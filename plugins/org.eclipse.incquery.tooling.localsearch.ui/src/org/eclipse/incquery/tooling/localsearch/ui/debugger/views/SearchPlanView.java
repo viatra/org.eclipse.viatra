@@ -23,8 +23,8 @@ import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
 import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationContentProvider;
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationLabelProvider;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.ZestNodeContentProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.internal.BreakPointListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -36,6 +36,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import com.google.common.collect.Lists;
@@ -50,13 +51,12 @@ public class SearchPlanView extends ViewPart implements IZoomableWorkbenchPart {
 
     public static final String ID = "org.eclipse.incquery.tooling.localsearch.ui.SearchPlanView";
     
-    private ZestNodeContentProvider zestContentProvider;
-    public static Boolean tst = false;
-
     private TreeViewer operationListViewer;
-    private OperationContentProvider operationListContentProvider;
+    private OperationListContentProvider operationListContentProvider;
+    private OperationListLabelProvider operationListLabelProvider;
+
     private GraphViewer graphViewer;
-    private OperationLabelProvider operationLabelProvider;
+    private ZestNodeContentProvider zestContentProvider;
     
     private List<ISearchOperation> breakpoints = Lists.newLinkedList();
     
@@ -88,7 +88,6 @@ public class SearchPlanView extends ViewPart implements IZoomableWorkbenchPart {
 
         // Zest viewer
         createZestViewer(sashForm);
-
     }
 
     private void createZestViewer(SashForm sashForm) {
@@ -105,19 +104,18 @@ public class SearchPlanView extends ViewPart implements IZoomableWorkbenchPart {
         LayoutAlgorithm layout = getLayout();
         this.graphViewer.setLayoutAlgorithm(layout, true);
         this.graphViewer.applyLayout();
-        
         this.graphViewer.setNodeStyle(ZestStyles.NONE);
+        
         fillToolBar();
     }
 
     private void createTreeViewer(SashForm sashForm) {
         this.operationListViewer = new TreeViewer(sashForm, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-        this.operationListContentProvider = new OperationContentProvider();
+        this.operationListContentProvider = new OperationListContentProvider();
+        this.operationListLabelProvider = new OperationListLabelProvider(breakpoints);
 
         this.operationListViewer.setContentProvider(operationListContentProvider);
-
-        this.operationLabelProvider = new OperationLabelProvider(breakpoints);
-        this.operationListViewer.setLabelProvider(getOperationLabelProvider());
+        this.operationListViewer.setLabelProvider(operationListLabelProvider);
         this.operationListViewer.setInput(null);
 
         
@@ -129,6 +127,7 @@ public class SearchPlanView extends ViewPart implements IZoomableWorkbenchPart {
             public void keyReleased(final KeyEvent e) {
                 if (e.keyCode == SWT.DEL) {
                     final IStructuredSelection selection = (IStructuredSelection) getOperationListViewer().getSelection();
+                    // TODO remove debug print
                     System.out.println(selection);
                 }
             }
@@ -149,7 +148,6 @@ public class SearchPlanView extends ViewPart implements IZoomableWorkbenchPart {
         ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
         IActionBars bars = getViewSite().getActionBars();
         bars.getMenuManager().add(toolbarZoomContributionViewItem);
-
     }
 
     @Override
@@ -163,39 +161,37 @@ public class SearchPlanView extends ViewPart implements IZoomableWorkbenchPart {
     }
 
     public void refreshOperationList() {
-        operationListViewer.refresh();
+    	// TODO check thread accesses
+    	PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				operationListViewer.refresh();
+			}
+		});
     }
 
     public void refreshGraph() {
         graphViewer.refresh();
     }
 
-    /**
-     * @return the operationListViewer
-     */
     public TreeViewer getOperationListViewer() {
         return operationListViewer;
     }
 
-    /**
-     * @param operationListViewer the operationListViewer to set
-     */
     public void setOperationListViewer(TreeViewer operationListViewer) {
         this.operationListViewer = operationListViewer;
     }
-
-    /**
-     * @return the operationLabelProvider
-     */
-    public OperationLabelProvider getOperationLabelProvider() {
-        return operationLabelProvider;
+    
+    public OperationListContentProvider getOperationListContentProvider() {
+    	return operationListContentProvider;
     }
 
-    /**
-     * @param operationLabelProvider the operationLabelProvider to set
-     */
-    public void setOperationLabelProvider(OperationLabelProvider operationLabelProvider) {
-        this.operationLabelProvider = operationLabelProvider;
+    public OperationListLabelProvider getOperationListLabelProvider() {
+        return operationListLabelProvider;
+    }
+
+    public void setOperationListLabelProvider(OperationListLabelProvider operationLabelProvider) {
+        this.operationListLabelProvider = operationLabelProvider;
     }
 
     public GraphViewer getGraphViewer() {

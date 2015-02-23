@@ -11,7 +11,6 @@
 package org.eclipse.incquery.runtime.localsearch.matcher;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
-import org.eclipse.incquery.runtime.localsearch.plan.SearchPlan;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
 
 
@@ -24,28 +23,28 @@ public interface ILocalSearchAdapter {
     /**
      * Callback method to indicate the start of a matching process
      */
-    void patternMatchingStarted();
+    void patternMatchingStarted(LocalSearchMatcher lsMatcher);
 
     /**
      * Callback method to indicate the end of a matching process
      */
-    void patternMatchingFinished();
+    void patternMatchingFinished(LocalSearchMatcher lsMatcher);
 
     /**
      * Callback method to indicate the start of a local search plan execution
      * 
-     * @param plan the plan that is started
+     * @param searchPlanExecutor the plan that is started
      * @param currentOperation the first operation to execute
      */
-    void planStarted(SearchPlan plan, int currentOperation);
+    void planStarted(SearchPlanExecutor searchPlanExecutor);
 
     /**
      * Callback method to indicate the end of a local search plan execution
      * 
-     * @param plan the plan that is started
+     * @param searchPlanExecutor the plan that is started
      * @param currentOperation the last operation to execute
      */
-    void planFinished(SearchPlan plan, int currentOperation);
+    void planFinished(SearchPlanExecutor searchPlanExecutor);
     
     /**
      * Callback method to indicate the selection of an operation to execute
@@ -54,7 +53,7 @@ public interface ILocalSearchAdapter {
      * @param currentOperation the operation that is selected for execution
      * @param frame the current matching frame
      */
-    void operationSelected(SearchPlanExecutor planExecutor, int currentOperation, MatchingFrame frame);
+    void operationSelected(SearchPlanExecutor planExecutor, MatchingFrame frame);
 
     /**
      * Callback method to indicate that an operation is executed
@@ -63,6 +62,6 @@ public interface ILocalSearchAdapter {
      * @param currentOperation the last operation that is executed
      * @param frame the current matching frame
      */
-    void operationExecuted(SearchPlanExecutor planExecutor, int currentOperation, MatchingFrame frame);
-          
+    void operationExecuted(SearchPlanExecutor planExecutor, MatchingFrame frame);
+
 }

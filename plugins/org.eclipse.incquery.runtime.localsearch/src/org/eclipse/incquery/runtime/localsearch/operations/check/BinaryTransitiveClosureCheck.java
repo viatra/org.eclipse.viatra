@@ -36,6 +36,10 @@ public class BinaryTransitiveClosureCheck extends CheckOperation {
     private int sourcePosition;
     private int targetPosition;
 
+    public LocalSearchMatcher getCalledMatcher(){
+    	return matcher;
+    }
+    
     /**
      * The source position will be matched in the called pattern to the first parameter; while target to the second.
      * 

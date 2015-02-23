@@ -11,8 +11,8 @@
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
@@ -34,7 +34,12 @@ public class CountOperation extends ExtendOperation<Integer> {
 
     PQuery calledQuery;
     Map<Integer, Integer> frameMapping;
+	private LocalSearchMatcher calledMatcher;
 
+	public LocalSearchMatcher getCalledMatcher(){
+		return calledMatcher;
+	}
+	
     public CountOperation(PQuery calledQuery, Map<Integer, Integer> frameMapping, int position) {
         super(position);
         this.calledQuery = calledQuery;
@@ -51,7 +56,7 @@ public class CountOperation extends ExtendOperation<Integer> {
             }
         }
         
-        LocalSearchMatcher calledMatcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
+        calledMatcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
         final MatchingFrame mappedFrame = calledMatcher.editableMatchingFrame();
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             mappedFrame.setValue(entry.getValue(), frame.getValue(entry.getKey()));

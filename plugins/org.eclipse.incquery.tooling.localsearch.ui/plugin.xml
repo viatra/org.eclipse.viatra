@@ -6,13 +6,13 @@
       <view
             class="org.eclipse.incquery.tooling.localsearch.ui.debugger.views.SearchPlanView"
             id="org.eclipse.incquery.tooling.localsearch.ui.SearchPlanView"
-            name="Search Plan View"
+            name="Local Search Plan View"
             restorable="true">
       </view>
       <view
             class="org.eclipse.incquery.tooling.localsearch.ui.debugger.old.FrameView"
             id="org.eclipse.incquery.tooling.localsearch.ui.FrameView"
-            name="Frame View"
+            name="Local Search Frame View"
             restorable="true">
       </view>
    </extension>
@@ -65,7 +65,7 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu">
+            locationURI="menu:org.eclipse.incquery.tooling.localsearch.ui.SearchPlanView">
          <menu
                label="Local Search">
             <command

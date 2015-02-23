@@ -145,6 +145,10 @@ public class LocalSearchMatcher {
     public void addAdapter(ILocalSearchAdapter adapter) {
         this.adapters.add(adapter);
     }
+
+    public void removeAdapter(ILocalSearchAdapter adapter) {
+    	this.adapters.remove(adapter);
+    }
     
     protected void setPlan(SearchPlanExecutor plan) {
         this.plan = ImmutableList.of(plan);
@@ -167,47 +171,73 @@ public class LocalSearchMatcher {
     }
 
     public boolean hasMatch() throws LocalSearchException {
-        return hasMatch(editableMatchingFrame());
+        boolean hasMatch = hasMatch(editableMatchingFrame());
+		return hasMatch;
     }
 
     public boolean hasMatch(final MatchingFrame initialFrame) throws LocalSearchException {
+    	matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);
-        return it.hasNext();
+        boolean hasMatch = it.hasNext();
+        matchingFinished();
+		return hasMatch;
     }
 
     public int countMatches() throws LocalSearchException {
-        return countMatches(editableMatchingFrame());
+        int countMatches = countMatches(editableMatchingFrame());
+		return countMatches;
     }
 
     public int countMatches(MatchingFrame initialFrame) throws LocalSearchException {
+    	matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);
+        matchingFinished();
         return Iterators.size(it);
     }
 
     public MatchingFrame getOneArbitraryMatch() throws LocalSearchException {
-        return getOneArbitraryMatch(editableMatchingFrame());
+        MatchingFrame oneArbitraryMatch = getOneArbitraryMatch(editableMatchingFrame());
+		return oneArbitraryMatch;
     }
 
     public MatchingFrame getOneArbitraryMatch(final MatchingFrame initialFrame) throws LocalSearchException {
+    	matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);
+        MatchingFrame returnValue = null;
         if (it.hasNext()) {
-            return it.next();
-        } else {
-            return null;
+			returnValue = it.next();
         }
+        matchingFinished();
+        return returnValue;
     }
 
     public Collection<MatchingFrame> getAllMatches() throws LocalSearchException {
-        return getAllMatches(editableMatchingFrame());
+        Collection<MatchingFrame> allMatches = getAllMatches(editableMatchingFrame());
+		return allMatches;
     }
 
-    public Collection<MatchingFrame> getAllMatches(final MatchingFrame initialFrame) throws LocalSearchException {
-        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);
+	private void matchingStarted() {
+		for (ILocalSearchAdapter adapter : adapters) {
+			adapter.patternMatchingStarted(this);
+		}
+	}
+
+	private void matchingFinished() {
+		for (ILocalSearchAdapter adapter : adapters) {
+			adapter.patternMatchingFinished(this);
+		}		
+	}
+
+	public Collection<MatchingFrame> getAllMatches(final MatchingFrame initialFrame) throws LocalSearchException {
+        matchingStarted();
+		PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);        
+        
         MatchingTable results = new MatchingTable();
         while (it.hasNext()) {
             final MatchingFrame frame = it.next();
             results.put(frame.getKey(), frame);
         }
+        matchingFinished();
         return ImmutableList.copyOf(results.iterator());
     }
     

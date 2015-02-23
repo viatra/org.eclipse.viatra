@@ -11,8 +11,8 @@
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
@@ -36,6 +36,10 @@ public class CountCheck extends CheckOperation {
     Map<Integer, Integer> frameMapping;
     private int position;
 
+    public LocalSearchMatcher getCalledMatcher(){
+    	return matcher;
+    }
+    
     public CountCheck(PQuery calledQuery, Map<Integer, Integer> frameMapping, int position) {
         super();
         this.calledQuery = calledQuery;
