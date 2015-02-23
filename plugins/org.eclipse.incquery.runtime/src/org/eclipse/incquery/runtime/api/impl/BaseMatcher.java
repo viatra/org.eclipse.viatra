@@ -89,7 +89,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     // TODO make me public for performance reasons
     protected abstract Match tupleToMatch(Tuple t);
 
-    private static Object[] fEmptyArray;
+    private Object[] fEmptyArray;
 
     protected Object[] emptyArray() {
         if (fEmptyArray == null)
