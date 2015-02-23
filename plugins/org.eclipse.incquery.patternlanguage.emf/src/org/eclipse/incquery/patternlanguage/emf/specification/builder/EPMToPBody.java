@@ -52,8 +52,10 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext.EdgeInterpretation;
+import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
@@ -328,16 +330,38 @@ public class EPMToPBody {
     protected void gatherPathSegment(Type segmentType, PVariable src, PVariable trg, final PBody pBody) throws SpecificationBuilderException {
         if (segmentType instanceof ReferenceType) { // EMF-specific
             EStructuralFeature typeObject = ((ReferenceType) segmentType).getRefname();
-            if (context.edgeInterpretation() == EdgeInterpretation.TERNARY) {
-                new TypeTernary(pBody, context, newVirtual(pBody), src, trg, typeObject, context.printType(typeObject));
+            boolean hasSurrogateQueryFQN = SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(typeObject);
+            if(hasSurrogateQueryFQN) {
+            	gatherSurrogateQueryCall(src, trg, pBody, typeObject);
             } else {
-                new TypeBinary(pBody, context, src, trg, typeObject, context.printType(typeObject));
+            	if (context.edgeInterpretation() == EdgeInterpretation.TERNARY) {
+            		new TypeTernary(pBody, context, newVirtual(pBody), src, trg, typeObject, context.printType(typeObject));
+            	} else {
+            		new TypeBinary(pBody, context, src, trg, typeObject, context.printType(typeObject));
+            	}
             }
         } else
             throw new SpecificationBuilderException("Unsupported path segment type {1} in pattern {2}: {3}", new String[] {
                     segmentType.eClass().getName(), patternFQN, typeStr(segmentType) }, "Unsupported navigation step",
                     pattern);
     }
+
+	private void gatherSurrogateQueryCall(PVariable src, PVariable trg, final PBody pBody,
+			EStructuralFeature typeObject) throws SpecificationBuilderException {
+		String surrogateQueryFQN = SurrogateQueryRegistry.instance().getSurrogateQueryFQN(typeObject);
+        IQuerySpecification<?> specification = patternMap.get(surrogateQueryFQN);
+		if(specification == null) {
+		   // XXX patternMap must contain surrogate query specifications, but QueryExplorer cannot put generated specifications into it
+		   context.logWarning(String.format("Surrogate query specification %s not added to SpecificationBuilder, trying from QuerySpecificationRegistry", surrogateQueryFQN));
+		   specification = QuerySpecificationRegistry.getQuerySpecification(surrogateQueryFQN);
+		}
+		if(specification == null) {
+		    throw new SpecificationBuilderException("Could not resolve surrogate query {1}.", new String[] {surrogateQueryFQN}, "Could not resolve surrogate query", pattern);
+		}
+		PQuery internalQueryRepresentation = specification.getInternalQueryRepresentation();
+		Tuple variablesTuple = new FlatTuple(src, trg);
+		new PositivePatternCall(pBody, variablesTuple, internalQueryRepresentation);
+	}
 
     protected void gatherCheckConstraint(final CheckConstraint check, final PBody pBody) throws SpecificationBuilderException {
         XExpression expression = check.getExpression();

@@ -83,13 +83,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="surrogate-query-fqn" type="string">
-            <annotation>
-               <documentation>
-                  The fully-qualified name of the query that behaves as a surrogate for the selected derived feature. By defining a surrogate query, a not well-behaving derived feature can be supported by EMF-IncQuery by replacing usages of the feature in patterns by a pattern call to the surrogate query.
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 

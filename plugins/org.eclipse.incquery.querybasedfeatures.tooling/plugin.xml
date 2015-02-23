@@ -7,5 +7,9 @@
             annotation="QueryBasedFeature"
             fragment="org.eclipse.incquery.querybasedfeatures.tooling.QueryBasedFeatureGenerator">
       </fragment>
+      <fragment
+            annotation="Surrogate"
+            fragment="org.eclipse.incquery.querybasedfeatures.tooling.SurrogateGeneratorFragment">
+      </fragment>
    </extension>
 </plugin>

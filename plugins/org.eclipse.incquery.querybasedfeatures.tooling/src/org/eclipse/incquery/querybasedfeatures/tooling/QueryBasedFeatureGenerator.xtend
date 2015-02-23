@@ -82,14 +82,11 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
   
   def private processAnnotations(Pattern pattern, boolean generate) {
     for(annotation : pattern.getAnnotationsByName(QueryBasedFeatures::ANNOTATION_LITERAL)) {
-      val useAsSurrogate = annotation.getValueOfFirstBooleanAnnotationParameter("useAsSurrogate", false)
-      if(!useAsSurrogate){
-          val useModelCode = annotation.getValueOfFirstBooleanAnnotationParameter("generateIntoModelCode", false)
-          if(useModelCode){
-            modelCodeBasedGenerator.processJavaFiles(pattern, annotation, generate)
-          } else {
-            delegateBasedGenerator.updateAnnotations(pattern, annotation, generate)
-          }
+      val useModelCode = annotation.getValueOfFirstBooleanAnnotationParameter("generateIntoModelCode", false)
+      if(useModelCode){
+        modelCodeBasedGenerator.processJavaFiles(pattern, annotation, generate)
+      } else {
+        delegateBasedGenerator.updateAnnotations(pattern, annotation, generate)
       }
     }
   }
@@ -114,10 +111,6 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
             contribAttribute(it, "package-nsUri", parameters.ePackage.nsURI)
             contribAttribute(it, "classifier-name", parameters.source.name)
             contribAttribute(it, "feature-name", parameters.feature.name)
-            
-            if(parameters.useAsSurrogate) {
-                contribAttribute(it, "surrogate-query-fqn", pattern.fullyQualifiedName)
-            }
           ]
         ]
       ]
@@ -159,21 +152,21 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
       throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+" has less than 2 parameters!")
     }
 
-      for (ap : annotation.parameters) {
-        if (ap.name.matches("source")) {
-          sourceTmp = (ap.value as VariableValue).value.getVar
-        } else if (ap.name.matches("target")) {
-          targetTmp = (ap.value as VariableValue).value.getVar
-        } else if (ap.name.matches("feature")) {
-          featureTmp = (ap.value as StringValue).value
-        } else if (ap.name.matches("kind")) {
-          kindTmp = (ap.value as StringValue).value
-        } else if (ap.name.matches("keepCache")) {
-          keepCacheTmp = (ap.value as BoolValue).value
-        } else if (ap.name.matches("useAsSurrogate")) {
-          useAsSurrogate = (ap.value as BoolValue).value
-        }
+    for (ap : annotation.parameters) {
+      if (ap.name.matches("source")) {
+        sourceTmp = (ap.value as VariableValue).value.getVar
+      } else if (ap.name.matches("target")) {
+        targetTmp = (ap.value as VariableValue).value.getVar
+      } else if (ap.name.matches("feature")) {
+        featureTmp = (ap.value as StringValue).value
+      } else if (ap.name.matches("kind")) {
+        kindTmp = (ap.value as StringValue).value
+      } else if (ap.name.matches("keepCache")) {
+        keepCacheTmp = (ap.value as BoolValue).value
+      } else if (ap.name.matches("useAsSurrogate")) {
+        useAsSurrogate = (ap.value as BoolValue).value
       }
+    }
 
     if(featureTmp == ""){
       featureTmp = pattern.name
@@ -222,37 +215,41 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
       throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" not found in class " + source.name +"!")
     }
     val feature = features.iterator.next
-    if(!(feature.derived && feature.transient && feature.volatile)){
-      if(feedback)
-        errorFeedback.reportError(annotation,"Feature " + featureTmp +" must be set derived, transient, volatile, non-changeable!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-      throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" must be set derived, transient, volatile!")
-    }
     parameters.feature = feature
-
-    // if resource is not writable, the generation will fail
-    val resource = pckg.eResource();
-    val uri = resource.getURI();
-    // only file and platform resource URIs are considered safely writable
-    if (!(uri.isFile() || uri.isPlatformResource())) {
-      val useModelCodeRef = annotation.getFirstAnnotationParameter("generateIntoModelCode");
-      var useModelCode = false;
-      if(useModelCodeRef != null){
-        useModelCode = (useModelCodeRef as BoolValue).value
-      }
-      val annotationsOK = QueryBasedFeatures::checkEcoreAnnotation(pckg, feature, pattern.fullyQualifiedName, useModelCode)
-      if(!annotationsOK){
-          val message = String.format(
-            "Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!",
-            source.getName(),
-            uri.toString()
-          )
-          errorFeedback.reportError(sourcevar, message, DERIVED_ERROR_CODE, Severity::ERROR,
-            IErrorFeedback::FRAGMENT_ERROR_TYPE);
-          throw new IllegalArgumentException(
-            "Query-based feature pattern " + pattern.fullyQualifiedName + ": " + message)
-      }  
+    
+    parameters.useAsSurrogate = useAsSurrogate   
+    if(! useAsSurrogate){
+        if(!(feature.derived && feature.transient && feature.volatile)){
+          if(feedback)
+            errorFeedback.reportError(annotation,"Feature " + featureTmp +" must be set derived, transient, volatile!", DERIVED_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
+          throw new IllegalArgumentException("Query-based feature pattern "+pattern.fullyQualifiedName+": Feature " + featureTmp +" must be set derived, transient, volatile!")
+        }
+    
+        // if resource is not writable, the generation will fail
+        val resource = pckg.eResource();
+        val uri = resource.getURI();
+        // only file and platform resource URIs are considered safely writable
+        if (!(uri.isFile() || uri.isPlatformResource())) {
+          val useModelCodeRef = annotation.getFirstAnnotationParameter("generateIntoModelCode");
+          var useModelCode = false;
+          if(useModelCodeRef != null){
+            useModelCode = (useModelCodeRef as BoolValue).value
+          }
+          val annotationsOK = QueryBasedFeatures::checkEcoreAnnotation(pckg, feature, pattern.fullyQualifiedName, useModelCode)
+          if(!annotationsOK){
+              val message = String.format(
+                "Ecore package of %s must be writable by Query-based Feature generator, but resource with URI %s is not!",
+                source.getName(),
+                uri.toString()
+              )
+              errorFeedback.reportError(sourcevar, message, DERIVED_ERROR_CODE, Severity::ERROR,
+                IErrorFeedback::FRAGMENT_ERROR_TYPE);
+              throw new IllegalArgumentException(
+                "Query-based feature pattern " + pattern.fullyQualifiedName + ": " + message)
+          }  
+        }   
     }
-
+    
     if(kindTmp == ""){
       if(feature.many){
         kindTmp = "many"
@@ -268,7 +265,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
     }
     val kind = kinds.get(kindTmp)
     parameters.kind = kind
-
+    
     if(targetTmp == ""){
       targetTmp = pattern.parameters.get(1).name
     } else {
@@ -280,8 +277,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
     }
     parameters.targetVar = targetTmp
     parameters.keepCache = keepCacheTmp
-    parameters.useAsSurrogate = useAsSurrogate
-
+    
     return parameters
   }
 }

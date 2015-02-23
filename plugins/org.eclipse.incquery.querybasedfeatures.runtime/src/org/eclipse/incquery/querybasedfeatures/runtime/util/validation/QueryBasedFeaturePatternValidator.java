@@ -180,7 +180,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
             validator.warning("Cannot find target EClassifier", target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
                     PATTERN_ISSUE_CODE);
         }
-
+        
         // 5. "kind" (if set) is valid enum value
         QueryBasedFeatureKind kind = null;
         ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "kind");
@@ -264,7 +264,6 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         				+ " but it already contains correct annotations.", uri.toString(), sourceClass.getName()), annotation,
         				PatternLanguagePackage.Literals.ANNOTATION__NAME, METAMODEL_ISSUE_CODE);
         	}
-            return;
         }
         
 

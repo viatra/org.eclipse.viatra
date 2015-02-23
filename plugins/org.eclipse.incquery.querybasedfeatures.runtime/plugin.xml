@@ -42,12 +42,17 @@
                name="generateIntoModelCode"
                type="boolean">
          </annotationparameter>
+      </annotation>
+      <annotation
+            additionalValidator="org.eclipse.incquery.querybasedfeatures.runtime.util.validation.SurrogatePatternValidator"
+            description="This annotation is used to mark a pattern as a surrogate query definition for a feature."
+            name="Surrogate">
          <annotationparameter
-               description="If true, the Ecore model is not modified and instead of replacing the derived feature, the defined query will be used as a pattern call in all patterns where the derived feature is used in the definition."
+               description="The name of the EStructuralFeature that the query will serve (default: pattern name)."
                mandatory="false"
                multiple="false"
-               name="useAsSurrogate"
-               type="boolean">
+               name="feature"
+               type="string">
          </annotationparameter>
       </annotation>
    </extension>

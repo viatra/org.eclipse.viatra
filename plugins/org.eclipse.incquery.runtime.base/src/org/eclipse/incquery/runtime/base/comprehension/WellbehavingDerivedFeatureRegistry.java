@@ -12,13 +12,10 @@ package org.eclipse.incquery.runtime.base.comprehension;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -29,9 +26,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.IncQueryBasePlugin;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 /**
@@ -40,12 +35,10 @@ import com.google.common.collect.Multimap;
  */
 public class WellbehavingDerivedFeatureRegistry {
 
-	private static final String DUPLICATE_SURROGATE_QUERY = "Duplicate surrogate query definition %s for feature %s of EClass %s in package %s (FQN in map %s, contributing plug-ins %s, plug-in %s)";
 	
 	private static Collection<EStructuralFeature> contributedWellbehavingDerivedFeatures = Collections.newSetFromMap(new WeakHashMap<EStructuralFeature, Boolean>());
     private static Collection<EClass> contributedWellbehavingDerivedClasses = Collections.newSetFromMap(new WeakHashMap<EClass, Boolean>());
     private static Collection<EPackage> contributedWellbehavingDerivedPackages = Collections.newSetFromMap(new WeakHashMap<EPackage, Boolean>());
-    private static Map<EStructuralFeature,String> surrogateQueryFQNMap = new WeakHashMap<EStructuralFeature,String>();
     private static Multimap<String, String> contributingPluginOfFeatureMap = HashMultimap.create();
 
     private WellbehavingDerivedFeatureRegistry() {
@@ -89,7 +82,6 @@ public class WellbehavingDerivedFeatureRegistry {
             String packageUri = el.getAttribute("package-nsUri");
             String featureName = el.getAttribute("feature-name");
             String classifierName = el.getAttribute("classifier-name");
-            String surrogateQueryFQN = el.getAttribute("surrogate-query-fqn");
             String contributorName = el.getContributor().getName();
             StringBuilder featureIdBuilder = new StringBuilder();
             if (packageUri != null) {
@@ -105,20 +97,7 @@ public class WellbehavingDerivedFeatureRegistry {
                                 EStructuralFeature feature = cls.getEStructuralFeature(featureName);
                                 featureIdBuilder.append("##").append(featureName);
                                 if (feature != null) {
-                                    if(surrogateQueryFQN != null) {
-                                    	String fqnInMap = surrogateQueryFQNMap.get(feature);
-                                    	featureIdBuilder.append("##").append(surrogateQueryFQN);
-										if(fqnInMap != null) {
-                                    		String duplicateSurrogateFormatString = DUPLICATE_SURROGATE_QUERY;
-                                    		Collection<String> contributorPlugins = contributingPluginOfFeatureMap.get(featureIdBuilder.toString());
-											String duplicateSurrogateMessage = String.format(duplicateSurrogateFormatString, surrogateQueryFQN, featureName, classifierName, packageUri, fqnInMap, contributorPlugins, contributorName);
-											throw new IllegalStateException(duplicateSurrogateMessage);
-                                    	}
-                                    	registerSurrogateQueryForFeature(feature, surrogateQueryFQN);
-                                    } else {
-                                    	// only well-behaving derived features without surrogate queries are handled by Base
-                                    	registerWellbehavingDerivedFeature(feature);
-                                    }
+                                    registerWellbehavingDerivedFeature(feature);
                                 } else {
                                 	throw new IllegalStateException(String.format("Feature %s of EClass %s in package %s not found! (plug-in %s)", featureName, classifierName, packageUri, contributorName));
                                 }
@@ -190,19 +169,6 @@ public class WellbehavingDerivedFeatureRegistry {
         contributedWellbehavingDerivedPackages.add(pkg);
     }
 
-    /**
-	 * 
-	 * @param feature
-	 * @param surrogateQueryFQN
-	 * @return the previous surrogate query FQN associated with feature, or null if there was no such query FQN registered
-	 * @throws IllegalArgumentException if feature or surrogateQueryFQN is null 
-	 */
-	public static String registerSurrogateQueryForFeature(EStructuralFeature feature, String surrogateQueryFQN) {
-		Preconditions.checkArgument(feature != null, "Feature must not be null!");
-		Preconditions.checkArgument(surrogateQueryFQN != null, "Surrogate query FQN must not be null!");
-		return surrogateQueryFQNMap.put(feature, surrogateQueryFQN);
-	}
-
 	/**
      * @return the contributedWellbehavingDerivedFeatures
      */
@@ -218,40 +184,4 @@ public class WellbehavingDerivedFeatureRegistry {
         return contributedWellbehavingDerivedPackages;
     }
 
-    /**
-     * 
-     * @param feature that may have surrogate query defined, null not allowed
-     * @return true if the feature has a surrogate query defined
-     * @throws IllegalArgumentException if feature is null
-     */
-    public static boolean hasSurrogateQueryFQN(EStructuralFeature feature) {
-    	Preconditions.checkArgument(feature != null, "Feature must not be null!");
-   		return surrogateQueryFQNMap.containsKey(feature);
-    }
-    
-    /**
-	 * 
-	 * @param feature for which the surrogate query FQN should be returned
-	 * @return the surrogate query FQN defined for the feature
-	 * @throws IllegalArgumentException if feature is null
-	 * @throws NoSuchElementException if the feature has no surrogate query defined, use {@link #hasSurrogateQueryFQN} to check
-	 */
-	public static String getSurrogateQueryFQN(EStructuralFeature feature) {
-		Preconditions.checkArgument(feature != null, "Feature must not be null!");
-		String surrogateFQN = surrogateQueryFQNMap.get(feature);
-		if(surrogateFQN == null){
-			return surrogateFQN;
-		} else {
-			throw new NoSuchElementException(String.format("Feature %s has no surrogate query defined! Use #hasSurrogateQueryFQN to check existence.", feature.getName()));
-		}
-	}
-
-	/**
-	 * @return the surrogateQueryFQNMap
-	 */
-	public static Map<EStructuralFeature, String> getSurrogateQueryFQNMap() {
-		return surrogateQueryFQNMap;
-	}
-    
-    
 }

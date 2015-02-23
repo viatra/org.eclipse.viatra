@@ -24,10 +24,14 @@ import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
+import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry
+import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
+import com.google.common.collect.Sets
+import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry
 
 /**
  * <p>Infers a JVM model from the source model.</p>
@@ -139,6 +143,25 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		]
 	}
 	
+	def collectSurrogateQueries(PatternModel model) {
+		val patterns = newHashSet
+		val existingSpecifications = newHashSet
+		SurrogateQueryRegistry.instance.allSurrogateQueryFQNMap.entrySet.forEach[
+			val name = it.value	
+			val pattern = model.patterns.findFirst[CorePatternLanguageHelper.getFullyQualifiedName(it) == name]
+			if (pattern == null) {
+				existingSpecifications.add(QuerySpecificationRegistry.getQuerySpecification(name))
+			} else {
+				patterns.add(pattern)
+			}
+		]
+		val builder = new SpecificationBuilder(existingSpecifications)
+		patterns.forEach[
+			builder.getOrCreateSpecification(it)			
+		]
+		builder
+	}
+	
    	/**
 	 * Is called for each Pattern instance in a resource.
 	 *
@@ -150,7 +173,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 */
    	def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
 	   	try {
-	   		val builder = new SpecificationBuilder
+	   		val builder = model.collectSurrogateQueries
    			for (pattern : model.patterns){
    				pattern.infer(acceptor, builder, isPrelinkingPhase)
    			}
