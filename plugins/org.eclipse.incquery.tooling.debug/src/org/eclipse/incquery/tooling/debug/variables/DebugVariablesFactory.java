@@ -28,7 +28,7 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VirtualMachine;
 
 /**
- * This factory is responsible for the creation of {@link IJavaVariable}s for all the available {@link IncQueryEngine}s 
+ * This factory is responsible for the creation of {@link IJavaVariable}s for all the available {@link IncQueryEngine}s
  * in the current JVM.
  * 
  * @author Tamas Szabo (itemis AG)
@@ -51,7 +51,7 @@ public class DebugVariablesFactory extends VariablesFactory {
                         if (instances.size() > 0) {
                             for (ObjectReference instance : instances) {
                                 EngineValue value = new EngineValue(wrappedStackFrame.getJavaDebugTarget(),
-                                        threadReference, instance);
+                                        ValueWrapper.wrap(instance, threadReference));
                                 engines.add(value);
                             }
                             break;

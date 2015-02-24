@@ -16,17 +16,14 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.tooling.debug.common.IncQueryDebugUtil;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugValue;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugVariable;
+import org.eclipse.incquery.tooling.debug.variables.ValueWrapper;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.ArrayReference;
-import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StringReference;
-import com.sun.jdi.ThreadReference;
-import com.sun.jdi.Value;
 
 /**
  * The value of an IncQuery Debug Variable which represents an {@link IPatternMatch} instance. Children variables will
@@ -38,9 +35,8 @@ import com.sun.jdi.Value;
 @SuppressWarnings("restriction")
 public class MatchValue extends IncQueryDebugValue {
 
-    public MatchValue(JDIDebugTarget debugTarget, ThreadReference threadReference, Value value,
-            String... additionalData) {
-        super(debugTarget, threadReference, value, additionalData);
+    public MatchValue(JDIDebugTarget debugTarget, ValueWrapper value, String... additionalData) {
+        super(debugTarget, value, additionalData);
     }
 
     @Override
@@ -49,23 +45,27 @@ public class MatchValue extends IncQueryDebugValue {
             return fVariables;
         } else {
             try {
-                ObjectReference object = (ObjectReference) fValue;
                 fVariables = new ArrayList<IJavaVariable>();
-                ArrayReference parameters = (ArrayReference) IncQueryDebugUtil.invokeMethod(threadReference, object,
-                        "toArray");
-                ObjectReference parameterNames = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference,
-                        object, "parameterNames");
-                ArrayReference list = (ArrayReference) IncQueryDebugUtil.invokeMethod(threadReference, parameterNames,
-                        "toArray");
 
-                for (int i = 0; i < parameters.length(); i++) {
-                    IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
-                    MatchParameterValue value = new MatchParameterValue(debugTarget, threadReference,
-                            parameters.getValue(i), ((StringReference) list.getValue(i)).value());
-                    var.setValue(value);
-                    fVariables.add(var);
+                ValueWrapper parameters = fValue.invoke("toArray");
+                ValueWrapper parameterNames = fValue.invoke("parameterNames").invoke("toArray");
 
+                if (parameterNames.isArray() && parameters.isArray()) {
+                    ArrayReference parametersArray = (ArrayReference) parameters.getValue();
+                    ArrayReference parameterNamesArray = (ArrayReference) parameterNames.getValue();
+
+                    for (int i = 0; i < parametersArray.length(); i++) {
+                        IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
+                        String parameterName = ((StringReference) parameterNamesArray.getValue(i)).value();
+                        ValueWrapper wrappedParameter = ValueWrapper.wrap(parametersArray.getValue(i),
+                                fValue.getThreadReference());
+                        MatchParameterValue value = new MatchParameterValue(debugTarget, wrappedParameter,
+                                parameterName);
+                        var.setValue(value);
+                        fVariables.add(var);
+                    }
                 }
+
                 return fVariables;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -81,10 +81,9 @@ public class MatchValue extends IncQueryDebugValue {
 
     @Override
     public String getValueString() throws DebugException {
-        ObjectReference value = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference,
-                (ObjectReference) fValue, "prettyPrint");
-        if (value != null) {
-            return ((StringReference) value).value();
+        ValueWrapper value = fValue.invoke("prettyPrint");
+        if (value.getValue() != null) {
+            return ((StringReference) value.getValue()).value();
         } else {
             return super.getValueString();
         }

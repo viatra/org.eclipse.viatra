@@ -17,18 +17,16 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.tooling.debug.common.IncQueryDebugUtil;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugValue;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugVariable;
 import org.eclipse.incquery.tooling.debug.variables.ClassNames;
+import org.eclipse.incquery.tooling.debug.variables.ValueWrapper;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 
 import com.sun.jdi.ArrayReference;
 import com.sun.jdi.BooleanValue;
-import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StringReference;
-import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 
 /**
@@ -49,8 +47,8 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
 
     private String cachedLabel;
 
-    public EngineValue(JDIDebugTarget debugTarget, ThreadReference threadReference, Value value) {
-        super(debugTarget, threadReference, value);
+    public EngineValue(JDIDebugTarget debugTarget, ValueWrapper value) {
+        super(debugTarget, value);
     }
 
     @Override
@@ -59,22 +57,19 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
             return fVariables;
         } else {
             try {
-                ObjectReference object = (ObjectReference) fValue;
                 fVariables = new ArrayList<IJavaVariable>();
+                ValueWrapper matchers = fValue.get("matchers").get("table");
 
-                ObjectReference matchersFieldValue = (ObjectReference) IncQueryDebugUtil.getField(object, "matchers");
-                ObjectReference tableFieldValue = (ObjectReference) IncQueryDebugUtil.getField(matchersFieldValue,
-                        "table");
-
-                for (Value val : ((ArrayReference) tableFieldValue).getValues()) {
-                    if (val != null) {
-                        ObjectReference valueFieldValue = (ObjectReference) IncQueryDebugUtil.getField(
-                                (ObjectReference) val, "value");
-                        IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
-                        MatcherValue value = new MatcherValue(debugTarget, threadReference, valueFieldValue);
-                        var.setValue(value);
-                        fVariables.add(var);
-
+                if (matchers.isArray()) {
+                    for (Value val : ((ArrayReference) matchers.getValue()).getValues()) {
+                        if (val != null) {
+                            ValueWrapper wrappedValue = ValueWrapper.wrap(val, fValue.getThreadReference());
+                            ValueWrapper valueFieldValue = wrappedValue.get("value");
+                            IncQueryDebugVariable var = new IncQueryDebugVariable(getJavaDebugTarget());
+                            MatcherValue value = new MatcherValue(debugTarget, valueFieldValue);
+                            var.setValue(value);
+                            fVariables.add(var);
+                        }
                     }
                 }
                 return fVariables;
@@ -88,60 +83,53 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
     public String getLabel() {
         if (cachedLabel == null) {
             try {
-                ObjectReference object = (ObjectReference) this.fValue;
-                BooleanValue isManaged = (BooleanValue) IncQueryDebugUtil.invokeMethod(threadReference, object,
-                        "isManaged");
-                ObjectReference scope = (ObjectReference) IncQueryDebugUtil.getField(object, "scope");
+                ValueWrapper isManaged = fValue.invoke("isManaged");
+                ValueWrapper scope = fValue.get("scope");
 
                 StringBuilder sb = new StringBuilder();
-                if (!isManaged.booleanValue()) {
+                if (!((BooleanValue) isManaged.getValue()).booleanValue()) {
                     sb.append("Advanced");
                 }
                 sb.append("IncQueryEngine on ");
 
-                if (scope.type().name().matches(ClassNames.EMF_SCOPE_NAME)) {
+                if (scope.getValue().type().name().matches(ClassNames.EMF_SCOPE_NAME)) {
                     // emf scope
-                    ObjectReference emfRoot = (ObjectReference) IncQueryDebugUtil.getField(scope, "scopeRoot");
-
-                    ObjectReference resourceSet = null;
+                    ValueWrapper emfRoot = scope.get("scopeRoot");
+                    ValueWrapper resourceSet = null;
 
                     if (isResourceSet(emfRoot)) {
                         resourceSet = emfRoot;
                     } else if (isResource(emfRoot)) {
-                        resourceSet = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference, emfRoot,
-                                "getResourceSet");
+                        resourceSet = emfRoot.invoke("getResourceSet");
                     } else {
-                        ObjectReference resource = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference,
-                                emfRoot, "eResource");
-                        resourceSet = (ObjectReference) IncQueryDebugUtil.invokeMethod(threadReference, resource,
-                                "getResourceSet");
+                        resourceSet = emfRoot.invoke("eResource").invoke("getResourceSet");
                     }
 
-                    ObjectReference resources = (ObjectReference) IncQueryDebugUtil.getField(resourceSet, "resources");
-                    ArrayReference data = (ArrayReference) IncQueryDebugUtil.getField(resources, "data");
+                    ValueWrapper resources = resourceSet.get("resources").get("data");
 
-                    for (Value resource : data.getValues()) {
-                        if (resource != null) {
-                            ObjectReference uri = (ObjectReference) IncQueryDebugUtil.getField(
-                                    (ObjectReference) resource, "uri");
-                            ArrayReference segments = (ArrayReference) IncQueryDebugUtil.getField(uri, "segments");
+                    if (resources.isArray()) {
+                        for (Value resource : ((ArrayReference) resources.getValue()).getValues()) {
+                            if (resource != null) {
+                                ValueWrapper wrappedResource = ValueWrapper.wrap(resource, fValue.getThreadReference());
+                                ValueWrapper segments = wrappedResource.get("uri").get("segments");
 
-                            int j = 0;
-                            for (Value value : segments.getValues()) {
-                                sb.append(((StringReference) value).value());
-                                if (j < segments.length()) {
-                                    sb.append("/");
+                                int length = ((ArrayReference) segments.getValue()).length();
+                                int j = 0;
+                                for (Value value : ((ArrayReference) segments.getValue()).getValues()) {
+                                    sb.append(((StringReference) value).value());
+                                    if (j < length) {
+                                        sb.append("/");
+                                    }
+                                    j++;
                                 }
-                                j++;
+                                sb.append(" ");
                             }
-                            sb.append(" ");
                         }
                     }
                 } else {
                     // other kind of scope
-                    String value = ((StringReference) IncQueryDebugUtil.invokeMethod(threadReference, scope,
-                            "toString")).value();
-                    sb.append(value);
+                    ValueWrapper wrappedValue = scope.invoke("toString");
+                    sb.append(((StringReference) wrappedValue.getValue()).value());
                 }
 
                 cachedLabel = sb.toString();
@@ -152,17 +140,16 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
         return cachedLabel;
     }
 
-    private boolean isResourceSet(ObjectReference ref) {
-        return IncQueryDebugUtil.getField(ref, "resources") != null;
+    private boolean isResourceSet(ValueWrapper value) {
+        return value.get("resources").getValue() != null;
     }
 
-    private boolean isResource(ObjectReference ref) {
-        return IncQueryDebugUtil.invokeMethod(threadReference, ref, "getResourceSet") != null;
+    private boolean isResource(ValueWrapper value) {
+        return value.invoke("getResourceSet").getValue() != null;
     }
 
     @Override
     public int compareTo(EngineValue that) {
-        return new Long(((ObjectReference) this.fValue).uniqueID()).compareTo(((ObjectReference) that.fValue)
-                .uniqueID());
+        return this.fValue.compareTo(that.fValue);
     }
 }

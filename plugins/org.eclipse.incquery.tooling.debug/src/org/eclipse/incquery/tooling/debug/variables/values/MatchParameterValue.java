@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugValue;
+import org.eclipse.incquery.tooling.debug.variables.ValueWrapper;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIArrayEntryVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
@@ -26,16 +27,15 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIFieldVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 
+import com.sun.jdi.ArrayReference;
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectCollectedException;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
-import com.sun.jdi.ThreadReference;
-import com.sun.jdi.Value;
 
 /**
- * The value of an IncQuery Debug Variable which represents a match parameter.
- * The children variables will be created by the original {@link JDIValue#getVariables()} logic.
+ * The value of an IncQuery Debug Variable which represents a match parameter. The children variables will be created by
+ * the original {@link JDIValue#getVariables()} logic.
  * 
  * @author Tamas Szabo (itemis AG)
  *
@@ -43,49 +43,39 @@ import com.sun.jdi.Value;
 @SuppressWarnings("restriction")
 public class MatchParameterValue extends IncQueryDebugValue {
 
-    public MatchParameterValue(JDIDebugTarget debugTarget, ThreadReference threadReference, Value value, String... additionalData) {
-        super(debugTarget, threadReference, value, additionalData);
+    public MatchParameterValue(JDIDebugTarget debugTarget, ValueWrapper value, String... additionalData) {
+        super(debugTarget, value, additionalData);
     }
 
     @Override
     public String getLabel() {
         return additionalData[0];
     }
-    
+
     // Copied from JDIValue.getVariablesList()
     @Override
     protected synchronized List<IJavaVariable> getVariablesList() throws DebugException {
         if (fVariables != null) {
             return fVariables;
-        } else if (fValue instanceof ObjectReference) {
-            ObjectReference object = (ObjectReference) fValue;
+        } else if (fValue.isReference()) {
             fVariables = new ArrayList<IJavaVariable>();
-            if (isArray()) {
-                try {
-                    int length = getArrayLength();
-                    for (int i = 0; i < length; i++) {
-                        fVariables.add(new JDIArrayEntryVariable(
-                                getJavaDebugTarget(), getArrayReference(), i,
-                                fLogicalParent));
-                    }
-                } catch (DebugException e) {
-                    if (e.getCause() instanceof ObjectCollectedException) {
-                        return Collections.emptyList();
-                    }
-                    throw e;
+            if (fValue.isArray()) {
+                int length = fValue.getArrayLength();
+                for (int i = 0; i < length; i++) {
+                    fVariables.add(new JDIArrayEntryVariable(getJavaDebugTarget(), (ArrayReference) fValue.getValue(), i,
+                            fLogicalParent));
                 }
             } else {
                 List<Field> fields = null;
                 try {
-                    ReferenceType refType = object.referenceType();
+                    ReferenceType refType = ((ObjectReference) fValue.getValue()).referenceType();
                     fields = refType.allFields();
                 } catch (ObjectCollectedException e) {
                     return Collections.emptyList();
                 } catch (RuntimeException e) {
-                    targetRequestFailed(
-                            MessageFormat.format(
-                                    JDIDebugModelMessages.JDIValue_exception_retrieving_fields,
-                                    new Object[] { e.toString() }), e);
+                    targetRequestFailed(MessageFormat.format(
+                            JDIDebugModelMessages.JDIValue_exception_retrieving_fields, new Object[] { e.toString() }),
+                            e);
                     // execution will not reach this line, as
                     // #targetRequestFailed will thrown an exception
                     return null;
@@ -93,8 +83,7 @@ public class MatchParameterValue extends IncQueryDebugValue {
                 Iterator<Field> list = fields.iterator();
                 while (list.hasNext()) {
                     Field field = list.next();
-                    fVariables.add(new JDIFieldVariable(
-                            (JDIDebugTarget) getDebugTarget(), field, object,
+                    fVariables.add(new JDIFieldVariable((JDIDebugTarget) getDebugTarget(), field, (ObjectReference) fValue.getValue(),
                             fLogicalParent));
                 }
                 Collections.sort(fVariables, new Comparator<IJavaVariable>() {

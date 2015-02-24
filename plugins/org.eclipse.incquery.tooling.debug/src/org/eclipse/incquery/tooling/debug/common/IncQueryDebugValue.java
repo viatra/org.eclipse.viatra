@@ -14,12 +14,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.incquery.tooling.debug.variables.ValueWrapper;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
-
-import com.sun.jdi.ThreadReference;
-import com.sun.jdi.Value;
 
 /**
  * An instances of this class represents the value of an IncQuery Debug variable. It is also responsible for the
@@ -37,17 +35,15 @@ public abstract class IncQueryDebugValue extends JDIValue {
 
     protected JDIDebugTarget debugTarget;
     protected List<IJavaVariable> fVariables;
-    protected Value fValue;
-    protected ThreadReference threadReference;
+    protected ValueWrapper fValue;
     protected String[] additionalData;
 
-    public IncQueryDebugValue(JDIDebugTarget debugTarget, ThreadReference threadReference, Value value,
+    public IncQueryDebugValue(JDIDebugTarget debugTarget, ValueWrapper value,
             String... additionalData) {
-        super(debugTarget, value);
+        super(debugTarget, value.getValue());
         this.debugTarget = debugTarget;
         this.fValue = value;
         this.additionalData = additionalData;
-        this.threadReference = threadReference;
     }
 
     protected synchronized List<IJavaVariable> getVariablesList() throws DebugException {
