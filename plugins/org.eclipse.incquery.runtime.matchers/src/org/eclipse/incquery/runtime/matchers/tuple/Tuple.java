@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Immutable tuple.
  * @author Gabor Bergmann
  * 
  */
@@ -49,6 +50,7 @@ public abstract class Tuple {
     public abstract Object get(int index);
 
     /**
+     * As the tuple is supposed to be immutable, do not modify the returned array.
      * @return the array containing all elements of this Tuple
      */
     public Object[] getElements() {

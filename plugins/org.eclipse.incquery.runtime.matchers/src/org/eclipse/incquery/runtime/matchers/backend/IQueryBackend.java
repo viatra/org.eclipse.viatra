@@ -23,6 +23,12 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
  */
 public interface IQueryBackend {
 	
+	/**
+	 * @return true iff this backend is incremental, i.e. it caches the results of queries for quick retrieval, 
+	 * and can provide update notifications on result set changes.
+	 */
+	public boolean isCaching();
+	
     /**
      * Returns a result provider for a given query. Repeated calls may return the same instance.
      * @throws QueryProcessingException 

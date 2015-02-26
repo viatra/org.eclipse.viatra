@@ -489,5 +489,10 @@ public class ReteEngine implements IQueryBackend {
 	public void dispose() {
 		killEngine();
 	}
+	
+	@Override
+	public boolean isCaching() {
+		return true;
+	}
 
 }
