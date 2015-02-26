@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.commands.AbstractHandler;
@@ -30,6 +31,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory;
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot;
 import org.eclipse.incquery.testing.core.ModelLoadHelper;
@@ -103,7 +106,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			logger.error("Cannot save snapshot without IncQueryEngine!");
 			return;
 		}
-		ResourceSet resourceSet = getResourceSetForNotifier(engine.getEMFRoot());
+		ResourceSet resourceSet = getResourceSetForScope(engine.getScope());
 		if(resourceSet == null) {
 			logger.error("Cannot save snapshot, models not in ResourceSet!");
 			return;
@@ -167,7 +170,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 	private boolean validateInputSpecification(IncQueryEngine engine, IncQuerySnapshot snapshot) {
 		if(snapshot.getInputSpecification() != null) {
 			Notifier root = helper.getEMFRootForSnapshot(snapshot);
-			Notifier matcherRoot = engine.getEMFRoot();
+            Notifier matcherRoot = getScopeRoot(engine.getScope());
 			if(matcherRoot != root) {
 				logger.error("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
 				return false;
@@ -213,17 +216,45 @@ public class SaveSnapshotHandler extends AbstractHandler {
 		return true;
 	}
 	
-	private ResourceSet getResourceSetForNotifier(Notifier notifier) {
-		if(notifier instanceof EObject) {
-			Resource resource = ((EObject) notifier).eResource();
-			if(resource != null) {
-				return resource.getResourceSet();
-			}
-		} else if(notifier instanceof Resource) {
-			return ((Resource) notifier).getResourceSet();
-		} else if(notifier instanceof ResourceSet) {
-			return (ResourceSet) notifier;
-		}
-		return null;
+	private ResourceSet getResourceSetForScope(IncQueryScope scope) {
+	    if (scope instanceof EMFScope) {
+            EMFScope emfScope = (EMFScope) scope;
+            Set<? extends Notifier> scopeRoots = emfScope.getScopeRoots();
+            if (scopeRoots.size() > 1) {
+                throw new IllegalArgumentException("EMF scopes with multiple ResourceSets are not supported!");
+            } else {
+                Notifier notifier = scopeRoots.iterator().next();
+                if(notifier instanceof EObject) {
+                    Resource resource = ((EObject) notifier).eResource();
+                    if(resource != null) {
+                        return resource.getResourceSet();
+                    } else {
+                        return null;
+                    }
+                } else if(notifier instanceof Resource) {
+                    return ((Resource) notifier).getResourceSet();
+                } else if(notifier instanceof ResourceSet) {
+                    return (ResourceSet) notifier;
+                } else {
+                    return null;
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Non-EMF scopes are not supported!");
+        }
 	}
+	
+	private Notifier getScopeRoot(IncQueryScope scope) {
+        if (scope instanceof EMFScope) {
+            EMFScope emfScope = (EMFScope) scope;
+            Set<? extends Notifier> scopeRoots = emfScope.getScopeRoots();
+            if (scopeRoots.size() > 1) {
+                throw new IllegalArgumentException("EMF scopes with multiple ResourceSets are not supported!");
+            } else {
+                return scopeRoots.iterator().next();
+            }
+        } else {
+            throw new IllegalArgumentException("Non-EMF scopes are not supported!");
+        }
+    }
 }

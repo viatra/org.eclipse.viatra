@@ -24,6 +24,8 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.snapshot.EIQSnapshot.InputSpecification
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord
+import org.eclipse.incquery.runtime.emf.EMFScope
+import org.eclipse.incquery.runtime.api.IncQueryEngine
 
 /**
  * Helper methods for dealing with snapshots and match set records.
@@ -48,36 +50,36 @@ class SnapshotHelper {
 	}
 
 	/**
-	 * Returns the model root that was used by the given matcher.
+	 * Returns the model roots that were used by the given IncQueryEngine.
 	 */
-	def getModelRootsForMatcher(IncQueryMatcher matcher){
-		val root = matcher.engine.getEMFRoot
-		if(root instanceof EObject){
-			return newArrayList(root as EObject)
-		} else if(root instanceof Resource){
-			val roots = new ArrayList<EObject>()
-			roots.addAll((root as Resource).contents)
-			return roots
-		} else if(root instanceof ResourceSet){
-			val roots = new ArrayList<EObject>()
-			(root as ResourceSet).resources.forEach()[
-				roots.addAll(contents)
-			]
-			return roots
-		}
+	def getModelRootsForEngine(IncQueryEngine engine){
+        switch scope : engine.scope {
+            EMFScope: {
+        		scope.scopeRoots.map[
+        		    switch it {
+        		        EObject: #[it]
+        		        Resource: contents
+        		        ResourceSet: resources.map[contents].flatten.toList
+        		    }
+        		].flatten.toList
+       		}
+       		default: #[]
+       	}
 	}
 
 	/**
 	 * Returns the input specification for the given matcher.
 	 */
-	def getInputspecificationForMatcher(IncQueryMatcher matcher){
-		val root = matcher.engine.getEMFRoot
-		if(root instanceof EObject){
-			InputSpecification::EOBJECT
-		} else if(root instanceof Resource){
-			InputSpecification::RESOURCE
-		} else if(root instanceof ResourceSet){
-			 InputSpecification::RESOURCE_SET
+	def getInputSpecificationForMatcher(IncQueryMatcher matcher){
+		switch scope : matcher.engine.scope {
+		    EMFScope: {
+		        switch scope.scopeRoots.head {
+		            EObject: InputSpecification::EOBJECT
+		            Resource: InputSpecification::RESOURCE
+		            ResourceSet: InputSpecification::RESOURCE_SET 
+		        }
+		    }
+		    default: InputSpecification::UNSET
 		}
 	}
 
@@ -93,9 +95,9 @@ class SnapshotHelper {
 		snapshot.matchSetRecords.add(actualRecord)
 		// 2. store model roots
 		if(snapshot.inputSpecification == InputSpecification::UNSET){
-			snapshot.modelRoots.addAll(matcher.modelRootsForMatcher)
+			snapshot.modelRoots.addAll(matcher.engine.modelRootsForEngine)
 			snapshot.modelRoots.remove(snapshot)
-			snapshot.inputSpecification = matcher.inputspecificationForMatcher
+			snapshot.inputSpecification = matcher.inputSpecificationForMatcher
 		}
 		actualRecord.filter = partialMatch.createMatchRecordForMatch
 
