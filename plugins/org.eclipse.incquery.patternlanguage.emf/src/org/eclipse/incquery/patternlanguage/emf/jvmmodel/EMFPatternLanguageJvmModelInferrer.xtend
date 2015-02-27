@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.jvmmodel
 
+import com.google.common.collect.Sets
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
@@ -26,12 +27,11 @@ import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
 import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
+import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
-import com.google.common.collect.Sets
-import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry
 
 /**
  * <p>Infers a JVM model from the source model.</p>
@@ -148,9 +148,16 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		val existingSpecifications = newHashSet
 		SurrogateQueryRegistry.instance.allSurrogateQueryFQNMap.entrySet.forEach[
 			val name = it.value	
-			val pattern = model.patterns.findFirst[CorePatternLanguageHelper.getFullyQualifiedName(it) == name]
+			val pattern = model.patterns.findFirst[p |
+				val fqn = CorePatternLanguageHelper.getFullyQualifiedName(p)
+				fqn == name
+			]
 			if (pattern == null) {
-				existingSpecifications.add(QuerySpecificationRegistry.getQuerySpecification(name))
+				val specification = QuerySpecificationRegistry.getQuerySpecification(name)
+					//XXX In case of no existing specification the EPMToPBody will fail to rewrite references; but there more specific issues can be provided
+				if (specification != null) {
+					existingSpecifications.add(specification)
+				}
 			} else {
 				patterns.add(pattern)
 			}
