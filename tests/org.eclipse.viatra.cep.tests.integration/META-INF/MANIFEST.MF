@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.viatra.cep.tests.integration
+Bundle-SymbolicName: org.eclipse.viatra.cep.tests.integration;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Export-Package: org.eclipse.viatra.cep.tests.integration.model,
+ org.eclipse.viatra.cep.tests.integration.model.events,
+ org.eclipse.viatra.cep.tests.integration.model.jobs,
+ org.eclipse.viatra.cep.tests.integration.model.patterns.atomic,
+ org.eclipse.viatra.cep.tests.integration.model.patterns.complex,
+ org.eclipse.viatra.cep.tests.integration.model.rules
+Require-Bundle: org.eclipse.emf.ecore,
+ org.eclipse.viatra.cep.core,
+ org.junit,
+ org.eclipse.core.databinding.observable
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.log4j

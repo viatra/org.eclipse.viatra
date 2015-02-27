@@ -1,0 +1,42 @@
+package org.eclipse.viatra.cep.tests.integration.model
+
+import org.eclipse.viatra.cep.tests.integration.*
+
+AtomicEvent a1
+
+AtomicEvent a2
+
+ComplexEvent follows(){
+	definition: a1 -> a2
+}
+
+ComplexEvent or(){
+	definition: a1 OR a2
+}
+
+ComplexEvent and(){
+	definition: a1 AND a2
+}
+
+ComplexEvent multiplicity(){
+	definition: a1{3} -> a2
+}
+
+ComplexEvent multiplicityAtLeast(){
+	definition: a1{+} -> a2
+}
+
+Rule followsRule{
+	events: follows
+	action{TestResultHelper . instance . incrementById(activation . atom .
+		observableEventPattern . id)
+	}
+}
+
+Rule orRule{
+	events: or
+	action{
+		TestResultHelper . instance . incrementById(activation . atom .
+		observableEventPattern . id)
+	}
+}
