@@ -14,7 +14,6 @@ package org.eclipse.viatra.cep.core.streams;
 import java.util.List;
 
 import org.eclipse.viatra.cep.core.engine.IEventModelManager;
-import org.eclipse.viatra.cep.core.metamodels.events.Event;
 
 import com.google.common.collect.Lists;
 
@@ -25,25 +24,12 @@ import com.google.common.collect.Lists;
  * 
  */
 public class DefaultStreamManager implements IStreamManager {
-    private static IStreamManager instance;
     private IEventModelManager listener;
 
     private static final int MAX_STREAMS = 1;
     private List<EventStream> eventStreams = Lists.newArrayList();
 
-    /**
-     * @param eventModelManager
-     *            the {@link IEventModelManager} the {@link EventStream}s will deliver {@link Event}s for
-     * @return a new {@link IStreamManager}
-     */
-    public static IStreamManager getInstance(IEventModelManager eventModelManager) {
-        if (instance == null) {
-            instance = new DefaultStreamManager(eventModelManager);
-        }
-        return instance;
-    }
-
-    private DefaultStreamManager(IEventModelManager eventModelManager) {
+    public DefaultStreamManager(IEventModelManager eventModelManager) {
         this.listener = eventModelManager;
     }
 

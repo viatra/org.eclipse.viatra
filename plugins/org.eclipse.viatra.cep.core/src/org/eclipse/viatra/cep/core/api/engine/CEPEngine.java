@@ -87,7 +87,7 @@ public class CEPEngine {
 
         ruleEngine = eventModelManager.createExecutionSchema();
 
-        streamManager = DefaultStreamManager.getInstance(eventModelManager);
+        streamManager = new DefaultStreamManager(eventModelManager);
     }
 
     /**
