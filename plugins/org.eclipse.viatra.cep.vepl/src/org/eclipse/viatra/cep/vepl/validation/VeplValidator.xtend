@@ -138,8 +138,7 @@ class VeplValidator extends AbstractVeplValidator {
 				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__TIMEWINDOW,
 				ATOM_TIMEWINDOW_NO_MULTIPLICITY
 			)
-		} else if (!atom.hasTimewindow && (atom.multiplicity instanceof Multiplicity) &&
-			(atom.multiplicity as Multiplicity).value < 2) {
+		} else if ((atom.multiplicity instanceof Multiplicity) && (atom.multiplicity as Multiplicity).value < 2) {
 			error(
 				"One atomic event does not result in a valid complex event.",
 				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
