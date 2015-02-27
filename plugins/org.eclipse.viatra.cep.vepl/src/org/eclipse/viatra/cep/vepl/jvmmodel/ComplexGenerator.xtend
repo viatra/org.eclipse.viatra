@@ -63,7 +63,7 @@ class ComplexGenerator {
 	}
 
 	def public generateComplexEventPattern(ComplexEventPattern pattern, IJvmDeclaredTypeAcceptor acceptor) {
-		if (pattern.complexEventExpression == null) {
+		if (pattern.complexEventExpression == null || pattern.complexEventExpression.left == null) {
 			return
 		}
 
