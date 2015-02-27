@@ -556,8 +556,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             EClassifier rightClassifier = emfTypeProvider
                     .getClassifierForLiteralComputationEnumValueReference(rightValueReference);
             if (!isCompatibleClassifiers(leftClassifier, rightClassifier)) {
+                final String leftName = leftClassifier == null ? "null" : leftClassifier.getInstanceClassName();
+                final String rightName = rightClassifier == null ? "null" : rightClassifier.getInstanceClassName();
                 error("The types of the literal/computational values are different: "
-                        + leftClassifier.getInstanceClassName() + ", " + rightClassifier.getInstanceClassName() + ".",
+                        + leftName + ", " + rightName + ".",
                         compareConstraint, null, EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE);
             }
         }
