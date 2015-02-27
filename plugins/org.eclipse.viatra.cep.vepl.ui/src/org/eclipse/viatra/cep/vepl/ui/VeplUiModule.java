@@ -10,10 +10,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra.cep.vepl.ui.builder.VeplBuilderParticipant;
 import org.eclipse.viatra.cep.vepl.ui.syntaxhighlight.CepDslAntlrTokenToAttributeIdMapper;
 import org.eclipse.viatra.cep.vepl.ui.syntaxhighlight.CepDslHighlightingConfiguration;
+import org.eclipse.viatra.cep.vepl.ui.syntaxhighlight.VeplSemanticHighlightingCalculator;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 
 import com.google.inject.Binder;
 import com.google.inject.Provides;
@@ -55,6 +57,11 @@ public class VeplUiModule extends org.eclipse.viatra.cep.vepl.ui.AbstractVeplUiM
 
     public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
         return CepDslHighlightingConfiguration.class;
+    }
+
+    @Override
+    public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+        return VeplSemanticHighlightingCalculator.class;
     }
 
     public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
