@@ -144,29 +144,16 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	}
 	
 	def collectSurrogateQueries(PatternModel model) {
-		val patterns = newHashSet
 		val existingSpecifications = newHashSet
 		SurrogateQueryRegistry.instance.allSurrogateQueryFQNMap.entrySet.forEach[
 			val name = it.value	
-			val pattern = model.patterns.findFirst[p |
-				val fqn = CorePatternLanguageHelper.getFullyQualifiedName(p)
-				fqn == name
-			]
-			if (pattern == null) {
-				val specification = QuerySpecificationRegistry.getQuerySpecification(name)
-					//XXX In case of no existing specification the EPMToPBody will fail to rewrite references; but there more specific issues can be provided
-				if (specification != null) {
-					existingSpecifications.add(specification)
-				}
-			} else {
-				patterns.add(pattern)
+			val specification = QuerySpecificationRegistry.getQuerySpecification(name)
+				//XXX In case of no existing specification the EPMToPBody will fail to rewrite references; but there more specific info can be provided
+			if (specification != null) {
+				existingSpecifications.add(specification)
 			}
 		]
-		val builder = new SpecificationBuilder(existingSpecifications)
-		patterns.forEach[
-			builder.getOrCreateSpecification(it)			
-		]
-		builder
+		new SpecificationBuilder(existingSpecifications)
 	}
 	
    	/**

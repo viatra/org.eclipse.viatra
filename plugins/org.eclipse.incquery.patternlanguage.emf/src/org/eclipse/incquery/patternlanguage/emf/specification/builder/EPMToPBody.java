@@ -56,6 +56,7 @@ import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext.EdgeInterpretation;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
+import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
@@ -71,6 +72,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeTernary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
@@ -338,21 +340,27 @@ public class EPMToPBody {
             EStructuralFeature typeObject = ((ReferenceType) segmentType).getRefname();
             boolean hasSurrogateQueryFQN = SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(typeObject);
             if(hasSurrogateQueryFQN) {
-            	gatherSurrogateQueryCall(src, trg, pBody, typeObject);
-            } else {
-            	if (context.edgeInterpretation() == EdgeInterpretation.TERNARY) {
-            		new TypeTernary(pBody, context, newVirtual(pBody), src, trg, typeObject, context.printType(typeObject));
+            	if (gatherSurrogateQueryCall(src, trg, pBody, typeObject)) {
+            	    //The gather call has created the pattern calls, no additional steps necessary
+            	    return;
             	} else {
-            		new TypeBinary(pBody, context, src, trg, typeObject, context.printType(typeObject));
+            	    //Surrogate query defined but not available
+            	    //TODO better error reporting (e.g. with PProblems) required
+            	    context.logWarning(String.format("Surrogate query for reference %s declared but not found.", typeObject.getName()));
             	}
             }
+           	if (context.edgeInterpretation() == EdgeInterpretation.TERNARY) {
+           	    new TypeTernary(pBody, context, newVirtual(pBody), src, trg, typeObject, context.printType(typeObject));
+           	} else {
+           	    new TypeBinary(pBody, context, src, trg, typeObject, context.printType(typeObject));
+           	}
         } else
             throw new SpecificationBuilderException("Unsupported path segment type {1} in pattern {2}: {3}", new String[] {
                     segmentType.eClass().getName(), patternFQN, typeStr(segmentType) }, "Unsupported navigation step",
                     pattern);
     }
 
-	private void gatherSurrogateQueryCall(PVariable src, PVariable trg, final PBody pBody,
+	private boolean gatherSurrogateQueryCall(PVariable src, PVariable trg, final PBody pBody,
 			EStructuralFeature typeObject) throws SpecificationBuilderException {
 		String surrogateQueryFQN = SurrogateQueryRegistry.instance().getSurrogateQueryFQN(typeObject);
         IQuerySpecification<?> specification = patternMap.get(surrogateQueryFQN);
@@ -362,11 +370,12 @@ public class EPMToPBody {
 		   specification = QuerySpecificationRegistry.getQuerySpecification(surrogateQueryFQN);
 		}
 		if(specification == null) {
-		    throw new SpecificationBuilderException("Could not resolve surrogate query {1}.", new String[] {surrogateQueryFQN}, "Could not resolve surrogate query", pattern);
+		    return false;
 		}
 		PQuery internalQueryRepresentation = specification.getInternalQueryRepresentation();
 		Tuple variablesTuple = new FlatTuple(src, trg);
 		new PositivePatternCall(pBody, variablesTuple, internalQueryRepresentation);
+		return true;
 	}
 
     protected void gatherCheckConstraint(final CheckConstraint check, final PBody pBody) throws SpecificationBuilderException {
