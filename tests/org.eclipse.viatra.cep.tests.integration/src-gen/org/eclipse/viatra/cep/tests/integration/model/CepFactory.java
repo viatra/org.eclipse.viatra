@@ -6,15 +6,16 @@ import org.eclipse.viatra.cep.core.api.rules.ICepRule;
 import org.eclipse.viatra.cep.core.metamodels.events.EventSource;
 import org.eclipse.viatra.cep.tests.integration.model.events.A1_Event;
 import org.eclipse.viatra.cep.tests.integration.model.events.A2_Event;
+import org.eclipse.viatra.cep.tests.integration.model.events.A3_Event;
 import org.eclipse.viatra.cep.tests.integration.model.patterns.atomic.A1_Pattern;
 import org.eclipse.viatra.cep.tests.integration.model.patterns.atomic.A2_Pattern;
+import org.eclipse.viatra.cep.tests.integration.model.patterns.atomic.A3_Pattern;
 import org.eclipse.viatra.cep.tests.integration.model.patterns.complex.And_Pattern;
 import org.eclipse.viatra.cep.tests.integration.model.patterns.complex.Follows_Pattern;
+import org.eclipse.viatra.cep.tests.integration.model.patterns.complex.Multiplicity3_Pattern;
 import org.eclipse.viatra.cep.tests.integration.model.patterns.complex.MultiplicityAtLeast_Pattern;
-import org.eclipse.viatra.cep.tests.integration.model.patterns.complex.Multiplicity_Pattern;
 import org.eclipse.viatra.cep.tests.integration.model.patterns.complex.Or_Pattern;
-import org.eclipse.viatra.cep.tests.integration.model.rules.FollowsRule;
-import org.eclipse.viatra.cep.tests.integration.model.rules.OrRule;
+import org.eclipse.viatra.cep.tests.integration.model.rules.TestRule;
 
 @SuppressWarnings("all")
 public class CepFactory {
@@ -56,6 +57,20 @@ public class CepFactory {
   }
   
   /**
+   * Factory method for event class {@link A3_Event}.
+   */
+  public A3_Event createA3_Event(final EventSource eventSource) {
+    return new A3_Event(eventSource);
+  }
+  
+  /**
+   * Factory method for event class {@link A3_Event}.
+   */
+  public A3_Event createA3_Event() {
+    return new A3_Event(null);
+  }
+  
+  /**
    * Factory method for atomic event pattern {@link A1_Pattern}.
    */
   public A1_Pattern createA1_Pattern() {
@@ -67,6 +82,13 @@ public class CepFactory {
    */
   public A2_Pattern createA2_Pattern() {
     return new A2_Pattern();
+  }
+  
+  /**
+   * Factory method for atomic event pattern {@link A3_Pattern}.
+   */
+  public A3_Pattern createA3_Pattern() {
+    return new A3_Pattern();
   }
   
   /**
@@ -91,10 +113,10 @@ public class CepFactory {
   }
   
   /**
-   * Factory method for complex event pattern {@link Multiplicity_Pattern}.
+   * Factory method for complex event pattern {@link Multiplicity3_Pattern}.
    */
-  public Multiplicity_Pattern createMultiplicity_Pattern() {
-    return new Multiplicity_Pattern();
+  public Multiplicity3_Pattern createMultiplicity3_Pattern() {
+    return new Multiplicity3_Pattern();
   }
   
   /**
@@ -105,17 +127,10 @@ public class CepFactory {
   }
   
   /**
-   * Factory method for rule {@link FollowsRule}.
+   * Factory method for rule {@link TestRule}.
    */
-  public FollowsRule createFollowsRule() {
-    return new FollowsRule();
-  }
-  
-  /**
-   * Factory method for rule {@link OrRule}.
-   */
-  public OrRule createOrRule() {
-    return new OrRule();
+  public TestRule createTestRule() {
+    return new TestRule();
   }
   
   /**
@@ -123,8 +138,7 @@ public class CepFactory {
    */
   public List<ICepRule> allRules() {
     List<ICepRule> rules = Lists.newArrayList();
-    rules.add(new FollowsRule());
-    rules.add(new OrRule());
+    rules.add(new TestRule());
     return rules;
   }
 }

@@ -9,8 +9,8 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.tests.integration.TestResultHelper;
 
 @SuppressWarnings("all")
-public class FollowsRule_Job extends Job<IObservableComplexEventPattern> {
-  public FollowsRule_Job(final ActivationState activationState) {
+public class TestRule_Job extends Job<IObservableComplexEventPattern> {
+  public TestRule_Job(final ActivationState activationState) {
     super(activationState);
   }
   

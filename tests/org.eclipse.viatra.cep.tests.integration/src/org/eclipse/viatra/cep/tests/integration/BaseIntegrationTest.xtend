@@ -8,7 +8,6 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.viatra.cep.tests.integration
 
 import org.eclipse.viatra.cep.core.api.engine.CEPEngine
@@ -17,23 +16,27 @@ import org.eclipse.viatra.cep.core.streams.EventStream
 import org.eclipse.viatra.cep.tests.integration.internal.DefaultRealm
 import org.eclipse.viatra.cep.tests.integration.model.CepFactory
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
-import org.junit.Test
 
-class IntegrationTests {
+abstract class BaseIntegrationTest {
 
-	extension CepFactory cf = CepFactory.getInstance
+	protected extension CepFactory cf = CepFactory.getInstance
 
+	private EventContext eventContext
 	private DefaultRealm defaultRealm
 	private CEPEngine engine
 	private EventStream eventStream
 
+	new(EventContext eventContext) {
+		this.eventContext = eventContext
+	}
+
 	@Before
 	def void setUp() throws Exception {
 		defaultRealm = new DefaultRealm()
-		engine = CEPEngine.newEngine(EventContext::CHRONICLE)
+		engine = CEPEngine.newEngine(eventContext)
 		eventStream = engine.getStreamManager().newEventStream()
+		TestResultHelper.instance.results.clear
 	}
 
 	@After
@@ -41,17 +44,14 @@ class IntegrationTests {
 		engine = null
 		eventStream = null
 		defaultRealm.dispose
+		TestResultHelper.instance.results.clear
 	}
 
-	@Test
-	def void test() {
-		engine.addRule(createFollowsRule());
-		engine.addRule(createOrRule());
+	def getEngine() {
+		engine
+	}
 
-		eventStream.push(createA1_Event);
-		Assert.assertEquals(1, TestResultHelper.instance.results.get("or"))
-		eventStream.push(createA2_Event);
-		Assert.assertEquals(2, TestResultHelper.instance.results.get("or"))
-		Assert.assertEquals(1, TestResultHelper.instance.results.get("follows"))
+	def getEventStream() {
+		eventStream
 	}
 }

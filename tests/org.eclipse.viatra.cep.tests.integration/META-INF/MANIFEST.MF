@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: EVM Integration Tests
 Bundle-SymbolicName: org.eclipse.viatra.cep.tests.integration;singleton:=true
 Bundle-Version: 0.7.0.qualifier
+Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.cep.tests.integration.model,
  org.eclipse.viatra.cep.tests.integration.model.events,
  org.eclipse.viatra.cep.tests.integration.model.jobs,
@@ -15,4 +16,3 @@ Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.core.databinding.observable
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.log4j
-Bundle-Vendor: Eclipse VIATRA Project

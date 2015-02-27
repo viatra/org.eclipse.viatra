@@ -8,7 +8,6 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.viatra.cep.tests.integration
 
 import com.google.common.collect.Maps
@@ -16,9 +15,9 @@ import java.util.Map
 
 class TestResultHelper {
 	var private static TestResultHelper _instance
-	
-	def static instance(){
-		if(_instance == null){
+
+	def static instance() {
+		if (_instance == null) {
 			_instance = new TestResultHelper
 		}
 		return _instance
@@ -26,11 +25,12 @@ class TestResultHelper {
 
 	var private Map<String, Integer> results = Maps.newHashMap();
 
-	private new(){}
+	private new() {
+	}
 
 	def incrementById(String testType) {
 		val type = testType.split('\\.').last.replace("_pattern", "");
-		
+
 		var increment = 1;
 		if (results.containsKey(type)) {
 			increment = increment + results.get(type);
@@ -38,7 +38,18 @@ class TestResultHelper {
 		results.put(type, increment);
 	}
 
+	def getResults(String testType) {
+		if (!results.containsKey(testType)) {
+			return 0
+		}
+		results.get(testType)
+	}
+
 	def getResults() {
-		return results;
+		results
+	}
+
+	def static dispose() {
+		_instance = null
 	}
 }
