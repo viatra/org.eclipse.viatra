@@ -11,6 +11,8 @@
 
 package org.eclipse.incquery.validation.tooling
 
+import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableSet
 import com.google.inject.Inject
 import org.eclipse.core.runtime.Path
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
@@ -19,20 +21,19 @@ import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelI
 import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation
+import org.eclipse.incquery.patternlanguage.patternLanguage.ListValue
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue
 import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator
 import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider
-import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.util.Strings
-import org.eclipse.xtext.xbase.lib.Pair
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 
-class ValidationGenerator //extends DatabindingGenerator
+class ValidationGenerator
 implements IGenerationFragment {
 
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
@@ -106,8 +107,9 @@ implements IGenerationFragment {
 	}
 
 	override getProjectDependencies() {
-		newArrayList("org.eclipse.incquery.runtime",
-			"org.eclipse.incquery.validation.runtime"
+		newArrayList("com.google.guava",
+		    "org.eclipse.incquery.runtime",
+		    "org.eclipse.incquery.validation.core"
 		)
 	}
 
@@ -192,65 +194,153 @@ implements IGenerationFragment {
     return values
 	}
 
-	def patternHandler(Pattern pattern, Annotation annotation) '''
-		package «pattern.packageName»;
-
-		import org.eclipse.emf.ecore.EObject;
-
-		import org.eclipse.incquery.validation.runtime.Constraint;
-		import org.eclipse.incquery.validation.runtime.ValidationUtil;
-		import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
-		import org.eclipse.incquery.runtime.exception.IncQueryException;
-
-		import «pattern.packageName + "." + pattern.matchClassName»;
-		import «pattern.utilPackageName + "." + pattern.querySpecificationClassName»;
-		import «pattern.packageName + "." + pattern.matcherClassName»;
-
-		public class «pattern.name.toFirstUpper»«annotationLiteral»«pattern.annotations.indexOf(annotation)» extends «annotationLiteral»<«pattern.matchClassName»> {
-
-			private «pattern.querySpecificationClassName» querySpecification;
-
-			public «pattern.name.toFirstUpper»«annotationLiteral»«pattern.annotations.indexOf(annotation)»() throws IncQueryException {
-				querySpecification = «pattern.querySpecificationClassName».instance();
-			}
-
-			@Override
-			public String getMessage() {
-				return "«Strings::convertToJavaString(getElementOfConstraintAnnotation(annotation, "message"))»";
-			}
-
-			@Override
-			public EObject getLocationObject(«pattern.matchClassName» signature) {
-				Object location = signature.get("«
-				{
-				  val loc = getElementOfConstraintAnnotation(annotation, "location")
-  				if(!pattern.parameterPositionsByName.containsKey(loc)){
-  					//This error should not be reported anymore
-  				  feedback.reportError(annotation, '''Location '«loc»' is not a valid parameter name!''', VALIDATION_ERROR_CODE, Severity::ERROR, IErrorFeedback::FRAGMENT_ERROR_TYPE)
-   				}
- 				  loc
-				}
-				  »");
-				if(location instanceof EObject){
-					return (EObject) location;
-				}
-				return null;
-			}
-
-			@Override
-			public int getSeverity() {
-				return ValidationUtil.getSeverity("«getElementOfConstraintAnnotation(annotation, "severity")»");
-			}
-
-			@Override
-			public BaseGeneratedEMFQuerySpecification<«pattern.matcherClassName»> getQuerySpecification() {
-				return querySpecification;
-			}
-		}
-	'''
-
 	override getAdditionalBinIncludes() {
 		return newArrayList(new Path("plugin.xml"))
 	}
 
+    def patternHandler(Pattern pattern, Annotation annotation){
+        val className = pattern.name.toFirstUpper + annotationLiteral + pattern.annotations.indexOf(annotation)
+        '''
+        package «pattern.packageName»;
+
+        import java.util.List;
+        import java.util.Map;
+        import java.util.Set;
+        import com.google.common.collect.ImmutableList;
+        import com.google.common.collect.ImmutableMap;
+        import com.google.common.collect.ImmutableSet;
+        
+        import org.eclipse.incquery.validation.core.api.Severity;
+        import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
+        import org.eclipse.incquery.runtime.api.IPatternMatch;
+        import org.eclipse.incquery.runtime.api.IQuerySpecification;
+        import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+        import org.eclipse.incquery.runtime.exception.IncQueryException;
+        
+        import «pattern.utilPackageName + "." + pattern.querySpecificationClassName»;
+        
+        public class «className» implements IConstraintSpecification {
+        
+            private «pattern.querySpecificationClassName» querySpecification;
+        
+            public «className»() throws IncQueryException {
+                querySpecification = «pattern.querySpecificationClassName».instance();
+            }
+        
+            @Override
+            public String getMessageFormat() {
+                return "«Strings::convertToJavaString(getElementOfConstraintAnnotation(annotation, "message"))»";
+            }
+        
+        
+            @Override
+            public Map<String,Object> getKeyObjects(IPatternMatch signature) {
+                Map<String,Object> map = ImmutableMap.of(
+                    «FOR key : pattern.getKeyList(annotation) SEPARATOR ","»
+                        "«key»",signature.get("«key»")
+                    «ENDFOR»
+                );
+                return map;
+            }
+        
+            @Override
+            public List<String> getKeyNames() {
+                List<String> keyNames = ImmutableList.of(
+                    «FOR key : pattern.getKeyList(annotation) SEPARATOR ","»
+                        "«key»"
+                    «ENDFOR»
+                );
+                return keyNames;
+            }
+        
+            @Override
+            public List<String> getPropertyNames() {
+                List<String> propertyNames = ImmutableList.of(
+                    «FOR property : pattern.getPropertyList(annotation) SEPARATOR ","»
+                        "«property»"
+                    «ENDFOR»
+                );
+                return propertyNames;
+            }
+        
+            @Override
+            public Set<List<String>> getSymmetricPropertyNames() {
+                Set<List<String>> symmetricPropertyNamesSet = ImmutableSet.<List<String>>of(
+                    «val symmetricProperties = pattern.getSymmetricList(annotation).filter[
+                        !pattern.getKeyList(annotation).containsAll(it)
+                    ]»
+                    «FOR propertyList : symmetricProperties SEPARATOR ","»
+                        ImmutableList.of(
+                        «FOR property : propertyList SEPARATOR ","»
+                            "«property»"
+                        «ENDFOR»
+                        )
+                    «ENDFOR»
+                );
+                return symmetricPropertyNamesSet;
+            }
+        
+            @Override
+            public Set<List<String>> getSymmetricKeyNames() {
+                Set<List<String>> symmetricKeyNamesSet = ImmutableSet.<List<String>>of(
+                    «val symmetricKeys = pattern.getSymmetricList(annotation).filter[
+                        pattern.getKeyList(annotation).containsAll(it)
+                    ]»
+                    «FOR symmetricKeyList : symmetricKeys SEPARATOR ","»
+                        ImmutableList.of(
+                        «FOR key : symmetricKeyList SEPARATOR ","»
+                            "«key»"
+                        «ENDFOR»
+                        )
+                    «ENDFOR»
+                );
+                return symmetricKeyNamesSet;
+            }
+        
+            @Override
+            public Severity getSeverity() {
+                return Severity.«getElementOfConstraintAnnotation(annotation, "severity").toUpperCase»;
+            }
+        
+            @Override
+            public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification() {
+                return querySpecification;
+            }
+        
+        }
+        '''
+    }
+    
+    def getKeyList(Pattern pattern, Annotation annotation) {
+        val locationParam = annotation.getFirstAnnotationParameter("location")
+        if(locationParam == null){
+            val keyParamValues = (annotation.getFirstAnnotationParameter("key") as ListValue).values
+            ImmutableList.builder.addAll(keyParamValues.map[(it as StringValue).value]).build
+        } else {
+            #[(locationParam as VariableValue).value.variable.name]
+        }
+    }
+    
+    def getPropertyList(Pattern pattern, Annotation annotation) {
+        val parameters = pattern.parameters.map[name]
+        val locationParam = annotation.getFirstAnnotationParameter("location")
+        if(locationParam == null){
+            val keyParamValues = (annotation.getFirstAnnotationParameter("key") as ListValue).values
+            val keys = keyParamValues.map[(it as StringValue).value]
+            ImmutableList.copyOf(parameters.filter[!keys.contains(it)])
+        } else {
+            val location = (locationParam as VariableValue).value.variable.name
+            ImmutableList.copyOf(parameters.filter[it != location])
+        }
+    }
+    
+    def getSymmetricList(Pattern pattern, Annotation annotation) {
+        val symmetricParams = annotation.getAnnotationParameters("symmetric")
+        val symmetryLists = symmetricParams.map[
+            ImmutableList.copyOf((it as ListValue).values.map[
+                (it as StringValue).value
+            ])
+        ]
+        ImmutableSet.copyOf(symmetryLists)
+    }
 }

@@ -22,23 +22,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
-import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
-import org.eclipse.incquery.runtime.evm.specific.Jobs;
-import org.eclipse.incquery.runtime.evm.specific.Rules;
-import org.eclipse.incquery.runtime.evm.specific.Schedulers;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
-import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.incquery.validation.core.ValidationEngine;
+import org.eclipse.incquery.validation.core.api.IConstraint;
+import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
+import org.eclipse.incquery.validation.core.api.IValidationEngine;
+import org.eclipse.incquery.validation.core.api.IViolation;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * The constraint adapter class is used to collect the constraints and deal with their maintenance for a given EMF
@@ -50,41 +40,35 @@ import com.google.common.collect.Sets;
 public class ConstraintAdapter {
 
     private Map<IPatternMatch, IMarker> markerMap;
-    private ExecutionSchema engine;
+    private Map<IViolation, IMarker> violationMarkerMap;
     private IResource resourceForEditor;
+    private IValidationEngine engine;
+    private Logger logger;
 
     public ConstraintAdapter(IEditorPart editorPart, Notifier notifier, Logger logger) {
+        this.logger = logger;
         resourceForEditor = getIResourceForEditor(editorPart);
         this.markerMap = new HashMap<IPatternMatch, IMarker>();
+        this.violationMarkerMap = new HashMap<IViolation, IMarker>();
 
-        Set<RuleSpecification<?>> rules = Sets.newHashSet();
+        engine = new ValidationEngine(notifier, logger);
+        engine.initialize();
 
-        for (Constraint<IPatternMatch> constraint : ValidationUtil.getConstraintsForEditorId(editorPart.getSite()
-                .getId())) {
-
-            rules.add(Rules.newMatcherRuleSpecification(constraint.getQuerySpecification(),
-                    DefaultActivationLifeCycle.DEFAULT, ImmutableSet.of(
-                            Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new MarkerPlacerJob(this,constraint, logger))),
-                            Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED, new MarkerEraserJob(this, logger))),
-                            Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.UPDATED, new MarkerUpdaterJob(this,constraint, logger))))));
+        MarkerManagerViolationListener markerManagerViolationListener = new MarkerManagerViolationListener(logger, this);
+        Set<IConstraintSpecification> constraintSpecificationsForEditorId = ValidationManager
+                .getConstraintSpecificationsForEditorId(editorPart.getSite().getId());
+        for (IConstraintSpecification constraint : constraintSpecificationsForEditorId) {
+            IConstraint coreConstraint = engine.addConstraintSpecification(constraint);
+            coreConstraint.addListener(markerManagerViolationListener);
         }
 
-        try {
-            IncQueryEngine incQueryEngine = IncQueryEngine.on(notifier);
-            ISchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
-            this.engine = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory, rules);
-            this.engine.startUnscheduledExecution();
-        } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getLogger(getClass()).error(
-                    String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
-        }
     }
 
     private IResource getIResourceForEditor(IEditorPart editorPart) {
         // get resource for editor input (see org.eclipse.ui.ide.ResourceUtil.getResource)
         IEditorInput input = editorPart.getEditorInput();
         IResource resource = null;
-        if(input != null) {
+        if (input != null) {
             Object o = input.getAdapter(IFile.class);
             if (o instanceof IResource) {
                 resource = (IResource) o;
@@ -94,12 +78,12 @@ public class ConstraintAdapter {
     }
 
     public void dispose() {
-        for (IMarker marker : markerMap.values()) {
+        for (IMarker marker : violationMarkerMap.values()) {
             try {
                 marker.delete();
             } catch (CoreException e) {
-                engine.getLogger().error(
-                        String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()), e);
+                logger.error(String.format("Exception occured when removing a marker on dispose: %s", e.getMessage()),
+                        e);
             }
         }
         engine.dispose();
@@ -116,7 +100,19 @@ public class ConstraintAdapter {
     public IMarker removeMarker(IPatternMatch match) {
         return this.markerMap.remove(match);
     }
-    
+
+    public IMarker getMarker(IViolation violation) {
+        return this.violationMarkerMap.get(violation);
+    }
+
+    public IMarker addMarker(IViolation violation, IMarker marker) {
+        return this.violationMarkerMap.put(violation, marker);
+    }
+
+    public IMarker removeMarker(IViolation violation) {
+        return this.violationMarkerMap.remove(violation);
+    }
+
     protected IResource getResourceForEditor() {
         return resourceForEditor;
     }
