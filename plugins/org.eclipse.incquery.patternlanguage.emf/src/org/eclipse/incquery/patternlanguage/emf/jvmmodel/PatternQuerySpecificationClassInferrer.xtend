@@ -263,7 +263,7 @@ class PatternQuerySpecificationClassInferrer {
 	}
 
 
-	def StringConcatenationClient inferBodies(Pattern pattern, IQuerySpecification<?> genericSpecification) {
+	def StringConcatenationClient inferBodies(Pattern pattern, IQuerySpecification<?> genericSpecification) throws IllegalStateException {
 		'''«FOR pBody : genericSpecification.internalQueryRepresentation.disjunctBodies.bodies »
 			{
 				PBody body = new PBody(this);
