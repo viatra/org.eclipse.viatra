@@ -362,7 +362,10 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             if (head == call && parentMap.get(call) != null) {
                 break;
             }
-
+            if (!graph.containsKey(head)) {
+                break;
+            }
+            
             for (PatternCall target : graph.get(head)) {
                 if (!parentMap.containsKey(target)) {
                     queue.add(target);
