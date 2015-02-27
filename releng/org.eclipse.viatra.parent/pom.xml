@@ -192,6 +192,7 @@
 				<module>../../plugins/org.eclipse.viatra.dse.genetic</module>
 				<module>../../plugins/org.eclipse.viatra.dse.monitor</module>
 				<module>../../tests/org.eclipse.viatra.cep.vepl.tests</module>
+				<module>../../tests/org.eclipse.viatra.cep.tests.integration</module>
 				<module>../../features/org.eclipse.viatra.emf.runtime.feature</module>
 				<module>../../features/org.eclipse.viatra.cep.feature</module>
 				<module>../../features/org.eclipse.viatra.dse.feature</module>
