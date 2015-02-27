@@ -11,8 +11,8 @@ Export-Package: org.eclipse.viatra.cep.tests.integration.model,
  org.eclipse.viatra.cep.tests.integration.model.patterns.complex,
  org.eclipse.viatra.cep.tests.integration.model.rules
 Require-Bundle: org.eclipse.emf.ecore,
- org.eclipse.viatra.cep.core,
  org.junit,
- org.eclipse.core.databinding.observable
+ org.eclipse.core.databinding.observable,
+ org.eclipse.viatra.cep.core;bundle-version="0.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.log4j
