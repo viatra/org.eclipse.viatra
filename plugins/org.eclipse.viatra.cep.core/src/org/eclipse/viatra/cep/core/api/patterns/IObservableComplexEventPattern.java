@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra.cep.core.api.patterns;
 
+import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 
 /**
@@ -20,5 +21,9 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
  * 
  */
 public interface IObservableComplexEventPattern {
+
+    Automaton getAutomaton();
+
     EventPattern getObservableEventPattern();
+
 }

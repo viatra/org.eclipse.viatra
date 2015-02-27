@@ -78,7 +78,7 @@ class ModelHandlingRules {
 	val createFinishedAutomatonRule = createRule().name("finished automaton rule").precondition(finishedAutomaton).
 		action [
 			automaton.finalState.eventTokens.remove(0)
-			var observedPattern = new ObservedComplexEventPattern(automaton.eventPattern)
+			var observedPattern = new ObservedComplexEventPattern(automaton)
 			eventModelManager.callbackOnPatternRecognition(observedPattern)
 			eventModelManager.cepRealm.forwardObservedEventPattern(observedPattern)
 		].build

@@ -29,14 +29,21 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
  */
 public class InTrapComplexEventPattern implements IObservableComplexEventPattern {
 
+    private Automaton automaton;
     private EventPattern observablePattern;
+
+    @Override
+    public Automaton getAutomaton() {
+        return automaton;
+    }
 
     @Override
     public EventPattern getObservableEventPattern() {
         return observablePattern;
     }
 
-    public InTrapComplexEventPattern(EventPattern observablePattern) {
-        this.observablePattern = observablePattern;
+    public InTrapComplexEventPattern(Automaton automaton) {
+        this.automaton = automaton;
+        this.observablePattern = automaton.getEventPattern();
     }
 }

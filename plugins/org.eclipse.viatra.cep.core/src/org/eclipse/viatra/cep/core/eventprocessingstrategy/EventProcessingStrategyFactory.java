@@ -34,7 +34,7 @@ public final class EventProcessingStrategyFactory {
         case STRICT_IMMEDIATE:
             return new StrictImmediateStrategy(eventModelManager);
         case IMMEDIATE:
-            return new NormalImmediateStrategy(eventModelManager);
+            return new ImmediateStrategy(eventModelManager);
         case RECENT:
             throw new IllegalArgumentException(); // NOT IMPLEMENTED YET
         case UNRESTRICTED:
