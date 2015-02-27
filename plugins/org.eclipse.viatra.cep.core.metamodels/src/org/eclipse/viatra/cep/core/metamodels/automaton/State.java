@@ -143,7 +143,7 @@ public interface State extends EObject {
      * It is bidirectional and its opposite is '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getInState <em>In State</em>}'.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>In State Of</em>' reference isn't clear,
+     * If the meaning of the '<em>In State Of</em>' reference list isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
@@ -161,7 +161,7 @@ public interface State extends EObject {
      * It is bidirectional and its opposite is '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone#getOutState <em>Out State</em>}'.
      * <!-- begin-user-doc -->
      * <p>
-     * If the meaning of the '<em>Out State Of</em>' reference isn't clear,
+     * If the meaning of the '<em>Out State Of</em>' reference list isn't clear,
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->

@@ -20,8 +20,8 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
-
 import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
+
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
 
 /**

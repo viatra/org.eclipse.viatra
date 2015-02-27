@@ -6,8 +6,6 @@
         eType="#//Automaton" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="latestEvent" eType="ecore:EClass Cep.ecore#//Event"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" lowerBound="1"
-        eType="#//EventContext"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Automaton">
     <eStructuralFeatures xsi:type="ecore:EReference" name="states" upperBound="-1"

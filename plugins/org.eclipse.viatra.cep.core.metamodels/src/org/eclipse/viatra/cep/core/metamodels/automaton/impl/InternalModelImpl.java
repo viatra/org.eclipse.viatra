@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage;
-import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
 
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
@@ -34,7 +33,6 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.InternalModelImpl#getAutomata <em>Automata</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.InternalModelImpl#getLatestEvent <em>Latest Event</em>}</li>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.InternalModelImpl#getContext <em>Context</em>}</li>
  * </ul>
  * </p>
  *
@@ -60,26 +58,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
      * @ordered
      */
     protected Event latestEvent;
-
-    /**
-     * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getContext()
-     * @generated
-     * @ordered
-     */
-    protected static final EventContext CONTEXT_EDEFAULT = EventContext.CHRONICLE;
-
-    /**
-     * The cached value of the '{@link #getContext() <em>Context</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getContext()
-     * @generated
-     * @ordered
-     */
-    protected EventContext context = CONTEXT_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -160,27 +138,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
      * <!-- end-user-doc -->
      * @generated
      */
-    public EventContext getContext() {
-        return context;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setContext(EventContext newContext) {
-        EventContext oldContext = context;
-        context = newContext == null ? CONTEXT_EDEFAULT : newContext;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, AutomatonPackage.INTERNAL_MODEL__CONTEXT, oldContext, context));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -204,8 +161,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
                 return getAutomata();
             case AutomatonPackage.INTERNAL_MODEL__LATEST_EVENT:
                 return getLatestEvent();
-            case AutomatonPackage.INTERNAL_MODEL__CONTEXT:
-                return getContext();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -226,9 +181,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
             case AutomatonPackage.INTERNAL_MODEL__LATEST_EVENT:
                 setLatestEvent((Event)newValue);
                 return;
-            case AutomatonPackage.INTERNAL_MODEL__CONTEXT:
-                setContext((EventContext)newValue);
-                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -247,9 +199,6 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
             case AutomatonPackage.INTERNAL_MODEL__LATEST_EVENT:
                 setLatestEvent((Event)null);
                 return;
-            case AutomatonPackage.INTERNAL_MODEL__CONTEXT:
-                setContext(CONTEXT_EDEFAULT);
-                return;
         }
         super.eUnset(featureID);
     }
@@ -266,26 +215,8 @@ public class InternalModelImpl extends MinimalEObjectImpl.Container implements I
                 return automata != null && !automata.isEmpty();
             case AutomatonPackage.INTERNAL_MODEL__LATEST_EVENT:
                 return latestEvent != null;
-            case AutomatonPackage.INTERNAL_MODEL__CONTEXT:
-                return context != CONTEXT_EDEFAULT;
         }
         return super.eIsSet(featureID);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public String toString() {
-        if (eIsProxy()) return super.toString();
-
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (context: ");
-        result.append(context);
-        result.append(')');
-        return result.toString();
     }
 
 } //InternalModelImpl

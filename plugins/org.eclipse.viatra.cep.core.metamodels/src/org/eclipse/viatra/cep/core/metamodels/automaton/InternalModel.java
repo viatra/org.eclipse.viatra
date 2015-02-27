@@ -18,7 +18,6 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  * <ul>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getAutomata <em>Automata</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getLatestEvent <em>Latest Event</em>}</li>
- *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getContext <em>Context</em>}</li>
  * </ul>
  * </p>
  *
@@ -68,34 +67,5 @@ public interface InternalModel extends EObject {
      * @generated
      */
     void setLatestEvent(Event value);
-
-    /**
-     * Returns the value of the '<em><b>Context</b></em>' attribute.
-     * The literals are from the enumeration {@link org.eclipse.viatra.cep.core.metamodels.automaton.EventContext}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Context</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Context</em>' attribute.
-     * @see org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
-     * @see #setContext(EventContext)
-     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getInternalModel_Context()
-     * @model required="true"
-     * @generated
-     */
-    EventContext getContext();
-
-    /**
-     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getContext <em>Context</em>}' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Context</em>' attribute.
-     * @see org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
-     * @see #getContext()
-     * @generated
-     */
-    void setContext(EventContext value);
 
 } // InternalModel
