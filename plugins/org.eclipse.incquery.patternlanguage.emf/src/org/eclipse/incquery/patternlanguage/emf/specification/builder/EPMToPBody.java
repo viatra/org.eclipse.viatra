@@ -78,6 +78,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.xtext.xbase.XExpression;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -121,7 +122,12 @@ public class EPMToPBody {
         for (AnnotationParameter param : annotation.getParameters()) {
             String parameterName = param.getName();
             ValueReference ref = param.getValue();
-            pAnnotation.addAttribute(parameterName, getValue(ref));
+            if (ref != null) {
+                final Object valueReference = getValue(ref);
+                if (!Strings.isNullOrEmpty(parameterName) && valueReference != null) {
+                    pAnnotation.addAttribute(parameterName, valueReference);
+                }
+            }
         }
         return pAnnotation;
     }
