@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<templates>
+	<template autoinsert="true"
+		id="org.eclipse.viatra.cep.vepl.Vepl.Multiplicity"
+		context="org.eclipse.viatra.cep.vepl.Vepl.Multiplicity"
+		deleted="false" description="multiplicity"
+		enabled="true" name="{n}">{${value}}${cursor}</template>
+	
+	<template autoinsert="true"
+		id="org.eclipse.viatra.cep.vepl.Vepl.Timewindow"
+		context="org.eclipse.viatra.cep.vepl.Vepl.Timewindow"
+		deleted="false" description="timewindow"
+		enabled="true" name="[milliseconds]">[${milliseconds}]${cursor}</template>
+</templates>

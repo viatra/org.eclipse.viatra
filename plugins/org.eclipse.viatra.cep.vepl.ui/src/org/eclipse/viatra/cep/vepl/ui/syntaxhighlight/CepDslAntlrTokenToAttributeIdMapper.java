@@ -13,6 +13,7 @@ package org.eclipse.viatra.cep.vepl.ui.syntaxhighlight;
 
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeType;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeIdMapper;
+import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
 
 import com.google.common.base.Joiner;
 
@@ -25,6 +26,10 @@ public class CepDslAntlrTokenToAttributeIdMapper extends DefaultAntlrTokenToAttr
         if (getApostrophedKeyword(QueryResultChangeType.NEW_MATCH_FOUND.getLiteral()).equals(tokenName)
                 || getApostrophedKeyword(QueryResultChangeType.EXISTING_MATCH_LOST.getLiteral()).equals(tokenName)) {
             return CepDslHighlightingConfiguration.EDL_ENUM_ID;
+        }
+        
+        if(tokenName.equals(getApostrophedKeyword("->"))){
+            return DefaultHighlightingConfiguration.KEYWORD_ID;
         }
 
         return calculateId;

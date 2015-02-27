@@ -6,11 +6,13 @@ package org.eclipse.viatra.cep.vepl.ui.labeling
 import com.google.inject.Inject
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.ComplexEventOperator
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.Import
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
+import org.eclipse.viatra.cep.vepl.vepl.Timewindow
 import org.eclipse.xtext.xbase.ui.labeling.XbaseLabelProvider
 
 /**
@@ -49,6 +51,10 @@ class VeplLabelProvider extends XbaseLabelProvider {
 				'rule.png'
 			Import:
 				'import-declaration.png'
+			ComplexEventOperator:
+				'operator.png'
+			Timewindow:
+				'clock.png'
 			default:
 				super.image(element)
 		}
