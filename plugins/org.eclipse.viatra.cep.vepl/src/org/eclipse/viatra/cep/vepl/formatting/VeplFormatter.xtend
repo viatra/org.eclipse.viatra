@@ -84,7 +84,7 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 
 		//handle line breaks in ATOMIC bodies
 		c.setLinewrap().after(grammar.atomicEventPatternAccess.sourceAssignment_3_1_2)
-		c.setLinewrap().after(grammar.atomicEventPatternAccess.staticBindingsAssignment_3_2_1)
+		c.setLinewrap().after(grammar.atomicEventPatternAccess.checkExpressionAssignment_3_2_1)
 
 		c.lineBreakAndIncrementIndentation(grammar.XBlockExpressionAccess.leftCurlyBracketKeyword_1)
 		c.lineBreakAndDecrementIndentation(grammar.XBlockExpressionAccess.rightCurlyBracketKeyword_3)

@@ -89,13 +89,13 @@ class AtomicGenerator {
 							setId("«pattern.patternFqn.toString.toLowerCase»");'''
 						)]
 				]
-				members += pattern.toMethod("checkStaticBindings", typeRefBuilder.typeRef("boolean")) [
-					if (pattern.staticBindings == null) {
+				members += pattern.toMethod("evaluateCheckExpression", typeRefBuilder.typeRef("boolean")) [
+					if (pattern.checkExpression == null) {
 						body = [
 							append('''return true;''')
 						]
 					} else {
-						body = pattern.staticBindings
+						body = pattern.checkExpression
 					}
 				]
 			]
@@ -103,10 +103,10 @@ class AtomicGenerator {
 		}
 	}
 
-	def private getStaticBindings(ModelElement element) {
+	def private getCheckExpression(ModelElement element) {
 		switch (element) {
 			AtomicEventPattern:
-				return (element as AtomicEventPattern).staticBindings
+				return (element as AtomicEventPattern).checkExpression
 			default:
 				return null
 		}

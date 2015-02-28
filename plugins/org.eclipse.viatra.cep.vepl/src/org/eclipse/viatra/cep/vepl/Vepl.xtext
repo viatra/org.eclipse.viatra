@@ -53,7 +53,7 @@ AbstractAtomicEventPattern:
 AtomicEventPattern:
 	'AtomicEvent' name=ID ('('parameters=TypedParameterList?')')? ('{'
 		('source' ':' source=[Source])?
-		('staticBindings' staticBindings = XBlockExpression)?
+		('check' checkExpression = XBlockExpression)?
 	'}')?
 ;
 	
