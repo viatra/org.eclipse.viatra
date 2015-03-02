@@ -43,15 +43,24 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
     /**
      * If set to true, shrinks the net by avoiding unnecessary typechecks
      */
-    public static final boolean calcImpliedTypes = false;
+    public boolean calcImpliedTypes;
     private IPatternMatcherContext context;
 
     public PBodyNormalizer(IPatternMatcherContext context) {
+        this(context, true);
+    }
+    
+    /**
+     * 
+     * @param calculateImpliedTypes
+     *            If set to true, shrinks the net by avoiding unnecessary typechecks
+     */
+    public PBodyNormalizer(IPatternMatcherContext context, boolean calculateImpliedTypes) {
         this.context = context;
+        calcImpliedTypes = calculateImpliedTypes;
     }
     @Override
     public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
-        Preconditions.checkArgument(disjunction.isMutable(), "Disjunction must be mutable");
         Set<PBody> normalizedBodies = Sets.newHashSet();
         for (PBody body : disjunction.getBodies()) {
             PBodyCopier copier = new PBodyCopier(body);

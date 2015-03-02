@@ -62,8 +62,6 @@ import com.google.common.collect.Sets;
  */
 public class SpecificationBuilder {
 
-    protected static final PBodyNormalizer NORMALIZER = new PBodyNormalizer(EMFPatternMatcherContext.STATIC_INSTANCE);
-
     private Logger logger = Logger.getLogger(SpecificationBuilder.class);
     private NameToSpecificationMap patternMap;
     /**
@@ -268,7 +266,7 @@ public class SpecificationBuilder {
         Set<PBody> bodies = Sets.newLinkedHashSet();
         for (PatternBody body : pattern.getBodies()) {
             PBody pBody = converter.toPBody(body);
-			bodies.add(NORMALIZER.normalizeBody(pBody));
+			bodies.add(pBody);
         }
         return bodies;
     }

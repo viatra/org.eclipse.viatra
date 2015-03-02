@@ -33,7 +33,7 @@ public class PDisjunction {
     private PQuery query;
 
     public PDisjunction(Set<PBody> bodies) {
-        this(null, bodies);
+        this(bodies.iterator().next().getPattern(), bodies);
     }
 
     public PDisjunction(PQuery query, Set<PBody> bodies) {

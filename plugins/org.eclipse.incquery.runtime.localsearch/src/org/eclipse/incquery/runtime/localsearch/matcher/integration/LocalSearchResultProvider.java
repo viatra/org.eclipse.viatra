@@ -75,7 +75,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         public void createPlan(MatcherReference key, IPatternMatcherRuntimeContext matcherContext, final ISearchContext searchContext)
                 throws QueryProcessingException {
             PQueryFlattener flattener = new PQueryFlattener();
-            PBodyNormalizer normalizer = new PBodyNormalizer(matcherContext);
+            PBodyNormalizer normalizer = new PBodyNormalizer(matcherContext, false);
             LocalSearchPlannerStrategy strategy = new LocalSearchPlannerStrategy();
             compiler = new POperationCompiler();
 

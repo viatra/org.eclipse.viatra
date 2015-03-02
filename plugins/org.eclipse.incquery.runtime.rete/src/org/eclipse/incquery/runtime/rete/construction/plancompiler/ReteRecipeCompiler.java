@@ -50,6 +50,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.incquery.runtime.rete.recipes.AntiJoinRecipe;
@@ -91,11 +92,13 @@ public class ReteRecipeCompiler {
 	private IQueryPlannerStrategy plannerStrategy;
 	private IPatternMatcherContext context;
 	private IQueryBackendHintProvider hintProvider;
+	private PBodyNormalizer normalizer;
 	
 	public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, IPatternMatcherContext context, IQueryBackendHintProvider hintProvider) {
 		super();
 		this.plannerStrategy = plannerStrategy;
 		this.context = context;
+		this.normalizer = new PBodyNormalizer(context);
 		this.hintProvider = hintProvider;
 	}
 
@@ -193,7 +196,7 @@ public class ReteRecipeCompiler {
 	
 	private CompiledQuery compileProduction(PQuery query) throws QueryProcessingException {
 		Collection<SubPlan> bodyPlans = new ArrayList<SubPlan>();
-		for (PBody pBody : query.getDisjunctBodies().getBodies()) {
+		for (PBody pBody : normalizer.rewrite(query).getBodies()) {
 			SubPlan bodyPlan = getPlan(pBody);
 			bodyPlans.add(bodyPlan);
 		}
