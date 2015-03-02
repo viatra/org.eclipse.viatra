@@ -25,8 +25,10 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 /**
  * A disjunction rewriter for creating a normalized form of specification, unifying variables and running basic sanity
@@ -36,7 +38,7 @@ import com.google.common.base.Preconditions;
  * @author Gabor Bergmann
  * 
  */
-public class PBodyNormalizer extends CachingPDisjunctionRewriter {
+public class PBodyNormalizer extends PDisjunctionRewriter {
 
     /**
      * If set to true, shrinks the net by avoiding unnecessary typechecks
@@ -48,12 +50,17 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
         this.context = context;
     }
     @Override
-    protected PDisjunction doRewrite(PDisjunction disjunction) throws RewriterException {
+    public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
         Preconditions.checkArgument(disjunction.isMutable(), "Disjunction must be mutable");
+        Set<PBody> normalizedBodies = Sets.newHashSet();
         for (PBody body : disjunction.getBodies()) {
-            normalizeBody(body);
+            PBodyCopier copier = new PBodyCopier(body);
+            PBody modifiedBody = copier.getCopiedBody();
+            normalizeBody(modifiedBody);
+            normalizedBodies.add(modifiedBody);
+            modifiedBody.setStatus(PQueryStatus.OK);
         }
-        return disjunction;
+        return new PDisjunction(normalizedBodies);
     }
 
     public void setContext(IPatternMatcherContext context) {
@@ -68,14 +75,14 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
      */
     public PBody normalizeBody(PBody body) throws RewriterException {
         try {
-			return normalizeBodyInternal(body);
-		} catch (QueryProcessingException e) {
+            return normalizeBodyInternal(body);
+        } catch (QueryProcessingException e) {
             throw new RewriterException("Error during rewriting: {1}", new String[]{e.getMessage()}, e.getShortMessage(), body.getPattern(), e);
-		}
+        }
     }
     
-	PBody normalizeBodyInternal(PBody body) throws QueryProcessingException {
-		// UNIFICATION AND WEAK INEQUALITY ELMINATION
+    PBody normalizeBodyInternal(PBody body) throws QueryProcessingException {
+        // UNIFICATION AND WEAK INEQUALITY ELMINATION
         unifyVariablesAlongEqualities(body);
         eliminateWeakInequalities(body);
         removeMootEqualities(body);
@@ -87,7 +94,7 @@ public class PBodyNormalizer extends CachingPDisjunctionRewriter {
         // PREVENTIVE CHECKS
         checkSanity(body);
         return body;
-	}
+    }
 
     private void removeMootEqualities(PBody body) {
         Set<Equality> equals = body.getConstraintsOfType(Equality.class);

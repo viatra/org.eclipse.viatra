@@ -32,6 +32,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IConstraintFilter.AllowAllFilter;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
@@ -104,6 +105,9 @@ public class PBodyCopier {
         variableMapping.put(variable, newPVariable);
     }
 
+    /**
+     * Returns the body with the copied variables and constraints. The returned body is still uninitialized. 
+     */
     public PBody getCopiedBody() {
         return body;
     }

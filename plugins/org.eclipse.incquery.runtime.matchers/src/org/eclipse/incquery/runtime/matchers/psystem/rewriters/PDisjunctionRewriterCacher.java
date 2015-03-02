@@ -10,28 +10,43 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
+import java.util.List;
 import java.util.WeakHashMap;
 
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 
-/**
- * An abstract disjunction rewriter that stores the results of previous rewrites.
- * @author Zoltan Ujhelyi
- * @deprecated Use the {@link PDisjunctionRewriterCacher} implementation instead.
- */
-public abstract class CachingPDisjunctionRewriter extends PDisjunctionRewriter {
+import com.google.common.collect.ImmutableList;
 
+/**
+ * A rewriter that stores the previously computed results of a rewriter or a rewriter chain.
+ * 
+ * @author Zoltan Ujhelyi
+ * @since 1.0
+ */
+public abstract class PDisjunctionRewriterCacher extends PDisjunctionRewriter {
+
+    private final List<PDisjunctionRewriter> rewriterChain;
     private WeakHashMap<PDisjunction, PDisjunction> cachedResults =
             new WeakHashMap<PDisjunction, PDisjunction>();
 
+    public PDisjunctionRewriterCacher(PDisjunctionRewriter rewriter) {
+        rewriterChain = ImmutableList.of(rewriter);
+    }
+    
+    public PDisjunctionRewriterCacher(List<PDisjunctionRewriter> rewriterChain) {
+        this.rewriterChain = ImmutableList.copyOf(rewriterChain);
+    }
+    
     @Override
     public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
         if (!cachedResults.containsKey(disjunction)) {
-            PDisjunction rewritten = doRewrite(disjunction);
+            PDisjunction rewritten = disjunction;
+            for (PDisjunctionRewriter rewriter : rewriterChain) {
+                rewritten = rewriter.rewrite(rewritten);
+            }
             cachedResults.put(disjunction, rewritten);
         }
         return cachedResults.get(disjunction);
     }
     
-    protected abstract PDisjunction doRewrite(PDisjunction disjunction) throws RewriterException;
 }
