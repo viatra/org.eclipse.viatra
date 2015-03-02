@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
-import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IConstraintFilter.AllowAllFilter;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IConstraintFilter.ExportedParameterFilter;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IVariableRenamer.HierarchicalName;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -143,11 +144,11 @@ public class PQueryFlattener extends PDisjunctionRewriter {
 
             for (PBody calledBody : bodySet) {
                 // Copy each called body
-                copyBody(calledBody, copier, new HierarchicalName(), new ExportedParameterFilter());
+                copier.mergeBody(calledBody, new HierarchicalName(), new ExportedParameterFilter());
             }
 
             // Copy the caller body
-            copyBody(pBody, copier, new SameName());
+            copier.mergeBody(pBody);
 
             PBody copiedBody = copier.getCopiedBody();
             copiedBody.setStatus(PQueryStatus.OK);
@@ -160,8 +161,11 @@ public class PQueryFlattener extends PDisjunctionRewriter {
 
     private Set<PBody> prepareFlatPBody(PBody pBody) {
         Set<PBody> bodySet = Sets.newHashSet();
+        FlattenerCopier copier = new FlattenerCopier(pBody.getPattern(), Lists.<PositivePatternCall> newArrayList(),
+                Lists.<PBody> newArrayList());
+        copier.mergeBody(pBody, new SameName(), new AllowAllFilter());
         // the copying of the body here is necessary for only one containing PDisjunction can be assigned to a PBody
-        FlattenerCopier flattenerCopier = copyBody(pBody);
+        FlattenerCopier flattenerCopier = copier;
         bodySet.add(flattenerCopier.getCopiedBody());
         return bodySet;
     }
@@ -187,7 +191,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     private Set<List<PBody>> combineBodies(List<PDisjunction> pDisjunctions) {
         // Note: Sets.cartesianProduct(sets) would also be useful to create matchings
 
-        ArrayList<Set<PBody>> setsToCombine = Lists.newArrayList();
+        List<Set<PBody>> setsToCombine = Lists.newArrayList();
         Set<List<PBody>> result = Sets.<List<PBody>> newHashSet();
 
         if (pDisjunctions.size() == 0) {
@@ -200,147 +204,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
             result = Sets.cartesianProduct(setsToCombine);
         }
         return result;
-    }
-
-    /**
-     * Helper function to copy a PBody object as-is. Creates a new copier.
-     * 
-     * @param pBody
-     * @return
-     */
-    private FlattenerCopier copyBody(PBody pBody) {
-        return copyBody(pBody, new SameName());
-    }
-
-    /**
-     * Helper function to copy a PBody object. Creates a new copier.
-     * 
-     * @param pBody
-     * @param namingTool
-     * @return
-     */
-    private FlattenerCopier copyBody(PBody pBody, INamingTool namingTool) {
-        FlattenerCopier copier = new FlattenerCopier(pBody.getPattern(), Lists.<PositivePatternCall> newArrayList(),
-                Lists.<PBody> newArrayList());
-        copyBody(pBody, copier, namingTool);
-        return copier;
-    }
-
-    /**
-     * Helper function to copy a PBody object. Uses a given copier.
-     * 
-     * @param pBody
-     * @param copier
-     * @param namingTool
-     */
-    private void copyBody(PBody pBody, FlattenerCopier copier, INamingTool namingTool) {
-        copyBody(pBody, copier, namingTool, new AllowAllFilter());
-    }
-
-    /**
-     * Helper function to copy a PBody object. Uses a given copier and a filter to copy only specific constraints.
-     * 
-     * @param pBody
-     * @param copier
-     * @param namingTool
-     */
-    private void copyBody(PBody pBody, FlattenerCopier copier, INamingTool namingTool, IConstraintFilter filter) {
-
-        // Copy variables
-        Set<PVariable> allVariables = pBody.getAllVariables();
-        for (PVariable pVariable : allVariables) {
-            if (pVariable.isUnique()) {
-                copier.copyVariable(pVariable, namingTool.createVariableName(pVariable, pBody.getPattern()));
-            }
-        }
-
-        // Copy constraints which are not filtered
-        Set<PConstraint> constraints = pBody.getConstraints();
-        for (PConstraint pConstraint : constraints) {
-            if (!filter.filter(pConstraint)) {
-                copier.copyConstraint(pConstraint);
-            }
-        }
-    }
-
-    /**
-     * Helper interface to exclude constraints from PBody copy processes
-     * 
-     * @author Marton Bur
-     * 
-     */
-    private interface IConstraintFilter {
-        /**
-         * Returns true, if the given constraint should be filtered (thus should not be copied)
-         * 
-         * @param constraint
-         *            to check
-         * @return true, if the constraint should be filtered
-         */
-        boolean filter(PConstraint constraint);
-    }
-
-    private class ExportedParameterFilter implements IConstraintFilter {
-
-        @Override
-        public boolean filter(PConstraint constraint) {
-            return constraint instanceof ExportedParameter;
-        }
-
-    }
-
-    private class AllowAllFilter implements IConstraintFilter {
-
-        @Override
-        public boolean filter(PConstraint constraint) {
-            // Nothing is filtered
-            return false;
-        }
-
-    }
-
-    /**
-     * Helper interface to ease the naming of the new variables during flattening
-     * 
-     * @author Marton Bur
-     * 
-     */
-    private interface INamingTool {
-        /**
-         * Creates a variable name based on a given variable and a given query. It only creates a String, doesn't set
-         * anything.
-         * 
-         * @param pVariable
-         * @param query
-         * @return the new variable name as a String
-         */
-        String createVariableName(PVariable pVariable, PQuery query);
-    }
-
-    private class SameName implements INamingTool {
-        @Override
-        public String createVariableName(PVariable pVariable, PQuery query) {
-            return pVariable.getName();
-        }
-    }
-
-    private class HierarchicalName implements INamingTool {
-        @Override
-        public String createVariableName(PVariable pVariable, PQuery query) {
-            return getPQueryName(query) + "_" + pVariable.getName();
-        }
-    }
-
-    /**
-     * Helper function to get the name of a query without qualifier
-     * 
-     * @param query
-     * @return the name of the query
-     */
-    private String getPQueryName(PQuery query) {
-        String fullyQualifiedName = query.getFullyQualifiedName();
-        int beginIndex = fullyQualifiedName.lastIndexOf(".") + 1;
-        return fullyQualifiedName.substring(beginIndex);
     }
 
     /**

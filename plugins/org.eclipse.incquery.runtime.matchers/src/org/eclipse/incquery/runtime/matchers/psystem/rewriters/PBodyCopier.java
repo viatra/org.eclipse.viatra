@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
@@ -31,6 +32,8 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePa
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IConstraintFilter.AllowAllFilter;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
 import com.google.common.collect.Lists;
@@ -51,19 +54,52 @@ public class PBodyCopier {
     /**
      * Mapping between the original and the copied variables
      */
-    Map<PVariable, PVariable> variableMapping;
+    Map<PVariable, PVariable> variableMapping = Maps.newHashMap();
     
     
     public Map<PVariable, PVariable> getVariableMapping() {
         return variableMapping;
     }
     
+    public PBodyCopier(PBody body) {
+        this.body = new PBody(body.getPattern());
+        mergeBody(body);
+        
+    }
     public PBodyCopier(PQuery query) {
-        body = new PBody(query);
-        variableMapping = Maps.newHashMap();
+        this.body = new PBody(query);
     }
 
-    public void copyVariable(PVariable variable, String newName) {
+    public void mergeBody(PBody sourceBody) {
+        mergeBody(sourceBody, new SameName(), new AllowAllFilter());
+    }
+    
+    /**
+     * Merge all variables and constraints from a source body to a target body. If multiple bodies are merged into a single one, use the renamer and filter options to avoid collisions.
+     * @param sourceBody
+     * @param namingTool
+     * @param filter
+     */
+    public void mergeBody(PBody sourceBody, IVariableRenamer namingTool, IConstraintFilter filter) {
+
+        // Copy variables
+        Set<PVariable> allVariables = sourceBody.getAllVariables();
+        for (PVariable pVariable : allVariables) {
+            if (pVariable.isUnique()) {
+                copyVariable(pVariable, namingTool.createVariableName(pVariable, sourceBody.getPattern()));
+            }
+        }
+
+        // Copy constraints which are not filtered
+        Set<PConstraint> constraints = sourceBody.getConstraints();
+        for (PConstraint pConstraint : constraints) {
+            if (!filter.filter(pConstraint) ) {
+                copyConstraint(pConstraint);
+            }
+        }
+    }
+    
+    protected void copyVariable(PVariable variable, String newName) {
         PVariable newPVariable = body.getOrCreateVariableByName(newName);
         variableMapping.put(variable, newPVariable);
     }
@@ -72,7 +108,7 @@ public class PBodyCopier {
         return body;
     }
 
-    public void copyConstraint(PConstraint constraint) {
+    protected void copyConstraint(PConstraint constraint) {
         if (constraint instanceof ExportedParameter) {
             copyExportedParameterConstraint((ExportedParameter) constraint);
         } else if (constraint instanceof Equality) {
