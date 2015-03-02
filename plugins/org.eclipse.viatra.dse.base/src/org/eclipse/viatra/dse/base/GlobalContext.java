@@ -302,7 +302,7 @@ public class GlobalContext {
         Arrays.sort(objectivesArray, new Comparator<IObjective>() {
             @Override
             public int compare(IObjective o1, IObjective o2) {
-                return Integer.compare(o1.getLevel(), o2.getLevel());
+                return Integer.valueOf(o1.getLevel()).compareTo(o2.getLevel());
             }
         });
         return objectivesArray;
