@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
@@ -49,6 +50,8 @@ public class FixedPriorityStrategy implements IStrategy {
 
     protected Map<TransformationRule<? extends IPatternMatch>, Integer> priorities = new HashMap<TransformationRule<? extends IPatternMatch>, Integer>();
     private FilterOptions filterOptions;
+
+    private Logger logger = Logger.getLogger(IStrategy.class);
 
     /**
      * Creates a fixed priority strategy instance, with default configuration: it tries only the rule activations with
@@ -112,6 +115,7 @@ public class FixedPriorityStrategy implements IStrategy {
             while ((depthLimit > 0 && dsm.getTrajectoryFromRoot().size() >= depthLimit)
                     || (transitions == null || transitions.isEmpty())) {
                 if (!dsm.undoLastTransformation()) {
+                    logger.debug("No more available transitions, the reachable design space has been fully explored.");
                     return null;
                 }
                 transitions = dsm.getTransitionsFromCurrentState(filterOptions);
@@ -123,6 +127,7 @@ public class FixedPriorityStrategy implements IStrategy {
                     bestPriority = getBestPriority(dsm.getTransitionsFromCurrentState());
                     bestPriorityInState.put(dsm.getCurrentState().getId(), bestPriority);
                 }
+                logger.debug("Best priority in state: " + bestPriority);
                 List<ITransition> bestTrasitions = Lists.newArrayList();
                 for (ITransition iTransition : transitions) {
                     if (priorities.get(iTransition.getTransitionMetaData().rule) == bestPriority) {
