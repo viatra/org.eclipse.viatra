@@ -26,7 +26,7 @@ import com.google.common.base.Preconditions;
 public abstract class BaseObjective implements IObjective {
 
     protected final String name;
-    protected Comparator<Double> comparator = Comparators.BIGGER_IS_BETTER;
+    protected Comparator<Double> comparator = Comparators.HIGHER_IS_BETTER;
     protected int level = 0;
 
     public BaseObjective(String name) {

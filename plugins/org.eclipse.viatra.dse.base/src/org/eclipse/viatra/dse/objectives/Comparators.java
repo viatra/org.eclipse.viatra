@@ -19,7 +19,7 @@ import java.util.Comparator;
  */
 public class Comparators {
 
-    public static final Comparator<Double> BIGGER_IS_BETTER = new Comparator<Double>() {
+    public static final Comparator<Double> HIGHER_IS_BETTER = new Comparator<Double>() {
         @Override
         public int compare(Double o1, Double o2) {
             return o1.compareTo(o2);
