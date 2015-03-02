@@ -11,46 +11,35 @@
 package org.eclipse.viatra.dse.objectives.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
-import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
 
 /**
- * This soft objective calculates a fitness value based on the length of the trajectory. Costs to the rules can be assigned.
+ * This soft objective calculates a fitness value based on the length of the trajectory. Costs to the rules can be
+ * assigned.
  * 
  * @author Andras Szabolcs Nagy
  *
  */
-public class TrajectoryCostSoftObjective implements IObjective {
+public class TrajectoryCostSoftObjective extends BaseObjective {
 
-    private static final String DEFAULT_NAME = "TrajectoryCostObjective";
-
-    protected String name;
-
+    public static final String DEFAULT_NAME = "TrajectoryCostObjective";
     protected List<TransformationRule<? extends IPatternMatch>> rules;
     protected List<Double> costs;
 
-    protected Comparator<Double> comparator = Comparators.BIGGER_IS_BETTER;
-
     public TrajectoryCostSoftObjective(String name) {
-        Preconditions.checkNotNull(name, "Name of the objective cannot be null.");
-        this.name = name;
+        super(name);
     }
 
     public TrajectoryCostSoftObjective() {
         this(DEFAULT_NAME);
-    }
-
-    public void setComparator(Comparator<Double> comparator) {
-        this.comparator = comparator;
     }
 
     /**
@@ -60,7 +49,7 @@ public class TrajectoryCostSoftObjective implements IObjective {
      * @param cost
      * @return The actual instance to enable builder pattern like usage.
      */
-    public TrajectoryCostSoftObjective addCost(TransformationRule<? extends IPatternMatch> rule, double cost) {
+    public TrajectoryCostSoftObjective withCost(TransformationRule<? extends IPatternMatch> rule, double cost) {
         Preconditions.checkNotNull(rule);
         Preconditions.checkArgument(!rules.contains(rule));
         if (rules == null) {
@@ -75,20 +64,11 @@ public class TrajectoryCostSoftObjective implements IObjective {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Comparator<Double> getComparator() {
-        return comparator;
-    }
-
-    @Override
     public Double getFitness(ThreadContext context) {
 
-        List<ITransition> trajectory = context.getDesignSpaceManager().getTrajectoryInfo().getFullTransitionTrajectory();
-        
+        List<ITransition> trajectory = context.getDesignSpaceManager().getTrajectoryInfo()
+                .getFullTransitionTrajectory();
+
         double result = 0;
 
         for (ITransition transition : trajectory) {
@@ -96,12 +76,11 @@ public class TrajectoryCostSoftObjective implements IObjective {
             int index = rules.indexOf(rule);
             if (index > -1) {
                 result += costs.get(index);
-            }
-            else {
+            } else {
                 result += 1;
             }
         }
-        
+
         return result;
     }
 
@@ -111,7 +90,6 @@ public class TrajectoryCostSoftObjective implements IObjective {
 
     @Override
     public IObjective createNew() {
-
         return this;
     }
 

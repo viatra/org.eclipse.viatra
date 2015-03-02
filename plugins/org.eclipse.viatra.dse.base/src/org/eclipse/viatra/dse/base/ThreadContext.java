@@ -34,6 +34,7 @@ import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.Fitness;
+import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 
 /**
  * This class holds all the information that is related to a single processing thread of the DesignSpaceExploration
@@ -55,6 +56,7 @@ public class ThreadContext {
     private List<IObjective> objectives;
     private List<IGlobalConstraint> globalConstraints;
     private Fitness fitness;
+    private ObjectiveComparatorHelper objectiveComparatorHelper;
 
     /**
      * This value is true after the {@link ThreadContext} has been initialized in it's own thread.
@@ -65,6 +67,7 @@ public class ThreadContext {
 
     private Guidance guidance;
     private boolean isFirstThread = false;
+    private IObjective[][] leveledObjectives;
 
     /**
      * Creates a {@link ThreadContext} and sets it up to be initialized on the given {@link TransactionalEditingDomain}
@@ -142,6 +145,8 @@ public class ThreadContext {
         if (isFirstThread) {
 
             objectives = globalContext.getObjectives();
+            globalContext.initLeveledObjectives();
+            leveledObjectives = globalContext.getLeveledObjectives();
             globalConstraints = globalContext.getGlobalConstraints();
 
         } else {
@@ -154,6 +159,16 @@ public class ThreadContext {
             for (IGlobalConstraint globalConstraint : globalContext.getGlobalConstraints()) {
                 globalConstraints.add(globalConstraint);
             }
+
+            IObjective[][] leveledObjectivesToCopy = globalContext.getLeveledObjectives();
+            leveledObjectives = new IObjective[leveledObjectivesToCopy.length][];
+            for (int i = 0; i < leveledObjectivesToCopy.length; i++) {
+                leveledObjectives[i] = new IObjective[leveledObjectivesToCopy[i].length];
+                for (int j = 0; j < leveledObjectivesToCopy[i].length; j++) {
+                    leveledObjectives[i][j] = leveledObjectivesToCopy[i][j].createNew();
+                }
+            }
+
         }
         // create the thread specific DesignSpaceManager
         designSpaceManager = new DesignSpaceManager(modelRoot, domain, globalContext.getStateSerializerFactory(),
@@ -233,6 +248,17 @@ public class ThreadContext {
 
     public void setFitness(Fitness fitness) {
         this.fitness = fitness;
+    }
+
+    public ObjectiveComparatorHelper getObjectiveComparatorHelper() {
+        if (objectiveComparatorHelper == null) {
+            objectiveComparatorHelper = new ObjectiveComparatorHelper(leveledObjectives);
+        }
+        return objectiveComparatorHelper;
+    }
+
+    public IObjective[][] getLeveledObjectives() {
+        return leveledObjectives;
     }
 
 }

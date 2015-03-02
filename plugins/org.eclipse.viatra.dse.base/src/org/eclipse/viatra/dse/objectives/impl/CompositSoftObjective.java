@@ -11,11 +11,9 @@
 package org.eclipse.viatra.dse.objectives.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
@@ -26,18 +24,13 @@ import com.google.common.base.Preconditions;
  * @author Andras Szabolcs Nagy
  *
  */
-public class CompositSoftObjective implements IObjective {
+public class CompositSoftObjective extends BaseObjective {
 
-    private static final String DEFAULT_NAME = "CompositSoftObjective";
-
-    protected String name;
-
+    public static final String DEFAULT_NAME = "CompositSoftObjective";
     protected List<IObjective> objectives;
 
-    protected Comparator<Double> comparator = Comparators.BIGGER_IS_BETTER;
-
     public CompositSoftObjective(String name, List<IObjective> objectives) {
-        Preconditions.checkNotNull(name, "Name of the objective cannot be null.");
+        super(name);
         Preconditions.checkNotNull(objectives, "The list of objectives cannot be null.");
 
         for (IObjective objective : objectives) {
@@ -47,7 +40,6 @@ public class CompositSoftObjective implements IObjective {
             }
         }
 
-        this.name = name;
         this.objectives = objectives;
     }
 
@@ -63,17 +55,13 @@ public class CompositSoftObjective implements IObjective {
         this(DEFAULT_NAME, new ArrayList<IObjective>());
     }
 
-    public void setComparator(Comparator<Double> comparator) {
-        this.comparator = comparator;
-    }
-
     /**
      * Adds a new soft objective.
      * 
      * @param objective
      * @return The actual instance to enable builder pattern like usage.
      */
-    public CompositSoftObjective addObjective(IObjective objective) {
+    public CompositSoftObjective withObjective(IObjective objective) {
         if (!objective.isHardObjective()) {
             throw new IllegalArgumentException("The objective " + objective.getName() + " should be a soft objective.");
         }
@@ -82,20 +70,10 @@ public class CompositSoftObjective implements IObjective {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Comparator<Double> getComparator() {
-        return comparator;
-    }
-
-    @Override
     public Double getFitness(ThreadContext context) {
 
         double result = 0;
-        
+
         for (IObjective objective : objectives) {
             result += objective.getFitness(context);
         }
@@ -118,10 +96,9 @@ public class CompositSoftObjective implements IObjective {
             newObjectives.add(objective.createNew());
         }
 
-        CompositSoftObjective hardObjectiveCopy = new CompositSoftObjective(name, newObjectives);
-        hardObjectiveCopy.setComparator(comparator);
-
-        return hardObjectiveCopy;
+        return new CompositSoftObjective(name, newObjectives)
+            .withComparator(comparator)
+            .withLevel(level);
     }
 
     @Override

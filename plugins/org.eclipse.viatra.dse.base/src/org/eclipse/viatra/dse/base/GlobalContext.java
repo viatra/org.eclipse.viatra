@@ -11,7 +11,9 @@
 package org.eclipse.viatra.dse.base;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,7 +69,7 @@ public class GlobalContext {
     private DSEThreadPool threadPool = new DSEThreadPool();
     private int numberOfStartedThreads = 0;
     private IDesignSpace designSpace;
-    
+
     private AtomicBoolean firstThreadContextInited = new AtomicBoolean(false);
     private AtomicBoolean firstThreadContextIniting = new AtomicBoolean(false);
 
@@ -222,12 +224,89 @@ public class GlobalContext {
     // **************************************************//
 
     private List<IObjective> objectives = new ArrayList<IObjective>();
+    private IObjective[][] leveledObjectives;
     private List<IGlobalConstraint> globalConstraints = new ArrayList<IGlobalConstraint>();
     private Set<TransformationRule<? extends IPatternMatch>> transformations = new HashSet<TransformationRule<? extends IPatternMatch>>();
     private IStateSerializerFactory stateSerializerFactory;
     private ISolutionStore solutionStore = new SimpleSolutionStore();
     private Object SharedObject;
     private List<IDesignSpaceVisualizer> visualizers;
+
+    public void initLeveledObjectives() {
+        if (objectives.size() == 0) {
+            leveledObjectives = new IObjective[0][0];
+            return;
+        }
+
+        int level = objectives.get(0).getLevel();
+        boolean oneLevelOnly = true;
+        for (IObjective objective : objectives) {
+            if (objective.getLevel() != level) {
+                oneLevelOnly = false;
+                break;
+            }
+        }
+
+        if (oneLevelOnly) {
+            leveledObjectives = new IObjective[1][objectives.size()];
+            for(int i = 0; i<objectives.size(); i++) {
+                leveledObjectives[0][i] = objectives.get(i);
+            }
+            return;
+        }
+
+        IObjective[] objectivesArray = getSortedByLevelObjectives(objectives);
+
+        int numberOfLevels = getNumberOfObjectiveLevels(objectivesArray);
+        
+        leveledObjectives = new IObjective[numberOfLevels][];
+
+        fillLeveledObjectives(objectivesArray);
+
+    }
+
+    private void fillLeveledObjectives(IObjective[] objectivesArray) {
+        int actLevel = objectivesArray[0].getLevel();
+        int levelIndex = 0;
+        int lastIndex = 0;
+        for (int i = 1; i < objectivesArray.length; i++) {
+            if (objectivesArray[i].getLevel() != actLevel) {
+                leveledObjectives[levelIndex] = new IObjective[i - lastIndex];
+                for (int j = lastIndex; j < i; j++) {
+                    leveledObjectives[levelIndex][j - lastIndex] = objectivesArray[j];
+                }
+                actLevel = objectivesArray[i].getLevel();
+                levelIndex++;
+                lastIndex = i;
+            }
+        }
+    }
+
+    private int getNumberOfObjectiveLevels(IObjective[] objectivesArray) {
+
+        int actLevel = objectivesArray[0].getLevel();
+        int numberOfLevels = 1;
+
+        for (int i = 1; i < objectivesArray.length; i++) {
+            if (objectivesArray[i].getLevel() != actLevel) {
+                numberOfLevels++;
+                actLevel = objectivesArray[i].getLevel();
+            }
+        }
+
+        return numberOfLevels;
+    }
+    
+    private IObjective[] getSortedByLevelObjectives(List<IObjective> objectives) {
+        IObjective[] objectivesArray = objectives.toArray(new IObjective[objectives.size()]);
+        Arrays.sort(objectivesArray, new Comparator<IObjective>() {
+            @Override
+            public int compare(IObjective o1, IObjective o2) {
+                return Integer.compare(o1.getLevel(), o2.getLevel());
+            }
+        });
+        return objectivesArray;
+    }
 
     public void reset() {
         state = ExplorationProcessState.NOT_STARTED;
@@ -238,7 +317,7 @@ public class GlobalContext {
     public List<IDesignSpaceVisualizer> getVisualizers() {
         return ImmutableList.copyOf(visualizers);
     }
-    
+
     public void registerDesignSpaceVisualizer(IDesignSpaceVisualizer visualizer) {
         if (visualizer == null) {
             return;
@@ -248,7 +327,7 @@ public class GlobalContext {
         }
         visualizers.add(visualizer);
     }
-    
+
     public void deregisterDesignSpaceVisualizer(IDesignSpaceVisualizer visualizer) {
         if (visualizer == null) {
             return;
@@ -257,14 +336,14 @@ public class GlobalContext {
             visualizers.remove(visualizer);
         }
     }
-    
+
     public boolean isDesignSpaceVisualizerRegistered(IDesignSpaceVisualizer visualizer) {
         if (visualizers != null) {
             return visualizers.contains(visualizer);
         }
         return false;
     }
-    
+
     public void initVisualizersForThread(ThreadContext threadContext) {
         if (visualizers != null && !visualizers.isEmpty()) {
             for (IDesignSpaceVisualizer visualizer : visualizers) {
@@ -341,11 +420,11 @@ public class GlobalContext {
     public ExplorationProcessState getState() {
         return state;
     }
-    
+
     public List<IObjective> getObjectives() {
         return objectives;
     }
-    
+
     public void setObjectives(List<IObjective> objectives) {
         this.objectives = objectives;
     }
@@ -357,13 +436,17 @@ public class GlobalContext {
     public void setGlobalConstraints(List<IGlobalConstraint> globalConstraints) {
         this.globalConstraints = globalConstraints;
     }
-    
+
     AtomicBoolean getFirstThreadContextInited() {
         return firstThreadContextInited;
     }
-    
+
     AtomicBoolean getFirstThreadContextIniting() {
         return firstThreadContextIniting;
+    }
+
+    public IObjective[][] getLeveledObjectives() {
+        return leveledObjectives;
     }
 
 }

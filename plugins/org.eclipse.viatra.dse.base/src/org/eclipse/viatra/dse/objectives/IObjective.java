@@ -39,8 +39,16 @@ public interface IObjective {
     String getName();
 
     /**
-     * Returns a {@link Comparator} which is used to compare objective values (doubles). It determines whether the
-     * objective is to minimize or maximize (or minimize or maximize a delta from a given number).
+     * Sets the {@link Comparator} which is used to compare fitness (doubles). It determines whether the objective is to
+     * minimize or maximize (or minimize or maximize a delta from a given number).
+     * 
+     * @param comparator The comparator.
+     */
+    void setComparator(Comparator<Double> comparator);
+
+    /**
+     * Returns a {@link Comparator} which is used to compare fitness (doubles). It determines whether the objective is
+     * to minimize or maximize (or minimize or maximize a delta from a given number).
      * 
      * @return The comparator.
      */
@@ -90,5 +98,19 @@ public interface IObjective {
      * @see IObjective
      */
     boolean satisifiesHardObjective(Double fitness);
+
+    /**
+     * Set the level of the objective.
+     * 
+     * @param level
+     */
+    void setLevel(int level);
+
+    /**
+     * Gets the level of the objective.
+     * 
+     * @return
+     */
+    int getLevel();
 
 }

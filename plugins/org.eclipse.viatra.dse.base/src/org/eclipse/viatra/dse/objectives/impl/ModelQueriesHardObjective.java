@@ -11,7 +11,6 @@
 package org.eclipse.viatra.dse.objectives.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -21,77 +20,68 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
 
 /**
- * This global constraint collects a list of IncQuery pattern and checks if any of them has a match on a solution
- * (trajectoy). It is unsatisfied if any of them has no match.
- * 
- * This hard objective collects a list of IncQuery pattern and checks if none of them has a match on a solution
- * (trajectoy). It is unsatisfied if any of them has a match.
+ * This hard objective collects a list of IncQuery patterns and checks if any of them has a match on a solution
+ * (trajectoy). It is unsatisfied if any of them has a match returning 0 or it is satisfied if none of them has a match
+ * returning 1.
  * 
  * @author Andras Szabolcs Nagy
  *
  */
-public class NoMatchGlobalConstraint implements IGlobalConstraint {
+public class ModelQueriesHardObjective extends BaseObjective {
 
-    protected static final String GLOBAL_CONSTRAINT = "GlobalConstraint";
-
-    protected String name;
-
+    protected static final String DEFAULT_NAME = "ModelQueriesHardObjective";
     protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints;
-
     protected List<IncQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>();
+    protected ModelQueryType type = ModelQueryType.ALL_MUST_HAVE_MATCH;
 
-    public NoMatchGlobalConstraint(String name,
+    public ModelQueriesHardObjective(String name,
             List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints) {
-        Preconditions.checkNotNull(name, "Name of the global constraint cannot be null.");
+        super(name);
         Preconditions.checkNotNull(constraints, "The list of constraints cannot be null.");
 
-        this.name = name;
         this.constraints = constraints;
     }
 
-    public NoMatchGlobalConstraint(
+    public ModelQueriesHardObjective(
             List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints) {
-        this(GLOBAL_CONSTRAINT, constraints);
+        this(DEFAULT_NAME, constraints);
     }
 
-    public NoMatchGlobalConstraint(String name) {
+    public ModelQueriesHardObjective(String name) {
         this(name, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
     }
 
-    public NoMatchGlobalConstraint() {
-        this(GLOBAL_CONSTRAINT, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
+    public ModelQueriesHardObjective() {
+        this(DEFAULT_NAME, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
     }
 
     /**
      * Adds a new IncQuery pattern.
-     * @param constraint An IncQuery pattern.
+     * 
+     * @param constraint
+     *            An IncQuery pattern.
      * @return The actual instance to enable builder pattern like usage.
      */
-    public NoMatchGlobalConstraint addConstraint(
+    public ModelQueriesHardObjective withConstraint(
             IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint) {
         constraints.add(constraint);
         return this;
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean checkGlobalConstraint(ThreadContext context) {
+    public Double getFitness(ThreadContext context) {
         for (IncQueryMatcher<? extends IPatternMatch> matcher : matchers) {
-            if (matcher.countMatches() > 0) {
-                return false;
+            if ((type.equals(ModelQueryType.ALL_MUST_HAVE_MATCH) && matcher.countMatches() == 0)
+                    || (type.equals(ModelQueryType.NO_MATCH) && matcher.countMatches() > 0)) {
+                return 0d;
             }
         }
-        return true;
+        return 1d;
     }
 
     @Override
@@ -110,8 +100,33 @@ public class NoMatchGlobalConstraint implements IGlobalConstraint {
     }
 
     @Override
-    public IGlobalConstraint createNew() {
-        return new NoMatchGlobalConstraint(name, constraints);
+    public IObjective createNew() {
+        return new ModelQueriesHardObjective(name, constraints)
+            .withType(type)
+            .withComparator(comparator)
+            .withLevel(level);
     }
 
+    @Override
+    public boolean isHardObjective() {
+        return true;
+    }
+
+    @Override
+    public boolean satisifiesHardObjective(Double fitness) {
+        return fitness.doubleValue() > 0.5d;
+    }
+
+    public ModelQueryType getType() {
+        return type;
+    }
+
+    public void setType(ModelQueryType type) {
+        this.type = type;
+    }
+
+    public ModelQueriesHardObjective withType(ModelQueryType type) {
+        setType(type);
+        return this;
+    }
 }

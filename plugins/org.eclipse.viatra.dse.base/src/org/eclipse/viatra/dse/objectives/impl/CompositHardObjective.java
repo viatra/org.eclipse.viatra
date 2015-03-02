@@ -11,11 +11,9 @@
 package org.eclipse.viatra.dse.objectives.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
@@ -27,18 +25,13 @@ import com.google.common.base.Preconditions;
  * @author Andras Szabolcs Nagy
  *
  */
-public class CompositHardObjective implements IObjective {
+public class CompositHardObjective extends BaseObjective {
 
-    private static final String DEFAULT_NAME = "CompositHardObjective";
-
-    protected String name;
-
+    public static final String DEFAULT_NAME = "CompositHardObjective";
     protected List<IObjective> objectives;
 
-    protected Comparator<Double> comparator = Comparators.BIGGER_IS_BETTER;
-
     public CompositHardObjective(String name, List<IObjective> objectives) {
-        Preconditions.checkNotNull(name, "Name of the objective cannot be null.");
+        super(name);
         Preconditions.checkNotNull(objectives, "The list of objectives cannot be null.");
 
         for (IObjective objective : objectives) {
@@ -48,7 +41,6 @@ public class CompositHardObjective implements IObjective {
             }
         }
 
-        this.name = name;
         this.objectives = objectives;
     }
 
@@ -64,32 +56,18 @@ public class CompositHardObjective implements IObjective {
         this(DEFAULT_NAME, new ArrayList<IObjective>());
     }
 
-    public void setComparator(Comparator<Double> comparator) {
-        this.comparator = comparator;
-    }
-
     /**
      * Adds a new hard objective.
      * 
      * @param objective
      * @return The actual instance to enable builder pattern like usage.
      */
-    public CompositHardObjective addObjective(IObjective objective) {
+    public CompositHardObjective withObjective(IObjective objective) {
         if (!objective.isHardObjective()) {
             throw new IllegalArgumentException("The objective " + objective.getName() + " should be a hard objective.");
         }
         objectives.add(objective);
         return this;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Comparator<Double> getComparator() {
-        return comparator;
     }
 
     @Override
@@ -120,10 +98,9 @@ public class CompositHardObjective implements IObjective {
             newObjectives.add(objective.createNew());
         }
 
-        CompositHardObjective hardObjectiveCopy = new CompositHardObjective(name, newObjectives);
-        hardObjectiveCopy.setComparator(comparator);
-
-        return hardObjectiveCopy;
+        return new CompositHardObjective(name, newObjectives)
+            .withComparator(comparator)
+            .withLevel(level);
     }
 
     @Override

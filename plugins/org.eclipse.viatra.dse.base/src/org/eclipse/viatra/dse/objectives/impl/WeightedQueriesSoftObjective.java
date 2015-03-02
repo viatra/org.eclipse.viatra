@@ -11,7 +11,6 @@
 package org.eclipse.viatra.dse.objectives.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -21,14 +20,13 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
 
 /**
- * This soft objective collects a list of IncQuery patterns and weights. Then the fitness value of a solution is calculated
- * in the following way:
+ * This soft objective collects a list of IncQuery patterns and weights. Then the fitness value of a solution is
+ * calculated in the following way:
  * <p>
  * <code>fitness = sum( pattern[i].countMatches() * weight[i] )</code>
  * 
@@ -36,48 +34,39 @@ import com.google.common.base.Preconditions;
  * @see IObjective
  *
  */
-public class WeightedPatternsSoftObjective implements IObjective {
+public class WeightedQueriesSoftObjective extends BaseObjective {
 
-    protected String name;
-
+    public static final String DEFAULT_NAME = "WeightedQueriesSoftObjective";
     protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints;
     protected List<Double> weights;
-
-    protected Comparator<Double> comparator = Comparators.BIGGER_IS_BETTER;
-
     protected List<IncQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>();
 
-    public WeightedPatternsSoftObjective(String name,
+    public WeightedQueriesSoftObjective(String name,
             List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints,
             List<Double> weights) {
-        Preconditions.checkNotNull(name, "Name of the objective cannot be null.");
+        super(name);
         Preconditions.checkNotNull(constraints, "The list of constraints cannot be null.");
         Preconditions.checkArgument(constraints.size() == weights.size(),
                 "The size of the two list must be equivalent.");
 
-        this.name = name;
         this.constraints = constraints;
         this.weights = weights;
     }
 
-    public WeightedPatternsSoftObjective(
+    public WeightedQueriesSoftObjective(
             List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints,
             List<Double> weights) {
-        this("HardObjective", constraints, weights);
+        this(DEFAULT_NAME, constraints, weights);
     }
 
-    public WeightedPatternsSoftObjective(String name) {
+    public WeightedQueriesSoftObjective(String name) {
         this(name, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(),
                 new ArrayList<Double>());
     }
 
-    public WeightedPatternsSoftObjective() {
-        this("HardObjective", new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(),
+    public WeightedQueriesSoftObjective() {
+        this(DEFAULT_NAME, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(),
                 new ArrayList<Double>());
-    }
-
-    public void setComparator(Comparator<Double> comparator) {
-        this.comparator = comparator;
     }
 
     /**
@@ -89,21 +78,11 @@ public class WeightedPatternsSoftObjective implements IObjective {
      *            The weight of the pattern.
      * @return The actual instance to enable builder pattern like usage.
      */
-    public WeightedPatternsSoftObjective addConstraint(
+    public WeightedQueriesSoftObjective withConstraint(
             IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint, double weight) {
         constraints.add(constraint);
         weights.add(new Double(weight));
         return this;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Comparator<Double> getComparator() {
-        return comparator;
     }
 
     @Override
@@ -135,11 +114,9 @@ public class WeightedPatternsSoftObjective implements IObjective {
 
     @Override
     public IObjective createNew() {
-
-        WeightedPatternsSoftObjective hardObjectiveCopy = new WeightedPatternsSoftObjective(name, constraints, weights);
-        hardObjectiveCopy.setComparator(comparator);
-
-        return hardObjectiveCopy;
+        return new WeightedQueriesSoftObjective(name, constraints, weights)
+            .withComparator(comparator)
+            .withLevel(level);
     }
 
     @Override
