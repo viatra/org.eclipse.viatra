@@ -230,6 +230,11 @@ public class DesignSpaceExplorer {
      * @see IObjective
      */
     public void addObjective(IObjective objective) {
+        for (IObjective o : globalContext.getObjectives()) {
+            if (o.getName().equals(objective.getName())) {
+                throw new DSEException("Two objectives with the same name cannot be registered:" + o.getName());
+            }
+        }
         globalContext.getObjectives().add(objective);
     }
 
