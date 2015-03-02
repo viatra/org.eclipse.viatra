@@ -80,6 +80,7 @@ public class ExplorerThread implements IExplorerThread {
             globalContext = threadContext.getGlobalContext();
 
             IStrategy strategy = threadContext.getStrategy();
+            strategy.init(threadContext);
 
             boolean continueExecution = true;
 

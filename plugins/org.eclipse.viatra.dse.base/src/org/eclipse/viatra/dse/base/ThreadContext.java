@@ -190,8 +190,6 @@ public class ThreadContext {
 
         globalContext.initVisualizersForThread(this);
 
-        strategy.init(this);
-
         if (isFirstThread) {
             isFirstReady.set(true);
         }
