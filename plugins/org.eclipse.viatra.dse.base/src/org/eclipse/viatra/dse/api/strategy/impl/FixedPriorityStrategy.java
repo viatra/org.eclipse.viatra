@@ -142,9 +142,7 @@ public class FixedPriorityStrategy implements IStrategy {
                 }
             }
 
-            dsm.undoLastTransformation();
-            
-        } while (!isInterrupted);
+        } while (!isInterrupted && dsm.undoLastTransformation());
 
         return null;
     }
