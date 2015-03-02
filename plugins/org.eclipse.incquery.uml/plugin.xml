@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="org.eclipse.incquery.examples.uml.derivedfeatures.UsedOperations" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.examples.uml.derivedfeatures.UsedOperations" id="org.eclipse.incquery.examples.uml.derivedfeatures.UsedOperations"/>
+  </extension>
+  <extension id="org.eclipse.incquery.examples.uml.derivedfeatures.NotUnion" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.examples.uml.derivedfeatures.NotUnion" id="org.eclipse.incquery.examples.uml.derivedfeatures.NotUnion"/>
+  </extension>
+  <extension id="org.eclipse.incquery.examples.uml.derivedfeatures.Union" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.examples.uml.derivedfeatures.Union" id="org.eclipse.incquery.examples.uml.derivedfeatures.Union"/>
+  </extension>
+  <extension id="org.eclipse.incquery.examples.uml.derivedfeatures.Handwritten" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.examples.uml.derivedfeatures.Handwritten" id="org.eclipse.incquery.examples.uml.derivedfeatures.Handwritten"/>
+  </extension>
+  <extension id="org.eclipse.incquery.uml.derivedfeatures.UsedOperations" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.UsedOperations" id="org.eclipse.incquery.uml.derivedfeatures.UsedOperations"/>
+  </extension>
+  <extension id="org.eclipse.incquery.uml.derivedfeatures.Handwritten" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.Handwritten" id="org.eclipse.incquery.uml.derivedfeatures.Handwritten"/>
+  </extension>
+  <extension id="org.eclipse.incquery.uml.derivedfeatures.Union" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.Union" id="org.eclipse.incquery.uml.derivedfeatures.Union"/>
+  </extension>
+  <extension id="org.eclipse.incquery.uml.derivedfeatures.NotUnion" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.NotUnion" id="org.eclipse.incquery.uml.derivedfeatures.NotUnion"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.elementOwner" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Element" feature-name="owner" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.elementOwner"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.activityEdgeInGroup" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="ActivityEdge" feature-name="inGroup" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.activityEdgeInGroup"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.redefinableElementRedefinedElement" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="RedefinableElement" feature-name="redefinedElement" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.redefinableElementRedefinedElement"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.activityGroupContainedNode" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="ActivityGroup" feature-name="containedNode" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.activityGroupContainedNode"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.activityGroupSuperGroup" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="ActivityGroup" feature-name="superGroup" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.activityGroupSuperGroup"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.relationshipRelatedElement" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Relationship" feature-name="relatedElement" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.relationshipRelatedElement"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.classifierFeature" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Classifier" feature-name="feature" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.classifierFeature"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.actionInput" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Action" feature-name="input" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.actionInput"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.actionOutput" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Action" feature-name="output" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.actionOutput"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.featureFeaturingClassifier" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Feature" feature-name="featuringClassifier" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.featureFeaturingClassifier"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.directedRelationshipSource" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="DirectedRelationship" feature-name="source" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.directedRelationshipSource"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.namespaceMember" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Namespace" feature-name="member" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.namespaceMember"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.activityGroupSubgroup" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="ActivityGroup" feature-name="subgroup" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.activityGroupSubgroup"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.redefinableElementRedefinitionContext" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="RedefinableElement" feature-name="redefinitionContext" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.redefinableElementRedefinitionContext"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.activityNodeInGroup" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="ActivityNode" feature-name="inGroup" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.activityNodeInGroup"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.directedRelationshipTarget" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="DirectedRelationship" feature-name="target" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.directedRelationshipTarget"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.namespaceOwnedMember" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Namespace" feature-name="ownedMember" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.namespaceOwnedMember"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.structuredClassifierRole" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="StructuredClassifier" feature-name="role" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.structuredClassifierRole"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.elementOwnedElement" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Element" feature-name="ownedElement" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.elementOwnedElement"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.activityGroupContainedEdge" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="ActivityGroup" feature-name="containedEdge" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.activityGroupContainedEdge"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.namedElementNamespace" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="NamedElement" feature-name="namespace" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.namedElementNamespace"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.classifierAttribute" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Classifier" feature-name="attribute" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query-fqn="org.eclipse.incquery.uml.derivedfeatures.classifierAttribute"/>
+  </extension>
+</plugin>

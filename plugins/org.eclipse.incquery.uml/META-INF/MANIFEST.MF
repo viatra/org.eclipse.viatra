@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMF-IncQuery UML Support (Incubation)
+Bundle-SymbolicName: org.eclipse.incquery.uml;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Export-Package: org.eclipse.incquery.uml.derivedfeatures,
+ org.eclipse.incquery.uml.derivedfeatures.util
+Require-Bundle: org.eclipse.uml2.uml;bundle-version="5.0.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.incquery.runtime;bundle-version="1.0.0",
+ org.eclipse.xtext.xbase.lib
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.log4j
