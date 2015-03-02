@@ -90,4 +90,27 @@ public class State implements IState {
         isProcessed.set(true);
         logger.debug(Thread.currentThread() + " State with id " + id + " isProcessed set to true");
     }
+
+    @Override
+    public String toString() {
+        return id.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof State) {
+            if (id.equals(((State) obj).id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }

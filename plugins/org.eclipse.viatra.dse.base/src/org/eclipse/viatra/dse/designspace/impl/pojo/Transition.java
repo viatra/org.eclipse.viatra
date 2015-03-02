@@ -72,4 +72,26 @@ public class Transition implements ITransition {
         resultsIn = (State) state;
     }
 
+    @Override
+    public String toString() {
+        return id.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof Transition) {
+            if (id.equals(((Transition) obj).id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }

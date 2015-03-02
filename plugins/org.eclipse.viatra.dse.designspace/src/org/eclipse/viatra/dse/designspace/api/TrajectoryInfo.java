@@ -185,4 +185,14 @@ public class TrajectoryInfo implements Cloneable {
 
         return clone;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Trajectory:\n");
+        for (ITransition transition : transitionTrajectory) {
+            sb.append(transition);
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 }
