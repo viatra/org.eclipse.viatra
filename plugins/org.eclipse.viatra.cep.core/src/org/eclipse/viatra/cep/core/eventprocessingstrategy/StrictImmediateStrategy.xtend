@@ -34,11 +34,11 @@ class StrictImmediateStrategy extends AbstractImmediateStrategy {
 	}
 
 	override handleInitTokenCreation(InternalModel model, AutomatonFactory factory) {
-		for (a : model.automata) {
-			if (a.eventTokens.forall[et|et.currentState.enablesStrictInitTokenCreation]) {
-				newEventToken(a, a.initState)
+		model.automata.forEach [ automaton |
+			if (automaton.eventTokens.forall[eventToken|eventToken.currentState.enablesStrictInitTokenCreation]) {
+				newEventToken(automaton, automaton.initState)
 			}
-		}
+		]
 	}
 
 }

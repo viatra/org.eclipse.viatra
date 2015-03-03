@@ -23,6 +23,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
  * Interface for event processing strategies. An event processing strategy is derived from an {@link EventContext} and
  * should take care of the following tasks at runtime:
  * <ul>
+ * <li>marking event tokens as already handled, so the IQ engine will know which tokens can participate in enabled transitions;
  * <li>firing enabled transitions;
  * <li>recreate {@link EventToken}s in the {@link InitState} of {@link Automaton}s, depending on the semantics of the
  * {@link EventContext};

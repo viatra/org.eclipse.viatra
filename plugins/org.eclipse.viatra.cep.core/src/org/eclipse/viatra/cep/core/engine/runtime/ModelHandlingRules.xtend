@@ -19,8 +19,6 @@ import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPatte
 import org.eclipse.viatra.cep.core.engine.IEventModelManager
 import org.eclipse.viatra.cep.core.engine.timing.TimingTable
 import org.eclipse.viatra.cep.core.logging.LoggerUtils
-import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
-import org.eclipse.viatra.cep.core.metamodels.automaton.State
 import org.eclipse.viatra.cep.core.metamodels.automaton.TrapState
 import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup
 import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory

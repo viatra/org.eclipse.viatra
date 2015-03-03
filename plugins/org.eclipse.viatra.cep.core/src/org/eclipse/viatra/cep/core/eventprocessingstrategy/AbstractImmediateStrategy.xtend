@@ -35,16 +35,18 @@ abstract class AbstractImmediateStrategy extends AbstractStrategy {
 	}
 
 	override public handleAutomatonResets(InternalModel model, AutomatonFactory factory) {
-		model.automata.filter[a|a.needsReset].forEach [ a |
-			debug(String.format("ImmediateStrategy: No suitable update in the SM : %s. It's going to be reset.", a.id));
-			a.normalStates.filter[s|s.notEmpty].forEach [ s |
-				debug(String.format("ImmediateStrategy: Deleting tokens from state: %s.", s.label))
-				s.clear
+		model.automata.filter[automaton|automaton.needsReset].forEach [ automaton |
+			debug(
+				String.format("ImmediateStrategy: No suitable update in the SM : %s. It's going to be reset.",
+					automaton.id));
+			automaton.normalStates.filter[state|state.notEmpty].forEach [ state |
+				debug(String.format("ImmediateStrategy: Deleting tokens from state: %s.", state.label))
+				state.clear
 			]
 			model.setLatestEvent(null);
-			var initState = eventModelManager.initStatesForAutomata.get(a)
+			var initState = eventModelManager.initStatesForAutomata.get(automaton)
 			if (initState.empty) {
-				newEventToken(a, initState)
+				newEventToken(automaton, initState)
 			}
 		]
 	}
