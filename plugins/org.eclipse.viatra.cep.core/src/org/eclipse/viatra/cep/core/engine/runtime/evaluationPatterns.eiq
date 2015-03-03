@@ -20,74 +20,74 @@ pattern finishedAutomaton(automaton : Automaton, et : EventToken) {
 	EventToken.currentState(_, state);
 }
 
-pattern finalState(s : State, et : EventToken) {
-	State.label(s, label);
-	State.eventTokens(s, et);
+pattern finalState(state : State, eventToken : EventToken) {
+	State.label(state, label);
+	State.eventTokens(state, eventToken);
 	check(label.equalsIgnoreCase("final"));
 }
 
-pattern latestEvent(e : Event) {
-	InternalModel.latestEvent(_, e);
+pattern latestEvent(event : Event) {
+	InternalModel.latestEvent(_, event);
 }
 
-pattern preState(t : TypedTransition, s : State) {
-	TypedTransition.preState(t, s);
+pattern preState(transition : TypedTransition, state : State) {
+	TypedTransition.preState(transition, state);
 }
 
 pattern guardAtomicPattern(guard : Guard, atomicPattern : AtomicEventPattern) {
 	Guard.eventType(guard, atomicPattern);
 }
 
-pattern eventProcessedByEventToken(et : EventToken, e : Event) {
-	EventToken.lastProcessed(et, e);
+pattern eventProcessedByEventToken(event : Event, eventToken : EventToken) {
+	EventToken.lastProcessed(eventToken, event);
 }
 
-pattern eventProcessed(e : Event) {
-	Event.isProcessed(e, true);
+pattern eventProcessed(event : Event) {
+	Event.isProcessed(event, true);
 }
 
-pattern atomicPatternType(a : AtomicEventPattern, t : EString) {
-	AtomicEventPattern.type(a, t);
+pattern atomicPatternType(atomicEventPattern : AtomicEventPattern, type : EString) {
+	AtomicEventPattern.type(atomicEventPattern, type);
 }
 
-pattern enabledTransition(t : TypedTransition, et : EventToken, e : Event) {
-	find latestEvent(e);
-	Event.type(e, eventType);
-	TypedTransition.guard.eventType.type(t, eventType);
-	TypedTransition.preState.eventTokens(t, et);
-	neg find eventProcessedByEventToken(et, e);
+pattern enabledTransition(transition : TypedTransition, eventToken : EventToken, event : Event) {
+	find latestEvent(event);
+	Event.type(event, eventType);
+	TypedTransition.guard.eventType.type(transition, eventType);
+	TypedTransition.preState.eventTokens(transition, eventToken);
+	neg find eventProcessedByEventToken(event, eventToken);
 }
 
-pattern tokenInTrapState(et : EventToken) {
-	TrapState.eventTokens(_, et);
+pattern tokenInTrapState(eventToken : EventToken) {
+	TrapState.eventTokens(_, eventToken);
 }
 
-pattern initState(s : InitState) {
-	InitState(s);
+pattern initState(state : InitState) {
+	InitState(state);
 }
 
-pattern partiallyMatchedEventPattern(et : EventToken, s : State) {
-	State.eventTokens(s, et);
-	neg find initState(s);
+pattern partiallyMatchedEventPattern(eventToken : EventToken, state : State) {
+	State.eventTokens(state, eventToken);
+	neg find initState(state);
 }
 
-pattern epsilonTransitionBetweenStates(t : EpsilonTransition, s1 : State, s2 : State) {
-	State.outTransitions(s1, t);
-	State.inTransitions(s2, t);
+pattern epsilonTransitionBetweenStates(transition : EpsilonTransition, state1 : State, state2 : State) {
+	State.outTransitions(state1, transition);
+	State.inTransitions(state2, transition);
 }
 
-pattern tokenEntersTimedZone(et : EventToken, s : State, tz : TimedZone) {
-	EventToken.currentState(et, s);
-	State.inStateOf(s, tz);
+pattern tokenEntersTimedZone(eventToken : EventToken, state : State, timedZone : TimedZone) {
+	EventToken.currentState(eventToken, state);
+	State.inStateOf(state, timedZone);
 }
 
-pattern tokenLeavesTimedZone(et : EventToken, s : State, tz : TimedZone) {
-	EventToken.currentState(et, s);
-	EventToken.timedZones(et, tz);
-	State.outStateOf(s, tz);
+pattern tokenLeavesTimedZone(eventToken : EventToken, state : State, timedZone : TimedZone) {
+	EventToken.currentState(eventToken, state);
+	EventToken.timedZones(eventToken, timedZone);
+	State.outStateOf(state, timedZone);
 }
 
-pattern tokenInTimedZone(et : EventToken, s : State, tz : TimedZone) {
-	EventToken.currentState(et, s);
-	State.inStateOf(s, tz);
+pattern tokenInTimedZone(eventToken : EventToken, state : State, timedZone : TimedZone) {
+	EventToken.currentState(eventToken, state);
+	State.inStateOf(state, timedZone);
 }

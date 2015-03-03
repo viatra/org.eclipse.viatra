@@ -66,15 +66,15 @@ class ModelHandlingRules {
 
 	val createEnabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).
 		action [
-			var eventPattern = ((t.eContainer() as State).eContainer() as Automaton).eventPattern
+			var eventPattern = ((transition.eContainer() as State).eContainer() as Automaton).eventPattern
 			//			Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
-			eventModelManager.handleEvent(t, et)
+			eventModelManager.handleEvent(transition, eventToken)
 			if (eventPattern instanceof ParameterizableComplexEventPattern) {
-				if (!((eventPattern as ParameterizableComplexEventPattern).evaluateParameterBindings(e))) {
+				if (!((eventPattern as ParameterizableComplexEventPattern).evaluateParameterBindings(event))) {
 					return
 				}
 			}
-			eventModelManager.fireTransition(t, et)
+			eventModelManager.fireTransition(transition, eventToken)
 		].build
 
 	val createFinishedAutomatonRule = createRule().name("finished automaton rule").precondition(finishedAutomaton).
@@ -86,13 +86,13 @@ class ModelHandlingRules {
 		].build
 
 	val createTokenInTrapStateRule = createRule().name("trap state rule").precondition(tokenInTrapState).action [
-		var currentState = et.currentState
+		var currentState = eventToken.currentState
 		if (!(currentState instanceof TrapState)) {
 			return
 		}
 		debug(
 			String::format("Event token found in the trap state for pattern %s.",
-				(et.currentState.eContainer as Automaton).eventPattern.id));
+				(eventToken.currentState.eContainer as Automaton).eventPattern.id));
 		//		var eventPattern = (currentState.eContainer() as Automaton).getEventPattern();
 		//		var failedPattern = new InTrapComplexEventPattern(eventPattern)
 		//		eventModelManager.cepRealm.forwardFailedEventPattern(failedPattern)
@@ -101,15 +101,15 @@ class ModelHandlingRules {
 
 	val createTokenEntersTimedZoneRule = createRule().name("token enters timed zone rule").precondition(
 		tokenEntersTimedZone).action [
-		TimingTable.instance.enterTimedZone(tz, et)
+		TimingTable.instance.enterTimedZone(timedZone, eventToken)
 	].build
 
 	val createTokenLeavesTimedZoneRule = createRule().name("token leaves timed zone rule").precondition(
 		tokenLeavesTimedZone).action [
-		val canLeave = TimingTable.instance.leaveTimedZone(tz, et);
+		val canLeave = TimingTable.instance.leaveTimedZone(timedZone, eventToken);
 		if (!canLeave) {
-			val automaton = et.eContainer as Automaton
-			et.setCurrentState(automaton.trapState)
+			val automaton = eventToken.eContainer as Automaton
+			eventToken.setCurrentState(automaton.trapState)
 		}
 	].build
 }
