@@ -66,9 +66,7 @@ abstract class AbstractStrategy implements IEventProcessingStrategy {
 
 		model.automata.forEach [ a |
 			if (a.initState.empty) {
-				var newToken = factory.createEventToken;
-				newToken.setCurrentState(a.initState);
-				a.eventTokens.add(newToken);
+				newEventToken(a, a.initState)
 			}
 		]
 	}

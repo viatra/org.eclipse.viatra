@@ -25,6 +25,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="lastProcessed" eType="ecore:EClass Cep.ecore#//Event"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="timedZones" upperBound="-1"
         eType="#//TimedZone"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eventPatternInstance" lowerBound="1"
+        eType="ecore:EClass Cep.ecore#//EventPatternInstance" eOpposite="Cep.ecore#//EventPatternInstance/eventToken"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="State">
     <eStructuralFeatures xsi:type="ecore:EReference" name="inTransitions" upperBound="-1"

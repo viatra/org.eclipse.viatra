@@ -7,6 +7,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPatternInstance;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,6 +21,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getRecordedEvents <em>Recorded Events</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getLastProcessed <em>Last Processed</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getTimedZones <em>Timed Zones</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getEventPatternInstance <em>Event Pattern Instance</em>}</li>
  * </ul>
  * </p>
  *
@@ -113,5 +115,33 @@ public interface EventToken extends EObject {
      * @generated
      */
     EList<TimedZone> getTimedZones();
+
+    /**
+     * Returns the value of the '<em><b>Event Pattern Instance</b></em>' reference.
+     * It is bidirectional and its opposite is '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternInstance#getEventToken <em>Event Token</em>}'.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Event Pattern Instance</em>' reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Event Pattern Instance</em>' reference.
+     * @see #setEventPatternInstance(EventPatternInstance)
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getEventToken_EventPatternInstance()
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternInstance#getEventToken
+     * @model opposite="eventToken" required="true"
+     * @generated
+     */
+    EventPatternInstance getEventPatternInstance();
+
+    /**
+     * Sets the value of the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getEventPatternInstance <em>Event Pattern Instance</em>}' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Event Pattern Instance</em>' reference.
+     * @see #getEventPatternInstance()
+     * @generated
+     */
+    void setEventPatternInstance(EventPatternInstance value);
 
 } // EventToken

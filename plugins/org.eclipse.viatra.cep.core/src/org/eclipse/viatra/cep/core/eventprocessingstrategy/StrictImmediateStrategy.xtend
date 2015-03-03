@@ -8,7 +8,6 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
- 
 package org.eclipse.viatra.cep.core.eventprocessingstrategy
 
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern
@@ -42,8 +41,6 @@ class StrictImmediateStrategy extends AbstractImmediateStrategy {
 		}
 
 		val automaton = observedComplexEventPattern.getAutomaton();
-		val newToken = factory.createEventToken();
-		newToken.setCurrentState(automaton.initState);
-		automaton.eventTokens.add(newToken);
+		newEventToken(automaton, automaton.initState)
 	}
 }

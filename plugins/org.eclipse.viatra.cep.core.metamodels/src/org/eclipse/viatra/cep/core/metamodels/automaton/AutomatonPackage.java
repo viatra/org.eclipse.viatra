@@ -214,13 +214,22 @@ public interface AutomatonPackage extends EPackage {
     int EVENT_TOKEN__TIMED_ZONES = 3;
 
     /**
+     * The feature id for the '<em><b>Event Pattern Instance</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int EVENT_TOKEN__EVENT_PATTERN_INSTANCE = 4;
+
+    /**
      * The number of structural features of the '<em>Event Token</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EVENT_TOKEN_FEATURE_COUNT = 4;
+    int EVENT_TOKEN_FEATURE_COUNT = 5;
 
     /**
      * The number of operations of the '<em>Event Token</em>' class.
@@ -1105,6 +1114,17 @@ public interface AutomatonPackage extends EPackage {
     EReference getEventToken_TimedZones();
 
     /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getEventPatternInstance <em>Event Pattern Instance</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference '<em>Event Pattern Instance</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.EventToken#getEventPatternInstance()
+     * @see #getEventToken()
+     * @generated
+     */
+    EReference getEventToken_EventPatternInstance();
+
+    /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.State <em>State</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1521,6 +1541,14 @@ public interface AutomatonPackage extends EPackage {
          * @generated
          */
         EReference EVENT_TOKEN__TIMED_ZONES = eINSTANCE.getEventToken_TimedZones();
+
+        /**
+         * The meta object literal for the '<em><b>Event Pattern Instance</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference EVENT_TOKEN__EVENT_PATTERN_INSTANCE = eINSTANCE.getEventToken_EventPatternInstance();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.StateImpl <em>State</em>}' class.

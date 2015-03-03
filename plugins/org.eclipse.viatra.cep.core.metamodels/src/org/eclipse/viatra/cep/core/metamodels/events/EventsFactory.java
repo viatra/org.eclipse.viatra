@@ -49,6 +49,15 @@ public interface EventsFactory extends EFactory {
     EventPatternReference createEventPatternReference();
 
     /**
+     * Returns a new object of class '<em>Event Pattern Instance</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Event Pattern Instance</em>'.
+     * @generated
+     */
+    EventPatternInstance createEventPatternInstance();
+
+    /**
      * Returns a new object of class '<em>Event</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

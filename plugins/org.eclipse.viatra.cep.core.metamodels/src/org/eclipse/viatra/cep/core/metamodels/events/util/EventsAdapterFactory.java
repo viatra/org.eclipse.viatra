@@ -84,6 +84,10 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
                 return createEventPatternReferenceAdapter();
             }
             @Override
+            public Adapter caseEventPatternInstance(EventPatternInstance object) {
+                return createEventPatternInstanceAdapter();
+            }
+            @Override
             public Adapter caseEvent(Event object) {
                 return createEventAdapter();
             }
@@ -204,6 +208,20 @@ public class EventsAdapterFactory extends AdapterFactoryImpl {
      * @generated
      */
     public Adapter createEventPatternReferenceAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.cep.core.metamodels.events.EventPatternInstance <em>Event Pattern Instance</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.viatra.cep.core.metamodels.events.EventPatternInstance
+     * @generated
+     */
+    public Adapter createEventPatternInstanceAdapter() {
         return null;
     }
 

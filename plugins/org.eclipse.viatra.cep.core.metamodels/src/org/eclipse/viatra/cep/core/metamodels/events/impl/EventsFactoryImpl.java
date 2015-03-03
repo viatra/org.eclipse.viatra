@@ -59,6 +59,7 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
             case EventsPackage.ATOMIC_EVENT_PATTERN: return createAtomicEventPattern();
             case EventsPackage.COMPLEX_EVENT_PATTERN: return createComplexEventPattern();
             case EventsPackage.EVENT_PATTERN_REFERENCE: return createEventPatternReference();
+            case EventsPackage.EVENT_PATTERN_INSTANCE: return createEventPatternInstance();
             case EventsPackage.EVENT: return createEvent();
             case EventsPackage.OR: return createOR();
             case EventsPackage.NEG: return createNEG();
@@ -101,6 +102,16 @@ public class EventsFactoryImpl extends EFactoryImpl implements EventsFactory {
     public EventPatternReference createEventPatternReference() {
         EventPatternReferenceImpl eventPatternReference = new EventPatternReferenceImpl();
         return eventPatternReference;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EventPatternInstance createEventPatternInstance() {
+        EventPatternInstanceImpl eventPatternInstance = new EventPatternInstanceImpl();
+        return eventPatternInstance;
     }
 
     /**

@@ -332,6 +332,15 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      * <!-- end-user-doc -->
      * @generated
      */
+    public EReference getEventToken_EventPatternInstance() {
+        return (EReference)eventTokenEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getState() {
         return stateEClass;
     }
@@ -613,6 +622,7 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         createEReference(eventTokenEClass, EVENT_TOKEN__RECORDED_EVENTS);
         createEReference(eventTokenEClass, EVENT_TOKEN__LAST_PROCESSED);
         createEReference(eventTokenEClass, EVENT_TOKEN__TIMED_ZONES);
+        createEReference(eventTokenEClass, EVENT_TOKEN__EVENT_PATTERN_INSTANCE);
 
         stateEClass = createEClass(STATE);
         createEReference(stateEClass, STATE__IN_TRANSITIONS);
@@ -710,6 +720,7 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         initEReference(getEventToken_RecordedEvents(), theEventsPackage.getEvent(), null, "recordedEvents", null, 0, -1, EventToken.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getEventToken_LastProcessed(), theEventsPackage.getEvent(), null, "lastProcessed", null, 0, 1, EventToken.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getEventToken_TimedZones(), this.getTimedZone(), null, "timedZones", null, 0, -1, EventToken.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getEventToken_EventPatternInstance(), theEventsPackage.getEventPatternInstance(), theEventsPackage.getEventPatternInstance_EventToken(), "eventPatternInstance", null, 1, 1, EventToken.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(stateEClass, State.class, "State", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getState_InTransitions(), this.getTransition(), this.getTransition_PostState(), "inTransitions", null, 0, -1, State.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -23,6 +23,8 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
 
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
+import org.eclipse.viatra.cep.core.metamodels.events.EventPatternInstance;
+import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -35,6 +37,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getRecordedEvents <em>Recorded Events</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getLastProcessed <em>Last Processed</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getTimedZones <em>Timed Zones</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl#getEventPatternInstance <em>Event Pattern Instance</em>}</li>
  * </ul>
  * </p>
  *
@@ -80,6 +83,16 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
      * @ordered
      */
     protected EList<TimedZone> timedZones;
+
+    /**
+     * The cached value of the '{@link #getEventPatternInstance() <em>Event Pattern Instance</em>}' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getEventPatternInstance()
+     * @generated
+     * @ordered
+     */
+    protected EventPatternInstance eventPatternInstance;
 
     /**
      * <!-- begin-user-doc -->
@@ -227,6 +240,66 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
      * <!-- end-user-doc -->
      * @generated
      */
+    public EventPatternInstance getEventPatternInstance() {
+        if (eventPatternInstance != null && eventPatternInstance.eIsProxy()) {
+            InternalEObject oldEventPatternInstance = (InternalEObject)eventPatternInstance;
+            eventPatternInstance = (EventPatternInstance)eResolveProxy(oldEventPatternInstance);
+            if (eventPatternInstance != oldEventPatternInstance) {
+                if (eNotificationRequired())
+                    eNotify(new ENotificationImpl(this, Notification.RESOLVE, AutomatonPackage.EVENT_TOKEN__EVENT_PATTERN_INSTANCE, oldEventPatternInstance, eventPatternInstance));
+            }
+        }
+        return eventPatternInstance;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EventPatternInstance basicGetEventPatternInstance() {
+        return eventPatternInstance;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public NotificationChain basicSetEventPatternInstance(EventPatternInstance newEventPatternInstance, NotificationChain msgs) {
+        EventPatternInstance oldEventPatternInstance = eventPatternInstance;
+        eventPatternInstance = newEventPatternInstance;
+        if (eNotificationRequired()) {
+            ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, AutomatonPackage.EVENT_TOKEN__EVENT_PATTERN_INSTANCE, oldEventPatternInstance, newEventPatternInstance);
+            if (msgs == null) msgs = notification; else msgs.add(notification);
+        }
+        return msgs;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setEventPatternInstance(EventPatternInstance newEventPatternInstance) {
+        if (newEventPatternInstance != eventPatternInstance) {
+            NotificationChain msgs = null;
+            if (eventPatternInstance != null)
+                msgs = ((InternalEObject)eventPatternInstance).eInverseRemove(this, EventsPackage.EVENT_PATTERN_INSTANCE__EVENT_TOKEN, EventPatternInstance.class, msgs);
+            if (newEventPatternInstance != null)
+                msgs = ((InternalEObject)newEventPatternInstance).eInverseAdd(this, EventsPackage.EVENT_PATTERN_INSTANCE__EVENT_TOKEN, EventPatternInstance.class, msgs);
+            msgs = basicSetEventPatternInstance(newEventPatternInstance, msgs);
+            if (msgs != null) msgs.dispatch();
+        }
+        else if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, AutomatonPackage.EVENT_TOKEN__EVENT_PATTERN_INSTANCE, newEventPatternInstance, newEventPatternInstance));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -234,6 +307,10 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
                 if (currentState != null)
                     msgs = ((InternalEObject)currentState).eInverseRemove(this, AutomatonPackage.STATE__EVENT_TOKENS, State.class, msgs);
                 return basicSetCurrentState((State)otherEnd, msgs);
+            case AutomatonPackage.EVENT_TOKEN__EVENT_PATTERN_INSTANCE:
+                if (eventPatternInstance != null)
+                    msgs = ((InternalEObject)eventPatternInstance).eInverseRemove(this, EventsPackage.EVENT_PATTERN_INSTANCE__EVENT_TOKEN, EventPatternInstance.class, msgs);
+                return basicSetEventPatternInstance((EventPatternInstance)otherEnd, msgs);
         }
         return super.eInverseAdd(otherEnd, featureID, msgs);
     }
@@ -248,6 +325,8 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
         switch (featureID) {
             case AutomatonPackage.EVENT_TOKEN__CURRENT_STATE:
                 return basicSetCurrentState(null, msgs);
+            case AutomatonPackage.EVENT_TOKEN__EVENT_PATTERN_INSTANCE:
+                return basicSetEventPatternInstance(null, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -270,6 +349,9 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
                 return basicGetLastProcessed();
             case AutomatonPackage.EVENT_TOKEN__TIMED_ZONES:
                 return getTimedZones();
+            case AutomatonPackage.EVENT_TOKEN__EVENT_PATTERN_INSTANCE:
+                if (resolve) return getEventPatternInstance();
+                return basicGetEventPatternInstance();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -297,6 +379,9 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
                 getTimedZones().clear();
                 getTimedZones().addAll((Collection<? extends TimedZone>)newValue);
                 return;
+            case AutomatonPackage.EVENT_TOKEN__EVENT_PATTERN_INSTANCE:
+                setEventPatternInstance((EventPatternInstance)newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -321,6 +406,9 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
             case AutomatonPackage.EVENT_TOKEN__TIMED_ZONES:
                 getTimedZones().clear();
                 return;
+            case AutomatonPackage.EVENT_TOKEN__EVENT_PATTERN_INSTANCE:
+                setEventPatternInstance((EventPatternInstance)null);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -341,6 +429,8 @@ public class EventTokenImpl extends MinimalEObjectImpl.Container implements Even
                 return lastProcessed != null;
             case AutomatonPackage.EVENT_TOKEN__TIMED_ZONES:
                 return timedZones != null && !timedZones.isEmpty();
+            case AutomatonPackage.EVENT_TOKEN__EVENT_PATTERN_INSTANCE:
+                return eventPatternInstance != null;
         }
         return super.eIsSet(featureID);
     }
