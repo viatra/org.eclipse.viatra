@@ -11,7 +11,7 @@ public class A1_Pattern extends AtomicEventPatternImpl {
     setId("org.eclipse.viatra.cep.tests.integration.model.patterns.atomic.a1_pattern");
   }
   
-  public boolean checkStaticBindings() {
+  public boolean evaluateCheckExpression() {
     return true;
   }
 }

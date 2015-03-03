@@ -14,6 +14,7 @@ import org.junit.Test
 
 import static org.junit.Assert.*
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
+import org.apache.log4j.Level
 
 class ImmediateTests extends BaseIntegrationTest {
 
@@ -23,6 +24,7 @@ class ImmediateTests extends BaseIntegrationTest {
 
 	@Test
 	def void test() {
+//		engine.cepEngineDebugLevel = Level::DEBUG
 		engine.addRule(createTestRule());
 
 		eventStream.push(createA1_Event);

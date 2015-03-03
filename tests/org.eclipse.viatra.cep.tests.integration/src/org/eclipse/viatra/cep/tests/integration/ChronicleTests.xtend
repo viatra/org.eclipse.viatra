@@ -14,6 +14,7 @@ import org.junit.Test
 
 import static org.junit.Assert.*
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
+import org.apache.log4j.Level
 
 class ChronicleTests extends BaseIntegrationTest {
 
@@ -23,11 +24,12 @@ class ChronicleTests extends BaseIntegrationTest {
 
 	@Test
 	def void test() {
+//		engine.ruleEngineDebuggingLevel = Level::DEBUG
 		engine.addRule(createTestRule());
 
 		eventStream.push(createA1_Event);
 		assertEquals(1, TestResultHelper.instance.getResults("or"))
-		
+
 		eventStream.push(createA2_Event);
 		assertEquals(2, TestResultHelper.instance.getResults("or"))
 		assertEquals(1, TestResultHelper.instance.getResults("follows"))
