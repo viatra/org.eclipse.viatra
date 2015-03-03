@@ -65,8 +65,7 @@ public class ExplorerThread implements IExplorerThread {
      * {@link ISolutionFoundHandler#solutionFound(Strategy, Solution)} method returns STOP or the
      * {@link IStrategy#getNextTransition(ThreadContext)} method returns null.
      * 
-     * If this main algorithm is not good for you, you can derive from this class and override this method. TODO:
-     * strategy factory
+     * If this main algorithm is not good for you, you can derive from this class and override this method.
      */
     @Override
     public void run() {
@@ -89,12 +88,89 @@ public class ExplorerThread implements IExplorerThread {
 
             logger.debug("Strategy started with state: " + designSpaceManager.getCurrentState().getId());
 
-            calculateFitness();
 
-            // do the exploration until {@link StrategyBase#solutionFound}
-            // returns
-            // stop, or interrupted from outside by Strategy#stopRunning
-            mainloop: while (continueExecution) {
+            mainloop: do {
+
+                PerformanceMonitorManager.startTimer(STATE_EVALUATION);
+
+                IState currentState = designSpaceManager.getCurrentState();
+                boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
+                boolean areConstraintsSatisfied = true;
+
+                calculateFitness();
+
+                if (isAlreadyTraversed) {
+                    TraversalStateType traversalState = currentState.getTraversalState();
+
+                    // Create new trajectory for solution
+                    if (fitness.isSatisifiesHardObjectives() && !globalContext.getSolutionStore().isStrategyDependent()) {
+                        StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext);
+                        switch (verdict) {
+                        case STOP_ALL:
+                            continueExecution = false;
+                            globalContext.stopAllThreads();
+                            break;
+                        case STOP_THREAD:
+                            continueExecution = false;
+                        default:
+                            break;
+                        }
+                    } else if (traversalState == TraversalStateType.CUT) {
+                        areConstraintsSatisfied = false;
+                    }
+
+                    logger.debug("State is already traversed.");
+
+                } else {
+                    // if the global constraints are satisfied
+                    areConstraintsSatisfied = checkGlobalConstraints();
+                    if (areConstraintsSatisfied) {
+
+                        // if it is a goal state
+                        if (fitness.isSatisifiesHardObjectives()) {
+
+                            logger.debug("State satisfies all the hard objectives.");
+
+                            currentState.setTraversalState(TraversalStateType.GOAL);
+
+                            if (!globalContext.getSolutionStore().isStrategyDependent()) {
+                                StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext);
+                                switch (verdict) {
+                                case STOP_ALL:
+                                    continueExecution = false;
+                                    globalContext.stopAllThreads();
+                                    break;
+                                case STOP_THREAD:
+                                    continueExecution = false;
+                                default:
+                                    break;
+                                }
+                            }
+
+                        }
+                        // if not goal state, check the cut-off criterias
+                        else {
+                            if (guidance != null && guidance.evaluateCutOffCriterias() == EvaluationResult.CUT_OFF) {
+                                currentState.setTraversalState(TraversalStateType.CUT);
+                            }
+
+                        }
+                    }
+                    // if the global constraints are not satisfied
+                    else {
+                        currentState.setTraversalState(TraversalStateType.CUT);
+                        logger.debug("Global constraints are not satisfied.");
+                    }
+                    currentState.setProcessed(); // TODO there is one in addState
+                }
+
+                strategy.newStateIsProcessed(threadContext, isAlreadyTraversed, fitness, !areConstraintsSatisfied);
+                PerformanceMonitorManager.endTimer(STATE_EVALUATION);
+
+                // do the exploration until {@link StrategyBase#solutionFound}
+                // returns
+                // stop, or interrupted from outside by Strategy#stopRunning
+
                 PerformanceMonitorManager.endTimer(WALKER_CYCLE);
 
                 if (interrupted.get()) {
@@ -125,87 +201,9 @@ public class ExplorerThread implements IExplorerThread {
                 designSpaceManager.fireActivation(transition);
                 PerformanceMonitorManager.endTimer(FIRE_ACTIVATION_TIMER);
 
-                IState newState = designSpaceManager.getCurrentState();
+                logger.debug("Transition fired: " + transition.getId() + " State: " + currentState.getId());
 
-                logger.debug("Transition fired: " + transition.getId() + " State: " + newState.getId());
-
-                PerformanceMonitorManager.startTimer(STATE_EVALUATION);
-
-                boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
-                boolean areConstraintsSatisfied = true;
-
-                calculateFitness();
-
-                if (isAlreadyTraversed) {
-                    TraversalStateType traversalState = newState.getTraversalState();
-
-                    // Create new trajectory for solution
-                    if (fitness.isSatisifiesHardObjectives()
-                            && !globalContext.getSolutionStore().isStrategyDependent()) {
-                        StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext);
-                        switch (verdict) {
-                        case STOP_ALL:
-                            continueExecution = false;
-                            globalContext.stopAllThreads();
-                            break;
-                        case STOP_THREAD:
-                            continueExecution = false;
-                        default:
-                            break;
-                        }
-                    } else if (traversalState == TraversalStateType.CUT) {
-                        areConstraintsSatisfied = false;
-                    }
-
-                    logger.debug("State is already traversed.");
-
-                } else {
-                    // if the global constraints are satisfied
-                    areConstraintsSatisfied = checkGlobalConstraints();
-                    if (areConstraintsSatisfied) {
-
-                        // if it is a goal state
-                        if (fitness.isSatisifiesHardObjectives()) {
-
-                            logger.debug("State satisfies all the hard objectives.");
-
-                            newState.setTraversalState(TraversalStateType.GOAL);
-
-                            if (!globalContext.getSolutionStore().isStrategyDependent()) {
-                                StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext);
-                                switch (verdict) {
-                                case STOP_ALL:
-                                    continueExecution = false;
-                                    globalContext.stopAllThreads();
-                                    break;
-                                case STOP_THREAD:
-                                    continueExecution = false;
-                                default:
-                                    break;
-                                }
-                            }
-
-                        }
-                        // if not goal state, check the cut-off criterias
-                        else {
-                            if (guidance != null && guidance.evaluateCutOffCriterias() == EvaluationResult.CUT_OFF) {
-                                newState.setTraversalState(TraversalStateType.CUT);
-                            }
-
-                        }
-                    }
-                    // if the global constraints are not satisfied
-                    else {
-                        newState.setTraversalState(TraversalStateType.CUT);
-                        logger.debug("Global constraints are not satisfied.");
-                    }
-                    newState.setProcessed(); // TODO there is one in addState
-                }
-
-                strategy.newStateIsProcessed(threadContext, isAlreadyTraversed, fitness,
-                        !areConstraintsSatisfied);
-                PerformanceMonitorManager.endTimer(STATE_EVALUATION);
-            }
+            } while (continueExecution);
 
             logger.debug("Strategy stopped on Thread " + Thread.currentThread());
             globalContext.strategyFinished(this);
