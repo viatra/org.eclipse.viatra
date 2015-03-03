@@ -66,7 +66,6 @@ class ModelHandlingRules {
 
 	val createEnabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).
 		action [
-			var eventPattern = ((transition.eContainer() as State).eContainer() as Automaton).eventPattern
 			//			Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
 			eventModelManager.handleEvent(transition, eventToken)
 			if (eventPattern instanceof ParameterizableComplexEventPattern) {
@@ -90,9 +89,7 @@ class ModelHandlingRules {
 		if (!(currentState instanceof TrapState)) {
 			return
 		}
-		debug(
-			String::format("Event token found in the trap state for pattern %s.",
-				(eventToken.currentState.eContainer as Automaton).eventPattern.id));
+		debug(String::format("Event token found in the trap state for pattern %s.", eventPattern.id));
 		//		var eventPattern = (currentState.eContainer() as Automaton).getEventPattern();
 		//		var failedPattern = new InTrapComplexEventPattern(eventPattern)
 		//		eventModelManager.cepRealm.forwardFailedEventPattern(failedPattern)
@@ -108,8 +105,7 @@ class ModelHandlingRules {
 		tokenLeavesTimedZone).action [
 		val canLeave = TimingTable.instance.leaveTimedZone(timedZone, eventToken);
 		if (!canLeave) {
-			val automaton = eventToken.eContainer as Automaton
-			eventToken.setCurrentState(automaton.trapState)
+			eventToken.setCurrentState(trapState)
 		}
 	].build
 }
