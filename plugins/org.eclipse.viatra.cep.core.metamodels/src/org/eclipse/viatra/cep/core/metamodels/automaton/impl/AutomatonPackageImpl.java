@@ -5,6 +5,7 @@ package org.eclipse.viatra.cep.core.metamodels.automaton.impl;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -485,6 +486,15 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      * <!-- end-user-doc -->
      * @generated
      */
+    public EOperation getTypedTransition__CheckParameters__Event_EventToken() {
+        return typedTransitionEClass.getEOperations().get(0);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getEpsilonTransition() {
         return epsilonTransitionEClass;
     }
@@ -645,6 +655,7 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
 
         typedTransitionEClass = createEClass(TYPED_TRANSITION);
         createEReference(typedTransitionEClass, TYPED_TRANSITION__GUARD);
+        createEOperation(typedTransitionEClass, TYPED_TRANSITION___CHECK_PARAMETERS__EVENT_EVENTTOKEN);
 
         epsilonTransitionEClass = createEClass(EPSILON_TRANSITION);
 
@@ -743,6 +754,10 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
 
         initEClass(typedTransitionEClass, TypedTransition.class, "TypedTransition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getTypedTransition_Guard(), this.getGuard(), this.getGuard_Transition(), "guard", null, 1, 1, TypedTransition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+        EOperation op = initEOperation(getTypedTransition__CheckParameters__Event_EventToken(), ecorePackage.getEBoolean(), "checkParameters", 1, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, theEventsPackage.getEvent(), "event", 1, 1, IS_UNIQUE, IS_ORDERED);
+        addEParameter(op, this.getEventToken(), "eventToken", 1, 1, IS_UNIQUE, IS_ORDERED);
 
         initEClass(epsilonTransitionEClass, EpsilonTransition.class, "EpsilonTransition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

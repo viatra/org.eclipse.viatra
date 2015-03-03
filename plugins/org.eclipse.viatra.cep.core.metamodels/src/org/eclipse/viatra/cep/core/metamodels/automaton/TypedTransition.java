@@ -2,6 +2,8 @@
  */
 package org.eclipse.viatra.cep.core.metamodels.automaton;
 
+import org.eclipse.viatra.cep.core.metamodels.events.Event;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -47,5 +49,13 @@ public interface TypedTransition extends Transition {
      * @generated
      */
     void setGuard(Guard value);
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @model required="true" eventRequired="true" eventTokenRequired="true"
+     * @generated
+     */
+    boolean checkParameters(Event event, EventToken eventToken);
 
 } // TypedTransition

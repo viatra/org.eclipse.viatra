@@ -5,6 +5,7 @@ package org.eclipse.viatra.cep.core.metamodels.automaton;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -697,13 +698,22 @@ public interface AutomatonPackage extends EPackage {
     int TYPED_TRANSITION_FEATURE_COUNT = TRANSITION_FEATURE_COUNT + 1;
 
     /**
+     * The operation id for the '<em>Check Parameters</em>' operation.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TYPED_TRANSITION___CHECK_PARAMETERS__EVENT_EVENTTOKEN = TRANSITION_OPERATION_COUNT + 0;
+
+    /**
      * The number of operations of the '<em>Typed Transition</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int TYPED_TRANSITION_OPERATION_COUNT = TRANSITION_OPERATION_COUNT + 0;
+    int TYPED_TRANSITION_OPERATION_COUNT = TRANSITION_OPERATION_COUNT + 1;
 
     /**
      * The meta object id for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EpsilonTransitionImpl <em>Epsilon Transition</em>}' class.
@@ -1295,6 +1305,16 @@ public interface AutomatonPackage extends EPackage {
     EReference getTypedTransition_Guard();
 
     /**
+     * Returns the meta object for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition#checkParameters(org.eclipse.viatra.cep.core.metamodels.events.Event, org.eclipse.viatra.cep.core.metamodels.automaton.EventToken) <em>Check Parameters</em>}' operation.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the '<em>Check Parameters</em>' operation.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition#checkParameters(org.eclipse.viatra.cep.core.metamodels.events.Event, org.eclipse.viatra.cep.core.metamodels.automaton.EventToken)
+     * @generated
+     */
+    EOperation getTypedTransition__CheckParameters__Event_EventToken();
+
+    /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EpsilonTransition <em>Epsilon Transition</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1689,6 +1709,14 @@ public interface AutomatonPackage extends EPackage {
          * @generated
          */
         EReference TYPED_TRANSITION__GUARD = eINSTANCE.getTypedTransition_Guard();
+
+        /**
+         * The meta object literal for the '<em><b>Check Parameters</b></em>' operation.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EOperation TYPED_TRANSITION___CHECK_PARAMETERS__EVENT_EVENTTOKEN = eINSTANCE.getTypedTransition__CheckParameters__Event_EventToken();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EpsilonTransitionImpl <em>Epsilon Transition</em>}' class.

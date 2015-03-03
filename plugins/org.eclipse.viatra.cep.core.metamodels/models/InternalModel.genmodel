@@ -50,6 +50,10 @@
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//TypedTransition">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//TypedTransition/guard"/>
+      <genOperations ecoreOperation="Automaton.ecore#//TypedTransition/checkParameters">
+        <genParameters ecoreParameter="Automaton.ecore#//TypedTransition/checkParameters/event"/>
+        <genParameters ecoreParameter="Automaton.ecore#//TypedTransition/checkParameters/eventToken"/>
+      </genOperations>
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//EpsilonTransition"/>
     <genClasses ecoreClass="Automaton.ecore#//Guard">

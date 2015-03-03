@@ -2,17 +2,21 @@
  */
 package org.eclipse.viatra.cep.core.metamodels.automaton.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage;
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Guard;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
+import org.eclipse.viatra.cep.core.metamodels.events.Event;
 
 /**
  * <!-- begin-user-doc -->
@@ -105,6 +109,17 @@ public class TypedTransitionImpl extends TransitionImpl implements TypedTransiti
      * <!-- end-user-doc -->
      * @generated
      */
+    public boolean checkParameters(Event event, EventToken eventToken) {
+        // TODO: implement this method
+        // Ensure that you remove @generated or mark it @generated NOT
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -186,6 +201,20 @@ public class TypedTransitionImpl extends TransitionImpl implements TypedTransiti
                 return guard != null;
         }
         return super.eIsSet(featureID);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+        switch (operationID) {
+            case AutomatonPackage.TYPED_TRANSITION___CHECK_PARAMETERS__EVENT_EVENTTOKEN:
+                return checkParameters((Event)arguments.get(0), (EventToken)arguments.get(1));
+        }
+        return super.eInvoke(operationID, arguments);
     }
 
 } //TypedTransitionImpl
