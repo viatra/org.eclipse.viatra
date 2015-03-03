@@ -8,7 +8,6 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
- 
 package org.eclipse.viatra.cep.core.engine.runtime
 
 import "cep.meta"
@@ -43,10 +42,6 @@ pattern eventProcessedByEventToken(et : EventToken, e : Event) {
 	EventToken.lastProcessed(et, e);
 }
 
-pattern eventHandledByState(s : State, e : Event) {
-	State.lastProcessedEvent(s, e);
-}
-
 pattern eventProcessed(e : Event) {
 	Event.isProcessed(e, true);
 }
@@ -60,8 +55,6 @@ pattern enabledTransition(t : TypedTransition, et : EventToken, e : Event) {
 	Event.type(e, eventType);
 	TypedTransition.guard.eventType.type(t, eventType);
 	TypedTransition.preState.eventTokens(t, et);
-	TypedTransition.preState(t, ps);
-	neg find eventHandledByState(ps, e);
 	neg find eventProcessedByEventToken(et, e);
 }
 
@@ -78,23 +71,23 @@ pattern partiallyMatchedEventPattern(et : EventToken, s : State) {
 	neg find initState(s);
 }
 
-pattern epsilonTransitionBetweenStates(t : EpsilonTransition, s1 : State, s2 : State){
+pattern epsilonTransitionBetweenStates(t : EpsilonTransition, s1 : State, s2 : State) {
 	State.outTransitions(s1, t);
 	State.inTransitions(s2, t);
 }
 
-pattern tokenEntersTimedZone(et : EventToken, s: State, tz : TimedZone){
+pattern tokenEntersTimedZone(et : EventToken, s : State, tz : TimedZone) {
 	EventToken.currentState(et, s);
 	State.inStateOf(s, tz);
 }
 
-pattern tokenLeavesTimedZone(et : EventToken, s: State, tz : TimedZone){
+pattern tokenLeavesTimedZone(et : EventToken, s : State, tz : TimedZone) {
 	EventToken.currentState(et, s);
 	EventToken.timedZones(et, tz);
 	State.outStateOf(s, tz);
 }
 
-pattern tokenInTimedZone(et : EventToken, s: State, tz : TimedZone){
+pattern tokenInTimedZone(et : EventToken, s : State, tz : TimedZone) {
 	EventToken.currentState(et, s);
 	State.inStateOf(s, tz);
 }

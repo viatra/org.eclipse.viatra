@@ -11,7 +11,6 @@
 package org.eclipse.viatra.cep.core.eventprocessingstrategy
 
 import com.google.common.base.Preconditions
-import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern
 import org.eclipse.viatra.cep.core.engine.IEventModelManager
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken
@@ -39,9 +38,21 @@ abstract class AbstractStrategy implements IEventProcessingStrategy {
 		this.eventModelManager = eventModelManager
 	}
 
+	override handleEvent(Transition transition, EventToken eventTokenToMove) {
+		eventTokenToMove.addProcessedEvent(eventModelManager.model.latestEvent)
+	}
+
 	override public fireTransition(Transition transition, EventToken eventTokenToMove) {
 		Preconditions.checkArgument(transition != null)
 		Preconditions.checkArgument(eventTokenToMove != null)
+
+		for (et : eventTokenToMove.currentState.eventTokens.filter[et|et.lastProcessed == null]) {
+
+			//we only allow one transition to be fired per observed matching event on the stream and thus,
+			//each token in a given state is marked as processed once a transition is fired,
+			//but this might be overridden in other strategies
+			et.addProcessedEvent(eventModelManager.model.latestEvent)
+		}
 
 		val preState = transition.preState
 		if (preState instanceof FinalState) {
@@ -50,8 +61,6 @@ abstract class AbstractStrategy implements IEventProcessingStrategy {
 
 		val nextState = transition.postState
 
-		eventTokenToMove.addProcessedEvent(eventModelManager.model.latestEvent)
-		preState.setLastProcessedEvent(eventModelManager.model.latestEvent)
 		eventTokenToMove.setCurrentState(nextState)
 		eventModelManager.callbackOnFiredToken(transition, eventTokenToMove)
 	}
@@ -61,8 +70,7 @@ abstract class AbstractStrategy implements IEventProcessingStrategy {
 		eventToken.lastProcessed = event
 	}
 
-	override public handleInitTokenCreation(InternalModel model, AutomatonFactory factory,
-		IObservableComplexEventPattern observedComplexEventPattern) {
+	override public handleInitTokenCreation(InternalModel model, AutomatonFactory factory) {
 
 		model.automata.forEach [ a |
 			if (a.initState.empty) {

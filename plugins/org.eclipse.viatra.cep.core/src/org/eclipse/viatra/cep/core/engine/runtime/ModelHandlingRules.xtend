@@ -67,6 +67,8 @@ class ModelHandlingRules {
 	val createEnabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).
 		action [
 			var eventPattern = ((t.eContainer() as State).eContainer() as Automaton).eventPattern
+			//			Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
+			eventModelManager.handleEvent(t, et)
 			if (eventPattern instanceof ParameterizableComplexEventPattern) {
 				if (!((eventPattern as ParameterizableComplexEventPattern).evaluateParameterBindings(e))) {
 					return

@@ -48,6 +48,8 @@ public interface IEventModelManager {
 
     void registerNewEventStream(EventStream newEventStream);
 
+    void handleEvent(TypedTransition transition, EventToken token);
+
     void fireTransition(TypedTransition transition, EventToken token);
 
     void callbackOnFiredToken(Transition t, EventToken eventTokenToMove);

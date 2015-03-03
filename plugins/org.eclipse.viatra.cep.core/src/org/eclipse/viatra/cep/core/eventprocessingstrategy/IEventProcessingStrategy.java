@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.cep.core.eventprocessingstrategy;
 
-import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
@@ -36,10 +35,11 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 public interface IEventProcessingStrategy {
     EventContext getContext();
 
+    void handleEvent(Transition transition, EventToken eventTokenToMove);
+
     void fireTransition(Transition transition, EventToken eventTokenToMove);
 
-    void handleInitTokenCreation(InternalModel model, final AutomatonFactory factory,
-            IObservableComplexEventPattern observedComplexEventPattern);
+    void handleInitTokenCreation(InternalModel model, final AutomatonFactory factory);
 
     void handleAutomatonResets(InternalModel model, final AutomatonFactory factory);
 }

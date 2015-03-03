@@ -75,7 +75,6 @@ public class DefaultEventModelManager implements IEventModelManager {
     private Map<Automaton, InitState> initStatesForAutomata = new LinkedHashMap<Automaton, InitState>();
     private Map<Automaton, Boolean> wasEnabledForTheLatestEvent = new LinkedHashMap<Automaton, Boolean>();
     private List<EventToken> eventTokensToClear = Lists.newArrayList();
-    private List<State> statesToClear = Lists.newArrayList();
 
     private final static class CEPUpdateCompleteProvider extends UpdateCompleteProvider {
         protected void latestEventHandled() {
@@ -150,12 +149,9 @@ public class DefaultEventModelManager implements IEventModelManager {
         for (EventToken eventToken : eventTokensToClear) {
             eventToken.setLastProcessed(null);
         }
-        for (State state : statesToClear) {
-            state.setLastProcessedEvent(null);
-        }
-        
+
         wasEnabledForTheLatestEvent.clear();
-        strategy.handleInitTokenCreation(model, AutomatonFactory.eINSTANCE, null);
+        strategy.handleInitTokenCreation(model, AutomatonFactory.eINSTANCE);
         model.setLatestEvent(event);
         cepUpdateCompleteProvider.latestEventHandled();
         strategy.handleAutomatonResets(model, AutomatonFactory.eINSTANCE);
@@ -206,6 +202,11 @@ public class DefaultEventModelManager implements IEventModelManager {
     }
 
     @Override
+    public void handleEvent(TypedTransition transition, EventToken token) {
+        strategy.handleEvent(transition, token);
+    }
+
+    @Override
     public void fireTransition(TypedTransition transition, EventToken token) {
         strategy.fireTransition(transition, token);
     }
@@ -224,12 +225,11 @@ public class DefaultEventModelManager implements IEventModelManager {
 
         wasEnabledForTheLatestEvent.put(((Automaton) container), true);
         eventTokensToClear.add(eventTokenToMove);
-        statesToClear.add(transition.getPreState());
     }
 
     @Override
     public void callbackOnPatternRecognition(IObservableComplexEventPattern observedPattern) {
-        strategy.handleInitTokenCreation(model, AutomatonFactory.eINSTANCE, observedPattern);
+        // NOP
     }
 
 }

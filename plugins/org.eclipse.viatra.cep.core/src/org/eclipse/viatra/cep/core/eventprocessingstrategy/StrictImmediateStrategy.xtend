@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.core.eventprocessingstrategy
 
-import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern
 import org.eclipse.viatra.cep.core.engine.IEventModelManager
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
@@ -34,13 +33,12 @@ class StrictImmediateStrategy extends AbstractImmediateStrategy {
 		super(eventModelManager)
 	}
 
-	override void handleInitTokenCreation(InternalModel model, AutomatonFactory factory,
-		IObservableComplexEventPattern observedComplexEventPattern) {
-		if (observedComplexEventPattern == null) {
-			return;
+	override handleInitTokenCreation(InternalModel model, AutomatonFactory factory) {
+		for (a : model.automata) {
+			if (a.eventTokens.forall[et|et.currentState.enablesStrictInitTokenCreation]) {
+				newEventToken(a, a.initState)
+			}
 		}
-
-		val automaton = observedComplexEventPattern.getAutomaton();
-		newEventToken(automaton, automaton.initState)
 	}
+
 }

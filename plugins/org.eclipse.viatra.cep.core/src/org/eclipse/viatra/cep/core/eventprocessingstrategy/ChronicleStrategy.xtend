@@ -8,13 +8,12 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
- 
 package org.eclipse.viatra.cep.core.eventprocessingstrategy
 
 import org.eclipse.viatra.cep.core.engine.IEventModelManager
+import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
-import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
 
 /**
  * Strategy implementation for the <i>Chronicle</i> {@link EventContext}.
@@ -31,7 +30,7 @@ class ChronicleStrategy extends AbstractStrategy {
 	new(IEventModelManager eventModelManager) {
 		super(eventModelManager)
 	}
-	
+
 	override handleAutomatonResets(InternalModel model, AutomatonFactory factory) {
 		return
 	}
