@@ -35,17 +35,17 @@
 					<outputDirectory>src-gen</outputDirectory>
 					<metamodels>
 						<metamodel>
-							<packageClass>org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
+							<packageClass>src/org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
 							<genmodelUri>models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 						<metamodel>
-							<packageClass>org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage</packageClass>
+							<packageClass>src/org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage</packageClass>
 							<genmodelUri>models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 					</metamodels>
 				</configuration>
 			</plugin>
-			<plugin>
+<!--			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-eclipserun-plugin</artifactId>
 				<version>${tycho.version}</version>
@@ -53,7 +53,7 @@
 					<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile generate-emf.xml</appArgLine>
 					<dependencies>
 						<!-- list of bundles that we need -->
-						<dependency>
+	<!--					<dependency>
 							<artifactId>org.eclipse.ant.core</artifactId>
 							<type>eclipse-plugin</type>
 						</dependency>
@@ -86,7 +86,7 @@
 						<phase>generate-sources</phase>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 		</plugins>
 	</build>
   
