@@ -33,11 +33,11 @@
 					<metamodels>
 						<metamodel>
 							<packageClass>org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
-							<genmodelUri>models/InternalModel.genmodel</genmodelUri>
+							<genmodelUri>../org.eclipse.viatra.cep.core.metamodels/models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 						<metamodel>
 							<packageClass>org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage</packageClass>
-							<genmodelUri>models/InternalModel.genmodel</genmodelUri>
+							<genmodelUri>../org.eclipse.viatra.cep.core.metamodels/models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 					</metamodels>
 				</configuration>
