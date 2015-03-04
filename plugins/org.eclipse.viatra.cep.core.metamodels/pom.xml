@@ -10,40 +10,4 @@
   </parent>
   <artifactId>org.eclipse.viatra.cep.core.metamodels</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <build>
-		<resources>
-			<resource>
-				<directory>src</directory>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.incquery</groupId>
-				<artifactId>incquery-maven-plugin</artifactId>
-				<version>${incquery.compiler.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<outputDirectory>src-gen</outputDirectory>
-					<metamodels>
-						<metamodel>
-							<packageClass>org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
-							<genmodelUri>../org.eclipse.viatra.cep.core.metamodels/models/InternalModel.genmodel</genmodelUri>
-						</metamodel>
-						<metamodel>
-							<packageClass>org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage</packageClass>
-							<genmodelUri>../org.eclipse.viatra.cep.core.metamodels/models/InternalModel.genmodel</genmodelUri>
-						</metamodel>
-					</metamodels>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-  
-  
 </project>
