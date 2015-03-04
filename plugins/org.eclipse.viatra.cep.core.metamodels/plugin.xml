@@ -14,10 +14,13 @@
   <extension id="extension.derived.org.eclipse.viatra.cep.core.metamodels.derived.initialState" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
     <wellbehaving-derived-feature classifier-name="Automaton" feature-name="initialState" package-nsUri="automaton.meta"/>
   </extension>
+  <extension id="extension.derived.org.eclipse.viatra.cep.core.metamodels.derived.trapState" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Automaton" feature-name="trapState" package-nsUri="automaton.meta"/>
+  </extension>
   <extension id="extension.derived.org.eclipse.viatra.cep.core.metamodels.derived.finalStates" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
     <wellbehaving-derived-feature classifier-name="Automaton" feature-name="finalStates" package-nsUri="automaton.meta"/>
   </extension>
-  <extension id="extension.derived.org.eclipse.viatra.cep.core.metamodels.derived.trapState" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
-    <wellbehaving-derived-feature classifier-name="Automaton" feature-name="trapState" package-nsUri="automaton.meta"/>
+  <extension id="extension.derived.org.eclipse.viatra.cep.core.metamodels.derived.eventTokensInModel" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="InternalModel" feature-name="eventTokensInModel" package-nsUri="automaton.meta"/>
   </extension>
 </plugin>

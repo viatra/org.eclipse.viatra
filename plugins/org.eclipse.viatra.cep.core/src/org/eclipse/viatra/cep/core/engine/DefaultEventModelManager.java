@@ -12,7 +12,6 @@
 package org.eclipse.viatra.cep.core.engine;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +50,6 @@ import org.eclipse.viatra.cep.core.metamodels.events.Event;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.streams.EventStream;
 
-import com.google.common.collect.Lists;
-
 public class DefaultEventModelManager implements IEventModelManager {
     private final Logger logger = LoggerUtils.getInstance().getLogger();
 
@@ -66,10 +63,6 @@ public class DefaultEventModelManager implements IEventModelManager {
     private CepRealm cepRealm = new CepRealm();
     private UpdateCompleteBasedSchedulerFactory schedulerFactory = new UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory(
             cepUpdateCompleteProvider);
-
-    // cache
-    private Map<Automaton, Boolean> wasEnabledForTheLatestEvent = new LinkedHashMap<Automaton, Boolean>();
-    private List<EventToken> eventTokensToClear = Lists.newArrayList();
 
     private final static class CEPUpdateCompleteProvider extends UpdateCompleteProvider {
         protected void latestEventHandled() {
@@ -122,18 +115,18 @@ public class DefaultEventModelManager implements IEventModelManager {
         Compiler compiler = new Compiler(model);
         Automaton automaton = compiler.compile(eventPattern);
 
-        wasEnabledForTheLatestEvent.put(automaton, true);
+        model.getEnabledForTheLatestEvent().add(automaton);
 
         return automaton;
     }
 
     private void refreshModel(Event event) {
         model.setLatestEvent(null);
-        for (EventToken eventToken : eventTokensToClear) {
+        for (EventToken eventToken : model.getEventTokensInModel()) {
             eventToken.setLastProcessed(null);
         }
 
-        wasEnabledForTheLatestEvent.clear();
+        model.getEnabledForTheLatestEvent().clear();
         strategy.handleInitTokenCreation(model, AutomatonFactory.eINSTANCE);
         model.setLatestEvent(event);
         cepUpdateCompleteProvider.latestEventHandled();
@@ -165,8 +158,8 @@ public class DefaultEventModelManager implements IEventModelManager {
     }
 
     @Override
-    public Map<Automaton, Boolean> getWasEnabledForTheLatestEvent() {
-        return wasEnabledForTheLatestEvent;
+    public List<Automaton> getEnabledAutomataForTheLatestEvent() {
+        return model.getEnabledForTheLatestEvent();
     }
 
     @Override
@@ -186,23 +179,16 @@ public class DefaultEventModelManager implements IEventModelManager {
 
     @Override
     public void callbackOnFiredToken(Transition transition, EventToken eventTokenToMove) {
-        EObject state = transition.eContainer();
-        if (!(state instanceof State)) {
+        EObject automaton = eventTokenToMove.eContainer();
+        if (!(automaton instanceof Automaton)) {
             return;
         }
 
-        EObject container = ((State) state).eContainer();
-        if (!(container instanceof Automaton)) {
-            return;
-        }
-
-        wasEnabledForTheLatestEvent.put(((Automaton) container), true);
-        eventTokensToClear.add(eventTokenToMove);
+        model.getEnabledForTheLatestEvent().add(((Automaton) automaton));
     }
 
     @Override
     public void callbackOnPatternRecognition(IObservableComplexEventPattern observedPattern) {
         // NOP
     }
-
 }

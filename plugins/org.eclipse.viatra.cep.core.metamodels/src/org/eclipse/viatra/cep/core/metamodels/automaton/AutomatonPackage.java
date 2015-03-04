@@ -88,13 +88,31 @@ public interface AutomatonPackage extends EPackage {
     int INTERNAL_MODEL__LATEST_EVENT = 1;
 
     /**
+     * The feature id for the '<em><b>Enabled For The Latest Event</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INTERNAL_MODEL__ENABLED_FOR_THE_LATEST_EVENT = 2;
+
+    /**
+     * The feature id for the '<em><b>Event Tokens In Model</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int INTERNAL_MODEL__EVENT_TOKENS_IN_MODEL = 3;
+
+    /**
      * The number of structural features of the '<em>Internal Model</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int INTERNAL_MODEL_FEATURE_COUNT = 2;
+    int INTERNAL_MODEL_FEATURE_COUNT = 4;
 
     /**
      * The number of operations of the '<em>Internal Model</em>' class.
@@ -1044,6 +1062,28 @@ public interface AutomatonPackage extends EPackage {
     EReference getInternalModel_LatestEvent();
 
     /**
+     * Returns the meta object for the reference list '{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getEnabledForTheLatestEvent <em>Enabled For The Latest Event</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference list '<em>Enabled For The Latest Event</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getEnabledForTheLatestEvent()
+     * @see #getInternalModel()
+     * @generated
+     */
+    EReference getInternalModel_EnabledForTheLatestEvent();
+
+    /**
+     * Returns the meta object for the reference list '{@link org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getEventTokensInModel <em>Event Tokens In Model</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference list '<em>Event Tokens In Model</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel#getEventTokensInModel()
+     * @see #getInternalModel()
+     * @generated
+     */
+    EReference getInternalModel_EventTokensInModel();
+
+    /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton <em>Automaton</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1538,6 +1578,22 @@ public interface AutomatonPackage extends EPackage {
          * @generated
          */
         EReference INTERNAL_MODEL__LATEST_EVENT = eINSTANCE.getInternalModel_LatestEvent();
+
+        /**
+         * The meta object literal for the '<em><b>Enabled For The Latest Event</b></em>' reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference INTERNAL_MODEL__ENABLED_FOR_THE_LATEST_EVENT = eINSTANCE.getInternalModel_EnabledForTheLatestEvent();
+
+        /**
+         * The meta object literal for the '<em><b>Event Tokens In Model</b></em>' reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference INTERNAL_MODEL__EVENT_TOKENS_IN_MODEL = eINSTANCE.getInternalModel_EventTokensInModel();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl <em>Automaton</em>}' class.

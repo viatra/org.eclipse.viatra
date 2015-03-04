@@ -18,3 +18,9 @@ pattern finalStates(this : Automaton, finalState : FinalState){
 pattern trapState(this : Automaton, trapState : TrapState){
 	Automaton.states(this, trapState);
 }
+
+@QueryBasedFeature
+pattern eventTokensInModel(this : InternalModel, eventToken : EventToken){
+	InternalModel.automata(this, automaton);
+	Automaton.eventTokens(automaton, eventToken);
+}

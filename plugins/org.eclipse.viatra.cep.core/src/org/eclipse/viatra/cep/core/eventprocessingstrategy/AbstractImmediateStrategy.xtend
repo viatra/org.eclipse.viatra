@@ -60,6 +60,6 @@ abstract class AbstractImmediateStrategy extends AbstractStrategy {
 	}
 
 	def private needsReset(Automaton automaton) {
-		!(eventModelManager.wasEnabledForTheLatestEvent.containsKey(automaton));
+		!(eventModelManager.enabledAutomataForTheLatestEvent.contains(automaton));
 	}
 }

@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra.cep.core.engine;
 
-import java.util.Map;
+import java.util.List;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
@@ -30,7 +30,7 @@ public interface IEventModelManager {
 
     CepRealm getCepRealm();
 
-    Map<Automaton, Boolean> getWasEnabledForTheLatestEvent();
+    List<Automaton> getEnabledAutomataForTheLatestEvent();
 
     void registerNewEventStream(EventStream newEventStream);
 

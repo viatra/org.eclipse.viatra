@@ -9,6 +9,15 @@
         eType="#//Automaton" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="latestEvent" eType="ecore:EClass Cep.ecore#//Event"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="enabledForTheLatestEvent"
+        upperBound="-1" eType="#//Automaton"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eventTokensInModel" upperBound="-1"
+        eType="#//EventToken" changeable="false" volatile="true" transient="true"
+        derived="true">
+      <eAnnotations source="org.eclipse.incquery.querybasedfeature">
+        <details key="patternFQN" value="org.eclipse.viatra.cep.core.metamodels.derived.eventTokensInModel"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Automaton">
     <eStructuralFeatures xsi:type="ecore:EReference" name="states" upperBound="-1"

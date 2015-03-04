@@ -243,6 +243,24 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      * <!-- end-user-doc -->
      * @generated
      */
+    public EReference getInternalModel_EnabledForTheLatestEvent() {
+        return (EReference)internalModelEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getInternalModel_EventTokensInModel() {
+        return (EReference)internalModelEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getAutomaton() {
         return automatonEClass;
     }
@@ -647,6 +665,8 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         internalModelEClass = createEClass(INTERNAL_MODEL);
         createEReference(internalModelEClass, INTERNAL_MODEL__AUTOMATA);
         createEReference(internalModelEClass, INTERNAL_MODEL__LATEST_EVENT);
+        createEReference(internalModelEClass, INTERNAL_MODEL__ENABLED_FOR_THE_LATEST_EVENT);
+        createEReference(internalModelEClass, INTERNAL_MODEL__EVENT_TOKENS_IN_MODEL);
 
         automatonEClass = createEClass(AUTOMATON);
         createEReference(automatonEClass, AUTOMATON__STATES);
@@ -749,6 +769,8 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         initEClass(internalModelEClass, InternalModel.class, "InternalModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getInternalModel_Automata(), this.getAutomaton(), null, "automata", null, 0, -1, InternalModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getInternalModel_LatestEvent(), theEventsPackage.getEvent(), null, "latestEvent", null, 0, 1, InternalModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getInternalModel_EnabledForTheLatestEvent(), this.getAutomaton(), null, "enabledForTheLatestEvent", null, 0, -1, InternalModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getInternalModel_EventTokensInModel(), this.getEventToken(), null, "eventTokensInModel", null, 0, -1, InternalModel.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
         initEClass(automatonEClass, Automaton.class, "Automaton", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getAutomaton_States(), this.getState(), null, "states", null, 0, -1, Automaton.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -849,6 +871,12 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      */
     protected void createOrgAnnotations() {
         String source = "org.eclipse.incquery.querybasedfeature";	
+        addAnnotation
+          (getInternalModel_EventTokensInModel(), 
+           source, 
+           new String[] {
+             "patternFQN", "org.eclipse.viatra.cep.core.metamodels.derived.eventTokensInModel"
+           });	
         addAnnotation
           (getAutomaton_InitialState(), 
            source, 

@@ -18,6 +18,8 @@
     <genClasses ecoreClass="Automaton.ecore#//InternalModel">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//InternalModel/automata"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//InternalModel/latestEvent"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//InternalModel/enabledForTheLatestEvent"/>
+      <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference Automaton.ecore#//InternalModel/eventTokensInModel"/>
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//Automaton">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//Automaton/states"/>
