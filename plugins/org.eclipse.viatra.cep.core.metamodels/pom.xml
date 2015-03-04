@@ -35,12 +35,12 @@
 					<outputDirectory>src-gen</outputDirectory>
 					<metamodels>
 						<metamodel>
-							<packageClass>org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
-							<genmodelUri>/models/InternalModel.genmodel</genmodelUri>
+							<packageClass>src/org/eclipse/viatra/cep/core/metamodels/events/org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
+							<genmodelUri>models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 						<metamodel>
 							<packageClass>org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage</packageClass>
-							<genmodelUri>/models/InternalModel.genmodel</genmodelUri>
+							<genmodelUri>models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 					</metamodels>
 				</configuration>
