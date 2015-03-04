@@ -43,7 +43,6 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
-import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
