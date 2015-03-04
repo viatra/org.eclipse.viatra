@@ -15,9 +15,6 @@
 			<resource>
 				<directory>src</directory>
 			</resource>
-			<resource>
-				<directory>src-gen</directory>
-			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -35,7 +32,7 @@
 					<outputDirectory>src-gen</outputDirectory>
 					<metamodels>
 						<metamodel>
-							<packageClass>src/org/eclipse/viatra/cep/core/metamodels/events/org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
+							<packageClass>org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
 							<genmodelUri>models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 						<metamodel>
