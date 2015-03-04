@@ -44,7 +44,7 @@ abstract class AbstractImmediateStrategy extends AbstractStrategy {
 				state.clear
 			]
 			model.setLatestEvent(null);
-			var initState = eventModelManager.initStatesForAutomata.get(automaton)
+			var initState = automaton.initialState
 			if (initState.empty) {
 				newEventToken(automaton, initState)
 			}

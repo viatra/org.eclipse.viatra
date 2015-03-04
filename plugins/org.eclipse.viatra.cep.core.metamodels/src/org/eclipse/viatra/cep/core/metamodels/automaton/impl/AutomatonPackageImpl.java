@@ -288,6 +288,33 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
      * <!-- end-user-doc -->
      * @generated
      */
+    public EReference getAutomaton_InitialState() {
+        return (EReference)automatonEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getAutomaton_FinalStates() {
+        return (EReference)automatonEClass.getEStructuralFeatures().get(5);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getAutomaton_TrapState() {
+        return (EReference)automatonEClass.getEStructuralFeatures().get(6);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getEventToken() {
         return eventTokenEClass;
     }
@@ -626,6 +653,9 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         createEReference(automatonEClass, AUTOMATON__EVENT_PATTERN);
         createEReference(automatonEClass, AUTOMATON__EVENT_TOKENS);
         createEReference(automatonEClass, AUTOMATON__TIMED_ZONES);
+        createEReference(automatonEClass, AUTOMATON__INITIAL_STATE);
+        createEReference(automatonEClass, AUTOMATON__FINAL_STATES);
+        createEReference(automatonEClass, AUTOMATON__TRAP_STATE);
 
         eventTokenEClass = createEClass(EVENT_TOKEN);
         createEReference(eventTokenEClass, EVENT_TOKEN__CURRENT_STATE);
@@ -725,6 +755,9 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
         initEReference(getAutomaton_EventPattern(), theEventsPackage.getEventPattern(), theEventsPackage.getEventPattern_Automaton(), "eventPattern", null, 1, 1, Automaton.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getAutomaton_EventTokens(), this.getEventToken(), null, "eventTokens", null, 0, -1, Automaton.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getAutomaton_TimedZones(), this.getTimedZone(), null, "timedZones", null, 0, -1, Automaton.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getAutomaton_InitialState(), this.getInitState(), null, "initialState", null, 1, 1, Automaton.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+        initEReference(getAutomaton_FinalStates(), this.getFinalState(), null, "finalStates", null, 1, -1, Automaton.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+        initEReference(getAutomaton_TrapState(), this.getTrapState(), null, "trapState", null, 1, 1, Automaton.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
         initEClass(eventTokenEClass, EventToken.class, "EventToken", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getEventToken_CurrentState(), this.getState(), this.getState_EventTokens(), "currentState", null, 0, 1, EventToken.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -784,6 +817,56 @@ public class AutomatonPackageImpl extends EPackageImpl implements AutomatonPacka
 
         // Create resource
         createResource(eNS_URI);
+
+        // Create annotations
+        // http://www.eclipse.org/emf/2002/Ecore
+        createEcoreAnnotations();
+        // org.eclipse.incquery.querybasedfeature
+        createOrgAnnotations();
+    }
+
+    /**
+     * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/Ecore</b>.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void createEcoreAnnotations() {
+        String source = "http://www.eclipse.org/emf/2002/Ecore";	
+        addAnnotation
+          (this, 
+           source, 
+           new String[] {
+             "settingDelegates", "org.eclipse.incquery.querybasedfeature"
+           });
+    }
+
+    /**
+     * Initializes the annotations for <b>org.eclipse.incquery.querybasedfeature</b>.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void createOrgAnnotations() {
+        String source = "org.eclipse.incquery.querybasedfeature";	
+        addAnnotation
+          (getAutomaton_InitialState(), 
+           source, 
+           new String[] {
+             "patternFQN", "org.eclipse.viatra.cep.core.metamodels.derived.initialState"
+           });	
+        addAnnotation
+          (getAutomaton_FinalStates(), 
+           source, 
+           new String[] {
+             "patternFQN", "org.eclipse.viatra.cep.core.metamodels.derived.finalStates"
+           });	
+        addAnnotation
+          (getAutomaton_TrapState(), 
+           source, 
+           new String[] {
+             "patternFQN", "org.eclipse.viatra.cep.core.metamodels.derived.trapState"
+           });
     }
 
 } //AutomatonPackageImpl

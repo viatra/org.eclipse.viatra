@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.core.engine.runtime
 
+import com.google.common.base.Preconditions
 import java.util.Map
 import org.apache.log4j.Logger
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification
@@ -19,13 +20,10 @@ import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPatte
 import org.eclipse.viatra.cep.core.engine.IEventModelManager
 import org.eclipse.viatra.cep.core.engine.timing.TimingTable
 import org.eclipse.viatra.cep.core.logging.LoggerUtils
-import org.eclipse.viatra.cep.core.metamodels.automaton.TrapState
 import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup
 import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
 import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformation
 import org.eclipse.xtend.lib.annotations.Accessors
-
-import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
 
 class ModelHandlingRules {
 
@@ -76,22 +74,18 @@ class ModelHandlingRules {
 
 	val createFinishedAutomatonRule = createRule().name("finished automaton rule").precondition(finishedAutomaton).
 		action [
-			automaton.finalState.eventTokens.remove(0)
+			Preconditions::checkArgument(automaton.finalStates.size == 1)
+			automaton.eventTokens.remove(eventToken)
 			var observedPattern = new ObservedComplexEventPattern(automaton)
 			eventModelManager.callbackOnPatternRecognition(observedPattern)
 			eventModelManager.cepRealm.forwardObservedEventPattern(observedPattern)
 		].build
 
 	val createTokenInTrapStateRule = createRule().name("trap state rule").precondition(tokenInTrapState).action [
-		var currentState = eventToken.currentState
-		if (!(currentState instanceof TrapState)) {
-			return
-		}
 		debug(String::format("Event token found in the trap state for pattern %s.", eventPattern.id));
-		//		var eventPattern = (currentState.eContainer() as Automaton).getEventPattern();
-		//		var failedPattern = new InTrapComplexEventPattern(eventPattern)
+		//		var failedPattern = new InTrapComplexEventPattern(automaton)
 		//		eventModelManager.cepRealm.forwardFailedEventPattern(failedPattern)
-		currentState.eventTokens.clear
+		automaton.eventTokens.remove(eventToken)
 	].build
 
 	val createTokenEntersTimedZoneRule = createRule().name("token enters timed zone rule").precondition(

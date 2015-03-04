@@ -18,8 +18,6 @@ import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.evm.CepRealm;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
-import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState;
-import org.eclipse.viatra.cep.core.metamodels.automaton.InitState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
@@ -31,18 +29,6 @@ public interface IEventModelManager {
     ResourceSet getResourceSet();
 
     CepRealm getCepRealm();
-
-    /**
-     * This is a cache functionality to track init states, e.g. in automaton reset scenarios in immediate event
-     * processing contexts. Should be replaced by a direct Automaton->InitState reference in the metamodel.
-     */
-    Map<Automaton, InitState> getInitStatesForAutomata();
-
-    /**
-     * This is a cache functionality for quickly finding the Final states of an automaton when removing tokens from
-     * there. Should be replaced by a direct Automaton->FinalState reference in the metamodel.
-     */
-    Map<Automaton, FinalState> getFinalStatesForAutomata();
 
     Map<Automaton, Boolean> getWasEnabledForTheLatestEvent();
 

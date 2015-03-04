@@ -4,16 +4,20 @@ Bundle-Name: VIATRA-CEP Metamodels
 Bundle-SymbolicName: org.eclipse.viatra.cep.core.metamodels;singleton:=true
 Bundle-Version: 0.7.0.qualifier
 Bundle-ClassPath: .
+Bundle-Activator: org.eclipse.viatra.cep.core.metamodels.internal.Activator
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Localization: plugin
-Bundle-Activator: org.eclipse.viatra.cep.core.metamodels.internal.Activator
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore;visibility:=reexport
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.viatra.cep.core.metamodels.automaton,
  org.eclipse.viatra.cep.core.metamodels.automaton.impl,
  org.eclipse.viatra.cep.core.metamodels.automaton.util,
+ org.eclipse.viatra.cep.core.metamodels.derived,
+ org.eclipse.viatra.cep.core.metamodels.derived.util,
  org.eclipse.viatra.cep.core.metamodels.events,
  org.eclipse.viatra.cep.core.metamodels.events.impl,
  org.eclipse.viatra.cep.core.metamodels.events.util
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.incquery.runtime;bundle-version="1.0.0"
+Import-Package: org.apache.log4j
 Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

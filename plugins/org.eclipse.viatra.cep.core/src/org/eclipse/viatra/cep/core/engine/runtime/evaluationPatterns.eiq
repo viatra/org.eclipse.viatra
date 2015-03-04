@@ -14,40 +14,22 @@ import "cep.meta"
 import "automaton.meta"
 import "http://www.eclipse.org/emf/2002/Ecore"
 
-pattern finishedAutomaton(automaton : Automaton, et : EventToken) {
-	Automaton.states(automaton, state);
-	find finalState(state, et);
-	EventToken.currentState(_, state);
-}
-
-pattern finalState(state : State, eventToken : EventToken) {
-	State.label(state, label);
-	State.eventTokens(state, eventToken);
-	check(label.equalsIgnoreCase("final"));
-}
+////////////EVENT PROCESSING////////////
 
 pattern latestEvent(event : Event) {
 	InternalModel.latestEvent(_, event);
 }
 
-pattern preState(transition : TypedTransition, state : State) {
-	TypedTransition.preState(transition, state);
+////////////TOKEN BASED OPERATIONS////////////
+pattern finishedAutomaton(automaton : Automaton, eventToken : EventToken) {
+	Automaton.finalStates(automaton, finalState);
+	EventToken.currentState(eventToken, finalState);
 }
 
-pattern guardAtomicPattern(guard : Guard, atomicPattern : AtomicEventPattern) {
-	Guard.eventType(guard, atomicPattern);
-}
-
-pattern eventProcessedByEventToken(event : Event, eventToken : EventToken) {
-	EventToken.lastProcessed(eventToken, event);
-}
-
-pattern eventProcessed(event : Event) {
-	Event.isProcessed(event, true);
-}
-
-pattern atomicPatternType(atomicEventPattern : AtomicEventPattern, type : EString) {
-	AtomicEventPattern.type(atomicEventPattern, type);
+pattern tokenInTrapState(automaton : Automaton, eventToken : EventToken, eventPattern : EventPattern) {
+	Automaton.trapState(automaton, trapState);
+	TrapState.eventTokens(trapState, eventToken);
+	Automaton.eventPattern(automaton, eventPattern);
 }
 
 pattern enabledTransition(transition : TypedTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern) {
@@ -62,26 +44,21 @@ pattern enabledTransition(transition : TypedTransition, eventToken : EventToken,
 	Automaton.eventPattern(automaton, eventPattern);
 }
 
-pattern tokenInTrapState(eventToken : EventToken, eventPattern : EventPattern) {
-	TrapState.eventTokens(trapState, eventToken);
-	
-	Automaton.states(automaton, trapState);
-	Automaton.eventPattern(automaton, eventPattern);
+pattern eventProcessedByEventToken(event : Event, eventToken : EventToken) {
+	EventToken.lastProcessed(eventToken, event);
 }
 
-pattern initState(state : InitState) {
-	InitState(state);
-}
-
-pattern partiallyMatchedEventPattern(eventToken : EventToken, state : State) {
+pattern partiallyMatchedEventPattern(automaton : Automaton, eventToken : EventToken, state : State) {
+	Automaton.eventTokens(automaton, eventToken);
 	State.eventTokens(state, eventToken);
-	neg find initState(state);
+	neg find initState(automaton, state);
 }
 
-pattern epsilonTransitionBetweenStates(transition : EpsilonTransition, state1 : State, state2 : State) {
-	State.outTransitions(state1, transition);
-	State.inTransitions(state2, transition);
+pattern initState(automaton : Automaton, initState : InitState) {
+	Automaton.initialState(automaton, initState);
 }
+
+////////////TIMING PATTERNS////////////
 
 pattern tokenEntersTimedZone(eventToken : EventToken, state : State, timedZone : TimedZone) {
 	EventToken.currentState(eventToken, state);

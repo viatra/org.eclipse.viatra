@@ -101,7 +101,6 @@ public class CEPEngine {
         for (ICepRule rule : rules) {
             addSingleRule(rule);
         }
-        eventModelManager.initializeAutomatons();
     }
 
     /**
@@ -112,7 +111,6 @@ public class CEPEngine {
      */
     public void addRule(ICepRule rule) {
         addSingleRule(rule);
-        eventModelManager.initializeAutomatons();
     }
 
     /**

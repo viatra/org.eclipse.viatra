@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EReference;
  * <!-- end-user-doc -->
  * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
  * @model kind="package"
+ *        annotation="http://www.eclipse.org/emf/2002/Ecore settingDelegates='org.eclipse.incquery.querybasedfeature'"
  * @generated
  */
 public interface AutomatonPackage extends EPackage {
@@ -151,13 +152,40 @@ public interface AutomatonPackage extends EPackage {
     int AUTOMATON__TIMED_ZONES = 3;
 
     /**
+     * The feature id for the '<em><b>Initial State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int AUTOMATON__INITIAL_STATE = 4;
+
+    /**
+     * The feature id for the '<em><b>Final States</b></em>' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int AUTOMATON__FINAL_STATES = 5;
+
+    /**
+     * The feature id for the '<em><b>Trap State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int AUTOMATON__TRAP_STATE = 6;
+
+    /**
      * The number of structural features of the '<em>Automaton</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int AUTOMATON_FEATURE_COUNT = 4;
+    int AUTOMATON_FEATURE_COUNT = 7;
 
     /**
      * The number of operations of the '<em>Automaton</em>' class.
@@ -1070,6 +1098,39 @@ public interface AutomatonPackage extends EPackage {
     EReference getAutomaton_TimedZones();
 
     /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getInitialState <em>Initial State</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference '<em>Initial State</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getInitialState()
+     * @see #getAutomaton()
+     * @generated
+     */
+    EReference getAutomaton_InitialState();
+
+    /**
+     * Returns the meta object for the reference list '{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getFinalStates <em>Final States</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference list '<em>Final States</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getFinalStates()
+     * @see #getAutomaton()
+     * @generated
+     */
+    EReference getAutomaton_FinalStates();
+
+    /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getTrapState <em>Trap State</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the reference '<em>Trap State</em>'.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getTrapState()
+     * @see #getAutomaton()
+     * @generated
+     */
+    EReference getAutomaton_TrapState();
+
+    /**
      * Returns the meta object for class '{@link org.eclipse.viatra.cep.core.metamodels.automaton.EventToken <em>Event Token</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1519,6 +1580,30 @@ public interface AutomatonPackage extends EPackage {
          * @generated
          */
         EReference AUTOMATON__TIMED_ZONES = eINSTANCE.getAutomaton_TimedZones();
+
+        /**
+         * The meta object literal for the '<em><b>Initial State</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference AUTOMATON__INITIAL_STATE = eINSTANCE.getAutomaton_InitialState();
+
+        /**
+         * The meta object literal for the '<em><b>Final States</b></em>' reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference AUTOMATON__FINAL_STATES = eINSTANCE.getAutomaton_FinalStates();
+
+        /**
+         * The meta object literal for the '<em><b>Trap State</b></em>' reference feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference AUTOMATON__TRAP_STATE = eINSTANCE.getAutomaton_TrapState();
 
         /**
          * The meta object literal for the '{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.EventTokenImpl <em>Event Token</em>}' class.

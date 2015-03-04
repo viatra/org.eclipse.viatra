@@ -20,6 +20,9 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getEventPattern <em>Event Pattern</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getEventTokens <em>Event Tokens</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getTimedZones <em>Timed Zones</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getInitialState <em>Initial State</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getFinalStates <em>Final States</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.Automaton#getTrapState <em>Trap State</em>}</li>
  * </ul>
  * </p>
  *
@@ -103,5 +106,54 @@ public interface Automaton extends EObject {
      * @generated
      */
     EList<TimedZone> getTimedZones();
+
+    /**
+     * Returns the value of the '<em><b>Initial State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Initial State</em>' reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Initial State</em>' reference.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getAutomaton_InitialState()
+     * @model required="true" transient="true" changeable="false" volatile="true" derived="true"
+     *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='org.eclipse.viatra.cep.core.metamodels.derived.initialState'"
+     * @generated
+     */
+    InitState getInitialState();
+
+    /**
+     * Returns the value of the '<em><b>Final States</b></em>' reference list.
+     * The list contents are of type {@link org.eclipse.viatra.cep.core.metamodels.automaton.FinalState}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Final States</em>' reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Final States</em>' reference list.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getAutomaton_FinalStates()
+     * @model required="true" transient="true" changeable="false" volatile="true" derived="true"
+     *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='org.eclipse.viatra.cep.core.metamodels.derived.finalStates'"
+     * @generated
+     */
+    EList<FinalState> getFinalStates();
+
+    /**
+     * Returns the value of the '<em><b>Trap State</b></em>' reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Trap State</em>' reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Trap State</em>' reference.
+     * @see org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage#getAutomaton_TrapState()
+     * @model required="true" transient="true" changeable="false" volatile="true" derived="true"
+     *        annotation="org.eclipse.incquery.querybasedfeature patternFQN='org.eclipse.viatra.cep.core.metamodels.derived.trapState'"
+     * @generated
+     */
+    TrapState getTrapState();
 
 } // Automaton

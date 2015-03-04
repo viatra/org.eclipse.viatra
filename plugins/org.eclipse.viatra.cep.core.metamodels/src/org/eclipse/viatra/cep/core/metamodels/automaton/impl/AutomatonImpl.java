@@ -10,6 +10,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -21,9 +22,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
+import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState;
+import org.eclipse.viatra.cep.core.metamodels.automaton.InitState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
 
+import org.eclipse.viatra.cep.core.metamodels.automaton.TrapState;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
 
@@ -38,6 +42,9 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventsPackage;
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getEventPattern <em>Event Pattern</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getEventTokens <em>Event Tokens</em>}</li>
  *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getTimedZones <em>Timed Zones</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getInitialState <em>Initial State</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getFinalStates <em>Final States</em>}</li>
+ *   <li>{@link org.eclipse.viatra.cep.core.metamodels.automaton.impl.AutomatonImpl#getTrapState <em>Trap State</em>}</li>
  * </ul>
  * </p>
  *
@@ -83,6 +90,36 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
      * @ordered
      */
     protected EList<TimedZone> timedZones;
+
+    /**
+     * The cached setting delegate for the '{@link #getInitialState() <em>Initial State</em>}' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getInitialState()
+     * @generated
+     * @ordered
+     */
+    protected EStructuralFeature.Internal.SettingDelegate INITIAL_STATE__ESETTING_DELEGATE = ((EStructuralFeature.Internal)AutomatonPackage.Literals.AUTOMATON__INITIAL_STATE).getSettingDelegate();
+
+    /**
+     * The cached setting delegate for the '{@link #getFinalStates() <em>Final States</em>}' reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getFinalStates()
+     * @generated
+     * @ordered
+     */
+    protected EStructuralFeature.Internal.SettingDelegate FINAL_STATES__ESETTING_DELEGATE = ((EStructuralFeature.Internal)AutomatonPackage.Literals.AUTOMATON__FINAL_STATES).getSettingDelegate();
+
+    /**
+     * The cached setting delegate for the '{@link #getTrapState() <em>Trap State</em>}' reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getTrapState()
+     * @generated
+     * @ordered
+     */
+    protected EStructuralFeature.Internal.SettingDelegate TRAP_STATE__ESETTING_DELEGATE = ((EStructuralFeature.Internal)AutomatonPackage.Literals.AUTOMATON__TRAP_STATE).getSettingDelegate();
 
     /**
      * <!-- begin-user-doc -->
@@ -204,6 +241,52 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
      * <!-- end-user-doc -->
      * @generated
      */
+    public InitState getInitialState() {
+        return (InitState)INITIAL_STATE__ESETTING_DELEGATE.dynamicGet(this, null, 0, true, false);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public InitState basicGetInitialState() {
+        return (InitState)INITIAL_STATE__ESETTING_DELEGATE.dynamicGet(this, null, 0, false, false);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @SuppressWarnings("unchecked")
+    public EList<FinalState> getFinalStates() {
+        return (EList<FinalState>)FINAL_STATES__ESETTING_DELEGATE.dynamicGet(this, null, 0, true, false);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public TrapState getTrapState() {
+        return (TrapState)TRAP_STATE__ESETTING_DELEGATE.dynamicGet(this, null, 0, true, false);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public TrapState basicGetTrapState() {
+        return (TrapState)TRAP_STATE__ESETTING_DELEGATE.dynamicGet(this, null, 0, false, false);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -252,6 +335,14 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
                 return getEventTokens();
             case AutomatonPackage.AUTOMATON__TIMED_ZONES:
                 return getTimedZones();
+            case AutomatonPackage.AUTOMATON__INITIAL_STATE:
+                if (resolve) return getInitialState();
+                return basicGetInitialState();
+            case AutomatonPackage.AUTOMATON__FINAL_STATES:
+                return getFinalStates();
+            case AutomatonPackage.AUTOMATON__TRAP_STATE:
+                if (resolve) return getTrapState();
+                return basicGetTrapState();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -324,6 +415,12 @@ public class AutomatonImpl extends MinimalEObjectImpl.Container implements Autom
                 return eventTokens != null && !eventTokens.isEmpty();
             case AutomatonPackage.AUTOMATON__TIMED_ZONES:
                 return timedZones != null && !timedZones.isEmpty();
+            case AutomatonPackage.AUTOMATON__INITIAL_STATE:
+                return INITIAL_STATE__ESETTING_DELEGATE.dynamicIsSet(this, null, 0);
+            case AutomatonPackage.AUTOMATON__FINAL_STATES:
+                return FINAL_STATES__ESETTING_DELEGATE.dynamicIsSet(this, null, 0);
+            case AutomatonPackage.AUTOMATON__TRAP_STATE:
+                return TRAP_STATE__ESETTING_DELEGATE.dynamicIsSet(this, null, 0);
         }
         return super.eIsSet(featureID);
     }

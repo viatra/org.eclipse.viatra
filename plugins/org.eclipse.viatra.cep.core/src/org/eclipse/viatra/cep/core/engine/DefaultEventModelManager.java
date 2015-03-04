@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Adapter;
@@ -44,8 +43,6 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
-import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState;
-import org.eclipse.viatra.cep.core.metamodels.automaton.InitState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
@@ -71,8 +68,6 @@ public class DefaultEventModelManager implements IEventModelManager {
             cepUpdateCompleteProvider);
 
     // cache
-    private Map<Automaton, FinalState> finalStatesForAutomata = new LinkedHashMap<Automaton, FinalState>();
-    private Map<Automaton, InitState> initStatesForAutomata = new LinkedHashMap<Automaton, InitState>();
     private Map<Automaton, Boolean> wasEnabledForTheLatestEvent = new LinkedHashMap<Automaton, Boolean>();
     private List<EventToken> eventTokensToClear = Lists.newArrayList();
 
@@ -123,21 +118,9 @@ public class DefaultEventModelManager implements IEventModelManager {
         new ModelHandlingRules(this).registerRulesWithCustomPriorities();
     }
 
-    public void initializeAutomatons() {
-        for (Entry<Automaton, InitState> entry : initStatesForAutomata.entrySet()) {
-            if (entry.getValue().getEventTokens().isEmpty()) {
-                EventToken token = AutomatonFactory.eINSTANCE.createEventToken();
-                token.setCurrentState(entry.getValue());
-                entry.getKey().getEventTokens().add(token);
-            }
-        }
-    }
-
     public Automaton getAutomaton(EventPattern eventPattern) {
         Compiler compiler = new Compiler(model);
         Automaton automaton = compiler.compile(eventPattern);
-        finalStatesForAutomata.put(automaton, compiler.getFinalState());
-        initStatesForAutomata.put(automaton, compiler.getInitState());
 
         wasEnabledForTheLatestEvent.put(automaton, true);
 
@@ -179,16 +162,6 @@ public class DefaultEventModelManager implements IEventModelManager {
     @Override
     public CepRealm getCepRealm() {
         return cepRealm;
-    }
-
-    @Override
-    public Map<Automaton, InitState> getInitStatesForAutomata() {
-        return initStatesForAutomata;
-    }
-
-    @Override
-    public Map<Automaton, FinalState> getFinalStatesForAutomata() {
-        return finalStatesForAutomata;
     }
 
     @Override

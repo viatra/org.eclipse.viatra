@@ -1,0 +1,20 @@
+package org.eclipse.viatra.cep.core.metamodels.derived
+
+import "cep.meta"
+import "automaton.meta"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+@QueryBasedFeature
+pattern initialState(this : Automaton, initState : InitState){
+	Automaton.states(this, initState);
+}
+
+@QueryBasedFeature
+pattern finalStates(this : Automaton, finalState : FinalState){
+	Automaton.states(this, finalState);
+}
+
+@QueryBasedFeature
+pattern trapState(this : Automaton, trapState : TrapState){
+	Automaton.states(this, trapState);
+}

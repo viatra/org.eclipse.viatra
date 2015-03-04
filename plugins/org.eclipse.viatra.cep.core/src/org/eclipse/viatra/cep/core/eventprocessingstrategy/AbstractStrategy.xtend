@@ -72,8 +72,8 @@ abstract class AbstractStrategy implements IEventProcessingStrategy {
 	override public handleInitTokenCreation(InternalModel model, AutomatonFactory factory) {
 
 		model.automata.forEach [ automaton |
-			if (automaton.initState.empty) {
-				newEventToken(automaton, automaton.initState)
+			if (automaton.initialState.empty) {
+				newEventToken(automaton, automaton.initialState)
 			}
 		]
 	}
