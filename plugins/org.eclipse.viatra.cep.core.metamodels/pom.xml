@@ -44,13 +44,6 @@
 						</metamodel>
 					</metamodels>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.viatra</groupId>
-						<artifactId>org.eclipse.viatra.cep.core.metamodels</artifactId>
-						<version>${project.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
