@@ -11,7 +11,6 @@
 package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -25,6 +24,7 @@ import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
+import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 
 public class HillClimbingStrategy implements IStrategy {
@@ -40,14 +40,11 @@ public class HillClimbingStrategy implements IStrategy {
     private boolean interrupted;
     private HillClimbingStrategyState state = HillClimbingStrategyState.TRY_AND_SAVE;
 
-    private HashMap<ITransition, Fitness> objeciveValues = new HashMap<ITransition, Fitness>();
     private int triedTransitions = 0;
     private Fitness bestFitness = null;
     private Random rnd = new Random();
 
     private ObjectiveComparatorHelper objectiveComparatorHelper;
-    private ITransition bestTransition = null;
-    private ITransition lastBestTransition = null;
 
     private ISolutionStore solutionStore;
 
@@ -120,35 +117,25 @@ public class HillClimbingStrategy implements IStrategy {
             } else {
                 logger.debug("Comparing fitnesses.");
 
-                // TODO random from first front
-                for (ITransition transition : objeciveValues.keySet()) {
-                    if (bestTransition == null) {
-                        // runs only once, after that the last transition is used.
-                        bestTransition = transition;
-                        bestFitness = objeciveValues.get(bestTransition);
-                    } else {
-                        Fitness fitness = objeciveValues.get(transition);
-                        if (objectiveComparatorHelper.compare(bestFitness, fitness) <= 0) {
-                            bestTransition = transition;
-                            bestFitness = fitness;
-                        }
-                    }
-                }
-
-                if (lastBestTransition == null) {
-                    lastBestTransition = bestTransition;
-                } else if (lastBestTransition.equals(bestTransition)) {
+                TrajectoryFitness bestTrajectoryFitness = objectiveComparatorHelper.getRandomBest();
+                objectiveComparatorHelper.clearTrajectoryFitnesses();
+                
+                int compare = objectiveComparatorHelper.compare(bestFitness, bestTrajectoryFitness.fitness);
+                
+                if (compare >= 0) {
                     solutionStore.newSolution(context);
                     logger.debug(dsm.getTrajectoryInfo().toString());
                     return null;
                 }
+                else {
+                    bestFitness = bestTrajectoryFitness.fitness;
+                }
 
                 triedTransitions = 0;
-                objeciveValues.clear();
                 state = HillClimbingStrategyState.TRY_AND_SAVE;
 
+                ITransition bestTransition = bestTrajectoryFitness.trajectory[0];
                 logger.debug("Best transition: " + bestTransition.getId() + " with fitness " + bestFitness);
-
                 dsm.fireActivation(bestTransition);
             }
 
@@ -161,10 +148,16 @@ public class HillClimbingStrategy implements IStrategy {
     public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
             boolean constraintsNotSatisfied) {
 
+        if (dsm.getTrajectoryInfo().getDepthFromRoot() == 0) {
+            bestFitness = fitness;
+            logger.debug("Fitness of the root state: " + fitness);
+            return;
+        }
+        
         if (state == HillClimbingStrategyState.TRY_AND_SAVE) {
             if (!constraintsNotSatisfied) {
                 logger.debug("Fitness of last transformation: " + fitness);
-                objeciveValues.put(dsm.getTrajectoryInfo().getLastTransition(), fitness);
+                objectiveComparatorHelper.addTrajectoryFitness(new TrajectoryFitness(dsm.getTrajectoryInfo().getLastTransition(), fitness));
             } else {
                 logger.debug("Global constraints are unsatisfied.");
             }

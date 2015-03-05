@@ -36,6 +36,11 @@ public class TrajectoryFitness {
         trajectory = fullTraj.toArray(new ITransition[fullTraj.size()]);
     }
 
+    public TrajectoryFitness(ITransition transition, Fitness fitness) {
+        this.fitness = fitness;
+        trajectory = new ITransition[] {transition};
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Object[]) {
