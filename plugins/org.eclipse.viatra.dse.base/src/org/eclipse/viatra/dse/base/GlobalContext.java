@@ -269,10 +269,14 @@ public class GlobalContext {
         int actLevel = objectivesArray[0].getLevel();
         int levelIndex = 0;
         int lastIndex = 0;
-        for (int i = 1; i < objectivesArray.length; i++) {
-            if (objectivesArray[i].getLevel() != actLevel) {
-                leveledObjectives[levelIndex] = new IObjective[i - lastIndex];
-                for (int j = lastIndex; j < i; j++) {
+        int corrigationForLastLevel = 0;
+        for (int i = 0; i < objectivesArray.length; i++) {
+            if (i == objectivesArray.length-1) {
+                corrigationForLastLevel = 1;
+            }
+            if (objectivesArray[i].getLevel() != actLevel || corrigationForLastLevel == 1) {
+                leveledObjectives[levelIndex] = new IObjective[i - lastIndex + corrigationForLastLevel];
+                for (int j = lastIndex; j < i + corrigationForLastLevel; j++) {
                     leveledObjectives[levelIndex][j - lastIndex] = objectivesArray[j];
                 }
                 actLevel = objectivesArray[i].getLevel();
