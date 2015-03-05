@@ -35,6 +35,10 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
+/**
+ * This class contains static helper methods.
+ * @author Andras Szabolcs Nagy
+ */
 public final class EMFHelper {
 
     private static final Logger logger = Logger.getLogger(EMFHelper.class);
@@ -42,6 +46,11 @@ public final class EMFHelper {
     private EMFHelper() {
     }
 
+    /**
+     * Creates an {@link EditingDomain} over the given {@link EObject}.
+     * @param root
+     * @return
+     */
     public static EditingDomain createEditingDomain(EObject root) {
         // TODO maybe there is already a ted on the eobject
         EditingDomain domain = new AdapterFactoryEditingDomain(null,new BasicCommandStack());
@@ -50,15 +59,22 @@ public final class EMFHelper {
         return domain;
     }
 
+    /**
+     * Saves the EMF model into the given file. An {@link XMIResourceFactoryImpl} will be registered if not already.
+     * @param root The root of model.
+     * @param name The name or path of the file. 
+     * @param ext The extension of the file.
+     */
     public static void serializeModel(EObject root, String name, String ext) {
 
         Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
         Map<String, Object> m = reg.getExtensionToFactoryMap();
-        m.put(ext, new XMIResourceFactoryImpl());
+        if (m.get(ext) == null) {
+            m.put(ext, new XMIResourceFactoryImpl());
+        }
 
         ResourceSet resSet = new ResourceSetImpl();
-
-        URI uri = URI.createURI(name + "." + ext);
+        URI uri = URI.createFileURI(name + "." + ext);
         Resource resource = resSet.createResource(uri);
 
         resource.getContents().add(root);
@@ -70,6 +86,11 @@ public final class EMFHelper {
         }
     }
 
+    /**
+     * Clones the given model.
+     * @param root The root container object of the model.
+     * @return The cloned model.
+     */
     public static EObject clone(EObject root) {
         Copier copier = new Copier();
         EObject result = copier.copy(root);
@@ -79,6 +100,11 @@ public final class EMFHelper {
 
     }
 
+    /**
+     * Collects all the classes and references from the given {@link EPackage}s.
+     * @param metaModelPackages
+     * @return
+     */
     public static List<EModelElement> getClassesAndReferences(Collection<EPackage> metaModelPackages) {
         List<EModelElement> result = new ArrayList<EModelElement>();
         for (EPackage ePackage : metaModelPackages) {
