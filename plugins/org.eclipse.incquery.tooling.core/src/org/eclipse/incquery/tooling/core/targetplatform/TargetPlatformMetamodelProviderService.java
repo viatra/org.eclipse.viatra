@@ -12,6 +12,7 @@
 package org.eclipse.incquery.tooling.core.targetplatform;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,8 +20,8 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService;
-import org.eclipse.xtext.naming.IQualifiedNameConverter;
+import org.eclipse.incquery.patternlanguage.emf.scoping.BaseMetamodelProviderService;
+import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
@@ -32,20 +33,37 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 /**
- * Subclass implementation of MetamdelProviderService, which queires registered metamodel packages
+ * Subclass implementation of MetamdelProviderService, which queries registered metamodel packages
  * from the TargetPlatform instead of the PackageRegistry.
  *
  */
 public class TargetPlatformMetamodelProviderService extends
-		MetamodelProviderService {
+		BaseMetamodelProviderService implements IMetamodelProviderInstance {
 
+    @Override
+    public String getIdentifier() {
+        return "target";
+    }
+
+    @Override
+    public int getPriority() {
+        return 10;
+    }
+
+    @Override
+    public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
+        return (metamodelLoader.loadGenPackage(set, ePackage.getNsURI()) != null);
+    }
+
+    @Override
+    protected Collection<String> getProvidedMetamodels() {
+        return metamodelLoader.listEPackages();
+    }
+    
 	@Inject
 	private ITargetPlatformMetamodelLoader metamodelLoader;
 	
-	 @Inject
-	 private IQualifiedNameConverter qualifiedNameConverter;
-	
-	@Override
+	 @Override
 	public IScope getAllMetamodelObjects(IScope delegateScope, EObject context) {
 		final ResourceSet resourceSet = context.eResource().getResourceSet();
 		List<String> tpmetamodels = metamodelLoader.listEPackages();
@@ -79,17 +97,8 @@ public class TargetPlatformMetamodelProviderService extends
 	
 	@Override
 	public EPackage loadEPackage(String packageUri, ResourceSet resourceSet) {
-	    EPackage pack;
-	    pack = super.loadEPackage(packageUri, resourceSet);
-	    if (pack != null) return pack;
-        pack = metamodelLoader.loadPackage(resourceSet, packageUri);
+	    EPackage pack = metamodelLoader.loadPackage(resourceSet, packageUri);
         return pack;
 	}
-
-    @Override
-    public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
-        return (metamodelLoader.loadGenPackage(set, ePackage.getNsURI()) != null)
-                || super.isGeneratedCodeAvailable(ePackage, set);
-    }
 	
 }

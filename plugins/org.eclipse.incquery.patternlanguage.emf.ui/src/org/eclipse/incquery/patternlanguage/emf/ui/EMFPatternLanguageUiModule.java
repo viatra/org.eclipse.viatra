@@ -22,7 +22,7 @@ import org.eclipse.incquery.patternlanguage.annotations.IAnnotationValidatorLoad
 import org.eclipse.incquery.patternlanguage.emf.GenmodelExtensionLoader;
 import org.eclipse.incquery.patternlanguage.emf.IGenmodelMappingLoader;
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
-import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
+import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.incquery.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
@@ -46,6 +46,7 @@ import org.eclipse.incquery.tooling.core.generator.fragments.IGenerationFragment
 import org.eclipse.incquery.tooling.core.generator.genmodel.GenModelMetamodelProviderService;
 import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.incquery.tooling.core.targetplatform.ITargetPlatformMetamodelLoader;
+import org.eclipse.incquery.tooling.core.targetplatform.TargetPlatformMetamodelProviderService;
 import org.eclipse.incquery.tooling.core.targetplatform.TargetPlatformMetamodelsIndex;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
@@ -64,12 +65,13 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
 import com.google.inject.Binder;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 
 /**
  * Use this class to register components to be used within the IDE.
  */
-@SuppressWarnings({ "restriction", "deprecation" })
+@SuppressWarnings("restriction")
 public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModule {
     private static final String loggerRoot = "org.eclipse.incquery";
 
@@ -93,6 +95,9 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
         binder.bind(String.class)
                 .annotatedWith(Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
                 .toInstance(".,");
+        Multibinder<IMetamodelProviderInstance> metamodelProviderBinder = Multibinder.newSetBinder(binder, IMetamodelProviderInstance.class);
+        metamodelProviderBinder.addBinding().to(GenModelMetamodelProviderService.class);
+        metamodelProviderBinder.addBinding().to(TargetPlatformMetamodelProviderService.class);
     }
 
     /*
@@ -117,17 +122,9 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
         return EMFPatternLanguageHighlightingConfiguration.class;
     }
 
-    public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
-        return GenModelMetamodelProviderService.class;
-    }
-
     public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
         return GenModelMetamodelProviderService.class;
     }
-
-//    public Class<? extends ITypeProvider> bindITypeProvider() {
-//        return GenModelBasedTypeProvider.class;
-//    }
 
     public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
     	return GenModelBasedTypeProvider.class;

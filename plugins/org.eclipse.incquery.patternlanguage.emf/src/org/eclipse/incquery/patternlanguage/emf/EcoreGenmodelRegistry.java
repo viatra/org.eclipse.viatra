@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,9 +20,12 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -46,6 +50,31 @@ public class EcoreGenmodelRegistry {
                 genmodelUriMap = Maps.newHashMap();
             }
         } 
+    }
+    
+    /**
+     * 
+     * @return a non-null, but possibly empty set of package nsURIs
+     * @since 1.0
+     */
+    public Collection<String> getPackageUris() {
+        return genpackageMap.keySet();
+    }
+    
+    /**
+     * 
+     * @return a non-null, but possibly empty set of package instances
+     * @since 1.0
+     */
+    public Collection<EPackage> getPackages() {
+        return Collections2.transform(genpackageMap.values(), new Function<GenPackage, EPackage>() {
+
+            @Override
+            public EPackage apply(GenPackage input) {
+                return input.getEcorePackage();
+            }
+        });
+        
     }
     
     public GenPackage findGenPackage(String nsURI, ResourceSet set) {

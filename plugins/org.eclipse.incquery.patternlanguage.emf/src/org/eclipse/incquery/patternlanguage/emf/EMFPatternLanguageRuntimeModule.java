@@ -14,14 +14,17 @@ import org.apache.log4j.Logger;
 import org.eclipse.incquery.patternlanguage.emf.annotations.AnnotationExpressionValidator;
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternJvmModelAssociator;
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.incquery.patternlanguage.emf.scoping.CompoundMetamodelProviderService;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageDeclarativeScopeProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageImportNamespaceProvider;
 import org.eclipse.incquery.patternlanguage.emf.scoping.EMFPatternLanguageLinkingService;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
+import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.incquery.patternlanguage.emf.scoping.MetamodelProviderService;
+import org.eclipse.incquery.patternlanguage.emf.scoping.ResourceSetMetamodelProviderService;
 import org.eclipse.incquery.patternlanguage.emf.serializer.EMFPatternLanguageCrossRefSerializer;
-import org.eclipse.incquery.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeProvider;
+import org.eclipse.incquery.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.incquery.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.util.IClassLoaderProvider;
@@ -32,7 +35,6 @@ import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJav
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
 import org.eclipse.incquery.patternlanguage.scoping.MyAbstractDeclarativeScopeProvider;
 import org.eclipse.incquery.patternlanguage.scoping.PatternLanguageResourceDescriptionStrategy;
-import org.eclipse.incquery.patternlanguage.typing.AbstractTypeSystem;
 import org.eclipse.incquery.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.incquery.patternlanguage.typing.ITypeSystem;
 import org.eclipse.incquery.patternlanguage.validation.IIssueCallback;
@@ -50,6 +52,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
 
 import com.google.inject.Binder;
 import com.google.inject.Provides;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 
 /**
@@ -74,6 +77,9 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         binder.bind(IScopeProvider.class).annotatedWith(Names.named(MyAbstractDeclarativeScopeProvider.NAMED_DELEGATE))
                 .to(EMFPatternLanguageImportNamespaceProvider.class);
         // .to(XImportSectionNamespaceScopeProvider.class);
+        Multibinder<IMetamodelProviderInstance> metamodelProviderBinder = Multibinder.newSetBinder(binder, IMetamodelProviderInstance.class);
+        metamodelProviderBinder.addBinding().to(MetamodelProviderService.class);
+        metamodelProviderBinder.addBinding().to(ResourceSetMetamodelProviderService.class);
     }
 
     @Override
@@ -86,7 +92,7 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     }
 
     public Class<? extends IMetamodelProvider> bindIMetamodelProvider() {
-        return MetamodelProviderService.class;
+        return CompoundMetamodelProviderService.class;
     }
 
     public Class<? extends ICrossReferenceSerializer> bindICrossReferenceSerializer() {

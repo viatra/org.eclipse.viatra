@@ -31,14 +31,14 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.incquery.patternlanguage.emf.scoping.BaseMetamodelProviderService;
+import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.incquery.tooling.core.project.IncQueryNature;
-import org.eclipse.incquery.tooling.core.targetplatform.TargetPlatformMetamodelProviderService;
 import org.eclipse.incquery.tooling.generator.model.generatorModel.GeneratorModelFactory;
 import org.eclipse.incquery.tooling.generator.model.generatorModel.GeneratorModelReference;
 import org.eclipse.incquery.tooling.generator.model.generatorModel.IncQueryGeneratorModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
-import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
@@ -57,7 +57,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
-public class GenModelMetamodelProviderService extends TargetPlatformMetamodelProviderService implements IEiqGenmodelProvider {
+public class GenModelMetamodelProviderService extends BaseMetamodelProviderService implements IEiqGenmodelProvider, IMetamodelProviderInstance {
 
     private static final class NameTransformerFunction implements Function<IEObjectDescription, QualifiedName> {
         @Override
@@ -88,9 +88,17 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
     @Inject
     private IJavaProjectProvider projectProvider;
 
-    @Inject
-    private IQualifiedNameConverter qualifiedNameConverter;
 
+    @Override
+    public String getIdentifier() {
+        return "genmodel";
+    }
+
+    @Override
+    public int getPriority() {
+        return 1000;
+    }
+    
     private URI getGenmodelURI(IProject project) {
         IFile file = project.getFile(IncQueryNature.IQGENMODEL);
         return URI.createPlatformResourceURI(file.getFullPath().toString(), false);
@@ -143,17 +151,13 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
                     }));
         }
 
-        referencedPackages.addAll(getMetamodelMap().values());
+        referencedPackages.addAll(getGenmodelRegistry().getPackages());
         return referencedPackages;
     }
 
     @Override
     public EPackage loadEPackage(final String packageUri, ResourceSet set) {
-        EPackage ePackage = super.loadEPackage(packageUri, set);
-        if (ePackage != null) {
-            return ePackage;
-        }
-        GenPackage loadedPackage = findGenPackage(set, packageUri, false);
+        GenPackage loadedPackage = findGenPackage(set, packageUri);
         if (loadedPackage != null) {
             return loadedPackage.getEcorePackage();
         }
@@ -228,7 +232,7 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
     @Override
     public GenPackage findGenPackage(EObject ctx, final String packageNsUri) {
         IncQueryGeneratorModel eiqGenModel = getGeneratorModel(ctx);
-        return findGenPackage(eiqGenModel, ctx.eResource().getResourceSet(), packageNsUri, true);
+        return findGenPackage(eiqGenModel, ctx.eResource().getResourceSet(), packageNsUri);
     }
 
     @Override
@@ -239,16 +243,10 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
     @Override
     public GenPackage findGenPackage(ResourceSet set, final String packageNsUri) {
         IncQueryGeneratorModel eiqGenModel = getGeneratorModel(set);
-        return findGenPackage(eiqGenModel, set, packageNsUri, true);
+        return findGenPackage(eiqGenModel, set, packageNsUri);
     }
 
-    private GenPackage findGenPackage(ResourceSet set, final String packageNsUri, boolean fallbackToPackageRegistry) {
-        IncQueryGeneratorModel eiqGenModel = getGeneratorModel(set);
-        return findGenPackage(eiqGenModel, set, packageNsUri, fallbackToPackageRegistry);
-    }
-
-    private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, ResourceSet set, final String packageNsUri,
-            boolean fallbackToPackageRegistry) {
+    private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, ResourceSet set, final String packageNsUri) {
         // eiqGenModel is null if loading a pattern from the registry
         // in this case only fallback to package Registry works
         if (eiqGenModel != null) {
@@ -270,14 +268,7 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
                 return it.next();
             }
         }
-        if (fallbackToPackageRegistry) {
-            GenPackage foundPackage = getGenmodelRegistry().findGenPackage(packageNsUri, set);
-            if (foundPackage == null) {
-                foundPackage = internalFindGenPackage(set, packageNsUri);
-            }
-            return foundPackage;
-        }
-        return null;
+        return getGenmodelRegistry().findGenPackage(packageNsUri, set);
     }
 
     private List<GenPackage> getAllGenPackages(GenModel genModel) {
@@ -328,5 +319,10 @@ public class GenModelMetamodelProviderService extends TargetPlatformMetamodelPro
             resource.getContents().add(model);
             return model;
         }
+    }
+
+    @Override
+    protected Collection<String> getProvidedMetamodels() {
+        return getGenmodelRegistry().getPackageUris();
     }
 }
