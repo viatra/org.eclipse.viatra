@@ -29,6 +29,16 @@
             <artifactId>org.eclipse.xtext.xbase</artifactId>
             <version>${xtend.compiler.version}</version>
         </dependency>
+        <dependency>
+    	    <groupId>com.google.inject</groupId>
+    	    <artifactId>guice</artifactId>
+    	    <version>3.0</version>
+        </dependency>
+        <dependency>
+    	    <groupId>com.google.inject.extensions</groupId>
+    	    <artifactId>guice-multibindings</artifactId>
+    	    <version>3.0</version>
+        </dependency>        
 	</dependencies>
 	<properties>
 		<maven.compiler.source>1.6</maven.compiler.source>
