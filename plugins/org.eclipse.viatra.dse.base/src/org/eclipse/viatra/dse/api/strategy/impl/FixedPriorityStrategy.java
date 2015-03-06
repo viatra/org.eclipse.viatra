@@ -52,6 +52,7 @@ public class FixedPriorityStrategy implements IStrategy {
     private FilterOptions filterOptions;
 
     private Logger logger = Logger.getLogger(IStrategy.class);
+    private ThreadContext context;
 
     /**
      * Creates a fixed priority strategy instance, with default configuration: it tries only the rule activations with
@@ -99,11 +100,12 @@ public class FixedPriorityStrategy implements IStrategy {
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
         dsm = context.getDesignSpaceManager();
     }
 
     @Override
-    public ITransition getNextTransition(final ThreadContext context, boolean lastWasSuccesful) {
+    public ITransition getNextTransition(boolean lastWasSuccesful) {
 
         if (isInterrupted) {
             return null;
@@ -153,15 +155,14 @@ public class FixedPriorityStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied) {
         if (isAlreadyTraversed || constraintsNotSatisfied || (fitness.isSatisifiesHardObjectives())) {
             context.getDesignSpaceManager().undoLastTransformation();
         }
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
         isInterrupted = true;
     }
 

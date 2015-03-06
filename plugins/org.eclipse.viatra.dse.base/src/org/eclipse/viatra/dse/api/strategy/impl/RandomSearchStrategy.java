@@ -46,6 +46,7 @@ public class RandomSearchStrategy implements IStrategy {
     private TrajectoryInfo trajectoryInfo;
     int nth;
     private boolean isInterrupted = false;
+    private ThreadContext context;
 
     public RandomSearchStrategy(int minDepth, int maxDepth, int numberOfTries) {
         shared = new SharedData(minDepth, maxDepth, numberOfTries);
@@ -56,6 +57,7 @@ public class RandomSearchStrategy implements IStrategy {
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
         dsm = context.getDesignSpaceManager();
         trajectoryInfo = dsm.getTrajectoryInfo();
         gc = context.getGlobalContext();
@@ -71,7 +73,7 @@ public class RandomSearchStrategy implements IStrategy {
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful) {
+    public ITransition getNextTransition(boolean lastWasSuccessful) {
 
         if (isInterrupted) {
             return null;
@@ -111,7 +113,7 @@ public class RandomSearchStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness,
             boolean constraintsNotSatisfied) {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();
@@ -119,7 +121,7 @@ public class RandomSearchStrategy implements IStrategy {
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
         isInterrupted = true;
     }
 

@@ -27,7 +27,7 @@ public interface IStrategy {
      * Called once before the first {@link IStrategy#getNextTransition(ThreadContext)} is called for every new thread.
      * 
      * @param context
-     *            The {@link ThreadContext} which contains necessary informations.
+     *            The {@link ThreadContext} which contains necessary informations. Should be assigned to a field.
      */
     void init(ThreadContext context);
 
@@ -35,19 +35,15 @@ public interface IStrategy {
      * Returns the next {@link ITransition} to fire, the next step in the design space. It can be a quite complex method
      * or a simple depth first search.
      * 
-     * @param context
-     *            The {@link ThreadContext} which contains necessary informations.
      * @param lastWasSuccessful
      *            False if the last returned transition was already fired by someone, otherwise true.
      * @return An {@link ITransition} which is <b>not traversed</b> yet. Null if there is no more to fire.
      */
-    ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful);
+    ITransition getNextTransition(boolean lastWasSuccessful);
 
     /**
      * Called after the chosen transition is fired and the new state has been processed.
      * 
-     * @param context
-     *            The {@link ThreadContext} which contains necessary informations.
      * @param isAlreadyTraversed
      *            True if the new state is already traversed in the past.
      * @param fitness
@@ -55,15 +51,11 @@ public interface IStrategy {
      * @param areConstraintsSatisfied
      *            True if the new state doesn't satisfies the global constraints.
      */
-    void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
-            boolean constraintsNotSatisfied);
+    void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied);
 
     /**
      * Called if the exploration process is interrupted for example by timeout. Exit by returning null in the
      * {@link IStrategy#getNextTransition(ThreadContext, boolean)} method witch is called right after this one.
-     * 
-     * @param context
-     *            The {@link ThreadContext} which contains necessary informations.
      */
-    void interrupted(ThreadContext context);
+    void interrupted();
 }

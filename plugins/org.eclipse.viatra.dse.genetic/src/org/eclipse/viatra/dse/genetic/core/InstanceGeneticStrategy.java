@@ -40,10 +40,12 @@ public class InstanceGeneticStrategy implements IStrategy {
     private WorkerState state;
 
     private boolean correctionWasNeeded = false;
+    private ThreadContext context;
 
     @Override
     public void init(ThreadContext context) {
 
+        this.context = context;
         gc = context.getGlobalContext();
         dsm = context.getDesignSpaceManager();
 
@@ -63,7 +65,7 @@ public class InstanceGeneticStrategy implements IStrategy {
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+    public ITransition getNextTransition(boolean lastWasSuccesful) {
         do {
 
             // Get next Instance
@@ -163,11 +165,10 @@ public class InstanceGeneticStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness objectives,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness objectives, boolean constraintsNotSatisfied) {
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
     }
 }

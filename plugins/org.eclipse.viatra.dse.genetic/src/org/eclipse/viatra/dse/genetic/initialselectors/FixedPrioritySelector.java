@@ -54,6 +54,8 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
 
     private boolean isInterrupted = false;
 
+    private ThreadContext context;
+
     public FixedPrioritySelector(List<PatternWithCardinality> goals) {
         this.goals = goals;
     }
@@ -70,6 +72,7 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
         if (store == null) {
             throw new DSEException("No IStoreChild is set for the BFSSelector");
         }
@@ -79,7 +82,7 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful) {
+    public ITransition getNextTransition(boolean lastWasSuccessful) {
 
         if (isInterrupted) {
             return null;
@@ -133,7 +136,7 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
 
                 if (iTransition.isAssignedToFire()) {
                     dsm.fireActivation(iTransition);
-                    return getNextTransition(context, true);
+                    return getNextTransition(true);
                 }
 
                 return iTransition;
@@ -147,15 +150,14 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness objectives,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness objectives, boolean constraintsNotSatisfied) {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();
         }
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
         isInterrupted = true;
     }
 

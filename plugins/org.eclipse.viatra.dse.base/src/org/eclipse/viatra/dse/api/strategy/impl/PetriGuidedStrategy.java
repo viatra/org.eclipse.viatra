@@ -32,14 +32,16 @@ public class PetriGuidedStrategy implements IStrategy {
     private boolean lastWasPetriTurn = true;
     private boolean isInterrupted = false;
     private FilterOptions filterOptions;
+    private ThreadContext context;
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
         filterOptions = new FilterOptions().nothingIfCut().nothingIfGoal().untraversedOnly();
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+    public ITransition getNextTransition(boolean lastWasSuccesful) {
 
         if (isInterrupted) {
             return null;
@@ -85,16 +87,15 @@ public class PetriGuidedStrategy implements IStrategy {
         }
         lastWasPetriTurn = false;
 
-        return breadthFirstSearch.getNextTransition(context, lastWasSuccesful);
+        return breadthFirstSearch.getNextTransition(lastWasSuccesful);
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied) {
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
         isInterrupted = true;
     }
 }

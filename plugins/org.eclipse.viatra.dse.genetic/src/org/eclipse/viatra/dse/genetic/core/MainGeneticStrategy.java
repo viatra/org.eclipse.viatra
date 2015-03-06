@@ -57,10 +57,12 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
 
     private double actualBestSoftConstraint = Double.MAX_VALUE;
     private int noBetterSolutionForXIterations = 0;
+    private ThreadContext context;
 
     @Override
     public void init(ThreadContext context) {
 
+        this.context = context;
         gc = context.getGlobalContext();
         dsm = context.getDesignSpaceManager();
 
@@ -92,13 +94,12 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+    public ITransition getNextTransition(boolean lastWasSuccesful) {
 
         do {
             if (state == GeneticStrategyState.FIRST_POPULATION) {
 
-                ITransition transition = sharedObject.initialPopulationSelector.getNextTransition(context,
-                        lastWasSuccesful);
+                ITransition transition = sharedObject.initialPopulationSelector.getNextTransition(lastWasSuccesful);
                 if (transition != null) {
                     return transition;
                 } else {
@@ -368,16 +369,14 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied) {
         if (state == GeneticStrategyState.FIRST_POPULATION) {
-            sharedObject.initialPopulationSelector.newStateIsProcessed(context, isAlreadyTraversed, fitness,
-                    constraintsNotSatisfied);
+            sharedObject.initialPopulationSelector.newStateIsProcessed(isAlreadyTraversed, fitness, constraintsNotSatisfied);
         }
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
     }
 
     @Override

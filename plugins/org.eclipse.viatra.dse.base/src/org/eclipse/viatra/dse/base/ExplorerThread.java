@@ -165,7 +165,7 @@ public class ExplorerThread implements IExplorerThread {
                     currentState.setProcessed(); // TODO there is one in addState
                 }
 
-                strategy.newStateIsProcessed(threadContext, isAlreadyTraversed, fitness, !areConstraintsSatisfied);
+                strategy.newStateIsProcessed(isAlreadyTraversed, fitness, !areConstraintsSatisfied);
                 PerformanceMonitorManager.endTimer(STATE_EVALUATION);
 
                 // do the exploration until {@link StrategyBase#solutionFound}
@@ -175,7 +175,7 @@ public class ExplorerThread implements IExplorerThread {
                 PerformanceMonitorManager.endTimer(WALKER_CYCLE);
 
                 if (interrupted.get()) {
-                    strategy.interrupted(threadContext);
+                    strategy.interrupted();
                 }
 
                 PerformanceMonitorManager.startTimer(WALKER_CYCLE);
@@ -186,7 +186,7 @@ public class ExplorerThread implements IExplorerThread {
                     // Get next activation to fire. Eventually calls the
                     // getNextTransition methods.
                     PerformanceMonitorManager.startTimer(GET_NEXT_TRANSITION_ID_TIMER);
-                    transition = strategy.getNextTransition(threadContext, transition == null);
+                    transition = strategy.getNextTransition(transition == null);
                     PerformanceMonitorManager.endTimer(GET_NEXT_TRANSITION_ID_TIMER);
                     // If there are no more transitions to fire, then return and
                     // stop the exploration.

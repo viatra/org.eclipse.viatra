@@ -62,6 +62,8 @@ public class ParallelBFSStrategy implements IStrategy {
 
     private FilterOptions filterOptions;
 
+    private ThreadContext context;
+
     public ParallelBFSStrategy(int maxDepth) {
         this.initMaxDepth = maxDepth;
         filterOptions = new FilterOptions().nothingIfCut().nothingIfGoal().untraversedOnly();
@@ -69,6 +71,7 @@ public class ParallelBFSStrategy implements IStrategy {
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
         GlobalContext gc = context.getGlobalContext();
         if (gc.getSharedObject() == null) {
             sharedData = new SharedData();
@@ -85,7 +88,7 @@ public class ParallelBFSStrategy implements IStrategy {
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+    public ITransition getNextTransition(boolean lastWasSuccesful) {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         TrajectoryInfo trajectory = dsm.getTrajectoryInfo();
@@ -169,12 +172,11 @@ public class ParallelBFSStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied) {
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
         isInterrupted = true;
     }
 }

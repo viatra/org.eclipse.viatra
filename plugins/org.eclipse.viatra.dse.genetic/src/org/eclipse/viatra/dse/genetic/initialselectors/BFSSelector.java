@@ -48,6 +48,8 @@ public class BFSSelector implements IInitialPopulationSelector {
 
     private FilterOptions filterOptions;
 
+    private ThreadContext context;
+
     public BFSSelector() {
         this(2, 1);
     }
@@ -69,6 +71,7 @@ public class BFSSelector implements IInitialPopulationSelector {
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
         if (store == null) {
             throw new DSEException("No IStoreChild is set for the BFSSelector");
         }
@@ -76,7 +79,7 @@ public class BFSSelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful) {
+    public ITransition getNextTransition(boolean lastWasSuccessful) {
 
         if (isInterrupted) {
             return null;
@@ -135,8 +138,7 @@ public class BFSSelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness objectives,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness objectives, boolean constraintsNotSatisfied) {
     }
 
     @Override
@@ -145,7 +147,7 @@ public class BFSSelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
         isInterrupted = true;
     }
 

@@ -40,6 +40,7 @@ public class DepthFirstStrategy implements IStrategy {
     private Logger logger = Logger.getLogger(this.getClass());
     private boolean isInterrupted = false;
     private FilterOptions filterOptions;
+    private ThreadContext context;
 
     public DepthFirstStrategy(int maxDepth) {
         initMaxDepth = maxDepth;
@@ -48,6 +49,7 @@ public class DepthFirstStrategy implements IStrategy {
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
         GlobalContext gc = context.getGlobalContext();
         if (gc.getSharedObject() == null) {
             sharedData = new SharedData();
@@ -61,7 +63,7 @@ public class DepthFirstStrategy implements IStrategy {
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+    public ITransition getNextTransition(boolean lastWasSuccesful) {
 
         if (isInterrupted) {
             return null;
@@ -109,8 +111,7 @@ public class DepthFirstStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied) {
         if (isAlreadyTraversed || constraintsNotSatisfied || (fitness.isSatisifiesHardObjectives())) {
             logger.debug("Backtrack. Already traversed: " + isAlreadyTraversed + ". Goal state: " + (fitness!=null)
                     + ". Constraints not satisfied: " + constraintsNotSatisfied);
@@ -119,7 +120,7 @@ public class DepthFirstStrategy implements IStrategy {
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
         isInterrupted = true;
     }
 

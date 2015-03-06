@@ -46,6 +46,7 @@ public class BreadthFirstStrategy implements IStrategy {
     private int transitionsInNextLevel = 0;
     private TransitionWrapper t;
     private boolean isInterrupted = false;
+    private ThreadContext context;
 
     public BreadthFirstStrategy() {
     }
@@ -55,7 +56,7 @@ public class BreadthFirstStrategy implements IStrategy {
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccesful) {
+    public ITransition getNextTransition(boolean lastWasSuccesful) {
 
         // TODO: For some reason it keeps failing from time to time
         // For me it failed at the level of 10 and 11, in the 2/3 of the time
@@ -143,15 +144,15 @@ public class BreadthFirstStrategy implements IStrategy {
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied) {
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
         isInterrupted = true;
     }
 

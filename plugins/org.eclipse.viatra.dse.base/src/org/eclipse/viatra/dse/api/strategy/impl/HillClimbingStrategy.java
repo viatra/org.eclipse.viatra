@@ -52,6 +52,8 @@ public class HillClimbingStrategy implements IStrategy {
 
     private FilterOptions filterOptions;
 
+    private ThreadContext context;
+
     public HillClimbingStrategy() {
         this(1.001);
     }
@@ -63,6 +65,7 @@ public class HillClimbingStrategy implements IStrategy {
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
         dsm = context.getDesignSpaceManager();
         objectiveComparatorHelper = context.getObjectiveComparatorHelper();
         solutionStore = context.getGlobalContext().getSolutionStore();
@@ -72,7 +75,7 @@ public class HillClimbingStrategy implements IStrategy {
     }
 
     @Override
-    public ITransition getNextTransition(ThreadContext context, boolean lastWasSuccessful) {
+    public ITransition getNextTransition(boolean lastWasSuccessful) {
 
         while (!interrupted) {
 
@@ -143,8 +146,7 @@ public class HillClimbingStrategy implements IStrategy {
     }
 
     @Override
-    public void newStateIsProcessed(ThreadContext context, boolean isAlreadyTraversed, Fitness fitness,
-            boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied) {
 
         if (dsm.getTrajectoryInfo().getDepthFromRoot() == 0) {
             bestFitness = fitness;
@@ -165,7 +167,7 @@ public class HillClimbingStrategy implements IStrategy {
     }
 
     @Override
-    public void interrupted(ThreadContext context) {
+    public void interrupted() {
         interrupted = true;
     }
 
