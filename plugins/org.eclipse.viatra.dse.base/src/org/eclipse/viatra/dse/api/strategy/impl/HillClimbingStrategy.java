@@ -86,9 +86,6 @@ public class HillClimbingStrategy implements IStrategy {
 
             Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState(filterOptions);
 
-            // TODO explorer thread -> do-while, instead of while to check the first state
-            // TODO delete context from param (enough for init)
-
             if (transitions.size() <= 0) {
                 logger.debug("No more transitions to try.");
                 state = HillClimbingStrategyState.COMPARE_AND_STEP;
@@ -123,6 +120,7 @@ public class HillClimbingStrategy implements IStrategy {
                 int compare = objectiveComparatorHelper.compare(bestFitness, bestTrajectoryFitness.fitness);
                 
                 if (compare >= 0) {
+                    context.calculateFitness();
                     solutionStore.newSolution(context);
                     logger.debug(dsm.getTrajectoryInfo().toString());
                     return null;

@@ -16,17 +16,17 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.guidance.ICriteria.EvaluationResult;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
-import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
-import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.Fitness;
+import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
+import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore.StopExecutionType;
 
 /**
@@ -85,6 +85,7 @@ public class ExplorerThread implements IExplorerThread {
 
             DesignSpaceManager designSpaceManager = threadContext.getDesignSpaceManager();
             Guidance guidance = threadContext.getGuidance();
+            ISolutionStore solutionStore = globalContext.getSolutionStore();
 
             logger.debug("Strategy started with state: " + designSpaceManager.getCurrentState().getId());
 
@@ -97,14 +98,14 @@ public class ExplorerThread implements IExplorerThread {
                 boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
                 boolean areConstraintsSatisfied = true;
 
-                calculateFitness();
+                fitness = threadContext.calculateFitness();
 
                 if (isAlreadyTraversed) {
                     TraversalStateType traversalState = currentState.getTraversalState();
 
                     // Create new trajectory for solution
-                    if (fitness.isSatisifiesHardObjectives() && !globalContext.getSolutionStore().isStrategyDependent()) {
-                        StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext);
+                    if (fitness.isSatisifiesHardObjectives() && !solutionStore.isStrategyDependent()) {
+                        StopExecutionType verdict = solutionStore.newSolution(threadContext);
                         switch (verdict) {
                         case STOP_ALL:
                             continueExecution = false;
@@ -133,8 +134,8 @@ public class ExplorerThread implements IExplorerThread {
 
                             currentState.setTraversalState(TraversalStateType.GOAL);
 
-                            if (!globalContext.getSolutionStore().isStrategyDependent()) {
-                                StopExecutionType verdict = globalContext.getSolutionStore().newSolution(threadContext);
+                            if (!solutionStore.isStrategyDependent()) {
+                                StopExecutionType verdict = solutionStore.newSolution(threadContext);
                                 switch (verdict) {
                                 case STOP_ALL:
                                     continueExecution = false;
@@ -227,27 +228,6 @@ public class ExplorerThread implements IExplorerThread {
     @Override
     public ThreadContext getThreadContext() {
         return threadContext;
-    }
-
-    private Fitness calculateFitness() {
-        Fitness result = new Fitness();
-
-        boolean satisifiesHardObjectives = true;
-
-        for (IObjective objective : globalContext.getObjectives()) {
-            Double fitness = objective.getFitness(threadContext);
-            result.put(objective.getName(), fitness);
-            if (objective.isHardObjective() && !objective.satisifiesHardObjective(fitness)) {
-                satisifiesHardObjectives = false;
-            }
-        }
-
-        result.setSatisifiesHardObjectives(satisifiesHardObjectives);
-
-        threadContext.setFitness(result);
-        fitness = result;
-
-        return result;
     }
 
     private boolean checkGlobalConstraints() {

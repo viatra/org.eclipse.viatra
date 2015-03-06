@@ -196,6 +196,26 @@ public class ThreadContext {
 
     }
 
+    public Fitness calculateFitness() {
+        Fitness result = new Fitness();
+
+        boolean satisifiesHardObjectives = true;
+
+        for (IObjective objective : globalContext.getObjectives()) {
+            Double fitness = objective.getFitness(this);
+            result.put(objective.getName(), fitness);
+            if (objective.isHardObjective() && !objective.satisifiesHardObjective(fitness)) {
+                satisifiesHardObjectives = false;
+            }
+        }
+
+        result.setSatisifiesHardObjectives(satisifiesHardObjectives);
+
+        fitness = result;
+
+        return result;
+    }
+    
     public RuleEngine getRuleEngine() {
         return ruleEngine;
     }
@@ -240,12 +260,8 @@ public class ThreadContext {
         this.explorerThread = explorerThread;
     }
 
-    public Fitness getFitness() {
+    public Fitness getLastFitness() {
         return fitness;
-    }
-
-    public void setFitness(Fitness fitness) {
-        this.fitness = fitness;
     }
 
     public ObjectiveComparatorHelper getObjectiveComparatorHelper() {

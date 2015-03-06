@@ -96,7 +96,7 @@ public class SingleObjectiveSolutionStore implements ISolutionStore {
     @Override
     public synchronized StopExecutionType newSolution(ThreadContext context) {
 
-        Double fitness = context.getFitness().get(key);
+        Double fitness = context.getLastFitness().get(key);
 
         if (solutionsToStore <= 0 || solutionsToStore > solutionsTrajectories.size()) {
             saveTrajectory(context.getDesignSpaceManager(), fitness);
