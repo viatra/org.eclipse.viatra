@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.objectives.impl;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
@@ -31,8 +34,8 @@ import com.google.common.base.Preconditions;
 public class TrajectoryCostSoftObjective extends BaseObjective {
 
     public static final String DEFAULT_NAME = "TrajectoryCostObjective";
-    protected List<TransformationRule<? extends IPatternMatch>> rules;
-    protected List<Double> costs;
+    protected Map<TransformationRule<? extends IPatternMatch>, Double> fixCosts;
+    protected Map<TransformationRule<? extends IPatternMatch>, ActivationFitnessProcessor> activationCostProcessors;
 
     public TrajectoryCostSoftObjective(String name) {
         super(name);
@@ -49,17 +52,31 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
      * @param cost
      * @return The actual instance to enable builder pattern like usage.
      */
-    public TrajectoryCostSoftObjective withCost(TransformationRule<? extends IPatternMatch> rule, double cost) {
+    public TrajectoryCostSoftObjective withRuleCost(TransformationRule<? extends IPatternMatch> rule, double cost) {
         Preconditions.checkNotNull(rule);
-        Preconditions.checkArgument(!rules.contains(rule));
-        if (rules == null) {
-            rules = new ArrayList<TransformationRule<? extends IPatternMatch>>();
+        if (fixCosts == null) {
+            fixCosts = new HashMap<TransformationRule<? extends IPatternMatch>, Double>();
         }
-        if (costs == null) {
-            costs = new ArrayList<Double>();
+        Preconditions.checkArgument(!fixCosts.containsKey(rule));
+        fixCosts.put(rule, cost);
+        return this;
+    }
+
+    /**
+     * Sets an activation processor for a rule.
+     * @param rule
+     * @param activationCostProcessor
+     * @return The actual instance to enable builder pattern like usage.
+     */
+    public TrajectoryCostSoftObjective withActivationCost(TransformationRule<? extends IPatternMatch> rule,
+            ActivationFitnessProcessor activationCostProcessor) {
+        Preconditions.checkNotNull(rule);
+        Preconditions.checkNotNull(activationCostProcessor);
+        if (activationCostProcessors == null) {
+            activationCostProcessors = new HashMap<TransformationRule<? extends IPatternMatch>, ActivationFitnessProcessor>();
         }
-        rules.add(rule);
-        costs.add(cost);
+        Preconditions.checkArgument(!activationCostProcessors.containsKey(rule));
+        activationCostProcessors.put(rule, activationCostProcessor);
         return this;
     }
 
@@ -73,11 +90,18 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
 
         for (ITransition transition : trajectory) {
             TransformationRule<? extends IPatternMatch> rule = transition.getTransitionMetaData().rule;
-            int index = rules.indexOf(rule);
-            if (index > -1) {
-                result += costs.get(index);
-            } else {
-                result += 1;
+
+            Double cost = fixCosts.get(rule);
+            if (cost != null) {
+                result += cost;
+            }
+
+            Map<String, Double> costs = transition.getTransitionMetaData().costs;
+            if (costs != null) {
+                cost = costs.get(name);
+                if (cost != null) {
+                    result += cost;
+                }
             }
         }
 
@@ -86,6 +110,10 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
 
     @Override
     public void init(ThreadContext context) {
+        DesignSpaceManager dsm = context.getDesignSpaceManager();
+        for (TransformationRule<? extends IPatternMatch> rule : activationCostProcessors.keySet()) {
+            dsm.registerActivationCostProcessor(name, rule, activationCostProcessors.get(rule));
+        }
     }
 
     @Override

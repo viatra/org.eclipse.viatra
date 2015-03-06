@@ -42,6 +42,7 @@ import org.eclipse.viatra.dse.designspace.api.TransitionMetaData;
 import org.eclipse.viatra.dse.guidance.IRuleApplicationChanger;
 import org.eclipse.viatra.dse.guidance.IRuleApplicationNumberChanged;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
+import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.statecode.IStateSerializer;
 import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
 import org.eclipse.viatra.dse.visualizer.IExploreEventHandler;
@@ -76,6 +77,8 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
     private Logger logger = Logger.getLogger(this.getClass());
 
     private boolean isNewState = false;
+    private Map<TransformationRule<? extends IPatternMatch>, ActivationFitnessProcessor> activationFitnessProcessors;
+    private Map<TransformationRule<? extends IPatternMatch>, String> activationFitnessProcessorNames;
 
     private static final long SLEEP_INTERVAL = 1;
 
@@ -332,6 +335,15 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
             Map<String, Double> measureCosts = specification.measureCosts(match);
 
+            if (activationFitnessProcessors != null && activationFitnessProcessors.containsKey(specification)) {
+                ActivationFitnessProcessor processor = activationFitnessProcessors.get(specification);
+                double fitness = processor.process(match);
+                if (measureCosts == null) {
+                    measureCosts = new HashMap<String, Double>();
+                }
+                measureCosts.put(activationFitnessProcessorNames.get(specification), fitness);
+            }
+
             TransitionMetaData transitionMetaData = new TransitionMetaData();
             transitionMetaData.rule = specification;
             transitionMetaData.costs = measureCosts;
@@ -378,6 +390,16 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         if (handlers != null) {
             handlers.remove(handler);
         }
+    }
+
+    public void registerActivationCostProcessor(String name, TransformationRule<? extends IPatternMatch> rule,
+            ActivationFitnessProcessor activationFitnessProcessor) {
+        if (activationFitnessProcessors == null || activationFitnessProcessorNames == null) {
+            activationFitnessProcessors = new HashMap<TransformationRule<? extends IPatternMatch>, ActivationFitnessProcessor>();
+            activationFitnessProcessorNames = new HashMap<TransformationRule<? extends IPatternMatch>, String>();
+        }
+        activationFitnessProcessors.put(rule, activationFitnessProcessor);
+        activationFitnessProcessorNames.put(rule, name);
     }
 
 }

@@ -30,12 +30,22 @@ public class TrajectoryFitness {
 
     private int hashCode;
 
+    /**
+     * Creates a {@link TrajectoryFitness} with the full trajectory.
+     * @param trajectoryInfo The trajectory.
+     * @param fitness The fitness.
+     */
     public TrajectoryFitness(TrajectoryInfo trajectoryInfo, Fitness fitness) {
         this.fitness = fitness;
         List<ITransition> fullTraj = trajectoryInfo.getFullTransitionTrajectory();
         trajectory = fullTraj.toArray(new ITransition[fullTraj.size()]);
     }
 
+    /**
+     * Creates a {@link TrajectoryFitness} with the given {@link ITransition}
+     * @param transition The transition.
+     * @param fitness The fitness.
+     */
     public TrajectoryFitness(ITransition transition, Fitness fitness) {
         this.fitness = fitness;
         trajectory = new ITransition[] {transition};

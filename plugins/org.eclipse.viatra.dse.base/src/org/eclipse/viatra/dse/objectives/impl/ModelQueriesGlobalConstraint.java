@@ -78,6 +78,11 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
         return this;
     }
 
+    public ModelQueriesGlobalConstraint withType(ModelQueryType type) {
+        this.type = type;
+        return this;
+    }
+
     @Override
     public String getName() {
         return name;
