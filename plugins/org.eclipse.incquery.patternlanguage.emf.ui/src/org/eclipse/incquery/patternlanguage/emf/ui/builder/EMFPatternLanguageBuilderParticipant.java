@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -132,19 +133,25 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
     @Override
     protected void handleChangedContents(Delta delta, IBuildContext context,
             EclipseResourceFileSystemAccess2 fileSystemAccess) throws CoreException {
-        // TODO: we will run out of memory here if the number of deltas is large
-        // enough
-        Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
-        if (shouldGenerate(deltaResource, context)) {
-            try {
-                // do inferred jvm model to code transformation
-                generator.doGenerate(deltaResource, fileSystemAccess);
-                doPostGenerate(deltaResource, context);
-            } catch (RuntimeException e) {
-                if (e.getCause() instanceof CoreException) {
-                    throw (CoreException) e.getCause();
+        // Determine if this resource is logically nested in the project being built.
+        // Hopefully helps with performance, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=461302
+        URI uri = delta.getUri();
+        IProject builtProject = context.getBuiltProject();
+        if (uri.isPlatformResource() && builtProject.getName().equals(uri.segment(1))) {
+            // TODO: we will run out of memory here if the number of deltas is large
+            // enough
+            Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
+            if (shouldGenerate(deltaResource, context)) {
+                try {
+                    // do inferred jvm model to code transformation
+                    generator.doGenerate(deltaResource, fileSystemAccess);
+                    doPostGenerate(deltaResource, context);
+                } catch (RuntimeException e) {
+                    if (e.getCause() instanceof CoreException) {
+                        throw (CoreException) e.getCause();
+                    }
+                    throw e;
                 }
-                throw e;
             }
         }
     }
