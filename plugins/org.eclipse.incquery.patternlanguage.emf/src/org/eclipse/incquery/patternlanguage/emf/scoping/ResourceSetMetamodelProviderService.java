@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.xtext.resource.DerivedStateAwareResource;
 
 import com.google.common.collect.Lists;
 
@@ -91,6 +92,9 @@ public class ResourceSetMetamodelProviderService extends BaseMetamodelProviderSe
     }
 
     private EPackage findEPackageInResource(String packageUri, Resource resource) {
+        if (resource instanceof DerivedStateAwareResource && !((DerivedStateAwareResource) resource).isFullyInitialized()) {
+            return null;
+        }
         TreeIterator<EObject> it = resource.getAllContents();
         while (it.hasNext()) {
             EObject obj = it.next();
