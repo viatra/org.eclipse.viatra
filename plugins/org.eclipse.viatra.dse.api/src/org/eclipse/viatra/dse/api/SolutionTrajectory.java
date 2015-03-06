@@ -157,4 +157,15 @@ public class SolutionTrajectory {
         this.fitness = fitness;
     }
 
+    public String prettyPrint() {
+        StringBuilder sb = new StringBuilder();
+        for (Object object : transitionIds) {
+            sb .append(object.toString());
+            sb.append(" | ");
+        }
+        sb.append("| Fitness: ");
+        sb.append(fitness.toString());
+        return sb.toString();
+    }
+
 }

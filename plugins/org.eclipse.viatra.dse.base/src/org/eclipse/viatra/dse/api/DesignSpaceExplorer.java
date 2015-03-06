@@ -565,4 +565,23 @@ public class DesignSpaceExplorer {
         globalContext.registerDesignSpaceVisualizer(visualizer);
     }
 
+    public String prettyPrintSolutions() {
+        StringBuilder sb = new StringBuilder();
+        Collection<Solution> solutions = getSolutions();
+        sb.append("Number of solutions: ");
+        sb.append(solutions.size());
+        sb.append("\n");
+        for (Solution solution : solutions) {
+            sb.append("Solution: ");
+            sb.append(solution.getStateCode());
+            sb.append("\n");
+            for (SolutionTrajectory trajectory : solution.getTrajectories()) {
+                sb.append("  Trajectory: ");
+                sb.append(trajectory.prettyPrint());
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
 }
