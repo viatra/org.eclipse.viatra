@@ -66,6 +66,15 @@
 							<classifier>default</classifier>
 						</artifact>
 					</target>
+					<dependency-resolution>
+						<extraRequirements>
+							<requirement>
+								<type>eclipse-plugin</type>
+								<id>com.google.inject.multibindings</id>
+								<versionRange>[3.0.0,4.0.0)</versionRange>
+							</requirement>
+						</extraRequirements>
+					</dependency-resolution>
 					<ignoreTychoRepositories>true</ignoreTychoRepositories>
 				</configuration>
 			</plugin>
