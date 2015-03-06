@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="emfpattern" sequenceNumber="39">
+<?pde version="3.8"?><target includeMode="feature" name="emfpattern" sequenceNumber="41">
 <locations>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.emf.ecore.xcore.ui.feature.group" version="1.2.1.v20141013-0331"/>
+<unit id="org.eclipse.emf.ecore.xcore.sdk.feature.group" version="1.2.1.v20141013-0331"/>
+<unit id="org.eclipse.emf.ecore.xcore.feature.group" version="1.2.1.v20141013-0331"/>
+<repository location="http://download.eclipse.org/modeling/emf/emf/updates/milestones/"/>
+</location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
@@ -22,6 +28,10 @@
 <repository location="http://download.eclipse.org/tools/gef/gef4/updates/integration"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.7.0.v201409021032"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
 <unit id="de.itemis.xtext.antlr.sdk.feature.group" version="2.1.1.v201405091103"/>
 <repository location="http://download.itemis.com/updates/releases"/>
@@ -32,21 +42,8 @@
 <repository location="http://download.eclipse.org/modeling/emf/emf/updates/releases/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.7.0.v201409021032"/>
-<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.junit" version="4.11.0.v201303080030"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.emf.ecore.xcore.ui.feature.group" version="1.2.1.v20141013-0331"/>
-<unit id="org.eclipse.emf.ecore.xcore.sdk.feature.group" version="1.2.1.v20141013-0331"/>
-<unit id="org.eclipse.emf.ecore.xcore.feature.group" version="1.2.1.v20141013-0331"/>
-<repository location="http://download.eclipse.org/modeling/emf/emf/updates/milestones/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
+<unit id="com.google.inject" version="3.0.0.v201312141243"/>
+<unit id="com.google.inject.multibindings.source" version="3.0.0.v201402270930"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
 </location>
 </locations>
