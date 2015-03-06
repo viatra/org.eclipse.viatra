@@ -14,7 +14,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
@@ -99,8 +98,10 @@ public class TransformationRule<P extends IPatternMatch> extends RuleSpecificati
         }
     }
 
-    // ****** getters & setters
-    // ****************************
+    @Override
+    public int hashCode() {
+        return querySpecification.getFullyQualifiedName().hashCode();
+    }
 
     public void setName(String name) {
         this.name = name;
