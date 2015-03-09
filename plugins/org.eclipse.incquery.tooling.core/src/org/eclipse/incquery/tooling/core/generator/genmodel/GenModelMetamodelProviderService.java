@@ -96,7 +96,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
 
     @Override
     public int getPriority() {
-        return 1000;
+        return 0;
     }
     
     private URI getGenmodelURI(IProject project) {

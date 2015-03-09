@@ -29,7 +29,7 @@ public class MetamodelProviderService extends BaseMetamodelProviderService imple
 
     @Override
     public int getPriority() {
-        return 0;
+        return 1;
     }
     
     @Override
