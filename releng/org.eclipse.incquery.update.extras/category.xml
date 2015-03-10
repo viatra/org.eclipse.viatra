@@ -2,7 +2,7 @@
 <site>
    <feature url="features/org.eclipse.incquery.runtime.gmf.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature" version="1.0.0.qualifier">
       <category name="org.eclipse.incquery"/>
-   </feature>1.0.0
+   </feature>
    <feature url="features/org.eclipse.incquery.runtime.graphiti.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature" version="1.0.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
@@ -39,6 +39,8 @@
    <feature url="features/org.eclipse.gef4.geometry_0.1.0.qualifier.jar" id="org.eclipse.gef4.geometry" version="0.1.0.qualifier">
       <category name="thirdparty"/>
    </feature>
+   <bundle id="com.google.inject" version="3.0.0.v201312141243"/>
+   <bundle id="com.google.inject.multibindings" version="3.0.0.v201402270930"/>
    <category-def name="org.eclipse.incquery" label="EMF-IncQuery"/>
    <category-def name="org.eclipse.incquery.sources" label="EMF-IncQuery Sources"/>
    <category-def name="thirdparty" label="Third party features"/>
