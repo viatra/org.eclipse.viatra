@@ -131,7 +131,7 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
     @Override
     public JvmTypeReference getJvmType(EClassifier classifier, EObject context) {
         if (classifier != null) {
-            String className = metamodelProvider.getQualifiedClassName(classifier, context.eResource().getResourceSet()); 
+            String className = metamodelProvider.getQualifiedClassName(classifier, context); 
             if (!Strings.isNullOrEmpty(className)) {
                 return getTypeReferenceForTypeName(className, context);
             }

@@ -330,7 +330,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     }
 
     @Override
-    protected String doGetQualifiedClassName(EClassifier classifier, ResourceSet set) {
+    protected String doGetQualifiedClassName(EClassifier classifier, EObject context) {
         EPackage ePackage = classifier.getEPackage();
         if (ePackage != null) {
             GenPackage genPackage = provider.findGenPackage(classifier, ePackage);

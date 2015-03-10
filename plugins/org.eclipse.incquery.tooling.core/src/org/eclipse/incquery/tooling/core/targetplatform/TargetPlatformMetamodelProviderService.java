@@ -105,12 +105,15 @@ public class TargetPlatformMetamodelProviderService extends
 	}
 	
     @Override
-    protected String doGetQualifiedClassName(EClassifier classifier, ResourceSet set) {
-        EPackage ePackage = classifier.getEPackage();
-        if (ePackage != null) {
-            GenPackage genPackage = internalFindGenPackage(set, ePackage.getNsURI());
-            if (genPackage != null) {
-                return GeneratorModelHelper.resolveTypeReference(genPackage, classifier);
+    protected String doGetQualifiedClassName(EClassifier classifier, EObject context) {
+        if (context.eResource() != null) {
+            ResourceSet set = context.eResource().getResourceSet();
+            EPackage ePackage = classifier.getEPackage();
+            if (ePackage != null && set != null) {
+                GenPackage genPackage = internalFindGenPackage(set, ePackage.getNsURI());
+                if (genPackage != null) {
+                    return GeneratorModelHelper.resolveTypeReference(genPackage, classifier);
+                }
             }
         }
         return null;

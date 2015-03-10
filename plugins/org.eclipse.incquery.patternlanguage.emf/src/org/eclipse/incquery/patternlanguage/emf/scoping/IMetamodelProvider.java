@@ -41,5 +41,5 @@ public interface IMetamodelProvider {
 
     boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set);
     
-    String getQualifiedClassName(EClassifier classifier, ResourceSet set);
+    String getQualifiedClassName(EClassifier classifier, EObject context);
 }

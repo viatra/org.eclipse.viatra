@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
@@ -50,8 +51,7 @@ public class MetamodelProviderService extends BaseMetamodelProviderService imple
     }
 
     @Override
-    protected String doGetQualifiedClassName(EClassifier classifier, ResourceSet set) {
-        // TODO Auto-generated method stub
+    protected String doGetQualifiedClassName(EClassifier classifier, EObject context) {
         return null;
     }
     

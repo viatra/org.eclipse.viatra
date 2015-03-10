@@ -72,7 +72,7 @@ public abstract class BaseMetamodelProviderService implements IMetamodelProvider
 
     protected abstract Collection<String> getProvidedMetamodels();
 
-    protected abstract String doGetQualifiedClassName(EClassifier classifier, ResourceSet set);
+    protected abstract String doGetQualifiedClassName(EClassifier classifier, EObject context);
     
     @Override
     public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
@@ -80,12 +80,12 @@ public abstract class BaseMetamodelProviderService implements IMetamodelProvider
     }
 
     @Override
-    public String getQualifiedClassName(EClassifier classifier, ResourceSet set) {
+    public String getQualifiedClassName(EClassifier classifier, EObject context) {
         if (!Strings.isNullOrEmpty(classifier.getInstanceClassName())) {
             return classifier.getInstanceClassName();
         } else {
             if (getProvidedMetamodels().contains(classifier.getEPackage().getNsURI())) {
-                return doGetQualifiedClassName(classifier, set);
+                return doGetQualifiedClassName(classifier, context);
             }
             return null;
         }

@@ -112,7 +112,7 @@ public class ResourceSetMetamodelProviderService extends BaseMetamodelProviderSe
 
 
     @Override
-    protected String doGetQualifiedClassName(EClassifier classifier, ResourceSet set) {
+    protected String doGetQualifiedClassName(EClassifier classifier, EObject context) {
         // TODO Auto-generated method stub
         return null;
     }

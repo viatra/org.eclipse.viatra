@@ -81,11 +81,11 @@ public class CompoundMetamodelProviderService implements IMetamodelProvider {
     }
 
     @Override
-    public String getQualifiedClassName(EClassifier classifier, ResourceSet set) {
+    public String getQualifiedClassName(EClassifier classifier, EObject context) {
         String fqn = null;
         Iterator<IMetamodelProviderInstance> it = sortedProviders.iterator();
         while (Strings.isNullOrEmpty(fqn) && it.hasNext()) {
-            fqn = it.next().getQualifiedClassName(classifier, set);
+            fqn = it.next().getQualifiedClassName(classifier, context);
         }
         return fqn;
     }
