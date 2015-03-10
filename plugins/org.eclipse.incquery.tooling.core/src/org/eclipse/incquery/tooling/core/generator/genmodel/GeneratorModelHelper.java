@@ -50,7 +50,7 @@ public class GeneratorModelHelper {
             className = ((GenEnum) genClassifier).getQualifiedInstanceClassName();
         } else {
             //At this point, no corresponding genpackage declaration was found; creating default type
-            className = genPackage.getGenModel().getModelPluginPackageName() + "." + classifier.getName();
+            className = genPackage.getInterfacePackageName() + "." + classifier.getName();
         }
         return className;
     }
