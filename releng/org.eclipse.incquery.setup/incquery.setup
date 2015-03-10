@@ -380,8 +380,16 @@
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.7.0,2.8.0)"/>
+      <requirement
+          name="com.google.inject.multibindings.source"
+          versionRange="[3.0.0,4.0.0)"/>
+      <requirement
+          name="com.google.inject.source"
+          versionRange="[3.0.0,4.0.0)"/>
       <repository
           url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+      <repository
+          url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
     </setupTask>
     <setupTask
         xsi:type="setup:CompoundTask"
@@ -421,6 +429,20 @@
               url="https://hudson.eclipse.org/incquery/job/incquery-master/lastSuccessfulBuild/artifact/update-site-extra/"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Guice">
+        <requirement
+            name="com.google.inject"
+            versionRange="[3.0.0,4.0.0)"/>
+        <requirement
+            name="com.google.inject.multibindings"
+            versionRange="[3.0.0,4.0.0)"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
         </repositoryList>
       </targlet>
     </setupTask>
