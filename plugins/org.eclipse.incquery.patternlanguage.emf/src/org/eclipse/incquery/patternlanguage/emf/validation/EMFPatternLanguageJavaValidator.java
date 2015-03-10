@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.impl.BasicEObjectImpl;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.incquery.patternlanguage.emf.ResolutionException;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
@@ -265,7 +266,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         sb.append(" which has multiple definitions: ");
                         for (EClassifier cls : possibleClassifiers) {
                             sb.append(" '");
-                            sb.append(cls.eResource().getURI());
+                            if (cls.eIsProxy()) {
+                                sb.append(((BasicEObjectImpl)cls).eProxyURI());
+                            } else {
+                                sb.append(cls.eResource().getURI());
+                            }
                             sb.append("' -- ");
                         }
                         error(sb.toString(), variable

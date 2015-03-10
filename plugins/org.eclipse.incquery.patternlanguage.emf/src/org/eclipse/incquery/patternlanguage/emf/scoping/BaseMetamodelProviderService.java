@@ -84,7 +84,7 @@ public abstract class BaseMetamodelProviderService implements IMetamodelProvider
         if (!Strings.isNullOrEmpty(classifier.getInstanceClassName())) {
             return classifier.getInstanceClassName();
         } else {
-            if (getProvidedMetamodels().contains(classifier.getEPackage().getNsURI())) {
+            if (classifier.getEPackage() != null && getProvidedMetamodels().contains(classifier.getEPackage().getNsURI())) {
                 return doGetQualifiedClassName(classifier, context);
             }
             return null;
