@@ -96,7 +96,6 @@ public class SaveSnapshotHandler extends AbstractHandler {
                 IncQueryMatcher<?> matcher = patternMatcherContent.getMatcher();
                 if(matcher != null && matcher.getEngine() != null) {
                     engine = matcher.getEngine();
-                    break;
                 }
 			}
 		}
