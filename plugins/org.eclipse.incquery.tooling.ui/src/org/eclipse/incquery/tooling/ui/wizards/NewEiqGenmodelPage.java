@@ -11,7 +11,9 @@
 
 package org.eclipse.incquery.tooling.ui.wizards;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoProperties;
@@ -52,6 +54,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class NewEiqGenmodelPage extends WizardPage {
     // private DataBindingContext m_bindingContext;
@@ -62,7 +65,7 @@ public class NewEiqGenmodelPage extends WizardPage {
     private Button addGenmodel;
 
     private ResourceSet set;
-    private List<GenModel> selectedGenmodels = Lists.newArrayList();
+    private Set<GenModel> selectedGenmodels = Sets.newHashSet();
     private boolean displayCreateComposite;
 
     /**
@@ -123,13 +126,13 @@ public class NewEiqGenmodelPage extends WizardPage {
         genModelViewer = new TreeViewer(referencedGenmodels);
         genModelViewer.setContentProvider(new ITreeContentProvider() {
 
-            List<GenModel> genmodels;
+            Collection<GenModel> genmodels;
 
             @SuppressWarnings("unchecked")
             @Override
             public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-                if (newInput instanceof List<?>) {
-                    genmodels = (List<GenModel>) newInput;
+                if (newInput instanceof Collection<?>) {
+                    genmodels = (Collection<GenModel>) newInput;
                 }
             }
 
@@ -276,7 +279,7 @@ public class NewEiqGenmodelPage extends WizardPage {
         }
     }
 
-    public List<GenModel> getSelectedGenmodels() {
+    public Collection<GenModel> getSelectedGenmodels() {
         return selectedGenmodels;
     }
 

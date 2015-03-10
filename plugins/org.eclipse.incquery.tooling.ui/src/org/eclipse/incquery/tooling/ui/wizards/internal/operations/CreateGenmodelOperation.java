@@ -12,6 +12,7 @@
 package org.eclipse.incquery.tooling.ui.wizards.internal.operations;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -35,11 +36,11 @@ import org.eclipse.xtext.util.StringInputStream;
 
 public class CreateGenmodelOperation extends WorkspaceModifyOperation {
     private final IProject project;
-    private final List<GenModel> genmodels;
+    private final Collection<GenModel> genmodels;
     private final IEiqGenmodelProvider genmodelProvider;
     private final IResourceSetProvider resourceSetProvider;
 
-    public CreateGenmodelOperation(IProject project, List<GenModel> genmodels, IEiqGenmodelProvider genmodelProvider,
+    public CreateGenmodelOperation(IProject project, Collection<GenModel> genmodels, IEiqGenmodelProvider genmodelProvider,
             IResourceSetProvider resourceSetProvider) {
         this.project = project;
         this.genmodels = genmodels;
