@@ -65,7 +65,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
   }
 
   override getProjectDependencies() {
-    return newArrayList()
+    return newArrayList("org.eclipse.incquery.querybasedfeatures.runtime")
   }
 
   override getProjectPostfix() {
