@@ -257,7 +257,18 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     // If the String sets contains only 1 elements than it is an error
                     // There is some element which is defined multiple types within the ecores
                     if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() <= 1) {
-                        error("Variable has a type which has multiple definitions: " + classifierNamesSet, variable
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Variable ");
+                        sb.append(variable.getName());
+                        sb.append(" has a type "); 
+                        sb.append(classifierNamesSet.iterator().next());
+                        sb.append(" which has multiple definitions: ");
+                        for (EClassifier cls : possibleClassifiers) {
+                            sb.append(" '");
+                            sb.append(cls.eResource().getURI());
+                            sb.append("' -- ");
+                        }
+                        error(sb.toString(), variable
                                 .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
                     } else {
                         EClassifier explicitType = emfTypeProvider.getExplicitClassifierForPatternParameterVariable(variable);
