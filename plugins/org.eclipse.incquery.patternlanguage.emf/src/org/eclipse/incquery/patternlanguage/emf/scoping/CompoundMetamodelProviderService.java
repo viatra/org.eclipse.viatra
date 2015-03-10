@@ -16,11 +16,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.scoping.IScope;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -76,5 +78,15 @@ public class CompoundMetamodelProviderService implements IMetamodelProvider {
             codeFound = it.next().isGeneratedCodeAvailable(ePackage, set);
         }
         return codeFound;
+    }
+
+    @Override
+    public String getQualifiedClassName(EClassifier classifier, ResourceSet set) {
+        String fqn = null;
+        Iterator<IMetamodelProviderInstance> it = sortedProviders.iterator();
+        while (Strings.isNullOrEmpty(fqn) && it.hasNext()) {
+            fqn = it.next().getQualifiedClassName(classifier, set);
+        }
+        return fqn;
     }
 }

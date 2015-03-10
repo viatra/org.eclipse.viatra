@@ -13,6 +13,7 @@ package org.eclipse.incquery.patternlanguage.emf.scoping;
 import java.util.Collection;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
@@ -46,6 +47,12 @@ public class MetamodelProviderService extends BaseMetamodelProviderService imple
             Set<String> nsURISet = Sets.newHashSet(EPackage.Registry.INSTANCE.keySet());
             return nsURISet;
         
+    }
+
+    @Override
+    protected String doGetQualifiedClassName(EClassifier classifier, ResourceSet set) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.scoping;
 
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -39,4 +40,6 @@ public interface IMetamodelProvider {
     EPackage loadEPackage(String uri, ResourceSet resourceSet);
 
     boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set);
+    
+    String getQualifiedClassName(EClassifier classifier, ResourceSet set);
 }

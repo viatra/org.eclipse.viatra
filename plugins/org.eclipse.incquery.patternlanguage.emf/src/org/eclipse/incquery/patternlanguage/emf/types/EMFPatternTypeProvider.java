@@ -33,6 +33,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierCo
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
+import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.BoolValue;
@@ -80,7 +81,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 /**
- * An extension of the {@link XbaseTypeProvider} for inferring the correct types for the pattern variables. It handles
+ * A type provider for inferring the correct types for the pattern variables. It handles
  * all constraints in the model which can modify the outcome of the type, but it has some practical limitations, as the
  * calculation of the proper type can be time consuming in some cases.
  */
@@ -104,6 +105,9 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
     
     @Inject
     private IBatchTypeResolver typeResolver;
+    
+    @Inject
+    private IMetamodelProvider metamodelProvider;
 
     private static final int RECURSION_CALLING_LEVEL_LIMIT = 5;
 
@@ -127,7 +131,7 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
     @Override
     public JvmTypeReference getJvmType(EClassifier classifier, EObject context) {
         if (classifier != null) {
-            String className = getClassNameForEClassifier(classifier, context);
+            String className = metamodelProvider.getQualifiedClassName(classifier, context.eResource().getResourceSet()); 
             if (!Strings.isNullOrEmpty(className)) {
                 return getTypeReferenceForTypeName(className, context);
             }
@@ -135,17 +139,6 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
         //Return Object or EObject if no classifier can be found 
         final Class<?> clazz = (classifier instanceof EClass) ? EObject.class : Object.class;
         return typeReferences.getTypeForName(clazz, context);
-    }
-
-    /**
-     * Returns the {@link JvmTypeReference} for a given {@link EClassifier}.
-     * 
-     * @param classifier
-     * @param context The context parameter is used for identifying the current Resource/ResourceSet context
-     * @return
-     */
-    protected String getClassNameForEClassifier(EClassifier classifier, EObject context) {
-        return classifier.getInstanceClassName();
     }
 
     @Override

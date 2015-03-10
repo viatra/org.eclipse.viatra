@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -106,6 +107,13 @@ public class ResourceSetMetamodelProviderService extends BaseMetamodelProviderSe
                 it.prune();
             }
         }
+        return null;
+    }
+
+
+    @Override
+    protected String doGetQualifiedClassName(EClassifier classifier, ResourceSet set) {
+        // TODO Auto-generated method stub
         return null;
     }
 

@@ -12,12 +12,10 @@ package org.eclipse.incquery.patternlanguage.emf.scoping;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
@@ -32,6 +30,7 @@ import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.SimpleScope;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
@@ -73,9 +72,23 @@ public abstract class BaseMetamodelProviderService implements IMetamodelProvider
 
     protected abstract Collection<String> getProvidedMetamodels();
 
+    protected abstract String doGetQualifiedClassName(EClassifier classifier, ResourceSet set);
+    
     @Override
     public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
         return getGenmodelRegistry().findGenPackage(ePackage.getNsURI(), set) != null;
+    }
+
+    @Override
+    public String getQualifiedClassName(EClassifier classifier, ResourceSet set) {
+        if (!Strings.isNullOrEmpty(classifier.getInstanceClassName())) {
+            return classifier.getInstanceClassName();
+        } else {
+            if (getProvidedMetamodels().contains(classifier.getEPackage().getNsURI())) {
+                return doGetQualifiedClassName(classifier, set);
+            }
+            return null;
+        }
     }
 
 }

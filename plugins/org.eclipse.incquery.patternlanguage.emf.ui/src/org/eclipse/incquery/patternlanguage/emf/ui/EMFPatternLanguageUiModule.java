@@ -23,7 +23,6 @@ import org.eclipse.incquery.patternlanguage.emf.GenmodelExtensionLoader;
 import org.eclipse.incquery.patternlanguage.emf.IGenmodelMappingLoader;
 import org.eclipse.incquery.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrer;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProviderInstance;
-import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.incquery.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.feedback.GeneratorMarkerFeedback;
@@ -32,7 +31,6 @@ import org.eclipse.incquery.patternlanguage.emf.ui.highlight.EMFPatternLanguageH
 import org.eclipse.incquery.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverDocumentationProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.types.EMFPatternLanguageTypeProviderFactory;
 import org.eclipse.incquery.patternlanguage.emf.ui.types.EMFPatternLanguageTypeScopeProvider;
-import org.eclipse.incquery.patternlanguage.emf.ui.types.GenModelBasedTypeProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.incquery.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
 import org.eclipse.incquery.patternlanguage.emf.ui.validation.GenmodelBasedEMFPatternLanguageJavaValidator;
@@ -124,10 +122,6 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
 
     public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
         return GenModelMetamodelProviderService.class;
-    }
-
-    public Class<? extends IEMFTypeProvider> bindIEMFTypeProvider() {
-    	return GenModelBasedTypeProvider.class;
     }
 
     @Override

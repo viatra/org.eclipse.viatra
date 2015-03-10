@@ -17,11 +17,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.patternlanguage.emf.scoping.BaseMetamodelProviderService;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProviderInstance;
+import org.eclipse.incquery.tooling.core.generator.genmodel.GeneratorModelHelper;
+import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
@@ -39,7 +42,7 @@ import com.google.inject.Inject;
  */
 public class TargetPlatformMetamodelProviderService extends
 		BaseMetamodelProviderService implements IMetamodelProviderInstance {
-
+    
     @Override
     public String getIdentifier() {
         return "target";
@@ -47,7 +50,7 @@ public class TargetPlatformMetamodelProviderService extends
 
     @Override
     public int getPriority() {
-        return 10;
+        return 3;
     }
 
     @Override
@@ -101,4 +104,15 @@ public class TargetPlatformMetamodelProviderService extends
         return pack;
 	}
 	
+    @Override
+    protected String doGetQualifiedClassName(EClassifier classifier, ResourceSet set) {
+        EPackage ePackage = classifier.getEPackage();
+        if (ePackage != null) {
+            GenPackage genPackage = internalFindGenPackage(set, ePackage.getNsURI());
+            if (genPackage != null) {
+                return GeneratorModelHelper.resolveTypeReference(genPackage, classifier);
+            }
+        }
+        return null;
+    }
 }

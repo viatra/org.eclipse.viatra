@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -59,6 +60,9 @@ import com.google.inject.Singleton;
 @Singleton
 public class GenModelMetamodelProviderService extends BaseMetamodelProviderService implements IEiqGenmodelProvider, IMetamodelProviderInstance {
 
+    @Inject
+    private IEiqGenmodelProvider provider;
+    
     private static final class NameTransformerFunction implements Function<IEObjectDescription, QualifiedName> {
         @Override
         public QualifiedName apply(IEObjectDescription desc) {
@@ -259,7 +263,6 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
                 @Override
                 public boolean apply(GenPackage genPackage) {
                     Preconditions.checkNotNull(genPackage, "Checked genpackage must not be null");
-
                     return packageNsUri.equals(genPackage.getEcorePackage().getNsURI());
                 }
             });
@@ -268,7 +271,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
                 return it.next();
             }
         }
-        return getGenmodelRegistry().findGenPackage(packageNsUri, set);
+        return null;
     }
 
     private List<GenPackage> getAllGenPackages(GenModel genModel) {
@@ -324,5 +327,17 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     @Override
     protected Collection<String> getProvidedMetamodels() {
         return getGenmodelRegistry().getPackageUris();
+    }
+
+    @Override
+    protected String doGetQualifiedClassName(EClassifier classifier, ResourceSet set) {
+        EPackage ePackage = classifier.getEPackage();
+        if (ePackage != null) {
+            GenPackage genPackage = provider.findGenPackage(classifier, ePackage);
+            if (genPackage != null) {
+                return GeneratorModelHelper.resolveTypeReference(genPackage, classifier);
+            }
+        }
+        return null;
     }
 }
