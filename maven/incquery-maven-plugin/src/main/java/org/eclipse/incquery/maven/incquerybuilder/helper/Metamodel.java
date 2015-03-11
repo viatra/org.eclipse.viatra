@@ -15,13 +15,11 @@ public class Metamodel {
 
     /**
      * @property
-     * @required
      */
     private String packageClass;
 
     /**
      * @property
-     * @required
      */
     private String genmodelUri;
 

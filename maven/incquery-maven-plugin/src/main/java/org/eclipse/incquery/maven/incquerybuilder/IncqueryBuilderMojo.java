@@ -32,6 +32,8 @@ import org.eclipse.xtext.maven.Language;
 import org.eclipse.xtext.maven.OutputConfiguration;
 import org.eclipse.xtext.maven.XtextGenerator;
 
+import com.google.common.base.Strings;
+
 /**
  * Goal which generates Java code for EMF-IncQuery patterns
  * 
@@ -205,8 +207,7 @@ public class IncqueryBuilderMojo extends AbstractMojo {
      * @throws MojoExecutionException 
      */
     private void registerMetamodels() throws MojoExecutionException {
-        for (Metamodel metamodel : metamodels)
-        {
+        for (Metamodel metamodel : metamodels) {
             String fqnOfEPackageClass = null;
             String metamodelNSURI = null;
             try {
@@ -243,11 +244,13 @@ public class IncqueryBuilderMojo extends AbstractMojo {
             }
             
             String genmodelUri = metamodel.getGenmodelUri();
-            if (URI.createURI(genmodelUri).isRelative()) {
-                genmodelUri = project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
-            }
+            if (!Strings.isNullOrEmpty(genmodelUri)) {
+                if (URI.createURI(genmodelUri).isRelative()) {
+                    genmodelUri = "file://" + project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
+                }
             
-            MavenBuilderGenmodelLoader.addGenmodel(metamodelNSURI, "file://" + genmodelUri);
+                MavenBuilderGenmodelLoader.addGenmodel(metamodelNSURI, genmodelUri);
+            }
         }
     }
 

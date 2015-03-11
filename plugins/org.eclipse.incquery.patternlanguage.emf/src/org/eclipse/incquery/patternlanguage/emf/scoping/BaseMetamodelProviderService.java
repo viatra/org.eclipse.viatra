@@ -12,6 +12,7 @@ package org.eclipse.incquery.patternlanguage.emf.scoping;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
@@ -32,6 +33,7 @@ import org.eclipse.xtext.scoping.impl.SimpleScope;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.inject.Inject;
 
 /**
@@ -76,7 +78,17 @@ public abstract class BaseMetamodelProviderService implements IMetamodelProvider
     
     @Override
     public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
-        return getGenmodelRegistry().findGenPackage(ePackage.getNsURI(), set) != null;
+        if (getProvidedMetamodels().contains(ePackage.getNsURI())) {
+            Iterator<EClassifier> it = Iterators.filter(ePackage.eAllContents(), EClassifier.class);
+            boolean missingNameFound = false;
+            while (!missingNameFound && it.hasNext()) {
+                final String instanceClassName = it.next().getInstanceClassName();
+                missingNameFound = Strings.isNullOrEmpty(instanceClassName);
+            }
+            return !missingNameFound || getGenmodelRegistry().findGenPackage(ePackage.getNsURI(), set) != null;
+        } else {
+            return false;
+        }
     }
 
     @Override
