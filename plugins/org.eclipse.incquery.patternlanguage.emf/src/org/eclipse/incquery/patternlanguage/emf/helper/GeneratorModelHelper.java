@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.tooling.core.generator.genmodel;
+package org.eclipse.incquery.patternlanguage.emf.helper;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass;
 import org.eclipse.emf.codegen.ecore.genmodel.GenClassifier;

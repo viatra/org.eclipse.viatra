@@ -14,6 +14,7 @@ package org.eclipse.incquery.maven.incquerybuilder;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -21,9 +22,13 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.incquery.maven.incquerybuilder.helper.Metamodel;
 import org.eclipse.incquery.maven.incquerybuilder.setup.EMFPatternLanguageMavenStandaloneSetup;
@@ -33,6 +38,8 @@ import org.eclipse.xtext.maven.OutputConfiguration;
 import org.eclipse.xtext.maven.XtextGenerator;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Maps;
 
 /**
  * Goal which generates Java code for EMF-IncQuery patterns
@@ -208,57 +215,83 @@ public class IncqueryBuilderMojo extends AbstractMojo {
      */
     private void registerMetamodels() throws MojoExecutionException {
         for (Metamodel metamodel : metamodels) {
-            String fqnOfEPackageClass = null;
+            String fqnOfEPackageClass = metamodel.getPackageClass();
+            String genmodelUri = metamodel.getGenmodelUri();
             String metamodelNSURI = null;
-            try {
-
-                fqnOfEPackageClass = metamodel.getPackageClass();
-                
-                Class<?> ePackageClass = Class.forName(fqnOfEPackageClass);
-                
-                Field instanceField = ePackageClass.getDeclaredField("eINSTANCE");
-
-                Class<?> instanceFieldType = instanceField.getType();
-
-                if (ePackageClass != instanceFieldType) {
-                    getLog().error(
-                            "eINSTANCE is not type of " + fqnOfEPackageClass + " in class " + fqnOfEPackageClass
-                                    + ". It's type of " + instanceFieldType.getCanonicalName() + ".");
-                    throw new MojoExecutionException("Execution failed due to wrong type of eINSTANCE");
-                }
-
-                EPackage ePackage = (EPackage)instanceField.get(null);
-                metamodelNSURI = ePackage.getNsURI();
-
-            } catch (ClassNotFoundException e) {
-                getLog().error("Couldn't find class " + fqnOfEPackageClass + " on the classpath.");
-                throw new MojoExecutionException("Execution failed due to wrong classname.");
-            } catch (NoSuchFieldException e) {
-                getLog().error("The " + fqnOfEPackageClass + " class doesn't have eINSTANCE field.");
-            } catch (SecurityException e) {
-
-            } catch (IllegalArgumentException e) {
-
-            } catch (IllegalAccessException e) {
-
+            
+            if (Strings.isNullOrEmpty(fqnOfEPackageClass) && Strings.isNullOrEmpty(genmodelUri)) {
+                final String msg = "For a metamodel definition, either EPackage class of Genmodel URI must be set.";
+                getLog().error(msg);
+                throw new MojoExecutionException(msg);
             }
             
-            String genmodelUri = metamodel.getGenmodelUri();
+            if (!Strings.isNullOrEmpty(fqnOfEPackageClass)) {
+                loadNSUriFromClass(fqnOfEPackageClass);
+            }
+            
             if (!Strings.isNullOrEmpty(genmodelUri)) {
                 if (URI.createURI(genmodelUri).isRelative()) {
                     genmodelUri = "file://" + project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
                 }
-            
-                MavenBuilderGenmodelLoader.addGenmodel(metamodelNSURI, genmodelUri);
+                if (Strings.isNullOrEmpty(metamodelNSURI)) {
+                    try {
+                    ResourceSet set = new ResourceSetImpl();
+                    final Resource resource = set.getResource(URI.createURI(genmodelUri), true);
+                    resource.load(Maps.newHashMap());
+                    EcoreUtil.resolveAll(resource);
+                    final Iterator<GenPackage> it = Iterators.filter(resource.getAllContents(), GenPackage.class);
+                    while (it.hasNext()) {
+                        final GenPackage genPackage = it.next();
+                        final EPackage ecorePackage = genPackage.getEcorePackage();
+                        EPackage.Registry.INSTANCE.putIfAbsent(ecorePackage.getNsURI(), ecorePackage);
+                        MavenBuilderGenmodelLoader.addGenmodel(ecorePackage.getNsURI(), genmodelUri);
+                    }
+                    } catch (Exception e) {
+                        final String msg = "Error while loading metamodel specification from " + genmodelUri;
+                        getLog().error(msg);
+                        throw new MojoExecutionException(msg, e);
+                    }
+                } else {
+                    MavenBuilderGenmodelLoader.addGenmodel(metamodelNSURI, genmodelUri);
+                }
             }
         }
     }
 
+    private String loadNSUriFromClass(String fqnOfEPackageClass) throws MojoExecutionException {
+        try {
+            Class<?> ePackageClass = Class.forName(fqnOfEPackageClass);
+            
+            Field instanceField = ePackageClass.getDeclaredField("eINSTANCE");
+
+            Class<?> instanceFieldType = instanceField.getType();
+
+            if (ePackageClass != instanceFieldType) {
+                getLog().error(
+                        "eINSTANCE is not type of " + fqnOfEPackageClass + " in class " + fqnOfEPackageClass
+                                + ". It's type of " + instanceFieldType.getCanonicalName() + ".");
+                throw new MojoExecutionException("Execution failed due to wrong type of eINSTANCE");
+            }
+
+            EPackage ePackage = (EPackage)instanceField.get(null);
+            return ePackage.getNsURI();
+
+        } catch (ClassNotFoundException e) {
+            getLog().error("Couldn't find class " + fqnOfEPackageClass + " on the classpath.");
+            throw new MojoExecutionException("Execution failed due to wrong classname.", e);
+        } catch (NoSuchFieldException e) {
+            getLog().error("The " + fqnOfEPackageClass + " class doesn't have eINSTANCE field.");
+            throw new MojoExecutionException("Execution failed due to wrong classname.", e);
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error while loading EPackage " + fqnOfEPackageClass, e);
+        }
+    }
 
     /**
      * To register genmodel extension and according factory to the extension factory
      */
     private void registerGenmodelExtension() {
+        Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("genmodel", new EcoreResourceFactoryImpl());
         GenModelPackage.eINSTANCE.eClass();
     }

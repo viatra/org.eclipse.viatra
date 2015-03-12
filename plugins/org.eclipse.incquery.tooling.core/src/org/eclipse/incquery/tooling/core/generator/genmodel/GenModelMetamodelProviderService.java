@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.incquery.patternlanguage.emf.helper.GeneratorModelHelper;
 import org.eclipse.incquery.patternlanguage.emf.scoping.BaseMetamodelProviderService;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.incquery.tooling.core.project.IncQueryNature;

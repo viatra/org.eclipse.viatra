@@ -52,7 +52,6 @@
 					<metamodels>
 						<metamodel>
 							<packageClass>org.eclipse.incquery.runtime.rete.recipes.RecipesPackage</packageClass>
-							<genmodelUri>../org.eclipse.incquery.runtime.rete.recipes/model/rete-recipes.xcore</genmodelUri>
 						</metamodel>
 					</metamodels>
 				</configuration>

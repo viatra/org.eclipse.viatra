@@ -14,10 +14,12 @@ package org.eclipse.incquery.maven.incquerybuilder.setup;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageRuntimeModule;
 import org.eclipse.incquery.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
 import org.eclipse.incquery.patternlanguage.emf.IGenmodelMappingLoader;
+import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.multibindings.Multibinder;
 
 public class EMFPatternLanguageMavenStandaloneSetup extends EMFPatternLanguageStandaloneSetup {
 
@@ -28,6 +30,8 @@ public class EMFPatternLanguageMavenStandaloneSetup extends EMFPatternLanguageSt
             @SuppressWarnings("unused")
             public void configureIGenmodelMappingLoader(Binder bind) {
                 bind.bind(IGenmodelMappingLoader.class).toInstance(MavenBuilderGenmodelLoader.getInstance());
+                Multibinder<IMetamodelProviderInstance> metamodelProviderBinder = Multibinder.newSetBinder(bind, IMetamodelProviderInstance.class);
+                metamodelProviderBinder.addBinding().to(MavenGenmodelMetamodelProvider.class);
             }
 
         });

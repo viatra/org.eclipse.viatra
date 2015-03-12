@@ -52,7 +52,6 @@
 					<metamodels>
 						<metamodel>
 							<packageClass>org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage</packageClass>
-							<genmodelUri>../org.eclipse.incquery.snapshot/model/eiqsnapshot.genmodel</genmodelUri>
 						</metamodel>
 					</metamodels>
 				</configuration>
