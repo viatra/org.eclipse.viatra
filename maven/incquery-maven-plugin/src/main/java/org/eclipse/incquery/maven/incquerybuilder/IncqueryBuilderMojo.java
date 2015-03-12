@@ -243,7 +243,7 @@ public class IncqueryBuilderMojo extends AbstractMojo {
                     while (it.hasNext()) {
                         final GenPackage genPackage = it.next();
                         final EPackage ecorePackage = genPackage.getEcorePackage();
-                        EPackage.Registry.INSTANCE.putIfAbsent(ecorePackage.getNsURI(), ecorePackage);
+                        EPackage.Registry.INSTANCE.put(ecorePackage.getNsURI(), ecorePackage);
                         MavenBuilderGenmodelLoader.addGenmodel(ecorePackage.getNsURI(), genmodelUri);
                     }
                     } catch (Exception e) {
