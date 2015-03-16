@@ -30,21 +30,21 @@
 							<filesets>
 								<fileset><!-- EMF generated code -->
 									<directory>emf-gen</directory>
-									<includes>
-										<include>**/*</include>
-									</includes>
+                                                        		<excludes>
+                                                                		<exclude>.gitignore</exclude>
+                                                        		</excludes>
 								</fileset>
 								<fileset><!--  EMF generator workspace -->
 									<directory>${emf.workspace.location}</directory>
-									<includes>
-										<include>**/*</include>
-									</includes>
+                                                        		<excludes>
+                                                                		<exclude>.gitignore</exclude>
+                                                        		</excludes>
 								</fileset>
 								<fileset><!--  IncQuery generated code -->
 									<directory>src-gen</directory>
-									<includes>
-										<include>**/*</include>
-									</includes>
+                                                        		<excludes>
+                                                                		<exclude>.gitignore</exclude>
+                                                        		</excludes>
 								</fileset>
 							</filesets>
 						</configuration>

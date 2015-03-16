@@ -21,22 +21,19 @@
 						<fileset>
 							<directory>src-gen</directory>
 							<excludes>
-								<exclude>keep.txt</exclude>
-								<exclude>.keep.txt</exclude>
+								<exclude>.gitignore</exclude>
 							</excludes>
 						</fileset>
 						<fileset>
 							<directory>xtend-gen</directory>
 							<excludes>
-								<exclude>keep.txt</exclude>
-								<exclude>.keep.txt</exclude>
+								<exclude>.gitignore</exclude>
 							</excludes>
 						</fileset>
 						<fileset>
 							<directory>../${project.artifactId}.ui/src-gen</directory>
 							<excludes>
-								<exclude>keep.txt</exclude>
-								<exclude>.keep.txt</exclude>
+								<exclude>.gitignore</exclude>
 							</excludes>
 						</fileset>
 					</filesets>

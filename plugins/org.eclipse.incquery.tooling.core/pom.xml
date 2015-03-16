@@ -29,8 +29,7 @@
 						<fileset>
 							<directory>xtend-gen</directory>
 							<excludes>
-								<exclude>keep.txt</exclude>
-								<exclude>.keep.txt</exclude>
+								<exclude>.gitignore</exclude>
 							</excludes>
 						</fileset>
 					</filesets>
