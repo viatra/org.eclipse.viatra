@@ -225,11 +225,15 @@ public class IncqueryBuilderMojo extends AbstractMojo {
                 throw new MojoExecutionException(msg);
             }
             
+            if (!Strings.isNullOrEmpty(fqnOfEPackageClass) && !Strings.isNullOrEmpty(genmodelUri)) {
+                getLog().warn(String.format("For metamodel %s both EPackage class and genmodel are set. Using EPackage class", fqnOfEPackageClass));
+            }
+            
             if (!Strings.isNullOrEmpty(fqnOfEPackageClass)) {
                 loadNSUriFromClass(fqnOfEPackageClass);
             }
             
-            if (!Strings.isNullOrEmpty(genmodelUri)) {
+            if (!Strings.isNullOrEmpty(genmodelUri) && Strings.isNullOrEmpty(fqnOfEPackageClass)) {
                 if (URI.createURI(genmodelUri).isRelative()) {
                     genmodelUri = "file://" + project.getBasedir().getAbsolutePath() + File.separator + genmodelUri;
                 }
