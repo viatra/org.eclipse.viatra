@@ -112,7 +112,7 @@ public class CleanSupport {
 
     private void cleanFragment(IProject modelProject, IGenerationFragment fragment) throws CoreException {
         IProject fragmentProject = fragmentProvider.getFragmentProject(modelProject, fragment);
-        if (fragmentProject.exists()) {
+        if (fragmentProject.exists() && !fragmentProject.equals(modelProject)) {
             fragmentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
             // full clean on output directories
             EclipseResourceFileSystemAccess2 fsa = eclipseResourceSupport
