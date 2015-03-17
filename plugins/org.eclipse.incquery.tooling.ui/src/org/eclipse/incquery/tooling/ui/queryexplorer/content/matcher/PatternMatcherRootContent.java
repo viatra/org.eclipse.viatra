@@ -27,6 +27,9 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryEngineLifecycleListener;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
+import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
@@ -81,8 +84,9 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
                 .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
 
         try {
-            AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(key.getNotifier(),
-                    wildcardMode, dynamicEMFMode);
+            BaseIndexOptions options = new BaseIndexOptions(dynamicEMFMode, wildcardMode);
+            IncQueryScope scope = new EMFScope(key.getNotifier(), options);
+            AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(scope);
             return engine;
         } catch (IncQueryException e) {
             logger.log(new Status(IStatus.ERROR, IncQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "
