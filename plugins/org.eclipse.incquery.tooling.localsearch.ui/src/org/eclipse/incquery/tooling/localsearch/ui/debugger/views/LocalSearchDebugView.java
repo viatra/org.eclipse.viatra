@@ -46,7 +46,7 @@ import com.google.common.collect.Lists;
  * @author Marton Bur
  *
  */
-public class SearchPlanView extends ViewPart implements IZoomableWorkbenchPart {
+public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbenchPart {
 
 
     public static final String ID = "org.eclipse.incquery.tooling.localsearch.ui.SearchPlanView";
@@ -62,7 +62,7 @@ public class SearchPlanView extends ViewPart implements IZoomableWorkbenchPart {
     
     private boolean halted = true;
 
-    public SearchPlanView() {
+    public LocalSearchDebugView() {
     }
     
     public List<ISearchOperation> getBreakpoints() {

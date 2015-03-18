@@ -23,7 +23,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.SearchPlanView;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
 public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	public static volatile Object notifier = new Object();
-	private SearchPlanView searchPlanView;
+	private LocalSearchDebugView searchPlanView;
 	private List<LocalSearchMatcher> runningMatchers;
 	
 	private boolean startHandlerCalled = false;
@@ -63,7 +63,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 					try {
 						runningMatchers = Lists.newArrayList();
 						// Init treeviewer related fields
-						searchPlanView = (SearchPlanView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(SearchPlanView.ID);
+						searchPlanView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
 						operationListContentProvider = searchPlanView.getOperationListContentProvider();
 						operationListContentProvider.getMatcherCurrentExecutorMappings().clear();
 						searchPlanView.refreshOperationList();

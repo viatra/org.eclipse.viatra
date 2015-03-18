@@ -13,7 +13,7 @@ package org.eclipse.incquery.tooling.localsearch.ui.debugger.views.internal;
 import java.util.List;
 
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.SearchPlanView;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,9 +26,9 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 public class BreakPointListener implements IDoubleClickListener {
 
-    private SearchPlanView searchPlanView;
+    private LocalSearchDebugView searchPlanView;
     
-    public BreakPointListener(SearchPlanView searchPlanView){
+    public BreakPointListener(LocalSearchDebugView searchPlanView){
         this.searchPlanView = searchPlanView;
     }
     
