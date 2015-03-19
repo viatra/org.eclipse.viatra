@@ -34,6 +34,8 @@ import com.google.common.collect.Maps;
 public class OperationListContentProvider implements ITreeContentProvider {
 
 	private Map<LocalSearchMatcher,SearchPlanExecutor> matcherCurrentExecutorMappings = Maps.newHashMap();
+	private OperationListLabelProvider operationListLabelProvider;
+	private Map<Object, Object> dummyOperations = Maps.newHashMap();
 
 	public Map<LocalSearchMatcher,SearchPlanExecutor> getMatcherCurrentExecutorMappings() {
 		return matcherCurrentExecutorMappings;
@@ -56,13 +58,28 @@ public class OperationListContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof SearchPlanExecutor) {
 			// Get the first from the list that is the top level plan
-			List<ISearchOperation> operations = Lists.newArrayList();
+			List<Object> operationsToShow = Lists.newArrayList();
 			if(inputElement != null){
-				operations = ((SearchPlanExecutor)inputElement).getSearchPlan().getOperations();
+				createOperationsList(inputElement, operationsToShow);
 			}
-			return operations.toArray(new Object[operations.size()]);
+			return operationsToShow.toArray(new Object[operationsToShow.size()]);
 		}
 		return new Object[0];
+	}
+
+
+	private void createOperationsList(Object inputElement, List<Object> operationsToShow) {
+		List<ISearchOperation> searchOperations = ((SearchPlanExecutor)inputElement).getSearchPlan().getOperations();
+		operationsToShow.addAll(searchOperations);
+		// Final dummy operation
+		
+		Object dummyOperation = dummyOperations.get(inputElement);
+		if(dummyOperation == null){
+			dummyOperation = new Object();
+			dummyOperations.put(inputElement, dummyOperation);
+		}
+		operationListLabelProvider.createDummyMatchOperationMapping(dummyOperation,(SearchPlanExecutor)inputElement);
+		operationsToShow.add(dummyOperation);
 	}
 
 	@Override
@@ -80,10 +97,8 @@ public class OperationListContentProvider implements ITreeContentProvider {
 
 		if(calledMatcher != null){
 			SearchPlanExecutor searchPlanExecutor = matcherCurrentExecutorMappings.get(calledMatcher);
-			List<ISearchOperation> operations = Lists.newArrayList();
-			if(searchPlanExecutor != null){				
-				operations = searchPlanExecutor.getSearchPlan().getOperations();
-			}
+			List<Object> operations = Lists.newArrayList();
+			createOperationsList(searchPlanExecutor, operations);
 			return operations.toArray(new Object[operations.size()]);
 		}
 		
@@ -109,6 +124,13 @@ public class OperationListContentProvider implements ITreeContentProvider {
 		}
 		return calledMatcher != null;
 	}
+
+
+	public void setLabelProvider(OperationListLabelProvider operationListLabelProvider) {
+		this.operationListLabelProvider = operationListLabelProvider;
+	}
+
+
 
 
 }

@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
+import java.util.List;
+
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author Zoltan Ujhelyi
@@ -48,14 +52,12 @@ public class InequalityCheck extends CheckOperation {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("InequalityCheck(")
-           .append(sourceLocation)
-           .append(", ")
-           .append(targetLocation)
-           .append(')');
-        return builder.toString();
+        return "InequalityCheck";
     }
 
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(sourceLocation, targetLocation, new Integer[0]);
+	}
 
 }

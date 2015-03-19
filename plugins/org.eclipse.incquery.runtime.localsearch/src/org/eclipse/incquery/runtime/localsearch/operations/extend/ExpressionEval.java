@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
@@ -19,6 +20,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.MatchingFrameValuePro
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * Calculates the result of an expression and stores it inside a variable for future reference.
@@ -46,5 +48,19 @@ public class ExpressionEval extends ExtendOperation<Object> {
             throw new LocalSearchException("Error while evaluating expression", e);
         }
     }
-
+    
+    @Override
+    public String toString() {
+    	return "ExpressionEval";
+    }
+    
+    
+    @Override
+	public List<Integer> getVariablePositions() {
+    	// XXX not sure if this is the correct implementation to get the affected variable indicies
+    	List<Integer> variables = Lists.newArrayList();
+    	variables.addAll(nameMap.values());
+		return variables;
+	}
+    
 }

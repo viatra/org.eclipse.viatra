@@ -23,18 +23,19 @@ import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
 import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.ZestNodeContentProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.internal.BreakPointListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -49,7 +50,7 @@ import com.google.common.collect.Lists;
 public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbenchPart {
 
 
-    public static final String ID = "org.eclipse.incquery.tooling.localsearch.ui.SearchPlanView";
+    public static final String ID = "org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView";
     
     private TreeViewer operationListViewer;
     private OperationListContentProvider operationListContentProvider;
@@ -58,20 +59,36 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     private GraphViewer graphViewer;
     private ZestNodeContentProvider zestContentProvider;
     
-    private List<ISearchOperation> breakpoints = Lists.newLinkedList();
+    private List<Object> breakpoints = Lists.newLinkedList();
     
     private boolean halted = true;
+
+	private TableViewer matchesViewer;
 
     public LocalSearchDebugView() {
     }
     
-    public List<ISearchOperation> getBreakpoints() {
+    public List<Object> getBreakpoints() {
         return breakpoints;
     }
     
-    public boolean isBreakpointHit(ISearchOperation iSearchOperation) {
+    public boolean isBreakpointHit(SearchPlanExecutor planExecutor) {
+    	
+    	int currentOperation = planExecutor.getCurrentOperation();
+		boolean operationNotInRange = planExecutor.getSearchPlan().getOperations().size() <= currentOperation || currentOperation < 0;
+		ISearchOperation currentSerachOperation = operationNotInRange 
+				? null 
+				: planExecutor.getSearchPlan().getOperations().get(currentOperation);
+
+		boolean matched = planExecutor.getSearchPlan().getOperations().size() == currentOperation;
+		Object dummyMatchOperation = null;
+		if(matched){
+			dummyMatchOperation = operationListLabelProvider.getDummyMatchOperation(planExecutor);
+		}
+    	
         if (halted == false) {
-            halted = breakpoints.contains(iSearchOperation);
+            halted = breakpoints.contains(currentSerachOperation);
+            halted |= breakpoints.contains(dummyMatchOperation);
             return halted;
         } else {
             return true;
@@ -83,14 +100,37 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
         parent.setLayoutData(new FillLayout());
         SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
 
-        // TreeViewer
-        createTreeViewer(sashForm);
+        SashForm planSashForm = new SashForm(sashForm, SWT.VERTICAL);
+        
+        // TreeViewer for the plan
+        createTreeViewer(planSashForm);
 
+        // Table viewer for the matches
+        createTableViewer(planSashForm);
+        
         // Zest viewer
         createZestViewer(sashForm);
     }
 
-    private void createZestViewer(SashForm sashForm) {
+    private void createTableViewer(SashForm planSashForm) {
+    	matchesViewer = new TableViewer(planSashForm, SWT.MULTI | SWT.H_SCROLL
+    		      | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+    	
+
+    	// TODO Create proper content provider
+    	matchesViewer.setContentProvider(ArrayContentProvider.getInstance());
+
+    	// This way it is insufficient information, a label provider is missing 
+		matchesViewer.setInput(new Object[] { new Object[]{0,0}, 0, 0 });
+
+    	final Table table = matchesViewer.getTable();
+    	table.setHeaderVisible(true);
+    	table.setLinesVisible(true); 
+
+    	
+	}
+
+	private void createZestViewer(SashForm sashForm) {
         this.graphViewer = new GraphViewer(sashForm, SWT.BORDER);
         
         ZestNodeContentProvider zestContentProvider = new ZestNodeContentProvider();
@@ -115,6 +155,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
         this.operationListLabelProvider = new OperationListLabelProvider(breakpoints);
 
         this.operationListViewer.setContentProvider(operationListContentProvider);
+        operationListContentProvider.setLabelProvider(operationListLabelProvider);
         this.operationListViewer.setLabelProvider(operationListLabelProvider);
         this.operationListViewer.setInput(null);
 
@@ -122,16 +163,6 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
         BreakPointListener breakPointListener = new BreakPointListener(this);
         this.operationListViewer.addDoubleClickListener(breakPointListener);
 
-        this.operationListViewer.getTree().addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(final KeyEvent e) {
-                if (e.keyCode == SWT.DEL) {
-                    final IStructuredSelection selection = (IStructuredSelection) getOperationListViewer().getSelection();
-                    // TODO remove debug print
-                    System.out.println(selection);
-                }
-            }
-        });
     }
 
     private LayoutAlgorithm getLayout() {

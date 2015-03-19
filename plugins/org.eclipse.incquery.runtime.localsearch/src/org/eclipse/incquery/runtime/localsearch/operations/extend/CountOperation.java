@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -22,6 +24,7 @@ import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -65,4 +68,20 @@ public class CountOperation extends ExtendOperation<Integer> {
         
     }
 
+    @Override
+    public String toString() {
+    	StringBuilder builder = new StringBuilder();
+    	builder.append("CountOperation, pattern: ")
+    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.')));
+    	return builder.toString();
+    }
+    
+    @Override
+	public List<Integer> getVariablePositions() {
+    	ArrayList<Integer> variables = Lists.newArrayList();
+    	variables.addAll(frameMapping.keySet());
+		return variables;
+	}
+
+    
 }

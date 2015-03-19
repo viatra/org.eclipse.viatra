@@ -12,12 +12,10 @@ package org.eclipse.incquery.tooling.localsearch.ui.debugger.views.internal;
 
 import java.util.List;
 
-import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * 
@@ -26,34 +24,34 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 public class BreakPointListener implements IDoubleClickListener {
 
-    private LocalSearchDebugView searchPlanView;
+    private LocalSearchDebugView localSearchDebugView;
     
-    public BreakPointListener(LocalSearchDebugView searchPlanView){
-        this.searchPlanView = searchPlanView;
+    public BreakPointListener(LocalSearchDebugView localSearchDebugView){
+        this.localSearchDebugView = localSearchDebugView;
     }
     
     @Override
-    public void doubleClick(DoubleClickEvent event) {
-        TreeViewer viewer = (TreeViewer) event.getViewer();
-        IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
+	public void doubleClick(DoubleClickEvent event) {
+		// TreeViewer viewer = (TreeViewer) event.getViewer();
+		IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
 
         if(thisSelection.size() > 1){
             // when more than one operation is selected, place no breakpoints
             return;
         }
         
-        ISearchOperation selectedOperation = (ISearchOperation) thisSelection.getFirstElement();
+        Object selectedOperation = thisSelection.getFirstElement();
         // TODO store selected node
         
-        List<ISearchOperation> breakpoints = searchPlanView.getBreakpoints();
+        List<Object> breakpoints = localSearchDebugView.getBreakpoints();
         if(breakpoints.contains(selectedOperation)){
             breakpoints.remove(selectedOperation);
         } else {
             breakpoints.add(selectedOperation);
         }
         
-        searchPlanView.refreshOperationList();
-        searchPlanView.getOperationListViewer().setSelection(null);
+        localSearchDebugView.refreshOperationList();
+        localSearchDebugView.getOperationListViewer().setSelection(null);
         
     }
 

@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+
+import com.google.common.collect.Lists;
 
 /**
  * A simple operation that checks whether a {@link EStructuralFeature} connects two selected variables.
@@ -49,12 +53,12 @@ public class ContainmentCheck extends CheckOperation {
     
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ContainmentCheck(");
-        builder.append(childPosition + ", " + containerPosition + ", " + transitive);
-        builder.append(")");
-        return builder.toString();
+        return "ContainmentCheck";
     }
 
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(childPosition, containerPosition, new Integer[0]);
+	}
 
 }

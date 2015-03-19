@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.localsearch.planner;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
@@ -27,6 +28,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PQueryFlattener;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -86,7 +88,7 @@ public class LocalSearchPlanner {
      * @param boundVarIndices
      * @throws QueryProcessingException
      */
-    public List<List<ISearchOperation>> plan(PQuery querySpec, Set<Integer> boundVarIndices)
+    public Map<List<ISearchOperation>, Map<PVariable, Integer>> plan(PQuery querySpec, Set<Integer> boundVarIndices)
             throws QueryProcessingException {
 
         // Flatten
@@ -109,17 +111,20 @@ public class LocalSearchPlanner {
         }
 
         // Compile (from POperations to ISearchOperations)
-        List<List<ISearchOperation>> compiledSubPlans = Lists.newArrayList();
+        Map<List<ISearchOperation>,Map<PVariable, Integer>> compiledSubPlans = Maps.newHashMap();
         // TODO finish (revisit?) the implementation of the compile function
         // Pay extra caution to extend operations, when more than one variables are unbound
         for (SubPlan subPlan : plansForBodies) {
-            compiledSubPlans.add(operationCompiler.compile(subPlan, boundVarIndices));
+            List<ISearchOperation> compiledOperations = operationCompiler.compile(subPlan, boundVarIndices);
+            // Store the variable mappings for the plans for debug purposes (traceability information)
+			compiledSubPlans.put(compiledOperations,operationCompiler.getVariableMappings());
         }
 
         // Generate code if generator is provided
-        if (codeGenerator != null) {
-            codeGenerator.compile(compiledSubPlans);
-        }
+		// TODO there is no code generator implementation yet
+		// if (codeGenerator != null) {
+		// 		codeGenerator.compile(compiledSubPlans);
+		// }
 
         return compiledSubPlans;
     }

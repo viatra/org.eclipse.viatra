@@ -32,8 +32,8 @@ public class RunLocalSearchHandler extends AbstractHandler {
 //            @Override
 //            public void run() {
                 try {
-                    LocalSearchDebugView searchPlanView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
-                    searchPlanView.setHalted(false);
+                    LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
+                    localSearchDebugView.setHalted(false);
                 } catch (PartInitException e) {
                     e.printStackTrace();
                 }

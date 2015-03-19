@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -27,9 +29,6 @@ import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.incquery.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
-import org.eclipse.incquery.runtime.localsearch.operations.check.CountCheck;
-import org.eclipse.incquery.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureSource;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.IterateOverEClassInstances;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.IterateOverEDatatypeInstances;
@@ -46,6 +45,7 @@ import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PQueryFlattener;
@@ -69,7 +69,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     private static class Planner {
 
-        List<List<ISearchOperation>> operations;
+        Map<List<ISearchOperation>, Map<PVariable, Integer>> operationListsWithVarMappings;
         private POperationCompiler compiler;
 
         public void createPlan(MatcherReference key, IPatternMatcherRuntimeContext matcherContext, final ISearchContext searchContext)
@@ -81,17 +81,17 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
             LocalSearchPlanner planner = new LocalSearchPlanner();
             planner.initializePlanner(flattener, matcherContext, normalizer, strategy, compiler);
-            operations = planner.plan(key.getQuery(), key.getAdornment());
+            operationListsWithVarMappings = planner.plan(key.getQuery(), key.getAdornment());
 
-            Collection<SearchPlanExecutor> executors = Collections2.transform(operations,
-                    new Function<List<ISearchOperation>, SearchPlanExecutor>() {
+            Collection<SearchPlanExecutor> executors = Collections2.transform(operationListsWithVarMappings.entrySet(),
+                    new Function<Entry<List<ISearchOperation>, Map<PVariable, Integer>>, SearchPlanExecutor>() {
 
                         @Override
-                        public SearchPlanExecutor apply(List<ISearchOperation> input) {
+                        public SearchPlanExecutor apply(Entry<List<ISearchOperation>, Map<PVariable, Integer>> input) {
                             final SearchPlan plan = new SearchPlan();
-                            plan.addOperations(input);
+                            plan.addOperations(input.getKey());
 
-                            return new SearchPlanExecutor(plan, searchContext);
+                            return new SearchPlanExecutor(plan, searchContext, input.getValue());
                         }
                     });
 
@@ -111,7 +111,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
         public void collectElementsToIndex(Set<EClass> classesToIndex, Set<EStructuralFeature> featuresToIndex,
                 Set<EDataType> dataTypesToIndex) {
-            for (List<ISearchOperation> plan : operations) {
+            for (List<ISearchOperation> plan : operationListsWithVarMappings.keySet()) {
                 for (ISearchOperation operation : plan) {
                     if (operation instanceof ExtendToEStructuralFeatureSource) {
                         featuresToIndex.add(((ExtendToEStructuralFeatureSource) operation).getFeature());

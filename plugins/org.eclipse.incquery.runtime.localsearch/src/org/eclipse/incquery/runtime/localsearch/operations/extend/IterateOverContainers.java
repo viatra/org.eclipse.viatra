@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.eclipse.emf.ecore.EObject;
@@ -19,6 +20,7 @@ import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * Iterates all child elements of a selected EObjects. 
@@ -89,10 +91,14 @@ public class IterateOverContainers extends ExtendOperation<EObject> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("IterateOverContainers(");
-        builder.append(position + ", " + sourcePosition + ", " + transitive);
-        builder.append(")");
+        builder.append("extend ")
+        	.append("IterateOverContainers");
         return builder.toString();
     }
 
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(position, sourcePosition, new Integer[0]);
+	}
+    
 }

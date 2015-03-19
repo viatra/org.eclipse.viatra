@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
+import java.util.List;
+
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * This operation handles constants in search plans by binding a variable to a constant value. Such operations should be
@@ -37,4 +40,11 @@ public class ExtendConstant extends ExtendOperation<Object> {
         it = Iterators.singletonIterator(value);
     }
 
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(position, new Integer[0]);
+	}
+    
+
+    
 }
