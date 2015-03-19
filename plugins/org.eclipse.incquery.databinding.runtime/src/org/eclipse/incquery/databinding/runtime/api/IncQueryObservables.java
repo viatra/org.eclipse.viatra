@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.databinding.runtime.adapter.DatabindingAdapter;
@@ -246,9 +247,9 @@ public final class IncQueryObservables {
                 // if the instance does not have a name feature then simply use the first structural feature
                 // we cannot really do better at this moment as we want to avoid observing all the features
                 if (feature == null && o instanceof EObject) {
-                    EList<EStructuralFeature> features = ((EObject) o).eClass().getEAllStructuralFeatures();
-                    if (!features.isEmpty()) {
-                        feature = features.get(0);
+                    EList<EAttribute> attributes = ((EObject) o).eClass().getEAllAttributes();
+                    if (!attributes.isEmpty()) {
+                        feature = attributes.get(0);
                     }
                 }
             }
