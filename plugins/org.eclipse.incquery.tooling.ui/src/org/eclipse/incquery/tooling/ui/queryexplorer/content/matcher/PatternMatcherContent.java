@@ -121,6 +121,9 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
 
             setText(DisplayUtil.getMessage(matcher, children.size(), specification.getFullyQualifiedName(),
                     isGenerated(), isFiltered(), exceptionMessage));
+            
+            // 462706 - if no match is present initially, the user will not be able to expand it otherwise
+            updateHasChildren();
         }
 
     }
