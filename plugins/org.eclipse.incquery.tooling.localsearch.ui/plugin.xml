@@ -28,33 +28,34 @@
    
    
    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.start"
+            name="Start local search">
+      </command>
+      <command
+            id="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.step"
+            name="Step local search">
+      </command>
+      <command
+            id="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.run"
+            name="Run local search">
+      </command>
+   </extension>
+   <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.eclipse.incquery.tooling.localsearch.ui.debugger.handlers.StartLocalSearchHandler"
-            commandId="org.eclipse.debug.ui.commands.RunLast">
-         <activeWhen>
-            <reference
-                  definitionId="org.eclipse.incquery.tooling.localsearch.ui.activeLocalSearchView">
-            </reference></activeWhen>
-      </handler>
-      <handler
-            class="org.eclipse.incquery.tooling.localsearch.ui.debugger.handlers.RunLocalSearchHandler"
-            commandId="org.eclipse.debug.ui.commands.Resume">
-         <activeWhen>
-            <reference
-                  definitionId="org.eclipse.incquery.tooling.localsearch.ui.activeLocalSearchView">
-            </reference>
-         </activeWhen>
+            commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.start">
       </handler>
       <handler
             class="org.eclipse.incquery.tooling.localsearch.ui.debugger.handlers.StepLocalSearchHandler"
-            commandId="org.eclipse.debug.ui.commands.StepInto">
-         <activeWhen>
-            <reference
-                  definitionId="org.eclipse.incquery.tooling.localsearch.ui.activeLocalSearchView">
-            </reference>
-         </activeWhen>
+            commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.step">
       </handler>      
+      <handler
+            class="org.eclipse.incquery.tooling.localsearch.ui.debugger.handlers.RunLocalSearchHandler"
+            commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.run">
+      </handler>
  </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -62,33 +63,42 @@
             allPopups="false"
             locationURI="toolbar:org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView">
          <command
-               commandId="org.eclipse.debug.ui.commands.RunLast"
+               commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.start"
+               icon="icons/lrun_obj.gif"
                label="Start local search"
                style="push">
          </command>
          <command
-               commandId="org.eclipse.debug.ui.commands.Resume"
+               commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.run"
+               icon="icons/resume_co.gif"
                label="Run local search"
                style="push">
          </command>
          <command
-               commandId="org.eclipse.debug.ui.commands.StepInto"
+               commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.step"
+               icon="icons/stepinto_co.gif"
                label="Step local search"
                style="push">
          </command>
       </menuContribution>
    </extension>
    <extension
-         point="org.eclipse.core.expressions.definitions">
-      <definition
-            id="org.eclipse.incquery.tooling.localsearch.ui.activeLocalSearchView">
-         <with
-               variable="activePartId">
-            <equals
-                  value="org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView">
-            </equals>
-         </with>   
-      </definition>
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.step"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="F7">
+      </key>
+      <key
+            commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.start"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="F9">
+      </key>
+      <key
+            commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="F8">
+      </key>
    </extension>
 
 </plugin>

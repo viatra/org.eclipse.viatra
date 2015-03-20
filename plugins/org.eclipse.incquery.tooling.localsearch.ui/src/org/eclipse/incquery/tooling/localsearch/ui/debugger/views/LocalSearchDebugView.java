@@ -12,6 +12,8 @@ package org.eclipse.incquery.tooling.localsearch.ui.debugger.views;
 
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
@@ -22,6 +24,7 @@ import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
 import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
@@ -29,13 +32,17 @@ import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationLi
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.ZestNodeContentProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.internal.BreakPointListener;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -50,20 +57,63 @@ import com.google.common.collect.Lists;
 public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbenchPart {
 
 
-    public static final String ID = "org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView";
+    private final class ColumnLabelProviderExtension extends ColumnLabelProvider {
+		private int columnIndex;
+
+		public ColumnLabelProviderExtension(int i) {
+			this.columnIndex = i;
+		}
+
+		@Override
+		public String getText(Object inputElement) {
+			
+			MatchingFrame frame = (MatchingFrame)inputElement;
+			Object element = frame.get(columnIndex);
+			
+			if(element == null){
+				return "";
+			}
+			if(element instanceof EObject){
+				EObject eObject = ((EObject) element);
+				
+				EStructuralFeature feature = eObject.eClass().getEStructuralFeature("name");
+				if(feature != null){
+					if(!feature.isMany()){
+						return eObject.eGet(feature).toString();
+					}							
+				} else {
+					feature = eObject.eClass().getEStructuralFeature(0);
+					if(!feature.isMany()){
+						return eObject.eGet(feature).toString();
+					}														
+				}
+			}
+			return element.toString();
+		}
+	}
+
+	public static final String ID = "org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView";
     
-    private TreeViewer operationListViewer;
     private OperationListContentProvider operationListContentProvider;
+    private TreeViewer operationListViewer;
     private OperationListLabelProvider operationListLabelProvider;
 
     private GraphViewer graphViewer;
     private ZestNodeContentProvider zestContentProvider;
     
+    private TableViewer matchesViewer;
+    private List<TableViewerColumn> columns = Lists.newArrayList();
+
+    public TableViewer getMatchesViewer() {
+		return matchesViewer;
+	}
+
     private List<Object> breakpoints = Lists.newLinkedList();
     
     private boolean halted = true;
 
-	private TableViewer matchesViewer;
+	private SashForm planSashForm;
+
 
     public LocalSearchDebugView() {
     }
@@ -100,7 +150,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
         parent.setLayoutData(new FillLayout());
         SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
 
-        SashForm planSashForm = new SashForm(sashForm, SWT.VERTICAL);
+        planSashForm = new SashForm(sashForm, SWT.VERTICAL);
         
         // TreeViewer for the plan
         createTreeViewer(planSashForm);
@@ -116,20 +166,55 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     	matchesViewer = new TableViewer(planSashForm, SWT.MULTI | SWT.H_SCROLL
     		      | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
     	
-
-    	// TODO Create proper content provider
-    	matchesViewer.setContentProvider(ArrayContentProvider.getInstance());
-
-    	// This way it is insufficient information, a label provider is missing 
-		matchesViewer.setInput(new Object[] { new Object[]{0,0}, 0, 0 });
-
+		matchesViewer.setContentProvider(ArrayContentProvider.getInstance());
+		
+	    GridData gridData = new GridData();
+	    gridData.verticalAlignment = GridData.FILL;
+//	    gridData.horizontalSpan = 2;
+	    gridData.grabExcessHorizontalSpace = true;
+	    gridData.grabExcessVerticalSpace = true;
+	    gridData.horizontalAlignment = GridData.FILL;
+	    matchesViewer.getControl().setLayoutData(gridData);
+	    
+		
     	final Table table = matchesViewer.getTable();
     	table.setHeaderVisible(true);
     	table.setLinesVisible(true); 
-
     	
 	}
 
+    /**
+     * Create the columns for the frame variables
+     * 
+     * @param colNames the variable names
+     * @param parent the parent container
+     * @param viewer the table viewer that will show the variable values
+     */
+    public void recreateColumns(List<String> colNames) {
+      
+      for (TableViewerColumn column : columns) {
+    	  column.getColumn().dispose();
+      }
+      columns.clear();
+      
+      for (int i = 0; i<colNames.size(); i++) {
+			TableViewerColumn col = createTableViewerColumn(colNames.get(i), 100, i);
+			columns.add(col);
+			col.setLabelProvider(new ColumnLabelProviderExtension(i));
+		}
+
+    }
+    
+    private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
+        final TableViewerColumn viewerColumn = new TableViewerColumn(matchesViewer,SWT.NONE);
+        final TableColumn column = viewerColumn.getColumn();
+        column.setText(title);
+        column.setWidth(bound);
+        column.setResizable(true);
+        column.setMoveable(true);
+        return viewerColumn;
+      }
+    
 	private void createZestViewer(SashForm sashForm) {
         this.graphViewer = new GraphViewer(sashForm, SWT.BORDER);
         
