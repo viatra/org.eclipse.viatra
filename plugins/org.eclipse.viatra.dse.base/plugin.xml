@@ -1,44 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="org.eclipse.viatra.dse.api.strategy.checkconstraints" name="CheckConstraints" schema="schema/org.eclipse.viatra.dse.api.strategy.checkconstraints.exsd"/>
-   <extension-point id="org.eclipse.viatra.dse.api.strategy.checkgoalstate" name="CheckGoalState" schema="schema/org.eclipse.viatra.dse.api.strategy.checkgoalstate.exsd"/>
-   <extension-point id="org.eclipse.viatra.dse.api.strategy.traversedstatefound" name="TraversedStateFound" schema="schema/org.eclipse.viatra.dse.api.strategy.traversedstatefound.exsd"/>
-   <extension-point id="org.eclipse.viatra.dse.api.strategy.solutionfound" name="SolutionFound" schema="schema/org.eclipse.viatra.dse.api.strategy.solutionfound.exsd"/>
-   <extension-point id="org.eclipse.viatra.dse.api.strategy.nexttransition" name="NextTransition" schema="schema/org.eclipse.viatra.dse.api.strategy.nexttransition.exsd"/>
-   <extension-point id="org.eclipse.viatra.dse.ruledependency.resolver" name="RuleDependencyResolver" schema="schema/org.eclipse.viatra.dse.ruledependency.resolver.exsd"/>
-   <extension-point id="org.eclipse.viatra.dse.ruledependency.occurrence" name="Occurrence" schema="schema/org.eclipse.viatra.dse.ruledependency.occurrence.exsd"/>
-   <extension
-         point="org.eclipse.viatra.dse.api.strategy.nexttransition">
-      <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy"
-            id="org.eclipse.viatra.dse.api.strategy.impl.DepthFirstNextTransition"
-            name="DepthFirstNextTransition">
-      </client>
-   </extension>
-   <extension
-         point="org.eclipse.viatra.dse.api.strategy.checkgoalstate">
-      <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.CheckAllGoals"
-            id="org.eclipse.viatra.dse.api.strategy.impl.CheckAllGoalPattern"
-            name="CheckAllGoalPattern">
-      </client>
-   </extension>
-   <extension
-         point="org.eclipse.viatra.dse.api.strategy.nexttransition">
-      <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy"
-            id="org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityNextTransition"
-            name="FixedPriorityNextTransition">
-      </client>
-   </extension>
-   <extension
-         point="org.eclipse.viatra.dse.api.strategy.nexttransition">
-      <client
-            class="org.eclipse.viatra.dse.api.strategy.impl.BreadthFirstStrategy"
-            id="org.eclipse.viatra.dse.api.strategy.impl.BreadthFirstNextTransition"
-            name="BreadthFirstNextTransition">
-      </client>
-   </extension>
 
 </plugin>
