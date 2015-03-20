@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -21,6 +22,7 @@ import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -74,4 +76,17 @@ public class CountCheck extends CheckOperation {
         return ((Integer)frame.getValue(position)) == count;
     }
 
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(position, new Integer[0]);
+	}
+    
+    @Override
+    public String toString() {
+    	StringBuilder builder = new StringBuilder();
+    	builder.append("Count check for pattern ")
+    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.')));
+    	return super.toString();
+    }
+    
 }

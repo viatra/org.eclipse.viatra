@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
+
+import com.google.common.collect.Lists;
 
 /**
  * Iterates over all {@link EDataType} instances using an {@link NavigationHelper EMF-IncQuery Base indexer}. It is
@@ -47,18 +51,17 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         String name = dataType.getName();
-        String packageNsUri = dataType.getEPackage().getNsURI();
 
-        builder.append("IterateOverEDatatypeInstances(")
-            .append(position)
-            .append(", getClassifierLiteral(\"")
-            .append(packageNsUri)
-            .append("\", \"")
-            .append(name)
-            .append("\"))");
+        builder.append("extend ")
+            .append(name);
 
         return builder.toString();
     }
+    
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(position, new Integer[0]);
+	}
     
 
 }

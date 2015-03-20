@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations;
 
+import java.util.List;
+
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
@@ -46,5 +48,11 @@ public interface ISearchOperation {
      * @return true if successful, or false if backtracking needed
      */
     boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
+    
+    /**
+     * 
+     * @return the ordered list of the variable numbers that are affected by the search operation
+     */
+    List<Integer> getVariablePositions();
 
 }

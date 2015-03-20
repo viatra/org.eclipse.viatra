@@ -8,6 +8,7 @@
  * Contributors:
  *   Marton Bur, Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
+package org.eclipse.incquery.tooling.localsearch.ui;
 import org.eclipse.incquery.runtime.extensibility.QueryBackendRegistry;
 import org.eclipse.incquery.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.incquery.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;

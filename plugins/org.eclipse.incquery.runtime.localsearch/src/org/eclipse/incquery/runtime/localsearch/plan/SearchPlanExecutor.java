@@ -14,6 +14,7 @@
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -27,8 +28,11 @@ import org.eclipse.incquery.runtime.localsearch.operations.check.BinaryTransitiv
 import org.eclipse.incquery.runtime.localsearch.operations.check.CountCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.CountOperation;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 
 /**
@@ -41,8 +45,13 @@ public class SearchPlanExecutor {
     private List<ISearchOperation> operations;
     private ISearchContext context;
     private Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
+	private BiMap<Integer,PVariable> variableMapping;
 
-    public int getCurrentOperation() {
+	public BiMap<Integer, PVariable> getVariableMapping() {
+		return variableMapping;
+	}
+
+	public int getCurrentOperation() {
         return currentOperation;
     }
     
@@ -58,10 +67,13 @@ public class SearchPlanExecutor {
         this.adapters.removeAll(adapter);
     }
 
-    public SearchPlanExecutor(SearchPlan plan, ISearchContext context) {
-        Preconditions.checkArgument(context != null, "Context cannot be null");
+    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping) {
+		Preconditions.checkArgument(context != null, "Context cannot be null");
         this.plan = plan;
         this.context = context;
+        HashBiMap<PVariable, Integer> tmpMapping = HashBiMap.create();
+        tmpMapping.putAll(variableMapping);
+        this.variableMapping = tmpMapping.inverse();
         operations = plan.getOperations();
         this.currentOperation = -1;
 	}

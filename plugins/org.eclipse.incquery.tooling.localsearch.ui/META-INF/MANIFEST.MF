@@ -25,5 +25,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.incquery.tooling.localsearch.ui.debugger,o
  rg.eclipse.incquery.tooling.localsearch.ui.debugger.provider,org.ecli
  pse.incquery.tooling.localsearch.ui.debugger.views
-Bundle-Activator: LocalSearchToolingActivator
+Bundle-Activator: org.eclipse.incquery.tooling.localsearch.ui.LocalSearchToolingActivator
 Bundle-ActivationPolicy: lazy

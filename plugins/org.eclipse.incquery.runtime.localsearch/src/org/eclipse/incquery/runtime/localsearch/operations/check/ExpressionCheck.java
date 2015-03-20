@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.operations.MatchingFrameValueProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author Zoltan Ujhelyi
@@ -42,4 +45,17 @@ public class ExpressionCheck extends CheckOperation {
         }
     }
 
+    @Override
+	public List<Integer> getVariablePositions() {
+    	// XXX not sure if this is the correct implementation to get the affected variable indicies
+    	List<Integer> variables = Lists.newArrayList();
+    	variables.addAll(nameMap.values());
+		return variables;
+	}
+    
+    @Override
+    public String toString() {
+    	return "Expression check";
+    }
+    
 }

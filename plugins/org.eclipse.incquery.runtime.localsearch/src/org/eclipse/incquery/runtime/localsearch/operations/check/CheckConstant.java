@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
+import java.util.List;
+
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+
+import com.google.common.collect.Lists;
 
 /**
  * This operation handles constants in search plans by checking if a variable is bound to a certain constant value. Such
@@ -35,5 +39,9 @@ public class CheckConstant extends CheckOperation {
         return frame.get(position).equals(value);
     }
 
-
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(position, new Integer[0]);
+	}
+    
 }

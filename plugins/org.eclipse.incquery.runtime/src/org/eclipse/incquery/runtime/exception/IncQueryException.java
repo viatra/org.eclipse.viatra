@@ -39,7 +39,7 @@ public class IncQueryException extends Exception {
     public static final String QUERY_INIT_PROBLEM = "The following error occurred during the initialization of an IncQuery query specification";
     public static final String GETNAME_FAILED = "Could not get 'name' attribute of the result";
 
-    public static final String INVALID_EMFROOT = "Incremental EMF query engine can only be attached on the contents of an EMF EObject, Resource, or ResourceSet. Received instead: ";
+    public static final String INVALID_EMFROOT = "Incremental EMF query engine can only be attached on the contents of an EMF EObject, Resource, ResourceSet or multiple ResourceSets. Received instead: ";
     public static final String INVALID_EMFROOT_SHORT = "Invalid EMF model root";
     // public static final String EMF_MODEL_PROCESSING_ERROR = "Error while processing the EMF model";
 

@@ -4,15 +4,11 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="org.eclipse.incquery.tooling.localsearch.ui.debugger.views.SearchPlanView"
-            id="org.eclipse.incquery.tooling.localsearch.ui.SearchPlanView"
-            name="Local Search Plan View"
-            restorable="true">
-      </view>
-      <view
-            class="org.eclipse.incquery.tooling.localsearch.ui.debugger.old.FrameView"
-            id="org.eclipse.incquery.tooling.localsearch.ui.FrameView"
-            name="Local Search Frame View"
+            category="org.eclipse.incquery.tooling.ui"
+            class="org.eclipse.incquery.tooling.localsearch.ui.debugger.views.LocalSearchDebugView"
+            icon="icons/logo2.png"
+            id="org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView"
+            name="Local Search Debugger"
             restorable="true">
       </view>
    </extension>
@@ -21,7 +17,7 @@
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <view
-               id="org.eclipse.incquery.tooling.localsearch.ui.SearchPlanView"
+               id="org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView"
                minimized="false"
                ratio="0.5"
                relationship="left"
@@ -43,7 +39,7 @@
       </command>
       <command
             id="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.run"
-            name="Step local search">
+            name="Run local search">
       </command>
    </extension>
    <extension
@@ -65,25 +61,25 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="menu:org.eclipse.incquery.tooling.localsearch.ui.SearchPlanView">
-         <menu
-               label="Local Search">
-            <command
-                  commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.start"
-                  label="Start local search"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.step"
-                  label="Step local search"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.run"
-                  label="Run local search"
-                  style="push">
-            </command>
-         </menu>
+            locationURI="toolbar:org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView">
+         <command
+               commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.start"
+               icon="icons/lrun_obj.gif"
+               label="Start local search"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.run"
+               icon="icons/resume_co.gif"
+               label="Run local search"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.step"
+               icon="icons/stepinto_co.gif"
+               label="Step local search"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension

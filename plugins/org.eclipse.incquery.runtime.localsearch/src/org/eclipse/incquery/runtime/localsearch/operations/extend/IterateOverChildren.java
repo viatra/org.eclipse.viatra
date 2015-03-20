@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 /**
  * Iterates all child elements of a selected EObjects. 
@@ -54,10 +57,14 @@ public class IterateOverChildren extends ExtendOperation<EObject> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("IterateOverChildren(");
-        builder.append(position + ", " + sourcePosition + ", " + transitive);
-        builder.append(")");
+        builder.append("extend ")
+        	.append("IterateOverChildren");
         return builder.toString();
     }
+    
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(position, sourcePosition, new Integer[0]);
+	}
 
 }

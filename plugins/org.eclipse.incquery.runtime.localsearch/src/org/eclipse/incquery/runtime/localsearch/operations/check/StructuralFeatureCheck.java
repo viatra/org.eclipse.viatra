@@ -11,12 +11,14 @@
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
 import java.util.Collection;
+import java.util.List;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
+
+import com.google.common.collect.Lists;
 
 /**
  * A simple operation that checks whether a {@link EStructuralFeature} connects two selected variables.
@@ -51,22 +53,19 @@ public class StructuralFeatureCheck extends CheckOperation {
         }
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("StructuralFeatureCheck(");
-        builder.append(sourcePosition + ", " + targetPosition + ", ");
-
-        String name = feature.getName();
-        EClass container = feature.getEContainingClass();
-        String packageNsUri = container.getEPackage().getNsURI();
-        builder.append("getFeatureLiteral(\"" + packageNsUri + "\", \"" + container.getName() + "\", \"" + name + "\")");
-
-        builder.append(")");
+        builder.append("check ")
+        	.append(feature.getContainerClass().getSimpleName())
+        	.append('.')
+        	.append(feature.getName());
         return builder.toString();
     }
+    
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
+	}
 
 }

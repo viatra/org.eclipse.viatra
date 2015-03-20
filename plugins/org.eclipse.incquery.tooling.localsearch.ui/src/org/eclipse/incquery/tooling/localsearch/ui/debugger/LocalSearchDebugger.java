@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.localsearch.ui.debugger;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
@@ -22,11 +23,14 @@ import org.eclipse.incquery.runtime.localsearch.operations.check.CountCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.SearchPlanView;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import com.google.common.collect.BiMap;
 import com.google.common.collect.Lists;
 
 /**
@@ -37,7 +41,7 @@ import com.google.common.collect.Lists;
 public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	public static volatile Object notifier = new Object();
-	private SearchPlanView searchPlanView;
+	private LocalSearchDebugView localSearchDebugView;
 	private List<LocalSearchMatcher> runningMatchers;
 	
 	private boolean startHandlerCalled = false;
@@ -63,11 +67,12 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 					try {
 						runningMatchers = Lists.newArrayList();
 						// Init treeviewer related fields
-						searchPlanView = (SearchPlanView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(SearchPlanView.ID);
-						operationListContentProvider = searchPlanView.getOperationListContentProvider();
+						localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
+						operationListContentProvider = localSearchDebugView.getOperationListContentProvider();
 						operationListContentProvider.getMatcherCurrentExecutorMappings().clear();
-						searchPlanView.refreshOperationList();
-						searchPlanView.refreshGraph();
+						localSearchDebugView.refreshOperationList();
+						localSearchDebugView.refreshGraph();
+						
 					} catch (PartInitException e) {
 						// TODO proper logging
 						e.printStackTrace();
@@ -84,9 +89,9 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		if(runningMatchers.size() == 0){
 			// After all the matching process finished set to halted in order to 
 			// be able to start a new debug session
-			searchPlanView.setHalted(true);
-			searchPlanView.refreshOperationList();
-			searchPlanView.refreshGraph();
+			localSearchDebugView.setHalted(true);
+			localSearchDebugView.refreshOperationList();
+			localSearchDebugView.refreshGraph();
 		}
 	}
 
@@ -97,7 +102,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 				@Override
 				public void run() {
-					searchPlanView.getOperationListViewer().setInput(planExecutor);
+					localSearchDebugView.getOperationListViewer().setInput(planExecutor);
 				}
 			});
 		}
@@ -128,35 +133,52 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 			operationListContentProvider.getMatcherCurrentExecutorMappings().put(currentMatcher, planExecutor) ;
 		}
 		
-		if (searchPlanView.isHalted()) { 
+		if (localSearchDebugView.isHalted()) { 
 			// TODO is this refresh here needed?
-			searchPlanView.refreshOperationList();
+			localSearchDebugView.refreshOperationList();
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 				@Override
 				public void run() { 
-					searchPlanView.getOperationListLabelProvider().addPlanExecutor(planExecutor);					
-					GraphViewer graphViewer = searchPlanView.getGraphViewer();
+					localSearchDebugView.getOperationListLabelProvider().addPlanExecutor(planExecutor);					
+					GraphViewer graphViewer = localSearchDebugView.getGraphViewer();
+
+					TableViewer matchesViewer = localSearchDebugView.getMatchesViewer();
+
+					BiMap<Integer,PVariable> variableMapping = planExecutor.getVariableMapping();
+					List<String> columnNames = Lists.newArrayList();
+					for (int i = 0; i < variableMapping.size(); i++ ) {
+						columnNames.add(variableMapping.get(i).getName());
+					}
+					localSearchDebugView.recreateColumns(columnNames);
+
+					// TODO here a new match should be registered instead of calling set input: the old frames will also be needed
+					Object[] originalElements = frame.getElements();
+					Object[] elements = Arrays.copyOf(originalElements,originalElements.length);
+					for (int i = 0; i < elements.length; i++) {
+						if(elements[i]==null){
+							elements[i] = "";
+						}
+					}
+					matchesViewer.setInput(new MatchingFrame[]{frame});
+					matchesViewer.refresh();
+					
+					// TODO the graph viewer should show the frame selected in the TableViewer
 					// Redraw the matching frame - stateless implementation
 					graphViewer.setInput(frame);
+					
 				}
 			});
 		}
 		
-		int currentOperation = planExecutor.getCurrentOperation();
-
-		if (searchPlanView != null) {
-			boolean operationNotInRange = planExecutor.getSearchPlan().getOperations().size() <= currentOperation || currentOperation < 0;
-			ISearchOperation currentSerachOperation = operationNotInRange 
-					? null 
-					: planExecutor.getSearchPlan().getOperations().get(currentOperation);
-			if (searchPlanView.isBreakpointHit(currentSerachOperation)) {
+		if (localSearchDebugView != null) {
+			if (localSearchDebugView.isBreakpointHit(planExecutor)) {
 				synchronized (notifier) {
 					try {
 						PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 							@Override
 							public void run() {
-								searchPlanView.getOperationListViewer().refresh();
-								searchPlanView.getGraphViewer().refresh();
+								localSearchDebugView.getOperationListViewer().refresh();
+								localSearchDebugView.getGraphViewer().refresh();
 							}
 						});
 						notifier.wait();
@@ -175,6 +197,8 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		}
 		ISearchOperation operation = planExecutor.getSearchPlan().getOperations().get(currentOperation);
 
+		// TODO carry on with the debug phase until the plan is fully loaded for these special search operations
+		
 		LocalSearchMatcher calledMatcher = null;
 		if (operation instanceof NACOperation) {
 			calledMatcher = ((NACOperation) operation).getCalledMatcher();

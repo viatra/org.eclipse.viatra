@@ -14,7 +14,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.LocalSearchDebugger;
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.SearchPlanView;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -32,8 +32,8 @@ public class RunLocalSearchHandler extends AbstractHandler {
 //            @Override
 //            public void run() {
                 try {
-                    SearchPlanView searchPlanView = (SearchPlanView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(SearchPlanView.ID);
-                    searchPlanView.setHalted(false);
+                    LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
+                    localSearchDebugView.setHalted(false);
                 } catch (PartInitException e) {
                     e.printStackTrace();
                 }

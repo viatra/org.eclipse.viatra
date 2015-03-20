@@ -11,10 +11,10 @@
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
@@ -24,6 +24,7 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -83,16 +84,16 @@ public class IterateOverEStructuralFeatureInstances implements ISearchOperation 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("IterateOverEStructuralFeatureInstances(");
-        builder.append(sourcePosition + ", " + targetPosition + ", ");
-
-        String name = feature.getName();
-        EClass container = feature.getEContainingClass();
-        String packageNsUri = container.getEPackage().getNsURI();
-        builder.append("getFeatureLiteral(\"" + packageNsUri + "\", \"" + container.getName() + "\", \"" + name + "\")");
-
-        builder.append(")");
+        builder.append("extend ")
+        	.append(feature.getContainerClass().getSimpleName())
+        	.append('.')
+        	.append(feature.getName());
         return builder.toString();
     }
+
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
+	}
     
 }

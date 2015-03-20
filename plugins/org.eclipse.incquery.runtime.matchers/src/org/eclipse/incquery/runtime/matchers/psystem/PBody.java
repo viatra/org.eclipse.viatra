@@ -35,6 +35,10 @@ import com.google.common.collect.Lists;
  * 
  */
 public class PBody {
+    
+    public final static String VIRTUAL_VARIABLE_PREFIX = ".virtual";
+    private final static String VIRTUAL_VARIABLE_PATTERN = VIRTUAL_VARIABLE_PREFIX + "{%d}";
+    
     private PQuery query;
 
     /**
@@ -110,8 +114,17 @@ public class PBody {
         checkMutability();
         String name;
         do {
-            name = String.format(".virtual{%d}", nextVirtualNodeID++);
+            
+            name = String.format(VIRTUAL_VARIABLE_PATTERN, nextVirtualNodeID++);
         } while (variablesByName.containsKey(name));
+        PVariable var = new PVariable(this, name, true);
+        addVariable(var);
+        return var;
+    }
+    
+    public PVariable newVirtualVariable(String name) {
+        checkMutability();
+        Preconditions.checkArgument(!variablesByName.containsKey(name), "ID %s already used for a virtual variable", name);
         PVariable var = new PVariable(this, name, true);
         addVariable(var);
         return var;
@@ -150,10 +163,19 @@ public class PBody {
         return getVariableByName(name);
     }
 
+    /**
+     * Finds and returns a PVariable by name. If no PVariable exists with the name in the body, a new one is created. If
+     * the name of the variable starts with {@value #VIRTUAL_VARIABLE_PREFIX}, the created variable will be considered
+     * virtual.
+     * 
+     * @param name
+     * @return a PVariable with the selected name; never null
+     */
     public PVariable getOrCreateVariableByName(String name) {
         checkMutability();
-        if (!variablesByName.containsKey(name))
-            addVariable(new PVariable(this, name));
+        if (!variablesByName.containsKey(name)) {
+            addVariable(new PVariable(this, name, name.startsWith(VIRTUAL_VARIABLE_PREFIX)));
+        }
         return getVariableByName(name);
     }
 

@@ -11,8 +11,8 @@
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
 import java.util.Collection;
+import java.util.List;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * Iterates over all sources of {@link EStructuralFeature} using an {@link NavigationHelper EMF-IncQuery Base indexer}.
@@ -75,16 +76,16 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ExtendToEStructuralFeatureTarget(");
-        builder.append(sourcePosition + ", " + position + ", ");
-
-        String name = feature.getName();
-        EClass container = feature.getEContainingClass();
-        String packageNsUri = container.getEPackage().getNsURI();
-        builder.append("getFeatureLiteral(\"" + packageNsUri + "\", \"" + container.getName() + "\", \"" + name + "\")");
-
-        builder.append(")");
+        builder.append("extend to target ")
+    	.append(feature.getContainerClass().getSimpleName())
+    	.append('.')
+    	.append(feature.getName());
         return builder.toString();
     }
 
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(sourcePosition, position, new Integer[0]);
+	}
+    
 }

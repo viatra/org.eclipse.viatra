@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
@@ -20,6 +21,7 @@ import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -89,5 +91,18 @@ public class BinaryTransitiveClosureCheck extends CheckOperation {
         } while (!sourcesToEvaluate.isEmpty());
         return false;
     }
+    
+    @Override
+    public String toString() {
+    	StringBuilder builder = new StringBuilder();
+    	builder.append("Binary transitive colsure, pattern: ")
+    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.')));
+    	return builder.toString();
+    }
+
+	@Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
+	}
 
 }

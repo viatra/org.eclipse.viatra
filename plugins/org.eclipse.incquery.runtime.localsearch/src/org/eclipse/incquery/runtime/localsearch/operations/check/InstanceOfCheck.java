@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 /**
  * @author Zoltan Ujhelyi
@@ -42,19 +45,11 @@ public class InstanceOfCheck extends CheckOperation {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        String name = clazz.getName();
-        String packageNsUri = clazz.getEPackage().getNsURI();
-
-        builder.append("InstanceOfCheck(")
-            .append(position)
-            .append(", getClassifierLiteral(\"")
-            .append(packageNsUri)
-            .append("\", \"")
-            .append(name)
-            .append("\"))");
-
-        return builder.toString();
+        return "InstanceOfCheck";
     }
+    @Override
+	public List<Integer> getVariablePositions() {
+		return Lists.asList(position, new Integer[0]);
+	}
     
 }
