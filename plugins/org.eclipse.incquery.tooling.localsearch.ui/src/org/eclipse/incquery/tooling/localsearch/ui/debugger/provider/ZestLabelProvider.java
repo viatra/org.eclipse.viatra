@@ -13,6 +13,7 @@ package org.eclipse.incquery.tooling.localsearch.ui.debugger.provider;
 import org.eclipse.jface.viewers.LabelProvider;
 
 /**
+ * An initial implementation for the label provider to show the selected matching frame in a Zest viewer
  * 
  * @author Marton Bur
  *

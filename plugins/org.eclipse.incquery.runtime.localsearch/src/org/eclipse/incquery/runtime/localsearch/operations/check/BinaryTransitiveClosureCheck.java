@@ -18,6 +18,7 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.incquery.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.ImmutableSet;
@@ -31,13 +32,22 @@ import com.google.common.collect.Sets;
  * @author Zoltan Ujhelyi
  * 
  */
-public class BinaryTransitiveClosureCheck extends CheckOperation {
+public class BinaryTransitiveClosureCheck extends CheckOperation implements IMatcherBasedOperation {
 
     private PQuery calledQuery;
     private LocalSearchMatcher matcher;
     private int sourcePosition;
     private int targetPosition;
 
+    @Override
+	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
+		//Second parameter is NOT bound during execution, but the first is
+        ImmutableSet<Integer> adornment = ImmutableSet.of(0);
+        matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
+        return matcher;
+	}
+
+    @Override
     public LocalSearchMatcher getCalledMatcher(){
     	return matcher;
     }
@@ -63,9 +73,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation {
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
-        //Second parameter is NOT bound during execution, but the first is
-        ImmutableSet<Integer> adornment = ImmutableSet.of(0);
-        matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
+		getAndPrepareCalledMatcher(frame, context);
     }
     
     @Override
@@ -96,7 +104,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation {
     public String toString() {
     	StringBuilder builder = new StringBuilder();
     	builder.append("Binary transitive colsure, pattern: ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.')));
+    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
     	return builder.toString();
     }
 
@@ -104,5 +112,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation {
 	public List<Integer> getVariablePositions() {
 		return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
 	}
+
+
 
 }

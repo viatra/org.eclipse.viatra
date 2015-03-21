@@ -23,11 +23,8 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.incquery.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.incquery.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
-import org.eclipse.incquery.runtime.localsearch.operations.check.CountCheck;
-import org.eclipse.incquery.runtime.localsearch.operations.check.NACOperation;
-import org.eclipse.incquery.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 
 import com.google.common.base.Preconditions;
@@ -77,31 +74,22 @@ public class SearchPlanExecutor {
         operations = plan.getOperations();
         this.currentOperation = -1;
 	}
-    
-    private void planStarted() {
-        for (ILocalSearchAdapter adapter : adapters) {
-            adapter.planStarted(this);
-        }
-    } 
-
-    private void planFinished() {
-        for (ILocalSearchAdapter adapter : adapters) {
-            adapter.planFinished(this);
-        }
-    }
+   
 
     private void init(MatchingFrame frame) throws LocalSearchException {
-        if (currentOperation == -1) {
+    	if (currentOperation == -1) {
             currentOperation++;
             ISearchOperation operation = operations.get(currentOperation);
+            for (ILocalSearchAdapter adapter : adapters) {
+            	adapter.executorInitializing(this,frame);
+            }
+            addAdaptersWhenNeeded(operation,frame);
 			operation.onInitialize(frame, context);
-			addAdaptersWhenNeeded(operation);
         } else if (currentOperation == operations.size()) {
             currentOperation--;
         } else {
             throw new LocalSearchException(LocalSearchException.PLAN_EXECUTION_ERROR);
         }
-        operationSelected(frame);
     }
 
 
@@ -114,17 +102,18 @@ public class SearchPlanExecutor {
 	}
 
     public boolean execute(MatchingFrame frame) throws LocalSearchException {
-        planStarted();
         int upperBound = operations.size() - 1;
         init(frame);
+        operationSelected(frame);
         while (currentOperation >= 0 && currentOperation <= upperBound) {
             if (operations.get(currentOperation).execute(frame, context)) {
                 operationExecuted(frame);
                 currentOperation++;
+                operationSelected(frame);
                 if (currentOperation <= upperBound) {
                     ISearchOperation operation = operations.get(currentOperation);
+                    addAdaptersWhenNeeded(operation,frame);
 					operation.onInitialize(frame, context);
-					addAdaptersWhenNeeded(operation);
                 }
             } else {
                 operationExecuted(frame);
@@ -132,11 +121,16 @@ public class SearchPlanExecutor {
 				operation.onBacktrack(frame, context);
                 removeAdaptersWhenNeeded(operation);
 				currentOperation--;
+				operationSelected(frame);
             }
-            operationSelected(frame);
         }
-        planFinished();
-        return (currentOperation > upperBound);
+        boolean matchFound = currentOperation > upperBound;
+        if( matchFound ){
+        	for (ILocalSearchAdapter adapter : adapters) {
+				adapter.matchFound(this, frame);
+			}
+        }
+		return matchFound;
     }
     
     public void resetPlan() {
@@ -149,8 +143,11 @@ public class SearchPlanExecutor {
     	}
     }
 
-    private void addAdaptersWhenNeeded(ISearchOperation currentSearchOperation) {
-		LocalSearchMatcher calledMatcher = getCalledMatcherOfSearchOperation(currentSearchOperation);
+    private void addAdaptersWhenNeeded(ISearchOperation currentSearchOperation, MatchingFrame frame) {
+		LocalSearchMatcher calledMatcher = null;
+		if (currentSearchOperation instanceof IMatcherBasedOperation) {
+			calledMatcher = ((IMatcherBasedOperation) currentSearchOperation).getAndPrepareCalledMatcher(frame, context);
+		}
 		if(calledMatcher != null){
 			for (ILocalSearchAdapter adapter : adapters) {
 				calledMatcher.addAdapter(adapter);
@@ -159,26 +156,15 @@ public class SearchPlanExecutor {
 	}
 
 	private void removeAdaptersWhenNeeded(ISearchOperation currentSearchOperation) {
-		LocalSearchMatcher calledMatcher = getCalledMatcherOfSearchOperation(currentSearchOperation);
+		LocalSearchMatcher calledMatcher = null;
+		if(currentSearchOperation instanceof IMatcherBasedOperation){
+			calledMatcher = ((IMatcherBasedOperation) currentSearchOperation).getCalledMatcher();
+		}
 		if(calledMatcher != null){
 			for (ILocalSearchAdapter adapter : adapters) {
 				calledMatcher.removeAdapter(adapter);
 			}
 		}
-	}
-
-	private LocalSearchMatcher getCalledMatcherOfSearchOperation(ISearchOperation currentSearchOperation) {
-		LocalSearchMatcher calledMatcher = null;
-		if (currentSearchOperation instanceof NACOperation) {
-			calledMatcher = ((NACOperation) currentSearchOperation).getCalledMatcher();
-		} else if (currentSearchOperation instanceof BinaryTransitiveClosureCheck) {
-			calledMatcher = ((BinaryTransitiveClosureCheck) currentSearchOperation).getCalledMatcher();
-		} else if (currentSearchOperation instanceof CountOperation) {
-			calledMatcher = ((CountOperation) currentSearchOperation).getCalledMatcher();
-		} else if (currentSearchOperation instanceof CountCheck) {
-			calledMatcher = ((CountCheck) currentSearchOperation).getCalledMatcher();
-		}
-		return calledMatcher;
 	}
     
     private void operationExecuted(MatchingFrame frame) {
@@ -192,6 +178,9 @@ public class SearchPlanExecutor {
             adapter.operationSelected(this, frame);
         }
     }
-    
+
+	public ISearchContext getContext() {
+		return context;
+	}
 
 }

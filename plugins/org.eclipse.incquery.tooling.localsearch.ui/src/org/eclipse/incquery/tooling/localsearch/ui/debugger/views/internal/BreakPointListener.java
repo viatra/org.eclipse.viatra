@@ -41,7 +41,6 @@ public class BreakPointListener implements IDoubleClickListener {
         }
         
         Object selectedOperation = thisSelection.getFirstElement();
-        // TODO store selected node
         
         List<Object> breakpoints = localSearchDebugView.getBreakpoints();
         if(breakpoints.contains(selectedOperation)){
@@ -50,7 +49,7 @@ public class BreakPointListener implements IDoubleClickListener {
             breakpoints.add(selectedOperation);
         }
         
-        localSearchDebugView.refreshOperationList();
+        localSearchDebugView.refreshView();
         localSearchDebugView.getOperationListViewer().setSelection(null);
         
     }

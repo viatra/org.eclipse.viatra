@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.incquery.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Iterators;
@@ -33,14 +34,28 @@ import com.google.common.collect.Sets;
  * @author Zoltan Ujhelyi
  *
  */
-public class CountOperation extends ExtendOperation<Integer> {
+public class CountOperation extends ExtendOperation<Integer> implements IMatcherBasedOperation{
 
     PQuery calledQuery;
     Map<Integer, Integer> frameMapping;
-	private LocalSearchMatcher calledMatcher;
+	private LocalSearchMatcher matcher;
 
-	public LocalSearchMatcher getCalledMatcher(){
-		return calledMatcher;
+	@Override
+	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
+		Set<Integer> adornment = Sets.newHashSet();
+		for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+			Integer source = mapping.getKey();
+			if (frame.get(source) != null) {
+				adornment.add(mapping.getValue());
+			}
+		}
+		matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
+        return matcher;
+	}
+
+	@Override
+	public LocalSearchMatcher getCalledMatcher() {
+		return matcher;
 	}
 	
     public CountOperation(PQuery calledQuery, Map<Integer, Integer> frameMapping, int position) {
@@ -51,29 +66,21 @@ public class CountOperation extends ExtendOperation<Integer> {
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        Set<Integer> adornment = Sets.newHashSet();
-        for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
-            Integer source = mapping.getKey();
-            if (frame.get(source) != null) {
-                adornment.add(mapping.getValue());
-            }
-        }
-        
-        calledMatcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
-        final MatchingFrame mappedFrame = calledMatcher.editableMatchingFrame();
+        getAndPrepareCalledMatcher(frame, context);
+        final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             mappedFrame.setValue(entry.getValue(), frame.getValue(entry.getKey()));
         }
-        it = Iterators.singletonIterator(calledMatcher.countMatches(mappedFrame));
+        it = Iterators.singletonIterator(matcher.countMatches(mappedFrame));
         
     }
 
     @Override
     public String toString() {
     	StringBuilder builder = new StringBuilder();
-    	builder.append("CountOperation, pattern: ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.')));
-    	return builder.toString();
+		builder.append("CountOperation, pattern: ")
+			.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
+		return builder.toString();
     }
     
     @Override
@@ -82,6 +89,7 @@ public class CountOperation extends ExtendOperation<Integer> {
     	variables.addAll(frameMapping.keySet());
 		return variables;
 	}
+
 
     
 }

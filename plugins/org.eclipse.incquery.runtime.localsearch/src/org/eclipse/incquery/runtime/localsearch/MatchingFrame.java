@@ -103,7 +103,7 @@ public class MatchingFrame extends Tuple implements Cloneable {
     public String toString() {
     	StringBuilder builder = new StringBuilder();
     	for (int i = 0; i < frame.length; i++) {
-			builder.append("frame[" + i + "]\t" + frame[i].toString() + "\n");
+			builder.append("frame[" + i + "]\t" + (frame[i] == null ? "null" : frame[i]).toString() + "\n");
 		}
     	return builder.toString();
     }

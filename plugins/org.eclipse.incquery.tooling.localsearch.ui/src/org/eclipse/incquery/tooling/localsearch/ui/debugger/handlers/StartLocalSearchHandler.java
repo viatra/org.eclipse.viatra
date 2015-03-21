@@ -12,7 +12,6 @@ package org.eclipse.incquery.tooling.localsearch.ui.debugger.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -39,7 +38,7 @@ public class StartLocalSearchHandler extends AbstractHandler {
 	public static Thread planExecutorThread = null;
 
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 
 		try {
 			final ISelection selection = HandlerUtil.getCurrentSelection(event);
@@ -65,11 +64,8 @@ public class StartLocalSearchHandler extends AbstractHandler {
 							localSearchMatcher.addAdapter(debugger);
 							debugger.setStartHandlerCalled(true);
 
-							// TODO register the debugger for ALL search operation
-							
 							// Initiate the matching
 							localSearchMatcher.getAllMatches();
-							
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

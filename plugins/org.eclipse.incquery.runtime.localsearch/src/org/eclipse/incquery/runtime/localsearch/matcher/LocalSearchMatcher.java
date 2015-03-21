@@ -77,9 +77,13 @@ public class LocalSearchMatcher {
             if(currentPlan !=null) {
                 currentPlan.removeAdapters(adapters);
             }
-            currentPlan = iterator.next();
-            currentPlan.addAdapters(adapters);
-            currentPlan.resetPlan();
+            SearchPlanExecutor nextPlan = iterator.next();
+            nextPlan.addAdapters(adapters);
+            nextPlan.resetPlan();
+            for (ILocalSearchAdapter adapter : adapters) {
+				adapter.planChanged(currentPlan, nextPlan);
+			}
+            currentPlan = nextPlan;
         }
 
         @Override
@@ -90,7 +94,9 @@ public class LocalSearchMatcher {
             try {
                 boolean foundMatch = currentPlan.execute(frame);
                 while ((!foundMatch) && iterator.hasNext()) {
+                	// here ends the previous plan
                     getNextPlan();
+                    // here starts the new plan
                     foundMatch = currentPlan.execute(frame);
                 }
                 if (foundMatch) {
@@ -191,8 +197,9 @@ public class LocalSearchMatcher {
     public int countMatches(MatchingFrame initialFrame) throws LocalSearchException {
     	matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);
+        int result = Iterators.size(it);
         matchingFinished();
-        return Iterators.size(it);
+		return result;
     }
 
     public MatchingFrame getOneArbitraryMatch() throws LocalSearchException {

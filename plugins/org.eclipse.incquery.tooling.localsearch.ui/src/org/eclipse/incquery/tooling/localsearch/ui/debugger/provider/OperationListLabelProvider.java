@@ -39,6 +39,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
+ * Label provider class for the search plan tree viewer
  * 
  * @author Marton Bur
  *
@@ -88,12 +89,11 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 
 			StyledString text = new StyledString();
 
-			// TODO 
-			// For now toString() yields the obtainable type information 
+			// TODO For now toString() yields the obtainable type information, this might need some redesign work 
 			text.append(operation.toString());
 			
 			if(planExecutor != null){
-				text.append(" ( ");
+				text.append("( ");
 				
 				BiMap<Integer,PVariable> variableMapping = planExecutor.getVariableMapping();
 				List<Integer> variablePositions = operation.getVariablePositions();
@@ -106,7 +106,6 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 				}
 				text.append(')');
 			}
-
 			
 			if (planExecutor != null && planExecutor.getCurrentOperation() < planExecutor.getSearchPlan().getOperations().indexOf(operation)) {
 	            cell.setImage(notAppliedOperationImage);
@@ -117,8 +116,7 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 	                    doColoring(operation, textStyle);
 	                }
 	            });
-			} else if (planExecutor != null
-	                && planExecutor.getCurrentOperation() == planExecutor.getSearchPlan().getOperations().indexOf(operation)) {
+			} else if (planExecutor != null && planExecutor.getCurrentOperation() == planExecutor.getSearchPlan().getOperations().indexOf(operation)) {
 	            cell.setImage(currentOperationImage);
 	            text.setStyle(0, text.length(), new Styler() {
 	                public void applyStyles(TextStyle textStyle) {
@@ -128,7 +126,7 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 	                    textStyle.background = localResourceManager.createColor(new RGB(200,235,255));
 	                }
 	            });
-	        } else {
+	        } else if (planExecutor != null){
 	        	cell.setImage(appliedOperationImage);
 	        	text.setStyle(0, text.length(), new Styler() {
 	        		public void applyStyles(TextStyle textStyle) {
@@ -136,7 +134,17 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 	        			doColoring(operation, textStyle);
 	        		}
 	        	});
-	        }
+	        } else /*if(planExecutor == null)*/{
+				// If the operations are only shown, but the execution is not started
+				cell.setImage(notAppliedOperationImage);
+	            text.setStyle(0, text.length(), new Styler() {
+	                public void applyStyles(TextStyle textStyle) {
+	                    LocalResourceManager localResMan = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
+	                    textStyle.font = localResMan.createFont(FontDescriptor.createFrom("Arial", 10, SWT.NORMAL));
+	                    doColoring(operation, textStyle);
+	                }
+	            });
+			}
 	        cell.setText(text.toString());
 	        cell.setStyleRanges(text.getStyleRanges());
     	}
@@ -194,8 +202,8 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
         }
     }
 
-    public void addPlanExecutor(SearchPlanExecutor planExecutor) {
-        this.planExecutors.add(planExecutor);
+    public List<SearchPlanExecutor> getPlanExecutorList() {
+        return this.planExecutors;
     }
 
     @Override

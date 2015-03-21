@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.incquery.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Lists;
@@ -30,19 +31,28 @@ import com.google.common.collect.Sets;
  * @author Zoltan Ujhelyi
  *
  */
-public class NACOperation extends CheckOperation {
+public class NACOperation extends CheckOperation implements IMatcherBasedOperation {
 
     PQuery calledQuery;
     LocalSearchMatcher matcher;
     
-    /**
-     * This matcher is only available after the onInitialize() is called
-     * 
-     * @return the matcher used for the NAC
-     */
-    public LocalSearchMatcher getCalledMatcher() {
+	@Override
+	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
+		Set<Integer> adornment = Sets.newHashSet();
+		for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+			Integer source = mapping.getKey();
+			if (frame.get(source) != null) {
+				adornment.add(mapping.getValue());
+			}
+		}
+		matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
         return matcher;
-    }
+	}
+
+	@Override
+	public LocalSearchMatcher getCalledMatcher() {
+		return matcher;
+	}
 
     Map<Integer, Integer> frameMapping;
 
@@ -59,14 +69,7 @@ public class NACOperation extends CheckOperation {
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
-        Set<Integer> adornment = Sets.newHashSet();
-        for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
-            Integer source = mapping.getKey();
-            if (frame.get(source) != null) {
-                adornment.add(mapping.getValue());
-            }
-        }
-        matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
+        getAndPrepareCalledMatcher(frame, context);
     }
 
     @Override
@@ -83,7 +86,7 @@ public class NACOperation extends CheckOperation {
     public String toString() {
     	StringBuilder builder = new StringBuilder();
     	builder.append("NACOperation, pattern: ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.')));
+    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
     	return builder.toString();
     }
     
@@ -93,5 +96,6 @@ public class NACOperation extends CheckOperation {
     	variables.addAll(frameMapping.keySet());
 		return variables;
 	}
+
 
 }

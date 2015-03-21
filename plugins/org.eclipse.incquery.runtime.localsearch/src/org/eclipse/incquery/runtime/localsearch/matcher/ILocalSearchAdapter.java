@@ -22,35 +22,30 @@ public interface ILocalSearchAdapter {
 
     /**
      * Callback method to indicate the start of a matching process
+	 *
+     * @param lsMatcher the local search matcher that starts the matching
      */
     void patternMatchingStarted(LocalSearchMatcher lsMatcher);
 
     /**
      * Callback method to indicate the end of a matching process
+     * 
+     * @param lsMatcher the local search matcher that finished
      */
     void patternMatchingFinished(LocalSearchMatcher lsMatcher);
 
     /**
-     * Callback method to indicate the start of a local search plan execution
+     * Callback method to indicate switching to a new plan during the execution of a pattern matching
      * 
-     * @param searchPlanExecutor the plan that is started
-     * @param currentOperation the first operation to execute
+     * @param oldPlanExecutor the plan that is finished. Value is null when the first plan is starting.
+     * @param newPlanExecutor the plan that will begin execution
      */
-    void planStarted(SearchPlanExecutor searchPlanExecutor);
-
-    /**
-     * Callback method to indicate the end of a local search plan execution
-     * 
-     * @param searchPlanExecutor the plan that is started
-     * @param currentOperation the last operation to execute
-     */
-    void planFinished(SearchPlanExecutor searchPlanExecutor);
+    void planChanged(SearchPlanExecutor oldPlanExecutor, SearchPlanExecutor newPlanExecutor);
     
     /**
      * Callback method to indicate the selection of an operation to execute
      * 
      * @param planExecutor the current plan executor
-     * @param currentOperation the operation that is selected for execution
      * @param frame the current matching frame
      */
     void operationSelected(SearchPlanExecutor planExecutor, MatchingFrame frame);
@@ -59,9 +54,23 @@ public interface ILocalSearchAdapter {
      * Callback method to indicate that an operation is executed
      * 
      * @param planExecutor the current plan executor
-     * @param currentOperation the last operation that is executed
      * @param frame the current matching frame
      */
     void operationExecuted(SearchPlanExecutor planExecutor, MatchingFrame frame);
 
+    /**
+     * Callback that is used to indicate that a match has been found
+     * 
+     * @param planExecutor the search plan executor that found the match
+     * @param frame the frame that holds the substitutions of the variables that match
+     */
+	void matchFound(SearchPlanExecutor planExecutor, MatchingFrame frame);
+
+	/**
+	 * Callback method to indicate that a search plan executor is initialized with the given frame and starting operation
+	 * 
+	 * @param searchPlanExecutor
+	 * @param frame
+	 */
+	void executorInitializing(SearchPlanExecutor searchPlanExecutor, MatchingFrame frame);
 }

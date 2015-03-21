@@ -20,6 +20,7 @@ import org.eclipse.incquery.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.incquery.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.incquery.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Lists;
@@ -31,16 +32,30 @@ import com.google.common.collect.Sets;
  * @author Zoltan Ujhelyi
  *
  */
-public class CountCheck extends CheckOperation {
+public class CountCheck extends CheckOperation implements IMatcherBasedOperation{
 
     private PQuery calledQuery;
     private LocalSearchMatcher matcher;
     Map<Integer, Integer> frameMapping;
     private int position;
+    
+	@Override
+	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
+		Set<Integer> adornment = Sets.newHashSet();
+		for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+			Integer source = mapping.getKey();
+			if (frame.get(source) != null) {
+				adornment.add(mapping.getValue());
+			}
+		}
+		matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
+        return matcher;
+	}
 
-    public LocalSearchMatcher getCalledMatcher(){
-    	return matcher;
-    }
+	@Override
+	public LocalSearchMatcher getCalledMatcher(){
+		return matcher;
+	}
     
     public CountCheck(PQuery calledQuery, Map<Integer, Integer> frameMapping, int position) {
         super();
@@ -54,17 +69,10 @@ public class CountCheck extends CheckOperation {
     }
 
     @Override
-    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        super.onInitialize(frame, context);
-        Set<Integer> adornment = Sets.newHashSet();
-        for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
-            Integer source = mapping.getKey();
-            if (frame.get(source) != null) {
-                adornment.add(mapping.getValue());
-            }
-        }
-        matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
-    }
+	public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+		super.onInitialize(frame, context);
+		getAndPrepareCalledMatcher(frame, context);
+	}
 
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
@@ -85,8 +93,9 @@ public class CountCheck extends CheckOperation {
     public String toString() {
     	StringBuilder builder = new StringBuilder();
     	builder.append("Count check for pattern ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.')));
+    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
     	return super.toString();
     }
+
     
 }

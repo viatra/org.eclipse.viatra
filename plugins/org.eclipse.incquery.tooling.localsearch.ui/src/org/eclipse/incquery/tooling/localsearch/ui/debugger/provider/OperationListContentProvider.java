@@ -14,11 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.incquery.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.incquery.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
-import org.eclipse.incquery.runtime.localsearch.operations.check.CountCheck;
-import org.eclipse.incquery.runtime.localsearch.operations.check.NACOperation;
-import org.eclipse.incquery.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -27,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
+ * Content provider class for the search plan tree viewer
  * 
  * @author Marton Bur
  *
@@ -57,20 +55,21 @@ public class OperationListContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof SearchPlanExecutor) {
-			// Get the first from the list that is the top level plan
-			List<Object> operationsToShow = Lists.newArrayList();
+			List<Object> planToShow = null;
 			if(inputElement != null){
-				createOperationsList(inputElement, operationsToShow);
+				planToShow = createOperationsList(inputElement);
 			}
-			return operationsToShow.toArray(new Object[operationsToShow.size()]);
+			return planToShow.toArray(new Object[planToShow.size()]);
 		}
 		return new Object[0];
 	}
 
 
-	private void createOperationsList(Object inputElement, List<Object> operationsToShow) {
-		List<ISearchOperation> searchOperations = ((SearchPlanExecutor)inputElement).getSearchPlan().getOperations();
-		operationsToShow.addAll(searchOperations);
+	private List<Object> createOperationsList(Object inputElement) {
+		List<Object> operationsToShow = Lists.newArrayList();
+		
+		List<ISearchOperation> plan = ((SearchPlanExecutor)inputElement).getSearchPlan().getOperations();
+		operationsToShow.addAll(plan);
 		// Final dummy operation
 		
 		Object dummyOperation = dummyOperations.get(inputElement);
@@ -80,25 +79,19 @@ public class OperationListContentProvider implements ITreeContentProvider {
 		}
 		operationListLabelProvider.createDummyMatchOperationMapping(dummyOperation,(SearchPlanExecutor)inputElement);
 		operationsToShow.add(dummyOperation);
+		return operationsToShow;
 	}
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		LocalSearchMatcher calledMatcher = null;
-		if (parentElement instanceof NACOperation) {
-			calledMatcher = ((NACOperation) parentElement).getCalledMatcher();
-		} else if (parentElement instanceof BinaryTransitiveClosureCheck) {
-			calledMatcher = ((BinaryTransitiveClosureCheck) parentElement).getCalledMatcher();
-		} else if (parentElement instanceof CountOperation) {
-			calledMatcher = ((CountOperation) parentElement).getCalledMatcher();
-		} else if (parentElement instanceof CountCheck) {
-			calledMatcher = ((CountCheck) parentElement).getCalledMatcher();
+		if (parentElement instanceof IMatcherBasedOperation) {
+			calledMatcher = ((IMatcherBasedOperation) parentElement).getCalledMatcher();
 		}
 
 		if(calledMatcher != null){
 			SearchPlanExecutor searchPlanExecutor = matcherCurrentExecutorMappings.get(calledMatcher);
-			List<Object> operations = Lists.newArrayList();
-			createOperationsList(searchPlanExecutor, operations);
+			List<Object> operations = createOperationsList(searchPlanExecutor);
 			return operations.toArray(new Object[operations.size()]);
 		}
 		
@@ -113,14 +106,8 @@ public class OperationListContentProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object element) {
 		LocalSearchMatcher calledMatcher = null;
-		if (element instanceof NACOperation) {
-			calledMatcher = ((NACOperation) element).getCalledMatcher();
-		} else if (element instanceof BinaryTransitiveClosureCheck) {
-			calledMatcher = ((BinaryTransitiveClosureCheck) element).getCalledMatcher();
-		} else if (element instanceof CountOperation) {
-			calledMatcher = ((CountOperation) element).getCalledMatcher();
-		} else if (element instanceof CountCheck) {
-			calledMatcher = ((CountCheck) element).getCalledMatcher();
+		if (element instanceof IMatcherBasedOperation) {
+			calledMatcher = ((IMatcherBasedOperation) element).getCalledMatcher();
 		}
 		return calledMatcher != null;
 	}

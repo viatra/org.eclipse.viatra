@@ -11,18 +11,16 @@
 package org.eclipse.incquery.tooling.localsearch.ui.debugger.provider;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
+ * An initial implementation for the content provider to show the selected matching frame in a Zest viewer
  * 
  * @author Marton Bur
  *
@@ -33,18 +31,13 @@ public class ZestNodeContentProvider extends ArrayContentProvider implements IGr
     public Object[] getElements(Object inputElement) {
         MatchingFrame frame = (MatchingFrame) inputElement;
 
-        ArrayList<Object> elems = Lists.newArrayList();
+        ArrayList<Object> elements = Lists.newArrayList();
         for (int i = 0; i < frame.getSize(); i++) {
-            elems.add(frame.get(i));
-        }
-
-        Collection<Object> elements = Collections2.filter(elems, new Predicate<Object>() {
-            @Override
-            public boolean apply(Object arg0) {
-                return (arg0 != null && arg0 instanceof EObject);
+            Object element = frame.get(i);
+            if(element != null && element instanceof EObject){
+            	elements.add(element);            	
             }
-        });
-
+        }
         return elements.toArray();
     }
     
