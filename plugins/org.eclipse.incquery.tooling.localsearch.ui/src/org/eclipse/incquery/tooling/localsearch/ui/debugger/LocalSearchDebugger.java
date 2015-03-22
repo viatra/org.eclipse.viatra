@@ -32,6 +32,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.Lists;
 
 /**
+ * An adapter implementation for local search matchers to support debugging
  * 
  * @author Marton Bur
  *
@@ -43,8 +44,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	private Stack<LocalSearchMatcher> runningMatchers;
 	private OperationListContentProvider operationListContentProvider;
 	private boolean startHandlerCalled = false;
-	
-	
+
 	public boolean isStartHandlerCalled() {
 		return startHandlerCalled;
 	}
@@ -53,11 +53,10 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		this.startHandlerCalled = startHandlerCalled;
 	}
 
-	
 	@Override
 	public void patternMatchingStarted(final LocalSearchMatcher lsMatcher) {
 		// If a new debug session is starting, obtain the view
-		if(startHandlerCalled){
+		if (startHandlerCalled) {
 			startHandlerCalled = false;
 			// Syncexec is assumed to be needed because of the showView call
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -67,7 +66,8 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 						runningMatchers = new Stack<LocalSearchMatcher>();
 						// Init treeviewer related fields
 						// TODO make sure that the initialization is done for every part
-						localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
+						localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
 						localSearchDebugView.getBreakpoints().clear();
 						operationListContentProvider = localSearchDebugView.getOperationListContentProvider();
 						operationListContentProvider.getMatcherCurrentExecutorMappings().clear();
@@ -85,23 +85,22 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	@Override
 	public void patternMatchingFinished(LocalSearchMatcher matcher) {
 		runningMatchers.pop();
-		if(runningMatchers.size() == 0){
-			// After all the matching process finished set to halted in order to 
+		if (runningMatchers.size() == 0) {
+			// After all the matching process finished set to halted in order to
 			// be able to start a new debug session
 			localSearchDebugView.setHalted(true);
 			localSearchDebugView.refreshView();
 		}
 	}
 
-
 	@Override
 	public void planChanged(SearchPlanExecutor oldPlanExecutor, final SearchPlanExecutor newPlanExecutor) {
 
 		// Select corresponding matcher and store the (matcher,executor) pair
-		// This mapping is needed for the providers for the locaSearchDebugView 
+		// This mapping is needed for the providers for the locaSearchDebugView
 		// to get the information for matchers and their currently executed plans
 		operationListContentProvider.getMatcherCurrentExecutorMappings().put(runningMatchers.peek(), newPlanExecutor);
-		
+
 		if (runningMatchers.size() == 1) {
 			// Set the input when the top level matcher goes to the next plan
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -115,15 +114,15 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		List<SearchPlanExecutor> planExecutorList = localSearchDebugView.getOperationListLabelProvider().getPlanExecutorList();
 		planExecutorList.remove(oldPlanExecutor);
 		planExecutorList.add(newPlanExecutor);
-		
+
 		PQuery querySpecification = runningMatchers.peek().getQuerySpecification();
 		final int keySize = querySpecification.getParameters().size();
 		String queryName = getSimpleQueryName(querySpecification);
 		final TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(queryName);
 		@SuppressWarnings("unchecked")
-		List<MatchingFrame> storedFrames = (List<MatchingFrame>)matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
-		if(!storedFrames.isEmpty()){
-			storedFrames.remove(storedFrames.size()-1);
+		List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
+		if (!storedFrames.isEmpty()) {
+			storedFrames.remove(storedFrames.size() - 1);
 		}
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			@Override
@@ -136,7 +135,6 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 				localSearchDebugView.recreateColumns(columnNames, keySize, matchesViewer);
 			}
 		});
-		
 	}
 
 	@Override
@@ -145,40 +143,31 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		String simpleQueryName = getSimpleQueryName(runningMatchers.peek().getQuerySpecification());
 		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
 		@SuppressWarnings("unchecked")
-		List<MatchingFrame> storedFrames = (List<MatchingFrame>)matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
-		if(!storedFrames.contains(frame)){
+		List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
+		if (!storedFrames.contains(frame)) {
 			storedFrames.add(frame);
 		}
-
-//		synchronized (notifier) {
-//			try {
-//				notifier.wait();
-//			} catch (InterruptedException e) {
-//				Thread.currentThread.interrupt();
-//			}
-//		}
-		
 	}
-	
+
 	@Override
 	public void operationSelected(final SearchPlanExecutor planExecutor, final MatchingFrame frame) {
 
 		int currentOperationIndex = planExecutor.getCurrentOperation();
 
 		if (currentOperationIndex >= planExecutor.getSearchPlan().getOperations().size()) {
-			// A match was found previously so that the index is greater than the index of the last operation, no operation left in the plan
+			// A match was found previously so that the index is greater than the index of the last operation, no
+			// operation left in the plan
 			// It is still possible that the user placed a breakpoint on the match found proxy operation
 			checkForBreakPoint(planExecutor);
 			return;
-		} else if (currentOperationIndex < 0){
+		} else if (currentOperationIndex < 0) {
 			// The plan has been executed, index is out of range
 			return;
 		}
-		
-		// TODO the above line should be in planChanged
+
 		LocalSearchMatcher matcher = null;
 		try {
-			matcher = getMatcherIfExists(planExecutor,frame);
+			matcher = getMatcherIfExists(planExecutor, frame);
 		} catch (LocalSearchException e1) {
 			// TODO proper logging
 			e1.printStackTrace();
@@ -193,7 +182,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	private void checkForBreakPoint(final SearchPlanExecutor planExecutor) {
 		if (localSearchDebugView != null) {
 			if (localSearchDebugView.isBreakpointHit(planExecutor)) {
-						localSearchDebugView.refreshView();
+				localSearchDebugView.refreshView();
 				synchronized (notifier) {
 					try {
 						notifier.wait();
@@ -207,8 +196,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	@Override
 	public void operationExecuted(SearchPlanExecutor planExecutor, MatchingFrame frame) {
-		// Handle operation executed event here -- TODO the next operation might be selected here, so check for halting condition
-		if(localSearchDebugView.isHalted()){
+		if (localSearchDebugView.isHalted()) {
 			localSearchDebugView.refreshView();
 		}
 	}
@@ -219,31 +207,29 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		String simpleQueryName = getSimpleQueryName(runningMatchers.peek().getQuerySpecification());
 		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
 		@SuppressWarnings("unchecked")
-		List<MatchingFrame> storedFrames = (List<MatchingFrame>)matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
-		storedFrames.add(storedFrames.size()-1, frameToStore);
+		List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
+		storedFrames.add(storedFrames.size() - 1, frameToStore);
 	}
 
-	private LocalSearchMatcher getMatcherIfExists(SearchPlanExecutor planExecutor, MatchingFrame frame) throws LocalSearchException {
-		
+	private LocalSearchMatcher getMatcherIfExists(SearchPlanExecutor planExecutor, MatchingFrame frame)
+			throws LocalSearchException {
+
 		int currentOperationIndex = planExecutor.getCurrentOperation();
-		if(currentOperationIndex <= 0 || currentOperationIndex >= planExecutor.getSearchPlan().getOperations().size()){
+		if (currentOperationIndex <= 0 || currentOperationIndex >= planExecutor.getSearchPlan().getOperations().size()) {
 			return null;
 		}
 		ISearchOperation currentOperation = planExecutor.getSearchPlan().getOperations().get(currentOperationIndex);
 
-		// TODO carry on with the debug phase until the plan is fully loaded for these special search operations
-		// TODO  /|\ this is being elaborated now... this might not be an option for now
-		
 		LocalSearchMatcher calledMatcher = null;
 		if (currentOperation instanceof IMatcherBasedOperation) {
-			calledMatcher = ((IMatcherBasedOperation) currentOperation).getAndPrepareCalledMatcher(frame, planExecutor.getContext());
+			calledMatcher = ((IMatcherBasedOperation) currentOperation).getAndPrepareCalledMatcher(frame,planExecutor.getContext());
 		}
 		return calledMatcher;
 	}
-	
+
 	private String getSimpleQueryName(PQuery query) {
 		String[] stringTokens = query.getFullyQualifiedName().split("\\.");
-		String queryName = stringTokens[stringTokens.length-1];
+		String queryName = stringTokens[stringTokens.length - 1];
 		return queryName;
 	}
 
