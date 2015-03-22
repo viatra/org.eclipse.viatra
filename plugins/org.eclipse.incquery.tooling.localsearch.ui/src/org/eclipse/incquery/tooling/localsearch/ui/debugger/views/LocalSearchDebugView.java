@@ -15,8 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
@@ -30,11 +28,11 @@ import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.MatchesTableLabelProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.ZestNodeContentProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.internal.BreakPointListener;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -68,41 +66,6 @@ import com.google.common.collect.Maps;
  */
 public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbenchPart {
 
-
-    private final class ColumnLabelProviderExtension extends ColumnLabelProvider {
-		private int columnIndex;
-
-		public ColumnLabelProviderExtension(int i) {
-			this.columnIndex = i;
-		}
-
-		@Override
-		public String getText(Object inputElement) {
-			
-			MatchingFrame frame = (MatchingFrame)inputElement;
-			Object element = frame.get(columnIndex);
-			
-			if(element == null){
-				return "null";
-			}
-			if(element instanceof EObject){
-				EObject eObject = ((EObject) element);
-				
-				EStructuralFeature feature = eObject.eClass().getEStructuralFeature("name");
-				if(feature != null){
-					if(!feature.isMany()){
-						return eObject.eGet(feature).toString();
-					}							
-				} else {
-					feature = eObject.eClass().getEStructuralFeature(0);
-					if(!feature.isMany()){
-						return eObject.eGet(feature).toString();
-					}														
-				}
-			}
-			return element.toString();
-		}
-	}
 
 	public static final String ID = "org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView";
 
@@ -182,7 +145,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
      * @param parent the parent container
      * @param viewer the table viewer that will show the variable values
      */
-	public void recreateColumns(List<String> colNames, TableViewer matchesViewer) {
+	public void recreateColumns(List<String> colNames, int keySize, TableViewer matchesViewer) {
 		// TODO solve situations where the variable list changes (also in size)
 		TableColumn[] columns = matchesViewer.getTable().getColumns();
 		for (TableColumn tableColumn : columns) {
@@ -190,8 +153,9 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 		}
 		
 		for (int i = 0; i < colNames.size(); i++) {
+			// For now the header font style cannot be changed, see bug 63038
 			TableViewerColumn col = createTableViewerColumn(colNames.get(i), 100, i, matchesViewer);
-			col.setLabelProvider(new ColumnLabelProviderExtension(i));
+			col.setLabelProvider(new MatchesTableLabelProvider(i, i < keySize, matchesViewer));
 		}
 
 	}

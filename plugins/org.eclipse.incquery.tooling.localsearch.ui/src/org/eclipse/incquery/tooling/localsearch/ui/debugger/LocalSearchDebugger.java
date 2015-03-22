@@ -116,7 +116,9 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		planExecutorList.remove(oldPlanExecutor);
 		planExecutorList.add(newPlanExecutor);
 		
-		String queryName = getSimpleQueryName(runningMatchers.peek().getQuerySpecification());
+		PQuery querySpecification = runningMatchers.peek().getQuerySpecification();
+		final int keySize = querySpecification.getParameters().size();
+		String queryName = getSimpleQueryName(querySpecification);
 		final TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(queryName);
 		@SuppressWarnings("unchecked")
 		List<MatchingFrame> storedFrames = (List<MatchingFrame>)matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
@@ -131,7 +133,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 				for (int i = 0; i < variableMapping.size(); i++) {
 					columnNames.add(variableMapping.get(i).getName());
 				}
-				localSearchDebugView.recreateColumns(columnNames, matchesViewer);
+				localSearchDebugView.recreateColumns(columnNames, keySize, matchesViewer);
 			}
 		});
 		
