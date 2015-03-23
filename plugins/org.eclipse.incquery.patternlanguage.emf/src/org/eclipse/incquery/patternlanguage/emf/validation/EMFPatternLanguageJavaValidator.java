@@ -63,7 +63,6 @@ import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
-import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmGenericType;
@@ -730,17 +729,17 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             if (!comprehension.representable(feature)) {
             	if(SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(feature)) {
             		String surrogateQueryFQN = SurrogateQueryRegistry.instance().getSurrogateQueryFQN(feature);
-            		info("The derived/volatile feature" + feature.getName() + " of class "
+            		info("The derived/volatile feature " + feature.getName() + " of class "
                         + feature.getEContainingClass().getName()
                         + " used in the path expression has a surrogate query " + surrogateQueryFQN + " which will be used by EMF-IncQuery.",
                         tail.getKey().getType(), null, EMFIssueCodes.SURROGATE_QUERY_EXISTS);
+            	} else {
+                    warning("The derived/volatile feature " + feature.getName() + " of class "
+                            + feature.getEContainingClass().getName()
+                            + " used in the path expression is not representable in EMF-IncQuery."
+                            + " For details, consult the documentation on well-behaving features.",
+                            tail.getKey().getType(), null, EMFIssueCodes.FEATURE_NOT_REPRESENTABLE);
             	}
-            	
-                warning("The derived/volatile feature " + feature.getName() + " of class "
-                        + feature.getEContainingClass().getName()
-                        + " used in the path expression is not representable in EMF-IncQuery."
-                        + " For details, consult the documentation on well-behaving features.",
-                        tail.getKey().getType(), null, EMFIssueCodes.FEATURE_NOT_REPRESENTABLE);
             }
         }
     }
