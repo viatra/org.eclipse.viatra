@@ -1,0 +1,165 @@
+package org.eclipse.incquery.uml.derivedfeatures
+
+import "http://www.eclipse.org/uml2/5.0.0/UML"
+
+/*
+(if inStructuredNode<>null then inStructuredNode.containingBehavior() 
+else if activity<>null then activity
+else interaction 
+endif
+endif
+)
+*/
+// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (interaction)
+//pattern actionContainingBehavior(source: Action, target: Behavior) {}
+
+/*
+(directlyRealizedInterfaces()->union(self.allParents()->collect(directlyRealizedInterfaces()))->asSet())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: directlyRealizedInterfaces
+//pattern classifierAllRealizedInterfaces(source: Classifier, target: Interface) {}
+
+/*
+(directlyUsedInterfaces()->union(self.allParents()->collect(directlyUsedInterfaces()))->asSet())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: directlyUsedInterfaces
+//pattern classifierAllUsedInterfaces(source: Classifier, target: Interface) {}
+
+/*
+(inhs->reject(inh |
+  inh.oclIsKindOf(RedefinableElement) and
+  ownedMember->select(oclIsKindOf(RedefinableElement))->
+    select(redefinedElement->includes(inh.oclAsType(RedefinableElement)))
+       ->notEmpty()))
+*/
+// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (inhs)
+//pattern classifierInherit(source: Classifier, target: NamedElement) {}
+
+/*
+(member->select(m | c.hasVisibilityOf(m)))
+*/
+// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (c)
+//pattern classifierInheritableMembers(source: Classifier, target: NamedElement) {}
+
+/*
+(generalization.general->asSet())
+*/
+pattern classifierParents(
+	self : Classifier,
+	classifier : Classifier
+) {
+	Classifier.generalization(self, generalization);
+	temp1 == generalization;
+	Generalization.general(temp1, classifier);
+}
+
+/*
+(memberEnd->reject(p | ownedEnd->includes(p.oclAsType(ExtensionEnd)))->any(true))
+*/
+// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Iterator expression kind must be collect, select or reject instead of any in self.memberEnd->reject(p : Property | self.ownedEnd->includes(p.oclAsType(uml::ExtensionEnd)))->any(temp1 : Property | true)
+//pattern extensionMetaclassEnd(source: Extension, target: Property) {}
+
+/*
+(if (lowerValue=null or lowerValue.integerValue()=null) then 1 else lowerValue.integerValue() endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: integerValue
+//pattern multiplicityElementLowerBound(source: MultiplicityElement, target: Integer) {}
+
+/*
+(if (upperValue=null or upperValue.unlimitedValue()=null) then 1 else upperValue.unlimitedValue() endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: unlimitedValue
+//pattern multiplicityElementUpperBound(source: MultiplicityElement, target: UnlimitedNatural) {}
+
+/*
+(ownedParameter->select (direction = ParameterDirectionKind::return)->asSet())
+*/
+pattern operationReturnResult(
+	self : Operation,
+	temp1 : Parameter
+) {
+	Parameter.direction(temp1, parameterDirectionKind);
+	parameterDirectionKind_0 == ParameterDirectionKind::^return;
+	parameterDirectionKind == parameterDirectionKind_0;
+	BehavioralFeature.ownedParameter(self, parameter);
+	temp1 == parameter;
+}
+
+/*
+(member->select( m | m.oclIsKindOf(PackageableElement) and self.makesVisible(m))->collect(oclAsType(PackageableElement))->asSet())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: makesVisible
+//pattern packageVisibleMembers(source: Package, target: PackageableElement) {}
+
+/*
+(if type.oclIsKindOf(Interface) 
+then type.oclAsType(Interface)->asSet() 
+else type.oclAsType(Classifier).allRealizedInterfaces() 
+endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allRealizedInterfaces
+//pattern portBasicProvided(source: Port, target: Interface) {}
+
+/*
+( type.oclAsType(Classifier).allUsedInterfaces() )
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allUsedInterfaces
+//pattern portBasicRequired(source: Port, target: Interface) {}
+
+/*
+(if stateMachine = null 
+then
+  state.containingStateMachine()
+else
+  stateMachine
+endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingStateMachine
+//pattern regionContainingStateMachine(source: Region, target: StateMachine) {}
+
+/*
+(submachine <> null)
+*/
+// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
+//pattern stateIsSubmachineState(source: State, target: Boolean) {}
+
+/*
+(self.namespace.oclAsType(Package).containingProfile())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingProfile
+//pattern stereotypeContainingProfile(source: Stereotype, target: Profile) {}
+
+/*
+(container.containingStateMachine())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingStateMachine
+//pattern transitionContainingStateMachine(source: Transition, target: StateMachine) {}
+
+/*
+(null)
+*/
+// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
+//pattern valueSpecificationStringValue(source: ValueSpecification, target: String) {}
+
+/*
+(if container <> null
+then
+-- the container is a region
+   container.containingStateMachine()
+else 
+   if (self.oclIsKindOf(Pseudostate)) and ((self.oclAsType(Pseudostate).kind = PseudostateKind::entryPoint) or (self.oclAsType(Pseudostate).kind = PseudostateKind::exitPoint)) then
+      self.oclAsType(Pseudostate).stateMachine
+   else 
+      if (self.oclIsKindOf(ConnectionPointReference)) then
+          self.oclAsType(ConnectionPointReference).state.containingStateMachine() -- no other valid cases possible
+      else 
+          null
+      endif
+   endif
+endif
+)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingStateMachine
+//pattern vertexContainingStateMachine(source: Vertex, target: StateMachine) {}
+
+

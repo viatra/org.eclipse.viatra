@@ -276,6 +276,7 @@
 				<module>../../tests/org.eclipse.incquery.testing.core</module>
 				<module>../../tests/org.eclipse.incquery.testing.queries</module>
 				<module>../../tests/org.eclipse.incquery.testing.ui</module>
+                <module>../../tests/org.eclipse.incquery.uml.test</module>
 				<module>../../features/org.eclipse.incquery.runtime.feature</module>
 				<module>../../features/org.eclipse.incquery.runtime.generic.feature</module>
 				<module>../../features/org.eclipse.incquery.runtime.localsearch.feature</module>

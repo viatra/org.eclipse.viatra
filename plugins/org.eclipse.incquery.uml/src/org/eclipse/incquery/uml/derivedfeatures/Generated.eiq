@@ -1,0 +1,566 @@
+package org.eclipse.incquery.uml.derivedfeatures
+
+import "http://www.eclipse.org/uml2/5.0.0/UML"
+
+/*
+(let behavior: Behavior = self.containingBehavior() in
+if behavior=null then null
+else if behavior._'context' = null then behavior
+else behavior._'context'
+endif
+endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingBehavior
+//@Surrogate(feature = "context")
+//pattern actionContext(source: Action, target: Classifier) {}
+
+/*
+(memberEnd->collect(type)->asSet())
+*/
+@Surrogate(feature = "endType")
+pattern associationEndType(
+	self : Association,
+	type : Type
+) {
+	Association.memberEnd(self, property);
+	temp1 == property;
+	TypedElement.type(temp1, type);
+}
+
+/*
+(if nestingClass <> null then
+    null
+else
+    let b:BehavioredClassifier = self.behavioredClassifier(self.owner) in
+    if b.oclIsKindOf(Behavior) and b.oclAsType(Behavior)._'context' <> null then 
+        b.oclAsType(Behavior)._'context'
+    else 
+        b 
+    endif
+endif
+        )
+*/
+// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (nestingClass)
+//@Surrogate(feature = "context")
+//pattern behaviorContext(source: Behavior, target: BehavioredClassifier) {}
+
+/*
+(Extension.allInstances()->select(ext | 
+  let endTypes : Sequence(Classifier) = ext.memberEnd->collect(type.oclAsType(Classifier)) in
+  endTypes->includes(self) or endTypes.allParents()->includes(self) ))
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allParents
+//@Surrogate(feature = "extension")
+//pattern classExtension(source: Class, target: Extension) {}
+
+/*
+(self.general()->select(oclIsKindOf(Class))->collect(oclAsType(Class))->asSet())
+*/
+// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Cannot find operation (general()) for the type (Class)
+//@Surrogate(feature = "superClass")
+//pattern classSuperClass(source: Class, target: Class) {}
+
+/*
+(parents())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: parents
+//@Surrogate(feature = "general")
+//pattern classifierGeneral(source: Classifier, target: Classifier) {}
+
+/*
+(inherit(parents()->collect(inheritableMembers(self))->asSet()))
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: parents
+//@Surrogate(feature = "inheritedMember")
+//pattern classifierInheritedMember(source: Classifier, target: NamedElement) {}
+
+/*
+(let 	ris : Set(Interface) = allRealizedInterfaces(),
+        realizingClassifiers : Set(Classifier) =  self.realization.realizingClassifier->union(self.allParents()->collect(realization.realizingClassifier))->asSet(),
+        allRealizingClassifiers : Set(Classifier) = realizingClassifiers->union(realizingClassifiers.allParents())->asSet(),
+        realizingClassifierInterfaces : Set(Interface) = allRealizingClassifiers->iterate(c; rci : Set(Interface) = Set{} | rci->union(c.allRealizedInterfaces())),
+        ports : Set(Port) = self.ownedPort->union(allParents()->collect(ownedPort))->asSet(),
+        providedByPorts : Set(Interface) = ports.provided->asSet()
+in     ris->union(realizingClassifierInterfaces) ->union(providedByPorts)->asSet())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allRealizedInterfaces
+//@Surrogate(feature = "provided")
+//pattern componentProvided(source: Component, target: Interface) {}
+
+/*
+(let 	uis : Set(Interface) = allUsedInterfaces(),
+        realizingClassifiers : Set(Classifier) = self.realization.realizingClassifier->union(self.allParents()->collect(realization.realizingClassifier))->asSet(),
+        allRealizingClassifiers : Set(Classifier) = realizingClassifiers->union(realizingClassifiers.allParents())->asSet(),
+        realizingClassifierInterfaces : Set(Interface) = allRealizingClassifiers->iterate(c; rci : Set(Interface) = Set{} | rci->union(c.allUsedInterfaces())),
+        ports : Set(Port) = self.ownedPort->union(allParents()->collect(ownedPort))->asSet(),
+        usedByPorts : Set(Interface) = ports.required->asSet()
+in	    uis->union(realizingClassifierInterfaces)->union(usedByPorts)->asSet()
+)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allUsedInterfaces
+//@Surrogate(feature = "required")
+//pattern componentRequired(source: Component, target: Interface) {}
+
+/*
+(ConnectorEnd.allInstances()->select(role = self))
+*/
+@Surrogate(feature = "end")
+pattern connectableElementEnd(
+	self : ConnectableElement,
+	temp1 : ConnectorEnd
+) {
+	ConnectorEnd.role(temp1, connectableElement);
+	connectableElement == self;
+	ConnectorEnd(connectorEnd);
+	temp1 == connectorEnd;
+}
+
+/*
+(if end->exists(
+		role.oclIsKindOf(Port) 
+		and partWithPort->isEmpty()
+		and not role.oclAsType(Port).isBehavior)
+then ConnectorKind::delegation 
+else ConnectorKind::assembly 
+endif)
+*/
+@Surrogate(feature = "kind")
+pattern connectorKind(
+	self : Connector,
+	connectorKind_1 /* : ConnectorKind */
+) {
+	find connectorKind_5(self, connectorKind_1);
+}
+
+pattern connectorKind_0(
+	temp1 : ConnectorEnd,
+	property : Property
+) {
+	ConnectorEnd.partWithPort(temp1, property);
+}
+
+pattern connectorKind_1(
+	temp1 : ConnectorEnd
+) {
+	ConnectorEnd.role(temp1, connectableElement);
+	Port(port);
+	connectableElement == port;
+}
+
+pattern connectorKind_2(
+	temp1 : ConnectorEnd
+) {
+		neg find connectorKind_1(temp1);
+	} or {
+		find connectorKind_0(temp1, _property);
+}
+
+pattern connectorKind_3(
+	temp1 : ConnectorEnd
+) {
+		find connectorKind_2(temp1);
+	} or {
+		ConnectorEnd.role(temp1, connectableElement_0);
+		Port.isBehavior(connectableElement_0, boolean_0);
+		boolean_1 == eval(!((boolean_0 as boolean)));
+		false == boolean_1;
+}
+
+pattern connectorKind_4(
+	self : Connector
+) {
+	Connector.end(self, connectorEnd);
+	temp1 == connectorEnd;
+	ConnectorEnd.role(temp1, connectableElement);
+	Port(port);
+	connectableElement == port;
+	neg find connectorKind_0(temp1, _property);
+	ConnectorEnd.role(temp1, connectableElement_0);
+	Port.isBehavior(connectableElement_0, boolean_0);
+	boolean_1 == eval(!((boolean_0 as boolean)));
+	true == boolean_1;
+}
+
+pattern connectorKind_5(
+	self : Connector,
+	connectorKind_1 /* : ConnectorKind */
+) {
+		Connector.end(self, connectorEnd);
+		temp1 == connectorEnd;
+		ConnectorEnd.role(temp1, connectableElement);
+		Port(port);
+		connectableElement == port;
+		neg find connectorKind_0(temp1, _property);
+		ConnectorEnd.role(temp1, connectableElement_0);
+		Port.isBehavior(connectableElement_0, boolean_0);
+		boolean_1 == eval(!((boolean_0 as boolean)));
+		true == boolean_1;
+		connectorKind == ConnectorKind::delegation;
+		connectorKind == connectorKind_1;
+	} or {
+		neg find connectorKind_4(self);
+		connectorKind_0 == ConnectorKind::assembly;
+		connectorKind_0 == connectorKind_1;
+}
+
+/*
+(if connector.type = null 
+then
+  null 
+else
+  let index : Integer = connector.end->indexOf(self) in
+    connector.type.memberEnd->at(index)
+endif)
+*/
+// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (connector)
+//@Surrogate(feature = "definingEnd")
+//pattern connectorEndDefiningEnd(source: ConnectorEnd, target: Property) {}
+
+/*
+(deployment.deployedArtifact->select(oclIsKindOf(Artifact))->collect(oclAsType(Artifact).manifestation)->collect(utilizedElement)->asSet())
+*/
+@Surrogate(feature = "deployedElement")
+pattern deploymentTargetDeployedElement(
+	self : DeploymentTarget,
+	packageableElement : PackageableElement
+) {
+	Artifact(artifact);
+	temp2 == artifact;
+	DeploymentTarget.deployment(self, deployment);
+	temp1 == deployment;
+	Deployment.deployedArtifact(temp1, deployedArtifact);
+	temp2 == deployedArtifact;
+	temp3 == temp2;
+	Artifact.manifestation(temp3, manifestation);
+	temp4 == manifestation;
+	Manifestation.utilizedElement(temp4, packageableElement);
+}
+
+/*
+(ownedAttribute->select(oclIsKindOf(Port))->collect(oclAsType(Port))->asOrderedSet())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: asOrderedSet
+//@Surrogate(feature = "ownedPort")
+//pattern encapsulatedClassifierOwnedPort(source: EncapsulatedClassifier, target: Port) {}
+
+/*
+(ownedEnd.lowerBound() = 1)
+*/
+// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Cannot find operation (=(Integer)) for the type (Sequence(Integer))
+//@Surrogate(feature = "isRequired")
+//pattern extensionIsRequired(source: Extension, target: Boolean) {}
+
+/*
+(metaclassEnd().type.oclAsType(Class))
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: metaclassEnd
+//@Surrogate(feature = "metaclass")
+//pattern extensionMetaclass(source: Extension, target: Class) {}
+
+/*
+(messageKind)
+*/
+@Surrogate(feature = "messageKind")
+pattern messageMessageKind(
+	self : Message,
+	messageKind /* : MessageKind */
+) {
+	Message.messageKind(self, messageKind);
+}
+
+/*
+(lowerBound())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: lowerBound
+//@Surrogate(feature = "lower")
+//pattern multiplicityElementLower(source: MultiplicityElement, target: Integer) {}
+
+/*
+(upperBound())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: upperBound
+//@Surrogate(feature = "upper")
+//pattern multiplicityElementUpper(source: MultiplicityElement, target: UnlimitedNatural) {}
+
+/*
+(Dependency.allInstances()->select(d | d.client->includes(self)))
+*/
+@Surrogate(feature = "clientDependency")
+pattern namedElementClientDependency(
+	self : NamedElement,
+	d : Dependency
+) {
+	Dependency.client(d, namedElement);
+	namedElement == self;
+	Dependency(dependency);
+	d == dependency;
+}
+
+/*
+(if self.name <> null and self.allNamespaces()->select( ns | ns.name=null )->isEmpty()
+then 
+    self.allNamespaces()->iterate( ns : Namespace; agg: String = self.name | ns.name.concat(self.separator()).concat(agg))
+else
+   null
+endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [self.allNamespaces()->iterate(ns : Namespace; agg : String = self.name | ns.name.concat(self.separator()).concat(agg))]
+//@Surrogate(feature = "qualifiedName")
+//pattern namedElementQualifiedName(source: NamedElement, target: String) {}
+
+/*
+(self.importMembers(elementImport.importedElement->asSet()->union(packageImport.importedPackage->collect(p | p.visibleMembers()))->asSet()))
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: visibleMembers
+//@Surrogate(feature = "importedMember")
+//pattern namespaceImportedMember(source: Namespace, target: PackageableElement) {}
+
+/*
+(if behavior = null then
+	null
+else
+	behavior.ownedParameter->first()
+endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
+//@Surrogate(feature = "result")
+//pattern opaqueExpressionResult(source: OpaqueExpression, target: Parameter) {}
+
+/*
+(if returnResult()->notEmpty() then returnResult()-> exists(isOrdered) else false endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+//@Surrogate(feature = "isOrdered")
+//pattern operationIsOrdered(source: Operation, target: Boolean) {}
+
+/*
+(if returnResult()->notEmpty() then returnResult()->exists(isUnique) else true endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+//@Surrogate(feature = "isUnique")
+//pattern operationIsUnique(source: Operation, target: Boolean) {}
+
+/*
+(if returnResult()->notEmpty() then returnResult()->any(true).lower else null endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+//@Surrogate(feature = "lower")
+//pattern operationLower(source: Operation, target: Integer) {}
+
+/*
+(if returnResult()->notEmpty() then returnResult()->any(true).type else null endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+//@Surrogate(feature = "type")
+//pattern operationType(source: Operation, target: Type) {}
+
+/*
+(if returnResult()->notEmpty() then returnResult()->any(true).upper else null endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+//@Surrogate(feature = "upper")
+//pattern operationUpper(source: Operation, target: UnlimitedNatural) {}
+
+/*
+(packagedElement->select(oclIsKindOf(Package))->collect(oclAsType(Package))->asSet())
+*/
+@Surrogate(feature = "nestedPackage")
+pattern packageNestedPackage(
+	self : Package,
+	temp2 : PackageableElement
+) {
+	Package(package_0);
+	temp1 == package_0;
+	Package.packagedElement(self, packageableElement);
+	temp1 == packageableElement;
+	temp2 == temp1;
+}
+
+/*
+(packagedElement->select(oclIsKindOf(Stereotype))->collect(oclAsType(Stereotype))->asSet())
+*/
+@Surrogate(feature = "ownedStereotype")
+pattern packageOwnedStereotype(
+	self : Package,
+	temp2 : PackageableElement
+) {
+	Stereotype(stereotype);
+	temp1 == stereotype;
+	Package.packagedElement(self, packageableElement);
+	temp1 == packageableElement;
+	temp2 == temp1;
+}
+
+/*
+(packagedElement->select(oclIsKindOf(Type))->collect(oclAsType(Type))->asSet())
+*/
+@Surrogate(feature = "ownedType")
+pattern packageOwnedType(
+	self : Package,
+	temp2 : PackageableElement
+) {
+	Type(type);
+	temp1 == type;
+	Package.packagedElement(self, packageableElement);
+	temp1 == packageableElement;
+	temp2 == temp1;
+}
+
+/*
+(if self.type = String then defaultValue.stringValue() else null endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: stringValue
+//@Surrogate(feature = "default")
+//pattern parameterDefault(source: Parameter, target: String) {}
+
+/*
+(if isConjugated then basicRequired() else basicProvided() endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: basicRequired
+//@Surrogate(feature = "provided")
+//pattern portProvided(source: Port, target: Interface) {}
+
+/*
+(if isConjugated then basicProvided() else basicRequired() endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: basicProvided
+//@Surrogate(feature = "required")
+//pattern portRequired(source: Port, target: Interface) {}
+
+/*
+(aggregation = AggregationKind::composite)
+*/
+//@Surrogate(feature = "isComposite")
+//pattern propertyIsComposite(
+//	self : Property
+//) {
+//	Property.aggregation(self, aggregationKind);
+//	aggregationKind_0 == AggregationKind::composite;
+//	aggregationKind == aggregationKind_0;
+//}
+
+/*
+(if association <> null and association.memberEnd->size() = 2
+then
+    association.memberEnd->any(e | e <> self)
+else
+    null
+endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Iterator expression kind must be collect, select or reject instead of any in self.association.memberEnd->any(e : Property | e.<>(self))
+//@Surrogate(feature = "opposite")
+//pattern propertyOpposite(source: Property, target: Property) {}
+
+/*
+(trigger->collect(event)->select(oclIsKindOf(CallEvent))->collect(oclAsType(CallEvent).operation)->asSet())
+*/
+@Surrogate(feature = "referred")
+pattern protocolTransitionReferred(
+	self : ProtocolTransition,
+	operation : Operation
+) {
+	CallEvent(callEvent);
+	temp2 == callEvent;
+	Transition.trigger(self, trigger);
+	temp1 == trigger;
+	Trigger.event(temp1, event);
+	temp2 == event;
+	temp3 == temp2;
+	CallEvent.operation(temp3, operation);
+}
+
+/*
+(if extendedSignature->isEmpty() then Set{} else extendedSignature.parameter->asSet() endif)
+*/
+// Can't compile OCL to IncQuery because of java.lang.NullPointerException
+//@Surrogate(feature = "inheritedParameter")
+//pattern redefinableTemplateSignatureInheritedParameter(source: RedefinableTemplateSignature, target: TemplateParameter) {}
+
+/*
+(region->notEmpty())
+*/
+//@Surrogate(feature = "isComposite")
+//pattern stateIsComposite(
+//	self : State
+//) {
+//	find stateIsComposite_0(self, _region);
+//}
+
+pattern stateIsComposite_0(
+	self : State,
+	region : Region
+) {
+	State.region(self, region);
+}
+
+/*
+(region->size () > 1)
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: size
+//@Surrogate(feature = "isOrthogonal")
+//pattern stateIsOrthogonal(source: State, target: Boolean) {}
+
+/*
+((region->isEmpty()) and not isSubmachineState())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: isSubmachineState
+//@Surrogate(feature = "isSimple")
+//pattern stateIsSimple(source: State, target: Boolean) {}
+
+/*
+(submachine <> null)
+*/
+// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
+//@Surrogate(feature = "isSubmachineState")
+//pattern stateIsSubmachineState(source: State, target: Boolean) {}
+
+/*
+(self.containingProfile())
+*/
+// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingProfile
+//@Surrogate(feature = "profile")
+//pattern stereotypeProfile(source: Stereotype, target: Profile) {}
+
+/*
+(ownedAttribute->select(isComposite)->asSet())
+*/
+@Surrogate(feature = "part")
+pattern structuredClassifierPart(
+	self : StructuredClassifier,
+	temp1 : Property
+) {
+	Property.isComposite(temp1, boolean_0);
+	true == boolean_0;
+	StructuredClassifier.ownedAttribute(self, property);
+	temp1 == property;
+}
+
+/*
+(Transition.allInstances()->select(target=self))
+*/
+@Surrogate(feature = "incoming")
+pattern vertexIncoming(
+	self : Vertex,
+	temp1 : Transition
+) {
+	Transition.target(temp1, vertex);
+	vertex == self;
+	Transition(transition);
+	temp1 == transition;
+}
+
+/*
+(Transition.allInstances()->select(source=self))
+*/
+@Surrogate(feature = "outgoing")
+pattern vertexOutgoing(
+	self : Vertex,
+	temp1 : Transition
+) {
+	Transition.source(temp1, vertex);
+	vertex == self;
+	Transition(transition);
+	temp1 == transition;
+}
+
+

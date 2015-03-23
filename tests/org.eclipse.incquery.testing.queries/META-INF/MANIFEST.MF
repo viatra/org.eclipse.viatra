@@ -4,8 +4,8 @@ Bundle-Name: org.eclipse.incquery.testing.queries
 Bundle-SymbolicName: org.eclipse.incquery.testing.queries;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Budapest University of Technology and Economics
-Export-Package: org.eclipse.incquery.testing.queries,org.eclipse.incqu
- ery.testing.queries.util
+Export-Package: org.eclipse.incquery.testing.queries,
+ org.eclipse.incquery.testing.queries.util
 Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.emf.transaction,
  org.eclipse.incquery.runtime;bundle-version="0.8.0",
