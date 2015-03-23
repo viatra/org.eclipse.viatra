@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="org.eclipse.viatra.dse.emfdesignspace.patterns.Graphviewer" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.dse.emfdesignspace.patterns.Graphviewer" id="org.eclipse.viatra.dse.emfdesignspace.patterns.Graphviewer"/>
-  </extension>
-</plugin>

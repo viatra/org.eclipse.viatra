@@ -187,8 +187,6 @@
 				<module>../../plugins/org.eclipse.viatra.dse.dependencygraph</module>
 				<module>../../plugins/org.eclipse.viatra.dse.designspace</module>
 				<module>../../plugins/org.eclipse.viatra.dse.designspace.pathfinding</module>
-				<module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.model</module>
-				<module>../../plugins/org.eclipse.viatra.dse.emfdesignspace.patterns</module>
 				<module>../../plugins/org.eclipse.viatra.dse.genetic</module>
 				<module>../../plugins/org.eclipse.viatra.dse.monitor</module>
 				<module>../../tests/org.eclipse.viatra.cep.vepl.tests</module>
