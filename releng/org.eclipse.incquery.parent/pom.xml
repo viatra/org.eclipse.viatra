@@ -290,6 +290,7 @@
 				<module>../../features/org.eclipse.incquery.validation.tooling.feature</module>
 				<module>../../features/org.eclipse.incquery.runtime.gmf.feature</module>
 				<module>../../features/org.eclipse.incquery.runtime.graphiti.feature</module>
+                <module>../../features/org.eclipse.incquery.uml.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.runtime.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
