@@ -87,23 +87,16 @@ pattern packageOwnedType(
 */
 @Surrogate(feature = "isComposite")
 pattern propertyIsComposite(
-	self : Property, isComposite
+	property : Property, isComposite
 ) {
-	find propertyIsComposite_0(self);
+	Property.aggregation(property, AggregationKind::composite);
 	isComposite == true;
 } or {
-	neg find propertyIsComposite_0(self);
+	Property.aggregation(property, aggregation);
+	aggregation != AggregationKind::composite;
 	isComposite == false;
 }
 
-private pattern propertyIsComposite_0(
-	self : Property
-) {
-	Property.aggregation(self, aggregationKind);
-	aggregationKind_0 == AggregationKind::composite;
-	aggregationKind == aggregationKind_0;
-}
- 
 /*
 (region->notEmpty())
 */
