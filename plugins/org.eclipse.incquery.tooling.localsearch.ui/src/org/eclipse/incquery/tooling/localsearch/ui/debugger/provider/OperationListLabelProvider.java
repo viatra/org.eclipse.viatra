@@ -13,11 +13,8 @@ package org.eclipse.incquery.tooling.localsearch.ui.debugger.provider;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -30,6 +27,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -56,9 +54,11 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 
 	static {
 		// notAppliedOperationImage = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_ELCL_SYNCED);
-		notAppliedOperationImage = JavaDebugImages.get(JavaDebugImages.IMG_OBJS_CONTENDED_MONITOR);
-		currentOperationImage = DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_LAUNCH_RUN);
-		appliedOperationImage = JavaDebugImages.get(JavaDebugImages.IMG_OBJ_JAVA_INSPECT_EXPRESSION);
+		// notAppliedOperationImage = JavaDebugImages.get(JavaDebugImages.IMG_OBJS_CONTENDED_MONITOR);
+		// currentOperationImage = DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_LAUNCH_RUN);
+		notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.incquery.tooling.localsearch.ui", "/icons/help_contents.gif").createImage();
+		currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.incquery.tooling.localsearch.ui", "icons/nav_go.gif").createImage();
+		appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.incquery.tooling.localsearch.ui", "/icons/complete_status.gif").createImage();
 	}
 
 	@Override

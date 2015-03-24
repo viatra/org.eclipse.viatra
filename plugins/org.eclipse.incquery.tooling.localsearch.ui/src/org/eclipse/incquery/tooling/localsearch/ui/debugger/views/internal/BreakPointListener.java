@@ -11,7 +11,7 @@
 package org.eclipse.incquery.tooling.localsearch.ui.debugger.views.internal;
 
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.LocalSearchDebugger;
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.handlers.CreateBreakPointHandler;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -34,18 +34,9 @@ public class BreakPointListener implements IDoubleClickListener {
 		// TreeViewer viewer = (TreeViewer) event.getViewer();
 		IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
 
-        if(thisSelection.size() > 1){
-            // when more than one operation is selected, place no breakpoints
-            return;
-        }
-        
-        SearchOperationViewerNode selectedNode = (SearchOperationViewerNode) thisSelection.getFirstElement();
-        
-        selectedNode.setBreakpoint(!selectedNode.isBreakpoint());
-        
-        localSearchDebugger.getLocalSearchDebugView().refreshView();
-        localSearchDebugger.getLocalSearchDebugView().getOperationListViewer().setSelection(null);
+        CreateBreakPointHandler.breakPointHandler(thisSelection);
         
     }
+
 
 }

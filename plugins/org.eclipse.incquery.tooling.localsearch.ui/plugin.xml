@@ -41,6 +41,10 @@
             id="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.run"
             name="Run local search">
       </command>
+      <command
+            id="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.placebreakpoint"
+            name="Place/remove breakpoint">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -55,6 +59,10 @@
       <handler
             class="org.eclipse.incquery.tooling.localsearch.ui.debugger.handlers.RunLocalSearchHandler"
             commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.run">
+      </handler>
+      <handler
+            class="org.eclipse.incquery.tooling.localsearch.ui.debugger.handlers.CreateBreakPointHandler"
+            commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.placebreakpoint">
       </handler>
  </extension>
    <extension
@@ -78,6 +86,12 @@
                commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.step"
                icon="icons/stepinto_co.gif"
                label="Step local search"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.incquery.tooling.localsearch.ui.debugger.localsearch.placebreakpoint"
+               icon="icons/debug_exc.gif"
+               label="Place/remove breakpoint"
                style="push">
          </command>
       </menuContribution>

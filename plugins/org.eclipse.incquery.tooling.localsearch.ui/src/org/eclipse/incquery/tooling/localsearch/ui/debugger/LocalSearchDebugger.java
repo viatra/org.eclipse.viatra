@@ -31,7 +31,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
@@ -115,6 +114,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 				@Override
 				public void run() {
 					localSearchDebugView.getMatchesTabFolder().setSelection(0);
+					localSearchDebugView.getOperationListViewer().collapseAll();
 				}
 			});
 			localSearchDebugView.refreshView();
@@ -289,13 +289,9 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 							localSearchDebugView.getMatchesTabFolder().setSelection(runningMatchers.size()-1);
 						}
 						SearchOperationViewerNode lastSelected = viewModel.getLastSelected();
-						SearchOperationViewerNode parent = lastSelected.getParent();
-						if(parent != null){
-							ImmutableList<SearchOperationViewerNode> children = parent.getChildren();
-							for (SearchOperationViewerNode node : children) {
-								localSearchDebugView.getOperationListViewer().collapseToLevel(node, 0);
-							}
-						}
+
+						localSearchDebugView.getOperationListViewer().collapseAll();
+						
 						localSearchDebugView.getOperationListViewer().expandToLevel(lastSelected, 0);
 					}
 				});
