@@ -28,6 +28,10 @@ public class SearchPlanViewModel {
 	
 	private SearchOperationViewerNode lastSelected;
 	
+	public SearchOperationViewerNode getLastSelected(){
+		return lastSelected;
+	}
+	
 	public SearchPlanViewModel(List<SearchOperationViewerNode> topLevelElements){
 		this.topLevelElements = topLevelElements;
 	}

@@ -93,6 +93,10 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 		return this.debugger;
 	}
 
+	public CTabFolder getMatchesTabFolder() {
+		return matchesTabFolder;
+	}
+
 	@Override
     public void createPartControl(Composite parent) {
         parent.setLayoutData(new FillLayout());
@@ -246,14 +250,14 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				CTabItem item = new CTabItem(matchesTabFolder, SWT.NULL);
+				CTabItem item = new CTabItem(getMatchesTabFolder(), SWT.NULL);
 				item.setText(tabTitle);		
-				
+
 				// Mark as active
-				matchesTabFolder.setSelection(item);
+				getMatchesTabFolder().setSelection(item);
 				
 				// Table viewer for the matches
-				Composite container = new Composite(matchesTabFolder,SWT.NONE);
+				Composite container = new Composite(getMatchesTabFolder(),SWT.NONE);
 				container.setLayout(new FillLayout());
 				final TableViewer viewer = createTableViewer(container);
 				
@@ -345,6 +349,9 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     	return matchesViewer;
     	
 	}
+
+	
+
 
 
 
