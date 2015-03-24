@@ -436,7 +436,7 @@ class PatternQuerySpecificationClassInferrer {
 		} else {
 			//XXX there is no easy way to access query specification class from PQuery
 			val cl = query.class.enclosingClass
-			if (cl != null && cl.isAssignableFrom(typeof(IQuerySpecification))) {
+			if (cl != null && typeof(IQuerySpecification).isAssignableFrom(cl)) {
 				return typeRef(cl)
 			}
 		}
