@@ -116,94 +116,6 @@ pattern connectableElementEnd(
 }
 
 /*
-(if end->exists(
-		role.oclIsKindOf(Port) 
-		and partWithPort->isEmpty()
-		and not role.oclAsType(Port).isBehavior)
-then ConnectorKind::delegation 
-else ConnectorKind::assembly 
-endif)
-*/
-@Surrogate(feature = "kind")
-pattern connectorKind(
-	self : Connector,
-	connectorKind_1 /* : ConnectorKind */
-) {
-	find connectorKind_5(self, connectorKind_1);
-}
-
-pattern connectorKind_0(
-	temp1 : ConnectorEnd,
-	property : Property
-) {
-	ConnectorEnd.partWithPort(temp1, property);
-}
-
-pattern connectorKind_1(
-	temp1 : ConnectorEnd
-) {
-	ConnectorEnd.role(temp1, connectableElement);
-	Port(port);
-	connectableElement == port;
-}
-
-pattern connectorKind_2(
-	temp1 : ConnectorEnd
-) {
-		neg find connectorKind_1(temp1);
-	} or {
-		find connectorKind_0(temp1, _property);
-}
-
-pattern connectorKind_3(
-	temp1 : ConnectorEnd
-) {
-		find connectorKind_2(temp1);
-	} or {
-		ConnectorEnd.role(temp1, connectableElement_0);
-		Port.isBehavior(connectableElement_0, boolean_0);
-		boolean_1 == eval(!((boolean_0 as boolean)));
-		false == boolean_1;
-}
-
-pattern connectorKind_4(
-	self : Connector
-) {
-	Connector.end(self, connectorEnd);
-	temp1 == connectorEnd;
-	ConnectorEnd.role(temp1, connectableElement);
-	Port(port);
-	connectableElement == port;
-	neg find connectorKind_0(temp1, _property);
-	ConnectorEnd.role(temp1, connectableElement_0);
-	Port.isBehavior(connectableElement_0, boolean_0);
-	boolean_1 == eval(!((boolean_0 as boolean)));
-	true == boolean_1;
-}
-
-pattern connectorKind_5(
-	self : Connector,
-	connectorKind_1 /* : ConnectorKind */
-) {
-		Connector.end(self, connectorEnd);
-		temp1 == connectorEnd;
-		ConnectorEnd.role(temp1, connectableElement);
-		Port(port);
-		connectableElement == port;
-		neg find connectorKind_0(temp1, _property);
-		ConnectorEnd.role(temp1, connectableElement_0);
-		Port.isBehavior(connectableElement_0, boolean_0);
-		boolean_1 == eval(!((boolean_0 as boolean)));
-		true == boolean_1;
-		connectorKind == ConnectorKind::delegation;
-		connectorKind == connectorKind_1;
-	} or {
-		neg find connectorKind_4(self);
-		connectorKind_0 == ConnectorKind::assembly;
-		connectorKind_0 == connectorKind_1;
-}
-
-/*
 (if connector.type = null 
 then
   null 
@@ -256,17 +168,6 @@ pattern deploymentTargetDeployedElement(
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: metaclassEnd
 //@Surrogate(feature = "metaclass")
 //pattern extensionMetaclass(source: Extension, target: Class) {}
-
-/*
-(messageKind)
-*/
-@Surrogate(feature = "messageKind")
-pattern messageMessageKind(
-	self : Message,
-	messageKind /* : MessageKind */
-) {
-	Message.messageKind(self, messageKind);
-}
 
 /*
 (lowerBound())
@@ -362,51 +263,6 @@ endif)
 //pattern operationUpper(source: Operation, target: UnlimitedNatural) {}
 
 /*
-(packagedElement->select(oclIsKindOf(Package))->collect(oclAsType(Package))->asSet())
-*/
-@Surrogate(feature = "nestedPackage")
-pattern packageNestedPackage(
-	self : Package,
-	temp2 : PackageableElement
-) {
-	Package(package_0);
-	temp1 == package_0;
-	Package.packagedElement(self, packageableElement);
-	temp1 == packageableElement;
-	temp2 == temp1;
-}
-
-/*
-(packagedElement->select(oclIsKindOf(Stereotype))->collect(oclAsType(Stereotype))->asSet())
-*/
-@Surrogate(feature = "ownedStereotype")
-pattern packageOwnedStereotype(
-	self : Package,
-	temp2 : PackageableElement
-) {
-	Stereotype(stereotype);
-	temp1 == stereotype;
-	Package.packagedElement(self, packageableElement);
-	temp1 == packageableElement;
-	temp2 == temp1;
-}
-
-/*
-(packagedElement->select(oclIsKindOf(Type))->collect(oclAsType(Type))->asSet())
-*/
-@Surrogate(feature = "ownedType")
-pattern packageOwnedType(
-	self : Package,
-	temp2 : PackageableElement
-) {
-	Type(type);
-	temp1 == type;
-	Package.packagedElement(self, packageableElement);
-	temp1 == packageableElement;
-	temp2 == temp1;
-}
-
-/*
 (if self.type = String then defaultValue.stringValue() else null endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: stringValue
@@ -426,18 +282,6 @@ pattern packageOwnedType(
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: basicProvided
 //@Surrogate(feature = "required")
 //pattern portRequired(source: Port, target: Interface) {}
-
-/*
-(aggregation = AggregationKind::composite)
-*/
-//@Surrogate(feature = "isComposite")
-//pattern propertyIsComposite(
-//	self : Property
-//) {
-//	Property.aggregation(self, aggregationKind);
-//	aggregationKind_0 == AggregationKind::composite;
-//	aggregationKind == aggregationKind_0;
-//}
 
 /*
 (if association <> null and association.memberEnd->size() = 2
@@ -475,23 +319,6 @@ pattern protocolTransitionReferred(
 // Can't compile OCL to IncQuery because of java.lang.NullPointerException
 //@Surrogate(feature = "inheritedParameter")
 //pattern redefinableTemplateSignatureInheritedParameter(source: RedefinableTemplateSignature, target: TemplateParameter) {}
-
-/*
-(region->notEmpty())
-*/
-//@Surrogate(feature = "isComposite")
-//pattern stateIsComposite(
-//	self : State
-//) {
-//	find stateIsComposite_0(self, _region);
-//}
-
-pattern stateIsComposite_0(
-	self : State,
-	region : Region
-) {
-	State.region(self, region);
-}
 
 /*
 (region->size () > 1)

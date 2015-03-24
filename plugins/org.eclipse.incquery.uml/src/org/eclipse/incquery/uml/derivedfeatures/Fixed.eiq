@@ -1,0 +1,126 @@
+package org.eclipse.incquery.uml.derivedfeatures
+
+import "http://www.eclipse.org/uml2/5.0.0/UML"
+
+/*
+(if end->exists(
+		role.oclIsKindOf(Port) 
+		and partWithPort->isEmpty()
+		and not role.oclAsType(Port).isBehavior)
+then ConnectorKind::delegation 
+else ConnectorKind::assembly 
+endif)
+*/
+@Surrogate(feature = "kind")
+pattern connectorKind(
+	self : Connector,
+	kind : ConnectorKind
+) {
+	find connectorKindDelegation(self);
+	kind == ConnectorKind::delegation;
+} or {
+	neg find connectorKindDelegation(self);
+	kind == ConnectorKind::assembly;
+}
+
+private pattern connectorKindDelegation(self: Connector) {
+	Connector.end(self, end);
+	ConnectorEnd.role(end, role);
+	Port(role);
+	neg find connectorEndPartWithPort(end, _);
+	Port.isBehavior(role, false);
+}
+
+private pattern connectorEndPartWithPort(connectorEnd: ConnectorEnd, partWithPort: Property) {
+	ConnectorEnd.partWithPort(connectorEnd, partWithPort);
+}
+
+// Message.messageKind is recursive?!
+
+/*
+(packagedElement->select(oclIsKindOf(Package))->collect(oclAsType(Package))->asSet())
+*/
+@Surrogate(feature = "nestedPackage")
+pattern packageNestedPackage(
+	self : Package,
+	temp2 : Package
+) {
+	Package(package_0);
+	temp1 == package_0;
+	Package.packagedElement(self, packageableElement);
+	temp1 == packageableElement;
+	temp2 == temp1;
+}
+
+/*
+(packagedElement->select(oclIsKindOf(Stereotype))->collect(oclAsType(Stereotype))->asSet())
+*/
+@Surrogate(feature = "ownedStereotype")
+pattern packageOwnedStereotype(
+	self : Package,
+	temp2 : Stereotype
+) {
+	Stereotype(stereotype);
+	temp1 == stereotype;
+	Package.packagedElement(self, packageableElement);
+	temp1 == packageableElement;
+	temp2 == temp1;
+}
+
+/*
+(packagedElement->select(oclIsKindOf(Type))->collect(oclAsType(Type))->asSet())
+*/
+@Surrogate(feature = "ownedType")
+pattern packageOwnedType(
+	self : Package,
+	temp2 : Type
+) {
+	Type(type);
+	temp1 == type;
+	Package.packagedElement(self, packageableElement);
+	temp1 == packageableElement;
+	temp2 == temp1;
+}
+
+/*
+(aggregation = AggregationKind::composite)
+*/
+@Surrogate(feature = "isComposite")
+pattern propertyIsComposite(
+	self : Property, isComposite
+) {
+	find propertyIsComposite_0(self);
+	isComposite == true;
+} or {
+	neg find propertyIsComposite_0(self);
+	isComposite == false;
+}
+
+private pattern propertyIsComposite_0(
+	self : Property
+) {
+	Property.aggregation(self, aggregationKind);
+	aggregationKind_0 == AggregationKind::composite;
+	aggregationKind == aggregationKind_0;
+}
+ 
+/*
+(region->notEmpty())
+*/
+@Surrogate(feature = "isComposite")
+pattern stateIsComposite(
+	self : State, isComposite
+) {
+	find stateIsComposite_0(self, _region);
+	isComposite == true;
+} or {
+	neg find stateIsComposite_0(self, _region);
+	isComposite == false;
+}
+
+pattern stateIsComposite_0(
+	self : State,
+	region : Region
+) {
+	State.region(self, region);
+}

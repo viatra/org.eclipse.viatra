@@ -103,7 +103,7 @@ pattern namedElementNamespace(namedElement: NamedElement, namespace: Namespace) 
 (self.importMembers(elementImport.importedElement->asSet()->union(packageImport.importedPackage->collect(p | p.visibleMembers()))->asSet()))
 */
 @Surrogate(feature = "importedMember")
-pattern namespaceImportedMember(namespace: Namespace, importedMember: NamedElement) {
+pattern namespaceImportedMember(namespace: Namespace, importedMember: PackageableElement) {
 	Namespace.elementImport(namespace, elementImport);
 	ElementImport.importedElement(elementImport, importedMember);
 } or {
@@ -168,42 +168,6 @@ pattern redefinableTemplateSignatureInheritedParameter(source: RedefinableTempla
 pattern structuredClassifierPart(structuredClassifier: StructuredClassifier, part: Property) {
 	StructuredClassifier.ownedAttribute(structuredClassifier, part);
 	find propertyIsComposite(part, true);
-}
-
-/*
-(aggregation = AggregationKind::composite)
-*/
-@Surrogate(feature = "isComposite")
-pattern propertyIsComposite(
-	self : Property, isComposite
-) {
-	find propertyIsComposite_0(self);
-	isComposite == true;
-} or {
-	neg find propertyIsComposite_0(self);
-	isComposite == false;
-}
-
-private pattern propertyIsComposite_0(
-	self : Property
-) {
-	Property.aggregation(self, aggregationKind);
-	aggregationKind_0 == AggregationKind::composite;
-	aggregationKind == aggregationKind_0;
-}
- 
-/*
-(region->notEmpty())
-*/
-@Surrogate(feature = "isComposite")
-pattern stateIsComposite(
-	self : State, isComposite
-) {
-	find stateIsComposite_0(self, _region);
-	isComposite == true;
-} or {
-	neg find stateIsComposite_0(self, _region);
-	isComposite == false;
 }
 
 /*
