@@ -420,7 +420,9 @@ class PatternQuerySpecificationClassInferrer {
 	}
 
 	def StringConcatenationClient referPQuery(PQuery referredQuery, Pattern callerPattern) {
-		if ((referredQuery as GenericEMFPatternPQuery).getPattern == callerPattern) {
+		if (referredQuery instanceof GenericEMFPatternPQuery 
+				&& (referredQuery as GenericEMFPatternPQuery).getPattern == callerPattern
+		) {
 			'''this'''
 		} else {
 			'''«referredQuery.findGeneratedSpecification».instance().getInternalQueryRepresentation()'''
