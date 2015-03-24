@@ -8,6 +8,9 @@
   <extension id="org.eclipse.incquery.uml.derivedfeatures.Generated" point="org.eclipse.incquery.runtime.queryspecification">
     <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.Generated" id="org.eclipse.incquery.uml.derivedfeatures.Generated"/>
   </extension>
+  <extension id="org.eclipse.incquery.uml.derivedfeatures.Fixed" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.Fixed" id="org.eclipse.incquery.uml.derivedfeatures.Fixed"/>
+  </extension>
   <extension point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
     <wellbehaving-derived-feature classifier-name="Action" feature-name="input" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML"/>
     <wellbehaving-derived-feature classifier-name="Action" feature-name="output" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML"/>
