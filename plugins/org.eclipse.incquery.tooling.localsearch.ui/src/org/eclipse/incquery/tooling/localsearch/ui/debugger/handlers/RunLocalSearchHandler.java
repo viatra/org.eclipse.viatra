@@ -27,18 +27,12 @@ public class RunLocalSearchHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        // step the matching process here
-//        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-//            @Override
-//            public void run() {
-                try {
-                    LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
-                    localSearchDebugView.setHalted(false);
-                } catch (PartInitException e) {
-                    e.printStackTrace();
-                }
-//            }
-//        });
+        try {
+            LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
+            localSearchDebugView.getDebugger().setHalted(false);
+        } catch (PartInitException e) {
+            e.printStackTrace();
+        }
         
         synchronized (LocalSearchDebugger.notifier) {
             LocalSearchDebugger.notifier.notify();

@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.localsearch.ui.debugger.views.internal;
 
-import java.util.List;
-
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.LocalSearchDebugger;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -24,10 +23,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class BreakPointListener implements IDoubleClickListener {
 
-    private LocalSearchDebugView localSearchDebugView;
+    private LocalSearchDebugger localSearchDebugger;
     
-    public BreakPointListener(LocalSearchDebugView localSearchDebugView){
-        this.localSearchDebugView = localSearchDebugView;
+    public BreakPointListener(LocalSearchDebugger localSearchDebugger){
+        this.localSearchDebugger = localSearchDebugger;
     }
     
     @Override
@@ -40,17 +39,12 @@ public class BreakPointListener implements IDoubleClickListener {
             return;
         }
         
-        Object selectedOperation = thisSelection.getFirstElement();
+        SearchOperationViewerNode selectedNode = (SearchOperationViewerNode) thisSelection.getFirstElement();
         
-        List<Object> breakpoints = localSearchDebugView.getBreakpoints();
-        if(breakpoints.contains(selectedOperation)){
-            breakpoints.remove(selectedOperation);
-        } else {
-            breakpoints.add(selectedOperation);
-        }
+        selectedNode.setBreakpoint(!selectedNode.isBreakpoint());
         
-        localSearchDebugView.refreshView();
-        localSearchDebugView.getOperationListViewer().setSelection(null);
+        localSearchDebugger.getLocalSearchDebugView().refreshView();
+        localSearchDebugger.getLocalSearchDebugView().getOperationListViewer().setSelection(null);
         
     }
 

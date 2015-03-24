@@ -26,13 +26,11 @@ import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
 import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
 import org.eclipse.gef4.zest.core.widgets.ZestStyles;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
-import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.LocalSearchDebugger;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.MatchesTableLabelProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.ZestNodeContentProvider;
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.internal.BreakPointListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -73,55 +71,29 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     
     private OperationListContentProvider operationListContentProvider;
     private TreeViewer operationListViewer;
-    private OperationListLabelProvider operationListLabelProvider;
 
     private GraphViewer graphViewer;
     private ZestNodeContentProvider zestContentProvider;
     
-    private List<Object> breakpoints = Lists.newLinkedList();
-    
-    private boolean halted = true;
-
 	private SashForm planSashForm;
-
 	private CTabFolder matchesTabFolder;
 
-	private Map<String, TableViewer> matchViewersMap = Maps.newHashMap();;
+	private Map<String, TableViewer> matchViewersMap = Maps.newHashMap();
+
+	private LocalSearchDebugger debugger;
 
 
 	public LocalSearchDebugView() {
     }
     
-    public List<Object> getBreakpoints() {
-        return breakpoints;
-    }
-    
-    public CTabFolder getMatchesTabFolder() {
-    	return matchesTabFolder;
-    }
-    
-    public boolean isBreakpointHit(SearchPlanExecutor planExecutor) {
-    	
-    	int currentOperation = planExecutor.getCurrentOperation();
-		boolean operationNotInRange = planExecutor.getSearchPlan().getOperations().size() <= currentOperation || currentOperation < 0;
-		ISearchOperation currentSerachOperation = operationNotInRange 
-				? null 
-				: planExecutor.getSearchPlan().getOperations().get(currentOperation);
+	public void setDebugger(LocalSearchDebugger localSearchDebugger) {
+		this.debugger = localSearchDebugger;
+	}
+	public LocalSearchDebugger getDebugger() {
+		return this.debugger;
+	}
 
-		boolean matched = planExecutor.getSearchPlan().getOperations().size() == currentOperation;
-		Object dummyMatchOperation = null;
-		if(matched){
-			dummyMatchOperation = operationListLabelProvider.getDummyMatchOperation(planExecutor);
-		}
-    	// TODO debug - why isn't the match found dummy op. detected? might not be registered for the correct planexecutor
-        if (halted == false) {
-            halted = breakpoints.contains(currentSerachOperation);
-            halted |= breakpoints.contains(dummyMatchOperation);
-        }        
-        return halted;
-    }
-    
-    @Override
+	@Override
     public void createPartControl(Composite parent) {
         parent.setLayoutData(new FillLayout());
         SashForm sashForm = new SashForm(parent, SWT.HORIZONTAL);
@@ -192,15 +164,12 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     private void createTreeViewer(SashForm sashForm) {
         this.operationListViewer = new TreeViewer(sashForm, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
         this.operationListContentProvider = new OperationListContentProvider();
-        this.operationListLabelProvider = new OperationListLabelProvider(breakpoints);
 
         this.operationListViewer.setContentProvider(operationListContentProvider);
-        operationListContentProvider.setLabelProvider(operationListLabelProvider);
-        this.operationListViewer.setLabelProvider(operationListLabelProvider);
+        this.operationListViewer.setLabelProvider(new OperationListLabelProvider());
+        // TODO why is this needed?
         this.operationListViewer.setInput(null);
 
-        BreakPointListener breakPointListener = new BreakPointListener(this);
-        this.operationListViewer.addDoubleClickListener(breakPointListener);
     }
 
     private LayoutAlgorithm getLayout() {
@@ -256,28 +225,12 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     	return operationListContentProvider;
     }
 
-    public OperationListLabelProvider getOperationListLabelProvider() {
-        return operationListLabelProvider;
-    }
-
-    public void setOperationListLabelProvider(OperationListLabelProvider operationLabelProvider) {
-        this.operationListLabelProvider = operationLabelProvider;
-    }
-
     public GraphViewer getGraphViewer() {
         return graphViewer;
     }
 
     public ZestNodeContentProvider getZestContentProvider() {
         return zestContentProvider;
-    }
-
-    public void setHalted(boolean halted) {
-        this.halted = halted;
-    }
-
-    public boolean isHalted() {
-        return halted;
     }
 
 	public TableViewer getMatchesViewer(String queryName) {
@@ -392,6 +345,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     	return matchesViewer;
     	
 	}
+
 
 
 }
