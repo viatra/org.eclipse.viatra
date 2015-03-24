@@ -28,7 +28,7 @@ public class TrajectoryFitness {
     public int rank;
     public double crowdingDistance;
 
-    private int hashCode;
+    private int hash;
 
     /**
      * Creates a {@link TrajectoryFitness} with the full trajectory.
@@ -53,22 +53,22 @@ public class TrajectoryFitness {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Object[]) {
-            return Arrays.equals(trajectory, (Object[]) obj);
+        if (obj instanceof TrajectoryFitness) {
+            return Arrays.equals(trajectory, ((TrajectoryFitness) obj).trajectory);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        if (hashCode == 0 && trajectory.length > 0) {
-            hashCode = Arrays.hashCode(trajectory);
+        if (hash == 0 && trajectory.length > 0) {
+            hash = Arrays.hashCode(trajectory);
         }
-        return hashCode;
+        return hash;
     }
 
     @Override
     public String toString() {
-        return trajectory.toString() + fitness.toString();
+        return Arrays.toString(trajectory) + fitness.toString();
     }
 }

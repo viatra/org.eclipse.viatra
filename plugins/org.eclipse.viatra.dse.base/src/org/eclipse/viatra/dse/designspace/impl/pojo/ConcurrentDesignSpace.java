@@ -78,8 +78,8 @@ public class ConcurrentDesignSpace implements IDesignSpace {
         // set outgoing transitios
         Transition[] outTransitions = new Transition[outgoingTransitionIds.keySet().size()];
         int i = 0;
-        for (Object transitionId : outgoingTransitionIds.keySet()) {
-            Transition t = new Transition(transitionId, state, outgoingTransitionIds.get(transitionId));
+        for (Entry<Object, TransitionMetaData> transitionId : outgoingTransitionIds.entrySet()) {
+            Transition t = new Transition(transitionId.getKey(), state, transitionId.getValue());
             outTransitions[i++] = t;
             fireNewTransitionEvent(t); // TODO this can be faulty if race is lost. Is this needed?
         }

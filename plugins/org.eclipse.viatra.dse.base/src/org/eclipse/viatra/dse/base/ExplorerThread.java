@@ -113,6 +113,7 @@ public class ExplorerThread implements IExplorerThread {
                             break;
                         case STOP_THREAD:
                             continueExecution = false;
+                            break;
                         default:
                             break;
                         }
@@ -143,6 +144,7 @@ public class ExplorerThread implements IExplorerThread {
                                     break;
                                 case STOP_THREAD:
                                     continueExecution = false;
+                                    break;
                                 default:
                                     break;
                                 }

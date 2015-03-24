@@ -100,10 +100,8 @@ public class State implements IState {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj instanceof State) {
-            if (id.equals(((State) obj).id)) {
-                return true;
-            }
+        } else if (obj instanceof State && (id.equals(((State) obj).id))) {
+            return true;
         }
         return false;
     }

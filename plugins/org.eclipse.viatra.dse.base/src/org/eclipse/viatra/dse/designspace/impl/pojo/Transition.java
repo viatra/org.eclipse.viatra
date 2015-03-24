@@ -81,10 +81,8 @@ public class Transition implements ITransition {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj instanceof Transition) {
-            if (id.equals(((Transition) obj).id)) {
-                return true;
-            }
+        } else if (obj instanceof Transition && (id.equals(((Transition) obj).id))) {
+            return true;
         }
         return false;
     }
