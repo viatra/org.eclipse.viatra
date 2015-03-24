@@ -431,7 +431,16 @@ class PatternQuerySpecificationClassInferrer {
 	}
 
 	def findGeneratedSpecification(PQuery query) {
-		(query as GenericEMFPatternPQuery).getPattern.findInferredSpecification
+		if (query instanceof GenericEMFPatternPQuery) {
+			return (query as GenericEMFPatternPQuery).getPattern.findInferredSpecification
+		} else {
+			//XXX there is no easy way to access query specification class from PQuery
+			val cl = query.class.enclosingClass
+			if (cl != null && cl.isAssignableFrom(typeof(IQuerySpecification))) {
+				return typeRef(cl)
+			}
+		}
+		throw new UnsupportedOperationException("Cannot find query specification for PQuery " + query.fullyQualifiedName)
 	}
 
 	def expressionMethodName(XExpression ex) {
