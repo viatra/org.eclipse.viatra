@@ -12,7 +12,8 @@ package org.eclipse.viatra.emf.runtime.transformation.eventdriven;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Level;
 import org.eclipse.emf.common.notify.Notifier;
@@ -21,7 +22,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
@@ -31,14 +31,12 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup;
 import org.eclipse.xtext.xbase.lib.Pair;
 
-import com.google.common.collect.Sets;
-
 public class EventDrivenTransformation {
     private IncQueryEngine incQueryEngine;
     private UpdateCompleteBasedSchedulerFactory schedulerFactory;
     private ExecutionSchema executionSchema;
     private ConflictResolver conflictResolver;
-    private Set<EventDrivenTransformationRule<?, ?>> rules = Sets.newHashSet();
+    private List<EventDrivenTransformationRule<?, ?>> rules = new ArrayList<EventDrivenTransformationRule<?, ?>>();
 
     /**
      * @deprecated Use {@link #forSource(Notifier)} instead.
@@ -86,16 +84,11 @@ public class EventDrivenTransformation {
     }
 
     public EventDrivenTransformation create() {
-        Set<RuleSpecification<?>> ruleSpecifications = Sets.newHashSet();
-
-        for (EventDrivenTransformationRule<?, ?> rule : rules) {
-            ruleSpecifications.add(rule.getRuleSpecification());
-        }
-
-        executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory,
-                ruleSpecifications);
+        executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory);
         executionSchema.setConflictResolver(conflictResolver);
-
+        for (EventDrivenTransformationRule<?, ?> rule : rules) {
+            executionSchema.addRule(rule.getRuleSpecification());
+        }
         return this;
     }
 
