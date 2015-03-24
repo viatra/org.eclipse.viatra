@@ -11,8 +11,10 @@
 package org.eclipse.incquery.tooling.localsearch.ui.debugger.provider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -32,10 +34,12 @@ public class ZestNodeContentProvider extends ArrayContentProvider implements IGr
         MatchingFrame frame = (MatchingFrame) inputElement;
 
         ArrayList<Object> elements = Lists.newArrayList();
-        for (int i = 0; i < frame.getSize(); i++) {
-            Object element = frame.get(i);
-            if(element != null && element instanceof EObject){
-            	elements.add(element);            	
+        if (frame != null) {
+            for (int i = 0; i < frame.getSize(); i++) {
+                Object element = frame.get(i);
+                if(element != null && element instanceof EObject){
+            	    elements.add(element);            	
+                }
             }
         }
         return elements.toArray();
@@ -48,12 +52,17 @@ public class ZestNodeContentProvider extends ArrayContentProvider implements IGr
             EObject eSource = (EObject) source;
             EObject eDest = (EObject) dest;
 
-            // TODO add precondition here to know which constraint was the cause for this edge
-            if (eSource.eCrossReferences().contains(eDest) || eSource.eContents().contains(eDest)) {
-                return new Object[] { eSource, eDest };
-            } else {
-                return null;
+            Collection<EReference> refs = Lists.newArrayList();
+            
+            for (EReference ref : eSource.eClass().getEAllReferences()) {
+                final Object trg = eSource.eGet(ref);
+                if (eDest.equals(trg) ||
+                        (trg instanceof Collection<?> && ((Collection<?>)trg).contains(eDest))) {
+                    refs.add(ref);
+                }
             }
+            
+            return refs.toArray(new EReference[refs.size()]);
         } else {
             return null;
         }
