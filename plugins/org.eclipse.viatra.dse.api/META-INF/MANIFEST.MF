@@ -6,7 +6,8 @@ Bundle-Version: 0.7.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.incquery.runtime.evm;bundle-version="[1.0.0,1.1.0)",
  org.eclipse.incquery.runtime;bundle-version="[1.0.0,1.1.0)",
- com.google.guava
+ com.google.guava,
+ org.eclipse.viatra.emf.runtime;visibility:=reexport
 Export-Package: org.eclipse.viatra.dse.api,
  org.eclipse.viatra.dse.guidance.dependencygraph.interfaces,
  org.eclipse.viatra.dse.statecode

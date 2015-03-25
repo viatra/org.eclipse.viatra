@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.guidance;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.viatra.dse.api.TransformationRule;
 
 public interface IRuleApplicationNumberChanged {
 
-    void increment(TransformationRule<? extends IPatternMatch> rule, RuleEngine ruleEngine);
+    void increment(TransformationRule<?, ?> rule, RuleEngine ruleEngine);
 
-    void decrement(TransformationRule<? extends IPatternMatch> rule, RuleEngine ruleEngine);
+    void decrement(TransformationRule<?, ?> rule, RuleEngine ruleEngine);
 }

@@ -23,13 +23,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.api.strategy.StrategyFactory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThreadFactory;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
@@ -226,7 +225,7 @@ public class GlobalContext {
     private List<IObjective> objectives = new ArrayList<IObjective>();
     private IObjective[][] leveledObjectives;
     private List<IGlobalConstraint> globalConstraints = new ArrayList<IGlobalConstraint>();
-    private Set<TransformationRule<? extends IPatternMatch>> transformations = new HashSet<TransformationRule<? extends IPatternMatch>>();
+    private Set<TransformationRule<?, ?>> transformations = new HashSet<TransformationRule<?, ?>>();
     private IStateSerializerFactory stateSerializerFactory;
     private ISolutionStore solutionStore = new SimpleSolutionStore();
     private Object SharedObject;
@@ -373,11 +372,11 @@ public class GlobalContext {
         this.stateSerializerFactory = stateSerializerFactory;
     }
 
-    public Set<TransformationRule<? extends IPatternMatch>> getTransformations() {
+    public Set<TransformationRule<?, ?>> getTransformations() {
         return transformations;
     }
 
-    public void setTransformations(Set<TransformationRule<? extends IPatternMatch>> transformations) {
+    public void setTransformations(Set<TransformationRule<?, ?>> transformations) {
         this.transformations = transformations;
     }
 

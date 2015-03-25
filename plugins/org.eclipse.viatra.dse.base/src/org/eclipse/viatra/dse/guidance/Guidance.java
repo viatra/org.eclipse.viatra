@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EModelElement;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
@@ -36,24 +35,24 @@ public class Guidance implements Cloneable {
     private IOccurrenceVectorResolver occurrenceVectorResolver;
 
     private IDependencyGraph dependencyGraph;
-    private Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos = new HashMap<TransformationRule<? extends IPatternMatch>, RuleInfo>();
+    private Map<TransformationRule<?, ?>, RuleInfo> ruleInfos = new HashMap<TransformationRule<?, ?>, RuleInfo>();
 
     private List<ICriteria> cutOffCriterias = new ArrayList<ICriteria>();
     private List<ICriteria> selectionCriterias = new ArrayList<ICriteria>();
 
     private Set<PatternWithCardinality> goalPatterns;
     private Set<PatternWithCardinality> constraints;
-    private Set<TransformationRule<? extends IPatternMatch>> rules;
+    private Set<TransformationRule<?, ?>> rules;
 
-    private List<TransformationRule<? extends IPatternMatch>> sortedRules;
+    private List<TransformationRule<?, ?>> sortedRules;
     private final CriteriaContext criteriaContext = new CriteriaContext(this);
 
     private PetriAbstractionResult petriNetAbstractionResult;
 
-    private final Comparator<TransformationRule<? extends IPatternMatch>> rulePriorityComparator = new Comparator<TransformationRule<? extends IPatternMatch>>() {
+    private final Comparator<TransformationRule<?, ?>> rulePriorityComparator = new Comparator<TransformationRule<?, ?>>() {
         @Override
-        public int compare(TransformationRule<? extends IPatternMatch> o1,
-                TransformationRule<? extends IPatternMatch> o2) {
+        public int compare(TransformationRule<?, ?> o1,
+                TransformationRule<?, ?> o2) {
             RuleInfo ruleInfo1 = ruleInfos.get(o1);
             RuleInfo ruleInfo2 = ruleInfos.get(o2);
             double priority1 = ruleInfo1.getSelectionPriority() + ruleInfo1.getPriority();
@@ -84,9 +83,9 @@ public class Guidance implements Cloneable {
         return guidance;
     }
 
-    public Map<TransformationRule<? extends IPatternMatch>, RuleInfo> cloneRuleInfos() {
-        HashMap<TransformationRule<? extends IPatternMatch>, RuleInfo> result = new HashMap<TransformationRule<? extends IPatternMatch>, RuleInfo>();
-        for (TransformationRule<? extends IPatternMatch> rule : ruleInfos.keySet()) {
+    public Map<TransformationRule<?, ?>, RuleInfo> cloneRuleInfos() {
+        HashMap<TransformationRule<?, ?>, RuleInfo> result = new HashMap<TransformationRule<?, ?>, RuleInfo>();
+        for (TransformationRule<?, ?> rule : ruleInfos.keySet()) {
             result.put(rule, ruleInfos.get(rule).clone());
         }
         return result;
@@ -111,10 +110,10 @@ public class Guidance implements Cloneable {
                     initialMarking, rules, predicates);
 
             // set occurrence for the rule info
-            Map<TransformationRule<? extends IPatternMatch>, Integer> occurrence = petriNetAbstractionResult
+            Map<TransformationRule<?, ?>, Integer> occurrence = petriNetAbstractionResult
                     .getSolutions().get(0).getOccurrence();
 
-            for (TransformationRule<? extends IPatternMatch> rule : rules) {
+            for (TransformationRule<?, ?> rule : rules) {
 
                 RuleInfo ruleInfo = ruleInfos.get(rule);
                 if (ruleInfo == null) {
@@ -129,19 +128,19 @@ public class Guidance implements Cloneable {
 
     }
 
-    public void ruleFired(TransformationRule<? extends IPatternMatch> rule, RuleEngine ruleEngine) {
+    public void ruleFired(TransformationRule<?, ?> rule, RuleEngine ruleEngine) {
         ruleInfos.get(rule).incApp();
         resetActivations(ruleEngine);
     }
 
-    public void ruleUndone(TransformationRule<? extends IPatternMatch> rule, RuleEngine ruleEngine) {
+    public void ruleUndone(TransformationRule<?, ?> rule, RuleEngine ruleEngine) {
         ruleInfos.get(rule).decApp();
         resetActivations(ruleEngine);
     }
 
     public void resetActivations(RuleEngine ruleEngine) {
-        for (TransformationRule<? extends IPatternMatch> rule : rules) {
-            Set<?> genericSet = ruleEngine.getActivations(rule);
+        for (TransformationRule<?, ?> rule : rules) {
+            Set<?> genericSet = ruleEngine.getActivations(rule.getRuleSpecification());
             @SuppressWarnings("unchecked")
             Set<Activation<?>> activationSet = (Set<Activation<?>>) genericSet;
             ruleInfos.get(rule).setActivations(activationSet);
@@ -157,7 +156,7 @@ public class Guidance implements Cloneable {
         return EvaluationResult.NONE;
     }
 
-    public List<TransformationRule<? extends IPatternMatch>> evaluateSelectionCriterias() {
+    public List<TransformationRule<?, ?>> evaluateSelectionCriterias() {
         for (RuleInfo ruleInfo : ruleInfos.values()) {
             ruleInfo.resetSelectionPriority();
         }
@@ -165,7 +164,7 @@ public class Guidance implements Cloneable {
             criteria.evaluate(criteriaContext);
         }
         if (sortedRules == null || sortedRules.isEmpty()) {
-            sortedRules = new ArrayList<TransformationRule<? extends IPatternMatch>>(rules);
+            sortedRules = new ArrayList<TransformationRule<?, ?>>(rules);
         }
         Collections.sort(sortedRules, rulePriorityComparator);
         return sortedRules;
@@ -209,25 +208,25 @@ public class Guidance implements Cloneable {
         this.dependencyGraph = dependencyGraph;
     }
 
-    public Map<TransformationRule<? extends IPatternMatch>, RuleInfo> getRuleInfos() {
+    public Map<TransformationRule<?, ?>, RuleInfo> getRuleInfos() {
         return ruleInfos;
     }
 
-    public void setRuleInfos(Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos) {
+    public void setRuleInfos(Map<TransformationRule<?, ?>, RuleInfo> ruleInfos) {
         this.ruleInfos = ruleInfos;
     }
 
-    public RuleInfo addPriorityAndCostRuleInfo(TransformationRule<? extends IPatternMatch> rule, double priority,
+    public RuleInfo addPriorityAndCostRuleInfo(TransformationRule<?, ?> rule, double priority,
             double cost) {
         RuleInfo ruleInfo = new RuleInfo(priority, cost);
         return ruleInfos.put(rule, ruleInfo);
     }
 
-    public RuleInfo addPriorityRuleInfo(TransformationRule<? extends IPatternMatch> rule, double priority) {
+    public RuleInfo addPriorityRuleInfo(TransformationRule<?, ?> rule, double priority) {
         return addPriorityAndCostRuleInfo(rule, priority, 0);
     }
 
-    public RuleInfo addCostRuleInfo(TransformationRule<? extends IPatternMatch> rule, double cost) {
+    public RuleInfo addCostRuleInfo(TransformationRule<?, ?> rule, double cost) {
         return addPriorityAndCostRuleInfo(rule, 0, cost);
     }
 
@@ -263,11 +262,11 @@ public class Guidance implements Cloneable {
         this.constraints = constraints;
     }
 
-    public Set<TransformationRule<? extends IPatternMatch>> getRules() {
+    public Set<TransformationRule<?, ?>> getRules() {
         return rules;
     }
 
-    public void setRules(Set<TransformationRule<? extends IPatternMatch>> rules) {
+    public void setRules(Set<TransformationRule<?, ?>> rules) {
         this.rules = rules;
     }
 

@@ -14,18 +14,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
+import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
 public class PetriGuidedStrategy implements IStrategy {
 
-    private List<TransformationRule<? extends IPatternMatch>> petriTrajectory;
+    private List<TransformationRule<?, ?>> petriTrajectory;
     private int actIndex = 0;
     private List<Integer> trajectoyIndexes = new ArrayList<Integer>();
     private BreadthFirstStrategy breadthFirstSearch;
@@ -74,7 +73,7 @@ public class PetriGuidedStrategy implements IStrategy {
             transitions = dsm.getTransitionsFromCurrentState(filterOptions);
         }
 
-        TransformationRule<? extends IPatternMatch> nextPetriRule = petriTrajectory.get(actIndex);
+        TransformationRule<?, ?> nextPetriRule = petriTrajectory.get(actIndex);
 
         for (ITransition t : transitions) {
             if (t.getTransitionMetaData().rule.equals(nextPetriRule)) {

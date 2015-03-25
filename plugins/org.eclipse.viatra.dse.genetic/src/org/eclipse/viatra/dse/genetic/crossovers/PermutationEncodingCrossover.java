@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -49,10 +48,10 @@ public class PermutationEncodingCrossover implements ICrossoverTrajectories {
         List<ITransition> child1 = new ArrayList<ITransition>(parent1.subList(0, index));
         outerLoop: for (ITransition transition : parent2) {
 
-            TransformationRule<? extends IPatternMatch> ruleToAdd = transition.getTransitionMetaData().rule;
+            TransformationRule<?, ?> ruleToAdd = transition.getTransitionMetaData().rule;
 
             for (ITransition childTransition : child1) {
-                TransformationRule<? extends IPatternMatch> childRule = childTransition.getTransitionMetaData().rule;
+                TransformationRule<?, ?> childRule = childTransition.getTransitionMetaData().rule;
                 if (ruleToAdd.equals(childRule)) {
                     continue outerLoop;
                 }
@@ -64,10 +63,10 @@ public class PermutationEncodingCrossover implements ICrossoverTrajectories {
         ArrayList<ITransition> child2 = new ArrayList<ITransition>(parent2.subList(0, index));
         outerLoop: for (ITransition transition : parent1) {
             
-            TransformationRule<? extends IPatternMatch> ruleToAdd = transition.getTransitionMetaData().rule;
+            TransformationRule<?, ?> ruleToAdd = transition.getTransitionMetaData().rule;
             
             for (ITransition childTransition : child2) {
-                TransformationRule<? extends IPatternMatch> childRule = childTransition.getTransitionMetaData().rule;
+                TransformationRule<?, ?> childRule = childTransition.getTransitionMetaData().rule;
                 if (ruleToAdd.equals(childRule)) {
                     continue outerLoop;
                 }

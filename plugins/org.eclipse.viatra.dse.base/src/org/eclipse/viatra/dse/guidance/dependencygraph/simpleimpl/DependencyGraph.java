@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EModelElement;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
@@ -32,12 +31,12 @@ public class DependencyGraph implements IDependencyGraph {
     private final Set<INode> nodes = new HashSet<INode>();
     private final Set<IEdge> edges = new HashSet<IEdge>();
 
-    private final Map<TransformationRule<? extends IPatternMatch>, INode> nodesByTransformationRule = new HashMap<TransformationRule<? extends IPatternMatch>, INode>();
+    private final Map<TransformationRule<?, ?>, INode> nodesByTransformationRule = new HashMap<TransformationRule<?, ?>, INode>();
     private final Map<PatternWithCardinality, INode> nodesByGoalPattern = new HashMap<PatternWithCardinality, INode>();
     private final Map<PatternWithCardinality, INode> nodesByConstraint = new HashMap<PatternWithCardinality, INode>();
 
     @Override
-    public void addNode(TransformationRule<? extends IPatternMatch> transformationRule) {
+    public void addNode(TransformationRule<?, ?> transformationRule) {
         Node node = new Node(transformationRule);
         nodes.add(node);
         nodesByTransformationRule.put(node.getTransformationRule(), node);
@@ -95,7 +94,7 @@ public class DependencyGraph implements IDependencyGraph {
     }
 
     @Override
-    public INode getNodeByTransformationRule(TransformationRule<? extends IPatternMatch> rule) {
+    public INode getNodeByTransformationRule(TransformationRule<?, ?> rule) {
         return nodesByTransformationRule.get(rule);
     }
 

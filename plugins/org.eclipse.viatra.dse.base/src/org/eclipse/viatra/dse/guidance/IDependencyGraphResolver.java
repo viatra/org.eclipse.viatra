@@ -12,7 +12,6 @@ package org.eclipse.viatra.dse.guidance;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IDependencyGraph;
@@ -36,6 +35,6 @@ public interface IDependencyGraphResolver {
      *            The goal patterns
      * @return A dependency graph between the given parameters.
      */
-    IDependencyGraph createRuleDependencyGraph(Set<TransformationRule<? extends IPatternMatch>> transformations,
+    IDependencyGraph createRuleDependencyGraph(Set<TransformationRule<?, ?>> transformations,
             Set<PatternWithCardinality> constraints, Set<PatternWithCardinality> goalPatterns);
 }

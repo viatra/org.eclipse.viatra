@@ -29,11 +29,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThreadFactory;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
@@ -190,17 +189,17 @@ public class DesignSpaceExplorer {
      * @param rule
      *            The transformationRule.
      */
-    public <P extends IPatternMatch, M extends IncQueryMatcher<P>> void addTransformationRule(TransformationRule<P> rule) {
+    public void addTransformationRule(TransformationRule<?, ?> rule) {
         checkArgument(rule != null);
-        for (TransformationRule<? extends IPatternMatch> rule2 : globalContext.getTransformations()) {
-            if (rule.getQuerySpecification().equals(rule2.getQuerySpecification())) {
+        for (TransformationRule<?, ?> rule2 : globalContext.getTransformations()) {
+            if (rule.getPrecondition().equals(rule2.getPrecondition())) {
                 throw new DSEException(
                         "Two transformation rule ("
-                                + rule.getName()
+                                + rule.getRuleName()
                                 + "; "
-                                + rule2.getName()
+                                + rule2.getRuleName()
                                 + ") uses the same LHS IncQuery pattern ("
-                                + rule.getQuerySpecification().getFullyQualifiedName()
+                                + rule.getPrecondition().getFullyQualifiedName()
                                 + "), which may lead to hash collision."
                                 + " Please wrap the pattern with an other pattern with the 'find' keyword (or duplicate the code), and use that for one of the rules LHS.");
             }

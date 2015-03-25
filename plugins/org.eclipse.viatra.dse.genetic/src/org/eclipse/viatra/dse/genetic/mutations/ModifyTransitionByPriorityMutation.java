@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -48,7 +47,7 @@ public class ModifyTransitionByPriorityMutation implements IMutateTrajectory {
         if (guidance == null) {
             throw new DSEException("Guidance is missing for AddTransitionByPriorityMutation.");
         }
-        Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos = guidance.getRuleInfos();
+        Map<TransformationRule<?, ?>, RuleInfo> ruleInfos = guidance.getRuleInfos();
 
         double bestPriority = Double.MIN_VALUE;
         for (ITransition iTransition : availableTransitions) {

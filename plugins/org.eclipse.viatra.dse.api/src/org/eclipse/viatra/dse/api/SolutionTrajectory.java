@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
@@ -32,7 +33,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 public class SolutionTrajectory {
 
     private final List<Object> transitionIds;
-    private final List<TransformationRule<? extends IPatternMatch>> transformationRules;
+    private final List<TransformationRule<?, ?>> transformationRules;
     private final IStateSerializerFactory stateSerializerFactory;
     private Map<String, Double> fitness;
 
@@ -43,7 +44,7 @@ public class SolutionTrajectory {
     private int currentIndex;
 
     public SolutionTrajectory(final List<Object> transitionIds,
-            final List<TransformationRule<? extends IPatternMatch>> transformationRules,
+            final List<TransformationRule<?, ?>> transformationRules,
             final IStateSerializerFactory stateSerializerFactory) {
         checkNotNull(transformationRules, "Parameter transformationRules cannot be null!");
         checkNotNull(stateSerializerFactory, "Parameter stateSerializerFactory cannot be null!");
@@ -93,15 +94,16 @@ public class SolutionTrajectory {
         checkArgument(rootEObject != null, "The model cannot be null!");
 
         // cast for the ".process(match)" method.
-        TransformationRule<IPatternMatch> tr = (TransformationRule<IPatternMatch>) transformationRules.get(index);
+        TransformationRule<?, ?> tr = transformationRules.get(index);
 
-        IncQueryMatcher<? extends IPatternMatch> matcher = tr.getQuerySpecification().getMatcher(engine);
+        IncQueryMatcher<?> matcher = tr.getPrecondition().getMatcher(engine);
 
         boolean isActivationFound = false;
         for (IPatternMatch match : matcher.getAllMatches()) {
             Object matchHash = stateSerializer.serializePatternMatch(match);
             if (matchHash.equals(transitionIds.get(index))) {
-                tr.getMatchProcessor().process(match);
+                IMatchProcessor action = tr.getModelManipulation();
+                action.process(match);
                 isActivationFound = true;
                 break;
             }
@@ -117,7 +119,7 @@ public class SolutionTrajectory {
         return transitionIds;
     }
 
-    public List<TransformationRule<? extends IPatternMatch>> getTransformationRules() {
+    public List<TransformationRule<?,?>> getTransformationRules() {
         return transformationRules;
     }
 

@@ -17,13 +17,12 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
+import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
 import com.google.common.collect.Lists;
@@ -48,7 +47,7 @@ public class FixedPriorityStrategy implements IStrategy {
     private DesignSpaceManager dsm;
     private boolean isInterrupted = false;
 
-    protected Map<TransformationRule<? extends IPatternMatch>, Integer> priorities = new HashMap<TransformationRule<? extends IPatternMatch>, Integer>();
+    protected Map<TransformationRule<?, ?>, Integer> priorities = new HashMap<TransformationRule<?, ?>, Integer>();
     private FilterOptions filterOptions;
 
     private Logger logger = Logger.getLogger(IStrategy.class);
@@ -93,7 +92,7 @@ public class FixedPriorityStrategy implements IStrategy {
      *            The priority of the rule.
      * @return The actual instance to enable a builder pattern like usage.
      */
-    public FixedPriorityStrategy withRulePriority(TransformationRule<? extends IPatternMatch> rule, int priority) {
+    public FixedPriorityStrategy withRulePriority(TransformationRule<?, ?> rule, int priority) {
         priorities.put(rule, priority);
         return this;
     }

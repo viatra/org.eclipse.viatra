@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
 
 /**
@@ -48,7 +47,7 @@ public interface IGetCertainTransitions {
         /**
          * Only transitions with rules referenced by this list will be retrieved.
          */
-        public List<TransformationRule<? extends IPatternMatch>> ruleFilter;
+        public List<TransformationRule<?, ?>> ruleFilter;
 
         /**
          * Will return an empty list if the current state dissatisfies the global constraints.
@@ -82,9 +81,9 @@ public interface IGetCertainTransitions {
          * @param rule of the transitions to return
          * @return this
          */
-        public FilterOptions withRuleFilter(TransformationRule<? extends IPatternMatch> rule) {
+        public FilterOptions withRuleFilter(TransformationRule<?, ?> rule) {
             if (ruleFilter == null) {
-                ruleFilter = new ArrayList<TransformationRule<? extends IPatternMatch>>(1);
+                ruleFilter = new ArrayList<TransformationRule<?, ?>>(1);
             }
             ruleFilter.add(rule);
             return this;
@@ -95,7 +94,7 @@ public interface IGetCertainTransitions {
          * @param rule
          * @return True if it contains the rule or no rule was specified. False otherwise.
          */
-        public boolean containsRule(TransformationRule<? extends IPatternMatch> rule) {
+        public boolean containsRule(TransformationRule<?, ?> rule) {
             if (ruleFilter == null || ruleFilter.contains(rule)) {
                 return true;
             }

@@ -35,7 +35,7 @@ import org.eclipse.viatra.dse.guidance.dependencygraph.simpleimpl.DependencyGrap
 public class DependencyGraphResolver implements IDependencyGraphResolver {
 
     @Override
-    public IDependencyGraph createRuleDependencyGraph(Set<TransformationRule<? extends IPatternMatch>> transformations,
+    public IDependencyGraph createRuleDependencyGraph(Set<TransformationRule<?, ?>> transformations,
             Set<PatternWithCardinality> constraints, Set<PatternWithCardinality> goalPatterns) {
 
         IDependencyGraph dependencyGraph = new DependencyGraph();
@@ -50,7 +50,7 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
             dependencyGraph.addNode(constraint, NodeType.CONSTRAINT);
         }
 
-        for (TransformationRule<? extends IPatternMatch> rule : transformations) {
+        for (TransformationRule<?, ?> rule : transformations) {
             dependencyGraph.addNode(rule);
         }
 
@@ -59,7 +59,7 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
         // edges goes rhs -> lhs only
 
         // for each rule (edges can only start from a rule, only they have rhs)
-        for (TransformationRule<? extends IPatternMatch> rule : transformations) {
+        for (TransformationRule<?, ?> rule : transformations) {
 
             // for each modelElement which is in the RHS of the rule
 
@@ -98,7 +98,7 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
                     createEdges(dependencyGraph, rule, modelElement, metaData, targetNode, null, constraint, null);
                 }
 
-                for (TransformationRule<? extends IPatternMatch> targetRule : transformations) {
+                for (TransformationRule<?, ?> targetRule : transformations) {
                     INode targetNode = dependencyGraph.getNodeByTransformationRule(targetRule);
                     createEdges(dependencyGraph, rule, modelElement, metaData, targetNode, null, null, targetRule);
                 }
@@ -112,9 +112,9 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
         return dependencyGraph;
     }
 
-    private void createEdges(IDependencyGraph dependencyGraph, TransformationRule<? extends IPatternMatch> rule,
+    private void createEdges(IDependencyGraph dependencyGraph, TransformationRule<?, ?> rule,
             EModelElement modelElement, ModelElementMetaData metaData, INode targetNode, PatternWithCardinality goal,
-            PatternWithCardinality constraint, TransformationRule<? extends IPatternMatch> targetRule) {
+            PatternWithCardinality constraint, TransformationRule<?, ?> targetRule) {
 
         // get target's classifiers
         Map<? extends EModelElement, Integer> modelElementLHS;

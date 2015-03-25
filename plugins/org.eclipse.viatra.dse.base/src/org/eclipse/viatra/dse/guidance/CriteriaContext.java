@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IDependencyGraph;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IEdge;
@@ -32,7 +31,7 @@ public class CriteriaContext {
         return guidance.getDependencyGraph();
     }
 
-    public Map<TransformationRule<? extends IPatternMatch>, RuleInfo> getRuleInfos() {
+    public Map<TransformationRule<?, ?>, RuleInfo> getRuleInfos() {
         return guidance.getRuleInfos();
     }
 

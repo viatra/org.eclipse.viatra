@@ -135,8 +135,8 @@ public class ThreadContext {
             @Override
             protected void doExecute() {
                 // add rules to the RuleEngine
-                for (TransformationRule<?> tr : globalContext.getTransformations()) {
-                    ruleEngine.addRule(tr);
+                for (TransformationRule<?, ?> tr : globalContext.getTransformations()) {
+                    ruleEngine.addRule(tr.getRuleSpecification());
                 }
             }
         };
@@ -171,7 +171,7 @@ public class ThreadContext {
 
         }
         // create the thread specific DesignSpaceManager
-        designSpaceManager = new DesignSpaceManager(modelRoot, domain, globalContext.getStateSerializerFactory(),
+        designSpaceManager = new DesignSpaceManager(this, modelRoot, domain, globalContext.getStateSerializerFactory(),
                 globalContext.getDesignSpace(), trajectoryInfo, ruleEngine, incqueryEngine);
 
         // if there is a guidance registered, hook this thread's

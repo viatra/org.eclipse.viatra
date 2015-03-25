@@ -29,6 +29,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
+import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.TransformationRule;
@@ -77,17 +78,19 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
     private Logger logger = Logger.getLogger(this.getClass());
 
     private boolean isNewState = false;
-    private Map<TransformationRule<? extends IPatternMatch>, ActivationFitnessProcessor> activationFitnessProcessors;
-    private Map<TransformationRule<? extends IPatternMatch>, String> activationFitnessProcessorNames;
+    private Map<TransformationRule<?, ?>, ActivationFitnessProcessor> activationFitnessProcessors;
+    private Map<TransformationRule<?, ?>, String> activationFitnessProcessorNames;
+    private ThreadContext context;
 
     private static final long SLEEP_INTERVAL = 1;
 
-    public DesignSpaceManager(EObject modelRoot, EditingDomain domain, IStateSerializerFactory factory,
+    public DesignSpaceManager(ThreadContext context, EObject modelRoot, EditingDomain domain, IStateSerializerFactory factory,
             IDesignSpace designSpace, TrajectoryInfo trajectory, RuleEngine ruleEngine, IncQueryEngine engine) {
         checkNotNull(designSpace, "Cannot initialize crawler on a null design space!");
         checkNotNull(domain, "Cannot initialize crawler on a null editing domain!");
         checkNotNull(factory, "Cannot initialize crawler without a serializer factory!");
 
+        this.context = context;
         this.modelRoot = modelRoot;
         this.ruleEngine = ruleEngine;
         this.designSpace = designSpace;
@@ -329,9 +332,16 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             IPatternMatch match = (IPatternMatch) activation.getAtom();
             Object matchHash = generateMatchCode(match);
 
-            @SuppressWarnings("unchecked")
-            TransformationRule<? extends IPatternMatch> specification = (TransformationRule<? extends IPatternMatch>) activation
-                    .getInstance().getSpecification();
+            RuleSpecification<?> ruleSpec = activation.getInstance().getSpecification();
+            TransformationRule<?, ?> specification = null; 
+            for (TransformationRule<?, ?> t : context.getGlobalContext().getTransformations()) {
+                if (t.getRuleSpecification().equals(ruleSpec)) {
+                    specification = t;
+                }
+            }
+            if (specification == null) {
+                throw new DSEException("spec is null");
+            }
 
             Map<String, Double> measureCosts = specification.measureCosts(match);
 
@@ -392,11 +402,11 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         }
     }
 
-    public void registerActivationCostProcessor(String name, TransformationRule<? extends IPatternMatch> rule,
+    public void registerActivationCostProcessor(String name, TransformationRule<?, ?> rule,
             ActivationFitnessProcessor activationFitnessProcessor) {
         if (activationFitnessProcessors == null || activationFitnessProcessorNames == null) {
-            activationFitnessProcessors = new HashMap<TransformationRule<? extends IPatternMatch>, ActivationFitnessProcessor>();
-            activationFitnessProcessorNames = new HashMap<TransformationRule<? extends IPatternMatch>, String>();
+            activationFitnessProcessors = new HashMap<TransformationRule<?, ?>, ActivationFitnessProcessor>();
+            activationFitnessProcessorNames = new HashMap<TransformationRule<?, ?>, String>();
         }
         activationFitnessProcessors.put(rule, activationFitnessProcessor);
         activationFitnessProcessorNames.put(rule, name);

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.guidance;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.viatra.dse.api.TransformationRule;
 
@@ -23,12 +22,12 @@ public class ApplicationVectorUpdater implements IRuleApplicationNumberChanged {
     }
 
     @Override
-    public void increment(TransformationRule<? extends IPatternMatch> rule, RuleEngine ruleEngine) {
+    public void increment(TransformationRule<?, ?> rule, RuleEngine ruleEngine) {
         guidance.ruleFired(rule, ruleEngine);
     }
 
     @Override
-    public void decrement(TransformationRule<? extends IPatternMatch> rule, RuleEngine ruleEngine) {
+    public void decrement(TransformationRule<?, ?> rule, RuleEngine ruleEngine) {
         guidance.ruleUndone(rule, ruleEngine);
     }
 

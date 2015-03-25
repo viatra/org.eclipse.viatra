@@ -13,7 +13,6 @@ package org.eclipse.viatra.dse.guidance.dependencygraph.simpleimpl;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.TransformationRule;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IEdge;
@@ -29,11 +28,11 @@ public class Node implements INode {
 
     private NodeType nodeType;
 
-    private TransformationRule<? extends IPatternMatch> transformationRule;
+    private TransformationRule<?, ?> transformationRule;
     private PatternWithCardinality constraint;
     private PatternWithCardinality goalPattern;
 
-    public Node(TransformationRule<? extends IPatternMatch> transformationRule) {
+    public Node(TransformationRule<?, ?> transformationRule) {
         this.transformationRule = transformationRule;
         nodeType = NodeType.RULE;
     }
@@ -61,7 +60,7 @@ public class Node implements INode {
     }
 
     @Override
-    public TransformationRule<? extends IPatternMatch> getTransformationRule() {
+    public TransformationRule<?, ?> getTransformationRule() {
         if (!nodeType.equals(NodeType.RULE)) {
             throw new UnsupportedOperationException();
         }

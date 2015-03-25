@@ -13,25 +13,24 @@ package org.eclipse.viatra.dse.guidance;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
 
 public class PetriAbstractionSolution {
 
-    private final List<TransformationRule<? extends IPatternMatch>> trajectory;
-    private final Map<TransformationRule<? extends IPatternMatch>, Integer> occurrence;
+    private final List<TransformationRule<?, ?>> trajectory;
+    private final Map<TransformationRule<?, ?>, Integer> occurrence;
 
-    public PetriAbstractionSolution(Map<TransformationRule<? extends IPatternMatch>, Integer> occurrence,
-            List<TransformationRule<? extends IPatternMatch>> trajectory) {
+    public PetriAbstractionSolution(Map<TransformationRule<?, ?>, Integer> occurrence,
+            List<TransformationRule<?, ?>> trajectory) {
         this.trajectory = trajectory;
         this.occurrence = occurrence;
     }
 
-    public Map<TransformationRule<? extends IPatternMatch>, Integer> getOccurrence() {
+    public Map<TransformationRule<?, ?>, Integer> getOccurrence() {
         return occurrence;
     }
 
-    public List<TransformationRule<? extends IPatternMatch>> getTrajectory() {
+    public List<TransformationRule<?, ?>> getTrajectory() {
         return trajectory;
     }
 

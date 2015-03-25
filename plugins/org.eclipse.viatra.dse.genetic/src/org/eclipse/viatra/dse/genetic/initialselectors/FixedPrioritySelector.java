@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
@@ -46,7 +45,7 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
 
     private List<PatternWithCardinality> goals;
 
-    private Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos;
+    private Map<TransformationRule<?, ?>, RuleInfo> ruleInfos;
 
     private IncQueryEngine incqueryEngine;
 
@@ -162,7 +161,7 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     }
 
     private double getBestPriority(Collection<? extends ITransition> transitions,
-            Map<TransformationRule<? extends IPatternMatch>, RuleInfo> ruleInfos) {
+            Map<TransformationRule<?, ?>, RuleInfo> ruleInfos) {
         double bestPriority;
         bestPriority = Double.MIN_VALUE;
         for (ITransition iTransition : transitions) {

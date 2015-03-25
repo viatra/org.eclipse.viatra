@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.TransformationRule;
@@ -135,7 +134,7 @@ public class TrajectoryInfo implements Cloneable {
     public SolutionTrajectory createSolutionTrajectory(final IStateSerializerFactory serializerFactory) {
 
         List<Object> activationIds;
-        List<TransformationRule<? extends IPatternMatch>> rules;
+        List<TransformationRule<?, ?>> rules;
 
         // Recursion
         if (trajectoryUntilInitState != null) {
@@ -145,7 +144,7 @@ public class TrajectoryInfo implements Cloneable {
             rules = solutionTrajectory.getTransformationRules();
         } else {
             activationIds = new ArrayList<Object>();
-            rules = new ArrayList<TransformationRule<? extends IPatternMatch>>();
+            rules = new ArrayList<TransformationRule<?, ?>>();
         }
 
         // Putting together the list of rules

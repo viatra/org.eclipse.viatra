@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.TransformationRule;
@@ -57,11 +56,11 @@ public class GeneticDesignSpaceExplorer {
         dse.setSerializerFactory(serializerFactory);
     }
 
-    public void addTransformationRule(TransformationRule<? extends IPatternMatch> rule) {
+    public void addTransformationRule(TransformationRule<?, ?> rule) {
         dse.addTransformationRule(rule);
     }
 
-    public void addTransformationRule(TransformationRule<? extends IPatternMatch> rule, int priority) {
+    public void addTransformationRule(TransformationRule<?, ?> rule, int priority) {
         dse.addTransformationRule(rule);
         if (guidance == null) {
             guidance = new Guidance();

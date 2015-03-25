@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EModelElement;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.TransformationRule;
 
 /**
@@ -42,5 +41,5 @@ public interface IOccurrenceVectorResolver {
      */
     PetriAbstractionResult calculateOccurrenceVector(List<? extends EModelElement> classesAndReferences,
             Map<? extends EModelElement, Integer> initialMarking,
-            Set<TransformationRule<? extends IPatternMatch>> transformations, List<Predicate> predicates);
+            Set<TransformationRule<?, ?>> transformations, List<Predicate> predicates);
 }

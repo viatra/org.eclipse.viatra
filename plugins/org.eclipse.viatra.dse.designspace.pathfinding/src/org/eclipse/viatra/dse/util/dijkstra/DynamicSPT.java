@@ -173,7 +173,7 @@ public class DynamicSPT implements IDesignSpaceChangeHandler, IPathfinder {
         if (s.getShortestTrajectory().getTrajectoryLength() > get(solutionState).getCost()) {
 
             List<Object> transitionIds = new LinkedList<Object>();
-            List<TransformationRule<?>> transformationRules = new LinkedList<TransformationRule<?>>();
+            List<TransformationRule<?, ?>> transformationRules = new LinkedList<TransformationRule<?, ?>>();
 
             // get the transition sequence that leads to the solution
             Deque<ITransition> bestTrajectory = getBestTransitionTrajectory(solutionState);

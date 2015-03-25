@@ -10,115 +10,66 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.evm.api.Job;
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.Jobs;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
-import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
+import org.eclipse.viatra.emf.runtime.rules.batch.BatchTransformationRule;
+
+import com.google.common.base.Preconditions;
 
 /**
  * An instance of this class is a specification of a graph transformation rule on a given metamodel. Such a rule
- * consists of a left hand side (LHS), which is specified by an {@link IPatternMatch} and a right hand side (RHS), which
- * is specified by an {@link IMatchProcessor}.
+ * consists of a left hand side (LHS), which is specified by an {@link IQuerySpecification} and a right hand side (RHS),
+ * which is specified by an {@link IMatchProcessor}.
  * 
  * @author Andras Szabolcs Nagy
  * 
- * @param <P>
+ * @param <Match>
  *            An IncQuery pattern match - left hand side of the rule
+ * @param <Matcher>
+ *            An IncQuery pattern matcher - left hand side of the rule
+ * 
  */
-public class TransformationRule<P extends IPatternMatch> extends RuleSpecification<P> {
+public class TransformationRule<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends
+        BatchTransformationRule<Match, Matcher> {
 
-    public interface ActivationCostProcessor<P> {
-
-        public Map<String, Double> process(P match);
-
+    public interface ActivationCostProcessor<Match> {
+        public Map<String, Double> process(Match match);
     }
-
-    private IQuerySpecification<? extends IncQueryMatcher<P>> querySpecification;
-    private IMatchProcessor<P> matchProcessor;
-
-    private String name;
+    
     private RuleMetaData metaData;
-
     private Map<String, Double> costs;
-    private ActivationCostProcessor<P> activationCostProcessor;
+    private ActivationCostProcessor<Match> activationCostProcessor;
 
-    public TransformationRule(IQuerySpecification<? extends IncQueryMatcher<P>> querySpecification,
-            IMatchProcessor<P> matchProcessor, RuleMetaData metaData) {
-        super(IncQueryEventRealm.createSourceSpecification(querySpecification),
-                DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR, TransformationRule
-                        .<P> getJobs(matchProcessor));
+    
+    public TransformationRule(String name, IQuerySpecification<Matcher> querySpec,
+            IMatchProcessor<Match> action) {
+        super(name, querySpec, BatchTransformationRule.STATELESS_RULE_LIFECYCLE, action);
 
-        checkArgument(querySpecification != null);
-        checkArgument(matchProcessor != null);
+        Preconditions.checkNotNull(name);
+        Preconditions.checkNotNull(querySpec);
+        Preconditions.checkNotNull(action);
 
-        this.querySpecification = querySpecification;
-        this.matchProcessor = matchProcessor;
-        this.metaData = metaData;
-
-        this.name = querySpecification.getFullyQualifiedName() + "Rule";
     }
 
-    public TransformationRule(IQuerySpecification<? extends IncQueryMatcher<P>> querySpecification,
-            IMatchProcessor<P> matchProcessor) {
-        this(querySpecification, matchProcessor, null);
-    }
-
-    // Helper method for constructor
-    private static <M extends IPatternMatch> Set<Job<M>> getJobs(IMatchProcessor<M> matchProcessor) {
-        Job<M> appearedMatch = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, matchProcessor);
-        Job<M> firedMatch = Jobs.newStatelessJob(IncQueryActivationStateEnum.FIRED, matchProcessor);
-
-        Set<Job<M>> jobs = new HashSet<Job<M>>();
-
-        jobs.add(appearedMatch);
-        jobs.add(firedMatch);
-
-        return jobs;
+    public TransformationRule(IQuerySpecification<Matcher> querySpec,
+            IMatchProcessor<Match> action) {
+        this(querySpec.getFullyQualifiedName(), querySpec, action);
     }
 
     public Map<String, Double> measureCosts(IPatternMatch match) {
         if (activationCostProcessor != null) {
             @SuppressWarnings("unchecked")
-            P typedMatch = (P) match;
+            Match typedMatch = (Match) match;
             return activationCostProcessor.process(typedMatch);
         } else {
             return null;
         }
     }
-
-    @Override
-    public int hashCode() {
-        return querySpecification.getFullyQualifiedName().hashCode();
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public IMatchProcessor<P> getMatchProcessor() {
-        return matchProcessor;
-    }
-
-    public IQuerySpecification<? extends IncQueryMatcher<P>> getQuerySpecification() {
-        return querySpecification;
-    }
-
+    
     public RuleMetaData getMetaData() {
         return metaData;
     }
@@ -131,11 +82,17 @@ public class TransformationRule<P extends IPatternMatch> extends RuleSpecificati
         this.costs = costs;
     }
 
-    public ActivationCostProcessor<P> getActivationCostProcessor() {
+    public ActivationCostProcessor<Match> getActivationCostProcessor() {
         return activationCostProcessor;
     }
 
-    public void setActivationCostProcessor(ActivationCostProcessor<P> activationCostProcessor) {
+    public void setActivationCostProcessor(ActivationCostProcessor<Match> activationCostProcessor) {
         this.activationCostProcessor = activationCostProcessor;
     }
+    
+    @Override
+    public int hashCode() {
+        return getPrecondition().getFullyQualifiedName().hashCode();
+    }
+
 }
