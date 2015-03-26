@@ -12,11 +12,11 @@ package org.eclipse.viatra.dse.designspace.api;
 
 import java.util.Map;
 
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 
 public class TransitionMetaData {
 
-    public TransformationRule<?, ?> rule;
+    public DSETransformationRule<?, ?> rule;
     public Map<String, Double> costs;
 
 }

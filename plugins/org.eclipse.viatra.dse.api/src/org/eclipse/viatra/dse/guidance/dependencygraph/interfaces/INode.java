@@ -13,7 +13,7 @@ package org.eclipse.viatra.dse.guidance.dependencygraph.interfaces;
 import java.util.Set;
 
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 
 public interface INode {
 
@@ -23,7 +23,7 @@ public interface INode {
 
     Set<IEdge> getInEdges();
 
-    TransformationRule<?, ?> getTransformationRule();
+    DSETransformationRule<?, ?> getTransformationRule();
 
     PatternWithCardinality getConstraint();
 

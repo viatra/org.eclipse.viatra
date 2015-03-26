@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
 
 import com.google.common.base.Preconditions;
@@ -134,7 +134,7 @@ public class TrajectoryInfo implements Cloneable {
     public SolutionTrajectory createSolutionTrajectory(final IStateSerializerFactory serializerFactory) {
 
         List<Object> activationIds;
-        List<TransformationRule<?, ?>> rules;
+        List<DSETransformationRule<?, ?>> rules;
 
         // Recursion
         if (trajectoryUntilInitState != null) {
@@ -144,7 +144,7 @@ public class TrajectoryInfo implements Cloneable {
             rules = solutionTrajectory.getTransformationRules();
         } else {
             activationIds = new ArrayList<Object>();
-            rules = new ArrayList<TransformationRule<?, ?>>();
+            rules = new ArrayList<DSETransformationRule<?, ?>>();
         }
 
         // Putting together the list of rules

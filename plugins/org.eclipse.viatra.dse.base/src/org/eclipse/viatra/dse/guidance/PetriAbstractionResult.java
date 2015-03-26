@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 
 public final class PetriAbstractionResult {
 
     List<PetriAbstractionSolution> solutions = new ArrayList<PetriAbstractionSolution>();
 
-    public void addSolution(Map<TransformationRule<?, ?>, Integer> occurrence,
-            List<TransformationRule<?, ?>> trajectory) {
+    public void addSolution(Map<DSETransformationRule<?, ?>, Integer> occurrence,
+            List<DSETransformationRule<?, ?>> trajectory) {
         solutions.add(new PetriAbstractionSolution(occurrence, trajectory));
     }
 

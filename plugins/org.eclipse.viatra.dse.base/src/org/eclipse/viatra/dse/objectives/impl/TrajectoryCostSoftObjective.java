@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
@@ -33,8 +33,8 @@ import com.google.common.base.Preconditions;
 public class TrajectoryCostSoftObjective extends BaseObjective {
 
     public static final String DEFAULT_NAME = "TrajectoryCostObjective";
-    protected Map<TransformationRule<?, ?>, Double> fixCosts;
-    protected Map<TransformationRule<?, ?>, ActivationFitnessProcessor> activationCostProcessors;
+    protected Map<DSETransformationRule<?, ?>, Double> fixCosts;
+    protected Map<DSETransformationRule<?, ?>, ActivationFitnessProcessor> activationCostProcessors;
 
     public TrajectoryCostSoftObjective(String name) {
         super(name);
@@ -51,10 +51,10 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
      * @param cost
      * @return The actual instance to enable builder pattern like usage.
      */
-    public TrajectoryCostSoftObjective withRuleCost(TransformationRule<?, ?> rule, double cost) {
+    public TrajectoryCostSoftObjective withRuleCost(DSETransformationRule<?, ?> rule, double cost) {
         Preconditions.checkNotNull(rule);
         if (fixCosts == null) {
-            fixCosts = new HashMap<TransformationRule<?, ?>, Double>();
+            fixCosts = new HashMap<DSETransformationRule<?, ?>, Double>();
         }
         Preconditions.checkArgument(!fixCosts.containsKey(rule));
         fixCosts.put(rule, cost);
@@ -67,12 +67,12 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
      * @param activationCostProcessor
      * @return The actual instance to enable builder pattern like usage.
      */
-    public TrajectoryCostSoftObjective withActivationCost(TransformationRule<?, ?> rule,
+    public TrajectoryCostSoftObjective withActivationCost(DSETransformationRule<?, ?> rule,
             ActivationFitnessProcessor activationCostProcessor) {
         Preconditions.checkNotNull(rule);
         Preconditions.checkNotNull(activationCostProcessor);
         if (activationCostProcessors == null) {
-            activationCostProcessors = new HashMap<TransformationRule<?, ?>, ActivationFitnessProcessor>();
+            activationCostProcessors = new HashMap<DSETransformationRule<?, ?>, ActivationFitnessProcessor>();
         }
         Preconditions.checkArgument(!activationCostProcessors.containsKey(rule));
         activationCostProcessors.put(rule, activationCostProcessor);
@@ -88,7 +88,7 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
         double result = 0;
 
         for (ITransition transition : trajectory) {
-            TransformationRule<?, ?> rule = transition.getTransitionMetaData().rule;
+            DSETransformationRule<?, ?> rule = transition.getTransitionMetaData().rule;
 
             Double cost = fixCosts.get(rule);
             if (cost != null) {
@@ -110,7 +110,7 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
     @Override
     public void init(ThreadContext context) {
         DesignSpaceManager dsm = context.getDesignSpaceManager();
-        for (TransformationRule<?, ?> rule : activationCostProcessors.keySet()) {
+        for (DSETransformationRule<?, ?> rule : activationCostProcessors.keySet()) {
             dsm.registerActivationCostProcessor(name, rule, activationCostProcessors.get(rule));
         }
     }

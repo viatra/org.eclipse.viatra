@@ -11,7 +11,7 @@
 package org.eclipse.viatra.dse.designspace.api;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.statecode.IStateSerializer;
 
 /**
@@ -74,7 +74,7 @@ public interface ITransition {
 
     /**
      * Returns the {@link TransitionMetaData} of this {@link ITransition transition}, which contains data like the
-     * corresponding {@link TransformationRule} and the costs of the activation
+     * corresponding {@link DSETransformationRule} and the costs of the activation
      * 
      * @return the {@link TransitionMetaData}
      */

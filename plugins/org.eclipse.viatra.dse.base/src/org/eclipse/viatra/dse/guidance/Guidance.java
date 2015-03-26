@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.guidance.ICriteria.EvaluationResult;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IDependencyGraph;
@@ -35,24 +35,24 @@ public class Guidance implements Cloneable {
     private IOccurrenceVectorResolver occurrenceVectorResolver;
 
     private IDependencyGraph dependencyGraph;
-    private Map<TransformationRule<?, ?>, RuleInfo> ruleInfos = new HashMap<TransformationRule<?, ?>, RuleInfo>();
+    private Map<DSETransformationRule<?, ?>, RuleInfo> ruleInfos = new HashMap<DSETransformationRule<?, ?>, RuleInfo>();
 
     private List<ICriteria> cutOffCriterias = new ArrayList<ICriteria>();
     private List<ICriteria> selectionCriterias = new ArrayList<ICriteria>();
 
     private Set<PatternWithCardinality> goalPatterns;
     private Set<PatternWithCardinality> constraints;
-    private Set<TransformationRule<?, ?>> rules;
+    private Set<DSETransformationRule<?, ?>> rules;
 
-    private List<TransformationRule<?, ?>> sortedRules;
+    private List<DSETransformationRule<?, ?>> sortedRules;
     private final CriteriaContext criteriaContext = new CriteriaContext(this);
 
     private PetriAbstractionResult petriNetAbstractionResult;
 
-    private final Comparator<TransformationRule<?, ?>> rulePriorityComparator = new Comparator<TransformationRule<?, ?>>() {
+    private final Comparator<DSETransformationRule<?, ?>> rulePriorityComparator = new Comparator<DSETransformationRule<?, ?>>() {
         @Override
-        public int compare(TransformationRule<?, ?> o1,
-                TransformationRule<?, ?> o2) {
+        public int compare(DSETransformationRule<?, ?> o1,
+                DSETransformationRule<?, ?> o2) {
             RuleInfo ruleInfo1 = ruleInfos.get(o1);
             RuleInfo ruleInfo2 = ruleInfos.get(o2);
             double priority1 = ruleInfo1.getSelectionPriority() + ruleInfo1.getPriority();
@@ -83,9 +83,9 @@ public class Guidance implements Cloneable {
         return guidance;
     }
 
-    public Map<TransformationRule<?, ?>, RuleInfo> cloneRuleInfos() {
-        HashMap<TransformationRule<?, ?>, RuleInfo> result = new HashMap<TransformationRule<?, ?>, RuleInfo>();
-        for (TransformationRule<?, ?> rule : ruleInfos.keySet()) {
+    public Map<DSETransformationRule<?, ?>, RuleInfo> cloneRuleInfos() {
+        HashMap<DSETransformationRule<?, ?>, RuleInfo> result = new HashMap<DSETransformationRule<?, ?>, RuleInfo>();
+        for (DSETransformationRule<?, ?> rule : ruleInfos.keySet()) {
             result.put(rule, ruleInfos.get(rule).clone());
         }
         return result;
@@ -110,10 +110,10 @@ public class Guidance implements Cloneable {
                     initialMarking, rules, predicates);
 
             // set occurrence for the rule info
-            Map<TransformationRule<?, ?>, Integer> occurrence = petriNetAbstractionResult
+            Map<DSETransformationRule<?, ?>, Integer> occurrence = petriNetAbstractionResult
                     .getSolutions().get(0).getOccurrence();
 
-            for (TransformationRule<?, ?> rule : rules) {
+            for (DSETransformationRule<?, ?> rule : rules) {
 
                 RuleInfo ruleInfo = ruleInfos.get(rule);
                 if (ruleInfo == null) {
@@ -128,18 +128,18 @@ public class Guidance implements Cloneable {
 
     }
 
-    public void ruleFired(TransformationRule<?, ?> rule, RuleEngine ruleEngine) {
+    public void ruleFired(DSETransformationRule<?, ?> rule, RuleEngine ruleEngine) {
         ruleInfos.get(rule).incApp();
         resetActivations(ruleEngine);
     }
 
-    public void ruleUndone(TransformationRule<?, ?> rule, RuleEngine ruleEngine) {
+    public void ruleUndone(DSETransformationRule<?, ?> rule, RuleEngine ruleEngine) {
         ruleInfos.get(rule).decApp();
         resetActivations(ruleEngine);
     }
 
     public void resetActivations(RuleEngine ruleEngine) {
-        for (TransformationRule<?, ?> rule : rules) {
+        for (DSETransformationRule<?, ?> rule : rules) {
             Set<?> genericSet = ruleEngine.getActivations(rule.getRuleSpecification());
             @SuppressWarnings("unchecked")
             Set<Activation<?>> activationSet = (Set<Activation<?>>) genericSet;
@@ -156,7 +156,7 @@ public class Guidance implements Cloneable {
         return EvaluationResult.NONE;
     }
 
-    public List<TransformationRule<?, ?>> evaluateSelectionCriterias() {
+    public List<DSETransformationRule<?, ?>> evaluateSelectionCriterias() {
         for (RuleInfo ruleInfo : ruleInfos.values()) {
             ruleInfo.resetSelectionPriority();
         }
@@ -164,7 +164,7 @@ public class Guidance implements Cloneable {
             criteria.evaluate(criteriaContext);
         }
         if (sortedRules == null || sortedRules.isEmpty()) {
-            sortedRules = new ArrayList<TransformationRule<?, ?>>(rules);
+            sortedRules = new ArrayList<DSETransformationRule<?, ?>>(rules);
         }
         Collections.sort(sortedRules, rulePriorityComparator);
         return sortedRules;
@@ -177,7 +177,7 @@ public class Guidance implements Cloneable {
     }
 
     /**
-     * Defines a method to calculate a {@link IDependencyGraph} from {@link TransformationRule}s, global constraints and
+     * Defines a method to calculate a {@link IDependencyGraph} from {@link DSETransformationRule}s, global constraints and
      * goal patterns. A derived class can be registered through an extension, and can be reached with the
      * {@link StrategyBuildingBlocksManager} singleton. The graph will be reachable from the {@link ThreadContext}.
      * 
@@ -208,25 +208,25 @@ public class Guidance implements Cloneable {
         this.dependencyGraph = dependencyGraph;
     }
 
-    public Map<TransformationRule<?, ?>, RuleInfo> getRuleInfos() {
+    public Map<DSETransformationRule<?, ?>, RuleInfo> getRuleInfos() {
         return ruleInfos;
     }
 
-    public void setRuleInfos(Map<TransformationRule<?, ?>, RuleInfo> ruleInfos) {
+    public void setRuleInfos(Map<DSETransformationRule<?, ?>, RuleInfo> ruleInfos) {
         this.ruleInfos = ruleInfos;
     }
 
-    public RuleInfo addPriorityAndCostRuleInfo(TransformationRule<?, ?> rule, double priority,
+    public RuleInfo addPriorityAndCostRuleInfo(DSETransformationRule<?, ?> rule, double priority,
             double cost) {
         RuleInfo ruleInfo = new RuleInfo(priority, cost);
         return ruleInfos.put(rule, ruleInfo);
     }
 
-    public RuleInfo addPriorityRuleInfo(TransformationRule<?, ?> rule, double priority) {
+    public RuleInfo addPriorityRuleInfo(DSETransformationRule<?, ?> rule, double priority) {
         return addPriorityAndCostRuleInfo(rule, priority, 0);
     }
 
-    public RuleInfo addCostRuleInfo(TransformationRule<?, ?> rule, double cost) {
+    public RuleInfo addCostRuleInfo(DSETransformationRule<?, ?> rule, double cost) {
         return addPriorityAndCostRuleInfo(rule, 0, cost);
     }
 
@@ -262,11 +262,11 @@ public class Guidance implements Cloneable {
         this.constraints = constraints;
     }
 
-    public Set<TransformationRule<?, ?>> getRules() {
+    public Set<DSETransformationRule<?, ?>> getRules() {
         return rules;
     }
 
-    public void setRules(Set<TransformationRule<?, ?>> rules) {
+    public void setRules(Set<DSETransformationRule<?, ?>> rules) {
         this.rules = rules;
     }
 

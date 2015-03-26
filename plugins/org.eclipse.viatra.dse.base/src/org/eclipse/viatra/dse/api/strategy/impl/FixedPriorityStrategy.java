@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -47,7 +47,7 @@ public class FixedPriorityStrategy implements IStrategy {
     private DesignSpaceManager dsm;
     private boolean isInterrupted = false;
 
-    protected Map<TransformationRule<?, ?>, Integer> priorities = new HashMap<TransformationRule<?, ?>, Integer>();
+    protected Map<DSETransformationRule<?, ?>, Integer> priorities = new HashMap<DSETransformationRule<?, ?>, Integer>();
     private FilterOptions filterOptions;
 
     private Logger logger = Logger.getLogger(IStrategy.class);
@@ -92,7 +92,7 @@ public class FixedPriorityStrategy implements IStrategy {
      *            The priority of the rule.
      * @return The actual instance to enable a builder pattern like usage.
      */
-    public FixedPriorityStrategy withRulePriority(TransformationRule<?, ?> rule, int priority) {
+    public FixedPriorityStrategy withRulePriority(DSETransformationRule<?, ?> rule, int priority) {
         priorities.put(rule, priority);
         return this;
     }

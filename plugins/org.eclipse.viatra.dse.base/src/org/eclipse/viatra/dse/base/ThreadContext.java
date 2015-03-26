@@ -25,7 +25,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -136,7 +136,7 @@ public class ThreadContext {
             @Override
             protected void doExecute() {
                 // add rules to the RuleEngine
-                for (TransformationRule<?, ?> tr : globalContext.getTransformations()) {
+                for (DSETransformationRule<?, ?> tr : globalContext.getTransformations()) {
                     ruleEngine.addRule(tr.getRuleSpecification());
                 }
             }

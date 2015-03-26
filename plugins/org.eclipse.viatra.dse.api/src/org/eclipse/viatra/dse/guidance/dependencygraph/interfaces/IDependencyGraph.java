@@ -15,11 +15,11 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 
 public interface IDependencyGraph {
 
-    void addNode(TransformationRule<?, ?> transformationRule);
+    void addNode(DSETransformationRule<?, ?> transformationRule);
 
     void addNode(PatternWithCardinality pattern, NodeType nodeType);
 
@@ -31,7 +31,7 @@ public interface IDependencyGraph {
 
     Set<IEdge> getEdges();
 
-    INode getNodeByTransformationRule(TransformationRule<?, ?> rule);
+    INode getNodeByTransformationRule(DSETransformationRule<?, ?> rule);
 
     INode getNodeByGoalPattern(PatternWithCardinality pattern);
 

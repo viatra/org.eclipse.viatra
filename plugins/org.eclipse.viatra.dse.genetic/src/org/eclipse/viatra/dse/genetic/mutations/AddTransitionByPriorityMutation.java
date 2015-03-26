@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
@@ -50,7 +50,7 @@ public class AddTransitionByPriorityMutation implements IMutateTrajectory {
         if (guidance == null) {
             throw new DSEException("Guidance is missing for AddTransitionByPriorityMutation.");
         }
-        Map<TransformationRule<?, ?>, RuleInfo> ruleInfos = guidance.getRuleInfos();
+        Map<DSETransformationRule<?, ?>, RuleInfo> ruleInfos = guidance.getRuleInfos();
 
         double bestPriority = Double.MIN_VALUE;
         for (ITransition iTransition : availableTransitions) {

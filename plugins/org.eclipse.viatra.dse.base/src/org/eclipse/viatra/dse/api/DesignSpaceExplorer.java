@@ -184,14 +184,14 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Adds a {@link TransformationRule}.
+     * Adds a {@link DSETransformationRule}.
      * 
      * @param rule
      *            The transformationRule.
      */
-    public void addTransformationRule(TransformationRule<?, ?> rule) {
+    public void addTransformationRule(DSETransformationRule<?, ?> rule) {
         checkArgument(rule != null);
-        for (TransformationRule<?, ?> rule2 : globalContext.getTransformations()) {
+        for (DSETransformationRule<?, ?> rule2 : globalContext.getTransformations()) {
             if (rule.getPrecondition().equals(rule2.getPrecondition())) {
                 throw new DSEException(
                         "Two transformation rule ("

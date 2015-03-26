@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
@@ -48,10 +48,10 @@ public class PermutationEncodingCrossover implements ICrossoverTrajectories {
         List<ITransition> child1 = new ArrayList<ITransition>(parent1.subList(0, index));
         outerLoop: for (ITransition transition : parent2) {
 
-            TransformationRule<?, ?> ruleToAdd = transition.getTransitionMetaData().rule;
+            DSETransformationRule<?, ?> ruleToAdd = transition.getTransitionMetaData().rule;
 
             for (ITransition childTransition : child1) {
-                TransformationRule<?, ?> childRule = childTransition.getTransitionMetaData().rule;
+                DSETransformationRule<?, ?> childRule = childTransition.getTransitionMetaData().rule;
                 if (ruleToAdd.equals(childRule)) {
                     continue outerLoop;
                 }
@@ -63,10 +63,10 @@ public class PermutationEncodingCrossover implements ICrossoverTrajectories {
         ArrayList<ITransition> child2 = new ArrayList<ITransition>(parent2.subList(0, index));
         outerLoop: for (ITransition transition : parent1) {
             
-            TransformationRule<?, ?> ruleToAdd = transition.getTransitionMetaData().rule;
+            DSETransformationRule<?, ?> ruleToAdd = transition.getTransitionMetaData().rule;
             
             for (ITransition childTransition : child2) {
-                TransformationRule<?, ?> childRule = childTransition.getTransitionMetaData().rule;
+                DSETransformationRule<?, ?> childRule = childTransition.getTransitionMetaData().rule;
                 if (ruleToAdd.equals(childRule)) {
                     continue outerLoop;
                 }

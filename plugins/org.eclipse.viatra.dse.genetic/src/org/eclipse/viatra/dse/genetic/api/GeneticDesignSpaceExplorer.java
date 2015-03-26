@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.core.MainGeneticStrategy;
@@ -56,11 +56,11 @@ public class GeneticDesignSpaceExplorer {
         dse.setSerializerFactory(serializerFactory);
     }
 
-    public void addTransformationRule(TransformationRule<?, ?> rule) {
+    public void addTransformationRule(DSETransformationRule<?, ?> rule) {
         dse.addTransformationRule(rule);
     }
 
-    public void addTransformationRule(TransformationRule<?, ?> rule, int priority) {
+    public void addTransformationRule(DSETransformationRule<?, ?> rule, int priority) {
         dse.addTransformationRule(rule);
         if (guidance == null) {
             guidance = new Guidance();

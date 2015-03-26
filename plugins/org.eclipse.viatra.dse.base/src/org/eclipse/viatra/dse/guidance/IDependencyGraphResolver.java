@@ -13,11 +13,11 @@ package org.eclipse.viatra.dse.guidance;
 import java.util.Set;
 
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IDependencyGraph;
 
 /**
- * Defines a method to calculate a {@link IDependencyGraph} from {@link TransformationRule}s.
+ * Defines a method to calculate a {@link IDependencyGraph} from {@link DSETransformationRule}s.
  * 
  * @author Andras Szabolcs Nagy
  * 
@@ -25,7 +25,7 @@ import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IDependencyGra
 public interface IDependencyGraphResolver {
 
     /**
-     * Creates a {@link IDependencyGraph} from the give {@link TransformationRule}s, constraints and goal patterns.
+     * Creates a {@link IDependencyGraph} from the give {@link DSETransformationRule}s, constraints and goal patterns.
      * 
      * @param transformations
      *            The transformation rules.
@@ -35,6 +35,6 @@ public interface IDependencyGraphResolver {
      *            The goal patterns
      * @return A dependency graph between the given parameters.
      */
-    IDependencyGraph createRuleDependencyGraph(Set<TransformationRule<?, ?>> transformations,
+    IDependencyGraph createRuleDependencyGraph(Set<DSETransformationRule<?, ?>> transformations,
             Set<PatternWithCardinality> constraints, Set<PatternWithCardinality> goalPatterns);
 }

@@ -19,7 +19,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.EdgeType;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IDependencyGraph;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IEdge;
@@ -31,12 +31,12 @@ public class DependencyGraph implements IDependencyGraph {
     private final Set<INode> nodes = new HashSet<INode>();
     private final Set<IEdge> edges = new HashSet<IEdge>();
 
-    private final Map<TransformationRule<?, ?>, INode> nodesByTransformationRule = new HashMap<TransformationRule<?, ?>, INode>();
+    private final Map<DSETransformationRule<?, ?>, INode> nodesByTransformationRule = new HashMap<DSETransformationRule<?, ?>, INode>();
     private final Map<PatternWithCardinality, INode> nodesByGoalPattern = new HashMap<PatternWithCardinality, INode>();
     private final Map<PatternWithCardinality, INode> nodesByConstraint = new HashMap<PatternWithCardinality, INode>();
 
     @Override
-    public void addNode(TransformationRule<?, ?> transformationRule) {
+    public void addNode(DSETransformationRule<?, ?> transformationRule) {
         Node node = new Node(transformationRule);
         nodes.add(node);
         nodesByTransformationRule.put(node.getTransformationRule(), node);
@@ -94,7 +94,7 @@ public class DependencyGraph implements IDependencyGraph {
     }
 
     @Override
-    public INode getNodeByTransformationRule(TransformationRule<?, ?> rule) {
+    public INode getNodeByTransformationRule(DSETransformationRule<?, ?> rule) {
         return nodesByTransformationRule.get(rule);
     }
 

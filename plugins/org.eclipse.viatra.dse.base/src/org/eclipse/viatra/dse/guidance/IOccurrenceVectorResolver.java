@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EModelElement;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 
 /**
- * This interface defines a method which calculates an occurrence vector for the {@link TransformationRule}s. Basically
+ * This interface defines a method which calculates an occurrence vector for the {@link DSETransformationRule}s. Basically
  * it is lower bound for the how many times they should be executed.
  * 
  * @author Andras Szabolcs Nagy
@@ -27,19 +27,19 @@ import org.eclipse.viatra.dse.api.TransformationRule;
 public interface IOccurrenceVectorResolver {
 
     /**
-     * Calculates an occurrence vector for the {@link TransformationRule}s.
+     * Calculates an occurrence vector for the {@link DSETransformationRule}s.
      * 
      * @param eList
      * 
      * @param initialMarking
      *            The initial marking.
      * @param transformations
-     *            The {@link TransformationRule}s.
+     *            The {@link DSETransformationRule}s.
      * @param targetMarking
      *            The targetMarking.
      * @return The occurrence vector defined by a map.
      */
     PetriAbstractionResult calculateOccurrenceVector(List<? extends EModelElement> classesAndReferences,
             Map<? extends EModelElement, Integer> initialMarking,
-            Set<TransformationRule<?, ?>> transformations, List<Predicate> predicates);
+            Set<DSETransformationRule<?, ?>> transformations, List<Predicate> predicates);
 }

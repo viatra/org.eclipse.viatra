@@ -11,11 +11,11 @@
 package org.eclipse.viatra.dse.guidance;
 
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 
 public interface IRuleApplicationNumberChanged {
 
-    void increment(TransformationRule<?, ?> rule, RuleEngine ruleEngine);
+    void increment(DSETransformationRule<?, ?> rule, RuleEngine ruleEngine);
 
-    void decrement(TransformationRule<?, ?> rule, RuleEngine ruleEngine);
+    void decrement(DSETransformationRule<?, ?> rule, RuleEngine ruleEngine);
 }

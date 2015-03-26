@@ -33,7 +33,7 @@ import com.google.common.base.Preconditions;
  *            An IncQuery pattern matcher - left hand side of the rule
  * 
  */
-public class TransformationRule<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends
+public class DSETransformationRule<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> extends
         BatchTransformationRule<Match, Matcher> {
 
     public interface ActivationCostProcessor<Match> {
@@ -45,7 +45,7 @@ public class TransformationRule<Match extends IPatternMatch, Matcher extends Inc
     private ActivationCostProcessor<Match> activationCostProcessor;
 
     
-    public TransformationRule(String name, IQuerySpecification<Matcher> querySpec,
+    public DSETransformationRule(String name, IQuerySpecification<Matcher> querySpec,
             IMatchProcessor<Match> action) {
         super(name, querySpec, BatchTransformationRule.STATELESS_RULE_LIFECYCLE, action);
 
@@ -55,7 +55,7 @@ public class TransformationRule<Match extends IPatternMatch, Matcher extends Inc
 
     }
 
-    public TransformationRule(IQuerySpecification<Matcher> querySpec,
+    public DSETransformationRule(IQuerySpecification<Matcher> querySpec,
             IMatchProcessor<Match> action) {
         this(querySpec.getFullyQualifiedName(), querySpec, action);
     }

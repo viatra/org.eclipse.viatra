@@ -32,7 +32,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpaceManager;
 import org.eclipse.viatra.dse.designspace.api.IState;
@@ -78,8 +78,8 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
     private Logger logger = Logger.getLogger(this.getClass());
 
     private boolean isNewState = false;
-    private Map<TransformationRule<?, ?>, ActivationFitnessProcessor> activationFitnessProcessors;
-    private Map<TransformationRule<?, ?>, String> activationFitnessProcessorNames;
+    private Map<DSETransformationRule<?, ?>, ActivationFitnessProcessor> activationFitnessProcessors;
+    private Map<DSETransformationRule<?, ?>, String> activationFitnessProcessorNames;
     private ThreadContext context;
 
     private static final long SLEEP_INTERVAL = 1;
@@ -333,8 +333,8 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             Object matchHash = generateMatchCode(match);
 
             RuleSpecification<?> ruleSpec = activation.getInstance().getSpecification();
-            TransformationRule<?, ?> specification = null; 
-            for (TransformationRule<?, ?> t : context.getGlobalContext().getTransformations()) {
+            DSETransformationRule<?, ?> specification = null; 
+            for (DSETransformationRule<?, ?> t : context.getGlobalContext().getTransformations()) {
                 if (t.getRuleSpecification().equals(ruleSpec)) {
                     specification = t;
                 }
@@ -402,11 +402,11 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         }
     }
 
-    public void registerActivationCostProcessor(String name, TransformationRule<?, ?> rule,
+    public void registerActivationCostProcessor(String name, DSETransformationRule<?, ?> rule,
             ActivationFitnessProcessor activationFitnessProcessor) {
         if (activationFitnessProcessors == null || activationFitnessProcessorNames == null) {
-            activationFitnessProcessors = new HashMap<TransformationRule<?, ?>, ActivationFitnessProcessor>();
-            activationFitnessProcessorNames = new HashMap<TransformationRule<?, ?>, String>();
+            activationFitnessProcessors = new HashMap<DSETransformationRule<?, ?>, ActivationFitnessProcessor>();
+            activationFitnessProcessorNames = new HashMap<DSETransformationRule<?, ?>, String>();
         }
         activationFitnessProcessors.put(rule, activationFitnessProcessor);
         activationFitnessProcessorNames.put(rule, name);

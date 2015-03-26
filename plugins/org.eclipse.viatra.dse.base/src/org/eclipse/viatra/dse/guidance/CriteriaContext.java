@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IDependencyGraph;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IEdge;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.INode;
@@ -31,7 +31,7 @@ public class CriteriaContext {
         return guidance.getDependencyGraph();
     }
 
-    public Map<TransformationRule<?, ?>, RuleInfo> getRuleInfos() {
+    public Map<DSETransformationRule<?, ?>, RuleInfo> getRuleInfos() {
         return guidance.getRuleInfos();
     }
 

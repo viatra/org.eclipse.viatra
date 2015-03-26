@@ -20,7 +20,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpaceChangeHandler;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
@@ -173,7 +173,7 @@ public class DynamicSPT implements IDesignSpaceChangeHandler, IPathfinder {
         if (s.getShortestTrajectory().getTrajectoryLength() > get(solutionState).getCost()) {
 
             List<Object> transitionIds = new LinkedList<Object>();
-            List<TransformationRule<?, ?>> transformationRules = new LinkedList<TransformationRule<?, ?>>();
+            List<DSETransformationRule<?, ?>> transformationRules = new LinkedList<DSETransformationRule<?, ?>>();
 
             // get the transition sequence that leads to the solution
             Deque<ITransition> bestTrajectory = getBestTransitionTrajectory(solutionState);

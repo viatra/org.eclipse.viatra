@@ -33,7 +33,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 public class SolutionTrajectory {
 
     private final List<Object> transitionIds;
-    private final List<TransformationRule<?, ?>> transformationRules;
+    private final List<DSETransformationRule<?, ?>> transformationRules;
     private final IStateSerializerFactory stateSerializerFactory;
     private Map<String, Double> fitness;
 
@@ -44,7 +44,7 @@ public class SolutionTrajectory {
     private int currentIndex;
 
     public SolutionTrajectory(final List<Object> transitionIds,
-            final List<TransformationRule<?, ?>> transformationRules,
+            final List<DSETransformationRule<?, ?>> transformationRules,
             final IStateSerializerFactory stateSerializerFactory) {
         checkNotNull(transformationRules, "Parameter transformationRules cannot be null!");
         checkNotNull(stateSerializerFactory, "Parameter stateSerializerFactory cannot be null!");
@@ -94,7 +94,7 @@ public class SolutionTrajectory {
         checkArgument(rootEObject != null, "The model cannot be null!");
 
         // cast for the ".process(match)" method.
-        TransformationRule<?, ?> tr = transformationRules.get(index);
+        DSETransformationRule<?, ?> tr = transformationRules.get(index);
 
         IncQueryMatcher<?> matcher = tr.getPrecondition().getMatcher(engine);
 
@@ -119,7 +119,7 @@ public class SolutionTrajectory {
         return transitionIds;
     }
 
-    public List<TransformationRule<?,?>> getTransformationRules() {
+    public List<DSETransformationRule<?,?>> getTransformationRules() {
         return transformationRules;
     }
 

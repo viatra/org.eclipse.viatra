@@ -11,7 +11,7 @@
 package org.eclipse.viatra.dse.guidance;
 
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 
 public class ApplicationVectorUpdater implements IRuleApplicationNumberChanged {
 
@@ -22,12 +22,12 @@ public class ApplicationVectorUpdater implements IRuleApplicationNumberChanged {
     }
 
     @Override
-    public void increment(TransformationRule<?, ?> rule, RuleEngine ruleEngine) {
+    public void increment(DSETransformationRule<?, ?> rule, RuleEngine ruleEngine) {
         guidance.ruleFired(rule, ruleEngine);
     }
 
     @Override
-    public void decrement(TransformationRule<?, ?> rule, RuleEngine ruleEngine) {
+    public void decrement(DSETransformationRule<?, ?> rule, RuleEngine ruleEngine) {
         guidance.ruleUndone(rule, ruleEngine);
     }
 

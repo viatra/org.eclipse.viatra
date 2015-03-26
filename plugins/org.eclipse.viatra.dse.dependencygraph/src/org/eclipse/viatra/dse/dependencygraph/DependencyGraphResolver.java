@@ -23,7 +23,7 @@ import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.ModelElementMetaData;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.RuleMetaData;
-import org.eclipse.viatra.dse.api.TransformationRule;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.guidance.IDependencyGraphResolver;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.EdgeType;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.EdgeType.ClassType;
@@ -35,7 +35,7 @@ import org.eclipse.viatra.dse.guidance.dependencygraph.simpleimpl.DependencyGrap
 public class DependencyGraphResolver implements IDependencyGraphResolver {
 
     @Override
-    public IDependencyGraph createRuleDependencyGraph(Set<TransformationRule<?, ?>> transformations,
+    public IDependencyGraph createRuleDependencyGraph(Set<DSETransformationRule<?, ?>> transformations,
             Set<PatternWithCardinality> constraints, Set<PatternWithCardinality> goalPatterns) {
 
         IDependencyGraph dependencyGraph = new DependencyGraph();
@@ -50,7 +50,7 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
             dependencyGraph.addNode(constraint, NodeType.CONSTRAINT);
         }
 
-        for (TransformationRule<?, ?> rule : transformations) {
+        for (DSETransformationRule<?, ?> rule : transformations) {
             dependencyGraph.addNode(rule);
         }
 
@@ -59,7 +59,7 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
         // edges goes rhs -> lhs only
 
         // for each rule (edges can only start from a rule, only they have rhs)
-        for (TransformationRule<?, ?> rule : transformations) {
+        for (DSETransformationRule<?, ?> rule : transformations) {
 
             // for each modelElement which is in the RHS of the rule
 
@@ -98,7 +98,7 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
                     createEdges(dependencyGraph, rule, modelElement, metaData, targetNode, null, constraint, null);
                 }
 
-                for (TransformationRule<?, ?> targetRule : transformations) {
+                for (DSETransformationRule<?, ?> targetRule : transformations) {
                     INode targetNode = dependencyGraph.getNodeByTransformationRule(targetRule);
                     createEdges(dependencyGraph, rule, modelElement, metaData, targetNode, null, null, targetRule);
                 }
@@ -112,9 +112,9 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
         return dependencyGraph;
     }
 
-    private void createEdges(IDependencyGraph dependencyGraph, TransformationRule<?, ?> rule,
+    private void createEdges(IDependencyGraph dependencyGraph, DSETransformationRule<?, ?> rule,
             EModelElement modelElement, ModelElementMetaData metaData, INode targetNode, PatternWithCardinality goal,
-            PatternWithCardinality constraint, TransformationRule<?, ?> targetRule) {
+            PatternWithCardinality constraint, DSETransformationRule<?, ?> targetRule) {
 
         // get target's classifiers
         Map<? extends EModelElement, Integer> modelElementLHS;
