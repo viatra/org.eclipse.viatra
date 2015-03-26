@@ -68,6 +68,7 @@ public class ThreadContext {
     private Guidance guidance;
     private boolean isFirstThread = false;
     private IObjective[][] leveledObjectives;
+    private boolean isThereHardObjective;
 
     /**
      * Creates a {@link ThreadContext} and sets it up to be initialized on the given {@link TransactionalEditingDomain}
@@ -183,6 +184,9 @@ public class ThreadContext {
 
         for (IObjective objective : objectives) {
             objective.init(this);
+            if (objective.isHardObjective()) {
+                isThereHardObjective = true;
+            }
         }
         for (IGlobalConstraint globalConstraint : globalConstraints) {
             globalConstraint.init(this);
@@ -209,7 +213,12 @@ public class ThreadContext {
             }
         }
 
-        result.setSatisifiesHardObjectives(satisifiesHardObjectives);
+        if (isThereHardObjective) {
+            result.setSatisifiesHardObjectives(satisifiesHardObjectives);
+        }
+        else {
+            result.setSatisifiesHardObjectives(false);
+        }
 
         fitness = result;
 
