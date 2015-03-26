@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableList;
  * @author Zoltan Ujhelyi
  * @since 1.0
  */
-public abstract class PDisjunctionRewriterCacher extends PDisjunctionRewriter {
+public class PDisjunctionRewriterCacher extends PDisjunctionRewriter {
 
     private final List<PDisjunctionRewriter> rewriterChain;
     private WeakHashMap<PDisjunction, PDisjunction> cachedResults =
@@ -31,6 +31,10 @@ public abstract class PDisjunctionRewriterCacher extends PDisjunctionRewriter {
 
     public PDisjunctionRewriterCacher(PDisjunctionRewriter rewriter) {
         rewriterChain = ImmutableList.of(rewriter);
+    }
+    
+    public PDisjunctionRewriterCacher(PDisjunctionRewriter... rewriters) {
+        rewriterChain = ImmutableList.copyOf(rewriters);
     }
     
     public PDisjunctionRewriterCacher(List<PDisjunctionRewriter> rewriterChain) {

@@ -51,6 +51,9 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstr
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PDisjunctionRewriter;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PDisjunctionRewriterCacher;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.SurrogateQueryRewriter;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.incquery.runtime.rete.recipes.AntiJoinRecipe;
@@ -92,13 +95,13 @@ public class ReteRecipeCompiler {
 	private IQueryPlannerStrategy plannerStrategy;
 	private IPatternMatcherContext context;
 	private IQueryBackendHintProvider hintProvider;
-	private PBodyNormalizer normalizer;
+	private PDisjunctionRewriter normalizer;
 	
 	public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, IPatternMatcherContext context, IQueryBackendHintProvider hintProvider) {
 		super();
 		this.plannerStrategy = plannerStrategy;
 		this.context = context;
-		this.normalizer = new PBodyNormalizer(context);
+		this.normalizer = new PDisjunctionRewriterCacher(new SurrogateQueryRewriter(), new PBodyNormalizer(context));
 		this.hintProvider = hintProvider;
 	}
 

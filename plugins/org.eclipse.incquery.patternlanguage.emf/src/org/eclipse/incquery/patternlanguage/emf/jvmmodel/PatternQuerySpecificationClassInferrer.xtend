@@ -73,7 +73,6 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import org.eclipse.incquery.runtime.matchers.psystem.queries.BasePQuery
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.incquery.patternlanguage.emf.specification.GenericEMFPatternPQuery
@@ -433,12 +432,6 @@ class PatternQuerySpecificationClassInferrer {
 	def findGeneratedSpecification(PQuery query) {
 		if (query instanceof GenericEMFPatternPQuery) {
 			return (query as GenericEMFPatternPQuery).getPattern.findInferredSpecification
-		} else {
-			//XXX there is no easy way to access query specification class from PQuery
-			val cl = query.class.enclosingClass
-			if (cl != null && typeof(IQuerySpecification).isAssignableFrom(cl)) {
-				return typeRef(cl)
-			}
 		}
 		throw new UnsupportedOperationException("Cannot find query specification for PQuery " + query.fullyQualifiedName)
 	}

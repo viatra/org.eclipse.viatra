@@ -32,6 +32,10 @@ public class SingletonExtensionFactory implements IExecutableExtension, IExecuta
     private String clazzName;
     private Bundle bundle;
 
+    protected Bundle getBundle() {
+        return bundle;
+    }
+    
     @Override
     public Object create() throws CoreException {
         try {

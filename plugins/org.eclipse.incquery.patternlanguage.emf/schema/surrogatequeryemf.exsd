@@ -70,11 +70,14 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="surrogate-query-fqn" type="string" use="required">
+         <attribute name="surrogate-query" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully-qualified name of the query that behaves as a surrogate for the selected derived feature. By defining a surrogate query, a not well-behaving derived feature can be supported by EMF-IncQuery by replacing usages of the feature in patterns by a pattern call to the surrogate query.
+                  The query that implements the surrogate functionality.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

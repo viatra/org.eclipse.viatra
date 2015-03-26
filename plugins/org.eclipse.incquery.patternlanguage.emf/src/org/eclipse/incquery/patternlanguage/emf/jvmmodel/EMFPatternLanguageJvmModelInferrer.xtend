@@ -142,20 +142,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 			initializePrivateSpecification(querySpecificationClass, pattern, matcherClass, null /* no match class */, builder)
 		]
 	}
-	
-	def collectSurrogateQueries(PatternModel model) {
-		val existingSpecifications = newHashSet
-		SurrogateQueryRegistry.instance.allSurrogateQueryFQNMap.entrySet.forEach[
-			val name = it.value	
-			val specification = QuerySpecificationRegistry.getQuerySpecification(name)
-				//XXX In case of no existing specification the EPMToPBody will fail to rewrite references; but there more specific info can be provided
-			if (specification != null) {
-				existingSpecifications.add(specification)
-			}
-		]
-		new SpecificationBuilder(existingSpecifications)
-	}
-	
+		
    	/**
 	 * Is called for each Pattern instance in a resource.
 	 *
@@ -167,7 +154,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 */
    	def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
 	   	try {
-	   		val builder = model.collectSurrogateQueries
+	   		val builder = new SpecificationBuilder()
    			for (pattern : model.patterns){
    				pattern.infer(acceptor, builder, isPrelinkingPhase)
    			}

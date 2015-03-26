@@ -338,17 +338,6 @@ public class EPMToPBody {
     protected void gatherPathSegment(Type segmentType, PVariable src, PVariable trg, final PBody pBody) throws SpecificationBuilderException {
         if (segmentType instanceof ReferenceType) { // EMF-specific
             EStructuralFeature typeObject = ((ReferenceType) segmentType).getRefname();
-            boolean hasSurrogateQueryFQN = SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(typeObject);
-            if(hasSurrogateQueryFQN) {
-            	if (gatherSurrogateQueryCall(src, trg, pBody, typeObject)) {
-            	    //The gather call has created the pattern calls, no additional steps necessary
-            	    return;
-            	} else {
-            	    //Surrogate query defined but not available
-            	    //TODO better error reporting (e.g. with PProblems) required
-            	    context.logWarning(String.format("Surrogate query for reference %s declared but not found.", typeObject.getName()));
-            	}
-            }
            	if (context.edgeInterpretation() == EdgeInterpretation.TERNARY) {
            	    new TypeTernary(pBody, context, newVirtual(pBody), src, trg, typeObject, context.printType(typeObject));
            	} else {
@@ -359,24 +348,6 @@ public class EPMToPBody {
                     segmentType.eClass().getName(), patternFQN, typeStr(segmentType) }, "Unsupported navigation step",
                     pattern);
     }
-
-	private boolean gatherSurrogateQueryCall(PVariable src, PVariable trg, final PBody pBody,
-			EStructuralFeature typeObject) throws SpecificationBuilderException {
-		String surrogateQueryFQN = SurrogateQueryRegistry.instance().getSurrogateQueryFQN(typeObject);
-        IQuerySpecification<?> specification = patternMap.get(surrogateQueryFQN);
-		if(specification == null) {
-		   // XXX patternMap must contain surrogate query specifications, but QueryExplorer cannot put generated specifications into it
-		   context.logWarning(String.format("Surrogate query specification %s not added to SpecificationBuilder, trying from QuerySpecificationRegistry", surrogateQueryFQN));
-		   specification = QuerySpecificationRegistry.getQuerySpecification(surrogateQueryFQN);
-		}
-		if(specification == null) {
-		    return false;
-		}
-		PQuery internalQueryRepresentation = specification.getInternalQueryRepresentation();
-		Tuple variablesTuple = new FlatTuple(src, trg);
-		new PositivePatternCall(pBody, variablesTuple, internalQueryRepresentation);
-		return true;
-	}
 
     protected void gatherCheckConstraint(final CheckConstraint check, final PBody pBody) throws SpecificationBuilderException {
         XExpression expression = check.getExpression();

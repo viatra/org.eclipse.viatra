@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -39,7 +40,7 @@ public class ExtensionBasedSurrogateQueryLoader {
     static final String EXTENSIONID = "org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf";
 
     private Multimap<String, String> contributingPluginOfFeatureMap = HashMultimap.create();
-    private Map<EStructuralFeature, String> contributedSurrogateQueries;
+    private Map<EStructuralFeature, PQuery> contributedSurrogateQueries;
 
     private static final ExtensionBasedSurrogateQueryLoader instance = new ExtensionBasedSurrogateQueryLoader();
 
@@ -48,13 +49,13 @@ public class ExtensionBasedSurrogateQueryLoader {
     }
 
     public void loadKnownSurrogateQueriesIntoRegistry() {
-        Map<EStructuralFeature, String> knownSurrogateQueryFQNs = getKnownSurrogateQueryFQNs();
-        for (Entry<EStructuralFeature, String> entry : knownSurrogateQueryFQNs.entrySet()) {
+        Map<EStructuralFeature, PQuery> knownSurrogateQueryFQNs = getKnownSurrogateQueryFQNs();
+        for (Entry<EStructuralFeature, PQuery> entry : knownSurrogateQueryFQNs.entrySet()) {
             SurrogateQueryRegistry.instance().registerSurrogateQueryForFeature(entry.getKey(), entry.getValue());
         }
     }
     
-    public Map<EStructuralFeature, String> getKnownSurrogateQueryFQNs() {
+    public Map<EStructuralFeature, PQuery> getKnownSurrogateQueryFQNs() {
         if(contributedSurrogateQueries != null) {
             return contributedSurrogateQueries;
         }
@@ -79,13 +80,13 @@ public class ExtensionBasedSurrogateQueryLoader {
             String packageUri = el.getAttribute("package-nsUri");
             String className = el.getAttribute("class-name");
             String featureName = el.getAttribute("feature-name");
-            String surrogateQueryFQN = el.getAttribute("surrogate-query-fqn");
+            PQuery surrogateQuery = (PQuery) el.createExecutableExtension("surrogate-query");
             String contributorName = el.getContributor().getName();
             StringBuilder featureIdBuilder = new StringBuilder();
             checkState(packageUri != null, "Package NsURI cannot be null in extension");
             checkState(className != null, "Class name cannot be null in extension");
             checkState(featureName != null, "Feature name cannot be null in extension");
-            checkState(surrogateQueryFQN != null, "Query FQN cannot be null in extension");
+            checkState(surrogateQuery != null, "Query FQN cannot be null in extension");
             
             EPackage pckg = EPackage.Registry.INSTANCE.getEPackage(packageUri);
             featureIdBuilder.append(packageUri);
@@ -99,14 +100,14 @@ public class ExtensionBasedSurrogateQueryLoader {
             EStructuralFeature feature = cls.getEStructuralFeature(featureName);
             featureIdBuilder.append("##").append(featureName);
             checkState(feature != null, "Feature %s of EClass %s in package %s not found! (plug-in %s)", featureName, className, packageUri, contributorName);
-            String fqnInMap = contributedSurrogateQueries.get(feature);
+            PQuery fqnInMap = contributedSurrogateQueries.get(feature);
             if(fqnInMap != null) {
                 String duplicateSurrogateFormatString = DUPLICATE_SURROGATE_QUERY;
                 Collection<String> contributorPlugins = contributingPluginOfFeatureMap.get(featureIdBuilder.toString());
-                String duplicateSurrogateMessage = String.format(duplicateSurrogateFormatString, surrogateQueryFQN, featureName, className, packageUri, fqnInMap, contributorPlugins, contributorName);
+                String duplicateSurrogateMessage = String.format(duplicateSurrogateFormatString, surrogateQuery.getFullyQualifiedName(), featureName, className, packageUri, fqnInMap, contributorPlugins, contributorName);
                 throw new IllegalStateException(duplicateSurrogateMessage);
             }
-            contributedSurrogateQueries.put(feature, surrogateQueryFQN);
+            contributedSurrogateQueries.put(feature, surrogateQuery);
             contributingPluginOfFeatureMap.put(featureIdBuilder.toString(), contributorName);
         } catch (Exception e) {
             final Logger logger = Logger.getLogger(SurrogateQueryRegistry.class);

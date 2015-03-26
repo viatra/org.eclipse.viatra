@@ -64,6 +64,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.util.TypeReferences;
@@ -728,7 +729,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             EMFModelComprehension comprehension = new EMFModelComprehension(new BaseIndexOptions());
             if (!comprehension.representable(feature)) {
             	if(SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(feature)) {
-            		String surrogateQueryFQN = SurrogateQueryRegistry.instance().getSurrogateQueryFQN(feature);
+            		final PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(feature);
+                    String surrogateQueryFQN = surrogateQuery == null ? "(null)" : surrogateQuery.getFullyQualifiedName();
             		info("The derived/volatile feature " + feature.getName() + " of class "
                         + feature.getEContainingClass().getName()
                         + " used in the path expression has a surrogate query " + surrogateQueryFQN + " which will be used by EMF-IncQuery.",

@@ -27,7 +27,8 @@ import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
-import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry
+import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
+import org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory
 
 /**
  * @author Abel Hegedus
@@ -40,6 +41,7 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
     @Inject protected IErrorFeedback errorFeedback
     @Inject protected extension ExtensionGenerator exGen
     @Inject protected extension DerivedFeatureSourceCodeUtil codeGen
+    @Inject protected extension EMFPatternLanguageJvmModelInferrerUtil inferrerUtil
     
     protected static String SURROGATE_EXTENSION_POINT   = "org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf"
     protected static String SURROGATE_ERROR_CODE        = "org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf.e.error"
@@ -66,7 +68,9 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
                 contribAttribute(it, "package-nsUri", parameters.ePackage.nsURI)
                 contribAttribute(it, "class-name", parameters.source.name)
                 contribAttribute(it, "feature-name", parameters.feature.name)
-                contribAttribute(it, "surrogate-query-fqn", pattern.fullyQualifiedName)
+                contribAttribute(it, "surrogate-query", 
+                	typeof(PQueryExtensionFactory).canonicalName + ":" + pattern.utilPackageName + "." + pattern.querySpecificationClassName
+                )
               ]
             ]
           ]
@@ -94,14 +98,16 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
     }
   
     override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
-        pattern.gatherSurrogateParameters.forEach[ parameters | 
-            SurrogateQueryRegistry.instance.addDynamicSurrogateQueryForFeature(parameters.feature, pattern.fullyQualifiedName)
+        pattern.gatherSurrogateParameters.forEach[ parameters |
+        	//TODO readd dynamic surrogate support 
+            //SurrogateQueryRegistry.instance.addDynamicSurrogateQueryForFeature(parameters.feature, pattern.fullyQualifiedName)
         ]
     }
     
     override cleanUp(Pattern pattern, IFileSystemAccess fsa) {
-        pattern.gatherSurrogateParameters.forEach[ parameters | 
-            SurrogateQueryRegistry.instance.removeDynamicSurrogateQueryForFeature(parameters.feature)
+        pattern.gatherSurrogateParameters.forEach[ parameters |
+        	//TODO readd dynamic surrogate support 
+//            SurrogateQueryRegistry.instance.removeDynamicSurrogateQueryForFeature(parameters.feature)
         ]
     }
     
