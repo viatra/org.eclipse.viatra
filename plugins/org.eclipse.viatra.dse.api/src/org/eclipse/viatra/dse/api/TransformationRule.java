@@ -95,4 +95,8 @@ public class TransformationRule<Match extends IPatternMatch, Matcher extends Inc
         return getPrecondition().getFullyQualifiedName().hashCode();
     }
 
+    public void setMetaData(RuleMetaData metaData) {
+        this.metaData = metaData;
+    }
+
 }
