@@ -18,7 +18,7 @@
 		<tycho.version>0.22.0</tycho.version>
 		<tycho.extras.version>0.22.0</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
-		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra2/org.eclipse.viatra.git</tycho.scmUrl>
+		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra/org.eclipse.viatra.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=viatra</eclipse.bugzillaUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
