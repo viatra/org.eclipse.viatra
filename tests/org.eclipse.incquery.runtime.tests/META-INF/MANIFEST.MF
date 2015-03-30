@@ -4,7 +4,7 @@ Bundle-Name: Runtime rete engine tests
 Bundle-SymbolicName: org.eclipse.incquery.runtime.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Bundle-Vendor: The Eclipse EMF-IncQuery Project
 Require-Bundle: org.junit;bundle-version="4.8.0",
  org.eclipse.incquery.runtime;bundle-version="0.8.0",
  org.eclipse.incquery.patternlanguage;bundle-version="0.8.0",

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.incquery.querybasedfeatures.tooling.feature"
-      label="EMF-IncQuery Query Based Feature Tooling (Incubation)"
+      label="EMF-IncQuery Query Based Feature Tooling"
       version="1.0.0.qualifier"
-      provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
+      provider-name="The Eclipse EMF-IncQuery Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 

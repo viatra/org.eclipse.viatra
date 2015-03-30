@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.incquery.viewers.runtime.feature"
-      label="EMF-IncQuery Viewers Runtime (Incubation)"
+      label="EMF-IncQuery Viewers Runtime"
       version="1.0.0.qualifier"
       provider-name="Eclipse EMF-IncQuery"
       license-feature="org.eclipse.license"

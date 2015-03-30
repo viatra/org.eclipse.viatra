@@ -39,7 +39,7 @@
 			<plugin>
 				<groupId>org.eclipse.incquery</groupId>
 				<artifactId>incquery-maven-plugin</artifactId>
-				<version>${project.version}</version>
+				<version>${incquery.project.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -59,10 +59,11 @@
 					<dependency>
 						<groupId>org.eclipse.incquery</groupId>
 						<artifactId>org.eclipse.incquery.runtime.rete.recipes</artifactId>
-						<version>${project.version}</version>
+						<version>${incquery.project.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
+	<version>0.10.0-SNAPSHOT</version>
 </project>

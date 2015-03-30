@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.incquery.snapshot.editor
+Bundle-Name: EMF-IncQuery Snapshot Model Editor
 Bundle-SymbolicName: org.eclipse.incquery.snapshot.editor;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.incquery.snapshot.EIQSnapshot.presentation.EiqsnapshotEditorPlugin$Implementation
-Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Bundle-Vendor: The Eclipse EMF-IncQuery Project
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.incquery.snapshot.EIQSnapshot.presentation

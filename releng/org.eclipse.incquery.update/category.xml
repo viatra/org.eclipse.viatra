@@ -3,9 +3,6 @@
    <feature url="features/org.eclipse.incquery.runtime.gmf.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature" version="1.0.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature" version="1.0.0.qualifier">
-      <category name="org.eclipse.incquery"/>
-   </feature>
    <feature url="features/org.eclipse.incquery.uml.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.uml.feature" version="1.0.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
@@ -13,9 +10,6 @@
       <category name="org.eclipse.incquery"/>
    </feature>
    <feature url="features/org.eclipse.incquery.runtime.gmf.feature.source_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature.source" version="1.0.0.qualifier">
-      <category name="org.eclipse.incquery.sources"/>
-   </feature>
-   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature.source_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature.source" version="1.0.0.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
    <feature url="features/org.eclipse.incquery.uml.feature.source_1.0.0.qualifier.jar" id="org.eclipse.incquery.uml.feature.source" version="1.0.0.qualifier">

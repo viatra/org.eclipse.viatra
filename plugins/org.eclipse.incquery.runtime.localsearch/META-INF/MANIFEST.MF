@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Local Search Engine for EMF-IncQuery (Incubation)
+Bundle-Name: Local Search Engine for EMF-IncQuery
 Bundle-SymbolicName: org.eclipse.incquery.runtime.localsearch
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Eclipse EMF-IncQuery Project

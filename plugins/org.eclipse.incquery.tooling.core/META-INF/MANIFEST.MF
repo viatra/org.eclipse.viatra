@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IncQuery Tooling (Incubation)
+Bundle-Name: IncQuery Tooling
 Bundle-SymbolicName: org.eclipse.incquery.tooling.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.incquery.tooling.core.generator.IncQueryGeneratorPlugin

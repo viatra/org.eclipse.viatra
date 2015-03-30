@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.incquery.xcore.ui
+Bundle-Name: IncQueryXcore Metamodel Editor
 Bundle-SymbolicName: org.eclipse.incquery.xcore.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -27,3 +27,4 @@ Import-Package: org.eclipse.xtext.xbase.lib,
  org.apache.log4j
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.incquery.xcore.ui.IncQueryXcoreActivator
+Bundle-Vendor: The Eclipse EMF-IncQuery Project

@@ -3,7 +3,7 @@
    <feature url="features/org.eclipse.incquery.runtime.gmf.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature" version="1.0.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature_0.10.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature" version="0.10.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
    <feature url="features/org.eclipse.incquery.uml.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.uml.feature" version="1.0.0.qualifier">
@@ -15,7 +15,7 @@
    <feature url="features/org.eclipse.incquery.runtime.gmf.feature.source_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.gmf.feature.source" version="1.0.0.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature.source_1.0.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature.source" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.incquery.runtime.graphiti.feature.source_0.10.0.qualifier.jar" id="org.eclipse.incquery.runtime.graphiti.feature.source" version="0.10.0.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
    <feature url="features/org.eclipse.incquery.uml.feature.source_1.0.0.qualifier.jar" id="org.eclipse.incquery.uml.feature.source" version="1.0.0.qualifier">
@@ -24,13 +24,13 @@
    <feature url="features/org.eclipse.incquery.sdk.feature.source_1.0.0.qualifier.jar" id="org.eclipse.incquery.sdk.feature.source" version="1.0.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.tooling.ui.visualization.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.tooling.ui.visualization.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.incquery.tooling.ui.visualization.feature_0.10.0.qualifier.jar" id="org.eclipse.incquery.tooling.ui.visualization.feature" version="0.10.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.zest.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.zest.feature" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.zest.feature_0.10.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.zest.feature" version="0.10.0.qualifier">
       <category name="org.eclipse.incquery"/>
    </feature>
-   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.zest.feature.source_1.0.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.zest.feature.source" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.incquery.viewers.tooling.ui.zest.feature.source_0.10.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.zest.feature.source" version="0.10.0.qualifier">
       <category name="org.eclipse.incquery.sources"/>
    </feature>
    <feature url="features/org.eclipse.incquery.viewers.tooling.ui.feature_1.0.0.qualifier.jar" id="org.eclipse.incquery.viewers.tooling.ui.feature" version="1.0.0.qualifier">

@@ -37,6 +37,7 @@
 		<xcore.version>1.2.1</xcore.version>
 		<xcore.lib.version>1.1.0</xcore.lib.version>
 		<java.version>1.6</java.version>
+		<incquery.project.version>1.0.0-SNAPSHOT</incquery.project.version>
 		<!-- Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -62,7 +63,7 @@
 						<artifact>
 							<groupId>org.eclipse.incquery</groupId>
 							<artifactId>org.eclipse.incquery.target</artifactId>
-							<version>${project.version}</version>
+							<version>${incquery.project.version}</version>
 							<classifier>default</classifier>
 						</artifact>
 					</target>
