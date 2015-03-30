@@ -36,7 +36,7 @@
 			<plugin>
 				<groupId>org.fornax.toolsupport</groupId>
 				<artifactId>fornax-oaw-m2-plugin</artifactId>
-				<version>3.4.0</version>
+				<version>3.5.1</version>
 				<configuration>
 					<workflowEngine>mwe2</workflowEngine>
 					<workflowDescriptor>src/org/eclipse/viatra/cep/vepl/GenerateVepl.mwe2</workflowDescriptor>

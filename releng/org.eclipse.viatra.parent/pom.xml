@@ -222,11 +222,6 @@
 			</snapshots>
 			<url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
 		</pluginRepository>
-		<pluginRepository>
-			<id>fornax.plugin.repository</id>
-			<name>Fornax Plugin Repository</name>
-			<url>http://www.fornax-platform.org/m2/repository</url>
-		</pluginRepository>
 	</pluginRepositories>
 	<repositories>
 		<repository>
@@ -250,11 +245,6 @@
 		<repository>
 			<id>incquery-releases</id>
 			<url>https://repo.eclipse.org/content/repositories/emf-incquery-releases/</url>
-		</repository>
-		<repository>
-			<id>fornax.repository</id>
-			<name>Fornax Repository</name>
-			<url>http://www.fornax-platform.org/m2/repository</url>
 		</repository>
 	</repositories>
 	<scm>
