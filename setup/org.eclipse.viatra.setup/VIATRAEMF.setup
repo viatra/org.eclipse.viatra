@@ -44,7 +44,7 @@
       xsi:type="setup.p2:P2Task">
     <requirement
         name="org.eclipse.xtext.sdk.feature.group"
-        versionRange="[2.6.0,2.7.0)"/>
+        versionRange="[2.8.0,2.9.0)"/>
     <requirement
         name="org.eclipse.incquery.sdk.feature.source.feature.group"/>
     <requirement

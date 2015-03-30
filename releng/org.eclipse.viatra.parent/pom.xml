@@ -18,13 +18,13 @@
 		<tycho.version>0.22.0</tycho.version>
 		<tycho.extras.version>0.22.0</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
-		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra2/org.eclipse.viatra2.emf.git</tycho.scmUrl>
-		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=gmt&amp;component=VIATRA2</eclipse.bugzillaUrl>
+		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra2/org.eclipse.viatra.git</tycho.scmUrl>
+		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=viatra</eclipse.bugzillaUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.6.3.201306030806</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
-		<xtend.compiler.version>2.7.3</xtend.compiler.version>
+		<xtend.compiler.version>2.8.1</xtend.compiler.version>
 		<incquery.repository.url>http://download.eclipse.org/incquery/updates/integration</incquery.repository.url>
 		<incquery.compiler.version>1.0.0-SNAPSHOT</incquery.compiler.version>
 		<!-- Sonar -->
