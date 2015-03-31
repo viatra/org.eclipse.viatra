@@ -109,15 +109,11 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
         }
         SubMonitor progress = SubMonitor.convert(monitor, 5);
         final IProject modelProject = context.getBuiltProject();
-        modelProject.refreshLocal(IResource.DEPTH_INFINITE, progress.newChild(1));
         if (context.getBuildType() == BuildType.CLEAN || context.getBuildType() == BuildType.RECOVERY) {
             cleanSupport.fullClean(context, progress.newChild(1));
             // invoke clean build on main project src-gen
             super.build(context, progress.newChild(1));
             if (context.getBuildType() == BuildType.CLEAN) {
-                // work 2 unit if clean build is performed (xmi build, and
-                // ensure)
-                progress.worked(2);
                 return;
             }
         } else {
@@ -138,14 +134,14 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
         URI uri = delta.getUri();
         IProject builtProject = context.getBuiltProject();
         if (uri.isPlatformResource() && builtProject.getName().equals(uri.segment(1))) {
-            // TODO: we will run out of memory here if the number of deltas is large
-            // enough
+            // TODO: we will run out of memory here if the number of deltas is large enough
             Resource deltaResource = context.getResourceSet().getResource(delta.getUri(), true);
             if (shouldGenerate(deltaResource, context)) {
                 try {
+                	registerCurrentSourceFolder(context, delta, fileSystemAccess);
                     // do inferred jvm model to code transformation
                     generator.doGenerate(deltaResource, fileSystemAccess);
-                    doPostGenerate(deltaResource, context);
+//                    doPostGenerate(deltaResource, context);
                 } catch (RuntimeException e) {
                     if (e.getCause() instanceof CoreException) {
                         throw (CoreException) e.getCause();

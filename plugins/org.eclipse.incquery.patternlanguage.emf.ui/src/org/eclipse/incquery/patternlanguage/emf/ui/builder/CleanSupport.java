@@ -215,7 +215,6 @@ public class CleanSupport {
                 // clean if the project still exist
                 IProject targetProject = fragmentProvider.getFragmentProject(modelProject, fragment);
                 if (targetProject.exists()) {
-                    targetProject.refreshLocal(IResource.DEPTH_INFINITE, null);
                     EclipseResourceFileSystemAccess2 fsa = eclipseResourceSupport
                             .createProjectFileSystemAccess(targetProject);
                     fragment.cleanUp(pattern, fsa);
