@@ -281,6 +281,12 @@
           <operand
               xsi:type="predicates:NamePredicate"
               pattern="org\.eclipse\.incquery\.xcore.*"/>
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern="org\.eclipse\.incquery\.uml.*"/>
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern="org\.eclipse\.incquery\.viewmodel.*"/>
         </operand>
       </predicate>
     </workingSet>
