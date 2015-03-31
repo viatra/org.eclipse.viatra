@@ -11,6 +11,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
@@ -94,13 +95,17 @@ public final class FinalStatesQuerySpecification extends BaseGeneratedEMFQuerySp
       	PBody body = new PBody(this);
       	PVariable var_this = body.getOrCreateVariableByName("this");
       	PVariable var_finalState = body.getOrCreateVariableByName("finalState");
+      	PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
       	body.setExportedParameters(Arrays.<ExportedParameter>asList(
       		new ExportedParameter(body, var_this, "this"),
       				
       		new ExportedParameter(body, var_finalState, "finalState")
       	));
+      	new TypeUnary(body, var_this, getClassifierLiteral("automaton.meta", "Automaton"), "automaton.meta/Automaton");
       	new TypeUnary(body, var_finalState, getClassifierLiteral("automaton.meta", "FinalState"), "automaton.meta/FinalState");
-      	new TypeBinary(body, CONTEXT, var_this, var_finalState, getFeatureLiteral("automaton.meta", "Automaton", "states"), "automaton.meta/Automaton.states");
+      	new TypeUnary(body, var_this, getClassifierLiteral("automaton.meta", "Automaton"), "automaton.meta/Automaton");
+      	new TypeBinary(body, CONTEXT, var_this, var__virtual_0_, getFeatureLiteral("automaton.meta", "Automaton", "states"), "automaton.meta/Automaton.states");
+      	new Equality(body, var__virtual_0_, var_finalState);
       	bodies.add(body);
       }
       	{

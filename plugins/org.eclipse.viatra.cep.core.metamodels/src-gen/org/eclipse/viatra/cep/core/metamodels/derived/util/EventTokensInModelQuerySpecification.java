@@ -11,8 +11,10 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.cep.core.metamodels.derived.EventTokensInModelMatch;
@@ -94,13 +96,21 @@ public final class EventTokensInModelQuerySpecification extends BaseGeneratedEMF
       	PVariable var_this = body.getOrCreateVariableByName("this");
       	PVariable var_eventToken = body.getOrCreateVariableByName("eventToken");
       	PVariable var_automaton = body.getOrCreateVariableByName("automaton");
+      	PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
+      	PVariable var__virtual_1_ = body.getOrCreateVariableByName(".virtual{1}");
       	body.setExportedParameters(Arrays.<ExportedParameter>asList(
       		new ExportedParameter(body, var_this, "this"),
       				
       		new ExportedParameter(body, var_eventToken, "eventToken")
       	));
-      	new TypeBinary(body, CONTEXT, var_this, var_automaton, getFeatureLiteral("automaton.meta", "InternalModel", "automata"), "automaton.meta/InternalModel.automata");
-      	new TypeBinary(body, CONTEXT, var_automaton, var_eventToken, getFeatureLiteral("automaton.meta", "Automaton", "eventTokens"), "automaton.meta/Automaton.eventTokens");
+      	new TypeUnary(body, var_this, getClassifierLiteral("automaton.meta", "InternalModel"), "automaton.meta/InternalModel");
+      	new TypeUnary(body, var_eventToken, getClassifierLiteral("automaton.meta", "EventToken"), "automaton.meta/EventToken");
+      	new TypeUnary(body, var_this, getClassifierLiteral("automaton.meta", "InternalModel"), "automaton.meta/InternalModel");
+      	new TypeBinary(body, CONTEXT, var_this, var__virtual_0_, getFeatureLiteral("automaton.meta", "InternalModel", "automata"), "automaton.meta/InternalModel.automata");
+      	new Equality(body, var__virtual_0_, var_automaton);
+      	new TypeUnary(body, var_automaton, getClassifierLiteral("automaton.meta", "Automaton"), "automaton.meta/Automaton");
+      	new TypeBinary(body, CONTEXT, var_automaton, var__virtual_1_, getFeatureLiteral("automaton.meta", "Automaton", "eventTokens"), "automaton.meta/Automaton.eventTokens");
+      	new Equality(body, var__virtual_1_, var_eventToken);
       	bodies.add(body);
       }
       	{
