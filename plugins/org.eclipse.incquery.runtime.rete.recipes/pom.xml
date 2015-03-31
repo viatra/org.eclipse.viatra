@@ -11,6 +11,9 @@
 	</parent>
 	<artifactId>org.eclipse.incquery.runtime.rete.recipes</artifactId>
 	<packaging>eclipse-plugin</packaging>
+    <properties>
+        <emf.workspace.location>${project.basedir}/../../target/workspace</emf.workspace.location>
+    </properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -26,104 +29,51 @@
 						<configuration>
 							<filesets>
 								<fileset>
-									<directory>src-gen</directory>
-                                                        		<excludes>
-                                                                		<exclude>.gitignore</exclude>
-                                                        		</excludes>
+                                    <directory>src-gen</directory>
+                                    <excludes>
+                                        <exclude>.gitignore</exclude>
+                                    </excludes>
 								</fileset>
 								<fileset>
 									<directory>xtend-gen</directory>
-                                                        		<excludes>
-                                                                		<exclude>.gitignore</exclude>
-                                                        		</excludes>
+                                    <excludes>
+                                        <exclude>.gitignore</exclude>
+                                    </excludes>
 								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.eclipse.xtext</groupId>
-				<artifactId>xtext-maven-plugin</artifactId>
-				<version>${xtend.compiler.version}</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<sourceRoots>
-						<sourceRoot>${basedir}/model</sourceRoot>
-					</sourceRoots>
-					<languages>
-						<language>
-							<setup>org.eclipse.xtext.ecore.EcoreSupport</setup>
-						</language>
-						<language>
-							<setup>org.eclipse.emf.codegen.ecore.xtext.GenModelSupport</setup>
-						</language>
-						<language>
-							<setup>org.eclipse.emf.ecore.xcore.XcoreStandaloneSetup</setup>
-							<outputConfigurations>
-								<outputConfiguration>
-									<outputDirectory>${project.basedir}/src-gen</outputDirectory>
-								</outputConfiguration>
-							</outputConfigurations>
-						</language>
-					</languages>
-					<classPathLookupFilter>.*org\.eclipse\..*\.jar.*</classPathLookupFilter>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.emf</groupId>
-						<artifactId>org.eclipse.emf.ecore.xcore.lib</artifactId>
-						<version>${xcore.lib.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.emf</groupId>
-						<artifactId>org.eclipse.emf.ecore.xcore</artifactId>
-						<version>${xcore.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.emf</groupId>
-						<artifactId>org.eclipse.emf.codegen.ecore.xtext</artifactId>
-						<version>${xcore.lib.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.xtext</groupId>
-						<artifactId>org.eclipse.xtext.common.types</artifactId>
-						<version>${xtend.compiler.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.xtext</groupId>
-						<artifactId>org.eclipse.xtext.xbase</artifactId>
-						<version>${xtend.compiler.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.emf</groupId>
-						<artifactId>org.eclipse.emf.ecore</artifactId>
-						<version>[2.10.0,)</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.core</groupId>
-						<artifactId>org.eclipse.core.runtime</artifactId>
-						<version>[3.7.0,3.8.0)</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.core</groupId>
-						<artifactId>org.eclipse.core.resources</artifactId>
-						<version>[3.7.0,)</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.text</groupId>
-						<artifactId>org.eclipse.text</artifactId>
-						<version>[3.5.0,)</version>
-					</dependency>
-				</dependencies>
-			</plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho.extras</groupId>
+                <artifactId>tycho-eclipserun-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <configuration>
+                    <appArgLine>-data ${emf.workspace.location} -application org.eclipse.emf.codegen.ecore.Generator -projects ${project.basedir} -model ${project.basedir}/model/rete-recipes.genmodel ${project.basedir}</appArgLine>
+                    <dependencies>
+                        <dependency>
+                            <artifactId>org.eclipse.emf.codegen.ecore</artifactId>
+                            <type>eclipse-plugin</type>
+                        </dependency>
+                    </dependencies>
+                    <repositories>
+                        <repository>
+                            <id>indigo</id>
+                            <layout>p2</layout>
+                            <url>http://download.eclipse.org/releases/indigo</url>
+                        </repository>
+                    </repositories>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>eclipse-run</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.eclipse.xtend</groupId>
 				<artifactId>xtend-maven-plugin</artifactId>
