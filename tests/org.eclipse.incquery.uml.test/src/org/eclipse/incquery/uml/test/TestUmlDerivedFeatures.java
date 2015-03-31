@@ -14,9 +14,12 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.uml.derivedfeatures.AssociationEndTypeMatcher;
+import org.eclipse.incquery.uml.derivedfeatures.NamedElementQualifiedNameMatcher;
 import org.eclipse.uml2.uml.Activity;
 import org.eclipse.uml2.uml.ActivityPartition;
 import org.eclipse.uml2.uml.Association;
+import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLFactory;
@@ -51,6 +54,19 @@ public class TestUmlDerivedFeatures {
 		AssociationEndTypeMatcher matcher = AssociationEndTypeMatcher.on(getEngine(resource));
 		assertEquals(ImmutableSet.of(endType), matcher.getAllValuesOftype());
 	}
+
+	@Test
+    public void namedElementQualifiedName() throws IncQueryException {
+	    Resource resource = createResource();
+	    Package rootPackage = FACTORY.createPackage();
+        resource.getContents().add(rootPackage);
+        rootPackage.setName("root");
+        Package childPackage = FACTORY.createPackage();
+        rootPackage.getPackagedElements().add(childPackage);
+        childPackage.setName("child");
+        NamedElementQualifiedNameMatcher matcher = NamedElementQualifiedNameMatcher.on(getEngine(resource));
+        assertEquals(ImmutableSet.of(rootPackage.getName() + NamedElement.SEPARATOR + childPackage.getName()), matcher.getAllValuesOfqualifiedName(childPackage));
+    }
 
 	@Test
 	public void listsWellbehaving() {
