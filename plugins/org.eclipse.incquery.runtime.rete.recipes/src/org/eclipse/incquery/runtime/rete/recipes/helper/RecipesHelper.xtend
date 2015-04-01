@@ -14,9 +14,7 @@ package org.eclipse.incquery.runtime.rete.recipes.helper
 import org.eclipse.incquery.runtime.rete.recipes.Mask
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe
-import org.eclipse.incquery.runtime.rete.recipes.UnaryInputRecipe
 import org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe
-import static org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper.*
 
 /**
  * Static helper class for easy construction of recipes.
@@ -65,8 +63,5 @@ class RecipesHelper {
 			it.setTypeName(typeName)
 		]
 	}
-	
-	
-	
 
 }

@@ -11,7 +11,7 @@
       <package
             uri="http://www.eclipse.org/incquery/rete/recipes"
             class="org.eclipse.incquery.runtime.rete.recipes.RecipesPackage"
-            genModel="model/rete-recipes.xcore"/>
+            genModel="model/rete-recipes.genmodel"/>
    </extension>
 
 </plugin>

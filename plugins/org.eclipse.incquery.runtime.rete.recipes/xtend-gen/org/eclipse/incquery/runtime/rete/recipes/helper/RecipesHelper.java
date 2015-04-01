@@ -35,6 +35,7 @@ public class RecipesHelper {
   public static Mask mask(final int sourceArity, final Iterable<Integer> sourceIndices) {
     Mask _createMask = RecipesHelper.FACTORY.createMask();
     final Procedure1<Mask> _function = new Procedure1<Mask>() {
+      @Override
       public void apply(final Mask it) {
         it.setSourceArity(sourceArity);
         EList<Integer> _sourceIndices = it.getSourceIndices();
@@ -47,6 +48,7 @@ public class RecipesHelper {
   public static Mask mask(final int sourceArity, final int... sourceIndices) {
     Mask _createMask = RecipesHelper.FACTORY.createMask();
     final Procedure1<Mask> _function = new Procedure1<Mask>() {
+      @Override
       public void apply(final Mask it) {
         it.setSourceArity(sourceArity);
         EList<Integer> _sourceIndices = it.getSourceIndices();
@@ -59,6 +61,7 @@ public class RecipesHelper {
   public static ProjectionIndexerRecipe projectionIndexerRecipe(final ReteNodeRecipe parent, final Mask mask) {
     ProjectionIndexerRecipe _createProjectionIndexerRecipe = RecipesHelper.FACTORY.createProjectionIndexerRecipe();
     final Procedure1<ProjectionIndexerRecipe> _function = new Procedure1<ProjectionIndexerRecipe>() {
+      @Override
       public void apply(final ProjectionIndexerRecipe it) {
         it.setParent(parent);
         it.setMask(mask);
@@ -70,6 +73,7 @@ public class RecipesHelper {
   public static ExpressionDefinition expressionDefinition(final Object evaluator) {
     ExpressionDefinition _createExpressionDefinition = RecipesHelper.FACTORY.createExpressionDefinition();
     final Procedure1<ExpressionDefinition> _function = new Procedure1<ExpressionDefinition>() {
+      @Override
       public void apply(final ExpressionDefinition it) {
         it.setEvaluator(evaluator);
       }
@@ -89,6 +93,7 @@ public class RecipesHelper {
   
   private static TypeInputRecipe fillOut(final TypeInputRecipe typeInputRecipe, final Object typeKey, final String typeName) {
     final Procedure1<TypeInputRecipe> _function = new Procedure1<TypeInputRecipe>() {
+      @Override
       public void apply(final TypeInputRecipe it) {
         it.setTypeKey(typeKey);
         it.setTypeName(typeName);
