@@ -12,19 +12,6 @@
             restorable="true">
       </view>
    </extension>
-    <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               id="org.eclipse.incquery.tooling.localsearch.ui.LocalSearchDebugView"
-               minimized="false"
-               ratio="0.5"
-               relationship="left"
-               relative="org.eclipse.ui.views.ProblemView">
-         </view>
-      </perspectiveExtension>
-   </extension>
    
    
    <extension
