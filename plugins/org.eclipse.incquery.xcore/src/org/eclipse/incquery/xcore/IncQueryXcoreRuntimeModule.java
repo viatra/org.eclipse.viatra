@@ -96,7 +96,6 @@ public class IncQueryXcoreRuntimeModule extends org.eclipse.incquery.xcore.Abstr
         binder.bind(IScopeProvider.class).annotatedWith(SerializerScopeProviderBinding.class).to(XcoreSerializerScopeProvider.class);
     }
     
-    @Override
     public Class<? extends XbaseBatchScopeProvider> bindXbaseBatchScopeProvider()
     {
         return IncQueryXcoreScopeProvider.class;
