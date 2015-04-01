@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.runtime.api.IMatchProcessor
+import org.eclipse.incquery.runtime.evm.specific.Lifecycles
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.viatra.cep.core.streams.EventStream
@@ -131,13 +132,17 @@ class IQGenerator {
 							append('''«referClass(it, typeRefBuilder, p, EventDrivenTransformationRuleFactory)»''')
 							append('''().createRule();''')
 							newLine
+							append('''
+								builder.addLifeCycle(''')
+							append('''«referClass(it, typeRefBuilder, p, Lifecycles)»''')
+							append('''.getDefault(false, true));
+										''')
 							append(
 								'''
-								builder.addLifeCycle(EventDrivenTransformationRuleFactory.INTERVAL_SEMANTICS);
-								builder.precondition(''').append('''«it.referClass(typeRefBuilder, matcher, p)»''').
-								append(
-									'''.querySpecification());
-										''')
+									builder.precondition(''').append('''«it.referClass(typeRefBuilder, matcher, p)»''').
+							append(
+								'''.querySpecification());
+									''')
 							val appearActionPatterns = groupedPatterns.get(p).toList.patternsRequiringAppearAction.
 								toList
 							val disappearActionPatterns = groupedPatterns.get(p).toList.patternsRequiringDisappearAction.
