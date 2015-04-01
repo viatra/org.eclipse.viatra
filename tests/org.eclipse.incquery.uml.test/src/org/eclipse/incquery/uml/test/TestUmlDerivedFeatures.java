@@ -15,12 +15,14 @@ import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.uml.derivedfeatures.AssociationEndTypeMatcher;
 import org.eclipse.incquery.uml.derivedfeatures.NamedElementQualifiedNameMatcher;
+import org.eclipse.incquery.uml.derivedfeatures.StateIsOrthogonalMatcher;
 import org.eclipse.uml2.uml.Activity;
 import org.eclipse.uml2.uml.ActivityPartition;
 import org.eclipse.uml2.uml.Association;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
+import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
@@ -67,6 +69,18 @@ public class TestUmlDerivedFeatures {
         NamedElementQualifiedNameMatcher matcher = NamedElementQualifiedNameMatcher.on(getEngine(resource));
         assertEquals(ImmutableSet.of(rootPackage.getName() + NamedElement.SEPARATOR + childPackage.getName()), matcher.getAllValuesOfqualifiedName(childPackage));
     }
+
+	@Test
+	public void stateIsOrthogonal() throws IncQueryException {
+	    Resource resource = createResource();
+        State state = FACTORY.createState();
+        resource.getContents().add(state);
+        state.getRegions().add(FACTORY.createRegion());
+        StateIsOrthogonalMatcher matcher = StateIsOrthogonalMatcher.on(getEngine(resource));
+        assertEquals(ImmutableSet.of(false), matcher.getAllValuesOftarget(state));
+        state.getRegions().add(FACTORY.createRegion());
+        assertEquals(ImmutableSet.of(true), matcher.getAllValuesOftarget(state));
+	}
 
 	@Test
 	public void listsWellbehaving() {

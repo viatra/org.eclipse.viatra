@@ -35,7 +35,35 @@ private pattern connectorEndPartWithPort(connectorEnd: ConnectorEnd, partWithPor
 	ConnectorEnd.partWithPort(connectorEnd, partWithPort);
 }
 
-// Message.messageKind is recursive?!
+/*
+MessageOperations.getMessageKind
+*/
+@Surrogate(feature = "messageKind")
+pattern messageMessageKind(self: Message, messageKind: MessageKind) {
+	neg find messageSendEvent(self, _);
+	neg find messageReceiveEvent(self, _);
+	messageKind == MessageKind::unknown;
+} or {
+	neg find messageSendEvent(self, _);
+	find messageReceiveEvent(self, _);
+	messageKind == MessageKind::found;
+} or {
+	find messageSendEvent(self, _);
+	neg find messageReceiveEvent(self, _);
+	messageKind == MessageKind::lost;
+} or {
+	find messageSendEvent(self, _);
+	find messageReceiveEvent(self, _);
+	messageKind == MessageKind::complete;
+}
+
+private pattern messageSendEvent(self: Message, sendEvent: MessageEnd) {
+	Message.sendEvent(self, sendEvent);
+}
+
+private pattern messageReceiveEvent(self: Message, receiveEvent: MessageEnd) {
+	Message.receiveEvent(self, receiveEvent);
+}
 
 /*
 (packagedElement->select(oclIsKindOf(Package))->collect(oclAsType(Package))->asSet())
