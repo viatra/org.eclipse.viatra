@@ -455,8 +455,7 @@
         </repositoryList>
       </targlet>
       <targlet
-          name="UML"
-          activeRepositoryList="">
+          name="UML">
         <requirement
             name="org.eclipse.uml2.sdk.feature.group"
             versionRange="[5.0.0,6.0.0)"/>
