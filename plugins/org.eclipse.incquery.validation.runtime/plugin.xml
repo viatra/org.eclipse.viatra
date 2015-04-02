@@ -11,14 +11,14 @@
             name="Constraint">
          <annotationparameter
                deprecated="true"
-               description="Please use key with a single value list instead!"
+               description="Please use &quot;key&quot; parameter with a list containing a single string value with the name of the parameter instead!"
                mandatory="false"
                multiple="false"
                name="location"
                type="variablereference">
          </annotationparameter>
          <annotationparameter
-               description="The key of constraint represents the pattern parameter objects the constraint violation needs to be attached to."
+               description="The key of constraint represents the pattern parameter objects the constraint violation needs to be attached to. Keys are defined as a list of parameter names as strings (e.g. key = {&quot;param1&quot;, &quot;param2&quot;}"
                mandatory="false"
                multiple="false"
                name="key"
@@ -46,7 +46,7 @@
                type="string">
          </annotationparameter>
          <annotationparameter
-               description="Provide parameter a list, where permutations of the same values register as one match violation."
+               description="Provide parameter a list, where permutations of the same values register as one match violation. Symmetries are defined as a list of parameter names as strings (e.g. symmetric = {&quot;param1&quot;, &quot;param2&quot;}"
                mandatory="false"
                multiple="true"
                name="symmetric"
