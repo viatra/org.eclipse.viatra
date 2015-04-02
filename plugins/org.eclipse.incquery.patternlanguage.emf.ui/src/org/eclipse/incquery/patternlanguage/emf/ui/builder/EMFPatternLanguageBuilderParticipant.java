@@ -141,7 +141,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
                 	registerCurrentSourceFolder(context, delta, fileSystemAccess);
                     // do inferred jvm model to code transformation
                     generator.doGenerate(deltaResource, fileSystemAccess);
-//                    doPostGenerate(deltaResource, context);
+                    doPostGenerate(deltaResource, context);
                 } catch (RuntimeException e) {
                     if (e.getCause() instanceof CoreException) {
                         throw (CoreException) e.getCause();
