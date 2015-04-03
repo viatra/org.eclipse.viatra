@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2015, Denes Harmath, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Denes Harmath - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.incquery.uml.test;
 
 import static org.junit.Assert.assertEquals;
@@ -30,6 +40,11 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * 
+ * @author Denes Harmath
+ *
+ */
 public class TestUmlDerivedFeatures {
 
 	private static final UMLFactory FACTORY = UMLFactory.eINSTANCE;
@@ -107,4 +122,5 @@ public class TestUmlDerivedFeatures {
 		source.getGroups().remove(activityPartition);
 		assertTrue(removed.get());
 	}
+	
 }

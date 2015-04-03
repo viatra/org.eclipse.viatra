@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch
 import com.google.common.collect.Maps
 import java.util.Map
 import java.util.concurrent.TimeUnit
+import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine
 import org.eclipse.incquery.runtime.api.IPatternMatch
@@ -11,6 +12,7 @@ import org.eclipse.incquery.runtime.api.IQueryGroup
 import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope
+import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.incquery.runtime.extensibility.QueryBackendRegistry
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend
 import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint
@@ -41,18 +43,17 @@ abstract class QueryPerformanceTest {
 	protected static extension Logger logger = IncQueryLoggingUtil.getLogger(QueryPerformanceTest)
 	
 	AdvancedIncQueryEngine incQueryEngine
-	IQueryGroup queryGroup
 	Map<String, Long> results = Maps.newTreeMap()
 	
 	/**
 	 * This method shall return a scope that identifies the input artifact used for performance testing the queries.
 	 */
-	def IncQueryScope getScope()
+	def IncQueryScope getScope() throws IncQueryException
 	
 	/**
 	 * This method shall return the query group that contains the set of queries to evaluate.
 	 */
-	def IQueryGroup getQueryGroup()
+	def IQueryGroup getQueryGroup() throws IncQueryException
 	
 	/**
 	 * This method shall return the query backend class that will be used for evaluation.
@@ -83,6 +84,7 @@ abstract class QueryPerformanceTest {
 	 */
 	@Test
 	public def queryPerformance() {
+	    logger.level = Level.DEBUG
 		prepare()
 		
 		info("Starting query performance test")
@@ -107,7 +109,8 @@ abstract class QueryPerformanceTest {
 					" kByte heap, took " + watch.elapsed(TimeUnit.MILLISECONDS) + " ms)")
 			
 			incQueryEngine.wipe
-			logMemoryProperties("Wiped engine after building\n-------------------------------------------\n")
+			logMemoryProperties("Wiped engine after building")
+			debug("\n-------------------------------------------\n")
 		}
 		
 		info("Finished query performance test")
