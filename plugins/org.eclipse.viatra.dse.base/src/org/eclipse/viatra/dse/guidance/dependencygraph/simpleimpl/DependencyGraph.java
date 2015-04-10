@@ -18,8 +18,8 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
+import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.EdgeType;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IDependencyGraph;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IEdge;
