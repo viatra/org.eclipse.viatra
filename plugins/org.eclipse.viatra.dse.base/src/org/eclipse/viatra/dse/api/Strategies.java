@@ -12,8 +12,8 @@ package org.eclipse.viatra.dse.api;
 
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy;
+import org.eclipse.viatra.dse.api.strategy.impl.HillClimbingStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSStrategy;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.ExplorerThread;
 
 /**
@@ -27,23 +27,27 @@ public final class Strategies {
     private Strategies() {
     }
 
-    public static IStrategy createDFSStrategy(int depthLimit) {
+    public static DepthFirstStrategy createDFSStrategy(int depthLimit) {
         return new DepthFirstStrategy(depthLimit);
     }
 
-    public static IStrategy createFixedPriorityStrategy() {
+    public static FixedPriorityStrategy createFixedPriorityStrategy() {
         return createFixedPriorityStrategy(0);
     }
 
-    public static IStrategy createFixedPriorityStrategy(int depthLimit) {
+    public static FixedPriorityStrategy createFixedPriorityStrategy(int depthLimit) {
         return new FixedPriorityStrategy().withDepthLimit(depthLimit);
     }
 
-    public static IStrategy createBFSStrategy() {
+    public static ParallelBFSStrategy createBFSStrategy() {
         return createBFSStrategy(0);
     }
 
-    public static IStrategy createBFSStrategy(int depthLimit) {
+    public static ParallelBFSStrategy createBFSStrategy(int depthLimit) {
         return new ParallelBFSStrategy(depthLimit);
+    }
+    
+    public static HillClimbingStrategy creatHillClimbingStrategy() {
+        return new HillClimbingStrategy();
     }
 }
