@@ -102,7 +102,7 @@ public class SolutionTrajectory {
         for (IPatternMatch match : matcher.getAllMatches()) {
             Object matchHash = stateSerializer.serializePatternMatch(match);
             if (matchHash.equals(transitionIds.get(index))) {
-                IMatchProcessor action = tr.getModelManipulation();
+                IMatchProcessor action = tr.getAction();
                 action.process(match);
                 isActivationFound = true;
                 break;

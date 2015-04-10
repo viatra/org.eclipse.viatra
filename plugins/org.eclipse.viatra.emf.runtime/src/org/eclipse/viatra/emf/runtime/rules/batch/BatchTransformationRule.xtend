@@ -97,7 +97,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	/**
 	 * Return an IMatchProcessor representing the model manipulation executed by the rule.
 	 */
-	def IMatchProcessor<Match> getModelManipulation() {	
+	def IMatchProcessor<Match> getAction() {	
 		action
 	}	
 }
