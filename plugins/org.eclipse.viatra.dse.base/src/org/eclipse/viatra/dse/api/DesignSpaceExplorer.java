@@ -99,7 +99,7 @@ public class DesignSpaceExplorer {
 
     private Set<EPackage> metaModelPackages = new HashSet<EPackage>();
 
-    private static final String MODEL_NOT_YET_GIVEN = "The starting model is not given yet. Please call the setStartingModel method first.";
+    private static final String MODEL_NOT_YET_GIVEN = "The starting model is not given yet. Please call the setInitialModel method first.";
 
     private static final long SLEEP_INTERVAL = 1000;
 
