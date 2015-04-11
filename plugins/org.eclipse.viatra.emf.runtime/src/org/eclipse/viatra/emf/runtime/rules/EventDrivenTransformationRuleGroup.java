@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
-import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformationRule;
+import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRule;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.base.Function;

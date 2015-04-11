@@ -8,7 +8,7 @@
  * Contributors:
  *   Istvan David - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.emf.runtime.transformation.eventdriven;
+package org.eclipse.viatra.emf.runtime.rules.eventdriven;
 
 import java.util.Map.Entry;
 import java.util.Set;

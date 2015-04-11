@@ -27,10 +27,10 @@ import org.eclipse.viatra.cep.vepl.vepl.QueryImport
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeType
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameter
+import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRule
 import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
 import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationBuilder
 import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformation
-import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformationRule
 import org.eclipse.viatra.emf.runtime.transformation.eventdriven.InconsistentEventSemanticsException
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable

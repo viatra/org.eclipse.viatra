@@ -29,6 +29,7 @@ import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflict
 import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup;
+import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRule;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 public class EventDrivenTransformation {

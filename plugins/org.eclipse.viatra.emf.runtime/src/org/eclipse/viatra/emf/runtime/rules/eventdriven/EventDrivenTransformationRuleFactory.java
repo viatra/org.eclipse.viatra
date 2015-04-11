@@ -17,7 +17,6 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
-import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformationRule;
 import org.eclipse.viatra.emf.runtime.transformation.eventdriven.InconsistentEventSemanticsException;
 
 import com.google.common.collect.HashMultimap;
