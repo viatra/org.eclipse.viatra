@@ -42,4 +42,9 @@ public class LocalSearchBackend implements IQueryBackend {
     public void dispose() {        
     }
 
+	@Override
+	public boolean isCaching() {
+		return false;
+	}
+
 }
