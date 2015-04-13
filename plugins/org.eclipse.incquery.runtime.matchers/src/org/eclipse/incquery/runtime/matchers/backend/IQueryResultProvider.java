@@ -60,7 +60,6 @@ public interface IQueryResultProvider {
 	
     /**
      * Internal method that registers low-level callbacks for match appearance and disappearance.
-	 * TODO: stateless backends should signal an error.
      * 
      * <p>
      * <b>Caution: </b> This is a low-level callback that is invoked when the pattern matcher is not necessarily in a
@@ -75,11 +74,17 @@ public interface IQueryResultProvider {
      *            a tag by which to identify the listener for later removal by {@link #removeUpdateListener(Object)}. 
      * @param fireNow
      *            if true, the insertion update allback will be immediately invoked on all current matches as a one-time effect. 
+     *            
+     * @throws UnsupportedOperationException if this is a non-incremental backend 
+     * 	(i.e. {@link IQueryBackend#isCaching()} on {@link #getQueryBackend()} returns false)
      */	
 	public void addUpdateListener(final IUpdateable listener, final Object listenerTag, boolean fireNow);
 	
 	/**
 	 * Removes an existing listener previously registered with the given tag.
+     *            
+     * @throws UnsupportedOperationException if this is a non-incremental backend 
+     * 	(i.e. {@link IQueryBackend#isCaching()} on {@link #getQueryBackend()} returns false)
 	 */
 	public void removeUpdateListener(final Object listenerTag);
 
