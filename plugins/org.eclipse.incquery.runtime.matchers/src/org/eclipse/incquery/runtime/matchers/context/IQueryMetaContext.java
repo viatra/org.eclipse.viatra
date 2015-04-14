@@ -23,6 +23,12 @@ import java.util.Set;
 public interface IQueryMetaContext {
 	
 	/**
+	 * Returns true iff instance tuples of the given key can be enumerated.
+	 * <p> If false, the runtime can only test tuple membership in the extensional relation identified by the key, but not enumerate member tuples in general.
+	 */
+	boolean isEnumerable(IInputKey key);
+	
+	/**
 	 * Returns known implications, e.g. edge supertypes, edge opposites, node type constraints, etc.
 	 */
 	Collection<InputKeyImplication> getImplications(IInputKey implyingKey);
