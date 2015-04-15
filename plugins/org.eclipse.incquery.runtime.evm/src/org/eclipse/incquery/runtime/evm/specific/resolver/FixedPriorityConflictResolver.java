@@ -24,7 +24,7 @@ import com.google.common.collect.Maps;
  * @author Abel Hegedus
  *
  */
-public class FixedPriorityConflictResolver extends ReconfigurableConflictResolver {
+public class FixedPriorityConflictResolver extends ReconfigurableConflictResolver<FixedPriorityConflictSet> {
 
     protected Map<RuleSpecification<?>, Integer> priorities;
     

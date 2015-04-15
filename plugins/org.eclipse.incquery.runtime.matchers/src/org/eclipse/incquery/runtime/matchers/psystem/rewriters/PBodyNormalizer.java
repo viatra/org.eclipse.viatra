@@ -27,7 +27,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 /**

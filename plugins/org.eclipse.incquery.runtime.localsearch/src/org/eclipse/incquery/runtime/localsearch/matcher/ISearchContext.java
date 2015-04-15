@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -24,7 +23,6 @@ import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.emf.EMFBaseIndexWrapper;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Maps;
 

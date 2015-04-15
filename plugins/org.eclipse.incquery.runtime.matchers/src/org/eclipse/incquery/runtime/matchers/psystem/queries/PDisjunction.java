@@ -15,9 +15,9 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
