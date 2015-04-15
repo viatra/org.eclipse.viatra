@@ -564,6 +564,12 @@ public interface NavigationHelper {
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException;
 
     /**
+     * Examines whether execution is currently in the callable 
+     * 	block of an invocation of {#link {@link #coalesceTraversals(Callable)}}. 
+     */
+	public boolean isCoalescing();
+
+    /**
      * Adds a coarse-grained listener that will be invoked after the NavigationHelper index or the underlying model is changed. Can be used
      * e.g. to check model contents. Not intended for general use.
      * 
@@ -696,4 +702,5 @@ public interface NavigationHelper {
      * @since 0.8
      */
     boolean removeIndexingErrorListener(IEMFIndexingErrorListener listener);
+
 }

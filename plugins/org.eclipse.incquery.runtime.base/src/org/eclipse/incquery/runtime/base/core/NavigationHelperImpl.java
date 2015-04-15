@@ -976,6 +976,11 @@ public class NavigationHelperImpl implements NavigationHelper {
             }
         }
     }
+    
+    @Override
+    public boolean isCoalescing() {
+    	return delayTraversals;
+    }
 
     @Override
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {

@@ -109,7 +109,7 @@ public interface IQueryRuntimeContext {
 	 * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
 	 * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
 	 */
-	public Iterable<Object> enumerateValues(IInputKey key, Tuple seed);
+	public Iterable<? extends Object> enumerateValues(IInputKey key, Tuple seed);
 	
 	/**
 	 * Simpler form of {@link #enumerateTuples(IInputKey, Tuple)} in the case where all values of the tuples are bound by the seed. 

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.emf.helper;
 
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
@@ -22,6 +24,26 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  *
  */
 public class IncQueryRuntimeHelper {
+	
+	/**
+	 * Gives a human-readable name of an EMF type. 
+	 */
+    public static String prettyPrintEMFType(Object typeObject) {
+        if (typeObject == null) {
+            return "(null)";
+        } else if (typeObject instanceof EClassifier) {
+            final EClassifier eClassifier = (EClassifier) typeObject;
+            final EPackage ePackage = eClassifier.getEPackage();
+            final String nsURI = ePackage == null ? null : ePackage.getNsURI();
+            final String typeName = eClassifier.getName();
+            return "" + nsURI + "/" + typeName;
+        } else if (typeObject instanceof EStructuralFeature) {
+            final EStructuralFeature feature = (EStructuralFeature) typeObject;
+            return prettyPrintEMFType(feature.getEContainingClass()) + "." + feature.getName();
+        } else
+            return typeObject.toString();
+    }
+
 
     /**
      * Get the structural feature with the given name of the given object.
