@@ -36,19 +36,24 @@ public class EventDrivenTransformation {
     private List<EventDrivenTransformationRule<?, ?>> rules = new ArrayList<EventDrivenTransformationRule<?, ?>>();
 
     public static EventDrivenTransformation forScope(EMFScope scope) throws IncQueryException {
-    	return new EventDrivenTransformation(scope);
+    	IncQueryEngine incQueryEngine = IncQueryEngine.on(scope);
+    	return new EventDrivenTransformation(incQueryEngine);
+    }
+    
+    public static EventDrivenTransformation forEngine(IncQueryEngine engine) throws IncQueryException {
+    	return new EventDrivenTransformation(engine);
     }
     
     /**
-     * @deprecated Use {@link #forScope(EMFScope)} instead!
+     * @deprecated Use {@link #forScope(EMFScope)} or {@link #forEngine(IncQueryEngine)} instead!
      */
     @Deprecated
     public static EventDrivenTransformation forSource(Notifier notifier) throws IncQueryException {
-        return new EventDrivenTransformation(new EMFScope(notifier));
+        return EventDrivenTransformation.forScope(new EMFScope(notifier));
     }
 
-    private EventDrivenTransformation(EMFScope scope) throws IncQueryException {
-        incQueryEngine = IncQueryEngine.on(scope);
+    private EventDrivenTransformation(IncQueryEngine engine) throws IncQueryException {
+        incQueryEngine = engine;
         schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine.getBaseIndex());
         conflictResolver = new ArbitraryOrderConflictResolver();
     }
