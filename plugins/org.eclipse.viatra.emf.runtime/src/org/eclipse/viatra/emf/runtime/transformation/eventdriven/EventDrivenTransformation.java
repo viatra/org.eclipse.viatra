@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.emf.runtime.transformation.eventdriven;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Level;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
@@ -39,51 +35,28 @@ public class EventDrivenTransformation {
     private ConflictResolver conflictResolver;
     private List<EventDrivenTransformationRule<?, ?>> rules = new ArrayList<EventDrivenTransformationRule<?, ?>>();
 
+    public static EventDrivenTransformation forScope(EMFScope scope) throws IncQueryException {
+    	return new EventDrivenTransformation(scope);
+    }
+    
     /**
-     * @deprecated Use {@link #forSource(Notifier)} instead.
+     * @deprecated Use {@link #forScope(EMFScope)} instead!
      */
     @Deprecated
-    public static EventDrivenTransformation forResource(ResourceSet resourceSet) {
-        return new EventDrivenTransformation(resourceSet);
+    public static EventDrivenTransformation forSource(Notifier notifier) throws IncQueryException {
+        return new EventDrivenTransformation(new EMFScope(notifier));
     }
 
-    /**
-     * @deprecated Use {@link #forSource(Notifier)} instead.
-     */
-    @Deprecated
-    public static EventDrivenTransformation forResource(Resource resource) {
-        checkArgument(resource.getResourceSet() != null);
-        return new EventDrivenTransformation(resource.getResourceSet());
-    }
-
-    public static EventDrivenTransformation forSource(Notifier notifier) {
-        return new EventDrivenTransformation(notifier);
+    private EventDrivenTransformation(EMFScope scope) throws IncQueryException {
+        incQueryEngine = IncQueryEngine.on(scope);
+        schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine.getBaseIndex());
+        conflictResolver = new ArbitraryOrderConflictResolver();
     }
 
     /**
-     * @deprecated Use {@link #EventDrivenTransformation(Notifier)} instead.
+     * This method must be called in order to start the execution of the transformation!!!
+     * @return
      */
-    @Deprecated
-    private EventDrivenTransformation(ResourceSet resourceSet) {
-        try {
-            incQueryEngine = IncQueryEngine.on(resourceSet);
-            schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine.getBaseIndex());
-            conflictResolver = new ArbitraryOrderConflictResolver();
-        } catch (IncQueryException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private EventDrivenTransformation(Notifier source) {
-        try {
-            incQueryEngine = IncQueryEngine.on(new EMFScope(source));
-            schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine.getBaseIndex());
-            conflictResolver = new ArbitraryOrderConflictResolver();
-        } catch (IncQueryException e) {
-            e.printStackTrace();
-        }
-    }
-
     public EventDrivenTransformation create() {
         executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory);
         executionSchema.setConflictResolver(conflictResolver);
