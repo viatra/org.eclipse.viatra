@@ -45,14 +45,22 @@ public class BatchTransformation {
 	protected final Context context;
 	protected Set<BatchTransformationRule<?, ?>> rules = new HashSet<BatchTransformationRule<?,?>>();
 
+	public static BatchTransformation forScope(EMFScope scope) throws IncQueryException {
+		AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(scope);
+		return new BatchTransformation(engine);
+	}
+	
+	@Deprecated
 	public BatchTransformation(Resource resource) throws IncQueryException {
 		this(AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(resource)));
 	}
 
+	@Deprecated
 	public BatchTransformation(ResourceSet set) throws IncQueryException {
 		this(AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(set)));
 	}
 
+	@Deprecated
 	public BatchTransformation(RuleEngine ruleEngine,
 			AdvancedIncQueryEngine iqEngine) {
 		this(ruleEngine, iqEngine, false);
