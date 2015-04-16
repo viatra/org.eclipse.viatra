@@ -20,6 +20,7 @@ import java.util.concurrent.Callable;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -44,6 +45,7 @@ public class ReteEngine implements IQueryBackend {
     protected ReteBoundary boundary;
 
     protected IPatternMatcherRuntimeContext context;
+    protected IQueryRuntimeContext runtimeContext;
 
     protected Collection<Disconnectable> disconnectables;
 //    protected IPredicateTraceListener traceListener;
@@ -70,9 +72,10 @@ public class ReteEngine implements IQueryBackend {
      *            the number of threads to operate the RETE network with; 0 means single-threaded operation, 1 starts an
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
      */
-    public ReteEngine(IPatternMatcherRuntimeContext context, int reteThreads) {
+    public ReteEngine(IPatternMatcherRuntimeContext context, IQueryRuntimeContext runtimeContext, int reteThreads) {
         super();
         this.context = context;
+		this.runtimeContext = runtimeContext;
         this.reteThreads = reteThreads;
         this.parallelExecutionEnabled = reteThreads > 0;
         // this.framework = new WeakReference<IFramework>(context.getFramework());
@@ -189,6 +192,7 @@ public class ReteEngine implements IQueryBackend {
         return matcher;
     }
 
+    
     /**
      * Constructs RETE pattern matchers for a collection of patterns, if they are not available yet. Model traversal
      * during the whole construction period is coalesced (which may have an effect on performance, depending on the
@@ -484,6 +488,11 @@ public class ReteEngine implements IQueryBackend {
     	return accessMatcher(query);
     }
 
+    @Override
+    public IQueryResultProvider peekExistingResultProvider(PQuery query) {
+    	ensureInitialized();
+    	return matchers.get(query);
+    }
 
 	@Override
 	public void dispose() {

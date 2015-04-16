@@ -36,6 +36,7 @@ class EMFEngineContext implements IEngineContext {
     IBaseIndex baseIndex;
     IIndexingErrorListener taintListener;
     private EMFPatternMatcherRuntimeContext matcherContext;
+    private EMFQueryRuntimeContext runtimeContext;
     
     public EMFEngineContext(EMFScope emfScope, IncQueryEngine engine, IIndexingErrorListener taintListener, Logger logger) {
         this.emfScope = emfScope;
@@ -84,10 +85,13 @@ class EMFEngineContext implements IEngineContext {
     @Override
     public void initializeBackends(IQueryBackendInitializer initializer) throws IncQueryException {
        try {
+    	   NavigationHelper nh = getNavHelper(false);
            if (matcherContext == null) 
-               matcherContext = new EMFPatternMatcherRuntimeContext(engine, logger, getNavHelper(false));
+               matcherContext = new EMFPatternMatcherRuntimeContext(engine, logger, nh);
+           if (runtimeContext == null) 
+        	   runtimeContext = new EMFQueryRuntimeContext(nh);
            
-           initializer.initializeWith(matcherContext);
+           initializer.initializeWith(matcherContext, runtimeContext);
        } finally {
            // lazy navHelper initialization now,
            ensureIndexLoaded();
@@ -97,6 +101,7 @@ class EMFEngineContext implements IEngineContext {
     @Override
     public void dispose() {
         if (matcherContext != null) matcherContext.dispose();
+        if (runtimeContext != null) runtimeContext.dispose();
         if (navHelper != null) navHelper.dispose();
         
         this.baseIndex = null;

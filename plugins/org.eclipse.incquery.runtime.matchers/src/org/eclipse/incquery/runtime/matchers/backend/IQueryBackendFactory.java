@@ -11,6 +11,8 @@
 package org.eclipse.incquery.runtime.matchers.backend;
 
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 
 /**
  * Factory for instantiating {@link IQueryBackend}.
@@ -20,6 +22,8 @@ import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeConte
 public interface IQueryBackendFactory {
 	public IQueryBackend 
 		create(IPatternMatcherRuntimeContext matcherContext,
+				IQueryRuntimeContext runtimeContext,
+				IQueryCacheContext queryCacheContext,
 				IQueryBackendHintProvider hintProvider);
 
 }

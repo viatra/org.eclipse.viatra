@@ -14,16 +14,25 @@ import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 
 /**
  * @author Marton Bur, Zoltan Ujhelyi
  *
  */
 public class LocalSearchBackendFactory implements IQueryBackendFactory{
-
+    
     @Override
-    public IQueryBackend create(IPatternMatcherRuntimeContext matcherContext, IQueryBackendHintProvider hintProvider) {
-        return new LocalSearchBackend(matcherContext, hintProvider);
+    public IQueryBackend create(IPatternMatcherRuntimeContext matcherContext,
+    		IQueryRuntimeContext runtimeContext,
+    		IQueryCacheContext queryCacheContext,
+    		IQueryBackendHintProvider hintProvider) {
+        return new LocalSearchBackend(
+        		matcherContext, 
+        		runtimeContext,
+        		queryCacheContext,
+        		hintProvider);
     }
 
 }

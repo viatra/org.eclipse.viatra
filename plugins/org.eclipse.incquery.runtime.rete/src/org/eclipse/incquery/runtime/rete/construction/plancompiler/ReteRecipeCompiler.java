@@ -22,6 +22,8 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
@@ -94,13 +96,23 @@ public class ReteRecipeCompiler {
 	
 	private IQueryPlannerStrategy plannerStrategy;
 	private IPatternMatcherContext context;
+	private IQueryRuntimeContext runtimeContext;
 	private IQueryBackendHintProvider hintProvider;
+	private IQueryCacheContext queryCacheContext;
 	private PDisjunctionRewriter normalizer;
 	
-	public ReteRecipeCompiler(IQueryPlannerStrategy plannerStrategy, IPatternMatcherContext context, IQueryBackendHintProvider hintProvider) {
+	public ReteRecipeCompiler(
+			IQueryPlannerStrategy plannerStrategy, 
+			IPatternMatcherContext context, 
+			IQueryRuntimeContext runtimeContext, 
+			IQueryCacheContext queryCacheContext, 
+			IQueryBackendHintProvider hintProvider) 
+	{
 		super();
 		this.plannerStrategy = plannerStrategy;
 		this.context = context;
+		this.runtimeContext = runtimeContext;
+		this.queryCacheContext = queryCacheContext;
 		this.normalizer = new PDisjunctionRewriterCacher(new SurrogateQueryRewriter(), new PBodyNormalizer(context));
 		this.hintProvider = hintProvider;
 	}

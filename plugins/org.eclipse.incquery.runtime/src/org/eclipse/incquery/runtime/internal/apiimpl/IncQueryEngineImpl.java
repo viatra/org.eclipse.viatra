@@ -54,6 +54,8 @@ import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
 import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
@@ -74,7 +76,7 @@ import com.google.common.collect.Maps;
  * @author Bergmann Gábor
  * 
  */
-public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQueryBackendHintProvider {
+public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQueryBackendHintProvider, IQueryCacheContext {
 	
     /**
      * The engine manager responsible for this engine. Null if this engine is unmanaged.
@@ -234,10 +236,10 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 		    	try {
 		    		engineContext.initializeBackends(new IQueryBackendInitializer() {
 		    			@Override
-		    			public void initializeWith(IPatternMatcherRuntimeContext context) {
+		    			public void initializeWith(IPatternMatcherRuntimeContext context, IQueryRuntimeContext runtimeContext) {
 		    				queryBackends = Maps.newHashMap();
 		    				for (Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> factoryEntry : QueryBackendRegistry.getInstance().getAllKnownFactories()) {
-		    					IQueryBackend backend = factoryEntry.getValue().create(context, IncQueryEngineImpl.this);
+		    					IQueryBackend backend = factoryEntry.getValue().create(context, runtimeContext, IncQueryEngineImpl.this, IncQueryEngineImpl.this);
 		    					queryBackends.put(factoryEntry.getKey(), backend);
 		    				}
 		    			}
@@ -449,13 +451,51 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 	private IQueryResultProvider getResultProviderInternal(IQuerySpecification<?> query) 
 		throws QueryProcessingException, IncQueryException 
 	{
-		final IQueryBackend backend = getQueryBackend(query);
+		final IQueryBackend backend = getQueryBackend(query.getInternalQueryRepresentation());
 		return backend.getResultProvider(query.getInternalQueryRepresentation());
 	}
 	
-	private IQueryBackend getQueryBackend(IQuerySpecification<?> query) throws IncQueryException {
-		return getQueryBackend(getCurrentHint(query.getInternalQueryRepresentation()).getQueryBackendClass());
+	/**
+	 * Returns the query backend (influenced by the hint system), even if it is a non-caching backend.
+	 */
+	private IQueryBackend getQueryBackend(PQuery query) throws IncQueryException {
+		return getQueryBackend(getCurrentHint(query).getQueryBackendClass());
 	}
+	/**
+	 * Returns a caching query backend (influenced by the hint system).
+	 */
+	private IQueryBackend getCachingQueryBackend(PQuery query) throws IncQueryException {
+		IQueryBackend regularBackend = getQueryBackend(query);
+		if (regularBackend.isCaching()) 
+			return regularBackend; 
+		else
+			return getQueryBackend(QueryBackendRegistry.getInstance().getDefaultCachingBackendClass());
+	}
+	
+	@Override
+	public boolean isResultCached(PQuery query) {
+		try {
+			return null != getCachingQueryBackend(query).peekExistingResultProvider(query);
+		} catch (IncQueryException iqe)  {
+			getLogger().error("Error while accessing query evaluator backend", iqe);
+			return false;
+		}
+	}
+	
+	@Override
+	public IQueryResultProvider getCachingResultProvider(PQuery query) throws QueryProcessingException {
+		try {
+			return getCachingQueryBackend(query).getResultProvider(query);
+		} catch (IncQueryException iqe)  {
+			getLogger().error("Error while accessing query evaluator backend", iqe);
+			throw new QueryProcessingException(
+					"Error while attempting to consult caching query evaluator backend for evaluating query {1}", 
+					new String[] {query.getFullyQualifiedName()}, 
+					"Error while accessing query evaluator backends", 
+					query, iqe);
+		}
+	}
+	
 	
 	@Override
 	public Map<String, Object> getHints(PQuery query) {
@@ -479,7 +519,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 		}
 		return hint;
 	}
-	
+			
 	/**
 	 * @pre current hint exists with non-null fields
 	 */

@@ -14,6 +14,8 @@ import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.ReteRecipeCompiler;
 import org.eclipse.incquery.runtime.rete.util.Options;
 
@@ -25,16 +27,21 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     
     @Override
     public IQueryBackend create(IPatternMatcherRuntimeContext matcherContext,
-    		IQueryBackendHintProvider hintProvider) {
-        ReteEngine engine;
-        engine = new ReteEngine(matcherContext, reteThreads);
-        ReteRecipeCompiler compiler = 
-        		new ReteRecipeCompiler(
-        				Options.builderMethod.layoutStrategy(), 
-        				matcherContext,
-        				hintProvider);
-        //EPMBuilder builder = new EPMBuilder(buildable, context);
-        engine.setCompiler(compiler);
-        return engine;
+    		IQueryRuntimeContext runtimeContext,
+    		IQueryCacheContext queryCacheContext,
+    		IQueryBackendHintProvider hintProvider) 
+    {
+	    ReteEngine engine;
+	    engine = new ReteEngine(matcherContext, runtimeContext, reteThreads);
+	    ReteRecipeCompiler compiler = 
+	    		new ReteRecipeCompiler(
+	    				Options.builderMethod.layoutStrategy(), 
+	    				matcherContext,
+	    				runtimeContext,
+	    				queryCacheContext,
+	    				hintProvider);
+	    //EPMBuilder builder = new EPMBuilder(buildable, context);
+	    engine.setCompiler(compiler);
+	    return engine;
 	}
 }

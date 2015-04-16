@@ -14,6 +14,8 @@ import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
@@ -25,10 +27,14 @@ public class LocalSearchBackend implements IQueryBackend {
 
     IPatternMatcherRuntimeContext matcherContext;
     IQueryBackendHintProvider hintProvider;
+	IQueryRuntimeContext runtimeContext;
+	IQueryCacheContext queryCacheContext;
     
-    public LocalSearchBackend(IPatternMatcherRuntimeContext context, IQueryBackendHintProvider hintProvider) {
+    public LocalSearchBackend(IPatternMatcherRuntimeContext context, IQueryRuntimeContext runtimeContext, IQueryCacheContext queryCacheContext, IQueryBackendHintProvider hintProvider) {
         super();
         this.matcherContext = context;
+		this.runtimeContext = runtimeContext;
+		this.queryCacheContext = queryCacheContext;
         this.hintProvider = hintProvider;
     }
 
@@ -45,6 +51,11 @@ public class LocalSearchBackend implements IQueryBackend {
 	@Override
 	public boolean isCaching() {
 		return false;
+	}
+
+	@Override
+	public IQueryResultProvider peekExistingResultProvider(PQuery query) {
+		return null;
 	}
 
 }
