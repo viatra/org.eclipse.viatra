@@ -10,8 +10,16 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
+import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
@@ -21,22 +29,35 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  * @author Zoltan Ujhelyi
  *
  */
-public abstract class TypeConstraint extends KeyedEnumerablePConstraint<Object> {
-
-    private final String typeString;
-
-    public TypeConstraint(PBody pSystem, Tuple variablesTuple, Object supplierKey, String typeString) {
-        super(pSystem, variablesTuple, supplierKey);
-        this.typeString = typeString;
+public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implements ITypeInfoProviderConstraint {
+    
+    public TypeConstraint(PBody pSystem, Tuple variablesTuple, IInputKey inputKey) {
+        super(pSystem, variablesTuple, inputKey);
     }
 
     @Override
     protected String keyToString() {
-        return typeString;
+        return supplierKey.getPrettyPrintableName();
+    }
+    
+    @Override
+    public Object getTypeInfo(PVariable variable) {
+        if (variable.equals(variablesTuple.get(0)))
+            return context.binaryEdgeSourceType(supplierKey);
+        if (variable.equals(variablesTuple.get(1)))
+            return context.binaryEdgeTargetType(supplierKey);
+        return ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED;
     }
 
-    public String getTypeString() {
-        return typeString;
+    @Override
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+    	if (context.isBinaryEdgeMultiplicityToOne(supplierKey))
+    		result.put(Collections.singleton(getVariableInTuple(0)), Collections.singleton(getVariableInTuple(1)));
+    	if (context.isBinaryEdgeMultiplicityOneTo(supplierKey))
+    		result.put(Collections.singleton(getVariableInTuple(1)), Collections.singleton(getVariableInTuple(0)));
+		return result;
     }
+
 
 }

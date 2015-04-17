@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
@@ -48,9 +49,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternMatchC
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PDisjunctionRewriter;
@@ -59,21 +58,19 @@ import org.eclipse.incquery.runtime.matchers.psystem.rewriters.SurrogateQueryRew
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.incquery.runtime.rete.recipes.AntiJoinRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.BinaryInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ConstantRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.CountAggregatorRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TransitiveClosureRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.UnaryInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.helper.RecipesHelper;
 import org.eclipse.incquery.runtime.rete.traceability.CompiledQuery;
@@ -560,12 +557,8 @@ public class ReteRecipeCompiler {
 //            return compileEnumerable(plan, (Instantiation) constraint);
         } else if (constraint instanceof PositivePatternCall) {
             return compileEnumerable(plan, (PositivePatternCall) constraint);
-        } else if (constraint instanceof TypeBinary) {
-            return compileEnumerable(plan, (TypeBinary) constraint);
-//        } else if (constraint instanceof TypeTernary) {
-//            return compileEnumerable((TypeTernary) constraint);
-        } else if (constraint instanceof TypeUnary) {
-            return compileEnumerable(plan, (TypeUnary) constraint);
+        } else if (constraint instanceof TypeConstraint) {
+            return compileEnumerable(plan, (TypeConstraint) constraint);
         }
         throw new UnsupportedOperationException("Unknown enumerable constraint " + constraint);
 	}
@@ -586,19 +579,10 @@ public class ReteRecipeCompiler {
 		return referQuery(referredQuery, plan, constraint.getVariablesTuple());
 	}
 
-	private PlanningTrace compileEnumerable(SubPlan plan, TypeBinary constraint) {
-		final BinaryInputRecipe recipe = FACTORY.createBinaryInputRecipe();
-		initTypeInputRecipe(constraint, recipe);
+	private PlanningTrace compileEnumerable(SubPlan plan, TypeConstraint constraint) {
+		final IInputKey inputKey = constraint.getSupplierKey();
+		final InputRecipe recipe = RecipesHelper.inputRecipe(inputKey, inputKey.getStringID(), inputKey.getArity());
 		return new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), recipe);
-	}
-	private PlanningTrace compileEnumerable(SubPlan plan, TypeUnary constraint) {
-		final UnaryInputRecipe recipe = FACTORY.createUnaryInputRecipe();
-		initTypeInputRecipe(constraint, recipe);
-		return new PlanningTrace(plan, CompilerHelper.convertVariablesTuple(constraint), recipe);
-	}
-	private void initTypeInputRecipe(TypeConstraint constraint, final TypeInputRecipe recipe) {
-		recipe.setTypeKey(constraint.getSupplierKey());
-		recipe.setTypeName(constraint.getTypeString());
 	}
 	
 	private PlanningTrace compileEnumerable(SubPlan plan, ConstantValue constraint) {

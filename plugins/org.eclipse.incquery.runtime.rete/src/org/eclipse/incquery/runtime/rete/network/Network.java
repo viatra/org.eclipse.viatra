@@ -27,6 +27,7 @@ import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeConte
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
+import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
@@ -52,7 +53,8 @@ public class Network {
     // be changed
 
     // Knowledge of the outside world
-    protected IPatternMatcherRuntimeContext context;
+	private ReteEngine engine;
+	protected IPatternMatcherRuntimeContext context;
     protected NodeFactory nodeFactory;
     protected InputConnector inputConnector;
     
@@ -63,6 +65,7 @@ public class Network {
     /** if EcoreUtil.equals(recipe1, recipe2), only one of them will be included here */
     Map<EClass, Collection<ReteNodeRecipe>> primaryRecipesByClass = CollectionsFactory.getMap();
     Set<RecipeTraceInfo> recipeTraces = CollectionsFactory.getSet();
+
     /**
      * @throws IllegalStateException if no node has been constructed for the recipe
      */
@@ -86,10 +89,11 @@ public class Network {
      *            the number of threads to operate the network with; 0 means single-threaded operation, 1 starts an
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
      */
-    public Network(int threads, IPatternMatcherRuntimeContext context) {
+    public Network(int threads, ReteEngine engine) {
         super();
         this.threads = threads;
-        this.context = context;
+		this.engine = engine;
+        this.context = engine.getContext();
         this.inputConnector = new InputConnector(this);
         this.nodeFactory = new NodeFactory(context);
 
@@ -402,6 +406,9 @@ public class Network {
 	}
 	public InputConnector getInputConnector() {
 		return inputConnector;
+	}
+    public ReteEngine getEngine() {
+		return engine;
 	}
 
 }

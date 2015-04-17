@@ -93,7 +93,7 @@ public class ReteEngine implements IQueryBackend {
         this.disconnectables = new LinkedList<Disconnectable>();
         // this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
 
-        this.reteNet = new Network(reteThreads, context);
+        this.reteNet = new Network(reteThreads, this);
         this.boundary = new ReteBoundary(this); // prerequisite: network
 
         this.matchers = //new HashMap<PatternDescription, RetePatternMatcher>();
@@ -101,7 +101,7 @@ public class ReteEngine implements IQueryBackend {
         /* this.matchersScoped = new HashMap<PatternDescription, Map<Map<Integer,Scope>,RetePatternMatcher>>(); */
 
         // prerequisite: network, framework, boundary, disconnectables
-        context.subscribeBackendForUpdates(this.boundary);
+        //context.subscribeBackendForUpdates(this.boundary);
         // prerequisite: boundary, disconnectables
 //        this.traceListener = context.subscribePatternMatcherForTraceInfluences(this);
 
@@ -114,7 +114,7 @@ public class ReteEngine implements IQueryBackend {
     	ensureInitialized();
         reteNet.kill();
 
-        context.unSubscribeBackendFromUpdates(this.boundary);
+        //context.unSubscribeBackendFromUpdates(this.boundary);
         for (Disconnectable disc : disconnectables) {
             disc.disconnect();
         }
@@ -451,7 +451,12 @@ public class ReteEngine implements IQueryBackend {
         return context;
     }
 
-    public ReteRecipeCompiler getCompiler() {
+    public IQueryRuntimeContext getRuntimeContext() {
+    	ensureInitialized();
+		return runtimeContext;
+	}
+
+	public ReteRecipeCompiler getCompiler() {
     	ensureInitialized();
        return compiler;
     }

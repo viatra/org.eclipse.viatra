@@ -132,19 +132,19 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     	ensureValidKey(key);
     	if (key instanceof JavaTransitiveInstancesKey) {
     		Class<?> instanceClass = ((JavaTransitiveInstancesKey) key).getEmfKey();
-    		return instanceClass.isInstance(seed.get(0));
+    		return instanceClass.isInstance(getFromSeed(seed, 0));
     	} else {
     		ensureIndexed(key);
     		if (key instanceof EClassTransitiveInstancesKey) {
     			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
     			// instance check not enough, must lookup from index
-    			return baseIndex.getAllInstances(eClass).contains(seed.get(0));
+    			return baseIndex.getAllInstances(eClass).contains(getFromSeed(seed, 0));
     		} else if (key instanceof EDataTypeInSlotsKey) {
     			EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-    	    	return baseIndex.getDataTypeInstances(dataType).contains(seed.get(0));
+    	    	return baseIndex.getDataTypeInstances(dataType).contains(getFromSeed(seed, 0));
     		} else if (key instanceof EStructuralFeatureInstancesKey) {
     			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-    	    	return baseIndex.findByFeatureValue(seed.get(1), feature).contains(seed.get(0));
+    	    	return baseIndex.findByFeatureValue(getFromSeed(seed, 1), feature).contains(getFromSeed(seed, 0));
     		} else {
     			illegalInputKey(key);
     			return false;
@@ -160,7 +160,7 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 		if (key instanceof EClassTransitiveInstancesKey) {
 			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
 			
-			Object seedInstance = seed.get(0);
+			Object seedInstance = getFromSeed(seed, 0);
 			if (seedInstance == null) { // unseeded
 				return Iterables.transform(baseIndex.getAllInstances(eClass), wrapUnary);
 			} else { // fully seeded
@@ -170,7 +170,7 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 		} else if (key instanceof EDataTypeInSlotsKey) {
 			EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
 			
-			Object seedInstance = seed.get(0);
+			Object seedInstance = getFromSeed(seed, 0);
 			if (seedInstance == null) { // unseeded
 				return Iterables.transform(baseIndex.getDataTypeInstances(dataType), wrapUnary);
 			} else { // fully seeded
@@ -180,8 +180,8 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 		} else if (key instanceof EStructuralFeatureInstancesKey) {
 			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
 			
-			final Object seedSource = seed.get(0);
-			final Object seedTarget = seed.get(1);
+			final Object seedSource = getFromSeed(seed, 0);
+			final Object seedTarget = getFromSeed(seed, 1);
 			if (seedSource == null && seedTarget != null) { 
 				final Set<EObject> results = baseIndex.findByFeatureValue(seedTarget, feature);
 				return Iterables.transform(results, new Function<Object, Tuple>() {
@@ -229,7 +229,7 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 		if (key instanceof EClassTransitiveInstancesKey) {
 			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
 			
-			Object seedInstance = seed.get(0);
+			Object seedInstance = getFromSeed(seed, 0);
 			if (seedInstance == null) { // unseeded
 				return baseIndex.getAllInstances(eClass);
 			} else {
@@ -239,7 +239,7 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 		} else if (key instanceof EDataTypeInSlotsKey) {
 			EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
 			
-			Object seedInstance = seed.get(0);
+			Object seedInstance = getFromSeed(seed, 0);
 			if (seedInstance == null) { // unseeded
 				return baseIndex.getDataTypeInstances(dataType);
 			} else {
@@ -249,8 +249,8 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 		} else if (key instanceof EStructuralFeatureInstancesKey) {
 			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
 			
-			Object seedSource = seed.get(0);
-			Object seedTarget = seed.get(1);
+			Object seedSource = getFromSeed(seed, 0);
+			Object seedTarget = getFromSeed(seed, 1);
 			if (seedSource == null && seedTarget != null) { 
 				return baseIndex.findByFeatureValue(seedTarget, feature);
 			} else if (seedSource != null && seedTarget == null) { 
@@ -272,7 +272,7 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 		if (key instanceof EClassTransitiveInstancesKey) {
 			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
 			
-			Object seedInstance = seed.get(0);
+			Object seedInstance = getFromSeed(seed, 0);
 			if (seedInstance == null) { // unseeded
 				return baseIndex.getAllInstances(eClass).size();
 			} else { // fully seeded
@@ -281,7 +281,7 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 		} else if (key instanceof EDataTypeInSlotsKey) {
 			EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
 			
-			Object seedInstance = seed.get(0);
+			Object seedInstance = getFromSeed(seed, 0);
 			if (seedInstance == null) { // unseeded
 				return baseIndex.getDataTypeInstances(dataType).size();
 			} else { // fully seeded
@@ -290,8 +290,8 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 		} else if (key instanceof EStructuralFeatureInstancesKey) {
 			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
 			
-			final Object seedSource = seed.get(0);
-			final Object seedTarget = seed.get(1);
+			final Object seedSource = getFromSeed(seed, 0);
+			final Object seedTarget = getFromSeed(seed, 1);
 			if (seedSource == null && seedTarget != null) { 
 				return baseIndex.findByFeatureValue(seedTarget, feature).size();
 			} else if (seedSource != null && seedTarget != null) { // fully seeded
@@ -368,22 +368,35 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
      * 
      * @author Bergmann Gabor
      */
-    private abstract static class ListenerAdapter {
+    private abstract static class ListenerAdapter { 
     	IQueryRuntimeContextListener listener;
-		public ListenerAdapter(IQueryRuntimeContextListener listener) {
+		Tuple seed;
+		/**
+		 * @param listener
+		 * @param seed must be non-null
+		 */
+		public ListenerAdapter(IQueryRuntimeContextListener listener, Object... seed) {
 			this.listener = listener;
+			this.seed = new FlatTuple(seed);
 		}
+				
 		@Override
 		public int hashCode() {
-			return listener == null ? 0 : listener.hashCode();
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((listener == null) ? 0 : listener.hashCode());
+			result = prime * result + ((seed == null) ? 0 : seed.hashCode());
+			return result;
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
 			if (obj == null)
 				return false;
-			if (!(obj.getClass().equals(getClass())))
+			if (!(obj.getClass().equals(this.getClass())))
 				return false;
 			ListenerAdapter other = (ListenerAdapter) obj;
 			if (listener == null) {
@@ -391,81 +404,107 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 					return false;
 			} else if (!listener.equals(other.listener))
 				return false;
+			if (seed == null) {
+				if (other.seed != null)
+					return false;
+			} else if (!seed.equals(other.seed))
+				return false;
 			return true;
 		}
+
+
 		@Override
 		public String toString() {
-			return "Wrapped#" + listener;
+			return "Wrapped<Seed:" + seed + ">#" + listener;
 		}
+		
 		
     }
     private static class EClassTransitiveInstancesAdapter extends ListenerAdapter implements InstanceListener {
-		public EClassTransitiveInstancesAdapter(IQueryRuntimeContextListener listener) {
-			super(listener);
+		private Object seedInstance;
+		public EClassTransitiveInstancesAdapter(IQueryRuntimeContextListener listener, Object seedInstance) {
+			super(listener, seedInstance);
+			this.seedInstance = seedInstance;
 		}
     	@Override
     	public void instanceInserted(EClass clazz, EObject instance) {
+    		if (seedInstance != null && !seedInstance.equals(instance)) return;
     		listener.update(new EClassTransitiveInstancesKey(clazz), 
     				new FlatTuple(instance), true);
     	}
     	@Override
     	public void instanceDeleted(EClass clazz, EObject instance) {
+    		if (seedInstance != null && !seedInstance.equals(instance)) return;
     		listener.update(new EClassTransitiveInstancesKey(clazz), 
     				new FlatTuple(instance), false);
     	}    	
     }
     private static class EDataTypeInSlotsAdapter extends ListenerAdapter implements DataTypeListener {
-		public EDataTypeInSlotsAdapter(IQueryRuntimeContextListener listener) {
-			super(listener);
+		private Object seedValue;
+		public EDataTypeInSlotsAdapter(IQueryRuntimeContextListener listener, Object seedValue) {
+			super(listener, seedValue);
+			this.seedValue = seedValue;
 		}
 		@Override
 		public void dataTypeInstanceInserted(EDataType type, Object instance,
 				boolean firstOccurrence) {
-    		if (firstOccurrence)
+    		if (firstOccurrence) {
+        		if (seedValue != null && !seedValue.equals(instance)) return;
 				listener.update(new EDataTypeInSlotsKey(type), 
 	    				new FlatTuple(instance), true);
+    		}
 		}
 		@Override
 		public void dataTypeInstanceDeleted(EDataType type, Object instance,
 				boolean lastOccurrence) {
-			if (lastOccurrence)
+			if (lastOccurrence) {
+        		if (seedValue != null && !seedValue.equals(instance)) return;
 	    		listener.update(new EDataTypeInSlotsKey(type), 
 	    				new FlatTuple(instance), false);
+			}
 		}
     }
     private static class EStructuralFeatureInstancesKeyAdapter extends ListenerAdapter implements FeatureListener {
-		public EStructuralFeatureInstancesKeyAdapter(IQueryRuntimeContextListener listener) {
-			super(listener);
+		private Object seedHost;
+		private Object seedValue;
+		public EStructuralFeatureInstancesKeyAdapter(IQueryRuntimeContextListener listener, Object seedHost, Object seedValue) {
+			super(listener, seedHost, seedValue);
+			this.seedHost = seedHost;
+			this.seedValue = seedValue;
 		}
 		@Override
 		public void featureInserted(EObject host, EStructuralFeature feature,
 				Object value) {
+    		if (seedHost != null && !seedHost.equals(host)) return;
+    		if (seedValue != null && !seedValue.equals(value)) return;
     		listener.update(new EStructuralFeatureInstancesKey(feature), 
     				new FlatTuple(host, value), true);
 		}
 		@Override
 		public void featureDeleted(EObject host, EStructuralFeature feature,
 				Object value) {
+    		if (seedHost != null && !seedHost.equals(host)) return;
+    		if (seedValue != null && !seedValue.equals(value)) return;
     		listener.update(new EStructuralFeatureInstancesKey(feature), 
     				new FlatTuple(host, value), false);
 		}    	
     }
     
     @Override
-    public void addUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener) {
+    public void addUpdateListener(IInputKey key, Tuple seed /* TODO ignored */, IQueryRuntimeContextListener listener) {
     	ensureIndexed(key);
     	if (key instanceof EClassTransitiveInstancesKey) {
     		EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
     		baseIndex.addInstanceListener(Collections.singleton(eClass), 
-    				new EClassTransitiveInstancesAdapter(listener));
+    				new EClassTransitiveInstancesAdapter(listener, seed.get(0)));
     	} else if (key instanceof EDataTypeInSlotsKey) {
     		EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
     		baseIndex.addDataTypeListener(Collections.singleton(dataType), 
-    				new EDataTypeInSlotsAdapter(listener));
+    				new EDataTypeInSlotsAdapter(listener, seed.get(0)));
     	} else if (key instanceof EStructuralFeatureInstancesKey) {
     		EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
     		baseIndex.addFeatureListener(Collections.singleton(feature), 
-    				new EStructuralFeatureInstancesKeyAdapter(listener));
+    				new EStructuralFeatureInstancesKeyAdapter(listener, seed.get(0), seed.get(1)));
     	} else {
     		illegalInputKey(key);
     	}
@@ -476,21 +515,23 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     	if (key instanceof EClassTransitiveInstancesKey) {
     		EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
     		baseIndex.removeInstanceListener(Collections.singleton(eClass), 
-    				new EClassTransitiveInstancesAdapter(listener));
+    				new EClassTransitiveInstancesAdapter(listener, seed.get(0)));
     	} else if (key instanceof EDataTypeInSlotsKey) {
     		EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
     		baseIndex.removeDataTypeListener(Collections.singleton(dataType), 
-    				new EDataTypeInSlotsAdapter(listener));
+    				new EDataTypeInSlotsAdapter(listener, seed.get(0)));
     	} else if (key instanceof EStructuralFeatureInstancesKey) {
     		EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
     		baseIndex.removeFeatureListener(Collections.singleton(feature), 
-    				new EStructuralFeatureInstancesKeyAdapter(listener));
+    				new EStructuralFeatureInstancesKeyAdapter(listener, seed.get(0), seed.get(1)));
     	} else {
     		illegalInputKey(key);
     	}
     }    
     
-    
+    private Object getFromSeed(Tuple seed, int index) {
+    	return seed == null ? null : seed.get(index);
+    }
     
 }
 

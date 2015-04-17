@@ -63,6 +63,7 @@ import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.xtext.EcoreUtil2;
@@ -728,8 +729,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             EStructuralFeature feature = tail.getValue();
             EMFModelComprehension comprehension = new EMFModelComprehension(new BaseIndexOptions());
             if (!comprehension.representable(feature)) {
-            	if(SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(feature)) {
-            		final PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(feature);
+            	final EStructuralFeatureInstancesKey featureInputKey = new EStructuralFeatureInstancesKey(feature);
+				if(SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(featureInputKey)) {
+            		final PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(featureInputKey);
                     String surrogateQueryFQN = surrogateQuery == null ? "(null)" : surrogateQuery.getFullyQualifiedName();
             		info("The derived/volatile feature " + feature.getName() + " of class "
                         + feature.getEContainingClass().getName()

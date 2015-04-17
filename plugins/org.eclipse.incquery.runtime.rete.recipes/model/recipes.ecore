@@ -139,41 +139,23 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" unique="false" eType="#//Index"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="InputRecipe" abstract="true" eSuperTypes="#//ReteNodeRecipe">
+  <eClassifiers xsi:type="ecore:EClass" name="InputRecipe" eSuperTypes="#//ReteNodeRecipe">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Represents input nodes for the Rete network, i.e. nodes&#xA;that generate input tuples for processing."/>
     </eAnnotations>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TypeInputRecipe" abstract="true" eSuperTypes="#//InputRecipe">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Represents type-based input constraints."/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeKey" unique="false"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject">
+    <eOperations name="getArity" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="The original type of this input."/>
+        <details key="body" value="return getKeyArity();"/>
       </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeName" unique="false"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="keyID" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Temporary construct for identifying types over the wire.&#xA;TODO improve type references"/>
       </eAnnotations>
     </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="UnaryInputRecipe" eSuperTypes="#//TypeInputRecipe">
-    <eOperations name="getArity" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="return 1;"/>
-      </eAnnotations>
-    </eOperations>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BinaryInputRecipe" eSuperTypes="#//TypeInputRecipe">
-    <eOperations name="getArity" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="return 2;"/>
-      </eAnnotations>
-    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="keyArity" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConstantRecipe" eSuperTypes="#//ReteNodeRecipe">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

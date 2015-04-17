@@ -14,7 +14,9 @@ package org.eclipse.incquery.patternlanguage.emf.specification.builder;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
@@ -52,11 +54,11 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.incquery.runtime.emf.types.EDataTypeInSlotsKey;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext.EdgeInterpretation;
-import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
-import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
@@ -69,10 +71,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatte
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeTernary;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
@@ -221,14 +220,21 @@ public class EPMToPBody {
         for (Variable variable : parameters) {
             final ExportedParameter exportedParameter = new ExportedParameter(pBody, getPNode(variable, pBody), variable.getName());
             if (variable.getType() != null && variable.getType() instanceof ClassType) {
-                EClassifier classname = ((ClassType) variable.getType()).getClassname();
+                EClassifier classifier = ((ClassType) variable.getType()).getClassname();
                 PVariable pNode = getPNode(variable, pBody);
-                new TypeUnary(pBody, pNode, classname, context.printType(classname));
+                new TypeConstraint(pBody, new FlatTuple(pNode), classifierToInputKey(classifier));
             }
             exportedParameters.add(exportedParameter);
         }
         pBody.setExportedParameters(exportedParameters);
     }
+
+	private IInputKey classifierToInputKey(EClassifier classifier) {
+		IInputKey key = classifier instanceof EClass ?
+				new EClassTransitiveInstancesKey((EClass) classifier) :
+				new EDataTypeInSlotsKey((EDataType) classifier);
+		return key;
+	}
 
     private void gatherBodyConstraints(PatternBody body, final PBody pBody) throws SpecificationBuilderException {
         EList<Constraint> constraints = body.getConstraints();
@@ -269,7 +275,7 @@ public class EPMToPBody {
         Type headType = head.getType();
         if (headType instanceof ClassType) {
             EClassifier headClassname = ((ClassType) headType).getClassname();
-            new TypeUnary(pBody, currentSrc, headClassname, context.printType(headClassname));
+            new TypeConstraint(pBody, new FlatTuple(currentSrc), classifierToInputKey(headClassname));
         } else {
             throw new SpecificationBuilderException("Unsupported path expression head type {1} in pattern {2}: {3}",
                     new String[] { headType.eClass().getName(), patternFQN, typeStr(headType) },
@@ -332,17 +338,13 @@ public class EPMToPBody {
     protected void gatherClassifierConstraint(EClassifierConstraint constraint, final PBody pBody) {
         EClassifier classname = ((ClassType) constraint.getType()).getClassname();
         PVariable pNode = getPNode(constraint.getVar(), pBody);
-        new TypeUnary(pBody, pNode, classname, context.printType(classname));
+        new TypeConstraint(pBody, new FlatTuple(pNode), classifierToInputKey(classname));
     }
 
     protected void gatherPathSegment(Type segmentType, PVariable src, PVariable trg, final PBody pBody) throws SpecificationBuilderException {
         if (segmentType instanceof ReferenceType) { // EMF-specific
             EStructuralFeature typeObject = ((ReferenceType) segmentType).getRefname();
-           	if (context.edgeInterpretation() == EdgeInterpretation.TERNARY) {
-           	    new TypeTernary(pBody, context, newVirtual(pBody), src, trg, typeObject, context.printType(typeObject));
-           	} else {
-           	    new TypeBinary(pBody, context, src, trg, typeObject, context.printType(typeObject));
-           	}
+            new TypeConstraint(pBody, new FlatTuple(src, trg), new EStructuralFeatureInstancesKey(typeObject));
         } else
             throw new SpecificationBuilderException("Unsupported path segment type {1} in pattern {2}: {3}", new String[] {
                     segmentType.eClass().getName(), patternFQN, typeStr(segmentType) }, "Unsupported navigation step",

@@ -12,16 +12,16 @@ package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
-import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 import com.google.common.collect.Sets;
 
@@ -36,26 +36,24 @@ public class SurrogateQueryRewriter extends PDisjunctionRewriter {
         Set<PBody> replacedBodies = Sets.newHashSet();
         for (PBody body : disjunction.getBodies()) {
             PBodyCopier copier = new PBodyCopier(body) {
-
-                @Override
-                protected void copyTypeBinaryConstraint(TypeBinary typeBinary) {
-                    Object[] elements = typeBinary.getVariablesTuple().getElements();
-                    PVariable source = (PVariable) elements[0];
-                    PVariable target = (PVariable) elements[1];
-                    final Object typeKey = typeBinary.getSupplierKey();
-                    if(SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(typeKey)) {
-                        PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(typeKey);
+            	
+            	@Override
+            	protected void copyTypeConstraint(TypeConstraint typeConstraint) {
+                    PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
+                    FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
+                    final IInputKey supplierKey = typeConstraint.getSupplierKey();
+                    if(SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(supplierKey)) {
+                        PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(supplierKey);
                         if (surrogateQuery == null) {
-                            throw new IllegalStateException(String.format("Surrogate query for feature %s not found", typeBinary.getTypeString()));
+                            throw new IllegalStateException(
+                            		String.format("Surrogate query for feature %s not found", 
+                            				supplierKey.getPrettyPrintableName()));
                         }
-                        Tuple variablesTuple = new FlatTuple(variableMapping.get(source), variableMapping.get(target));
                         new PositivePatternCall(getCopiedBody(), variablesTuple, surrogateQuery);
                     } else {
-                        new TypeBinary(getCopiedBody(), typeBinary.getContext(), variableMapping.get(source),
-                            variableMapping.get(target), typeKey, typeBinary.getTypeString());
+                    	new TypeConstraint(getCopiedBody(), variablesTuple, supplierKey);
                     }
-                }
-
+            	}
             };
             PBody modifiedBody = copier.getCopiedBody();
             replacedBodies.add(modifiedBody);

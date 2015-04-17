@@ -14,7 +14,6 @@ package org.eclipse.incquery.runtime.rete.recipes.helper
 import org.eclipse.incquery.runtime.rete.recipes.Mask
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe
-import org.eclipse.incquery.runtime.rete.recipes.TypeInputRecipe
 
 /**
  * Static helper class for easy construction of recipes.
@@ -50,18 +49,13 @@ class RecipesHelper {
 		]
 	}
 	
-	def public static unaryInputRecipe(Object typeKey, String typeName) {
-		fillOut(FACTORY.createUnaryInputRecipe(), typeKey, typeName)
-	}
-	def public static binaryInputRecipe(Object typeKey, String typeName) {
-		fillOut(FACTORY.createBinaryInputRecipe(), typeKey, typeName)
-	}
-	
-	private def static fillOut(TypeInputRecipe typeInputRecipe, Object typeKey, String typeName) {
-		typeInputRecipe => [
-			it.setTypeKey(typeKey)
-			it.setTypeName(typeName)
+	def public static inputRecipe(Object inputKey, String inputKeyID, int arity) {
+		FACTORY.createInputRecipe() => [
+			it.inputKey = inputKey
+			it.keyArity = arity
+			it.keyID = inputKeyID
 		]
 	}
+	
 
 }

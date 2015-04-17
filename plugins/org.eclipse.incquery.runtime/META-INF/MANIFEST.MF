@@ -11,10 +11,15 @@ Require-Bundle: org.eclipse.incquery.runtime.rete;bundle-version="0.8.0";visibil
  com.google.guava;visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
-Export-Package: org.eclipse.incquery.runtime,org.eclipse.incquery.runt
- ime.api,org.eclipse.incquery.runtime.api.impl,org.eclipse.incquery.ru
- ntime.api.scope,org.eclipse.incquery.runtime.emf,org.eclipse.incquery
- .runtime.emf.helper,org.eclipse.incquery.runtime.exception,org.eclips
- e.incquery.runtime.extensibility,org.eclipse.incquery.runtime.util
+Export-Package: org.eclipse.incquery.runtime,
+ org.eclipse.incquery.runtime.api,
+ org.eclipse.incquery.runtime.api.impl,
+ org.eclipse.incquery.runtime.api.scope,
+ org.eclipse.incquery.runtime.emf,
+ org.eclipse.incquery.runtime.emf.helper,
+ org.eclipse.incquery.runtime.emf.types,
+ org.eclipse.incquery.runtime.exception,
+ org.eclipse.incquery.runtime.extensibility,
+ org.eclipse.incquery.runtime.util
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j;version="1.2.15"
