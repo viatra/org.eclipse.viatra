@@ -72,9 +72,6 @@
   <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.structuredClassifierPart" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
     <surrogate-query-emf class-name="StructuredClassifier" feature-name="part" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.StructuredClassifierPartQuerySpecification"/>
   </extension>
-  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.structuredClassifierPart" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
-    <surrogate-query-emf class-name="StructuredClassifier" feature-name="part" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.StructuredClassifierPartQuerySpecification"/>
-  </extension>
   <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.stateIsOrthogonal" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
     <surrogate-query-emf class-name="State" feature-name="isOrthogonal" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.StateIsOrthogonalQuerySpecification"/>
   </extension>
