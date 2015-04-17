@@ -6,8 +6,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
-import com.google.common.base.Strings;
-
 public class LabelParser {
 
     public static <Match extends IPatternMatch> String calculateLabel(Match match, String labelExpression) {

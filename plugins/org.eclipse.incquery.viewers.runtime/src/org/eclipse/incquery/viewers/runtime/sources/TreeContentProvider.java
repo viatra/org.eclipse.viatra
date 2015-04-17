@@ -54,7 +54,6 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object[] getElements(Object inputElement) {
     	if (state == null) {
