@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.incquery.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.incquery.viewers.runtime.model.ViewersRuntimeModelUtil;
+import org.eclipse.incquery.viewers.tooling.ui.Activator;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -159,9 +160,9 @@ public class ViewersMultiSandoxViewComponentSettings {
 		private Image contIcon;
 		
 		{
-			itemIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersRuntimePlugin.PLUGIN_ID, "icons/item.gif").createImage();
-			edgeIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersRuntimePlugin.PLUGIN_ID, "icons/edge.gif").createImage();
-			contIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersRuntimePlugin.PLUGIN_ID, "icons/containment.gif").createImage();
+			itemIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/item.gif").createImage();
+			edgeIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/edge.gif").createImage();
+			contIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(Activator.PLUGIN_ID, "icons/containment.gif").createImage();
 		}
 		
 		@Override

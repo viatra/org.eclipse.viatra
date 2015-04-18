@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewers.runtime.sources;
 
-import org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin;
-import org.eclipse.incquery.viewers.runtime.model.Containment;
 import org.eclipse.incquery.viewers.runtime.model.Edge;
 import org.eclipse.incquery.viewers.runtime.model.Item;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState;
@@ -19,7 +17,6 @@ import org.eclipse.incquery.viewers.runtime.model.listeners.AbstractViewerLabelL
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerLabelListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * @author Zoltan Ujhelyi
@@ -43,16 +40,9 @@ public class QueryLabelProvider extends LabelProvider {
 	
 	private ViewerState state; 
 
-    private Image itemIcon;
-    private Image edgeIcon; 
-    private Image contIcon;
-	
 	public QueryLabelProvider(ViewerState state) {
 		this.state = state;
 		state.addLabelListener(labelListener);
-		itemIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersRuntimePlugin.PLUGIN_ID, "icons/item.gif").createImage();
-		edgeIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersRuntimePlugin.PLUGIN_ID, "icons/edge.gif").createImage();
-		contIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersRuntimePlugin.PLUGIN_ID, "icons/containment.gif").createImage();
 	}
 	
     @Override
@@ -67,28 +57,8 @@ public class QueryLabelProvider extends LabelProvider {
     	return "";
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-     */
-    @Override
-    public Image getImage(Object element) {
-    	if (element instanceof Item) {
-            return itemIcon;
-        } else if (element instanceof Containment) {
-    		return contIcon;
-    	} else if (element instanceof Edge) {
-            return edgeIcon;
-    	} 
-    	return super.getImage(element);
-    }
-
-
-    
     @Override
     public void dispose() {
-    	itemIcon.dispose();
-    	edgeIcon.dispose();
-    	contIcon.dispose();
     	state.removeLabelListener(labelListener);
     	super.dispose();
     }
