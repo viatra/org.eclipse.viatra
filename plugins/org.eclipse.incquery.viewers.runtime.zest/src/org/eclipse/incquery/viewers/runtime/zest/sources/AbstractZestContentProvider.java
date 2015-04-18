@@ -62,13 +62,26 @@ public abstract class AbstractZestContentProvider extends
 	}
 
 	@Override
-	public void itemAppeared(Item item) {
-		viewer.addNode(item);
+	public void itemAppeared(final Item item) {
+	    viewer.getGraphControl().getDisplay().syncExec(new Runnable() {
+            
+            @Override
+            public void run() {
+                viewer.addNode(item);
+            }
+        });
 	}
 
 	@Override
-	public void itemDisappeared(Item item) {
-		viewer.removeNode(item);
+	public void itemDisappeared(final Item item) {
+	    viewer.getGraphControl().getDisplay().syncExec(new Runnable() {
+            
+            @Override
+            public void run() {
+                viewer.removeGraphModelNode(item);
+                viewer.removeNode(item);
+            }
+        });
 	}
 
 	@Override

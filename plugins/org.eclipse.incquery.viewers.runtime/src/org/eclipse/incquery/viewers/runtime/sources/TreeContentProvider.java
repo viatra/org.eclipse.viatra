@@ -79,28 +79,53 @@ public class TreeContentProvider extends AbstractViewerStateListener implements 
     }
 
     @Override
-    public void itemAppeared(Item item) {
+    public void itemAppeared(final Item item) {
         if (filter.apply(item)) {
-            viewer.add(viewer.getInput(), item);
+            viewer.getControl().getDisplay().syncExec(new Runnable() {
+                
+                @Override
+                public void run() {
+                    viewer.add(viewer.getInput(), item);
+                }
+            });
         }
     }
 
     @Override
-    public void itemDisappeared(Item item) {
-        viewer.remove(item);
+    public void itemDisappeared(final Item item) {
+        viewer.getControl().getDisplay().syncExec(new Runnable() {
+            
+            @Override
+            public void run() {
+                viewer.remove(item);
+            }
+        });
     }
 
     @Override
-    public void containmentAppeared(Containment edge) {
-        viewer.add(edge.getSource(), edge.getTarget());
-        viewer.setExpandedState(edge.getSource(), true);
-        viewer.refresh(edge.getTarget());
+    public void containmentAppeared(final Containment edge) {
+        viewer.getControl().getDisplay().syncExec(new Runnable() {
+            
+            @Override
+            public void run() {
+                viewer.add(edge.getSource(), edge.getTarget());
+                viewer.setExpandedState(edge.getSource(), true);
+                viewer.refresh(edge.getTarget());
+                
+            }
+        });
     }
 
     @Override
-    public void containmentDisappeared(Containment edge) {
-        viewer.remove(edge.getSource(), new Object[] { edge.getTarget() });
-        viewer.refresh(edge.getSource());
+    public void containmentDisappeared(final Containment edge) {
+        viewer.getControl().getDisplay().syncExec(new Runnable() {
+            
+            @Override
+            public void run() {
+                viewer.remove(edge.getSource(), new Object[] { edge.getTarget() });
+                viewer.refresh(edge.getSource());
+            }
+        });
     }
 
     @Override

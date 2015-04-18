@@ -39,7 +39,6 @@ public class ZestContentProvider extends AbstractZestContentProvider implements 
         super.inputChanged(viewer, oldInput, newInput);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object[] getElements(Object inputElement) {
         if (state!=null) {
@@ -62,13 +61,26 @@ public class ZestContentProvider extends AbstractZestContentProvider implements 
     }
     
     @Override
-    public void edgeAppeared(Edge edge) {
-        viewer.addRelationship(edge, edge.getSource(), edge.getTarget());
+    public void edgeAppeared(final Edge edge) {
+        viewer.getGraphControl().getDisplay().syncExec(new Runnable() {
+            
+            @Override
+            public void run() {
+                viewer.addRelationship(edge, edge.getSource(), edge.getTarget());
+            }
+        });
     }
 
     @Override
-    public void edgeDisappeared(Edge edge) {
-        viewer.removeRelationship(edge);
+    public void edgeDisappeared(final Edge edge) {
+        viewer.getGraphControl().getDisplay().syncExec(new Runnable() {
+            
+            @Override
+            public void run() {
+                viewer.removeGraphModelConnection(edge);
+                viewer.removeRelationship(edge);
+            }
+        });
     }
 
 }
