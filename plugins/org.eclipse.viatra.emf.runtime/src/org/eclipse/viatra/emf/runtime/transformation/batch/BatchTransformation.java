@@ -60,7 +60,6 @@ public class BatchTransformation {
 		this(AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(set)));
 	}
 
-	@Deprecated
 	public BatchTransformation(RuleEngine ruleEngine,
 			AdvancedIncQueryEngine iqEngine) {
 		this(ruleEngine, iqEngine, false);
