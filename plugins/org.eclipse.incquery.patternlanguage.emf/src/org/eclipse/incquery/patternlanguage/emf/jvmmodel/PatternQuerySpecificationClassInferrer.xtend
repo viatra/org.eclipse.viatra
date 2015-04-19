@@ -346,21 +346,21 @@ class PatternQuerySpecificationClassInferrer {
 						val literal = key.emfKey
 						val container = literal.EContainingClass
 						val packageNsUri = container.EPackage.nsURI
-						'''new «TypeConstraint»(body, «constraint.variablesTuple.output», new «EStructuralFeatureInstancesKey»(getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»")));'''
+						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «EStructuralFeatureInstancesKey»(getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»")));'''
 					}
 					EClassTransitiveInstancesKey : {
 						val literal = key.emfKey
 						val packageNsUri = literal.EPackage.nsURI
-						'''new «TypeConstraint»(body, «constraint.variablesTuple.output», new «EClassTransitiveInstancesKey»((«EClass»)getClassifierLiteral("«packageNsUri»", "«literal.name»")));'''
+						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «EClassTransitiveInstancesKey»((«EClass»)getClassifierLiteral("«packageNsUri»", "«literal.name»")));'''
 					}
 					EDataTypeInSlotsKey : {
 						val literal = key.emfKey
 						val packageNsUri = literal.EPackage.nsURI
-						'''new «TypeConstraint»(body, «constraint.variablesTuple.output», new «EDataTypeInSlotsKey»((«EDataType»)getClassifierLiteral("«packageNsUri»", "«literal.name»")));'''
+						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «EDataTypeInSlotsKey»((«EDataType»)getClassifierLiteral("«packageNsUri»", "«literal.name»")));'''
 					}
 					JavaTransitiveInstancesKey : {
 						val literal = key.emfKey
-						'''new «TypeConstraint»(body, «constraint.variablesTuple.output», new «JavaTransitiveInstancesKey»(«literal».class));'''
+						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «JavaTransitiveInstancesKey»(«literal».class));'''
 					}
 				}
 			}

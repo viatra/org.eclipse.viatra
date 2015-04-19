@@ -85,7 +85,7 @@ public abstract class BaseTypeSafeConstraint extends
     	
         for (PVariable pVariable : inputVariables) {
             Set<TypeJudgement> allTypeRestrictionsForVariable = pSystem.getAllUnaryTypeRestrictions(context).get(pVariable);
-        	if (!impliedJudgements.containsAll(allTypeRestrictionsForVariable))
+        	if (allTypeRestrictionsForVariable != null && !impliedJudgements.containsAll(allTypeRestrictionsForVariable))
                 return pVariable;
         }
         return null;

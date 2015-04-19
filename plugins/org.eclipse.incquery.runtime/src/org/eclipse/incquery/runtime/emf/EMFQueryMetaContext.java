@@ -91,8 +91,10 @@ public enum EMFQueryMetaContext implements IQueryMetaContext {
 			
 			// direct Java superClass
 			Class<?> superclass = instanceClass.getSuperclass();
-			JavaTransitiveInstancesKey impliedSuper = new JavaTransitiveInstancesKey(superclass);
-			result.add(new InputKeyImplication(implyingKey, impliedSuper, Arrays.asList(0)));
+			if (superclass != null) {
+				JavaTransitiveInstancesKey impliedSuper = new JavaTransitiveInstancesKey(superclass);
+				result.add(new InputKeyImplication(implyingKey, impliedSuper, Arrays.asList(0)));
+			}
 			
 			// direct Java superInterfaces
 			for (Class<?> superInterface : instanceClass.getInterfaces()) {
