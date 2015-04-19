@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
+import org.eclipse.incquery.tooling.localsearch.ui.LocalSearchToolingActivator;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -38,7 +39,6 @@ import com.google.common.collect.Maps;
  * @author Marton Bur
  *
  */
-@SuppressWarnings("restriction")
 public class OperationListLabelProvider extends StyledCellLabelProvider {
 
     private List<SearchPlanExecutor> planExecutors = Lists.newArrayList();
@@ -56,9 +56,9 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 		// notAppliedOperationImage = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_ELCL_SYNCED);
 		// notAppliedOperationImage = JavaDebugImages.get(JavaDebugImages.IMG_OBJS_CONTENDED_MONITOR);
 		// currentOperationImage = DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_LAUNCH_RUN);
-		notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.incquery.tooling.localsearch.ui", "/icons/help_contents.gif").createImage();
-		currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.incquery.tooling.localsearch.ui", "icons/nav_go.gif").createImage();
-		appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.incquery.tooling.localsearch.ui", "/icons/complete_status.gif").createImage();
+		notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(LocalSearchToolingActivator.PLUGIN_ID, "/icons/help_contents.gif").createImage();
+		currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(LocalSearchToolingActivator.PLUGIN_ID, "icons/nav_go.gif").createImage();
+		appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(LocalSearchToolingActivator.PLUGIN_ID, "/icons/complete_status.gif").createImage();
 	}
 
 	@Override

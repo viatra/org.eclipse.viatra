@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.localsearch.ui.debugger.provider;
 
-import java.util.Collection;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.EMFEditPlugin;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;

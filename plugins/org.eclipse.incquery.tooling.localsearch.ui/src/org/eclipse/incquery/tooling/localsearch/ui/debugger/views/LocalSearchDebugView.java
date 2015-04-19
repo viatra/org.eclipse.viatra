@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.localsearch.ui.debugger.views;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -276,7 +275,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 				matchViewersMap.put(tabTitle, viewer);
 				
 				viewer.refresh();
-				ArrayList<MatchingFrame> matchViewerInput = Lists.<MatchingFrame>newArrayList();
+				List<MatchingFrame> matchViewerInput = Lists.<MatchingFrame>newArrayList();
 				viewer.setData(VIEWER_KEY, matchViewerInput);
 				viewer.setInput(matchViewerInput);
 				
@@ -285,8 +284,6 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 					
 					@Override
 					public void handleEvent(Event event) {
-						// TODO Auto-generated method stub
-						System.out.println("focused detected");
 						viewer.setSelection(null);
 					}
 				}); 
@@ -294,8 +291,6 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 					
 					@Override
 					public void handleEvent(Event event) {
-						// TODO Auto-generated method stub
-						System.out.println("focus IN detected");
 						viewer.setSelection(null);
 					}
 				}); 

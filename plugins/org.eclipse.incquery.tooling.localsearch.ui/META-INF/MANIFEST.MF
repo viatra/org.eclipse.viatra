@@ -27,3 +27,4 @@ Export-Package: org.eclipse.incquery.tooling.localsearch.ui.debugger,o
  pse.incquery.tooling.localsearch.ui.debugger.views
 Bundle-Activator: org.eclipse.incquery.tooling.localsearch.ui.LocalSearchToolingActivator
 Bundle-ActivationPolicy: lazy
+Import-Package: org.apache.log4j;version="1.2.15"
