@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.matcher.integration;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
@@ -25,14 +25,14 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
  */
 public class LocalSearchBackend implements IQueryBackend {
 
-    IPatternMatcherRuntimeContext matcherContext;
     IQueryBackendHintProvider hintProvider;
 	IQueryRuntimeContext runtimeContext;
 	IQueryCacheContext queryCacheContext;
+	Logger logger;
     
-    public LocalSearchBackend(IPatternMatcherRuntimeContext context, IQueryRuntimeContext runtimeContext, IQueryCacheContext queryCacheContext, IQueryBackendHintProvider hintProvider) {
+    public LocalSearchBackend(Logger logger, IQueryRuntimeContext runtimeContext, IQueryCacheContext queryCacheContext, IQueryBackendHintProvider hintProvider) {
         super();
-        this.matcherContext = context;
+		this.logger = logger;
 		this.runtimeContext = runtimeContext;
 		this.queryCacheContext = queryCacheContext;
         this.hintProvider = hintProvider;
@@ -41,7 +41,7 @@ public class LocalSearchBackend implements IQueryBackend {
     @Override
     public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException {
         //TODO caching
-        return new LocalSearchResultProvider(this, matcherContext, hintProvider, query);
+        return new LocalSearchResultProvider(this, logger, runtimeContext, queryCacheContext, hintProvider, query);
     }
 
     @Override

@@ -14,8 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
@@ -59,21 +60,23 @@ public class LocalSearchPlanner {
     // Externally set tools for planning
     private PQueryFlattener flattener;
     private IQueryPlannerStrategy plannerStrategy;
-    private IPatternMatcherContext context;
     private PBodyNormalizer normalizer;
     private POperationCompiler operationCompiler;
     private ISearchPlanCodeGenerator codeGenerator;
+	private Logger logger;
+	private IQueryMetaContext context;
 
-    public void initializePlanner(PQueryFlattener pQueryFlattener, IPatternMatcherContext context,
+    public void initializePlanner(PQueryFlattener pQueryFlattener, Logger logger, IQueryMetaContext context,
             PBodyNormalizer pBodyNormalizer, IQueryPlannerStrategy localSearchPlannerStrategy,
             POperationCompiler pOperationCompiler) {
-        initializePlanner(pQueryFlattener, context, pBodyNormalizer, localSearchPlannerStrategy, pOperationCompiler, null);
+        initializePlanner(pQueryFlattener, logger, context, pBodyNormalizer, localSearchPlannerStrategy, pOperationCompiler, null);
     }
 
-    public void initializePlanner(PQueryFlattener pQueryFlattener, IPatternMatcherContext context,
+    public void initializePlanner(PQueryFlattener pQueryFlattener, Logger logger, IQueryMetaContext context,
             PBodyNormalizer pBodyNormalizer, IQueryPlannerStrategy localSearchPlannerStrategy,
             POperationCompiler pOperationCompiler, ISearchPlanCodeGenerator codeGenerator) {
         this.flattener = pQueryFlattener;
+		this.logger = logger;
         this.context = context;
         this.normalizer = pBodyNormalizer;
         this.plannerStrategy = localSearchPlannerStrategy;
@@ -106,7 +109,7 @@ public class LocalSearchPlanner {
 
         for (PBody normalizedBody : normalizedBodies) {
             preparePatternAdornmentForPlanner(boundVarIndices, normalizedBody);
-            SubPlan plan = plannerStrategy.plan(normalizedBody, context);
+            SubPlan plan = plannerStrategy.plan(normalizedBody, logger, context);
             plansForBodies.add(plan);
         }
 

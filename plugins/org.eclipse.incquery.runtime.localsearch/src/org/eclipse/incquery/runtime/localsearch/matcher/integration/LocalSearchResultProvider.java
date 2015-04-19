@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -42,7 +43,9 @@ import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -63,24 +66,26 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     private final static String UPDATE_LISTENER_NOT_SUPPORTED = "Local search backend does not support update listening.";
     private final IQueryBackend backend;
-    private final IPatternMatcherRuntimeContext matcherContext;
     private final IQueryBackendHintProvider hintProvider;
     private final PQuery query;
+	private Logger logger;
+	private IQueryRuntimeContext context;
+	private IQueryCacheContext cacheContext;
 
     private static class Planner {
 
         Map<List<ISearchOperation>, Map<PVariable, Integer>> operationListsWithVarMappings;
         private POperationCompiler compiler;
 
-        public void createPlan(MatcherReference key, IPatternMatcherRuntimeContext matcherContext, final ISearchContext searchContext)
+        public void createPlan(MatcherReference key, Logger logger, IQueryMetaContext context, final ISearchContext searchContext)
                 throws QueryProcessingException {
             PQueryFlattener flattener = new PQueryFlattener();
-            PBodyNormalizer normalizer = new PBodyNormalizer(matcherContext, false);
+            PBodyNormalizer normalizer = new PBodyNormalizer(context, false);
             LocalSearchPlannerStrategy strategy = new LocalSearchPlannerStrategy();
             compiler = new POperationCompiler();
 
             LocalSearchPlanner planner = new LocalSearchPlanner();
-            planner.initializePlanner(flattener, matcherContext, normalizer, strategy, compiler);
+            planner.initializePlanner(flattener, logger, context, normalizer, strategy, compiler);
             operationListsWithVarMappings = planner.plan(key.getQuery(), key.getAdornment());
 
             Collection<SearchPlanExecutor> executors = Collections2.transform(operationListsWithVarMappings.entrySet(),
@@ -136,10 +141,12 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     }
 
-    public LocalSearchResultProvider(IQueryBackend backend, IPatternMatcherRuntimeContext matcherContext,
-            IQueryBackendHintProvider hintProvider, PQuery query) {
+    public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext context,
+            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query) {
         this.backend = backend;
-        this.matcherContext = matcherContext;
+		this.logger = logger;
+		this.context = context;
+		this.cacheContext = cacheContext;
         this.hintProvider = hintProvider;
         this.query = query;
 
@@ -183,7 +190,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         while (!todo.isEmpty()) {
             final MatcherReference dependency = todo.iterator().next();
             Planner planner = new Planner();
-            planner.createPlan(dependency, matcherContext, searchContext);
+            planner.createPlan(dependency, logger, context.getMetaContext(), searchContext);
             planner.collectElementsToIndex(classesToIndex, featuresToIndex, dataTypesToIndex);
             planner.collectDependencies(dependencies);
             processedDependencies.add(dependency);

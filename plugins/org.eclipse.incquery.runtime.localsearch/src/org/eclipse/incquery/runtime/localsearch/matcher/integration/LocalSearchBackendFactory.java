@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.matcher.integration;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 
@@ -24,12 +24,12 @@ import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 public class LocalSearchBackendFactory implements IQueryBackendFactory{
     
     @Override
-    public IQueryBackend create(IPatternMatcherRuntimeContext matcherContext,
+    public IQueryBackend create(Logger logger,
     		IQueryRuntimeContext runtimeContext,
     		IQueryCacheContext queryCacheContext,
     		IQueryBackendHintProvider hintProvider) {
         return new LocalSearchBackend(
-        		matcherContext, 
+        		logger, 
         		runtimeContext,
         		queryCacheContext,
         		hintProvider);

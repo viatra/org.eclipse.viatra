@@ -14,7 +14,7 @@ import java.util.Comparator;
 
 import org.eclipse.incquery.runtime.localsearch.planner.cost.ICostEstimator;
 import org.eclipse.incquery.runtime.localsearch.planner.cost.impl.VariableBindingBasedCostEstimator;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 
@@ -29,7 +29,7 @@ public class OrderingHeuristics implements Comparator<PConstraint> {
 
     private SubPlan plan;
 
-    public OrderingHeuristics(SubPlan plan, IPatternMatcherContext context) {
+    public OrderingHeuristics(SubPlan plan, IQueryMetaContext context) {
         this.plan = plan;
     }
 
