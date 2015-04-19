@@ -42,7 +42,7 @@ public class InvertedDisappearancePriorityConflictResolver extends FixedPriority
 		return new InvertedDisappearancePriorityConflictSet(this, priorities);
 	}
 
-	public class InvertedDisappearancePriorityConflictSet extends FixedPriorityConflictSet {
+	public static class InvertedDisappearancePriorityConflictSet extends FixedPriorityConflictSet {
 
 		public InvertedDisappearancePriorityConflictSet(FixedPriorityConflictResolver resolver,
 				Map<RuleSpecification<?>, Integer> priorities) {

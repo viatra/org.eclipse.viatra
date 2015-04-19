@@ -114,4 +114,7 @@
   <extension id="org.eclipse.incquery.uml.derivedfeatures.Fixed" point="org.eclipse.incquery.runtime.queryspecification">
     <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.Fixed" id="org.eclipse.incquery.uml.derivedfeatures.Fixed"/>
   </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.messageMessageKind" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Message" feature-name="messageKind" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.MessageMessageKindQuerySpecification"/>
+  </extension>
 </plugin>

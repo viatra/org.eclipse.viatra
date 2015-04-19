@@ -349,20 +349,6 @@ pattern protocolTransitionReferred(
 //pattern stereotypeProfile(source: Stereotype, target: Profile) {}
 
 /*
-(ownedAttribute->select(isComposite)->asSet())
-*/
-@Surrogate(feature = "part")
-pattern structuredClassifierPart(
-	self : StructuredClassifier,
-	temp1 : Property
-) {
-	Property.isComposite(temp1, boolean_0);
-	true == boolean_0;
-	StructuredClassifier.ownedAttribute(self, property);
-	temp1 == property;
-}
-
-/*
 (Transition.allInstances()->select(target=self))
 */
 @Surrogate(feature = "incoming")
