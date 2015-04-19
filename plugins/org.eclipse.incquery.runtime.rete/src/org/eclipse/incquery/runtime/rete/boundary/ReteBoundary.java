@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
@@ -54,8 +52,6 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
         return headContainer;
     }
 
-    protected IPatternMatcherRuntimeContext context;
-    IPatternMatcherContext.GeneralizationQueryDirection generalizationQueryDirection;
 	protected final InputConnector inputConnector;
 
 
@@ -78,8 +74,6 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
         this.headContainer = network.getHeadContainer();
         inputConnector = network.getInputConnector();
 
-        this.context = engine.getContext();
-        this.generalizationQueryDirection = this.context.allowedGeneralizationQueryDirection();
         this.parentPlansOfReceiver = CollectionsFactory.getMap();//new HashMap<Address<? extends Receiver>, Set<SubPlan<Address<? extends Supplier>>>>();
 
         // productionsScoped = new HashMap<GTPattern, Map<Map<Integer,Scope>,Address<? extends Production>>>();

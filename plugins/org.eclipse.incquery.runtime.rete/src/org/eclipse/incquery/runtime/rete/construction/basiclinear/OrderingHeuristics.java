@@ -14,7 +14,7 @@ package org.eclipse.incquery.runtime.rete.construction.basiclinear;
 import java.util.Comparator;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
@@ -30,12 +30,12 @@ import org.eclipse.incquery.runtime.rete.util.OrderingCompareAgent;
  */
 public class OrderingHeuristics implements Comparator<PConstraint> {
     private SubPlan plan;
-    private IPatternMatcherContext context;
+    private IQueryMetaContext context;
 
     /**
      * @param plan
      */
-    public OrderingHeuristics(SubPlan plan, IPatternMatcherContext context) {
+    public OrderingHeuristics(SubPlan plan, IQueryMetaContext context) {
         super();
         this.plan = plan;
         this.context = context;

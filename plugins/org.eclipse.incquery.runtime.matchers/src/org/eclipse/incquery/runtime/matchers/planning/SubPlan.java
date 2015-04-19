@@ -15,13 +15,17 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.WeakHashMap;
 
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
+import org.eclipse.incquery.runtime.matchers.planning.helpers.TypeHelper;
 import org.eclipse.incquery.runtime.matchers.planning.operations.POperation;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PProject;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PStart;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.TypeJudgement;
 
 import com.google.common.base.Joiner;
 
@@ -182,6 +186,23 @@ public class SubPlan {
 	public POperation getOperation() {
 		return operation;
 	}
+	
+	
+    /**
+     * The closure of all type judgments of enforced constraints at this point.
+     * <p> No subsumption applied.
+     */
+    public Set<TypeJudgement> getAllImpliedTypeJudgements(IQueryMetaContext context) {
+        Set<TypeJudgement> impliedJudgements = allImpliedTypeJudgements.get(context);
+		if (impliedJudgements == null) {
+	    	Set<TypeJudgement> equivalentJudgements = TypeHelper.getDirectJudgements(getAllEnforcedConstraints(), context);
+	    	impliedJudgements = TypeHelper.typeClosure(equivalentJudgements, context);
+
+			allImpliedTypeJudgements.put(context, impliedJudgements);
+        }
+        return impliedJudgements;
+    }
+    private WeakHashMap<IQueryMetaContext, Set<TypeJudgement>> allImpliedTypeJudgements = new WeakHashMap<IQueryMetaContext, Set<TypeJudgement>>();   
 	
 	
 	@Override

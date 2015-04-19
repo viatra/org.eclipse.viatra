@@ -17,9 +17,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
@@ -44,7 +44,7 @@ public class ReteEngine implements IQueryBackend {
     protected final int reteThreads;
     protected ReteBoundary boundary;
 
-    protected IPatternMatcherRuntimeContext context;
+	private Logger logger;
     protected IQueryRuntimeContext runtimeContext;
 
     protected Collection<Disconnectable> disconnectables;
@@ -72,9 +72,9 @@ public class ReteEngine implements IQueryBackend {
      *            the number of threads to operate the RETE network with; 0 means single-threaded operation, 1 starts an
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
      */
-    public ReteEngine(IPatternMatcherRuntimeContext context, IQueryRuntimeContext runtimeContext, int reteThreads) {
+    public ReteEngine(Logger logger, IQueryRuntimeContext runtimeContext, int reteThreads) {
         super();
-        this.context = context;
+		this.logger = logger;
 		this.runtimeContext = runtimeContext;
         this.reteThreads = reteThreads;
         this.parallelExecutionEnabled = reteThreads > 0;
@@ -139,7 +139,7 @@ public class ReteEngine implements IQueryBackend {
         deconstructEngine();
         // this.framework = null;
         this.compiler = null;
-        this.context = null;
+        this.logger = null;
     }
 
     /**
@@ -220,13 +220,13 @@ public class ReteEngine implements IQueryBackend {
 
 	private void constructionWrapper(final Callable<Void> payload)
 			throws RetePatternBuildException {
-		context.modelReadLock();
-		    try {
+//		context.modelReadLock();
+//		    try {
 		        if (parallelExecutionEnabled)
 		            reteNet.getStructuralChangeLock().lock();
 		        try {
 		            try {
-						context.coalesceTraversals(payload);
+						runtimeContext.coalesceTraversals(payload);
 		            } catch (InvocationTargetException ex) {
 		                final Throwable cause = ex.getCause();
 		                if (cause instanceof RetePatternBuildException)
@@ -240,9 +240,9 @@ public class ReteEngine implements IQueryBackend {
 		                reteNet.getStructuralChangeLock().unlock();
 		           reteNet.waitForReteTermination();
 		        }
-		    } finally {
-		        context.modelReadUnLock();
-		    }
+//		    } finally {
+//		        context.modelReadUnLock();
+//		    }
 	}
 
     // /**
@@ -312,8 +312,8 @@ public class ReteEngine implements IQueryBackend {
         NodeProvisioner nodeProvisioner = reteNet.getHeadContainer().getProvisioner();
         Indexer result = nodeProvisioner.peekProjectionIndexer(production, mask);
         if (result == null) {
-            context.modelReadLock();
-            try {
+//            context.modelReadLock();
+//            try {
                 if (parallelExecutionEnabled)
                     reteNet.getStructuralChangeLock().lock();
                 try {
@@ -322,9 +322,9 @@ public class ReteEngine implements IQueryBackend {
                     if (parallelExecutionEnabled)
                         reteNet.getStructuralChangeLock().unlock();
                 }
-            } finally {
-                context.modelReadUnLock();
-            }
+//            } finally {
+//                context.modelReadUnLock();
+//            }
         }
 
         return result;
@@ -443,15 +443,13 @@ public class ReteEngine implements IQueryBackend {
         return parallelExecutionEnabled;
     }
 
-    /**
-     * @return the context
-     */
-    public IPatternMatcherRuntimeContext getContext() {
-    	ensureInitialized();
-        return context;
-    }
 
-    public IQueryRuntimeContext getRuntimeContext() {
+    public Logger getLogger() {
+    	ensureInitialized();
+		return logger;
+	}
+
+	public IQueryRuntimeContext getRuntimeContext() {
     	ensureInitialized();
 		return runtimeContext;
 	}

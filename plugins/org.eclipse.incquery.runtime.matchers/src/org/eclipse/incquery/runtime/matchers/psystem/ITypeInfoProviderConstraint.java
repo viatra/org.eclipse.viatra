@@ -11,6 +11,10 @@
 
 package org.eclipse.incquery.runtime.matchers.psystem;
 
+import java.util.Set;
+
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
+
 /**
  * @author Gabor Bergmann
  * 
@@ -18,37 +22,9 @@ package org.eclipse.incquery.runtime.matchers.psystem;
 public interface ITypeInfoProviderConstraint {
 
     /**
-     * Returns type information that is known about the variable if this constraint holds. Null if no such information
-     * is discernible.
+     * Returns type information implied by this constraint.
      * 
-     * @param variable
-     * @return the inferred type information, or TypeInfoSpecials.NO_TYPE_INFO_PROVIDED if no type information is
-     *         inferrable. Never returns null.
      */
-    public Object getTypeInfo(PVariable variable);
-
-    public static enum TypeInfoSpecials {
-        NO_TYPE_INFO_PROVIDED, ANY_UNARY, ANY_TERNARY;
-
-        public static Object wrapUnary(Object typeKey) {
-            return typeKey == null ? ITypeInfoProviderConstraint.TypeInfoSpecials.ANY_UNARY : typeKey;
-        }
-
-        public static Object unwrapUnary(Object typeKey) {
-            return typeKey == ITypeInfoProviderConstraint.TypeInfoSpecials.ANY_UNARY ? null : typeKey;
-        }
-
-        public static Object wrapTernary(Object typeKey) {
-            return typeKey == null ? ITypeInfoProviderConstraint.TypeInfoSpecials.ANY_TERNARY : typeKey;
-        }
-
-        public static Object unwrapTernary(Object typeKey) {
-            return typeKey == ITypeInfoProviderConstraint.TypeInfoSpecials.ANY_TERNARY ? null : typeKey;
-        }
-
-        public static Object wrapAny(Object typeKey) {
-            return typeKey == null ? ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED : typeKey;
-        }
-    }
+    public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context);
 
 }

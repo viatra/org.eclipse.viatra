@@ -53,7 +53,6 @@ import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
 import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
@@ -236,10 +235,10 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 		    	try {
 		    		engineContext.initializeBackends(new IQueryBackendInitializer() {
 		    			@Override
-		    			public void initializeWith(IPatternMatcherRuntimeContext context, IQueryRuntimeContext runtimeContext) {
+		    			public void initializeWith(IQueryRuntimeContext runtimeContext) {
 		    				queryBackends = Maps.newHashMap();
 		    				for (Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> factoryEntry : QueryBackendRegistry.getInstance().getAllKnownFactories()) {
-		    					IQueryBackend backend = factoryEntry.getValue().create(context, runtimeContext, IncQueryEngineImpl.this, IncQueryEngineImpl.this);
+		    					IQueryBackend backend = factoryEntry.getValue().create(logger, runtimeContext, IncQueryEngineImpl.this, IncQueryEngineImpl.this);
 		    					queryBackends.put(factoryEntry.getKey(), backend);
 		    				}
 		    			}

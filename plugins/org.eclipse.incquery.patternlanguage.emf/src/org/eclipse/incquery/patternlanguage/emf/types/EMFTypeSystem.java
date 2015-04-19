@@ -20,7 +20,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.ReferenceType
 import org.eclipse.incquery.patternlanguage.patternLanguage.RelationType;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.typing.AbstractTypeSystem;
-import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
+import org.eclipse.incquery.runtime.emf.EMFQueryMetaContext;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.TypeReferences;
@@ -43,7 +43,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
 
     @Inject
     public EMFTypeSystem(Logger logger) {
-        super(new EMFPatternMatcherContext(logger));
+        super(EMFQueryMetaContext.INSTANCE);
     }
 
     @Override

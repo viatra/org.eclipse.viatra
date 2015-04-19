@@ -17,7 +17,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.apache.log4j.Logger;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
@@ -44,15 +45,15 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
     @Override
-    public SubPlan plan(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context)
+    public SubPlan plan(PBody pSystem, Logger logger, IQueryMetaContext context)
             throws QueryProcessingException {
-        return new Scaffold(pSystem, /*compiler,*/ context).run();
+        return new Scaffold(pSystem, logger, context).run();
     }
 
 	public class Scaffold {
         PBody pSystem;
         PQuery query;
-        IPatternMatcherContext context;
+        IQueryMetaContext context;
         //IOperationCompiler compiler;
         //SubPlanProcessor planProcessor = new SubPlanProcessor();
         SubPlanFactory planFactory;
@@ -60,9 +61,11 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         Set<DeferredPConstraint> deferredConstraints = null;
         Set<EnumerablePConstraint> enumerableConstraints = null;
         Set<SubPlan> forefront = new LinkedHashSet<SubPlan>();
+		Logger logger;
 
-        Scaffold(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context) {
+        Scaffold(PBody pSystem, Logger logger, /*IOperationCompiler compiler,*/ IQueryMetaContext context) {
             this.pSystem = pSystem;
+			this.logger = logger;
             this.context = context;
             this.planFactory = new SubPlanFactory(pSystem);
             query = pSystem.getPattern();
@@ -72,7 +75,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
         public SubPlan run() throws QueryProcessingException {
             try {
-                context.logDebug(String.format(
+                logger.debug(String.format(
                 		"%s: patternbody build started for %s",
                 		getClass().getSimpleName(), 
                 		query.getFullyQualifiedName()));
@@ -108,7 +111,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                 BuildHelper.finalCheck(pSystem, finalPlan, context);
     			// TODO integrate the check above in SubPlan / POperation 
 
-                context.logDebug(String.format(
+                logger.debug(String.format(
                 		"%s: patternbody query plan concluded for %s as: %s",
                 		getClass().getSimpleName(), 
                 		query.getFullyQualifiedName(),
@@ -129,7 +132,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                     if (aIndex++ >= bIndex)
                         break;
                     final SubPlan joinedPlan = planFactory.createSubPlan(new PJoin(), a, b);
-                    candidates.add(new JoinCandidate(joinedPlan));
+                    candidates.add(new JoinCandidate(joinedPlan, context));
                 }
                 bIndex++;
             }
@@ -141,7 +144,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
         	if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
         			!plan.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
-        		final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(planFactory, plan, true);
+        		final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(planFactory, plan, true, context);
 				plan = trimmed;
         	}        	
         	// are there any checkable constraints?

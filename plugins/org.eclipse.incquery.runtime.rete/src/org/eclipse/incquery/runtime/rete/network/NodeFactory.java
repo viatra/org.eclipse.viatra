@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -65,11 +65,11 @@ import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
  *
  */
 class NodeFactory {
-	IPatternMatcherRuntimeContext context;
+	Logger logger;
 	
-	public NodeFactory(IPatternMatcherRuntimeContext context) {
+	public NodeFactory(Logger logger) {
 		super();
-		this.context = context;
+		this.logger = logger;
 	}
 	
 	/**
@@ -179,13 +179,13 @@ class NodeFactory {
 	private Supplier instantiateNode(ReteContainer reteContainer, EvalRecipe recipe) {
 		final IExpressionEvaluator evaluator = toIExpressionEvaluator(recipe.getExpression());
 		final Map<String, Integer> posMapping = toStringIndexMap(recipe.getMappedIndices());
-		return new CachedFunctionEvaluatorNode(reteContainer, context, evaluator, posMapping, recipe.getParent().getArity());
+		return new CachedFunctionEvaluatorNode(reteContainer, logger, evaluator, posMapping, recipe.getParent().getArity());
 	}
 
 	private Supplier instantiateNode(ReteContainer reteContainer, CheckRecipe recipe) {
 		final IExpressionEvaluator evaluator = toIExpressionEvaluator(recipe.getExpression());
 		final Map<String, Integer> posMapping = toStringIndexMap(recipe.getMappedIndices());
-		return new CachedPredicateEvaluatorNode(reteContainer, context, evaluator, posMapping, recipe.getParent().getArity());
+		return new CachedPredicateEvaluatorNode(reteContainer, logger, evaluator, posMapping, recipe.getParent().getArity());
 	}
 
 

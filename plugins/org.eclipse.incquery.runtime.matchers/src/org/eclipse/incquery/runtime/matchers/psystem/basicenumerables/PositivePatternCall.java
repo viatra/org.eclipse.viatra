@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.psystem.IQueryReference;
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
@@ -38,9 +39,9 @@ public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> impl
     }
 
     @Override
-    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
     	// TODO insert inferred functional dependencies here
-		return super.getFunctionalDependencies();
+		return super.getFunctionalDependencies(context);
     }
 
     @Override

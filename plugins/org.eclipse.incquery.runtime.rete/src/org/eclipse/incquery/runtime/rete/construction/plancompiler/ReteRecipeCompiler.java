@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
-import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
@@ -92,25 +92,25 @@ import com.google.common.collect.Multimap;
 public class ReteRecipeCompiler {
 	
 	private IQueryPlannerStrategy plannerStrategy;
-	private IPatternMatcherContext context;
-	private IQueryRuntimeContext runtimeContext;
+	private IQueryMetaContext metaContext;
 	private IQueryBackendHintProvider hintProvider;
 	private IQueryCacheContext queryCacheContext;
 	private PDisjunctionRewriter normalizer;
+	private Logger logger;
 	
 	public ReteRecipeCompiler(
 			IQueryPlannerStrategy plannerStrategy, 
-			IPatternMatcherContext context, 
-			IQueryRuntimeContext runtimeContext, 
+			Logger logger, 
+			IQueryMetaContext metaContext, 
 			IQueryCacheContext queryCacheContext, 
 			IQueryBackendHintProvider hintProvider) 
 	{
 		super();
 		this.plannerStrategy = plannerStrategy;
-		this.context = context;
-		this.runtimeContext = runtimeContext;
+		this.logger = logger;
+		this.metaContext = metaContext;
 		this.queryCacheContext = queryCacheContext;
-		this.normalizer = new PDisjunctionRewriterCacher(new SurrogateQueryRewriter(), new PBodyNormalizer(context));
+		this.normalizer = new PDisjunctionRewriterCacher(new SurrogateQueryRewriter(), new PBodyNormalizer(metaContext));
 		this.hintProvider = hintProvider;
 	}
 
@@ -196,7 +196,7 @@ public class ReteRecipeCompiler {
 					+ pBody.getPattern().getFullyQualifiedName());
 			} else { // not reentrant, therefore no recursion, do the planning
 				try {
-					plan = plannerStrategy.plan(pBody, context);
+					plan = plannerStrategy.plan(pBody, logger, metaContext);
 					plannerCache.put(pBody, plan);				
 				} finally {
 					planningInProgress.remove(pBody);				
@@ -498,7 +498,7 @@ public class ReteRecipeCompiler {
 		
 		final TrimmerRecipe trimmerRecipe = CompilerHelper.makeTrimmerRecipe(compiledParent, projectedVariables);
 		
-		if (BuildHelper.areAllVariablesDetermined(plan.getParentPlans().get(0), projectedVariables)) {
+		if (BuildHelper.areAllVariablesDetermined(plan.getParentPlans().get(0), projectedVariables, metaContext)) {
 			// skip uniqueness enforcement if unneeded?
 			return new CompiledSubPlan(plan, projectedVariables, trimmerRecipe, compiledParent);
 		} else {

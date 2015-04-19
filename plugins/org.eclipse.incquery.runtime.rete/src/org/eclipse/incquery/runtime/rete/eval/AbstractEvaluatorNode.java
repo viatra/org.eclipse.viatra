@@ -12,7 +12,7 @@ package org.eclipse.incquery.runtime.rete.eval;
 
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
@@ -34,16 +34,16 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
 	
 
 	
-    protected IPatternMatcherRuntimeContext context;
+    protected Logger logger;
     protected IExpressionEvaluator evaluator;    
     int sourceTupleWidth;
     private Map<String, Integer> parameterPositions;
     
     
-    public AbstractEvaluatorNode(ReteContainer reteContainer, IPatternMatcherRuntimeContext context, IExpressionEvaluator evaluator,
+    public AbstractEvaluatorNode(ReteContainer reteContainer, Logger logger, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions, int sourceTupleWidth) {
 		super(reteContainer);
-		this.context = context;
+		this.logger = logger;
 		this.evaluator = evaluator;
         this.parameterPositions = parameterPositions;
 		this.sourceTupleWidth = sourceTupleWidth;
@@ -70,7 +70,7 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
             TupleValueProvider tupleParameters = new TupleValueProvider(ps, parameterPositions);
             result = evaluator.evaluateExpression(tupleParameters);
         } catch (Exception e) {
-            context.logWarning(
+            logger.warn(
             		String.format(
             				"The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
             				logNodeName(), 

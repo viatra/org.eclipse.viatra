@@ -58,7 +58,6 @@ import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.incquery.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
@@ -89,17 +88,15 @@ import com.google.common.collect.Lists;
 public class EPMToPBody {
 
     protected Pattern pattern;
-    protected IPatternMatcherContext context;
 
     String patternFQN;
     private PQuery query;
     private NameToSpecificationMap patternMap;
 
-    public EPMToPBody(Pattern pattern, PQuery query, IPatternMatcherContext context, NameToSpecificationMap patternMap) {
+    public EPMToPBody(Pattern pattern, PQuery query, NameToSpecificationMap patternMap) {
         super();
         this.pattern = pattern;
         this.query = query;
-        this.context = context;
         this.patternMap = patternMap;
 
         patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);

@@ -14,6 +14,7 @@ package org.eclipse.incquery.runtime.rete.eval;
 import java.util.Collection;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -48,6 +49,7 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 public class PredicateEvaluatorNode extends SingleInputNode {
 
     protected ReteEngine engine;
+    private Logger logger;
     protected InputConnector inputConnector;
     protected Integer rhsIndex;
     protected int[] affectedIndices;
@@ -76,6 +78,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
             int[] affectedIndices, int tupleWidth, AbstractEvaluator evaluator) {
         super(container);
         this.engine = engine;
+        logger = engine.getLogger();
         this.inputConnector = engine.getReteNet().getInputConnector();
         this.rhsIndex = rhsIndex;
         this.affectedIndices = affectedIndices;
@@ -210,8 +213,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
                 return false;
             else if (Boolean.TRUE.equals(termResult))
                 return true;
-            engine.getContext()
-                    .logWarning(
+            logger.warn(
                             String.format(
                                     "The incremental pattern matcher encountered a type compatibility problem during check() evaluation for pattern(s) %s over variables %s: expression evaluated to type %s instead of java.lang.Boolean. (Developer note: result was %s in %s)",
                                     getTraceInfoPatternsEnumerated(), prettyPrintTuple(ps), termResult == null ? null : termResult.getClass().getName(),
@@ -231,8 +233,7 @@ public class PredicateEvaluatorNode extends SingleInputNode {
         } catch (Throwable e) { // NOPMD
             if (e instanceof Error)
                 throw (Error) e;
-            engine.getContext()
-                    .logWarning(
+            logger.warn(
                             String.format(
                                     "The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
                                     rhsIndex == null ? "check()" : "eval()", getTraceInfoPatternsEnumerated(), prettyPrintTuple(ps), e.getMessage(), e

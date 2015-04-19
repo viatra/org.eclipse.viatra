@@ -7,7 +7,8 @@ Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant S
 Require-Bundle: org.eclipse.incquery.runtime.base.itc;bundle-version="0.8.0";visibility:=reexport,
  org.eclipse.incquery.runtime.matchers;bundle-version="0.8.0";visibility:=reexport,
  org.eclipse.incquery.runtime.rete.recipes;bundle-version="0.8.0";visibility:=reexport,
- com.google.guava
+ com.google.guava,
+ org.apache.log4j;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.incquery.runtime.rete.boundary,org.eclipse

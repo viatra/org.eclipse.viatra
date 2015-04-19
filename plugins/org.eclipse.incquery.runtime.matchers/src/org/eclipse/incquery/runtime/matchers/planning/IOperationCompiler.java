@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.matchers.planning;
 
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
@@ -41,7 +40,7 @@ public interface IOperationCompiler<Collector> {
     /**
 	 * @since 0.9
 	 */
-    public void patternFinished(PQuery pattern, IPatternMatcherContext context, Collector collector);
+    public void patternFinished(PQuery pattern, Collector collector);
     
     public SubPlan patternCallPlan(Tuple nodes, PQuery supplierKey)
             throws QueryProcessingException;
@@ -98,7 +97,7 @@ public interface IOperationCompiler<Collector> {
      * @return an operation compiler that puts build actions on the tab of the given pattern
      * @since 0.9
      */
-    public IOperationCompiler<Collector> putOnTab(PQuery effort, IPatternMatcherContext context);
+    public IOperationCompiler<Collector> putOnTab(PQuery effort /*, IPatternMatcherContext context*/);
 
     public void reinitialize();
 

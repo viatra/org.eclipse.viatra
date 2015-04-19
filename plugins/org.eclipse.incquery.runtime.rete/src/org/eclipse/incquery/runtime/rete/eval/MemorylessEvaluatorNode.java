@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.Direction;
@@ -27,9 +27,9 @@ import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 public abstract class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
 
 	public MemorylessEvaluatorNode(ReteContainer reteContainer,
-			IPatternMatcherRuntimeContext context, IExpressionEvaluator evaluator,
+			Logger logger, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions, int tupleWidth) {
-		super(reteContainer, context, evaluator, parameterPositions, tupleWidth);
+		super(reteContainer, logger, evaluator, parameterPositions, tupleWidth);
 	}
 
 	/* (non-Javadoc)

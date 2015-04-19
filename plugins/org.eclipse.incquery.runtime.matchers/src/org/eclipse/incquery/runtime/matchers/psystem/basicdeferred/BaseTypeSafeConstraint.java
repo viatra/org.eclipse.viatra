@@ -12,15 +12,13 @@
 package org.eclipse.incquery.runtime.matchers.psystem.basicdeferred;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
-import org.eclipse.incquery.runtime.matchers.planning.helpers.TypeHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.incquery.runtime.matchers.psystem.VariableDeferredPConstraint;
 
 import com.google.common.collect.ImmutableSet;
@@ -31,7 +29,6 @@ import com.google.common.collect.ImmutableSet;
  */
 public abstract class BaseTypeSafeConstraint extends
         VariableDeferredPConstraint {
-    private Map<PVariable, Set<Object>> allTypeRestrictions;
     
     protected Set<PVariable> inputVariables;
     protected PVariable outputVariable;
@@ -70,7 +67,7 @@ public abstract class BaseTypeSafeConstraint extends
     }
 
     @Override
-    public boolean isReadyAt(SubPlan plan, IPatternMatcherContext context) {
+    public boolean isReadyAt(SubPlan plan, IQueryMetaContext context) {
         if (super.isReadyAt(plan, context)) {
             return checkTypeSafety(plan, context) == null;
         }
@@ -83,27 +80,15 @@ public abstract class BaseTypeSafeConstraint extends
      * @param plan
      * @return a variable whose type safety is not enforced yet, or null if the plan is typesafe
      */
-    public PVariable checkTypeSafety(SubPlan plan, IPatternMatcherContext context) {
+    public PVariable checkTypeSafety(SubPlan plan, IQueryMetaContext context) {
+    	Set<TypeJudgement> impliedJudgements = plan.getAllImpliedTypeJudgements(context);
+    	
         for (PVariable pVariable : inputVariables) {
-            Set<Object> allTypeRestrictionsForVariable = getAllTypeRestrictions().get(pVariable);
-            Set<Object> checkedTypeRestrictions = TypeHelper.inferTypes(pVariable, plan.getAllEnforcedConstraints());
-            Set<Object> uncheckedTypeRestrictions = TypeHelper.subsumeTypes(allTypeRestrictionsForVariable,
-                    checkedTypeRestrictions, context);
-            if (!uncheckedTypeRestrictions.isEmpty())
+            Set<TypeJudgement> allTypeRestrictionsForVariable = pSystem.getAllUnaryTypeRestrictions(context).get(pVariable);
+        	if (!impliedJudgements.containsAll(allTypeRestrictionsForVariable))
                 return pVariable;
         }
         return null;
-    }
-
-    public Map<PVariable, Set<Object>> getAllTypeRestrictions() {
-        if (allTypeRestrictions == null) {
-            allTypeRestrictions = new HashMap<PVariable, Set<Object>>();
-            for (PVariable pVariable : inputVariables) {
-                allTypeRestrictions.put(pVariable,
-                        TypeHelper.inferTypes(pVariable, pVariable.getReferringConstraints()));
-            }
-        }
-        return allTypeRestrictions;
     }
     
     @Override

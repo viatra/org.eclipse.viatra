@@ -23,7 +23,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
@@ -54,7 +53,6 @@ public class Network {
 
     // Knowledge of the outside world
 	private ReteEngine engine;
-	protected IPatternMatcherRuntimeContext context;
     protected NodeFactory nodeFactory;
     protected InputConnector inputConnector;
     
@@ -93,9 +91,8 @@ public class Network {
         super();
         this.threads = threads;
 		this.engine = engine;
-        this.context = engine.getContext();
         this.inputConnector = new InputConnector(this);
-        this.nodeFactory = new NodeFactory(context);
+        this.nodeFactory = new NodeFactory(engine.getLogger());
 
         containers = new ArrayList<ReteContainer>();
         firstContainer = (threads > 1) ? Options.firstFreeContainer : 0; // NOPMD
@@ -395,10 +392,6 @@ public class Network {
 	
     public Lock getStructuralChangeLock() {
         return structuralChangeLock;
-    }
-
-    public IPatternMatcherRuntimeContext getContext() {
-        return context;
     }
 
 	public NodeFactory getNodeFactory() {

@@ -11,7 +11,6 @@
 package org.eclipse.incquery.runtime.api.scope;
 
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 
 /**
@@ -38,7 +37,7 @@ public interface IEngineContext {
 	 */
 	void initializeBackends(IQueryBackendInitializer initializer) throws IncQueryException;
 	public static interface IQueryBackendInitializer {
-		public void initializeWith(IPatternMatcherRuntimeContext context, IQueryRuntimeContext runtimeContext);
+		public void initializeWith(IQueryRuntimeContext runtimeContext);
 	}
 
 	/**

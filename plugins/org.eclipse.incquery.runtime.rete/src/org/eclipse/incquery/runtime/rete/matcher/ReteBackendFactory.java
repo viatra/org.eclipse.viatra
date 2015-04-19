@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.rete.matcher;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.ReteRecipeCompiler;
@@ -26,18 +26,18 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     private final int reteThreads = 0;
     
     @Override
-    public IQueryBackend create(IPatternMatcherRuntimeContext matcherContext,
+    public IQueryBackend create(Logger logger,
     		IQueryRuntimeContext runtimeContext,
     		IQueryCacheContext queryCacheContext,
     		IQueryBackendHintProvider hintProvider) 
     {
 	    ReteEngine engine;
-	    engine = new ReteEngine(matcherContext, runtimeContext, reteThreads);
+	    engine = new ReteEngine(logger, runtimeContext, reteThreads);
 	    ReteRecipeCompiler compiler = 
 	    		new ReteRecipeCompiler(
 	    				Options.builderMethod.layoutStrategy(), 
-	    				matcherContext,
-	    				runtimeContext,
+	    				logger,
+	    				runtimeContext.getMetaContext(),
 	    				queryCacheContext,
 	    				hintProvider);
 	    //EPMBuilder builder = new EPMBuilder(buildable, context);

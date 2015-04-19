@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -37,7 +38,7 @@ public class ConstantValue extends KeyedEnumerablePConstraint<Object> {
     }
     
     @Override
-    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
     	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
         final Set<PVariable> emptySet = Collections.emptySet(); // a constant value is functionally determined by everything
         result.put(emptySet, Collections.singleton(getVariableInTuple(0)));

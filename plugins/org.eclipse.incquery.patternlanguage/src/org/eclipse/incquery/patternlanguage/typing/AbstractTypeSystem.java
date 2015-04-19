@@ -11,7 +11,8 @@
 package org.eclipse.incquery.patternlanguage.typing;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 
 /**
  * @author Zoltan Ujhelyi
@@ -19,9 +20,9 @@ import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
  */
 public abstract class AbstractTypeSystem implements ITypeSystem {
 
-    final IPatternMatcherContext context;
+    final IQueryMetaContext context;
 
-    public AbstractTypeSystem(IPatternMatcherContext context) {
+    public AbstractTypeSystem(IQueryMetaContext context) {
         this.context = context;
     }
 
@@ -57,8 +58,9 @@ public abstract class AbstractTypeSystem implements ITypeSystem {
     public String typeString(Object type) {
         if (type instanceof Type) {
             return ((Type) type).getTypename();
-        }
-        return context.printType(type);
+        } else if (type instanceof IInputKey) {
+        	return ((IInputKey) type).getPrettyPrintableName();
+        } else throw new IllegalArgumentException("Invalid type: " + type);
     }
 
     
