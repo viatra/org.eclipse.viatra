@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.types;
 
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.typing.AbstractTypeInferrer;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 
 import com.google.inject.Inject;
 
@@ -25,8 +27,9 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
     private IEMFTypeProvider emfTypeProvider;
     
     @Override
-    public Object getInferredVariableType(Variable var) {
-        return emfTypeProvider.getClassifierForVariable(var);
+    public IInputKey getInferredVariableType(Variable var) {
+        final EClassifier classifier = emfTypeProvider.getClassifierForVariable(var);
+		return EMFTypeSystem.classifierToInputKey(classifier);
     }
 
 }

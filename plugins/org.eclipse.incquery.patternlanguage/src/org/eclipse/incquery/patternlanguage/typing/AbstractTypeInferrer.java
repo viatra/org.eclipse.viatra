@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import com.google.inject.Inject;
@@ -28,8 +29,8 @@ public abstract class AbstractTypeInferrer implements ITypeInferrer {
     private ITypeSystem typeSystem;
     
     @Override
-    public Object getVariableType(Variable var) {
-        final Object declaredType = getDeclaredType(var);
+    public IInputKey getVariableType(Variable var) {
+        final IInputKey declaredType = getDeclaredType(var);
         if (declaredType != null) {
             return declaredType;
         } else {
@@ -38,7 +39,7 @@ public abstract class AbstractTypeInferrer implements ITypeInferrer {
     }
 
     @Override
-    public Object getDeclaredType(Variable var) {
+    public IInputKey getDeclaredType(Variable var) {
         final Type type = var.getType();
         if (type != null) {
             return typeSystem.extractTypeDescriptor(type);
@@ -48,7 +49,7 @@ public abstract class AbstractTypeInferrer implements ITypeInferrer {
     }
 
     @Override
-    public Object getVariableReferenceType(VariableReference reference) {
+    public IInputKey getVariableReferenceType(VariableReference reference) {
         return getVariableType(reference.getVariable());
     }
 

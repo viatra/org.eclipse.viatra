@@ -13,6 +13,7 @@ package org.eclipse.incquery.patternlanguage.typing;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.RelationType;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 /**
@@ -25,27 +26,13 @@ public interface ITypeSystem {
 
     /**
      * Decides whether the second type is compatible with the first one
-     * 
-     * @param expectedType
-     * @param actualType
      */
-    boolean isConformant(Object expectedType, Object actualType);
+    boolean isConformant(IInputKey expectedType, IInputKey actualType);
 
     /**
-     * Decides whether the reference can have a selected type as source
-     * 
-     * @param relationType
-     * @param sourceType
+     * Decides whether the reference can have a selected type at its given column.
      */
-    boolean isConformToRelationSource(Object relationType, Object sourceType);
-
-    /**
-     * Decides whether the reference can have a selected type as target.
-     * 
-     * @param relationType
-     * @param targetType
-     */
-    boolean isConformToRelationTarget(Object relationType, Object targetType);
+    boolean isConformToRelationColumn(IInputKey relationType, int columnIndex, IInputKey columnType);
 
     /**
      * Extracts the model-specific types from a Type declaration.
@@ -54,29 +41,22 @@ public interface ITypeSystem {
      *            either the {@link Type} or the {@link RelationType} instance
      * @return model-specific type representation
      */
-    Object extractTypeDescriptor(Type type);
+    IInputKey extractTypeDescriptor(Type type);
 
     /**
-     * Extracts the model-specific source type from a RelationType declaration
+     * Extracts the model-specific column type of the given index from a RelationType declaration
      * 
      * @param type
      */
-    Object extractSourceTypeDescriptor(RelationType type);
+    IInputKey extractColumnDescriptor(RelationType type, int columnIndex);
 
     /**
-     * Extracts the model-specific target type from a {@link RelationType} declaration.
-     * 
-     * @param type
-     */
-    Object extractTargetTypeDescriptor(RelationType type);
-
-    /**
-     * Creates a tye reference for model inference from a selected type.
+     * Creates a type reference for model inference from a selected type.
      * 
      * @param type
      * @param context
      */
-    JvmTypeReference toJvmTypeReference(Object type, EObject context);
+    JvmTypeReference toJvmTypeReference(IInputKey type, EObject context);
 
     /**
      * Converts a type object to a user-visible description string.
@@ -85,52 +65,46 @@ public interface ITypeSystem {
      *            either a {@link Type}, or a model-specific type instance
      * @return the string representation of the selected type
      */
-    String typeString(Object type);
+    String typeString(IInputKey type);
 
     /**
      * An empty implementation of {@link ITypeSystem} that can be used by the abstract pattern language module.
      */
     public static final class NullTypeSystem implements ITypeSystem {
 
-        @Override
-        public boolean isConformant(Object expectedType, Object actualType) {
+		@Override
+		public boolean isConformant(IInputKey expectedType, IInputKey actualType) {
             throw new UnsupportedOperationException();
-        }
+		}
 
-        @Override
-        public boolean isConformToRelationSource(Object relationType, Object sourceType) {
+		@Override
+		public boolean isConformToRelationColumn(IInputKey relationType,
+				int columnIndex, IInputKey columnType) {
             throw new UnsupportedOperationException();
-        }
+		}
 
-        @Override
-        public boolean isConformToRelationTarget(Object relationType, Object targetType) {
+		@Override
+		public IInputKey extractTypeDescriptor(Type type) {
             throw new UnsupportedOperationException();
-        }
+		}
 
-        @Override
-        public JvmTypeReference toJvmTypeReference(Object type, EObject context) {
+		@Override
+		public IInputKey extractColumnDescriptor(RelationType type,
+				int columnIndex) {
             throw new UnsupportedOperationException();
-        }
+		}
 
-        @Override
-        public Object extractTypeDescriptor(Type type) {
+		@Override
+		public JvmTypeReference toJvmTypeReference(IInputKey type,
+				EObject context) {
             throw new UnsupportedOperationException();
-        }
+		}
 
-        @Override
-        public Object extractSourceTypeDescriptor(RelationType type) {
+		@Override
+		public String typeString(IInputKey type) {
             throw new UnsupportedOperationException();
-        }
+		}
 
-        @Override
-        public Object extractTargetTypeDescriptor(RelationType type) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String typeString(Object type) {
-            throw new UnsupportedOperationException();
-        }
 
     }
 }

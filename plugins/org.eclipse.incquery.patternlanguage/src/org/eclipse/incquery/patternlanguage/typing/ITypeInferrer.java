@@ -13,6 +13,7 @@ package org.eclipse.incquery.patternlanguage.typing;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 /**
@@ -28,14 +29,14 @@ public interface ITypeInferrer {
      * @param var
      * @return the declared type of the variable, or null if no type declaration is available
      */
-    Object getDeclaredType(Variable var);
+    IInputKey getDeclaredType(Variable var);
 
     /**
      * Returns the inferred type of a variable
      * 
      * @param var
      */
-    Object getInferredVariableType(Variable var);
+    IInputKey getInferredVariableType(Variable var);
 
     /**
      * Returns the type of a variable.
@@ -43,14 +44,14 @@ public interface ITypeInferrer {
      * @param var
      * @return if the variable has a declared type, it is returned; otherwise the inferred type is calculated.
      */
-    Object getVariableType(Variable var);
+    IInputKey getVariableType(Variable var);
 
     /**
      * Calculates the type of a variable reference. A type of a reference is the type of the referred variable.
      * 
      * @param reference
      */
-    Object getVariableReferenceType(VariableReference reference);
+    IInputKey getVariableReferenceType(VariableReference reference);
 
     /**
      * Creates a Jvm Type Reference for a selected variable. Useful during Jvm Model Inference
@@ -65,7 +66,7 @@ public interface ITypeInferrer {
     public static class NullTypeInferrer implements ITypeInferrer {
 
         @Override
-        public Object getInferredVariableType(Variable var) {
+        public IInputKey getInferredVariableType(Variable var) {
             throw new UnsupportedOperationException();
         }
 
@@ -75,17 +76,17 @@ public interface ITypeInferrer {
         }
 
         @Override
-        public Object getVariableReferenceType(VariableReference reference) {
+        public IInputKey getVariableReferenceType(VariableReference reference) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Object getDeclaredType(Variable var) {
+        public IInputKey getDeclaredType(Variable var) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Object getVariableType(Variable var) {
+        public IInputKey getVariableType(Variable var) {
             throw new UnsupportedOperationException();
         }
 
