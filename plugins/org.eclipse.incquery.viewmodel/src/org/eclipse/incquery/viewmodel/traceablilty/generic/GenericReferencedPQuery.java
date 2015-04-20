@@ -17,16 +17,21 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery;
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.incquery.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
@@ -154,12 +159,21 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
         if (pTarget.getTypeName() != null) {
             //TODO: resolve hack
             String[] type = pTarget.getTypeName().split(Pattern.quote("||"));
-            new TypeUnary(body, var_target, getClassifierLiteral(type[0], type[1]), String.format("{0}/{1}",
-                    type[0], type[1]));
+            new TypeConstraint(body, new FlatTuple(var_target), 
+            		toInputKey(getClassifierLiteral(type[0], type[1]))/*, 
+            		String.format("{0}/{1}", type[0], type[1])*/);
         }
     }
     
-    protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
+    private static IInputKey toInputKey(EClassifier classifierLiteral) {
+    	if (classifierLiteral instanceof EClass)
+    		return new EClassTransitiveInstancesKey((EClass) classifierLiteral);
+    	else if (classifierLiteral instanceof EDataType)
+    		return new EDataTypeInSlotsKey((EDataType) classifierLiteral);
+    	else return null;
+	}
+
+	protected EClassifier getClassifierLiteral(String packageUri, String classifierName) {
         EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(packageUri);
         Preconditions.checkState(ePackage != null, "EPackage %s not found in EPackage Registry.", packageUri);
         EClassifier literal = ePackage.getEClassifier(classifierName);

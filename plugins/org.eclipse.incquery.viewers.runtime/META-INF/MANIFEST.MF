@@ -16,8 +16,7 @@ Export-Package: org.eclipse.incquery.viewers.runtime,
  org.eclipse.incquery.viewers.runtime.model.patterns,
  org.eclipse.incquery.viewers.runtime.model.patterns.util,
  org.eclipse.incquery.viewers.runtime.model.util,
- org.eclipse.incquery.viewers.runtime.sources;
-  x-friends:="org.eclipse.incquery.viewers.runtime.zest",
+ org.eclipse.incquery.viewers.runtime.sources;x-friends:="org.eclipse.incquery.viewers.runtime.zest",
  org.eclipse.incquery.viewers.runtime.specifications,
  org.eclipse.incquery.viewers.runtime.util,
  org.eclipse.incquery.viewers.runtime.validators

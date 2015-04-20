@@ -2,10 +2,10 @@ package org.eclipse.incquery.tooling.ui.retevis
 
 import "http://www.eclipse.org/incquery/rete/recipes"
 
-@Item(item = recipe, label = "Type Input: $recipe.typeName$")
+@Item(item = recipe, label = "Input: $recipe.inputKey")
 @Format(textColor = "#FFFFFF", color = "#7F004D")
-pattern typeInputRecipe(recipe) {
-	TypeInputRecipe(recipe);
+pattern inputRecipe(recipe) {
+	InputRecipe(recipe);
 }
 
 @Item(item = recipe, label = "Constant: $recipe.constantValues$")
