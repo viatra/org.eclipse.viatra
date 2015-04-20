@@ -50,6 +50,14 @@ public class BatchTransformation {
 		return new BatchTransformation(engine);
 	}
 	
+	public static BatchTransformation forEngine(IncQueryEngine engine) {
+		return new BatchTransformation(AdvancedIncQueryEngine.from(engine));
+	}
+	
+	public static BatchTransformation forRuleEngine(RuleEngine ruleEngine, IncQueryEngine engine) {
+		return new BatchTransformation(ruleEngine, AdvancedIncQueryEngine.from(engine), false);
+	}
+	
 	@Deprecated
 	public BatchTransformation(Resource resource) throws IncQueryException {
 		this(AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(resource)));
@@ -60,8 +68,8 @@ public class BatchTransformation {
 		this(AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(set)));
 	}
 
-	public BatchTransformation(RuleEngine ruleEngine,
-			AdvancedIncQueryEngine iqEngine) {
+	@Deprecated
+	public BatchTransformation(RuleEngine ruleEngine, AdvancedIncQueryEngine iqEngine) {
 		this(ruleEngine, iqEngine, false);
 	}
 	
