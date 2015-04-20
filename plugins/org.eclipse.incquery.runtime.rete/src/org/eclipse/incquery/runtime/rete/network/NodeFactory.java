@@ -14,11 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
+import org.eclipse.incquery.runtime.rete.boundary.ExternalInputNode;
 import org.eclipse.incquery.runtime.rete.eval.CachedFunctionEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.eval.CachedPredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.index.AggregatorNode;
@@ -29,7 +30,6 @@ import org.eclipse.incquery.runtime.rete.index.JoinNode;
 import org.eclipse.incquery.runtime.rete.misc.ConstantNode;
 import org.eclipse.incquery.runtime.rete.recipes.AggregatorIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.AntiJoinRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.BinaryInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.CheckRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ConstantRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.CountAggregatorRecipe;
@@ -38,6 +38,7 @@ import org.eclipse.incquery.runtime.rete.recipes.EvalRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ExpressionDefinition;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.Mask;
 import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
@@ -47,12 +48,10 @@ import org.eclipse.incquery.runtime.rete.recipes.SemiJoinRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TransitiveClosureRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TransparentRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TrimmerRecipe;
-import org.eclipse.incquery.runtime.rete.recipes.UnaryInputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.UniquenessEnforcerRecipe;
 import org.eclipse.incquery.runtime.rete.single.DefaultProductionNode;
 import org.eclipse.incquery.runtime.rete.single.EqualityFilterNode;
 import org.eclipse.incquery.runtime.rete.single.InequalityFilterNode;
-import org.eclipse.incquery.runtime.rete.single.InputNode;
 import org.eclipse.incquery.runtime.rete.single.TransitiveClosureNode;
 import org.eclipse.incquery.runtime.rete.single.TransparentNode;
 import org.eclipse.incquery.runtime.rete.single.TrimmerNode;
@@ -66,11 +65,11 @@ import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
  *
  */
 class NodeFactory {
-	IPatternMatcherRuntimeContext context;
+	Logger logger;
 	
-	public NodeFactory(IPatternMatcherRuntimeContext context) {
+	public NodeFactory(Logger logger) {
 		super();
-		this.context = context;
+		this.logger = logger;
 	}
 	
 	/**
@@ -112,10 +111,8 @@ class NodeFactory {
 		
 		if (recipe instanceof ConstantRecipe) 
 			return instantiateNode(reteContainer, (ConstantRecipe)recipe);	
-		if (recipe instanceof UnaryInputRecipe) 
-			return instantiateNode(reteContainer, (UnaryInputRecipe)recipe);	
-		if (recipe instanceof BinaryInputRecipe) 
-			return instantiateNode(reteContainer, (BinaryInputRecipe)recipe);	
+		if (recipe instanceof InputRecipe) 
+			return instantiateNode(reteContainer, (InputRecipe)recipe);	
 		
 		// SingleParentNodeRecipe
 		
@@ -159,13 +156,17 @@ class NodeFactory {
 
 	// INSTANTIATION for recipe types
 
-	private Supplier instantiateNode(ReteContainer reteContainer, BinaryInputRecipe recipe) {
-		return new InputNode(reteContainer, 2, recipe.getTypeKey());
+	private Supplier instantiateNode(ReteContainer reteContainer, InputRecipe recipe) {
+		return new ExternalInputNode(reteContainer);
 	}
 
-	private Supplier instantiateNode(ReteContainer reteContainer, UnaryInputRecipe recipe) {
-		return new InputNode(reteContainer, 1, recipe.getTypeKey());
-	}
+//	private Supplier instantiateNode(ReteContainer reteContainer, BinaryInputRecipe recipe) {
+//		return new InputNode(reteContainer, 2, recipe.getTypeKey());
+//	}
+//
+//	private Supplier instantiateNode(ReteContainer reteContainer, UnaryInputRecipe recipe) {
+//		return new InputNode(reteContainer, 1, recipe.getTypeKey());
+//	}
 
 	private Supplier instantiateNode(ReteContainer reteContainer, CountAggregatorRecipe recipe) {
 		return new CountNode(reteContainer);
@@ -178,13 +179,13 @@ class NodeFactory {
 	private Supplier instantiateNode(ReteContainer reteContainer, EvalRecipe recipe) {
 		final IExpressionEvaluator evaluator = toIExpressionEvaluator(recipe.getExpression());
 		final Map<String, Integer> posMapping = toStringIndexMap(recipe.getMappedIndices());
-		return new CachedFunctionEvaluatorNode(reteContainer, context, evaluator, posMapping, recipe.getParent().getArity());
+		return new CachedFunctionEvaluatorNode(reteContainer, logger, evaluator, posMapping, recipe.getParent().getArity());
 	}
 
 	private Supplier instantiateNode(ReteContainer reteContainer, CheckRecipe recipe) {
 		final IExpressionEvaluator evaluator = toIExpressionEvaluator(recipe.getExpression());
 		final Map<String, Integer> posMapping = toStringIndexMap(recipe.getMappedIndices());
-		return new CachedPredicateEvaluatorNode(reteContainer, context, evaluator, posMapping, recipe.getParent().getArity());
+		return new CachedPredicateEvaluatorNode(reteContainer, logger, evaluator, posMapping, recipe.getParent().getArity());
 	}
 
 

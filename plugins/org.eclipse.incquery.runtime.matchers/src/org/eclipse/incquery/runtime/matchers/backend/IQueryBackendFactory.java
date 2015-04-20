@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.backend;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeContext;
+import org.apache.log4j.Logger;
+import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 
 /**
  * Factory for instantiating {@link IQueryBackend}.
@@ -19,7 +21,9 @@ import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherRuntimeConte
  */
 public interface IQueryBackendFactory {
 	public IQueryBackend 
-		create(IPatternMatcherRuntimeContext matcherContext,
+		create(Logger logger,
+				IQueryRuntimeContext runtimeContext,
+				IQueryCacheContext queryCacheContext,
 				IQueryBackendHintProvider hintProvider);
 
 }

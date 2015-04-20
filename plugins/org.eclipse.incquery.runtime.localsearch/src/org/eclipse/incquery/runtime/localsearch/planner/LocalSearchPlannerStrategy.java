@@ -14,11 +14,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.incquery.runtime.localsearch.planner.cost.EvaluablePConstraint;
 import org.eclipse.incquery.runtime.localsearch.planner.util.OrderingHeuristics;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
@@ -29,7 +30,7 @@ import org.eclipse.incquery.runtime.matchers.planning.operations.PStart;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
@@ -55,7 +56,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
      * PBody
      */
     @Override
-    public SubPlan plan(PBody pBody, IPatternMatcherContext context) throws QueryProcessingException {
+    public SubPlan plan(PBody pBody, Logger logger, IQueryMetaContext context) throws QueryProcessingException {
 
         // Create a starting plan
         SubPlanFactory subPlanFactory = new SubPlanFactory(pBody);
@@ -77,7 +78,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
         return subPlanFactory.createSubPlan(new PProject(pBody.getSymbolicParameterVariables()), plan);
     }
 
-    private PConstraint selectNextPConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IPatternMatcherContext context) {
+    private PConstraint selectNextPConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IQueryMetaContext context) {
 
         PConstraint pConstraint = null;
 
@@ -88,7 +89,9 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
             Set<PConstraint> referringPConstraints = pVariable.getReferringConstraints();
             for (PConstraint referringPConstraint : referringPConstraints) {
                 // If the type constraint is unprocessed and is unary, then select it
-                if (constraintSet.contains(referringPConstraint) && referringPConstraint instanceof TypeUnary) {
+                if (constraintSet.contains(referringPConstraint) && 
+                		referringPConstraint instanceof TypeConstraint && 
+                		referringPConstraint.getAffectedVariables().size()==1) {
                     pConstraint = referringPConstraint;
                 }
             }

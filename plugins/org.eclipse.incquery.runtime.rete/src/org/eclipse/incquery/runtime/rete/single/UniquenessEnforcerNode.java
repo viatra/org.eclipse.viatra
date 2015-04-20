@@ -79,8 +79,9 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
                 change = false;
                 reteContainer
                         .getNetwork()
-                        .getContext()
-                        .logError(
+                        .getEngine()
+                        .getLogger()
+                        .error(
                                 "[INTERNAL ERROR] Duplicate deletion of " + updateElement
                                         + " was detected in UniquenessEnforcer " + this 
                                         + " for pattern(s) " + getTraceInfoPatternsEnumerated(), ex);

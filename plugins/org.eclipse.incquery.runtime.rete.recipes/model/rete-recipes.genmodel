@@ -61,16 +61,11 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//StringIndexMapEntry/key"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//StringIndexMapEntry/value"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="recipes.ecore#//InputRecipe"/>
-    <genClasses image="false" ecoreClass="recipes.ecore#//TypeInputRecipe">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//TypeInputRecipe/typeKey"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//TypeInputRecipe/typeName"/>
-    </genClasses>
-    <genClasses ecoreClass="recipes.ecore#//UnaryInputRecipe">
-      <genOperations ecoreOperation="recipes.ecore#//UnaryInputRecipe/getArity"/>
-    </genClasses>
-    <genClasses ecoreClass="recipes.ecore#//BinaryInputRecipe">
-      <genOperations ecoreOperation="recipes.ecore#//BinaryInputRecipe/getArity"/>
+    <genClasses image="false" ecoreClass="recipes.ecore#//InputRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/inputKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/keyID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/keyArity"/>
+      <genOperations ecoreOperation="recipes.ecore#//InputRecipe/getArity"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//ConstantRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ConstantRecipe/constantValues"/>

@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlanFactory;
@@ -54,7 +54,7 @@ public class BuildHelper {
      * @return the plan after the trimming (possibly the original)
      */
     public static SubPlan trimUnneccessaryVariables(SubPlanFactory planFactory, /*IOperationCompiler buildable,*/
-            SubPlan plan, boolean onlyIfNotDetermined) {
+            SubPlan plan, boolean onlyIfNotDetermined, IQueryMetaContext context) {
     	Set<PVariable> canBeTrimmed = new HashSet<PVariable>();
     	Set<PVariable> variablesInPlan = plan.getVisibleVariables();
     	for (PVariable trimCandidate : variablesInPlan) {
@@ -64,7 +64,7 @@ public class BuildHelper {
     		}
     	}
 		final Set<PVariable> retainedVars = setMinus(variablesInPlan, canBeTrimmed);   	
-    	if (!canBeTrimmed.isEmpty() && !(onlyIfNotDetermined && areVariablesDetermined(plan, retainedVars, canBeTrimmed))) {
+    	if (!canBeTrimmed.isEmpty() && !(onlyIfNotDetermined && areVariablesDetermined(plan, retainedVars, canBeTrimmed, context))) {
     		// TODO add smart ordering? 
     		plan = planFactory.createSubPlan(new PProject(retainedVars), plan);
     	}
@@ -75,17 +75,17 @@ public class BuildHelper {
     /**
      * @return true iff a set of given variables functionally determine all visible variables in the subplan according to the subplan's constraints
      */
-    public static boolean areAllVariablesDetermined(SubPlan plan, Collection<PVariable> determining) {
-		return areVariablesDetermined(plan, determining, plan.getVisibleVariables());
+    public static boolean areAllVariablesDetermined(SubPlan plan, Collection<PVariable> determining, IQueryMetaContext context) {
+		return areVariablesDetermined(plan, determining, plan.getVisibleVariables(), context);
 	}
     
     /**
      * @return true iff one set of given variables functionally determine the other set according to the subplan's constraints
      */
-    public static boolean areVariablesDetermined(SubPlan plan, Collection<PVariable> determining, Collection<PVariable> determined) {
+    public static boolean areVariablesDetermined(SubPlan plan, Collection<PVariable> determining, Collection<PVariable> determined, IQueryMetaContext context) {
         Map<Set<PVariable>, Set<PVariable>> dependencies = new HashMap<Set<PVariable>, Set<PVariable>>();
         for (PConstraint pConstraint : plan.getAllEnforcedConstraints())
-            dependencies.putAll(pConstraint.getFunctionalDependencies());
+            dependencies.putAll(pConstraint.getFunctionalDependencies(context));
 		final Set<PVariable> closure = FunctionalDependencyHelper.closureOf(determining, dependencies);
 		final boolean isDetermined = closure.containsAll(determined);
 		return isDetermined;
@@ -122,7 +122,7 @@ public class BuildHelper {
      * @param plan
      * @throws QueryProcessingException
      */
-    public static void finalCheck(final PBody pSystem, SubPlan plan, IPatternMatcherContext context)
+    public static void finalCheck(final PBody pSystem, SubPlan plan, IQueryMetaContext context)
             throws QueryProcessingException {
         PConstraint unenforcedConstraint = getAnyUnenforcedConstraint(pSystem, plan);
         if (unenforcedConstraint != null) {

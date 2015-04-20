@@ -15,7 +15,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.apache.log4j.Logger;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
@@ -47,12 +48,12 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
 	//SubPlanProcessor planProcessor = new SubPlanProcessor();
 	
     @Override
-    public SubPlan plan(final PBody pSystem, /*final IOperationCompiler compiler, */IPatternMatcherContext context) throws QueryProcessingException {
+    public SubPlan plan(final PBody pSystem, Logger logger, IQueryMetaContext context) throws QueryProcessingException {
     	SubPlanFactory planFactory = new SubPlanFactory(pSystem);
         PQuery query = pSystem.getPattern();
         //planProcessor.setCompiler(compiler);
         try {
-            context.logDebug(String.format(
+            logger.debug(String.format(
             		"%s: patternbody build started for %s",
             		getClass().getSimpleName(), 
             		query.getFullyQualifiedName()));
@@ -89,7 +90,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
             BuildHelper.finalCheck(pSystem, finalPlan, context);
 			// TODO integrate the check above in SubPlan / POperation 
             
-            context.logDebug(String.format(
+            logger.debug(String.format(
             		"%s: patternbody query plan concluded for %s as: %s",
             		getClass().getSimpleName(), 
             		query.getFullyQualifiedName(),
@@ -110,7 +111,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
      * @throws RetePatternBuildException
      *             to indicate the error in detail.
      */
-    private void raiseForeverDeferredError(DeferredPConstraint constraint, SubPlan plan, IPatternMatcherContext context) throws RetePatternBuildException {
+    private void raiseForeverDeferredError(DeferredPConstraint constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
     	if (constraint instanceof Equality) {
     		raiseForeverDeferredError((Equality)constraint, plan, context);
     	} else if (constraint instanceof ExportedParameter) {
@@ -122,13 +123,13 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
     	}
     }
     
-    private void raiseForeverDeferredError(Equality constraint, SubPlan plan, IPatternMatcherContext context) throws RetePatternBuildException {
+    private void raiseForeverDeferredError(Equality constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
     	String[] args = { constraint.getWho().toString(), constraint.getWithWhom().toString() };
         String msg = "Cannot express equality of variables {1} and {2} if neither of them is deducable.";
         String shortMsg = "Equality between undeducible variables.";
         throw new RetePatternBuildException(msg, args, shortMsg, null);
     }
-    private void raiseForeverDeferredError(ExportedParameter constraint, SubPlan plan, IPatternMatcherContext context) throws RetePatternBuildException {
+    private void raiseForeverDeferredError(ExportedParameter constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
     	String[] args = { constraint.getParameterName().toString() };
         String msg = "Pattern Graph Search terminated incompletely: "
                 + "exported pattern variable {1} could not be determined based on the pattern constraints. "
@@ -136,7 +137,7 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
         String shortMsg = "Could not deduce value of parameter";
         throw new RetePatternBuildException(msg, args, shortMsg, null);
     }
-    private void raiseForeverDeferredError(ExpressionEvaluation constraint, SubPlan plan, IPatternMatcherContext context) throws RetePatternBuildException {
+    private void raiseForeverDeferredError(ExpressionEvaluation constraint, SubPlan plan, IQueryMetaContext context) throws RetePatternBuildException {
         if (constraint.checkTypeSafety(plan, context) == null) {
             raiseForeverDeferredError(constraint, plan);
         } else {

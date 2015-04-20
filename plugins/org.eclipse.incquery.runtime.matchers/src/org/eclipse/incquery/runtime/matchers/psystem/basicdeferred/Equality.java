@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
@@ -81,7 +81,7 @@ public class Equality extends DeferredPConstraint {
     }
     
     @Override
-    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies() {
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
     	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
     	result.put(Collections.singleton(who), Collections.singleton(withWhom));
     	result.put(Collections.singleton(withWhom), Collections.singleton(who));
@@ -89,7 +89,7 @@ public class Equality extends DeferredPConstraint {
     }
 
     @Override
-    public boolean isReadyAt(SubPlan plan, IPatternMatcherContext context) {
+    public boolean isReadyAt(SubPlan plan, IQueryMetaContext context) {
         return plan.getVisibleVariables().contains(who) && plan.getVisibleVariables().contains(withWhom);
         // will be replaced by || if copierNode is available;
         // until then, LayoutHelper.unifyVariablesAlongEqualities(PSystem<PatternDescription, StubHandle, Collector>) is

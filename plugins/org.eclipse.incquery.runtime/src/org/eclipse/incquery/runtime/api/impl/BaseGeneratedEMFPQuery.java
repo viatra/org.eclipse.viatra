@@ -16,9 +16,7 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.BasePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 
@@ -28,9 +26,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitialization
  *
  */
 public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
-	
-	protected static final IPatternMatcherContext CONTEXT = EMFPatternMatcherContext.STATIC_INSTANCE;
-	
+		
     protected QueryInitializationException processDependencyException(IncQueryException ex) {
     	if (ex.getCause() instanceof QueryInitializationException) 
     		return (QueryInitializationException) ex.getCause();

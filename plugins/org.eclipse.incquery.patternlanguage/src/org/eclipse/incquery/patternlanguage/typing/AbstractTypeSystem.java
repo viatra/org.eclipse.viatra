@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.typing;
 
-import org.eclipse.incquery.patternlanguage.patternLanguage.Type;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 
 /**
  * @author Zoltan Ujhelyi
@@ -19,46 +19,50 @@ import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
  */
 public abstract class AbstractTypeSystem implements ITypeSystem {
 
-    final IPatternMatcherContext context;
+    final IQueryMetaContext context;
 
-    public AbstractTypeSystem(IPatternMatcherContext context) {
+    public AbstractTypeSystem(IQueryMetaContext context) {
         this.context = context;
     }
 
-    @Override
-    public boolean isConformToRelationSource(Object relationType, Object sourceType) {
-        Object expectedType = null;
-        switch (context.edgeInterpretation()) {
-        case BINARY:
-            expectedType = context.binaryEdgeSourceType(relationType);
-            break;
-        case TERNARY:
-            expectedType = context.ternaryEdgeSourceType(relationType);
-            break;
-        }
-        return isConformant(expectedType, sourceType);
-    }
+//    @Override
+//    public boolean isConformToRelationColumn(IInputKey relationType,
+//    		int columnIndex, IInputKey columnType) {
+//    	// TODO Auto-generated method stub
+//    	return false;
+//    }
+//    
+//    @Override
+//    public boolean isConformToRelationSource(Object relationType, Object sourceType) {
+//        Object expectedType = null;
+//        switch (context.edgeInterpretation()) {
+//        case BINARY:
+//            expectedType = context.binaryEdgeSourceType(relationType);
+//            break;
+//        case TERNARY:
+//            expectedType = context.ternaryEdgeSourceType(relationType);
+//            break;
+//        }
+//        return isConformant(expectedType, sourceType);
+//    }
+//
+//    @Override
+//    public boolean isConformToRelationTarget(Object relationType, Object targetType) {
+//        Object expectedType = null;
+//        switch (context.edgeInterpretation()) {
+//        case BINARY:
+//            expectedType = context.binaryEdgeTargetType(relationType);
+//            break;
+//        case TERNARY:
+//            expectedType = context.ternaryEdgeTargetType(relationType);
+//            break;
+//        }
+//        return isConformant(expectedType, targetType);
+//    }
 
     @Override
-    public boolean isConformToRelationTarget(Object relationType, Object targetType) {
-        Object expectedType = null;
-        switch (context.edgeInterpretation()) {
-        case BINARY:
-            expectedType = context.binaryEdgeTargetType(relationType);
-            break;
-        case TERNARY:
-            expectedType = context.ternaryEdgeTargetType(relationType);
-            break;
-        }
-        return isConformant(expectedType, targetType);
-    }
-
-    @Override
-    public String typeString(Object type) {
-        if (type instanceof Type) {
-            return ((Type) type).getTypename();
-        }
-        return context.printType(type);
+    public String typeString(IInputKey type) {
+        return type.getPrettyPrintableName();
     }
 
     

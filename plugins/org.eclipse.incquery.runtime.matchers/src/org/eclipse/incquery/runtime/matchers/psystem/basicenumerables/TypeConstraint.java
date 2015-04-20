@@ -10,33 +10,74 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
+import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
  * Represents a type constraint with using an undefined number of parameters. Subclasses are distinguished by the number
  * of parameters and their inferred type information. Such a constraint maintains how to output its type information.
  *
+ * <p> InputKey must be enumerable!
+ *
  * @author Zoltan Ujhelyi
  *
  */
-public abstract class TypeConstraint extends KeyedEnumerablePConstraint<Object> {
-
-    private final String typeString;
-
-    public TypeConstraint(PBody pSystem, Tuple variablesTuple, Object supplierKey, String typeString) {
-        super(pSystem, variablesTuple, supplierKey);
-        this.typeString = typeString;
+public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implements ITypeInfoProviderConstraint {
+    
+	private TypeJudgement equivalentJudgement;
+	
+    public TypeConstraint(PBody pSystem, Tuple variablesTuple, IInputKey inputKey) {
+        super(pSystem, variablesTuple, inputKey);
+        this.equivalentJudgement = new TypeJudgement(inputKey, variablesTuple);
     }
 
     @Override
     protected String keyToString() {
-        return typeString;
+        return supplierKey.getPrettyPrintableName();
+    }
+    
+    public TypeJudgement getEquivalentJudgement() {
+		return equivalentJudgement;
+	}
+
+	@Override
+	public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
+		return Collections.singleton(equivalentJudgement);
+		//return equivalentJudgement.getDirectlyImpliedJudgements(context);
+	}
+	
+	@Override
+    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
+    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
+    	
+    	Set<Entry<Set<Integer>, Set<Integer>>> dependencies = context.getFunctionalDependencies(supplierKey).entrySet();
+    	for (Entry<Set<Integer>, Set<Integer>> dependency : dependencies) {
+			result.put(transcribeVariables(dependency.getKey()), transcribeVariables(dependency.getValue()));
+		}
+
+    	return result;
     }
 
-    public String getTypeString() {
-        return typeString;
-    }
+	private Set<PVariable> transcribeVariables(Set<Integer> indices) {
+		Set<PVariable> result = new HashSet<PVariable>();
+		for (Integer index : indices) {
+			result.add((PVariable) variablesTuple.get(index));
+		}
+		return result;
+	}
+
 
 }

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.FunctionalDependencyHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
@@ -29,6 +30,8 @@ import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
  * 
  */
 class JoinCandidate {
+	private IQueryMetaContext context;
+	
     SubPlan primary;
     SubPlan secondary;
     
@@ -42,9 +45,10 @@ class JoinCandidate {
     List<PConstraint> consSecondary;
     
 
-    JoinCandidate(SubPlan joinedPlan) {
+    JoinCandidate(SubPlan joinedPlan, IQueryMetaContext context) {
         super();
         this.joinedPlan = joinedPlan;
+		this.context = context;
         this.primary = joinedPlan.getParentPlans().get(0);
         this.secondary = joinedPlan.getParentPlans().get(1);
 
@@ -137,9 +141,9 @@ class JoinCandidate {
         if (heath == null) {
             Map<Set<PVariable>, Set<PVariable>> dependencies = new HashMap<Set<PVariable>, Set<PVariable>>();
             for (PConstraint pConstraint : primary.getAllEnforcedConstraints())
-                dependencies.putAll(pConstraint.getFunctionalDependencies());
+                dependencies.putAll(pConstraint.getFunctionalDependencies(context));
             for (PConstraint pConstraint : secondary.getAllEnforcedConstraints())
-                dependencies.putAll(pConstraint.getFunctionalDependencies());
+                dependencies.putAll(pConstraint.getFunctionalDependencies(context));
 
             // does varCommon determine either varPrimary or varSecondary?
             Set<PVariable> varCommonClosure = FunctionalDependencyHelper.closureOf(varCommon, dependencies);

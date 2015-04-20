@@ -29,8 +29,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternMatchC
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IConstraintFilter.AllowAllFilter;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
@@ -118,10 +117,8 @@ public class PBodyCopier {
             copyEqualityConstraint((Equality) constraint);
         } else if (constraint instanceof Inequality) {
             copyInequalityConstraint((Inequality) constraint);
-        } else if (constraint instanceof TypeUnary) {
-            copyTypeUnaryConstraint((TypeUnary) constraint);
-        } else if (constraint instanceof TypeBinary) {
-            copyTypeBinaryConstraint((TypeBinary) constraint);
+        } else if (constraint instanceof TypeConstraint) {
+            copyTypeConstraint((TypeConstraint) constraint);
         } else if (constraint instanceof ConstantValue) {
             copyConstantValueConstraint((ConstantValue) constraint);
         } else if (constraint instanceof PositivePatternCall) {
@@ -162,17 +159,11 @@ public class PBodyCopier {
         PVariable withWhom = inequality.getWithWhom();
         new Inequality(body, variableMapping.get(who), variableMapping.get(withWhom));
     }
-
-    protected void copyTypeUnaryConstraint(TypeUnary typeUnary) {
-        PVariable pVariable = (PVariable) typeUnary.getVariablesTuple().getElements()[0];
-        new TypeUnary(body, variableMapping.get(pVariable), typeUnary.getSupplierKey(), typeUnary.getTypeString());
-    }
-
-    protected void copyTypeBinaryConstraint(TypeBinary typeBinary) {
-        Object[] elements = typeBinary.getVariablesTuple().getElements();
-        PVariable pVariable1 = (PVariable) elements[0];
-        PVariable pVariable2 = (PVariable) elements[1];
-        new TypeBinary(body, typeBinary.getContext(), variableMapping.get(pVariable1), variableMapping.get(pVariable2), typeBinary.getSupplierKey(), typeBinary.getTypeString());
+    
+    protected void copyTypeConstraint(TypeConstraint typeConstraint) {
+        PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
+        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
+        new TypeConstraint(body, variablesTuple, typeConstraint.getSupplierKey());
     }
 
     protected void copyConstantValueConstraint(ConstantValue constantValue) {
@@ -219,7 +210,7 @@ public class PBodyCopier {
      * @param positivePatternCall
      * @return the mapped variables to the pattern's parameters
      */
-    private PVariable[] extractMappedVariables(EnumerablePConstraint enumerablePConstraint) {
+    protected PVariable[] extractMappedVariables(EnumerablePConstraint enumerablePConstraint) {
         Object[] pVariables = enumerablePConstraint.getVariablesTuple().getElements();
         return mapVariableList(pVariables);
     }

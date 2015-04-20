@@ -12,18 +12,21 @@
 package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.TypeHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
@@ -43,9 +46,9 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      * If set to true, shrinks the net by avoiding unnecessary typechecks
      */
     public boolean calcImpliedTypes;
-    private IPatternMatcherContext context;
+    private IQueryMetaContext context;
 
-    public PBodyNormalizer(IPatternMatcherContext context) {
+    public PBodyNormalizer(IQueryMetaContext context) {
         this(context, true);
     }
     
@@ -54,7 +57,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      * @param calculateImpliedTypes
      *            If set to true, shrinks the net by avoiding unnecessary typechecks
      */
-    public PBodyNormalizer(IPatternMatcherContext context, boolean calculateImpliedTypes) {
+    public PBodyNormalizer(IQueryMetaContext context, boolean calculateImpliedTypes) {
         this.context = context;
         calcImpliedTypes = calculateImpliedTypes;
     }
@@ -71,7 +74,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         return new PDisjunction(normalizedBodies);
     }
 
-    public void setContext(IPatternMatcherContext context) {
+    public void setContext(IQueryMetaContext context) {
         this.context = context;
     }
 
@@ -97,7 +100,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
 
         // UNARY ELIMINATION WITH TYPE INFERENCE
         if (calcImpliedTypes) {
-            eliminateInferrableUnaryTypes(body, context);
+            eliminateInferrableTypes(body, context);
         }
         // PREVENTIVE CHECKS
         checkSanity(body);
@@ -138,27 +141,47 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
     }
 
     /**
-     * Eliminates all unary type constraints that are inferrable from other constraints.
+     * Eliminates all type constraints that are inferrable from other constraints.
      */
-    void eliminateInferrableUnaryTypes(final PBody body, IPatternMatcherContext context) {
-        Set<TypeUnary> constraintsOfType = body.getConstraintsOfType(TypeUnary.class);
-        for (TypeUnary typeUnary : constraintsOfType) {
-            PVariable var = (PVariable) typeUnary.getVariablesTuple().get(0);
-            Object expressedType = typeUnary.getTypeInfo(var);
-            Set<ITypeInfoProviderConstraint> typeRestrictors = var
-                    .getReferringConstraintsOfType(ITypeInfoProviderConstraint.class);
-            typeRestrictors.remove(typeUnary);
-            for (ITypeInfoProviderConstraint iTypeRestriction : typeRestrictors) {
-                Object typeInfo = iTypeRestriction.getTypeInfo(var);
-                if (typeInfo != ITypeInfoProviderConstraint.TypeInfoSpecials.NO_TYPE_INFO_PROVIDED) {
-                    Set<Object> typeClosure = TypeHelper.typeClosure(Collections.singleton(typeInfo), context);
-                    if (typeClosure.contains(expressedType)) {
-                        typeUnary.delete();
-                        break;
-                    }
-                }
-            }
-        }
+    void eliminateInferrableTypes(final PBody body, IQueryMetaContext context) {
+    	Set<TypeJudgement> subsumedByRetainedConstraints = new HashSet<TypeJudgement>();
+    	LinkedList<TypeConstraint> allTypeConstraints = new LinkedList<TypeConstraint>();
+        for (PConstraint pConstraint : body.getConstraints()) {
+			if (pConstraint instanceof TypeConstraint) {
+				allTypeConstraints.add((TypeConstraint) pConstraint);
+			} else if (pConstraint instanceof ITypeInfoProviderConstraint) { 
+				// non-type constraints are all retained
+				final Set<TypeJudgement> directJudgements = 
+						((ITypeInfoProviderConstraint) pConstraint).getImpliedJudgements(context);
+				subsumedByRetainedConstraints.addAll(TypeHelper.typeClosure(directJudgements, context));
+			}
+		}
+        Collections.sort(allTypeConstraints, PConstraint.CompareByMonotonousID.INSTANCE);
+        Queue<TypeConstraint> potentialConstraints = allTypeConstraints; // rename for better comprehension
+        
+        while (!potentialConstraints.isEmpty()) {
+        	TypeConstraint candidate = potentialConstraints.poll();
+        	
+        	boolean isSubsumed = 
+        			subsumedByRetainedConstraints.contains(candidate.getEquivalentJudgement());
+        	if (!isSubsumed) 
+	        	for (TypeConstraint subsuming : potentialConstraints) { // the remaining ones
+	        		final Set<TypeJudgement> directJudgements = 
+	        				subsuming.getImpliedJudgements(context);
+	        		final Set<TypeJudgement> typeClosure = TypeHelper.typeClosure(directJudgements, context);
+					
+	        		if (typeClosure.contains(candidate.getEquivalentJudgement())) {
+	        			isSubsumed = true;
+	        			break;
+	        		}
+	        	}          
+        	
+        	if (isSubsumed) { // eliminated
+        		candidate.delete();
+        	} else { // retained
+        		subsumedByRetainedConstraints.addAll(TypeHelper.typeClosure(candidate.getImpliedJudgements(context), context));
+        	}      		
+        }        
     }
 
     /**

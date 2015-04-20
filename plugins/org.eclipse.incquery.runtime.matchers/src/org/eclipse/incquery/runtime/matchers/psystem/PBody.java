@@ -17,7 +17,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
+import org.eclipse.incquery.runtime.matchers.planning.helpers.TypeHelper;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
@@ -270,6 +273,19 @@ public class PBody {
         Preconditions.checkState(this.containerDisjunction == null, "Disjunction is already set.");
         this.containerDisjunction = containerDisjunction;
     }
-    
+
+    /**
+     * All unary input keys directly prescribed by constraints, grouped by variable.
+     * <p> to supertype inference or subsumption applied at this point.
+     */
+    public Map<PVariable, Set<TypeJudgement>> getAllUnaryTypeRestrictions(IQueryMetaContext context) {
+        Map<PVariable, Set<TypeJudgement>> currentRestrictions = allUnaryTypeRestrictions.get(context);
+		if (currentRestrictions == null) {
+			currentRestrictions = TypeHelper.inferUnaryTypes(getConstraints(), context);
+			allUnaryTypeRestrictions.put(context, currentRestrictions);
+        }
+        return currentRestrictions;
+    }
+    private WeakHashMap<IQueryMetaContext, Map<PVariable, Set<TypeJudgement>>> allUnaryTypeRestrictions = new WeakHashMap<IQueryMetaContext, Map<PVariable,Set<TypeJudgement>>>();   
     
 }

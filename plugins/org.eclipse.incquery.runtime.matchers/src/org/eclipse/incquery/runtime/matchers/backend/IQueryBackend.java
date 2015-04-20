@@ -34,6 +34,12 @@ public interface IQueryBackend {
      * @throws QueryProcessingException 
      */
 	public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException;
+	
+    /**
+     * Returns an existing result provider for a given query, if it was previously constructed, returns null otherwise.
+     * Will not construct and initialize new result providers.
+     */
+	public IQueryResultProvider peekExistingResultProvider(PQuery query);
 
 	/**
 	 * Disposes the query backend.

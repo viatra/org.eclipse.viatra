@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.WeakHashMap;
 
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Preconditions;
@@ -26,8 +27,8 @@ import com.google.common.collect.Maps;
  */
 public class SurrogateQueryRegistry {
     
-    private Map<Object, PQuery> registeredSurrogateQueryMap = new WeakHashMap<Object, PQuery>();
-    private Map<Object, PQuery> dynamicSurrogateQueryMap = new WeakHashMap<Object, PQuery>();
+    private Map<IInputKey, PQuery> registeredSurrogateQueryMap = new WeakHashMap<IInputKey, PQuery>();
+    private Map<IInputKey, PQuery> dynamicSurrogateQueryMap = new WeakHashMap<IInputKey, PQuery>();
     
     /**
      * Hidden constructor
@@ -48,19 +49,19 @@ public class SurrogateQueryRegistry {
      * @return the previous surrogate query FQN associated with feature, or null if there was no such query FQN registered
      * @throws IllegalArgumentException if feature or surrogateQueryFQN is null 
      */
-    public PQuery registerSurrogateQueryForFeature(Object feature, PQuery surrogateQuery) {
+    public PQuery registerSurrogateQueryForFeature(IInputKey feature, PQuery surrogateQuery) {
         Preconditions.checkArgument(feature != null, "Feature must not be null!");
         Preconditions.checkArgument(surrogateQuery != null, "Surrogate query must not be null!");
         return registeredSurrogateQueryMap.put(feature, surrogateQuery);
     }
     
-    public PQuery addDynamicSurrogateQueryForFeature(Object feature, PQuery surrogateQuery) {
+    public PQuery addDynamicSurrogateQueryForFeature(IInputKey feature, PQuery surrogateQuery) {
         Preconditions.checkArgument(feature != null, "Feature must not be null!");
         Preconditions.checkArgument(surrogateQuery != null, "Surrogate query FQN must not be null!");
         return dynamicSurrogateQueryMap.put(feature, surrogateQuery);
     }
 
-    public PQuery removeDynamicSurrogateQueryForFeature(Object feature) {
+    public PQuery removeDynamicSurrogateQueryForFeature(IInputKey feature) {
         Preconditions.checkArgument(feature != null, "Feature must not be null!");
         return dynamicSurrogateQueryMap.remove(feature);
     }
@@ -71,7 +72,7 @@ public class SurrogateQueryRegistry {
      * @return true if the feature has a surrogate query defined
      * @throws IllegalArgumentException if feature is null
      */
-    public boolean hasSurrogateQueryFQN(Object feature) {
+    public boolean hasSurrogateQueryFQN(IInputKey feature) {
         Preconditions.checkArgument(feature != null, "Feature must not be null!");
         boolean surrogateExists = dynamicSurrogateQueryMap.containsKey(feature);
         if(!surrogateExists){
@@ -87,7 +88,7 @@ public class SurrogateQueryRegistry {
      * @throws IllegalArgumentException if feature is null
      * @throws NoSuchElementException if the feature has no surrogate query defined, use {@link #hasSurrogateQueryFQN} to check
      */
-    public PQuery getSurrogateQuery(Object feature) {
+    public PQuery getSurrogateQuery(IInputKey feature) {
         Preconditions.checkArgument(feature != null, "Feature must not be null!");
         PQuery surrogate = dynamicSurrogateQueryMap.get(feature);
         if(surrogate == null) {
@@ -103,14 +104,14 @@ public class SurrogateQueryRegistry {
     /**
      * @return the map of features with registered surrogate query FQNs
      */
-    public Map<Object, PQuery> getRegisteredSurrogateQueryFQNMap() {
+    public Map<IInputKey, PQuery> getRegisteredSurrogateQueryFQNMap() {
         return registeredSurrogateQueryMap;
     }
     
     /**
      * @return the map of features with dynamically added surrogate query FQNs
      */
-    public Map<Object, PQuery> getDynamicSurrogateQueryFQNMap() {
+    public Map<IInputKey, PQuery> getDynamicSurrogateQueryFQNMap() {
         return dynamicSurrogateQueryMap;
     }
     
@@ -120,8 +121,8 @@ public class SurrogateQueryRegistry {
      * 
      * @return a new copy of the map that contains all features with surrogate queries.
      */
-    public Map<Object, PQuery> getAllSurrogateQueryFQNMap() {
-        HashMap<Object, PQuery> allSurrogateQueries = Maps.newHashMap(registeredSurrogateQueryMap);
+    public Map<IInputKey, PQuery> getAllSurrogateQueryFQNMap() {
+        HashMap<IInputKey, PQuery> allSurrogateQueries = Maps.newHashMap(registeredSurrogateQueryMap);
         allSurrogateQueries.putAll(dynamicSurrogateQueryMap);
         return allSurrogateQueries;
     }

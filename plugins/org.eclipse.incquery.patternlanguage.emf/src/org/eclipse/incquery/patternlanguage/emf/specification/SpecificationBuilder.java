@@ -27,9 +27,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.incquery.runtime.emf.EMFPatternMatcherContext;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
 import org.eclipse.incquery.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
@@ -37,7 +35,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
-import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
 
 import com.google.common.base.Preconditions;
@@ -76,7 +73,6 @@ public class SpecificationBuilder {
                     return Sets.newHashSet();
                 }
             });
-    private IPatternMatcherContext context = new EMFPatternMatcherContext(logger);
     private PatternSanitizer sanitizer = new PatternSanitizer(/*logger*/ null /* do not log all errors */);
 
     /**
@@ -200,7 +196,7 @@ public class SpecificationBuilder {
             	String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
             	GenericQuerySpecification specification = (GenericQuerySpecification) patternMap.get(patternFqn);
             	try {
-                	EPMToPBody converter = new EPMToPBody(newPattern, specification.getInternalQueryRepresentation(), context, patternMap);
+                	EPMToPBody converter = new EPMToPBody(newPattern, specification.getInternalQueryRepresentation(), patternMap);
                 	buildAnnotations(newPattern, specification.getInternalQueryRepresentation(), converter);
                 	buildBodies(newPattern, specification.getInternalQueryRepresentation(), converter);
             	} catch (IncQueryException e) {
@@ -248,7 +244,7 @@ public class SpecificationBuilder {
     }
 
     public Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query) throws QueryInitializationException {
-        return buildBodies(pattern, query, new EPMToPBody(pattern, query, context, patternMap));
+        return buildBodies(pattern, query, new EPMToPBody(pattern, query, patternMap));
     }
 
     protected Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query, EPMToPBody converter)
@@ -259,7 +255,7 @@ public class SpecificationBuilder {
     }
 
     public Set<PBody> getBodies(Pattern pattern, PQuery query) throws QueryInitializationException {
-        return getBodies(pattern, new EPMToPBody(pattern, query, context, patternMap));
+        return getBodies(pattern, new EPMToPBody(pattern, query, patternMap));
     }
     
     public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws QueryInitializationException {

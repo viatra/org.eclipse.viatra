@@ -11,7 +11,8 @@
 
 package org.eclipse.incquery.runtime.matchers.planning;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.apache.log4j.Logger;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 
 /**
@@ -21,5 +22,5 @@ import org.eclipse.incquery.runtime.matchers.psystem.PBody;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IQueryPlannerStrategy {
-    public SubPlan plan(PBody pSystem, /*IOperationCompiler compiler,*/ IPatternMatcherContext context) throws QueryProcessingException;
+    public SubPlan plan(PBody pSystem, Logger logger, IQueryMetaContext context) throws QueryProcessingException;
 }

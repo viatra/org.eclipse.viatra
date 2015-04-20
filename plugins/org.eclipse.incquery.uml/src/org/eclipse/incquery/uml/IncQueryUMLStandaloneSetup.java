@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
@@ -74,7 +75,8 @@ public class IncQueryUMLStandaloneSetup {
 			WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedFeature(feature);
 		}
 		for (Map.Entry<EStructuralFeature, IQuerySpecification<?>> entry : getSurrogateQueries().entrySet()) {
-			SurrogateQueryRegistry.instance().registerSurrogateQueryForFeature(entry.getKey(),
+			SurrogateQueryRegistry.instance().registerSurrogateQueryForFeature(
+					new EStructuralFeatureInstancesKey(entry.getKey()),
 					entry.getValue().getInternalQueryRepresentation());
 		}
 	}

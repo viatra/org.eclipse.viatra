@@ -57,6 +57,7 @@ import org.eclipse.incquery.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.incquery.patternlanguage.typing.ITypeSystem;
 import org.eclipse.incquery.patternlanguage.validation.VariableReferenceCount.ReferenceType;
 import org.eclipse.incquery.patternlanguage.validation.whitelist.PureClassChecker;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.util.Primitives.Primitive;
@@ -202,8 +203,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                             IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);
                 } else {
 
-                    Object type1 = typeInferrer.getVariableType(patternRef.getParameters().get(0));
-                    Object type2 = typeInferrer.getVariableType(patternRef.getParameters().get(1));
+                	IInputKey type1 = typeInferrer.getVariableType(patternRef.getParameters().get(0));
+                	IInputKey type2 = typeInferrer.getVariableType(patternRef.getParameters().get(1));
                     if (!typeSystem.isConformant(type1, type2) && !typeSystem.isConformant(type2, type1)) {
                         error(String.format(
                                 "The parameter types %s and %s are not compatible, so no transitive references can exist in instance models.",

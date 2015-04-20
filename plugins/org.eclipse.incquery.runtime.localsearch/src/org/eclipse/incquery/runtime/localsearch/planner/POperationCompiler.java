@@ -14,8 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
@@ -33,6 +34,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStruc
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureTarget;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.IterateOverEClassInstances;
 import org.eclipse.incquery.runtime.localsearch.planner.util.CompilerHelper;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PApply;
@@ -49,11 +51,9 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternMatchC
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -152,10 +152,8 @@ public class POperationCompiler {
             createCheck((ConstantValue) pConstraint, variableMapping);
         } else if (pConstraint instanceof PositivePatternCall) {
             createCheck((PositivePatternCall) pConstraint, variableMapping);
-        } else if (pConstraint instanceof TypeBinary) {
-            createCheck((TypeBinary) pConstraint,variableMapping);
-        } else if (pConstraint instanceof TypeUnary) {
-            createCheck((TypeUnary) pConstraint,variableMapping);
+        } else if (pConstraint instanceof TypeConstraint) {
+            createCheck((TypeConstraint) pConstraint,variableMapping);
         }
 
     }
@@ -169,18 +167,19 @@ public class POperationCompiler {
         operations.add(new CheckConstant(position, constant.getSupplierKey()));
     }
 
-    private void createCheck(TypeUnary typeUnary, Map<PVariable, Integer> variableMapping) {
-        // TODO is this cast always ok? (EClass vs EClassifier)
-        operations.add(new InstanceOfCheck(variableMapping.get(typeUnary.getVariablesTuple().get(0)), (EClass) typeUnary.getSupplierKey()));
+    private void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
+    	final IInputKey inputKey = typeConstraint.getSupplierKey();
+		if (inputKey instanceof EClassTransitiveInstancesKey) {
+	        // TODO is this cast always ok? (EClass vs EClassifier)
+	        operations.add(new InstanceOfCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
+	    } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
+	        int sourcePosition = variableMapping.get(typeConstraint.getVariablesTuple().get(0));
+	        int targetPosition = variableMapping.get(typeConstraint.getVariablesTuple().get(1));
+	        operations.add(new StructuralFeatureCheck(sourcePosition, targetPosition, ((EStructuralFeatureInstancesKey) inputKey).getEmfKey()));
+	    } else {
+	    	throw new IllegalArgumentException("Unsupported type: " + inputKey);
+	    }
     }
-
-    private void createCheck(TypeBinary typeBinary, Map<PVariable, Integer> variableMapping) {
-        Preconditions.checkArgument(typeBinary.getSupplierKey() instanceof EStructuralFeature, "Unsupported type: " + typeBinary.getSupplierKey());
-        int sourcePosition = variableMapping.get(typeBinary.getVariablesTuple().get(0));
-        int targetPosition = variableMapping.get(typeBinary.getVariablesTuple().get(1));
-        operations.add(new StructuralFeatureCheck(sourcePosition, targetPosition, (EStructuralFeature) typeBinary.getSupplierKey()));
-    }
-
     private void createCheck(PositivePatternCall positivePatternCall, Map<PVariable, Integer> variableMapping) {
         throw new UnsupportedOperationException("Pattern call not supported");
     }
@@ -259,11 +258,8 @@ public class POperationCompiler {
         else if (pConstraint instanceof ConstantValue) {
             createExtend((ConstantValue) pConstraint, variableMapping);
         } 
-        else if (pConstraint instanceof TypeBinary) {
-            createExtend((TypeBinary) pConstraint,variableMapping);
-        }
-        else if (pConstraint instanceof TypeUnary) {
-            createExtend((TypeUnary) pConstraint,variableMapping);
+        else if (pConstraint instanceof TypeConstraint) {
+            createExtend((TypeConstraint) pConstraint,variableMapping);
         }
     }
 
@@ -276,29 +272,35 @@ public class POperationCompiler {
         operations.add(new ExtendConstant(position, constant.getSupplierKey()));        
     }
 
-    private void createExtend(TypeUnary pConstraint, Map<PVariable, Integer> variableMapping) {
-        operations.add(new IterateOverEClassInstances(variableMapping.get(pConstraint.getVariableInTuple(0)), (EClass) pConstraint.getSupplierKey()));
-    }
+    private void createExtend(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
+    	final IInputKey inputKey = typeConstraint.getSupplierKey();
+		if (inputKey instanceof EClassTransitiveInstancesKey) {
+	        // TODO is this cast always ok? (EClass vs EClassifier)
+	        operations.add(new IterateOverEClassInstances(variableMapping.get(typeConstraint.getVariableInTuple(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
+	    } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
+	    	final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
+	    	
+	        int sourcePosition = variableMapping.get(typeConstraint.getVariablesTuple().get(0));
+	        int targetPosition = variableMapping.get(typeConstraint.getVariablesTuple().get(1));
 
-    private void createExtend(TypeBinary typeBinary, Map<PVariable, Integer> variableMapping) {
-        Object supplierKey = typeBinary.getSupplierKey();
-        PVariable from = (PVariable) typeBinary.getVariablesTuple().get(0);
-        PVariable to = (PVariable) typeBinary.getVariablesTuple().get(1);
-        
-        boolean fromBound = variableBindings.get(typeBinary).contains(variableMapping.get(from));
-        boolean toBound = variableBindings.get(typeBinary).contains(variableMapping.get(to));
-        
-        if(fromBound && !toBound){
-            operations.add(new ExtendToEStructuralFeatureTarget(variableMapping.get(from), variableMapping.get(to), (EStructuralFeature)supplierKey));
-        }
-        else if(!fromBound && toBound){
-            operations.add(new ExtendToEStructuralFeatureSource(variableMapping.get(from), variableMapping.get(to), (EStructuralFeature)supplierKey));
-        } else {
-            // TODO Elaborate solution based on the navigability of edges
-            // As of now a static solution is implemented
-            operations.add(new IterateOverEClassInstances(variableMapping.get(from), (EClass) typeBinary.getTypeInfo(from)));
-            operations.add(new ExtendToEStructuralFeatureTarget(variableMapping.get(from), variableMapping.get(to), (EStructuralFeature)supplierKey));
-        }
+	        boolean fromBound = variableBindings.get(typeConstraint).contains(sourcePosition);
+	        boolean toBound = variableBindings.get(typeConstraint).contains(targetPosition);
+
+	        if(fromBound && !toBound){
+	            operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
+	        }
+	        else if(!fromBound && toBound){
+	            operations.add(new ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));
+	        } else {
+	            // TODO Elaborate solution based on the navigability of edges
+	            // As of now a static solution is implemented
+	            operations.add(new IterateOverEClassInstances(sourcePosition, feature.getEContainingClass()));
+				operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
+	        }
+
+	    } else {
+	    	throw new IllegalArgumentException("Unsupported type: " + inputKey);
+	    }        
     }
 
     private void createExtend(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {

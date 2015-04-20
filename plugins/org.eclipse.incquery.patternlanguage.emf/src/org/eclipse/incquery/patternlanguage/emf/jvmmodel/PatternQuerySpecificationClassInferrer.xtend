@@ -54,8 +54,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternMatchC
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PProblem
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery
@@ -76,6 +74,13 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.incquery.patternlanguage.emf.specification.GenericEMFPatternPQuery
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey
+import org.eclipse.incquery.runtime.emf.types.EDataTypeInSlotsKey
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey
+import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EDataType
+import org.eclipse.incquery.runtime.emf.types.JavaTransitiveInstancesKey
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -334,16 +339,30 @@ class PatternQuerySpecificationClassInferrer {
 			Inequality: {
 				'''new «Inequality»(body, «constraint.who.escapedName», «constraint.withWhom.escapedName»);'''
 			}
-			TypeUnary: {
-				val literal = constraint.supplierKey as EClassifier
-				val packageNsUri = literal.EPackage.nsURI
-				'''new «TypeUnary»(body, «constraint.variablesTuple.output», getClassifierLiteral("«packageNsUri»", "«literal.name»"), "«constraint.typeString»");'''
-			}
-			TypeBinary: {
-				val literal = constraint.supplierKey as EStructuralFeature
-				val container = literal.EContainingClass
-				val packageNsUri = container.EPackage.nsURI
-				'''new «TypeBinary»(body, CONTEXT, «constraint.variablesTuple.output», getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»"), "«constraint.typeString»");'''
+			TypeConstraint: {
+				val key = constraint.supplierKey
+				switch key {
+					EStructuralFeatureInstancesKey : {
+						val literal = key.emfKey
+						val container = literal.EContainingClass
+						val packageNsUri = container.EPackage.nsURI
+						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «EStructuralFeatureInstancesKey»(getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»")));'''
+					}
+					EClassTransitiveInstancesKey : {
+						val literal = key.emfKey
+						val packageNsUri = literal.EPackage.nsURI
+						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «EClassTransitiveInstancesKey»((«EClass»)getClassifierLiteral("«packageNsUri»", "«literal.name»")));'''
+					}
+					EDataTypeInSlotsKey : {
+						val literal = key.emfKey
+						val packageNsUri = literal.EPackage.nsURI
+						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «EDataTypeInSlotsKey»((«EDataType»)getClassifierLiteral("«packageNsUri»", "«literal.name»")));'''
+					}
+					JavaTransitiveInstancesKey : {
+						val literal = key.emfKey
+						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «JavaTransitiveInstancesKey»(«literal».class));'''
+					}
+				}
 			}
 			ConstantValue : {
 				'''new «ConstantValue»(body, «constraint.variablesTuple.output», «constraint.supplierKey.outputConstant»);'''

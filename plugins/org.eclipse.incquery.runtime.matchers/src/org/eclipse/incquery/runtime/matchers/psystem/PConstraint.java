@@ -11,9 +11,11 @@
 
 package org.eclipse.incquery.runtime.matchers.psystem;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 
 /**
@@ -36,7 +38,7 @@ public interface PConstraint {
      * A (preferably minimal) cover of known functional dependencies between variables.
      * @return non-trivial functional dependencies in the form of {variables} --> {variables}, where dependencies with the same lhs are unified.   
      */
-    public Map<Set<PVariable>,Set<PVariable>> getFunctionalDependencies();  
+    public Map<Set<PVariable>,Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context);  
 
     public void replaceVariable(PVariable obsolete, PVariable replacement);
 
@@ -48,4 +50,16 @@ public interface PConstraint {
      * Returns an integer ID that is guaranteed to increase strictly monotonously for constraints within a pBody.
      */
 	public abstract int getMonotonousID();
+	
+	
+	/**
+	 * Compares by {@link PConstraint#getMonotonousID()}
+	 */
+	public static enum CompareByMonotonousID implements Comparator<PConstraint> {
+		INSTANCE;
+		@Override
+		public int compare(PConstraint arg0, PConstraint arg1) {
+			return arg0.getMonotonousID() - arg1.getMonotonousID();
+		}
+	}
 }

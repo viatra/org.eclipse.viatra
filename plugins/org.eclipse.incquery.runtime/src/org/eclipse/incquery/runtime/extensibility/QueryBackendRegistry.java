@@ -37,8 +37,13 @@ public class QueryBackendRegistry {
      * Default backend implementation.
      */
     private Class<? extends IQueryBackend> defaultBackendClass = ReteEngine.class;
+    /**
+     * Default caching backend implementation (in case the regular deafult is non-caching).
+     */
+    private Class<? extends IQueryBackend> defaultCachingBackendClass = ReteEngine.class;
     
-    private QueryBackendRegistry () {
+
+	private QueryBackendRegistry () {
         queryBackendFactories.put(ReteEngine.class, new ReteBackendFactory());        
     }
 
@@ -54,6 +59,12 @@ public class QueryBackendRegistry {
      */
     public Class<? extends IQueryBackend> getDefaultBackendClass() {
         return defaultBackendClass;
+    }
+    /**
+     * @return the default caching backend, if a caching backend is explicitly requested
+     */
+    public Class<? extends IQueryBackend> getDefaultCachingBackendClass() {
+    	return defaultCachingBackendClass;
     }
  
     /**

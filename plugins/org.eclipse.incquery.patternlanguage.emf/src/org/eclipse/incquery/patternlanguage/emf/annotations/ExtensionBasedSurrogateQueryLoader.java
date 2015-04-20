@@ -23,6 +23,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 
@@ -51,7 +53,8 @@ public class ExtensionBasedSurrogateQueryLoader {
     public void loadKnownSurrogateQueriesIntoRegistry() {
         Map<EStructuralFeature, PQuery> knownSurrogateQueryFQNs = getKnownSurrogateQueryFQNs();
         for (Entry<EStructuralFeature, PQuery> entry : knownSurrogateQueryFQNs.entrySet()) {
-            SurrogateQueryRegistry.instance().registerSurrogateQueryForFeature(entry.getKey(), entry.getValue());
+        	final IInputKey inputKey = new EStructuralFeatureInstancesKey(entry.getKey());
+            SurrogateQueryRegistry.instance().registerSurrogateQueryForFeature(inputKey, entry.getValue());
         }
     }
     

@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.matchers.psystem;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.matchers.context.IPatternMatcherContext;
+import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 
 /**
@@ -35,7 +35,7 @@ public abstract class VariableDeferredPConstraint extends DeferredPConstraint {
      * Refine further if needed
      */
     @Override
-    public boolean isReadyAt(SubPlan plan, IPatternMatcherContext context) {
+    public boolean isReadyAt(SubPlan plan, IQueryMetaContext context) {
         return plan.getVisibleVariables().containsAll(getDeferringVariables());
     }
 

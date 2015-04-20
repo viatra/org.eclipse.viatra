@@ -52,12 +52,15 @@ public interface IQueryRuntimeContext {
 	 */
 	public boolean isIndexed(IInputKey key);
 	/**
-	 * If the given input key is not yet indexed, the model will be traversed 
+	 * If the given (enumerable) input key is not yet indexed, the model will be traversed 
 	 * (after the end of the outermost coalescing block, see {@link IQueryRuntimeContext#coalesceTraversals(Callable)}) 
 	 * so that the index can be built.
 	 * 
-	 * <p>After invoking this method, {@link #isIndexed(IInputKey)} for the same key 
+	 * <p><b>Postcondition:</b> After invoking this method, {@link #isIndexed(IInputKey)} for the same key 
 	 * will be guaranteed to return true as soon as {@link #isCoalescing()} first returns false.
+	 * 
+	 * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+	 * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
 	 */
 	public void ensureIndexed(IInputKey key);
 	
@@ -70,6 +73,9 @@ public interface IQueryRuntimeContext {
 	 * 	if non-null, only those tuples in the model are counted 
 	 * 	that match the seed at positions where the seed is non-null. 
 	 * @return the number of tuples in the model for the given key and seed
+	 * 
+	 * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+	 * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
 	 */
 	public int countTuples(IInputKey key, Tuple seed);
 	
@@ -81,6 +87,9 @@ public interface IQueryRuntimeContext {
 	 * 	if non-null, only those tuples in the model are enumerated 
 	 * 	that match the seed at positions where the seed is non-null. 
 	 * @return the tuples in the model for the given key and seed
+	 * 
+	 * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+	 * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
 	 */
 	public Iterable<Tuple> enumerateTuples(IInputKey key, Tuple seed);
 	
@@ -96,13 +105,18 @@ public interface IQueryRuntimeContext {
 	 * 	that match the seed at positions where the seed is non-null;
 	 *  the seed is null at exactly one position. 
 	 * @return the objects in the model for the given key and seed
+	 * 
+	 * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+	 * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
 	 */
-	public Iterable<Object> enumerateValues(IInputKey key, Tuple seed);
+	public Iterable<? extends Object> enumerateValues(IInputKey key, Tuple seed);
 	
 	/**
 	 * Simpler form of {@link #enumerateTuples(IInputKey, Tuple)} in the case where all values of the tuples are bound by the seed. 
 	 * 
 	 * <p> Returns whether the given tuple is in the extensional relation identified by the input key.
+	 * 
+	 * <p> Note: this call works for non-enumerable input keys as well.
 	 * 
 	 * @param key an input key
 	 * @param seed a tuple with matching arity, consisting of non-null elements (null can be used in the 0-ary case). 
@@ -120,6 +134,9 @@ public interface IQueryRuntimeContext {
 	 * 	if non-null, only those updates in the model are notified about 
 	 * 	that match the seed at positions where the seed is non-null. 
 	 * @param listener will be notified of future changes
+	 * 
+	 * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+	 * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
 	 */
 	public void addUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener);
 	/**
@@ -130,6 +147,9 @@ public interface IQueryRuntimeContext {
 	 * 	if non-null, only those updates in the model are notified about 
 	 * 	that match the seed at positions where the seed is non-null. 
 	 * @param listener will no longer be notified of future changes
+	 * 
+	 * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+	 * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
 	 */
 	public void removeUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener);
 	/*
