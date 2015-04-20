@@ -11,11 +11,16 @@
 package org.eclipse.viatra.dse.solutionstore;
 
 /**
- * An empty implementation of {@link ISolutionStore} which doesn't store any solution. Useful when the framework is
- * extended in such a way, that the solutions are stored elsewhere and in other structure.
+ * This class is a strategy dependents variant of the {@link SimpleSolutionStore}, implementation of the
+ * {@link ISolutionStore} interface, which stores all the found solution trajectory (i.e. trajectories, which satisfy
+ * all the hard objectives). It can be configured to stop the exploration after a predefined number of solutions is
+ * found.
+ * 
+ * It is strategy dependent, hence the responsibility of calling the {@link ISolutionStore#newSolution(ThreadContext)}
+ * method and stop the execution if the method returns STOP, relies on the strategy implementation.
  * 
  * @author Andras Szabolcs Nagy
- * 
+ *
  */
 public class StrategyDependentSolutionStore extends SimpleSolutionStore {
 

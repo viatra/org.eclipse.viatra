@@ -75,7 +75,8 @@ public class DepthFirstStrategy implements IStrategy {
         PerformanceMonitorManager.endTimer(GET_LOCAL_FIREABLE_TRANSITIONS);
 
         // backtrack
-        while (transitions == null || transitions.isEmpty()
+        while (transitions == null
+                || transitions.isEmpty()
                 || ((baseDepth + dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() >= sharedData.maxDepth) && sharedData.maxDepth > 0)) {
             PerformanceMonitorManager.startTimer(UNDO_TIMER);
             boolean didUndo = dsm.undoLastTransformation();
@@ -113,8 +114,8 @@ public class DepthFirstStrategy implements IStrategy {
     @Override
     public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied) {
         if (isAlreadyTraversed || constraintsNotSatisfied || (fitness.isSatisifiesHardObjectives())) {
-            logger.debug("Backtrack. Already traversed: " + isAlreadyTraversed + ". Goal state: " + (fitness!=null)
-                    + ". Constraints not satisfied: " + constraintsNotSatisfied);
+            logger.debug("Backtrack. Already traversed: " + isAlreadyTraversed + ". Goal state: "
+                    + fitness.isSatisifiesHardObjectives() + ". Constraints not satisfied: " + constraintsNotSatisfied);
             context.getDesignSpaceManager().undoLastTransformation();
         }
     }
