@@ -20,9 +20,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
+import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -272,5 +278,60 @@ public class Guidance implements Cloneable {
 
     public PetriAbstractionResult getPetriNetAbstractionResult() {
         return petriNetAbstractionResult;
+    }
+    
+    private static void processEObject(Map<EModelElement, Integer> initialMarking, EObject eObject) {
+
+        // increment number of objects
+        EClass eClass = eObject.eClass();
+        Integer i = initialMarking.get(eClass);
+        if (i == null) {
+            throw new DSEException(
+                    "The class "
+                            + eClass.getName()
+                            + " not found in the given meta models. Maybe you missed to call addMetaModelPackage with this parameter: "
+                            + eClass.getEPackage().getNsURI());
+        }
+        initialMarking.put(eClass, i + 1);
+        for (EClass superType : eClass.getEAllSuperTypes()) {
+            initialMarking.put(superType, initialMarking.get(superType) + 1);
+        }
+
+        // increment number of references
+        for (EReference eReference : eClass.getEReferences()) {
+            if (!(eReference.isContainment() || eReference.isContainer())) {
+                Object object = eObject.eGet(eReference);
+                if (object != null) {
+                    Integer i2 = initialMarking.get(eReference);
+                    if (object instanceof EList<?>) {
+                        i2 = i2 + ((EList<?>) object).size();
+                    } else {
+                        i2 = i2 + 1;
+                    }
+                    initialMarking.put(eReference, i2);
+                }
+            }
+        }
+    }
+
+    public static Map<EModelElement, Integer> getInitialMarking(EObject rootEObject,
+            List<? extends EModelElement> classesAndReferences) {
+
+        // init initialMarking (result map)
+        HashMap<EModelElement, Integer> initialMarking = new HashMap<EModelElement, Integer>();
+        for (EModelElement element : classesAndReferences) {
+            initialMarking.put(element, 0);
+        }
+
+        // process instance model
+        processEObject(initialMarking, rootEObject);
+        TreeIterator<EObject> allContents = rootEObject.eAllContents();
+        while (allContents.hasNext()) {
+            EObject eObject = allContents.next();
+            processEObject(initialMarking, eObject);
+
+        }
+
+        return initialMarking;
     }
 }
