@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -155,7 +156,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
 				subsumedByRetainedConstraints.addAll(TypeHelper.typeClosure(directJudgements, context));
 			}
 		}
-        allTypeConstraints.sort(PConstraint.CompareByMonotonousID.INSTANCE);
+        Collections.sort(allTypeConstraints, PConstraint.CompareByMonotonousID.INSTANCE);
         Queue<TypeConstraint> potentialConstraints = allTypeConstraints; // rename for better comprehension
         
         while (!potentialConstraints.isEmpty()) {
