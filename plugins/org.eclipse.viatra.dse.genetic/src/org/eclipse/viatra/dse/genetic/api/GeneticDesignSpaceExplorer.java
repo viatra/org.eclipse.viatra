@@ -49,7 +49,7 @@ public class GeneticDesignSpaceExplorer {
     }
 
     public void setStartingModel(EObject root) {
-        dse.setStartingModel(root, true);
+        dse.setInitialModel(root, true);
     }
 
     public void setSerializerFactory(IStateSerializerFactory serializerFactory) {
@@ -149,7 +149,7 @@ public class GeneticDesignSpaceExplorer {
         if (guidance != null) {
             dse.setGuidance(guidance);
         }
-        dse.startExploration(MAIN_GENETIC_STRATEGY, waitForTermination);
+        dse.startExploration(MAIN_GENETIC_STRATEGY, waitForTermination, -1);
     }
 
     public boolean startExploration(long timeOutInMiliSec) {
@@ -158,7 +158,7 @@ public class GeneticDesignSpaceExplorer {
             dse.setGuidance(guidance);
         }
 
-        dse.startExploration(MAIN_GENETIC_STRATEGY, false);
+        dse.startExploration(MAIN_GENETIC_STRATEGY, false, -1);
 
         double start = System.nanoTime() / 1000000;
         do {

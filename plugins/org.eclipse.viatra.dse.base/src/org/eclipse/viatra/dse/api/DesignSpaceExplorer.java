@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EList;
@@ -168,22 +170,6 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * @deprecated Use setInitialModel instead.
-     */
-    @Deprecated
-    public void setStartingModel(EObject rootEObject, boolean deepCopyModel) {
-        setInitialModel(rootEObject, deepCopyModel);
-    }
-
-    /**
-     * @deprecated Use setInitialModel instead.
-     */
-    @Deprecated
-    public void setStartingModel(EObject rootEObject) {
-        setInitialModel(rootEObject, true);
-    }
-
-    /**
      * Adds a {@link DSETransformationRule}.
      * 
      * @param rule
@@ -307,7 +293,7 @@ public class DesignSpaceExplorer {
      *            The strategy of the exploration.
      */
     public void startExploration(IStrategy strategy) {
-        startExploration(strategy, true);
+        startExploration(strategy, true, -1);
     }
 
     /**
@@ -318,72 +304,81 @@ public class DesignSpaceExplorer {
      *            The strategy of the exploration.
      */
     public void startExplorationAsync(IStrategy strategy) {
-        startExploration(strategy, false);
+        startExploration(strategy, false, -1);
+    }
+
+    /**
+     * Starts the design space exploration with a timeout. It returns only when the strategy decides to stop the
+     * execution or the given timeout is elapsed.
+     * 
+     * @param strategy
+     *            The strategy of the exploration.
+     * @param timeout
+     *            The number of milliseconds before the exploration is forced to stop.
+     */
+    public void startExplorationWithTimeout(IStrategy strategy, long timeout) {
+        startExploration(strategy, true, timeout);
+    }
+
+    /**
+     * Starts the design space exploration asynchronously with a timeout. Completion of the process can be verified by
+     * calling {@link DesignSpaceExplorer#isDone()}.
+     * 
+     * @param strategy
+     *            The strategy of the exploration.
+     * @param timeout
+     *            The number of milliseconds before the exploration is forced to stop.
+     */
+    public void startExplorationAsyncWithTimeout(IStrategy strategy, long timeout) {
+        startExploration(strategy, false, timeout);
     }
 
     /**
      * Starts the design space exploration. If {@code waitForTermination} is true, then it returns only when the
-     * strategy decides to stop the execution, otherwise when the exploration process is started it returns immediately.
-     * In this case, process completion can be verified by calling {@link DesignSpaceExplorer#isDone()}.
+     * strategy decides to stop the execution or there was a timeout, otherwise when the exploration process is started
+     * it returns immediately. In this case, process completion can be verified by calling
+     * {@link DesignSpaceExplorer#isDone()}.
      * 
      * @param strategy
      *            The strategy of the exploration.
      * @param waitForTermination
      *            True if the method must wait for the engine to stop.
-     * @deprecated Use startExploration(strategy) or startExplorationAsync(strategy) instead.
+     * @param timeout
+     *            The number of milliseconds before the exploration is forced to stop.
      */
-    @Deprecated
-    public void startExploration(IStrategy strategy, boolean waitForTermination) {
+    public void startExploration(IStrategy strategy, boolean waitForTermination, final long timeout) {
         initExploration(strategy);
 
-        // wait until all threads exit
-        while (waitForTermination) {
-            if (globalContext.isDone()) {
-                logger.info("DesignSpaceExplorer finished.");
-                return;
-            }
-            try {
-                Thread.sleep(SLEEP_INTERVAL);
-            } catch (InterruptedException e) {
-            }
+        Timer timer = new Timer();
+
+        if (timeout > 0) {
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    logger.debug("Timeout, stopping threads...");
+                    globalContext.stopAllThreads();
+                }
+            };
+            timer.schedule(timerTask, timeout);
         }
 
-        logger.info("DesignSpaceExplorer working in detached mode.");
-    }
+        if (waitForTermination) {
+            do {
+                try {
+                    Thread.sleep(SLEEP_INTERVAL);
+                } catch (InterruptedException e) {
+                }
 
-    /**
-     * Starts the design space exploration and then sleeps {@code waitInMilliseconds} millisecond. After that it stops
-     * the execution which can be a few millis long and returns.
-     * 
-     * @param strategy
-     *            The strategy of the exploration.
-     * @param waitInMilliseconds
-     *            The number of milliseconds the method must wait for stopping the exploration.
-     */
-    public void startExploration(IStrategy strategy, int waitInMilliseconds) throws DSEException {
-        initExploration(strategy);
-
-        try {
-            Thread.sleep(waitInMilliseconds);
-        } catch (InterruptedException e) {
+                if (globalContext.isDone()) {
+                    timer.cancel();
+                    logger.debug("DesignSpaceExplorer finished.");
+                    return;
+                }
+            } while (true);
+        } else {
+            logger.debug("DesignSpaceExplorer working in detached mode.");
         }
 
-        logger.info("Stopping threads...");
-
-        globalContext.stopAllThreads();
-
-        // wait until all threads exit
-        do {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-            }
-
-            if (globalContext.isDone()) {
-                logger.info("DesignSpaceExplorer finished.");
-                return;
-            }
-        } while (true);
     }
 
     private void initExploration(IStrategy strategy) {
@@ -408,7 +403,7 @@ public class DesignSpaceExplorer {
             }
         }
 
-        logger.info("DesignSpaceExplorer started exploration.");
+        logger.debug("DesignSpaceExplorer started exploration.");
 
         // Create main thread with given model, without cloning.
         ThreadContext threadContext = new ThreadContext(globalContext, strategy,
@@ -473,13 +468,6 @@ public class DesignSpaceExplorer {
         return initialMarking;
     }
 
-    /**
-     * 
-     * @deprecated Use getSolutions() instead.
-     */
-    public Collection<Solution> getAllSolutions() {
-        return getSolutions();
-    }
 
     /**
      * Returns all of the found {@link Solution}s, trajectories. Call it after
@@ -564,7 +552,7 @@ public class DesignSpaceExplorer {
         globalContext.registerDesignSpaceVisualizer(visualizer);
     }
 
-    public String prettyPrintSolutions() {
+    public String toStringSolutions() {
         StringBuilder sb = new StringBuilder();
         Collection<Solution> solutions = getSolutions();
         sb.append("Number of solutions: ");
@@ -581,6 +569,15 @@ public class DesignSpaceExplorer {
             }
         }
         return sb.toString();
+    }
+    
+    /**
+     * 
+     * @deprecated use toStringSolutions instead
+     */
+    @Deprecated
+    public String prettyPrintSolutions() {
+        return toStringSolutions();
     }
 
 }
