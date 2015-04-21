@@ -1,0 +1,17 @@
+package org.incquery.uml.demo
+
+import "http://www.eclipse.org/uml2/5.0.0/UML"
+
+@Constraint(
+	key = {"class"},
+	severity = "warning",
+	message = "$class.name$ has multiple superclasses"
+)
+pattern multipleSuperclasses(class: Class) {
+	N == count find superclass(class, _);
+	check (N > 1);
+}
+
+private pattern superclass(class, superclass) {
+	Class.superClass(class, superclass);
+}
