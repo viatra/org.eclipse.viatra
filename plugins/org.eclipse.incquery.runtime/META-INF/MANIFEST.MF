@@ -20,6 +20,7 @@ Export-Package: org.eclipse.incquery.runtime,
  org.eclipse.incquery.runtime.emf.types,
  org.eclipse.incquery.runtime.exception,
  org.eclipse.incquery.runtime.extensibility,
+ org.eclipse.incquery.runtime.matchers.psystem.basicenumerables,
  org.eclipse.incquery.runtime.util
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.log4j;version="1.2.15"
