@@ -26,6 +26,12 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitialization
  *
  */
 public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
+	
+	/**
+	 * This field exists only to maintain compatibility with old generated code.
+	 */
+	@Deprecated
+	protected static final Object CONTEXT = null;
 		
     protected QueryInitializationException processDependencyException(IncQueryException ex) {
     	if (ex.getCause() instanceof QueryInitializationException) 
