@@ -2,7 +2,7 @@ package org.eclipse.incquery.tooling.ui.retevis
 
 import "http://www.eclipse.org/incquery/rete/recipes"
 
-@Item(item = recipe, label = "Input: $recipe.inputKey")
+@Item(item = recipe, label = "Input: $recipe.inputKey$")
 @Format(textColor = "#FFFFFF", color = "#7F004D")
 pattern inputRecipe(recipe) {
 	InputRecipe(recipe);
