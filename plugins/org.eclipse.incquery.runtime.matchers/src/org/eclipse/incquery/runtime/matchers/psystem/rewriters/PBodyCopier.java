@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +36,6 @@ import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IConstraintFilter
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -62,6 +62,11 @@ public class PBodyCopier {
     
     public PBodyCopier(PBody body) {
         this.body = new PBody(body.getPattern());
+        
+        // preinitialize parameter list
+        this.body.setExportedParameters(Collections.<ExportedParameter>emptyList());
+
+        // do the actual copying
         mergeBody(body);
         
     }
@@ -138,14 +143,7 @@ public class PBodyCopier {
     protected void copyExportedParameterConstraint(ExportedParameter exportedParameter) {
         PVariable mappedPVariable = variableMapping.get(exportedParameter.getParameterVariable());
         ExportedParameter newExportedParameter = new ExportedParameter(body, mappedPVariable, exportedParameter.getParameterName());
-        if (body.getSymbolicParameters().size() == 0) {
-            List<ExportedParameter> exportedParameters = Lists.<ExportedParameter> newArrayList();
-            exportedParameters.add(newExportedParameter);
-            body.setExportedParameters(exportedParameters);
-        }
-        else {
-            body.getSymbolicParameters().add(newExportedParameter);
-        }
+        body.getSymbolicParameters().add(newExportedParameter);
     }
 
     protected void copyEqualityConstraint(Equality equality) {

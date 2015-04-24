@@ -205,7 +205,7 @@ public class PBody {
      * @return a non-null, but possibly empty list
      */
     public List<PVariable> getSymbolicParameterVariables() {
-        return Lists.transform(symbolicParameters, new Function<ExportedParameter, PVariable>() {
+        return Lists.transform(getSymbolicParameters(), new Function<ExportedParameter, PVariable>() {
 
             @Override
             public PVariable apply(ExportedParameter constraint) {
