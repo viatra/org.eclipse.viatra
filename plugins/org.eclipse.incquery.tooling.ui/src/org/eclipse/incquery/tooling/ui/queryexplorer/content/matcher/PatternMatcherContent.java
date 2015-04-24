@@ -18,6 +18,8 @@ import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -28,6 +30,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.DisplayUtil;
 
@@ -48,6 +51,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     private String orderParameter;
     private boolean ascendingOrder;
     private String exceptionMessage;
+    private Exception exception;
     private IQuerySpecification<?> specification;
     private IncQueryMatcher<IPatternMatch> matcher;
     /**
@@ -70,8 +74,12 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
 	            matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification);
 	        } catch (IncQueryException e) {
 	            this.exceptionMessage = e.getShortMessage();
+	            this.exception = e;
+	            logException();
 	        } catch (Exception e) {
 	            this.exceptionMessage = e.getMessage();
+	            this.exception = e;
+	            logException();
 	        }
         }
 
@@ -98,7 +106,25 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
         }
     }
     
-    @Override
+    /**
+	 * @param e
+	 */
+	private void logException() {
+		String logMessage = 
+				String.format(
+						"Query Explorer has encountered an error during evaluation of query %s%s",
+						specification.getFullyQualifiedName(),
+						exceptionMessage == null ? "" : (": " + exceptionMessage)
+				);
+		IncQueryGUIPlugin.getDefault().getLog().log(new Status(
+				IStatus.ERROR, 
+				IncQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), 
+				logMessage, 
+				exception)
+		);
+	}
+
+	@Override
     public void dispose() {
         super.dispose();
         this.matcher = null;
@@ -229,8 +255,12 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     public IObservableList getChildren() {
         return children;
     }
+    
+    public Exception getException() {
+		return exception;
+	}
 
-    @Override
+	@Override
     public Iterator<PatternMatchContent> getChildrenIterator() {
         /*
          *  XXX the iterator is Iterator<Object> but its contents are guaranteed to be PatternMatchContent,
