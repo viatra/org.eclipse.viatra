@@ -29,6 +29,7 @@ import org.eclipse.incquery.uml.derivedfeatures.StateIsOrthogonalMatcher;
 import org.eclipse.uml2.uml.Activity;
 import org.eclipse.uml2.uml.ActivityPartition;
 import org.eclipse.uml2.uml.Association;
+import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.Property;
@@ -36,6 +37,7 @@ import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLFactory;
 import org.eclipse.uml2.uml.UMLPackage;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -56,6 +58,24 @@ public class TestUmlDerivedFeatures {
 	private static Resource createResource() {
 		return new ResourceSetImpl().createResource(URI.createURI("test"));
 	}
+	
+	@Test
+	@Ignore("Exception on last line since NamedElement.namespace is not wellbehaving")
+    public void addAffectsContainment() throws IncQueryException {
+
+        Resource resource = createResource();
+        Package pkg = FACTORY.createPackage();
+        pkg.setName("pkg");
+        Package pkg1 = FACTORY.createPackage();
+        pkg1.setName("pkg1");
+        Class clazz = FACTORY.createClass();
+        resource.getContents().add(pkg);
+        pkg.getPackagedElements().add(pkg1);
+        pkg.getPackagedElements().add(clazz);
+        NamedElementQualifiedNameMatcher matcher = NamedElementQualifiedNameMatcher.on(getEngine(resource));
+        pkg1.getPackagedElements().add(clazz);
+
+    }
 
 	@Test
 	public void associationEndType() throws IncQueryException {
