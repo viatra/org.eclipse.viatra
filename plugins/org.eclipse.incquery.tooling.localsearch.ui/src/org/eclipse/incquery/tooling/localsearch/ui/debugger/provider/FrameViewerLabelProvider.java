@@ -24,11 +24,11 @@ import org.eclipse.swt.graphics.Image;
  * @author Marton Bur
  *
  */
-public class ZestLabelProvider extends LabelProvider {
+public class FrameViewerLabelProvider extends LabelProvider {
 
     private AdapterFactoryLabelProvider delegate;
 
-    public ZestLabelProvider() {
+    public FrameViewerLabelProvider() {
         final Registry registry = EMFEditPlugin.getComposedAdapterFactoryDescriptorRegistry();
         final ComposedAdapterFactory factory = new ComposedAdapterFactory(registry);
         delegate = new AdapterFactoryLabelProvider(factory);

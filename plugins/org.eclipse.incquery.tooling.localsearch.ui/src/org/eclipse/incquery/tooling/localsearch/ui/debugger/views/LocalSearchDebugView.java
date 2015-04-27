@@ -29,7 +29,7 @@ import org.eclipse.incquery.tooling.localsearch.ui.debugger.LocalSearchDebugger;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.MatchesTableLabelProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
-import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.ZestNodeContentProvider;
+import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.FrameViewerContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -72,7 +72,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     private TreeViewer operationListViewer;
 
     private GraphViewer graphViewer;
-    private ZestNodeContentProvider zestContentProvider;
+    private FrameViewerContentProvider zestContentProvider;
     
 	private SashForm planSashForm;
 	private CTabFolder matchesTabFolder;
@@ -148,7 +148,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 	private void createZestViewer(SashForm sashForm) {
         this.graphViewer = new GraphViewer(sashForm, SWT.BORDER);
         
-        ZestNodeContentProvider zestContentProvider = new ZestNodeContentProvider();
+        FrameViewerContentProvider zestContentProvider = new FrameViewerContentProvider();
         this.graphViewer.setContentProvider(zestContentProvider);
   
         ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
@@ -232,7 +232,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
         return graphViewer;
     }
 
-    public ZestNodeContentProvider getZestContentProvider() {
+    public FrameViewerContentProvider getZestContentProvider() {
         return zestContentProvider;
     }
 

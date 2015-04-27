@@ -67,7 +67,7 @@ public class StartLocalSearchHandler extends AbstractHandler {
 							// Initiate the matching
 							localSearchMatcher.getAllMatches();
 						} catch (Exception e) {
-							e.printStackTrace();
+							new RuntimeException(e);
 						}
 					}
 				};
@@ -83,11 +83,9 @@ public class StartLocalSearchHandler extends AbstractHandler {
 				}
 			}
 		} catch (IncQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (QueryProcessingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw new RuntimeException(e1);
 		}
 
 		return null;

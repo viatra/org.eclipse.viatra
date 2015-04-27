@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.check;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -92,7 +91,7 @@ public class NACOperation extends CheckOperation implements IMatcherBasedOperati
     
     @Override
 	public List<Integer> getVariablePositions() {
-    	ArrayList<Integer> variables = Lists.newArrayList();
+    	List<Integer> variables = Lists.newArrayList();
     	variables.addAll(frameMapping.keySet());
 		return variables;
 	}

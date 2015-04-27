@@ -104,13 +104,15 @@ public class CompilerHelper {
     /**
      * Extracts the operations from a SubPlan into a list of POperations in the order of execution
      * 
-     * @param plan
+     * @param plan the SubPlan from wich the POperations should be extracted
+     * @return list of POperations extracted from the <code>plan</code>
      */
     public static List<POperation> createOperationsList(SubPlan plan) {
         List<POperation> operationsList = Lists.newArrayList();
         while (plan.getParentPlans().size() > 0) {
             operationsList.add(plan.getOperation());
-            plan = plan.getParentPlans().get(0);
+            SubPlan parentPlan = plan.getParentPlans().get(0);
+            plan = parentPlan;
         }
         operationsList.add(plan.getOperation());
 

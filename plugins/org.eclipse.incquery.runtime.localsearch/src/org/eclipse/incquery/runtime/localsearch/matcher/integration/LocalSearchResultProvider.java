@@ -12,7 +12,6 @@ package org.eclipse.incquery.runtime.localsearch.matcher.integration;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,7 +63,6 @@ import com.google.common.collect.Sets;
  */
 public class LocalSearchResultProvider implements IQueryResultProvider {
 
-    private final static String UPDATE_LISTENER_NOT_SUPPORTED = "Local search backend does not support update listening.";
     private final IQueryBackend backend;
     private final IQueryBackendHintProvider hintProvider;
     private final PQuery query;
@@ -175,7 +173,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         Set<EStructuralFeature> featuresToIndex = Sets.newHashSet();
         Set<EDataType> dataTypesToIndex = Sets.newHashSet();
         
-        final HashSet<Integer> adornment = Sets.newHashSet();
+        final Set<Integer> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i] != null) {
                 adornment.add(Integer.valueOf(i));

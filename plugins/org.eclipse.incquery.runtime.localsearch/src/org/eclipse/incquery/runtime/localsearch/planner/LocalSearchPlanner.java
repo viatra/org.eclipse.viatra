@@ -62,35 +62,31 @@ public class LocalSearchPlanner {
     private IQueryPlannerStrategy plannerStrategy;
     private PBodyNormalizer normalizer;
     private POperationCompiler operationCompiler;
-    private ISearchPlanCodeGenerator codeGenerator;
 	private Logger logger;
 	private IQueryMetaContext context;
 
     public void initializePlanner(PQueryFlattener pQueryFlattener, Logger logger, IQueryMetaContext context,
             PBodyNormalizer pBodyNormalizer, IQueryPlannerStrategy localSearchPlannerStrategy,
             POperationCompiler pOperationCompiler) {
-        initializePlanner(pQueryFlattener, logger, context, pBodyNormalizer, localSearchPlannerStrategy, pOperationCompiler, null);
-    }
-
-    public void initializePlanner(PQueryFlattener pQueryFlattener, Logger logger, IQueryMetaContext context,
-            PBodyNormalizer pBodyNormalizer, IQueryPlannerStrategy localSearchPlannerStrategy,
-            POperationCompiler pOperationCompiler, ISearchPlanCodeGenerator codeGenerator) {
         this.flattener = pQueryFlattener;
 		this.logger = logger;
         this.context = context;
         this.normalizer = pBodyNormalizer;
         this.plannerStrategy = localSearchPlannerStrategy;
         this.operationCompiler = pOperationCompiler;
-        this.codeGenerator = codeGenerator;
     }
 
-    /**
-     * Creates executable plans for the provided query. It is required to call one of the
-     * <code>initializePlanner()</code> methods before calling this method.
-     * 
-     * @param boundVarIndices
-     * @throws QueryProcessingException
-     */
+	/**
+	 * Creates executable plans for the provided query. It is required to call one of the
+	 * <code>initializePlanner()</code> methods before calling this method.
+	 * 
+	 * @param querySpec
+	 * @param boundVarIndices
+	 *            a set of integers representing the variables that are bound
+	 * @return a mapping between ISearchOperation list and a mapping, that holds a PVariable-Integer mapping for the
+	 *         list of ISearchOperations
+	 * @throws QueryProcessingException
+	 */
     public Map<List<ISearchOperation>, Map<PVariable, Integer>> plan(PQuery querySpec, Set<Integer> boundVarIndices)
             throws QueryProcessingException {
 
@@ -122,12 +118,6 @@ public class LocalSearchPlanner {
             // Store the variable mappings for the plans for debug purposes (traceability information)
 			compiledSubPlans.put(compiledOperations,operationCompiler.getVariableMappings());
         }
-
-        // Generate code if generator is provided
-		// TODO there is no code generator implementation yet
-		// if (codeGenerator != null) {
-		// 		codeGenerator.compile(compiledSubPlans);
-		// }
 
         return compiledSubPlans;
     }

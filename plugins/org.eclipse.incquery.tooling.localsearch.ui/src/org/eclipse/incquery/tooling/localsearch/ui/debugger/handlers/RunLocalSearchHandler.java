@@ -31,10 +31,11 @@ public class RunLocalSearchHandler extends AbstractHandler {
             LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
             localSearchDebugView.getDebugger().setHalted(false);
         } catch (PartInitException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         
         synchronized (LocalSearchDebugger.notifier) {
+        	// notifies the thread that does the matching
             LocalSearchDebugger.notifier.notify();
         }
         

@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.incquery.tooling.localsearch.ui.debugger;
 
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
+import org.apache.log4j.Priority;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
@@ -21,6 +22,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.provider.viewelement.SearchPlanViewModel;
 import org.eclipse.incquery.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
@@ -32,6 +34,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Queues;
 
 /**
  * An adapter implementation for local search matchers to support debugging
@@ -43,8 +46,8 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	public static volatile Object notifier = new Object();
 	private LocalSearchDebugView localSearchDebugView;
-	private Stack<LocalSearchMatcher> runningMatchers;
-	private Stack<SearchPlanExecutor> runningExecutors;
+	private Deque<LocalSearchMatcher> runningMatchers;
+	private Deque<SearchPlanExecutor> runningExecutors;
 	private boolean startHandlerCalled = false;
 
     private boolean halted = true;
@@ -81,8 +84,8 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 						// TODO make sure that the initialization is done for every part so that restart is possible
 
-						runningMatchers = new Stack<LocalSearchMatcher>();
-						runningExecutors = new Stack<SearchPlanExecutor>();
+						runningMatchers = Queues.newArrayDeque();
+						runningExecutors = Queues.newArrayDeque();
 
 						String simpleQueryName = getSimpleQueryName(lsMatcher.getQuerySpecification());
 						TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
@@ -92,8 +95,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 						
 						localSearchDebugView.refreshView();
 					} catch (PartInitException e) {
-						// TODO proper logging
-						e.printStackTrace();
+						IncQueryLoggingUtil.getDefaultLogger().log(Priority.ERROR, "A part init exception occured while executing pattern matcher started handler" + e.getMessage(), e);
 					}
 				}
 			});
@@ -279,29 +281,26 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	}
 
 	private void checkForBreakPoint() {
-		if (localSearchDebugView != null) {
-			if (halted) {
-				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						if(shouldSelectOtherTab){
-							shouldSelectOtherTab = false;
-							localSearchDebugView.getMatchesTabFolder().setSelection(runningMatchers.size()-1);
-						}
-						SearchOperationViewerNode lastSelected = viewModel.getLastSelected();
-
-						localSearchDebugView.getOperationListViewer().collapseAll();
-						
-						localSearchDebugView.getOperationListViewer().expandToLevel(lastSelected, 0);
+		if (localSearchDebugView != null && halted) {
+			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					if(shouldSelectOtherTab){
+						shouldSelectOtherTab = false;
+						localSearchDebugView.getMatchesTabFolder().setSelection(runningMatchers.size()-1);
 					}
-				});
-				localSearchDebugView.refreshView();
-				synchronized (notifier) {
-					try {
-						notifier.wait();
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
+					SearchOperationViewerNode lastSelected = viewModel.getLastSelected();
+					localSearchDebugView.getOperationListViewer().collapseAll();
+					localSearchDebugView.getOperationListViewer().expandToLevel(lastSelected, 0);
+				}
+			});
+			localSearchDebugView.refreshView();
+			synchronized (notifier) {
+				try {
+					// Breakpoint hit, wait for notify
+					notifier.wait();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
 				}
 			}
 		}

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.operations.extend;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -85,7 +84,7 @@ public class CountOperation extends ExtendOperation<Integer> implements IMatcher
     
     @Override
 	public List<Integer> getVariablePositions() {
-    	ArrayList<Integer> variables = Lists.newArrayList();
+    	List<Integer> variables = Lists.newArrayList();
     	variables.addAll(frameMapping.keySet());
 		return variables;
 	}

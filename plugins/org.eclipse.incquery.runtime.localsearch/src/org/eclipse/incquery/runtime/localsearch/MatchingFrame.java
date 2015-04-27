@@ -65,9 +65,10 @@ public class MatchingFrame extends Tuple implements Cloneable {
 	}
     
     /**
+     * Sets the value of the variable at the given position
      * 
-     * @param position
-     * @param value
+     * @param position the position of the variable within the frame
+     * @param value the value to be set for the variable
      */
     public void setValue(Integer position, Object value) {
         Preconditions.checkElementIndex(position, frame.length);

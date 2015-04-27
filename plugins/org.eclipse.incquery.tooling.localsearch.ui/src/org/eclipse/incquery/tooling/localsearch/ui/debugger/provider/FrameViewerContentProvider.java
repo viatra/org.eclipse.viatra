@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
  * @author Marton Bur
  *
  */
-public class ZestNodeContentProvider extends ArrayContentProvider implements IGraphEntityRelationshipContentProvider {
+public class FrameViewerContentProvider extends ArrayContentProvider implements IGraphEntityRelationshipContentProvider {
 
     @Override
     public Object[] getElements(Object inputElement) {
