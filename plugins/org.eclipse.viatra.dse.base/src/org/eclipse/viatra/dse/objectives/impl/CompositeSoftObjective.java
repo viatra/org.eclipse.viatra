@@ -24,12 +24,12 @@ import com.google.common.base.Preconditions;
  * @author Andras Szabolcs Nagy
  *
  */
-public class CompositSoftObjective extends BaseObjective {
+public class CompositeSoftObjective extends BaseObjective {
 
     public static final String DEFAULT_NAME = "CompositSoftObjective";
     protected List<IObjective> objectives;
 
-    public CompositSoftObjective(String name, List<IObjective> objectives) {
+    public CompositeSoftObjective(String name, List<IObjective> objectives) {
         super(name);
         Preconditions.checkNotNull(objectives, "The list of objectives cannot be null.");
 
@@ -43,15 +43,15 @@ public class CompositSoftObjective extends BaseObjective {
         this.objectives = objectives;
     }
 
-    public CompositSoftObjective(List<IObjective> objectives) {
+    public CompositeSoftObjective(List<IObjective> objectives) {
         this(DEFAULT_NAME, objectives);
     }
 
-    public CompositSoftObjective(String name) {
+    public CompositeSoftObjective(String name) {
         this(name, new ArrayList<IObjective>());
     }
 
-    public CompositSoftObjective() {
+    public CompositeSoftObjective() {
         this(DEFAULT_NAME, new ArrayList<IObjective>());
     }
 
@@ -61,7 +61,7 @@ public class CompositSoftObjective extends BaseObjective {
      * @param objective
      * @return The actual instance to enable builder pattern like usage.
      */
-    public CompositSoftObjective withObjective(IObjective objective) {
+    public CompositeSoftObjective withObjective(IObjective objective) {
         if (!objective.isHardObjective()) {
             throw new IllegalArgumentException("The objective " + objective.getName() + " should be a soft objective.");
         }
@@ -96,7 +96,7 @@ public class CompositSoftObjective extends BaseObjective {
             newObjectives.add(objective.createNew());
         }
 
-        return new CompositSoftObjective(name, newObjectives)
+        return new CompositeSoftObjective(name, newObjectives)
             .withComparator(comparator)
             .withLevel(level);
     }
