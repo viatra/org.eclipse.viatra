@@ -49,6 +49,8 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.DefaultFlattenCallPredicate;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PQueryFlattener;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
@@ -77,7 +79,8 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
         public void createPlan(MatcherReference key, Logger logger, IQueryMetaContext context, final ISearchContext searchContext)
                 throws QueryProcessingException {
-            PQueryFlattener flattener = new PQueryFlattener();
+        	IFlattenCallPredicate flattenCallPredicate = new DefaultFlattenCallPredicate();
+            PQueryFlattener flattener = new PQueryFlattener(flattenCallPredicate);
             PBodyNormalizer normalizer = new PBodyNormalizer(context, false);
             LocalSearchPlannerStrategy strategy = new LocalSearchPlannerStrategy();
             compiler = new POperationCompiler();

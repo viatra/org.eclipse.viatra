@@ -36,7 +36,12 @@ import com.google.common.collect.Sets;
 public class PQueryFlattener extends PDisjunctionRewriter {
 
     private static final String FLATTENING_ERROR_MESSAGE = "Error occured while flattening";
+	private IFlattenCallPredicate flattenCallPredicate;
 
+	public PQueryFlattener(IFlattenCallPredicate flattenCallPredicate) {
+		this.flattenCallPredicate = flattenCallPredicate;
+	}
+    
     @Override
     public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
         PQuery query = disjunction.getQuery();
@@ -115,7 +120,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         for (PConstraint pConstraint : constraints) {
             if (pConstraint instanceof PositivePatternCall) {
                 PositivePatternCall positivePatternCall = (PositivePatternCall) pConstraint;
-                if (shouldFlatten(positivePatternCall)) {
+                if (flattenCallPredicate.shouldFlatten(positivePatternCall)) {
                     // If the above preconditions meet, do the flattening and return the disjoint bodies
                     PQuery referredQuery = positivePatternCall.getReferredQuery();
                     PDisjunction flattenedDisjunction = doFlatten(referredQuery.getDisjunctBodies());
@@ -174,8 +179,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         // Check if the body contains positive pattern call AND if it should be flattened
         for (PConstraint pConstraint : constraints) {
             if (pConstraint instanceof PositivePatternCall) {
-                if (shouldFlatten((PositivePatternCall) pConstraint))
-                    return true;
+                return flattenCallPredicate.shouldFlatten((PositivePatternCall) pConstraint);
             }
         }
         return false;
@@ -204,20 +208,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
             result = Sets.cartesianProduct(setsToCombine);
         }
         return result;
-    }
-
-    /**
-     * Decides whether the pattern should be flattened or not.
-     * 
-     * 
-     * @param positivePatternCall
-     *            the pattern call
-     * @return true if the call should be flattened
-     */
-    private boolean shouldFlatten(PositivePatternCall positivePatternCall) {
-        boolean shouldFlatten = true;
-        /* TODO implement logic here */
-        return shouldFlatten;
     }
 
 }
