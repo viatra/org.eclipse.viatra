@@ -38,21 +38,6 @@
   <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.protocolTransitionReferred" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
     <surrogate-query-emf class-name="ProtocolTransition" feature-name="referred" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.ProtocolTransitionReferredQuerySpecification"/>
   </extension>
-  <extension id="org.eclipse.incquery.uml.derivedfeatures.Generated" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.Generated" id="org.eclipse.incquery.uml.derivedfeatures.Generated"/>
-  </extension>
-  <extension id="org.eclipse.incquery.uml.derivedfeatures.Fixed" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.Fixed" id="org.eclipse.incquery.uml.derivedfeatures.Fixed"/>
-  </extension>
-  <extension id="org.eclipse.incquery.uml.derivedfeatures.UsedOperations" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.UsedOperations" id="org.eclipse.incquery.uml.derivedfeatures.UsedOperations"/>
-  </extension>
-  <extension id="org.eclipse.incquery.uml.derivedfeatures.Handwritten" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.Handwritten" id="org.eclipse.incquery.uml.derivedfeatures.Handwritten"/>
-  </extension>
-  <extension id="org.eclipse.incquery.uml.derivedfeatures.Union" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.Union" id="org.eclipse.incquery.uml.derivedfeatures.Union"/>
-  </extension>
   <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.namespaceImportedMember" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
     <surrogate-query-emf class-name="Namespace" feature-name="importedMember" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.NamespaceImportedMemberQuerySpecification"/>
   </extension>
@@ -157,5 +142,11 @@
   </extension>
   <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.actionOutput" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
     <surrogate-query-emf class-name="Action" feature-name="output" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.ActionOutputQuerySpecification"/>
+  </extension>
+  <extension id="org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures" id="org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures"/>
+  </extension>
+  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.packageNestedPackage" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
+    <surrogate-query-emf class-name="Package" feature-name="nestedPackage" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.PackageNestedPackageQuerySpecification"/>
   </extension>
 </plugin>

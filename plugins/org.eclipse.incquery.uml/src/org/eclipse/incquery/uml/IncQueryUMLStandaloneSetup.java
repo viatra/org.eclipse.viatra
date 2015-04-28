@@ -18,11 +18,7 @@ import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
-import org.eclipse.incquery.uml.derivedfeatures.Fixed;
-import org.eclipse.incquery.uml.derivedfeatures.Generated;
-import org.eclipse.incquery.uml.derivedfeatures.Handwritten;
-import org.eclipse.incquery.uml.derivedfeatures.Union;
-import org.eclipse.incquery.uml.derivedfeatures.UsedOperations;
+import org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActionInputQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActionOutputQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActivityEdgeInGroupQuerySpecification;
@@ -76,7 +72,6 @@ import org.eclipse.incquery.uml.derivedfeatures.util.VertexOutgoingQuerySpecific
 import org.eclipse.uml2.uml.UMLPackage;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 /**
  * A helper class to register all query specifications of the UML support
@@ -104,12 +99,7 @@ public class IncQueryUMLStandaloneSetup {
 	}
 
 	private static Iterable<IQuerySpecification<?>> getAllQuerySpecifications() throws IncQueryException {
-		return Iterables.concat(
-		        Union.instance().getSpecifications(),
-		        Generated.instance().getSpecifications(),
-		        Fixed.instance().getSpecifications(), 
-				Handwritten.instance().getSpecifications(),
-				UsedOperations.instance().getSpecifications());
+		return DerivedFeatures.instance().getSpecifications();
 	}
 
 	private static Map<EStructuralFeature, IQuerySpecification<?>> getSurrogateQueries() throws IncQueryException {

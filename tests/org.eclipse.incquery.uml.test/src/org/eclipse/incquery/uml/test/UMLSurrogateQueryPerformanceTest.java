@@ -18,10 +18,7 @@ import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.testing.core.QueryPerformanceTest;
-import org.eclipse.incquery.uml.derivedfeatures.Fixed;
-import org.eclipse.incquery.uml.derivedfeatures.Generated;
-import org.eclipse.incquery.uml.derivedfeatures.Handwritten;
-import org.eclipse.incquery.uml.derivedfeatures.UsedOperations;
+import org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures;
 import org.junit.Ignore;
 
 /**
@@ -45,10 +42,7 @@ public class UMLSurrogateQueryPerformanceTest extends QueryPerformanceTest {
     @Override
     public IQueryGroup getQueryGroup() throws IncQueryException {
         return GenericPatternGroup.of(
-                Fixed.instance(),
-                Generated.instance(),
-                Handwritten.instance(),
-                UsedOperations.instance()
+                DerivedFeatures.instance()
                 );
     }
 
