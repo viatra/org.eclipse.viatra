@@ -51,7 +51,7 @@ public class BatchTransformation {
 	}
 	
 	public static BatchTransformation forEngine(IncQueryEngine engine) {
-		return new BatchTransformation(AdvancedIncQueryEngine.from(engine));
+		return forRuleEngine(RuleEngines.createIncQueryRuleEngine(engine), engine);
 	}
 	
 	public static BatchTransformation forRuleEngine(RuleEngine ruleEngine, IncQueryEngine engine) {
