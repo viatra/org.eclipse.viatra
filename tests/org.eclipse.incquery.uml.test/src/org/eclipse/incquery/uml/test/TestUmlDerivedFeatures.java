@@ -11,12 +11,7 @@
 package org.eclipse.incquery.uml.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -24,10 +19,9 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.uml.derivedfeatures.AssociationEndTypeMatcher;
+import org.eclipse.incquery.uml.derivedfeatures.NamedElementNamespaceMatcher;
 import org.eclipse.incquery.uml.derivedfeatures.NamedElementQualifiedNameMatcher;
 import org.eclipse.incquery.uml.derivedfeatures.StateIsOrthogonalMatcher;
-import org.eclipse.uml2.uml.Activity;
-import org.eclipse.uml2.uml.ActivityPartition;
 import org.eclipse.uml2.uml.Association;
 import org.eclipse.uml2.uml.Class;
 import org.eclipse.uml2.uml.NamedElement;
@@ -36,8 +30,6 @@ import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.State;
 import org.eclipse.uml2.uml.Type;
 import org.eclipse.uml2.uml.UMLFactory;
-import org.eclipse.uml2.uml.UMLPackage;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -60,9 +52,7 @@ public class TestUmlDerivedFeatures {
 	}
 	
 	@Test
-	@Ignore("Exception on last line since NamedElement.namespace is not wellbehaving")
     public void addAffectsContainment() throws IncQueryException {
-
         Resource resource = createResource();
         Package pkg = FACTORY.createPackage();
         pkg.setName("pkg");
@@ -74,7 +64,6 @@ public class TestUmlDerivedFeatures {
         pkg.getPackagedElements().add(clazz);
         NamedElementQualifiedNameMatcher matcher = NamedElementQualifiedNameMatcher.on(getEngine(resource));
         pkg1.getPackagedElements().add(clazz);
-
     }
 
 	@Test
@@ -91,6 +80,19 @@ public class TestUmlDerivedFeatures {
 		AssociationEndTypeMatcher matcher = AssociationEndTypeMatcher.on(getEngine(resource));
 		assertEquals(ImmutableSet.of(endType), matcher.getAllValuesOftype());
 	}
+
+	@Test
+    public void namedElementNamespace() throws IncQueryException {
+	    Resource resource = createResource();
+        Package rootPackage = FACTORY.createPackage();
+        resource.getContents().add(rootPackage);
+        rootPackage.setName("root");
+        Package childPackage = FACTORY.createPackage();
+        rootPackage.getPackagedElements().add(childPackage);
+        childPackage.setName("child");
+        NamedElementNamespaceMatcher matcher = NamedElementNamespaceMatcher.on(getEngine(resource));
+        assertEquals(ImmutableSet.of(rootPackage), matcher.getAllValuesOftarget(childPackage));
+    }
 
 	@Test
     public void namedElementQualifiedName() throws IncQueryException {
@@ -115,32 +117,6 @@ public class TestUmlDerivedFeatures {
         assertEquals(ImmutableSet.of(false), matcher.getAllValuesOftarget(state));
         state.getRegions().add(FACTORY.createRegion());
         assertEquals(ImmutableSet.of(true), matcher.getAllValuesOftarget(state));
-	}
-
-	@Test
-	public void listsWellbehaving() {
-		Activity source = FACTORY.createActivity();
-		final AtomicBoolean added = new AtomicBoolean(false);
-		final AtomicBoolean removed = new AtomicBoolean(false);
-		final ActivityPartition activityPartition = FACTORY.createActivityPartition();
-		source.eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				super.notifyChanged(msg);
-				if (msg.getFeature() == UMLPackage.Literals.ACTIVITY__GROUP) {
-					if (msg.getEventType() == Notification.ADD && msg.getNewValue() == activityPartition) {
-						added.set(true);
-					}
-					if (msg.getEventType() == Notification.REMOVE && msg.getOldValue() == activityPartition) {
-						removed.set(true);
-					}
-				}
-			}
-		});
-		source.getGroups().add(activityPartition);
-		assertTrue(added.get());
-		source.getGroups().remove(activityPartition);
-		assertTrue(removed.get());
 	}
 	
 }

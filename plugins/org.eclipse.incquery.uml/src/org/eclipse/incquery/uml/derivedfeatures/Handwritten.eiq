@@ -95,10 +95,6 @@ pattern namedElementQualifiedName(namedElement: NamedElement, qualifiedName) {
 	qualifiedName == eval(namespaceQualifiedName + "::" + name); // XXX is separator always this?
 }
 
-pattern namedElementNamespace(namedElement: NamedElement, namespace: Namespace) {
-	NamedElement.namespace(namedElement, namespace);
-}
-
 /*
 (self.importMembers(elementImport.importedElement->asSet()->union(packageImport.importedPackage->collect(p | p.visibleMembers()))->asSet()))
 */
@@ -135,7 +131,7 @@ pattern packageVisibleMember(package_: Package, visibleMember: PackageableElemen
 }
 
 private pattern packageDirectlyVisibleMember(package_: Package, directlyVisibleMember: PackageableElement) {
-	Namespace.ownedMember(package_, directlyVisibleMember);
+	find namespaceOwnedMember(package_, directlyVisibleMember);
 	NamedElement.visibility(directlyVisibleMember, ::public);
 } or {
 	Package.elementImport(package_, elementImport);
@@ -151,6 +147,14 @@ private pattern packageImportedPackage(package_: Package, importedPackage: Packa
 	Namespace.packageImport(package_, packageImport);
 	PackageImport.visibility(packageImport, ::public);
 	PackageImport.importedPackage(packageImport, importedPackage);
+}
+
+pattern packageNestedPackage(nesting: Package, nested: Package) {
+	Package.packagedElement(nesting, nested);
+}
+
+pattern packageNestingPackage(nested: Package, nesting: Package) {
+	find packageNestedPackage(nesting, nested);
 }
 
 /*
