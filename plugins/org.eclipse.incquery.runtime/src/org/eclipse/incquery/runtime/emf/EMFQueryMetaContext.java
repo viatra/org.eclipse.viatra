@@ -98,8 +98,10 @@ public enum EMFQueryMetaContext implements IQueryMetaContext {
 			
 			// direct Java superInterfaces
 			for (Class<?> superInterface : instanceClass.getInterfaces()) {
-				JavaTransitiveInstancesKey impliedInterface = new JavaTransitiveInstancesKey(superInterface);
-				result.add(new InputKeyImplication(implyingKey, impliedInterface, Arrays.asList(0)));
+				if (superInterface != null) {
+					JavaTransitiveInstancesKey impliedInterface = new JavaTransitiveInstancesKey(superInterface);
+					result.add(new InputKeyImplication(implyingKey, impliedInterface, Arrays.asList(0)));
+				}
 			}
 		} else if (implyingKey instanceof EStructuralFeatureInstancesKey) {
 			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) implyingKey).getEmfKey();
@@ -129,8 +131,10 @@ public enum EMFQueryMetaContext implements IQueryMetaContext {
 			// instance class of datatype
 			// TODO this can have a generation gap! (could be some dynamic EMF impl or whatever)
 			Class<?> instanceClass = dataType.getInstanceClass();
-			JavaTransitiveInstancesKey implied = new JavaTransitiveInstancesKey(instanceClass);
-			result.add(new InputKeyImplication(implyingKey, implied, Arrays.asList(0)));
+			if (instanceClass != null) {
+				JavaTransitiveInstancesKey implied = new JavaTransitiveInstancesKey(instanceClass);
+				result.add(new InputKeyImplication(implyingKey, implied, Arrays.asList(0)));
+			}
 		} else {
 			illegalInputKey(implyingKey);
 		}
