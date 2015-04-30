@@ -310,7 +310,7 @@ pattern namedElementNamespace(source: NamedElement, target: Namespace)
 { Message.interaction(source, target); } or 
 { Operation.class(source, target); } or 
 { Operation.datatype(source, target); } or 
-{ Operation.interface(source, target); } or 
+{ Operation.interface(source, target); } or
 { find packageNestingPackage(source, target); } or 
 //{ find parameterOperation(source, target); } or 
 //{ find propertyClass(source, target); } or 
@@ -322,7 +322,7 @@ pattern namedElementNamespace(source: NamedElement, target: Namespace)
 { Region.state(source, target); } or 
 { Region.stateMachine(source, target); } or 
 { Transition.container(source, target); } or 
-//{ find typePackage(source, target); } or 
+{ find typePackage(source, target); } or 
 { Variable.activityScope(source, target); } or 
 { Variable.scope(source, target); } or 
 { Vertex.container(source, target); }
@@ -964,6 +964,15 @@ pattern stateIsComposite_0(
 }
 
 // * Handwritten
+
+/*
+Specifies the owning Package of this Type, if any.
+*/
+@Surrogate(feature = "package")
+pattern typePackage(source: Type, target: Package)
+{ 
+Package.packagedElement(target,source);
+}
 
 /*
 (Extension.allInstances()->select(ext | 

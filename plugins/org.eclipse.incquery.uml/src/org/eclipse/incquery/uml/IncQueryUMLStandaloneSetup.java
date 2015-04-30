@@ -67,6 +67,7 @@ import org.eclipse.incquery.uml.derivedfeatures.util.StateIsCompositeQuerySpecif
 import org.eclipse.incquery.uml.derivedfeatures.util.StateIsOrthogonalQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.StructuredClassifierPartQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.StructuredClassifierRoleQuerySpecification;
+import org.eclipse.incquery.uml.derivedfeatures.util.TypePackageQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.VertexIncomingQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.VertexOutgoingQuerySpecification;
 import org.eclipse.uml2.uml.UMLPackage;
@@ -176,7 +177,7 @@ public class IncQueryUMLStandaloneSetup {
 //			.put(UMLPackage.Literals.STEREOTYPE__PROFILE, StereotypeProfileQuerySpecification.instance())
 			.put(UMLPackage.Literals.STRUCTURED_CLASSIFIER__PART, StructuredClassifierPartQuerySpecification.instance())
 			.put(UMLPackage.Literals.STRUCTURED_CLASSIFIER__ROLE, StructuredClassifierRoleQuerySpecification.instance())
-//			.put(UMLPackage.Literals.TYPE__PACKAGE, TypePackageQuerySpecification.instance())
+			.put(UMLPackage.Literals.TYPE__PACKAGE, TypePackageQuerySpecification.instance())
 			.put(UMLPackage.Literals.VERTEX__INCOMING, VertexIncomingQuerySpecification.instance())
 			.put(UMLPackage.Literals.VERTEX__OUTGOING, VertexOutgoingQuerySpecification.instance())
 			.build();
