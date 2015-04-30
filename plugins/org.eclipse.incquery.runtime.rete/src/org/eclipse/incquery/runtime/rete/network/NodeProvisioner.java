@@ -83,9 +83,13 @@ public class NodeProvisioner {
         		if (equivalentRecipes(recipe, knownRecipe)) {
         			// FOUND EQUIVALENT RECIPE
         			result = getNodesByRecipe().get(knownRecipe);
-        			getNodesByRecipe().put(recipe, result);
-        			result.getNodeCache().assignTraceInfo(recipeTrace);
-        			break;
+        			if (result != null) {
+        				recipeTrace.shadowWithEquivalentRecipe(knownRecipe);
+	        			getNodesByRecipe().put(recipe, result);
+	                	if (getRecipeTraces().add(recipeTrace))
+	                		result.getNodeCache().assignTraceInfo(recipeTrace);
+	        			break;
+        			}
         		}
         	}
         	if (result == null) {
@@ -106,7 +110,9 @@ public class NodeProvisioner {
 	private Node instantiateNodeForRecipe(
 			RecipeTraceInfo recipeTrace,
 			final ReteNodeRecipe recipe,
-			Collection<ReteNodeRecipe> sameClassRecipes) {
+			Collection<ReteNodeRecipe> sameClassRecipes) 
+	{
+		this.getRecipeTraces().add(recipeTrace);
 		if (recipe instanceof IndexerRecipe) {
 			
 			// INSTANTIATE AND HOOK UP 

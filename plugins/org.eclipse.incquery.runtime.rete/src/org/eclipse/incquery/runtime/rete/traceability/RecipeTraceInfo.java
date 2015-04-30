@@ -31,6 +31,7 @@ public class RecipeTraceInfo implements TraceInfo {
 	
 	private Node node;
 	ReteNodeRecipe recipe;
+	ReteNodeRecipe shadowedRecipe;
 	ParentTraceList parentRecipeTraces;
 	
 	
@@ -68,4 +69,21 @@ public class RecipeTraceInfo implements TraceInfo {
 			}
 		}
 	}
+
+	/**
+	 * @param knownRecipe a known recipe that is equivalent to the current recipe
+	 */
+	public void shadowWithEquivalentRecipe(ReteNodeRecipe knownRecipe) {
+		this.shadowedRecipe = this.recipe;
+		this.recipe = knownRecipe;
+	}
+	
+	/**
+	 * Get original recipe shadowed by an equivalent
+	 */
+	public ReteNodeRecipe getShadowedRecipe() {
+		return shadowedRecipe;
+	}
+	
+	
 }
