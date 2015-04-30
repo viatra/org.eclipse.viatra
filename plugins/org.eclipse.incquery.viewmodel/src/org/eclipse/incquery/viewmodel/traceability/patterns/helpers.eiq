@@ -13,34 +13,41 @@ package org.eclipse.incquery.viewmodel.traceability.patterns
 
 import "http://org.eclipse.incquery/viewmodel/traceability/1.0"
 
+@QueryExplorer(checked = false)
 pattern emptyTrace(trace) {
 	Trace(trace);
 	neg find traceTargets(trace,_);
 }
 
+@QueryExplorer(checked = false)
 private pattern traceTargets(trace, target) {
 	Trace.targets(trace, target);
 }
 
+@QueryExplorer(checked = false)
 pattern trace2target(target, trace : Trace) {
 	Trace.targets(trace, target);
 }
 
+@QueryExplorer(checked = false)
 pattern trace2param(param, trace, id) {
 	Trace.params(trace, param);
 	Trace.id(trace, id);
 }
 
+@QueryExplorer(checked = false)
 pattern trace2object(param, trace, id) {
 	Trace.objects(trace, param);
 	Trace.id(trace, id);
 }
 
+@QueryExplorer(checked = false)
 pattern param2target(param, target) {
 	Trace.params(trace, param);
 	Trace.targets(trace, target);
 }
 
+@QueryExplorer(checked = false)
 pattern trace(source, id, target, trace, traceabilityId) {
 	Trace.params(trace, source);
 	Trace.targets(trace, target);

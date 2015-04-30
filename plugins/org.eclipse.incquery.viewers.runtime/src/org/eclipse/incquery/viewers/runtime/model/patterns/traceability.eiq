@@ -13,6 +13,7 @@ package org.eclipse.incquery.viewers.runtime.model.patterns
 import "http://org.eclipse.incquery/viewmodel/traceability/1.0"
 import "http://org.eclipse.incquery/viewmodel/notation/1.0"
 
+@QueryExplorer(checked = false)
 pattern param2item(param, trace : Trace, item : Item) {
 	Trace.params(trace, param);
 	Trace.targets(trace, item);
@@ -21,6 +22,7 @@ pattern param2item(param, trace : Trace, item : Item) {
 	Trace.targets(trace, item);
 }
 
+@QueryExplorer(checked = false)
 pattern param2edge(source, target, trace, edge : Edge) {
 	Trace.params(trace, source);
 	Trace.params(trace, target);
@@ -39,6 +41,7 @@ pattern param2edge(source, target, trace, edge : Edge) {
 	Trace.targets(trace, edge);
 }
 
+@QueryExplorer(checked = false)
 pattern param2containment(source, target, trace, containment : Containment) {
 	Trace.params(trace, source);
 	Trace.params(trace, target);
