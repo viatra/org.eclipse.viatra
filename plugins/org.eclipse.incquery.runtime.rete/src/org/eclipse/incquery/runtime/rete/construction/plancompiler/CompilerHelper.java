@@ -23,8 +23,8 @@ import java.util.TreeSet;
 
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.EnumerablePConstraint;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.recipes.AggregatorRecipe;
@@ -168,6 +168,8 @@ public class CompilerHelper {
 	{
 		final ProductionRecipe recipe = ReteRecipeCompiler.FACTORY.createProductionRecipe();
 		recipe.setPattern(query);
+		recipe.setPatternFQN(query.getFullyQualifiedName());
+		recipe.setTraceInfo(recipe.getPatternFQN());
 		recipe.getParents().addAll(bodyFinalRecipes);
 		for (int i = 0; i < query.getParameterNames().size(); ++i)
 			recipe.getMappedIndices().put(query.getParameterNames().get(i), i);

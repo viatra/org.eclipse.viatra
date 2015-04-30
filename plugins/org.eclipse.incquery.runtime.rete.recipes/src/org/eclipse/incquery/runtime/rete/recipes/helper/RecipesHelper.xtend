@@ -54,6 +54,7 @@ class RecipesHelper {
 			it.inputKey = inputKey
 			it.keyArity = arity
 			it.keyID = inputKeyID
+			it.traceInfo = inputKeyID
 		]
 	}
 	

@@ -39,9 +39,10 @@
       <genOperations ecoreOperation="recipes.ecore#//MultiParentNodeRecipe/getArity"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//UniquenessEnforcerRecipe"/>
-    <genClasses ecoreClass="recipes.ecore#//ProductionRecipe">
+    <genClasses ecoreClass="recipes.ecore#//ProductionRecipe" labelFeature="#//recipes/ProductionRecipe/patternFQN">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//ProductionRecipe/mappedIndices"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ProductionRecipe/pattern"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ProductionRecipe/patternFQN"/>
     </genClasses>
     <genClasses image="false" ecoreClass="recipes.ecore#//IndexerRecipe">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//IndexerRecipe/mask"/>
@@ -61,7 +62,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//StringIndexMapEntry/key"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//StringIndexMapEntry/value"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="recipes.ecore#//InputRecipe">
+    <genClasses image="false" ecoreClass="recipes.ecore#//InputRecipe" labelFeature="#//recipes/InputRecipe/keyID">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/inputKey"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/keyID"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputRecipe/keyArity"/>
