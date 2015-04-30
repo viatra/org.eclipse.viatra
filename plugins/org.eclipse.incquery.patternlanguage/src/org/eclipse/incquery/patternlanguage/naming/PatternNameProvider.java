@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
-import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.xbase.scoping.XbaseQualifiedNameProvider;
@@ -36,17 +35,6 @@ public class PatternNameProvider extends XbaseQualifiedNameProvider {
             PatternBody patternBody = (PatternBody) obj;
             Pattern pattern = (Pattern) patternBody.eContainer();
             return getFullyQualifiedName(pattern).append(Integer.toString(pattern.getBodies().indexOf(patternBody)));
-        } else if (obj instanceof Variable) {
-            Variable variable = (Variable) obj;
-            //QualifiedName parentName = getFullyQualifiedName(variable.eContainer());
-            if(variable.getName() != null){
-//                if (parentName == null || parentName.isEmpty()) {
-//                    return nameConverter.toQualifiedName(variable.getName());
-//                } else {
-//                    return parentName.append(variable.getName());
-//                }
-            	return nameConverter.toQualifiedName(variable.getName());
-            }
         }
         return super.getFullyQualifiedName(obj);
     }

@@ -105,6 +105,13 @@ public class EMFPatternLanguageDeclarativeScopeProvider extends MyAbstractDeclar
         return createUnqualifiedClassifierScope(ctx);
     }
 
+    public IScope scope_Variable(PatternBody ctx, EReference ref) {
+        if (ctx != null && !ctx.eIsProxy()) {
+            return Scopes.scopeFor(ctx.getVariables());
+        }
+        return null;
+    }
+    
     protected IScope createUnqualifiedClassifierScope(EObject ctx) {
         EObject root = getRootContainer(ctx);
         if (root instanceof PatternModel) {
