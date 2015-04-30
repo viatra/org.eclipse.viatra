@@ -34,12 +34,7 @@ pattern joinRecipe(recipe) {
 	JoinRecipe(recipe);
 }
 
-@Item(item = recipe, label = "Existence Join")
-pattern existenceJoinRecipe(recipe) {
-	ExistenceJoinRecipe(recipe);
-}
-
-@Item(item = recipe, label = "Production")
+@Item(item = recipe, label = "Production: $recipe.patternFQN$")
 @Format(textColor = "#FFFFFF", color = "#881A71")
 pattern productionRecipe(recipe) {
 	ProductionRecipe(recipe);
