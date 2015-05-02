@@ -18,15 +18,12 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.statecode.IStateSerializer;
+import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.util.Hasher;
 
-public class GraphHash implements IStateSerializer {
-
-    private IncQueryEngine iqengine;
+public class GraphHash implements IStateCoder {
 
     private int maxDepth = Integer.MAX_VALUE;
 
@@ -43,19 +40,23 @@ public class GraphHash implements IStateSerializer {
         this.vc = new ObjectCoder(ctx.getVertices(), hasher);
     }
 
-    public GraphHash(Notifier modelRoot, IncQueryEngine engine) throws IncQueryException {
-        iqengine = engine;
-        this.modelRoot = modelRoot;
-        encapsulateModel(modelRoot);
+    @Override
+    public void init(Notifier notifier) {
+        try {
+            this.modelRoot = notifier;
+            encapsulateModel(modelRoot);
+        } catch (IncQueryException e) {
+            throw new DSEException("Failed to create IncQueryEngne", e);
+        }
     }
-
+    
     private void calc() {
         vc.calculateHash(maxDepth);
         calculated = true;
     }
 
     @Override
-    public Object serializeContainmentTree() {
+    public Object createStateCode() {
         resetCache();
         if (!calculated) {
             calc();
@@ -64,12 +65,11 @@ public class GraphHash implements IStateSerializer {
     }
 
     @Override
-    public Object serializePatternMatch(IPatternMatch match) {
+    public Object createActivationCode(IPatternMatch match) {
         resetCache();
         return hashPatternMatch(match);
     }
 
-    @Override
     public void resetCache() {
         calculated = false;
         try {

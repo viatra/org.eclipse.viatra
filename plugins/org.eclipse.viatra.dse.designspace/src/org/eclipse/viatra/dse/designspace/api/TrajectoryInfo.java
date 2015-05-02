@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
 import com.google.common.base.Preconditions;
 
@@ -131,7 +131,7 @@ public class TrajectoryInfo implements Cloneable {
         return transitionTrajectory.size();
     }
 
-    public SolutionTrajectory createSolutionTrajectory(final IStateSerializerFactory serializerFactory) {
+    public SolutionTrajectory createSolutionTrajectory(final IStateCoderFactory stateCoderFactory) {
 
         List<Object> activationIds;
         List<DSETransformationRule<?, ?>> rules;
@@ -139,7 +139,7 @@ public class TrajectoryInfo implements Cloneable {
         // Recursion
         if (trajectoryUntilInitState != null) {
             SolutionTrajectory solutionTrajectory = trajectoryUntilInitState
-                    .createSolutionTrajectory(serializerFactory);
+                    .createSolutionTrajectory(stateCoderFactory);
             activationIds = solutionTrajectory.getActivations();
             rules = solutionTrajectory.getTransformationRules();
         } else {
@@ -161,7 +161,7 @@ public class TrajectoryInfo implements Cloneable {
             rules.add(transition.getTransitionMetaData().rule);
         }
 
-        return new SolutionTrajectory(getFullTransitionIdTrajectory(), rules, serializerFactory);
+        return new SolutionTrajectory(getFullTransitionIdTrajectory(), rules, stateCoderFactory);
     }
 
     public boolean canStepBack() {

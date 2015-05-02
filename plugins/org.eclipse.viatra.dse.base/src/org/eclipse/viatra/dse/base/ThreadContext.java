@@ -172,7 +172,7 @@ public class ThreadContext {
 
         }
         // create the thread specific DesignSpaceManager
-        designSpaceManager = new DesignSpaceManager(this, modelRoot, domain, globalContext.getStateSerializerFactory(),
+        designSpaceManager = new DesignSpaceManager(this, modelRoot, domain, globalContext.getStateCoderFactory(),
                 globalContext.getDesignSpace(), trajectoryInfo, ruleEngine, incqueryEngine);
 
         // if there is a guidance registered, hook this thread's

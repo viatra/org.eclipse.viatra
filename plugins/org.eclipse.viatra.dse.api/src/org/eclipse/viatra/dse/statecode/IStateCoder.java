@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.statecode;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 
 /**
@@ -32,7 +33,7 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  * </p>
  * 
  * <p>
- * In addition to providing pseudo-unique identifiers to model states, the state serializer must provide pseud-unique
+ * In addition to providing pseudo-unique identifiers to model states, the state coder must provide pseud-unique
  * identifiers to the outgoing transitions as well, but they only need to be unique on the scope of the particular
  * state, not globally. Global addressing thus can be achieved by considering the pseudo-unique identifier of the state
  * and the pseudo-unique identifier of the transition together if needed.
@@ -44,32 +45,40 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
  * </p>
  * 
  * <p>
- * For any particular implementation an {@link IStateSerializerFactory} implementation must also be supplied that
- * handles the creation of {@link IStateSerializer} instances.
+ * For any particular implementation an {@link IStateCoderFactory} implementation must also be supplied that handles the
+ * creation of {@link IStateCoder} instances.
  * </p>
  * 
- * @author Miklos Foldenyi
+ * <p>
+ * Usually it is unnecessary to represent everything from the model in a state code, only the parts which are modified
+ * by the transformation rules.
+ * </p>
+ * 
+ * @author Miklos Foldenyi, Andras Szabolcs Nagy
  * 
  */
-public interface IStateSerializer {
+public interface IStateCoder {
+
+    /**
+     * Initializes the state coder on the given model.
+     * 
+     * @param notifier
+     */
+    void init(Notifier notifier);
+
     /**
      * Returns a pseudo-unique identifier that describes the underlying model's current internal state.
      * 
      * @return an arbitrary {@link Object} that can be used as the identifier.
      */
-    Object serializeContainmentTree();
+    Object createStateCode();
 
     /**
      * Returns a pseudo-unique identifier that describes the given {@link IPatternMatch} in the context of the
      * underlying model's current internal state.
      * 
-     * @return an arbitrary {@link Object} that can be used as the identifier.
+     * @return an arbitrary {@link Object} that can be used as the identifier in the given state.
      */
-    Object serializePatternMatch(IPatternMatch match);
+    Object createActivationCode(IPatternMatch match);
 
-    /**
-     * A {@link IStateSerializer} object can be either stateless or stateful. If they are stateless, this method should
-     * have no effect. If they are stateful, the serializer must return to it's original state.
-     */
-    void resetCache();
 }

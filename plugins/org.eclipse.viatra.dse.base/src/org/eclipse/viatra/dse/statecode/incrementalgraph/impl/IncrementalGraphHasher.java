@@ -35,7 +35,7 @@ import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.statecode.IStateSerializer;
+import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.graph.impl.EGraphBuilderContext;
 import org.eclipse.viatra.dse.statecode.graph.impl.IModelObject;
 import org.eclipse.viatra.dse.statecode.graph.impl.IModelReference;
@@ -48,14 +48,14 @@ import org.eclipse.viatra.dse.util.Hasher;
  * @author Foldenyi Miklos
  * 
  */
-public class IncrementalGraphHasher implements IStateSerializer, InstanceListener {
+public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
     private Logger logger = Logger.getLogger(this.getClass());
 
     private final Map<IModelObject, ModelObjectCoderBucket> buckets = new HashMap<IModelObject, ModelObjectCoderBucket>();
 
-    private final IncQueryEngine iqEngine;
+    private IncQueryEngine iqEngine;
 
-    private final EGraphBuilderContext context;
+    private EGraphBuilderContext context;
 
     // this stores the level at which each bucket becomes unique
     private Map<ModelObjectCoderBucket, Integer> bucketUniquenessIndex = new HashMap<ModelObjectCoderBucket, Integer>();
@@ -67,6 +67,8 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
     private LightweightFeatureChangeListener observer;
 
     private boolean needsRecalculation = true;
+
+    private Collection<EClass> classes;
 
     public void invalidateObjectState(IModelObject objectChanged) {
         if (!objectsThatChangedInternalState.contains(objectChanged)) {
@@ -86,32 +88,44 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
         }
     }
 
-    public IncrementalGraphHasher(Notifier modelRoot, Collection<EClass> classes,
+    public IncrementalGraphHasher(Collection<EClass> classes,
             Collection<EStructuralFeature> features) throws IncQueryException {
+        this.classes = classes;
         logger.debug("Coder created");
 
-        EMFScope scope = new EMFScope(modelRoot);
-        // store the engine
-        iqEngine = IncQueryEngine.on(scope);
+        
 
-        // add listeners
-        EMFScope.extractUnderlyingEMFIndex(iqEngine).addInstanceListener(classes, this);
-
-        // create mapping context
-        context = new EGraphBuilderContext(modelRoot);
-
-        // create buckets for all objects
-        // for (IModelObject modelObject : context.getVertices()) {
-        // buckets.put(modelObject, new ModelObjectCoderBucket(modelObject));
-        // }
-
-        observer = new LightweightFeatureChangeListener();
-
-        for (EObject object : getAllObjects()) {
-            instanceInserted(null, object);
-        }
     }
 
+    @Override
+    public void init(Notifier notifier) {
+        try {
+            
+            EMFScope scope = new EMFScope(notifier);
+            iqEngine = IncQueryEngine.on(scope);
+
+            // add listeners
+            EMFScope.extractUnderlyingEMFIndex(iqEngine).addInstanceListener(classes, this);
+            
+            // create mapping context
+            context = new EGraphBuilderContext(notifier);
+            
+            // create buckets for all objects
+            // for (IModelObject modelObject : context.getVertices()) {
+            // buckets.put(modelObject, new ModelObjectCoderBucket(modelObject));
+            // }
+            
+            observer = new LightweightFeatureChangeListener();
+            
+            for (EObject object : getAllObjects()) {
+                instanceInserted(null, object);
+            }
+        } catch (IncQueryException e) {
+            logger.error("Failed to create IncQuery engine", e);
+            throw new DSEException("Failed to create IncQuery engine", e);
+        }
+    }
+    
     public void addNewModelObject(IModelObject newModelObject) {
         needsRecalculation = true;
 
@@ -238,7 +252,7 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
     String hash = null;
 
     @Override
-    public Object serializeContainmentTree() {
+    public Object createStateCode() {
         if (needsRecalculation || hash == null) {
             if (!objectsThatChangedReferences.isEmpty()) {
                 refreshCodes();
@@ -263,13 +277,13 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
     private Hasher sha1Hasher = Hasher.getHasher(Hasher.SHA1_PROTOCOLL);
 
     @Override
-    public Object serializePatternMatch(IPatternMatch match) {
+    public Object createActivationCode(IPatternMatch match) {
 
         if (match == null) {
             return "";
         }
 
-        serializeContainmentTree();
+        createStateCode();
 
         List<String> hashes = new ArrayList<String>();
 
@@ -374,7 +388,6 @@ public class IncrementalGraphHasher implements IStateSerializer, InstanceListene
         }
     }
 
-    @Override
     public void resetCache() {
 
     }

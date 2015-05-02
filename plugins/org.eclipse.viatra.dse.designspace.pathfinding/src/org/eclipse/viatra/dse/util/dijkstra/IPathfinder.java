@@ -13,7 +13,7 @@ package org.eclipse.viatra.dse.util.dijkstra;
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.designspace.api.IState;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
 public interface IPathfinder {
     /**
@@ -24,7 +24,7 @@ public interface IPathfinder {
      * @return
      */
     SolutionTrajectory getBestTrajectoryCheaply(Solution s, IState solutionState,
-            IStateSerializerFactory stateSerializerFactory);
+            IStateCoderFactory stateCoderFactory);
 
     /**
      * Checks the underlying data structure and updates it to see if there is a better route to this solution than the
@@ -36,6 +36,6 @@ public interface IPathfinder {
      * @return the {@link SolutionTrajectory} that represents the best trajectory we discovered so far.
      */
     SolutionTrajectory getBestTrajectoryCostly(Solution s, IState solutionState,
-            IStateSerializerFactory stateSerializerFactory);
+            IStateCoderFactory stateCoderFactory);
 
 }

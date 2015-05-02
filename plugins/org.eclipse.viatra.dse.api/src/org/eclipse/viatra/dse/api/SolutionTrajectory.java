@@ -25,8 +25,8 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra.dse.statecode.IStateSerializer;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoder;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
@@ -34,27 +34,27 @@ public class SolutionTrajectory {
 
     private final List<Object> transitionIds;
     private final List<DSETransformationRule<?, ?>> transformationRules;
-    private final IStateSerializerFactory stateSerializerFactory;
+    private final IStateCoderFactory stateCoderFactory;
     private Map<String, Double> fitness;
 
     private IncQueryEngine engine;
     private EObject rootEObject;
-    private IStateSerializer stateSerializer;
+    private IStateCoder stateCoder;
 
     private int currentIndex;
 
     public SolutionTrajectory(final List<Object> transitionIds,
             final List<DSETransformationRule<?, ?>> transformationRules,
-            final IStateSerializerFactory stateSerializerFactory) {
+            final IStateCoderFactory stateCoderFactory) {
         checkNotNull(transformationRules, "Parameter transformationRules cannot be null!");
-        checkNotNull(stateSerializerFactory, "Parameter stateSerializerFactory cannot be null!");
+        checkNotNull(stateCoderFactory, "Parameter stateSerializerFactory cannot be null!");
         checkNotNull(transitionIds, "Parameter activations cannot be null!");
         checkState(transformationRules.size() == transitionIds.size(),
                 "The two List parameters must be the same in size.");
 
         this.transitionIds = transitionIds;
         this.transformationRules = transformationRules;
-        this.stateSerializerFactory = stateSerializerFactory;
+        this.stateCoderFactory = stateCoderFactory;
         currentIndex = 0;
     }
 
@@ -62,7 +62,8 @@ public class SolutionTrajectory {
         EMFScope scope = new EMFScope(modelRoot);
         this.engine = IncQueryEngine.on(scope);
         this.rootEObject = (EObject) modelRoot;
-        stateSerializer = stateSerializerFactory.createStateSerializer(modelRoot);
+        stateCoder = stateCoderFactory.createStateCoder();
+        stateCoder.init(modelRoot);
     }
 
     /**
@@ -100,7 +101,7 @@ public class SolutionTrajectory {
 
         boolean isActivationFound = false;
         for (IPatternMatch match : matcher.getAllMatches()) {
-            Object matchHash = stateSerializer.serializePatternMatch(match);
+            Object matchHash = stateCoder.createActivationCode(match);
             if (matchHash.equals(transitionIds.get(index))) {
                 IMatchProcessor action = tr.getAction();
                 action.process(match);
@@ -123,8 +124,8 @@ public class SolutionTrajectory {
         return transformationRules;
     }
 
-    public IStateSerializerFactory getStateSerializerFactory() {
-        return stateSerializerFactory;
+    public IStateCoderFactory getStateSerializerFactory() {
+        return stateCoderFactory;
     }
 
     public IncQueryEngine getEngine() {
@@ -135,8 +136,8 @@ public class SolutionTrajectory {
         return rootEObject;
     }
 
-    public IStateSerializer getStateSerializer() {
-        return stateSerializer;
+    public IStateCoder getStateSerializer() {
+        return stateCoder;
     }
 
     public int getCurrentIndex() {

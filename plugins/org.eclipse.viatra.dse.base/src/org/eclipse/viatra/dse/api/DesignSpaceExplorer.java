@@ -39,8 +39,8 @@ import org.eclipse.viatra.dse.guidance.Predicate;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
-import org.eclipse.viatra.dse.statecode.IStateSerializer;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoder;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecode.graph.GraphHasherFactory;
 import org.eclipse.viatra.dse.statecode.graph.impl.GraphHash;
 import org.eclipse.viatra.dse.util.EMFHelper;
@@ -114,13 +114,13 @@ public class DesignSpaceExplorer {
      * </p>
      * 
      * <p>
-     * By default the state serializer used is the generic (not meta-model specific) {@link GraphHash}. You can provide
-     * your custom state serializer by implementing the {@link IStateSerializerFactory} and {@link IStateSerializer}
-     * interfaces, and passing the former to the {@link #setSerializerFactory(IStateSerializerFactory)} method.
+     * By default the state coder used is the generic (not meta-model specific) {@link GraphHash}. You can provide
+     * your custom state coder by implementing the {@link IStateCoderFactory} and {@link IStateCoder}
+     * interfaces, and passing the former to the {@link #setStateCoderFactory(IStateCoderFactory)} method.
      * 
      */
     public DesignSpaceExplorer() {
-        setSerializerFactory(new GraphHasherFactory());
+        setStateCoderFactory(new GraphHasherFactory());
         setDesignspace(new ConcurrentDesignSpace());
     }
 
@@ -219,13 +219,25 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Sets a {@link IStateSerializerFactory} for which will be used for creating {@link IStateSerializer}s.
+     * Sets a {@link IStateCoderFactory} for which will be used for creating {@link IStateCoder}s.
      * 
      * @param serializerFactory
      *            The factory.
+     * @deprecated Use {@link DesignSpaceExplorer#setStateCoderFactory(IStateCoderFactory)}
      */
-    public final void setSerializerFactory(IStateSerializerFactory serializerFactory) {
-        globalContext.setStateSerializerFactory(serializerFactory);
+    @Deprecated
+    public final void setSerializerFactory(IStateCoderFactory serializerFactory) {
+        setStateCoderFactory(serializerFactory);
+    }
+
+    /**
+     * Sets a {@link IStateCoderFactory} for which will be used for creating {@link IStateCoder}s.
+     * 
+     * @param stateCoderFactory
+     *            The factory.
+     */
+    public final void setStateCoderFactory(IStateCoderFactory stateCoderFactory) {
+        globalContext.setStateCoderFactory(stateCoderFactory);
     }
 
     @Deprecated

@@ -10,16 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.statecode.graph;
 
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.emf.EMFScope;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.statecode.IStateSerializer;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoder;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecode.graph.impl.GraphHash;
 
-public class GraphHasherFactory implements IStateSerializerFactory {
+public class GraphHasherFactory implements IStateCoderFactory {
 
     private static final int DEFAULT_MAX_UNFOLDING_DEPTH = 5;
 
@@ -34,16 +29,10 @@ public class GraphHasherFactory implements IStateSerializerFactory {
     }
 
     @Override
-    public IStateSerializer createStateSerializer(Notifier modelRoot) {
-        try {
-            EMFScope scope = new EMFScope(modelRoot);
-            IncQueryEngine engine = IncQueryEngine.on(scope);
-            GraphHash gh = new GraphHash(modelRoot, engine);
-            gh.setMaxDepth(maxUnfoldingDepth);
-            return gh;
-        } catch (IncQueryException e) {
-            throw new DSEException(e);
-        }
+    public IStateCoder createStateCoder() {
+        GraphHash gh = new GraphHash();
+        gh.setMaxDepth(maxUnfoldingDepth);
+        return gh;
     }
 
     @Override

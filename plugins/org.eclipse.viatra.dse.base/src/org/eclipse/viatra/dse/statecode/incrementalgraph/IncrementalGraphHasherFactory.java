@@ -22,12 +22,12 @@ import org.eclipse.emf.ecore.impl.EClassImpl;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.statecode.IStateSerializer;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoder;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecode.incrementalgraph.impl.IncrementalGraphHasher;
 import org.eclipse.viatra.dse.util.EMFHelper;
 
-public class IncrementalGraphHasherFactory implements IStateSerializerFactory {
+public class IncrementalGraphHasherFactory implements IStateCoderFactory {
 
     private Collection<EClass> classes;
     private Collection<EStructuralFeature> features;
@@ -58,13 +58,10 @@ public class IncrementalGraphHasherFactory implements IStateSerializerFactory {
     }
 
     @Override
-    public IStateSerializer createStateSerializer(Notifier modelRoot) {
-        IncrementalGraphHasher gh;
+    public IStateCoder createStateCoder() {
         try {
-            gh = new IncrementalGraphHasher(modelRoot, classes, features);
-            return gh;
+            return new IncrementalGraphHasher(classes, features);
         } catch (IncQueryException e) {
-            e.printStackTrace();
             throw new DSEException("Failed to create incremental graph hasher", e);
         }
     }

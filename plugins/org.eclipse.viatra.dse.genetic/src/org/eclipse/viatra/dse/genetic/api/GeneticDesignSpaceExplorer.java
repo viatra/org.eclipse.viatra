@@ -32,7 +32,7 @@ import org.eclipse.viatra.dse.genetic.interfaces.ISelectNextPopulation;
 import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.solutionstore.DummySolutionStore;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
 public class GeneticDesignSpaceExplorer {
 
@@ -52,8 +52,8 @@ public class GeneticDesignSpaceExplorer {
         dse.setInitialModel(root, true);
     }
 
-    public void setSerializerFactory(IStateSerializerFactory serializerFactory) {
-        dse.setSerializerFactory(serializerFactory);
+    public void setStateCoderFactory(IStateCoderFactory stateCoderFactory) {
+        dse.setStateCoderFactory(stateCoderFactory);
     }
 
     public void addTransformationRule(DSETransformationRule<?, ?> rule) {

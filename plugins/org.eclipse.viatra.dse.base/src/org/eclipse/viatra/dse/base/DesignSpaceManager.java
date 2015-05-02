@@ -44,8 +44,8 @@ import org.eclipse.viatra.dse.guidance.IRuleApplicationChanger;
 import org.eclipse.viatra.dse.guidance.IRuleApplicationNumberChanged;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
-import org.eclipse.viatra.dse.statecode.IStateSerializer;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoder;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.visualizer.IExploreEventHandler;
 
 public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplicationChanger {
@@ -53,8 +53,8 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
     private static final String EXECUTE = "execute";
     // ***** essential fields **********
     // the state serializer instance used to generate state and transition IDs
-    private final IStateSerializer stateSerializer;
-    private final IStateSerializerFactory serializerFactory;
+    private final IStateCoder stateCoder;
+    private final IStateCoderFactory serializerFactory;
 
     private final RuleEngine ruleEngine;
 
@@ -84,7 +84,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
     private static final long SLEEP_INTERVAL = 1;
 
-    public DesignSpaceManager(ThreadContext context, EObject modelRoot, EditingDomain domain, IStateSerializerFactory factory,
+    public DesignSpaceManager(ThreadContext context, EObject modelRoot, EditingDomain domain, IStateCoderFactory factory,
             IDesignSpace designSpace, TrajectoryInfo trajectory, RuleEngine ruleEngine, IncQueryEngine engine) {
         checkNotNull(designSpace, "Cannot initialize crawler on a null design space!");
         checkNotNull(domain, "Cannot initialize crawler on a null editing domain!");
@@ -98,9 +98,10 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         this.serializerFactory = factory;
 
         // init serializer
-        stateSerializer = factory.createStateSerializer(modelRoot);
+        stateCoder = factory.createStateCoder();
+        stateCoder.init(modelRoot);
 
-        Object initialStateId = stateSerializer.serializeContainmentTree();
+        Object initialStateId = stateCoder.createStateCode();
         isNewState = designSpace.addState(null, initialStateId, generateTransitions());
         IState rootState = designSpace.getStateById(initialStateId);
 
@@ -133,7 +134,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         domain.getCommandStack().execute(rc);
         PerformanceMonitorManager.endTimer(EXECUTE);
 
-        Object newStateId = stateSerializer.serializeContainmentTree();
+        Object newStateId = stateCoder.createStateCode();
 
         isNewState = designSpace.addState(transition, newStateId, generateTransitions());
         IState newState = designSpace.getStateById(newStateId);
@@ -305,7 +306,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
     }
 
     private Object generateMatchCode(IPatternMatch match) {
-        return stateSerializer.serializePatternMatch(match);
+        return stateCoder.createActivationCode(match);
     }
 
     @Override

@@ -36,7 +36,7 @@ import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.solutionstore.SimpleSolutionStore;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 
@@ -226,7 +226,7 @@ public class GlobalContext {
     private IObjective[][] leveledObjectives;
     private List<IGlobalConstraint> globalConstraints = new ArrayList<IGlobalConstraint>();
     private Set<DSETransformationRule<?, ?>> transformations = new HashSet<DSETransformationRule<?, ?>>();
-    private IStateSerializerFactory stateSerializerFactory;
+    private IStateCoderFactory stateCoderFactory;
     private ISolutionStore solutionStore = new SimpleSolutionStore();
     private Object SharedObject;
     private List<IDesignSpaceVisualizer> visualizers;
@@ -364,12 +364,12 @@ public class GlobalContext {
         return exceptions;
     }
 
-    public IStateSerializerFactory getStateSerializerFactory() {
-        return stateSerializerFactory;
+    public IStateCoderFactory getStateCoderFactory() {
+        return stateCoderFactory;
     }
 
-    public void setStateSerializerFactory(IStateSerializerFactory stateSerializerFactory) {
-        this.stateSerializerFactory = stateSerializerFactory;
+    public void setStateCoderFactory(IStateCoderFactory stateCoderFactory) {
+        this.stateCoderFactory = stateCoderFactory;
     }
 
     public Set<DSETransformationRule<?, ?>> getTransformations() {

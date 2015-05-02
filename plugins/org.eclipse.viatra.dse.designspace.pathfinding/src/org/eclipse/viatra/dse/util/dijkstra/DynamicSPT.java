@@ -24,7 +24,7 @@ import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpaceChangeHandler;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
 public class DynamicSPT implements IDesignSpaceChangeHandler, IPathfinder {
 
@@ -169,7 +169,7 @@ public class DynamicSPT implements IDesignSpaceChangeHandler, IPathfinder {
 
     @Override
     public SolutionTrajectory getBestTrajectoryCheaply(Solution s, IState solutionState,
-            IStateSerializerFactory stateSerializerFactory) {
+            IStateCoderFactory stateCoderFactory) {
         if (s.getShortestTrajectory().getTrajectoryLength() > get(solutionState).getCost()) {
 
             List<Object> transitionIds = new LinkedList<Object>();
@@ -192,7 +192,7 @@ public class DynamicSPT implements IDesignSpaceChangeHandler, IPathfinder {
             }
 
             SolutionTrajectory trajectory = new SolutionTrajectory(transitionIds, transformationRules,
-                    stateSerializerFactory);
+                    stateCoderFactory);
             return trajectory;
         } else {
             return null;
@@ -201,24 +201,24 @@ public class DynamicSPT implements IDesignSpaceChangeHandler, IPathfinder {
 
     @Override
     public SolutionTrajectory getBestTrajectoryCostly(Solution s, IState solutionState,
-            IStateSerializerFactory stateSerializerFactory) {
+            IStateCoderFactory stateCoderFactory) {
         switch (mode) {
         case EXPLICIT_CALL:
         case ANY_TIME:
             // because it is either already kept up to date automatically due to
             // being in ANY_TIME mode, or because an explicit refresh has been
             // called prior to calling this method
-            return getBestTrajectoryCheaply(s, solutionState, stateSerializerFactory);
+            return getBestTrajectoryCheaply(s, solutionState, stateCoderFactory);
         case BEST_ON_REQUEST:
             // on call we refresh the SPT, and based on that, return with a
             // 'cheap' result
             refreshSPT();
-            return getBestTrajectoryCheaply(s, solutionState, stateSerializerFactory);
+            return getBestTrajectoryCheaply(s, solutionState, stateCoderFactory);
         default:
             break;
         }
         refreshSPT();
-        return getBestTrajectoryCheaply(s, solutionState, stateSerializerFactory);
+        return getBestTrajectoryCheaply(s, solutionState, stateCoderFactory);
     }
 
     protected class EdgeComparator implements Comparator<DSEEdge> {

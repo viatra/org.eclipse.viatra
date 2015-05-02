@@ -20,7 +20,7 @@ import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.statecode.IStateSerializerFactory;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
 /**
  * This is a simple implementation of the {@link ISolutionStore} interface which stores all the found solution
@@ -51,8 +51,8 @@ public class SimpleSolutionStore implements ISolutionStore {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         Object id = dsm.getCurrentState().getId();
-        IStateSerializerFactory serializerFactory = context.getGlobalContext().getStateSerializerFactory();
-        SolutionTrajectory solutionTrajectory = dsm.getTrajectoryInfo().createSolutionTrajectory(serializerFactory);
+        IStateCoderFactory stateCoderFactory = context.getGlobalContext().getStateCoderFactory();
+        SolutionTrajectory solutionTrajectory = dsm.getTrajectoryInfo().createSolutionTrajectory(stateCoderFactory);
         solutionTrajectory.setFitness(context.getLastFitness());
         
         Solution solution = solutions.get(id);
