@@ -11,6 +11,7 @@
 package org.eclipse.viatra.emf.mwe2integration.eventdriven.mwe2impl;
 
 import org.eclipse.incquery.runtime.evm.api.Activation;
+import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Executor;
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
 import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
@@ -34,6 +35,10 @@ public class MWE2ControllableExecutor extends Executor implements IController {
 
     public MWE2ControllableExecutor(EventRealm realm) {
         super(realm);
+    }
+    
+    public MWE2ControllableExecutor(EventRealm eventRealm, Context context){
+        super(eventRealm, context);
     }
 
     /**
