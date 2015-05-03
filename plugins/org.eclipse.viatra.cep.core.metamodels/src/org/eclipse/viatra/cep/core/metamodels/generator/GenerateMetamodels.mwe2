@@ -1,0 +1,25 @@
+module org.eclipse.viatra.cep.core.metamodels.generator.generator
+
+import org.eclipse.emf.mwe.utils.*
+import org.apache.commons.logging.*
+
+var projectName = "org.eclipse.viatra.cep.core.metamodels"
+
+Workflow {
+	bean = StandaloneSetup {
+		scanClassPath = true
+		platformUri = ".."
+		registerGenModelFile = "platform:/resource/${projectName}/models/InternalModel.genmodel"
+		
+	}
+
+	component = DirectoryCleaner {
+		exclude = "keep.txt"
+		directory = "${projectName}/emf-gen"
+	}
+	
+	component = org.eclipse.emf.mwe2.ecore.EcoreGenerator {
+        genModel = "platform:/resource/${projectName}/models/InternalModel.genmodel"
+        srcPath = "platform:/resource/${projectName}/emf-gen"
+	}
+}
