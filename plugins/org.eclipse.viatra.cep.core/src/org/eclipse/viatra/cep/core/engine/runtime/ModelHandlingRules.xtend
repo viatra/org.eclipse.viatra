@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
@@ -13,13 +13,15 @@ package org.eclipse.viatra.cep.core.engine.runtime
 import com.google.common.base.Preconditions
 import java.util.Map
 import org.apache.log4j.Logger
+import org.eclipse.incquery.runtime.emf.EMFScope
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification
 import org.eclipse.incquery.runtime.evm.specific.ConflictResolvers
+import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance
 import org.eclipse.viatra.cep.core.api.patterns.ObservedComplexEventPattern
-import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern
 import org.eclipse.viatra.cep.core.engine.IEventModelManager
 import org.eclipse.viatra.cep.core.engine.timing.TimingTable
 import org.eclipse.viatra.cep.core.logging.LoggerUtils
+import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
 import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup
 import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
 import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformation
@@ -56,19 +58,40 @@ class ModelHandlingRules {
 		fixedPriorityResolver.setPriority(createTokenEntersTimedZoneRule.ruleSpecification, 5)
 		fixedPriorityResolver.setPriority(createTokenLeavesTimedZoneRule.ruleSpecification, 1)
 
-		EventDrivenTransformation.forSource(eventModelManager.resourceSet).addRules(rules).
-			setConflictResolver(fixedPriorityResolver).create()
+		EventDrivenTransformation.forScope(new EMFScope(eventModelManager.resourceSet)).addRules(rules).setConflictResolver(
+			fixedPriorityResolver).create()
 	}
 
 	val createEnabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).
 		action [
-			//			Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
+			// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
 			eventModelManager.handleEvent(transition, eventToken)
-			if (eventPattern instanceof ParameterizableComplexEventPattern) {
-				if (!((eventPattern as ParameterizableComplexEventPattern).evaluateParameterBindings(event))) {
-					return
+
+			if (event instanceof ParameterizableEventInstance) {
+				for (parameter : transition.parameters) {
+					// obtain the value in the observed event instance on the given position
+					val parameterValueToBind = (event as ParameterizableEventInstance).getParameter(parameter.position)
+
+					// check for existing bindings in the parameter table with the given symbolic name
+					val existingBinding = eventToken.parameterTable.parameterBindings.findFirst [ binding |
+						binding.symbolicName.equalsIgnoreCase(parameter.symbolicName)
+					]
+
+					if (existingBinding == null) { // if there was no parameter binding yet, it will be recorded now
+						val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
+						newBinding.symbolicName = parameter.symbolicName
+						newBinding.value = parameterValueToBind
+						eventToken.parameterTable.parameterBindings.add(newBinding)
+					} else {
+						// if there was a parameter binding found, the values should match
+						// otherwise return before the token could be fired
+						if (!existingBinding.value.equals(parameterValueToBind)) {
+							return
+						}
+					}
 				}
 			}
+
 			eventModelManager.fireTransition(transition, eventToken)
 		].build
 
@@ -83,8 +106,8 @@ class ModelHandlingRules {
 
 	val createTokenInTrapStateRule = createRule().name("trap state rule").precondition(tokenInTrapState).action [
 		debug(String::format("Event token found in the trap state for pattern %s.", eventPattern.id));
-		//		var failedPattern = new InTrapComplexEventPattern(automaton)
-		//		eventModelManager.cepRealm.forwardFailedEventPattern(failedPattern)
+		// var failedPattern = new InTrapComplexEventPattern(automaton)
+		// eventModelManager.cepRealm.forwardFailedEventPattern(failedPattern)
 		automaton.eventTokens.remove(eventToken)
 	].build
 

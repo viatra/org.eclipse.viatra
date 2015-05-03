@@ -14,6 +14,7 @@ package org.eclipse.viatra.cep.core.engine.compiler;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.viatra.cep.core.logging.LoggerUtils;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory;
@@ -21,6 +22,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Guard;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InitState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
+import org.eclipse.viatra.cep.core.metamodels.automaton.Parameter;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
@@ -50,6 +52,7 @@ import com.google.common.collect.Lists;
 public class Compiler {
     private final static Logger LOGGER = LoggerUtils.getInstance().getLogger();
     private final static AutomatonFactory FACTORY = AutomatonFactory.eINSTANCE;
+    private final static String OMITTED_PARAMETER_SYMBOLIC_NAME = "_";
 
     private InternalModel model;
     private Automaton automaton;
@@ -125,7 +128,7 @@ public class Compiler {
 
     private void map(AtomicEventPattern atomicEventPattern) {
         Guard guard = createGuard(atomicEventPattern);
-        createTransition(initState, finalState, guard);
+        createTransition(initState, finalState, guard); // no parameters in this case
     }
 
     /**
@@ -173,16 +176,18 @@ public class Compiler {
         for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
             EventPattern eventPattern = eventPatternReference.getEventPattern();
             AbstractMultiplicity multiplicity = eventPatternReference.getMultiplicity();
+            List<String> parameterSymbolicNames = eventPatternReference.getParameterSymbolicNames();
             if (multiplicity instanceof Multiplicity) {
                 for (int i = 0; i < ((Multiplicity) multiplicity).getValue(); i++) {
-                    SubAutomaton subAutomatonData = mapFollowsPath(lastCreatedState, eventPattern);
+                    SubAutomaton subAutomatonData = mapFollowsPath(lastCreatedState, eventPattern,
+                            parameterSymbolicNames);
                     lastCreatedState = subAutomatonData.getOutState();
                     if (inStates.isEmpty()) {
                         inStates.addAll(subAutomatonData.getInStates());
                     }
                 }
             } else if (multiplicity instanceof AtLeastOne) {
-                SubAutomaton subAutomatonData = mapFollowsPath(lastCreatedState, eventPattern);
+                SubAutomaton subAutomatonData = mapFollowsPath(lastCreatedState, eventPattern, parameterSymbolicNames);
                 lastCreatedState = subAutomatonData.getOutState();
 
                 for (Transition transition : preState.getOutTransitions()) {
@@ -191,7 +196,8 @@ public class Compiler {
                     }
                     Guard guard = ((TypedTransition) transition).getGuard();
                     Guard backwardLoopGuard = createGuard(guard.getEventType());
-                    createTransition(lastCreatedState, transition.getPostState(), backwardLoopGuard);
+                    createTransition(lastCreatedState, transition.getPostState(), backwardLoopGuard,
+                            parameterSymbolicNames);
                 }
             } else {
                 throw new UnsupportedOperationException(); // TODO Infinite case should be implemented here
@@ -202,11 +208,11 @@ public class Compiler {
         return new SubAutomaton(inStates, lastCreatedState);
     }
 
-    private SubAutomaton mapFollowsPath(State preState, EventPattern eventPattern) {
+    private SubAutomaton mapFollowsPath(State preState, EventPattern eventPattern, List<String> parameterSymbolicNames) {
         if (eventPattern instanceof AtomicEventPattern) {
             State currentState = createState();
             Guard guard = createGuard((AtomicEventPattern) eventPattern);
-            createTransition(preState, currentState, guard);
+            createTransition(preState, currentState, guard, parameterSymbolicNames);
             return new SubAutomaton(Lists.newArrayList(currentState), currentState);
         } else if (eventPattern instanceof ComplexEventPattern) {
             return map(preState, (ComplexEventPattern) eventPattern);
@@ -231,7 +237,8 @@ public class Compiler {
 
         for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
             EventPattern eventPattern = eventPatternReference.getEventPattern();
-            mapOrPath(preState, outState, inStates, statesToBeMergedIntoOut, eventPattern);
+            EList<String> parameterSymbolicNames = eventPatternReference.getParameterSymbolicNames();
+            mapOrPath(preState, outState, inStates, statesToBeMergedIntoOut, eventPattern, parameterSymbolicNames);
         }
 
         for (State state : statesToBeMergedIntoOut) {
@@ -242,10 +249,10 @@ public class Compiler {
     }
 
     private void mapOrPath(State preState, State outState, List<State> inStates, List<State> statesToBeMergedIntoOut,
-            EventPattern eventPattern) {
+            EventPattern eventPattern, List<String> parameterSymbolicNames) {
         if (eventPattern instanceof AtomicEventPattern) {
             Guard guard = createGuard((AtomicEventPattern) eventPattern);
-            createTransition(preState, outState, guard);
+            createTransition(preState, outState, guard, parameterSymbolicNames);
         } else if (eventPattern instanceof ComplexEventPattern) {
             SubAutomaton subAutomatonData = map(preState, (ComplexEventPattern) eventPattern);
             inStates.addAll(subAutomatonData.getInStates());
@@ -309,6 +316,25 @@ public class Compiler {
         transition.setPreState(preState);
         transition.setPostState(postState);
         transition.setGuard(guard);
+        return transition;
+    }
+
+    private TypedTransition createTransition(State preState, State postState, Guard guard, List<String> parameters) {
+        TypedTransition transition = createTransition(preState, postState, guard);
+
+        for (int i = 0; i < parameters.size(); i++) {
+            String symbolicName = parameters.get(i);
+
+            if (symbolicName.equalsIgnoreCase(OMITTED_PARAMETER_SYMBOLIC_NAME)) {
+                continue;
+            }
+
+            Parameter transitionParameter = FACTORY.createParameter();
+            transitionParameter.setSymbolicName(symbolicName);
+            transitionParameter.setPosition(i);
+            transition.getParameters().add(transitionParameter);
+        }
+
         return transition;
     }
 

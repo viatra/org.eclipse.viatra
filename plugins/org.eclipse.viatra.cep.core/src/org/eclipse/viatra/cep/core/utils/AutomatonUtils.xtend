@@ -6,7 +6,6 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState
 import org.eclipse.viatra.cep.core.metamodels.automaton.InitState
 import org.eclipse.viatra.cep.core.metamodels.automaton.State
 import org.eclipse.viatra.cep.core.metamodels.automaton.TrapState
-import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
 
 class AutomatonUtils {
 
@@ -32,8 +31,8 @@ class AutomatonUtils {
 
 	def public static newEventToken(Automaton automaton, State state) {
 		val token = AutomatonFactory.eINSTANCE.createEventToken
-		val patternInstance = EventsFactory.eINSTANCE.createEventPatternInstance
-		token.eventPatternInstance = patternInstance
+		val parameterTable = AutomatonFactory.eINSTANCE.createParameterTable
+		token.parameterTable = parameterTable
 
 		token.currentState = state
 
