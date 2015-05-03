@@ -11,14 +11,11 @@
 package org.eclipse.viatra.cep.vepl.jvmmodel
 
 import com.google.common.collect.Lists
-import com.google.common.collect.Maps
 import com.google.inject.Inject
+import java.util.ArrayList
 import java.util.List
-import java.util.Map
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance
+import org.eclipse.internal.xtend.util.Pair
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern
-import org.eclipse.viatra.cep.core.metamodels.events.Event
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.ExpressionTreeBuilder
@@ -27,24 +24,18 @@ import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.Node
 import org.eclipse.viatra.cep.vepl.vepl.AndOperator
 import org.eclipse.viatra.cep.vepl.vepl.AtLeastOne
 import org.eclipse.viatra.cep.vepl.vepl.Atom
-import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.FollowsOperator
+import org.eclipse.viatra.cep.vepl.vepl.Infinite
 import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 import org.eclipse.viatra.cep.vepl.vepl.NegOperator
 import org.eclipse.viatra.cep.vepl.vepl.OrOperator
-import org.eclipse.viatra.cep.vepl.vepl.PatternCallParameter
 import org.eclipse.viatra.cep.vepl.vepl.UntilOperator
-import org.eclipse.xtext.common.types.JvmMember
-import org.eclipse.xtext.common.types.JvmVisibility
-import org.eclipse.xtext.common.types.TypesFactory
 import org.eclipse.xtext.naming.QualifiedName
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.viatra.cep.vepl.vepl.Infinite
-import java.util.ArrayList
 
 class ComplexGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
@@ -83,20 +74,20 @@ class ComplexGenerator {
 		QualifiedName className,
 		IJvmDeclaredTypeAcceptor acceptor
 	) {
-		var List<org.eclipse.internal.xtend.util.Pair<QualifiedName, List<String>>> compositionEvents = Lists.
+		var List<Pair<QualifiedName, List<String>>> compositionEvents = Lists.
 			newArrayList
 
 		for (child : node.children) {
 			if (child instanceof Node) {
 				val QualifiedName referredAnonymousPatternFqn = generateComplexEventPattern(pattern, (child as Node),
 					getAnonymousName(pattern, anonManager.nextIndex), acceptor);
-				val compositionEvent = new org.eclipse.internal.xtend.util.Pair
+				val compositionEvent = new Pair
 				compositionEvent.first = referredAnonymousPatternFqn
 				compositionEvent.second = null
 				compositionEvents.add(compositionEvent)
 			} else {
 				val leaf = child as Leaf
-				val compositionEvent = new org.eclipse.internal.xtend.util.Pair
+				val compositionEvent = new Pair
 				compositionEvent.first = (leaf.expression as Atom).patternCall.eventPattern.patternFqn;
 
 				var parameters = new ArrayList<String>
@@ -130,7 +121,7 @@ class ComplexGenerator {
 	}
 
 	def generateComplexEventPattern(ComplexEventPattern pattern, Node node, QualifiedName className,
-		List<org.eclipse.internal.xtend.util.Pair<QualifiedName, List<String>>> compositionPatterns,
+		List<Pair<QualifiedName, List<String>>> compositionPatterns,
 		IJvmDeclaredTypeAcceptor acceptor, ComplexPatternType complexPatternType) {
 		acceptor.accept(pattern.toClass(className)) [
 			superTypes += typeRefBuilder.typeRef(ParameterizableComplexEventPattern)
