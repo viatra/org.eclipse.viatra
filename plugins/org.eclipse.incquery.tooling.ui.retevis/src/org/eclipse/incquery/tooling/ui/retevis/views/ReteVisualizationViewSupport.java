@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
+import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
@@ -59,7 +59,7 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
 	@Override
 	protected void init() {
 		super.init();
-		getGraphViewer().setLayoutAlgorithm(new TreeLayoutAlgorithm());
+		getGraphViewer().setLayoutAlgorithm(new SpringLayoutAlgorithm());
 	}
 
 	private Map<ReteNodeRecipe, Node> nodeTrace; // XXX NOOO mutable state
@@ -84,9 +84,14 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
                         for (TraceInfo traceInfo : node.getTraceInfos()) {
                             if (traceInfo instanceof RecipeTraceInfo) {
                                 RecipeTraceInfo recipeTraceInfo = (RecipeTraceInfo) traceInfo;
-                                if (patternMatcherContent.getPatternName().equals(getPatternName(recipeTraceInfo))) {
-                                    ReteNodeRecipe recipe = recipeTraceInfo.getRecipe();
-                                    nodeTrace.put(recipe, node);
+                                if (patternMatcherContent.getPatternName().equals(getPatternName(recipeTraceInfo))) { 
+                                	ReteNodeRecipe recipe = recipeTraceInfo.getRecipe();
+                                	nodeTrace.put(recipe, node);                                    	
+                                	
+                                    ReteNodeRecipe shadowedRecipe = recipeTraceInfo.getShadowedRecipe();
+                                    if (shadowedRecipe != null) {
+                                    	nodeTrace.put(shadowedRecipe, node);
+                                    } 
                                 }
                             }
                         }
