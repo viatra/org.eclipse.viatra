@@ -65,6 +65,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	}
 	
 	new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action) {
+		this.ruleName = rulename
 		this.precondition = matcher
 		this.action = action
 		this.lifecycle = lifecycle
@@ -97,7 +98,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	/**
 	 * Return an IMatchProcessor representing the model manipulation executed by the rule.
 	 */
-	def IMatchProcessor<Match> getAction() {	
+	def IMatchProcessor<Match> getModelManipulation() {	
 		action
 	}	
 }
