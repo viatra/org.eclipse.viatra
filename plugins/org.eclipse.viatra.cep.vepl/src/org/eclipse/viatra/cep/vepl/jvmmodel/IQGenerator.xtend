@@ -37,6 +37,7 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.incquery.runtime.emf.EMFScope
 
 @SuppressWarnings("restriction", "discouraged")
 class IQGenerator {
@@ -106,7 +107,15 @@ class IQGenerator {
 				body = [
 					append(
 						'''
-						transformation = EventDrivenTransformation.forSource(resourceSet).addRules(getRules()).create();'''
+						try {
+							transformation = EventDrivenTransformation.forScope(new ''')
+					append('''«referClass(it, typeRefBuilder, model, EMFScope)»''')
+					append('''(resourceSet)).addRules(getRules()).create();''')
+					newLine
+					append('''
+						} catch (IncQueryException e) {
+							e.printStackTrace();
+						}'''
 					)
 				]
 			]
