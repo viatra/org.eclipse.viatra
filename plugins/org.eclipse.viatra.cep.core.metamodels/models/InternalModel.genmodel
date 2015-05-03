@@ -35,7 +35,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//EventToken/recordedEvents"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//EventToken/lastProcessed"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//EventToken/timedZones"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//EventToken/eventPatternInstance"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//EventToken/parameterTable"/>
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//State">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Automaton.ecore#//State/inTransitions"/>
@@ -55,6 +55,7 @@
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//TypedTransition">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//TypedTransition/guard"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//TypedTransition/parameters"/>
       <genOperations ecoreOperation="Automaton.ecore#//TypedTransition/checkParameters">
         <genParameters ecoreParameter="Automaton.ecore#//TypedTransition/checkParameters/event"/>
         <genParameters ecoreParameter="Automaton.ecore#//TypedTransition/checkParameters/eventToken"/>
@@ -72,6 +73,20 @@
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//Within"/>
     <genClasses ecoreClass="Automaton.ecore#//HoldsFor"/>
+    <genClasses ecoreClass="Automaton.ecore#//Parameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Automaton.ecore#//Parameter/position"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Automaton.ecore#//Parameter/symbolicName"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Automaton.ecore#//Parameter/transition"/>
+    </genClasses>
+    <genClasses ecoreClass="Automaton.ecore#//ParameterTable">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//ParameterTable/parameterBindings"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Automaton.ecore#//ParameterTable/eventToken"/>
+    </genClasses>
+    <genClasses ecoreClass="Automaton.ecore#//ParameterBinding">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Automaton.ecore#//ParameterBinding/symbolicName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Automaton.ecore#//ParameterBinding/value"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Automaton.ecore#//ParameterBinding/parameterTable"/>
+    </genClasses>
   </genPackages>
   <genPackages prefix="Events" basePackage="org.eclipse.viatra.cep.core.metamodels"
       disposableProviderFactory="true" ecorePackage="Cep.ecore#/">
@@ -93,9 +108,7 @@
     <genClasses ecoreClass="Cep.ecore#//EventPatternReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep.ecore#//EventPatternReference/eventPattern"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EReference Cep.ecore#//EventPatternReference/multiplicity"/>
-    </genClasses>
-    <genClasses ecoreClass="Cep.ecore#//EventPatternInstance">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep.ecore#//EventPatternInstance/eventToken"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//EventPatternReference/parameterSymbolicNames"/>
     </genClasses>
     <genClasses ecoreClass="Cep.ecore#//Event">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//Event/type"/>

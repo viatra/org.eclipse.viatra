@@ -17,7 +17,7 @@ Export-Package: org.eclipse.viatra.cep.core.metamodels.automaton,
  org.eclipse.viatra.cep.core.metamodels.events.util
 Require-Bundle: org.eclipse.incquery.querybasedfeatures.runtime,
  org.eclipse.core.runtime,
- org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.incquery.runtime,
  org.eclipse.emf.mwe2.launch,
  org.eclipse.emf.mwe2.lib,

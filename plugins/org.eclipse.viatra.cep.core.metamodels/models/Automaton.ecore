@@ -56,8 +56,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="lastProcessed" eType="ecore:EClass Cep.ecore#//Event"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="timedZones" upperBound="-1"
         eType="#//TimedZone"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="eventPatternInstance" lowerBound="1"
-        eType="ecore:EClass Cep.ecore#//EventPatternInstance" eOpposite="Cep.ecore#//EventPatternInstance/eventToken"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameterTable" lowerBound="1"
+        eType="#//ParameterTable" containment="true" eOpposite="#//ParameterTable/eventToken"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="State">
     <eStructuralFeatures xsi:type="ecore:EReference" name="inTransitions" upperBound="-1"
@@ -89,6 +89,8 @@
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="guard" lowerBound="1" eType="#//Guard"
         containment="true" eOpposite="#//Guard/transition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+        eType="#//Parameter" containment="true" eOpposite="#//Parameter/transition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EpsilonTransition" eSuperTypes="#//Transition"/>
   <eClassifiers xsi:type="ecore:EClass" name="Guard">
@@ -113,4 +115,24 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Within" eSuperTypes="#//TimedZone"/>
   <eClassifiers xsi:type="ecore:EClass" name="HoldsFor" eSuperTypes="#//TimedZone"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Parameter">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="symbolicName" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transition" lowerBound="1"
+        eType="#//TypedTransition" eOpposite="#//TypedTransition/parameters"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ParameterTable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameterBindings" upperBound="-1"
+        eType="#//ParameterBinding" containment="true" eOpposite="#//ParameterBinding/parameterTable"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eventToken" lowerBound="1"
+        eType="#//EventToken" eOpposite="#//EventToken/parameterTable"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ParameterBinding">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="symbolicName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameterTable" lowerBound="1"
+        eType="#//ParameterTable" eOpposite="#//ParameterTable/parameterBindings"/>
+  </eClassifiers>
 </ecore:EPackage>

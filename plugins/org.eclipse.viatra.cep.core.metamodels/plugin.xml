@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.0"?><!--
 --><plugin>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <!-- @generated InternalModel -->
-    <package class="org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage" genModel="models/InternalModel.genmodel" uri="automaton.meta"/>
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <!-- @generated InternalModel -->
-    <package class="org.eclipse.viatra.cep.core.metamodels.events.EventsPackage" genModel="models/InternalModel.genmodel" uri="cep.meta"/>
-  </extension>
-  <extension id="org.eclipse.viatra.cep.core.metamodels.derived.DerivedFeatures" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.metamodels.derived.DerivedFeatures" id="org.eclipse.viatra.cep.core.metamodels.derived.DerivedFeatures"/>
-  </extension>
-  <extension id="extension.derived.org.eclipse.viatra.cep.core.metamodels.derived.initialState" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated InternalModel -->
+      <package
+            uri="automaton.meta"
+            class="org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage"
+            genModel="models/InternalModel.genmodel"/>
+   </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated InternalModel -->
+      <package
+            uri="cep.meta"
+            class="org.eclipse.viatra.cep.core.metamodels.events.EventsPackage"
+            genModel="models/InternalModel.genmodel"/>
+   </extension>
+  <extension id="extension.derived.org.eclipse.viatra.cep.core.metamodels.derived.initialState" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
     <wellbehaving-derived-feature classifier-name="Automaton" feature-name="initialState" package-nsUri="automaton.meta"/>
   </extension>
   <extension id="extension.derived.org.eclipse.viatra.cep.core.metamodels.derived.trapState" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
@@ -22,5 +25,8 @@
   </extension>
   <extension id="extension.derived.org.eclipse.viatra.cep.core.metamodels.derived.eventTokensInModel" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
     <wellbehaving-derived-feature classifier-name="InternalModel" feature-name="eventTokensInModel" package-nsUri="automaton.meta"/>
+  </extension>
+  <extension id="org.eclipse.viatra.cep.core.metamodels.derived.DerivedFeatures" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.metamodels.derived.DerivedFeatures" id="org.eclipse.viatra.cep.core.metamodels.derived.DerivedFeatures"/>
   </extension>
 </plugin>
