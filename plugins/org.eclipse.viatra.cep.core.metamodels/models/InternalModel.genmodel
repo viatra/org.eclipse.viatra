@@ -56,10 +56,6 @@
     <genClasses ecoreClass="Automaton.ecore#//TypedTransition">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//TypedTransition/guard"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Automaton.ecore#//TypedTransition/parameters"/>
-      <genOperations ecoreOperation="Automaton.ecore#//TypedTransition/checkParameters">
-        <genParameters ecoreParameter="Automaton.ecore#//TypedTransition/checkParameters/event"/>
-        <genParameters ecoreParameter="Automaton.ecore#//TypedTransition/checkParameters/eventToken"/>
-      </genOperations>
     </genClasses>
     <genClasses ecoreClass="Automaton.ecore#//EpsilonTransition"/>
     <genClasses ecoreClass="Automaton.ecore#//Guard">
@@ -101,9 +97,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/operator"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/timewindow"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/containedEventPatterns"/>
-      <genOperations ecoreOperation="Cep.ecore#//ComplexEventPattern/evaluateParameterBindings">
-        <genParameters ecoreParameter="Cep.ecore#//ComplexEventPattern/evaluateParameterBindings/event"/>
-      </genOperations>
     </genClasses>
     <genClasses ecoreClass="Cep.ecore#//EventPatternReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep.ecore#//EventPatternReference/eventPattern"/>

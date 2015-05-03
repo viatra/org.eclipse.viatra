@@ -83,10 +83,6 @@
         eOpposite="#//State/inTransitions"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypedTransition" eSuperTypes="#//Transition">
-    <eOperations name="checkParameters" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
-      <eParameters name="event" lowerBound="1" eType="ecore:EClass Cep.ecore#//Event"/>
-      <eParameters name="eventToken" lowerBound="1" eType="#//EventToken"/>
-    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="guard" lowerBound="1" eType="#//Guard"
         containment="true" eOpposite="#//Guard/transition"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
