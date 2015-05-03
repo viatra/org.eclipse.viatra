@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
@@ -44,6 +44,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.viatra.cep.vepl.vepl.Infinite
+import java.util.ArrayList
 
 class ComplexGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
@@ -82,16 +83,32 @@ class ComplexGenerator {
 		QualifiedName className,
 		IJvmDeclaredTypeAcceptor acceptor
 	) {
-		var List<QualifiedName> compositionEvents = Lists::newArrayList
+		var List<org.eclipse.internal.xtend.util.Pair<QualifiedName, List<String>>> compositionEvents = Lists.
+			newArrayList
 
 		for (child : node.children) {
 			if (child instanceof Node) {
-				val QualifiedName referredAnonymousPattern = generateComplexEventPattern(pattern, (child as Node),
+				val QualifiedName referredAnonymousPatternFqn = generateComplexEventPattern(pattern, (child as Node),
 					getAnonymousName(pattern, anonManager.nextIndex), acceptor);
-				compositionEvents.add(referredAnonymousPattern)
+				val compositionEvent = new org.eclipse.internal.xtend.util.Pair
+				compositionEvent.first = referredAnonymousPatternFqn
+				compositionEvent.second = null
+				compositionEvents.add(compositionEvent)
 			} else {
 				val leaf = child as Leaf
-				compositionEvents.add((leaf.expression as Atom).patternCall.eventPattern.patternFqn)
+				val compositionEvent = new org.eclipse.internal.xtend.util.Pair
+				compositionEvent.first = (leaf.expression as Atom).patternCall.eventPattern.patternFqn;
+
+				var parameters = new ArrayList<String>
+				val paramList = (leaf.expression as Atom).patternCall.parameterList
+				if (paramList != null && !paramList.parameters.empty) {
+					for (parameter : paramList.parameters) {
+						parameters.add(parameter.name)
+					}
+				}
+
+				compositionEvent.second = parameters
+				compositionEvents.add(compositionEvent)
 			}
 		}
 
@@ -113,8 +130,8 @@ class ComplexGenerator {
 	}
 
 	def generateComplexEventPattern(ComplexEventPattern pattern, Node node, QualifiedName className,
-		List<QualifiedName> compositionPatterns, IJvmDeclaredTypeAcceptor acceptor,
-		ComplexPatternType complexPatternType) {
+		List<org.eclipse.internal.xtend.util.Pair<QualifiedName, List<String>>> compositionPatterns,
+		IJvmDeclaredTypeAcceptor acceptor, ComplexPatternType complexPatternType) {
 		acceptor.accept(pattern.toClass(className)) [
 			superTypes += typeRefBuilder.typeRef(ParameterizableComplexEventPattern)
 			members += pattern.toConstructor [
@@ -128,59 +145,59 @@ class ComplexGenerator {
 						'''«referClass(it, typeRefBuilder, pattern, EventsFactory)».eINSTANCE''').append(
 						'''.«node.operator.factoryMethod»''').append(
 						''');
-							''')
+					''')
 					append(
 						'''
-							
-							// contained event patterns
-						''')
+						
+						// contained event patterns
+					''')
 					for (p : compositionPatterns) {
 						append('''addEventPatternRefrence(new ''').append(
-							'''«referClass(typeRefBuilder, p, pattern)»''').append('''(), ''')
+							'''«referClass(typeRefBuilder, p.first, pattern)»''').append('''(), ''')
 						if (node.multiplicity instanceof Multiplicity) {
-							append('''«(node.multiplicity as Multiplicity).value»''').append(
-								''');
-									''')
+							append('''«(node.multiplicity as Multiplicity).value»''')
 						} else if (node.multiplicity instanceof Infinite) {
 							append('''«referClass(it, typeRefBuilder, pattern, EventsFactory)»''').append(
-								'''.eINSTANCE.createInfinite()''').append(
-								''');
-									''')
+								'''.eINSTANCE.createInfinite()''')
 						} else if (node.multiplicity instanceof AtLeastOne) {
 							append('''«referClass(it, typeRefBuilder, pattern, EventsFactory)»''').append(
-								'''.eINSTANCE.createAtLeastOne()''').append(
-								''');
-									''')
+								'''.eINSTANCE.createAtLeastOne()''')
 						} else {
 							append(
-								'''1);
-									''')
+								'''1''')
 						}
+						if (p.second != null && !p.second.empty) {
+							append(''', ''').append('''«referClass(typeRefBuilder, pattern, Lists)»''').
+								append('''.newArrayList(''')
+							append('''"«p.second.head»"''')
+							for (param : p.second.tail) {
+								append(''', "«param»"''')
+							}
+							append(''')''')
+						}
+						append(''');
+						''')
 					}
 					if (node.timewindow != null) {
 						it.append(
 							'''
 						
-						''').append('''«referClass(it, typeRefBuilder, pattern, Timewindow)»''').append(''' timewindow = ''').
-							append('''«referClass(it, typeRefBuilder, pattern, EventsFactory)».eINSTANCE''').
-							append(
+						''').append('''«referClass(it, typeRefBuilder, pattern, Timewindow)»''').
+							append(''' timewindow = ''').
+							append('''«referClass(it, typeRefBuilder, pattern, EventsFactory)».eINSTANCE''').append(
 								'''.createTimewindow();
-									''').append(
+							''').append(
 								'''
-									timewindow.setTime(«node.timewindow.time»);
-									setTimewindow(timewindow);
-										
-								''')
+								timewindow.setTime(«node.timewindow.time»);
+								setTimewindow(timewindow);
+									
+							''')
 					}
 					it.append(
 						'''
-						setId("«className.toLowerCase»");''')
+					setId("«className.toLowerCase»");''')
 				]
 			]
-			if (complexPatternType.normal) {
-				members += (pattern as ComplexEventPattern).parameterBindingDispatcher
-				members += (pattern as ComplexEventPattern).simpleBindingMethod
-			}
 		]
 		if (complexPatternType.normal) {
 			FactoryManager.instance.add(className)
@@ -232,101 +249,9 @@ class ComplexGenerator {
 		return "createNEG()"
 	}
 
-	def Iterable<? extends JvmMember> getParameterBindingDispatcher(ComplexEventPattern pattern) {
-		val method = TypesFactory.eINSTANCE.createJvmOperation
-		method.simpleName = "evaluateParameterBindings"
-		method.setVisibility(JvmVisibility.PUBLIC)
-		method.returnType = typeRefBuilder.typeRef("boolean")
-		method.parameters.add(pattern.toParameter("event", typeRefBuilder.typeRef(Event)))
-		method.setBody [
-			append(
-				'''
-				if(event instanceof ''').append('''«referClass(it, typeRefBuilder, method, ParameterizableEventInstance)»''').
-				append(
-					'''){
-						''').append(
-					'''
-							return evaluateParameterBindings((ParameterizableEventInstance) event);
-						}
-					''').append(
-					'''
-					return true;''')
-		]
-
-		method.addOverrideAnnotation(pattern)
-		return Lists.newArrayList(method)
-	}
-
-	def Iterable<? extends JvmMember> getSimpleBindingMethod(ComplexEventPattern pattern) {
-		val method = TypesFactory.eINSTANCE.createJvmOperation
-		method.simpleName = "evaluateParameterBindings"
-		method.setVisibility(JvmVisibility.PUBLIC)
-		method.returnType = typeRefBuilder.typeRef("boolean")
-		method.parameters.add(pattern.toParameter("event", typeRefBuilder.typeRef(ParameterizableEventInstance)))
-		val expression = pattern.complexEventExpression
-		method.setBody [
-			append(
-				'''«referClass(it, typeRefBuilder, pattern, Map, typeRefBuilder.typeRef("String"),
-					typeRefBuilder.typeRef("Object"))»''').append(''' params = ''').append(
-				'''«referClass(it, typeRefBuilder, pattern, Maps)»''')
-			append(
-				'''.newHashMap();
-					''')
-			it.getParameterMapping(expression, method)
-			append(
-				'''return evaluateParamBinding(params, event);
-					''')
-		]
-
-		return Lists.newArrayList(method)
-	}
-
 	var firstCondition = true
 
 	def getCondition() {
 		if (firstCondition) '''if''' else '''else if'''
-	}
-
-	def void getParameterMapping(ITreeAppendable appendable, ComplexEventExpression expression, EObject ctx) {
-		if (expression instanceof Atom) {
-			printParameterMapping(appendable, expression as Atom, ctx)
-		} else {
-			appendable.getParameterMapping(expression.left, ctx)
-		}
-		for (right : expression.right) {
-			appendable.getParameterMapping(right.expression, ctx)
-		}
-	}
-
-	def void printParameterMapping(ITreeAppendable appendable, Atom atom, EObject ctx) {
-		if (atom.patternCall.parameterList != null && !atom.patternCall.parameterList.parameters.empty) {
-			appendable.append(
-				'''
-				«condition» (event instanceof ''').append(
-				'''«appendable.referClass(typeRefBuilder, atom.patternCall.eventPattern.classFqn, ctx)»''').append(
-				'''){
-					''')
-			var i = 0
-			for (param : atom.patternCall.parameterList.parameters.filter[p|!p.ignorable]) {
-				appendable.append('''	Object value«i» = ((''').append(
-					'''«appendable.referClass(typeRefBuilder, atom.patternCall.eventPattern.classFqn, ctx)»''').append(
-					''') event).getParameter(«atom.patternCall.parameterList.parameters.indexOf(param)»);
-						''')
-				appendable.append(
-					'''	params.put("«param.name»", value«i»);
-						''')
-				i = i + 1
-			}
-			appendable.append(
-				'''}
-					''')
-		}
-	}
-
-	def isIgnorable(PatternCallParameter parameter) {
-		if (parameter.name.startsWith("_")) {
-			return true
-		}
-		return false
 	}
 }
