@@ -77,7 +77,7 @@ class ImportValidationTest extends AbstractValidatorTest {
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+		tester.validate(model).assertOK
 	}
 
 	@Test

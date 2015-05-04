@@ -56,7 +56,8 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.incquery.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.incquery.patternlanguage.typing.ITypeSystem;
 import org.eclipse.incquery.patternlanguage.validation.VariableReferenceCount.ReferenceType;
-import org.eclipse.incquery.patternlanguage.validation.whitelist.PureClassChecker;
+import org.eclipse.incquery.patternlanguage.validation.whitelist.PureWhitelistExtensionLoader;
+import org.eclipse.incquery.patternlanguage.validation.whitelist.PurityChecker;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
@@ -67,6 +68,7 @@ import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
+import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
 import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
@@ -108,9 +110,6 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Inject
     private PatternAnnotationProvider annotationProvider;
-
-    @Inject
-    private PureClassChecker purityChecker;
 
     @Inject
     private IJvmModelAssociations associations;
@@ -819,7 +818,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                     JvmIdentifiableElement jvmIdentifiableElement = xFeatureCall.getFeature();
                     if (jvmIdentifiableElement instanceof JvmOperation) {
                         JvmOperation jvmOperation = (JvmOperation) jvmIdentifiableElement;
-                        if (purityChecker.isImpureElement(jvmOperation)) {
+                        if (!PurityChecker.isPure(jvmOperation) && !jvmOperation.eIsProxy()) {
                             elementsWithWarnings.add(jvmOperation.getQualifiedName());
                         }
                     }
@@ -827,17 +826,11 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             }
         }
         if (!elementsWithWarnings.isEmpty()) {
-            if (elementsWithWarnings.size() > 1) {
-                warning("There are potentially problematic java calls in the check()/eval() expression. Custom java calls without @Pure annotations "
-                        + "considered unsafe in IncQuery. The possible erroneous calls are the following: "
-                        + elementsWithWarnings + ".", xExpression.eContainer(), feature,
-                        IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
-            } else {
-                warning("There is a potentially problematic java call in the check()/eval() expression. Custom java calls without @Pure annotations "
-                        + "considered unsafe in IncQuery. The possible erroneous call is the following: "
-                        + elementsWithWarnings + ".", xExpression.eContainer(), feature,
-                        IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
-            }
+            warning("There is at least one potentially problematic java call in the check()/eval() expression. Custom java calls "
+                    + "are considered unsafe in IncQuery unless they are annotated with @" + Pure.class.getSimpleName() + " or registered with the "
+                    + PureWhitelistExtensionLoader.EXTENSION_ID + " extension point. The possible erroneous calls are the following: "
+                    + elementsWithWarnings + ".", xExpression.eContainer(), feature,
+                    IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
         }
     }
 

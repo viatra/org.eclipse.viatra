@@ -20,14 +20,20 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.incquery.runtime.matchers;bundle-version="0.9.0"
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.eclipse.incquery.patternlanguage,org.eclipse.incqu
- ery.patternlanguage.annotations,org.eclipse.incquery.patternlanguage.
- formatting,org.eclipse.incquery.patternlanguage.helper,org.eclipse.in
- cquery.patternlanguage.jvmmodel,org.eclipse.incquery.patternlanguage.
- naming,org.eclipse.incquery.patternlanguage.patternLanguage,org.eclip
- se.incquery.patternlanguage.patternLanguage.impl,org.eclipse.incquery
- .patternlanguage.patternLanguage.util,org.eclipse.incquery.patternlan
- guage.scoping,org.eclipse.incquery.patternlanguage.serializer,org.ecl
- ipse.incquery.patternlanguage.services,org.eclipse.incquery.patternla
- nguage.typing,org.eclipse.incquery.patternlanguage.validation
+Export-Package: org.eclipse.incquery.patternlanguage,
+ org.eclipse.incquery.patternlanguage.annotations,
+ org.eclipse.incquery.patternlanguage.formatting,
+ org.eclipse.incquery.patternlanguage.helper,
+ org.eclipse.incquery.patternlanguage.jvmmodel,
+ org.eclipse.incquery.patternlanguage.naming,
+ org.eclipse.incquery.patternlanguage.patternLanguage,
+ org.eclipse.incquery.patternlanguage.patternLanguage.impl,
+ org.eclipse.incquery.patternlanguage.patternLanguage.util,
+ org.eclipse.incquery.patternlanguage.scoping,
+ org.eclipse.incquery.patternlanguage.serializer,
+ org.eclipse.incquery.patternlanguage.services,
+ org.eclipse.incquery.patternlanguage.typing,
+ org.eclipse.incquery.patternlanguage.validation,
+ org.eclipse.incquery.patternlanguage.validation.whitelist
+Bundle-Activator: org.eclipse.incquery.patternlanguage.PatternLanguagePlugin
 

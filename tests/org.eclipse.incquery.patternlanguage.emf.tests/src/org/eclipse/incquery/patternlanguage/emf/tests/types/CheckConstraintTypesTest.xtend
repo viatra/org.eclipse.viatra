@@ -100,7 +100,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 
 	@Test
@@ -120,7 +120,7 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 
 	@Test
