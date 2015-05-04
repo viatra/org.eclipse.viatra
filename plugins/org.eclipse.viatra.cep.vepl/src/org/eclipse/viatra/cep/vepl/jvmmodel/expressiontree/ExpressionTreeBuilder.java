@@ -19,9 +19,10 @@ import org.eclipse.viatra.cep.vepl.vepl.Atom;
 import org.eclipse.viatra.cep.vepl.vepl.ChainedExpression;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventOperator;
-import org.eclipse.viatra.cep.vepl.vepl.UntilOperator;
+import org.eclipse.viatra.cep.vepl.vepl.FollowsOperator;
 import org.eclipse.viatra.cep.vepl.vepl.VeplFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
@@ -79,7 +80,7 @@ public class ExpressionTreeBuilder {
         currentExpressionGroup.add(new ExpressionGroupElement(head, head.getMultiplicity(), getTimewindow(head)));
 
         for (ChainedExpression che : expression.getRight()) {
-            if (!sameOperators(che.getOperator(), lastOperator) || untilIntroducedCurrying(currentExpressionGroup, che)) {
+            if (!sameOperators(che.getOperator(), lastOperator)) {
                 packagePatternGroup(lastOperator, currentExpressionGroup, tree);
                 currentExpressionGroup.clear();
                 lastOperator = che.getOperator();
@@ -104,15 +105,51 @@ public class ExpressionTreeBuilder {
             ExpressionTree tree) {
         Node node = addNode(operator, tree);
 
+        if (operator instanceof FollowsOperator) {
+            packageRightCurried(operator, expressionGroup, tree, node);
+        } else {
+            packageNonCurried(operator, expressionGroup, tree, node);
+        }
+    }
+
+    private void packageRightCurried(ComplexEventOperator operator, List<ExpressionGroupElement> expressionGroup,
+            ExpressionTree tree, Node root) {
+        Preconditions.checkArgument(operator instanceof FollowsOperator);
+
+        if (expressionGroup.size() <= 1) {
+            packageNonCurried(operator, expressionGroup, tree, root);
+        } else {
+            Node node;
+            if (root.getChildren().isEmpty()) {
+                node = root;
+            } else {
+                node = new Node(operator);
+                root.addChild(node);
+            }
+
+            ExpressionGroupElement groupElement = expressionGroup.remove(0);
+            createSubTree(operator, groupElement, tree, node);
+
+            packageRightCurried(operator, expressionGroup, tree, node);
+        }
+    }
+
+    private void packageNonCurried(ComplexEventOperator operator, List<ExpressionGroupElement> expressionGroup,
+            ExpressionTree tree, Node node) {
         for (ExpressionGroupElement groupElement : expressionGroup) {
-            TreeElement treeElement = createTreeElement(groupElement);
-            node.addChild(treeElement);
-            if (!(groupElement.getComplexEventExpression() instanceof Atom)) {
-                if (treeElement instanceof Node) {
-                    tree.getComplexLeaves().add((Leaf) ((Node) treeElement).getChildren().get(0));
-                } else if (treeElement instanceof Leaf) {
-                    tree.getComplexLeaves().add((Leaf) treeElement);
-                }
+            createSubTree(operator, groupElement, tree, node);
+        }
+    }
+
+    private void createSubTree(ComplexEventOperator operator, ExpressionGroupElement groupElement, ExpressionTree tree,
+            Node node) {
+        TreeElement treeElement = createTreeElement(groupElement);
+        node.addChild(treeElement);
+        if (!(groupElement.getComplexEventExpression() instanceof Atom)) {
+            if (treeElement instanceof Node) {
+                tree.getComplexLeaves().add((Leaf) ((Node) treeElement).getChildren().get(0));
+            } else if (treeElement instanceof Leaf) {
+                tree.getComplexLeaves().add((Leaf) treeElement);
             }
         }
     }
@@ -181,11 +218,6 @@ public class ExpressionTreeBuilder {
 
     private boolean sameOperators(ComplexEventOperator operator1, ComplexEventOperator operator2) {
         return operator1.getClass().equals(operator2.getClass());
-    }
-
-    // UNTIL is binary, thus needs to be curried one by one
-    private boolean untilIntroducedCurrying(List<ExpressionGroupElement> currentExpressionGroup, ChainedExpression che) {
-        return (currentExpressionGroup.size() > 1) && (che.getOperator() instanceof UntilOperator);
     }
 
     private boolean done(ExpressionTree tree) {
