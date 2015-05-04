@@ -46,16 +46,7 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider implements
         StringBuffer text = new StringBuffer(super.getText(element));
         if (element instanceof Item) {
             Item item = (Item) element;
-            Object paramObject = item.getParamObject();
-            if (paramObject instanceof ProductionRecipe) {
-                ProductionRecipe productionRecipe = (ProductionRecipe) paramObject;
-                Object pattern = productionRecipe.getPattern();
-                if (pattern instanceof BasePQuery) {
-                    BasePQuery pQuery = (BasePQuery) pattern;
-                    text.append(": ");
-                    text.append(pQuery.getFullyQualifiedName());
-                }
-            }
+            Object paramObject = item.getParamEObject();
             if (paramObject instanceof ReteNodeRecipe) {
                 ReteNodeRecipe recipe = (ReteNodeRecipe) paramObject;
                 Node node = nodeTrace.get(recipe);
