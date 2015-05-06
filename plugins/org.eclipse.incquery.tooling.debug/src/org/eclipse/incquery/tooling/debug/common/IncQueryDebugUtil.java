@@ -12,6 +12,8 @@ package org.eclipse.incquery.tooling.debug.common;
 
 import java.lang.reflect.Field;
 
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+
 public class IncQueryDebugUtil {
     
     /**
@@ -30,6 +32,7 @@ public class IncQueryDebugUtil {
             field.setAccessible(true);
             return field.get(obj);
         } catch (Exception e) {
+            IncQueryLoggingUtil.getLogger(IncQueryDebugUtil.class).error("Couldn't retrieve the value of the field!", e);
             return null;
         }
     }

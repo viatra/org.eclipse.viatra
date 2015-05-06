@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugValue;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugVariable;
 import org.eclipse.incquery.tooling.debug.variables.ValueWrapper;
@@ -26,8 +27,8 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.Value;
 
 /**
- * The value of an IncQuery Debug Variable which represents an {@link IncQueryMatcher} instance. Children variables will
- * be the pattern matches.
+ * The value of an IncQuery Debug Variable which represents an {@link IncQueryMatcher} instance. Children variables are 
+ * the pattern matches.
  * 
  * @author Tamas Szabo (itemis AG)
  *
@@ -49,7 +50,7 @@ public class MatcherValue extends IncQueryDebugValue {
                 return null;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            IncQueryLoggingUtil.getLogger(MatcherValue.class).error("Label initialization has failed!", e);
             return null;
         }
     }

@@ -108,6 +108,7 @@ public class ValueWrapper implements Comparable<ValueWrapper> {
                         result = ((ObjectReference) this.value).invokeMethod(this.threadReference, method,
                                 (List<? extends Value>) Collections.emptyList(), 0);
                     } catch (Exception e) {
+                        // ignore, we will do a next try if possible
                         result = null;
                     }
                     t++;
@@ -121,10 +122,22 @@ public class ValueWrapper implements Comparable<ValueWrapper> {
     @Override
     public int compareTo(ValueWrapper that) {
         if (this.value instanceof ObjectReference && that.value instanceof ObjectReference) {
-            return new Long(((ObjectReference) this.value).uniqueID()).compareTo(((ObjectReference) that.value)
+            return Long.valueOf(((ObjectReference) this.value).uniqueID()).compareTo(((ObjectReference) that.value)
                     .uniqueID());
         } else {
-            return new Integer(this.hashCode()).compareTo(that.hashCode());
+            return Integer.valueOf(this.hashCode()).compareTo(that.hashCode());
+        }
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        } else {
+            ValueWrapper that = (ValueWrapper) obj;
+            return this.value.equals(that.value);
         }
     }
 }

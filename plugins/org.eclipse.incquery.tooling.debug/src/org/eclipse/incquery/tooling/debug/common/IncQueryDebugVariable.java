@@ -12,6 +12,7 @@ package org.eclipse.incquery.tooling.debug.common;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIVariable;
@@ -40,6 +41,7 @@ public class IncQueryDebugVariable extends JDIVariable {
         try {
             return ((JDIValue) getValue()).getSignature();
         } catch (RuntimeException e) {
+            IncQueryLoggingUtil.getLogger(IncQueryDebugVariable.class).error("getSignature call has failed!", e);
             return null;
         }
     }
@@ -49,6 +51,7 @@ public class IncQueryDebugVariable extends JDIVariable {
         try {
             return ((JDIValue) getValue()).getGenericSignature();
         } catch (RuntimeException e) {
+            IncQueryLoggingUtil.getLogger(IncQueryDebugVariable.class).error("getGenericSignature call has failed!", e);
             return null;
         }
     }
@@ -66,6 +69,7 @@ public class IncQueryDebugVariable extends JDIVariable {
         try {
             return ((JDIValue) getValue()).getReferenceTypeName();
         } catch (RuntimeException e) {
+            IncQueryLoggingUtil.getLogger(IncQueryDebugVariable.class).error("getReferenceTypeName call has failed!", e);
             return null;
         }
     }

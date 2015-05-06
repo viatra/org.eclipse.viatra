@@ -16,6 +16,8 @@ import java.util.List;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.incquery.tooling.debug.variables.values.MatchValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 
@@ -66,7 +68,7 @@ public class IncQueryDebugEventSetProcessor implements IDebugEventSetListener {
                             listener.update((JDIStackFrame) thread.getStackFrames()[0]);
                         }
                     } catch (DebugException e) {
-                        e.printStackTrace();
+                        IncQueryLoggingUtil.getLogger(IncQueryDebugEventSetProcessor.class).error("Couldn't retrieve the stack frames!", e);
                     }
                 }
             }

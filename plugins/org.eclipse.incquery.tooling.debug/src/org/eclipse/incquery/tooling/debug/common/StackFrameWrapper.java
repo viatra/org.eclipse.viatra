@@ -16,6 +16,7 @@ import java.util.WeakHashMap;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
@@ -61,6 +62,7 @@ public class StackFrameWrapper extends JDIStackFrame {
                 stackFrameMap.put(frame, transformed);
                 return transformed;
             } catch (Exception e) {
+                IncQueryLoggingUtil.getLogger(StackFrameWrapper.class).error("Stack frame transformation has failed!", e);
                 return null;
             }
         }

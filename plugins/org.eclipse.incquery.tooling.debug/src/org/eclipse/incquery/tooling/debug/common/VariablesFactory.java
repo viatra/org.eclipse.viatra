@@ -13,6 +13,7 @@ package org.eclipse.incquery.tooling.debug.common;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
@@ -41,7 +42,7 @@ public abstract class VariablesFactory {
                 return classLoaderReference.virtualMachine();
             }
         } catch (DebugException e) {
-            e.printStackTrace();
+            IncQueryLoggingUtil.getLogger(VariablesFactory.class).error("Couldn't retrieve the virtual machine instance!", e);
             return null;
         }
         return null;

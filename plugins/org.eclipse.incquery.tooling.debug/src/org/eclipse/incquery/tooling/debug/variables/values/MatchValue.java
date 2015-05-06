@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugValue;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugVariable;
 import org.eclipse.incquery.tooling.debug.variables.ValueWrapper;
@@ -26,8 +27,8 @@ import com.sun.jdi.ArrayReference;
 import com.sun.jdi.StringReference;
 
 /**
- * The value of an IncQuery Debug Variable which represents an {@link IPatternMatch} instance. Children variables will
- * be the pattern match parameters.
+ * The value of an IncQuery Debug Variable which represents an {@link IPatternMatch} instance. Children variables are 
+ * the pattern match parameters.
  * 
  * @author Tamas Szabo (itemis AG)
  * 
@@ -68,7 +69,7 @@ public class MatchValue extends IncQueryDebugValue {
 
                 return fVariables;
             } catch (Exception e) {
-                e.printStackTrace();
+                IncQueryLoggingUtil.getLogger(MatchValue.class).error("Couldn't retrieve the list of debug variables!", e);
                 return Collections.emptyList();
             }
         }

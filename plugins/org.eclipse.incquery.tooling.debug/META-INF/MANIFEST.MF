@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Import-Package: org.apache.log4j;version="1.2.15"

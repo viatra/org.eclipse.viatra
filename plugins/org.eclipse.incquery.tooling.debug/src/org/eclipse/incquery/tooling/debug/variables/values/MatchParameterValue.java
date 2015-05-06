@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugValue;
 import org.eclipse.incquery.tooling.debug.variables.ValueWrapper;
 import org.eclipse.jdt.debug.core.IJavaVariable;
@@ -34,7 +35,7 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 
 /**
- * The value of an IncQuery Debug Variable which represents a match parameter. The children variables will be created by
+ * The value of an IncQuery Debug Variable which represents a match parameter. The children variables are created by
  * the original {@link JDIValue#getVariables()} logic.
  * 
  * @author Tamas Szabo (itemis AG)
@@ -71,6 +72,7 @@ public class MatchParameterValue extends IncQueryDebugValue {
                     ReferenceType refType = ((ObjectReference) fValue.getValue()).referenceType();
                     fields = refType.allFields();
                 } catch (ObjectCollectedException e) {
+                    IncQueryLoggingUtil.getLogger(MatchParameterValue.class).error("Couldn't retrieve the list of debug variables!", e);
                     return Collections.emptyList();
                 } catch (RuntimeException e) {
                     targetRequestFailed(MessageFormat.format(
@@ -78,7 +80,8 @@ public class MatchParameterValue extends IncQueryDebugValue {
                             e);
                     // execution will not reach this line, as
                     // #targetRequestFailed will thrown an exception
-                    return null;
+                    IncQueryLoggingUtil.getLogger(MatchParameterValue.class).error("Couldn't retrieve the list of debug variables!", e);
+                    return Collections.emptyList();
                 }
                 Iterator<Field> list = fields.iterator();
                 while (list.hasNext()) {
@@ -99,8 +102,4 @@ public class MatchParameterValue extends IncQueryDebugValue {
         }
     }
 
-    @Override
-    public String getValueString() throws DebugException {
-        return super.getValueString();
-    }
 }

@@ -17,9 +17,10 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugValue;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugVariable;
-import org.eclipse.incquery.tooling.debug.variables.ClassNames;
+import org.eclipse.incquery.tooling.debug.variables.NameConstants;
 import org.eclipse.incquery.tooling.debug.variables.ValueWrapper;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
@@ -30,14 +31,14 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.Value;
 
 /**
- * The value of an IncQuery Debug Variable which represents an {@link IncQueryEngine} instance. This is the starting
- * point in the value hierarchy of 'engine - matcher - match - match parameters'. <br>
+ * The value of an IncQuery Debug Variable which represents an {@link IncQueryEngine} instance. This is the root element of the 
+ * 'engine - matcher - match - match parameters' content hierarchy. <br>
  * <br>
  * It is crucial, which class name is used for capturing the engine instances, because no subtyping relationship can be
- * used with the Debug API. Consecutive variable retrieval for the matchers and matches are 'easier' because the
+ * used with the Debug API. Consecutive variable retrieval for the matchers and matches is 'easier' because the
  * container data structure is used from the parent element (e.g. a {@link HashMap}). <br>
  * <br>
- * The children variables will be the matchers in the given engine.
+ * The children variables are the matchers in the given engine.
  * 
  * @author Tamas Szabo (itemis AG)
  * 
@@ -74,6 +75,7 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
                 }
                 return fVariables;
             } catch (Exception e) {
+                IncQueryLoggingUtil.getLogger(EngineValue.class).error("Couldn't retrieve the list of debug variables!", e);
                 return Collections.emptyList();
             }
         }
@@ -92,7 +94,7 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
                 }
                 sb.append("IncQueryEngine on ");
 
-                if (scope.getValue().type().name().matches(ClassNames.EMF_SCOPE_NAME)) {
+                if (scope.getValue().type().name().matches(NameConstants.EMF_SCOPE_NAME)) {
                     // emf scope
                     ValueWrapper emfRoot = scope.get("scopeRoot");
                     ValueWrapper resourceSet = null;
@@ -134,7 +136,7 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
 
                 cachedLabel = sb.toString();
             } catch (Exception e) {
-                e.printStackTrace();
+                IncQueryLoggingUtil.getLogger(EngineValue.class).error("Label initialization has failed!", e);
             }
         }
         return cachedLabel;
@@ -151,5 +153,17 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
     @Override
     public int compareTo(EngineValue that) {
         return this.fValue.compareTo(that.fValue);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        } else {
+            EngineValue that = (EngineValue) obj;
+            return this.fValue.equals(that.fValue);
+        }
     }
 }

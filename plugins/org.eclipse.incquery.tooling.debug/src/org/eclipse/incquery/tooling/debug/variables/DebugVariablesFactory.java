@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.tooling.debug.common.IncQueryDebugVariable;
 import org.eclipse.incquery.tooling.debug.common.VariablesFactory;
 import org.eclipse.incquery.tooling.debug.variables.values.EngineValue;
@@ -46,7 +47,7 @@ public class DebugVariablesFactory extends VariablesFactory {
                 List<EngineValue> engines = new ArrayList<EngineValue>();
 
                 for (ReferenceType rt : vm.allClasses()) {
-                    if (rt.name().matches(ClassNames.INCQUERY_ENGINE_IMPL_NAME)) {
+                    if (rt.name().matches(NameConstants.INCQUERY_ENGINE_IMPL_NAME)) {
                         List<ObjectReference> instances = rt.instances(100);
                         if (instances.size() > 0) {
                             for (ObjectReference instance : instances) {
@@ -69,7 +70,7 @@ public class DebugVariablesFactory extends VariablesFactory {
                 }
             }
         } catch (DebugException e) {
-            e.printStackTrace();
+            IncQueryLoggingUtil.getLogger(DebugVariablesFactory.class).error("Couldn't retrieve the list of debug variables!", e);
         }
         return variables;
     }
