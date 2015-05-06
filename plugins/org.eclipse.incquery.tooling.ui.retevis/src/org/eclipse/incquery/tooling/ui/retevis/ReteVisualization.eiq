@@ -35,11 +35,12 @@ pattern semiJoinRecipe(recipe) {
 }
 
 @Item(item = recipe, 
-	label = "Join left"
+	label = "Join left + $rightParentComplementaryMask.sourceIndices$/$rightParentComplementaryMask.sourceArity$"
 )
 @QueryExplorer(checked = false)
-pattern joinRecipe(recipe) {
+pattern joinRecipe(recipe, rightParentComplementaryMask) {
 	JoinRecipe(recipe);
+	JoinRecipe.rightParentComplementaryMask(recipe, rightParentComplementaryMask);
 }
 
 @Item(item = recipe, label = "Production: $recipe.patternFQN$")
@@ -90,24 +91,27 @@ pattern transitiveClosureRecipe(recipe) {
 	TransitiveClosureRecipe(recipe);
 }
 
-@Item(item = recipe, label = "Trimmer")
+@Item(item = recipe, label = "Trimmer: $mask.sourceIndices$/$mask.sourceArity$")
 @QueryExplorer(checked = false)
-pattern trimmerRecipe(recipe) {
+pattern trimmerRecipe(recipe, mask) {
 	TrimmerRecipe(recipe);
+	TrimmerRecipe.mask(recipe, mask);
 }
 
-@Item(item = recipe, label = "Aggregator Indexer")
+@Item(item = recipe, label = "Aggregator Indexer: $mask.sourceIndices$/$mask.sourceArity$")
 @Format(textColor = "#000000", color = "#FFFFFF")
 @QueryExplorer(checked = false)
-pattern aggregatorIndexerRecipe(recipe) {
+pattern aggregatorIndexerRecipe(recipe, mask) {
 	AggregatorIndexerRecipe(recipe);
+	AggregatorIndexerRecipe.mask(recipe, mask);
 }
 
-@Item(item = recipe, label = "IX")
+@Item(item = recipe, label = "IX: $mask.sourceIndices$/$mask.sourceArity$")
 @Format(textColor = "#000000", color = "#FFFFFF")
 @QueryExplorer(checked = false)
-pattern projectionIndexerRecipe(recipe) {
+pattern projectionIndexerRecipe(recipe, mask) {
 	ProjectionIndexerRecipe(recipe);
+	ProjectionIndexerRecipe.mask(recipe, mask);
 }
 
 @Edge(source = parent, target = recipe)
