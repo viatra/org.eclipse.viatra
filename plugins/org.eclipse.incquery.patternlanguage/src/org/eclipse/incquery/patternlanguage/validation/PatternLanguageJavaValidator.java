@@ -378,10 +378,12 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             StringBuffer buffer = new StringBuffer();
 
             PatternCall act = call;
+            int depth = 0;
             do {
                 buffer.insert(0, " -> " + prettyPrintPatternCall(act));
                 act = parentMap.get(act);
-            } while (act != call);
+                depth++;
+            } while (depth < parentMap.size() && act != call);
 
             buffer.insert(0, prettyPrintPatternCall(act));
 
