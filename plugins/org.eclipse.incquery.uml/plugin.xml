@@ -152,7 +152,4 @@
   <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.directedRelationshipTarget" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
     <surrogate-query-emf class-name="DirectedRelationship" feature-name="target" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.DirectedRelationshipTargetQuerySpecification"/>
   </extension>
-  <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.extensionIsRequired" point="org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf">
-    <surrogate-query-emf class-name="Extension" feature-name="isRequired" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.ExtensionIsRequiredQuerySpecification"/>
-  </extension>
 </plugin>
