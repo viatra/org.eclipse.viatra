@@ -24,6 +24,8 @@ import org.eclipse.viatra.emf.runtime.rules.ITransformationRule
 import org.eclipse.viatra.emf.runtime.rules.TransformationRuleGroup
 import org.eclipse.viatra.emf.runtime.transformation.batch.BatchTransformation
 import org.eclipse.xtext.xbase.lib.Pair
+import java.util.Collections
+import com.google.common.collect.ImmutableList
 
 /**
  * Utility class for simple rule usage
@@ -111,10 +113,8 @@ class BatchTransformationStatements {
 	) {
 		registerRule(ruleSpecification, filter)
 		val ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter)
-		println('''== Executing activations of «ruleSpecification» with filter «filter» ==''')
 
 		conflictSet.fireUntil(breakCondition)		
-		println('''== Execution finished of «ruleSpecification» with filter «filter» ==''')
 		conflictSet.dispose
 		
 		disposeRule(ruleSpecification, filter)
@@ -187,7 +187,8 @@ class BatchTransformationStatements {
 		registerRule(ruleSpecification, filter)
 		val ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter)
 
-		for(act : conflictSet.conflictingActivations){
+		val conflictingActivations = ImmutableList.copyOf(conflictSet.conflictingActivations)
+		for(act : conflictingActivations){
 			(act as Activation<Match>).fireActivation
 		}
 		
