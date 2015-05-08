@@ -11,6 +11,7 @@
 package org.eclipse.viatra.emf.runtime.rules.batch
 
 import com.google.common.base.Predicate
+import com.google.common.collect.ImmutableSet
 import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.evm.api.Activation
@@ -23,9 +24,6 @@ import org.eclipse.viatra.emf.runtime.filters.MatchParameterFilter
 import org.eclipse.viatra.emf.runtime.rules.ITransformationRule
 import org.eclipse.viatra.emf.runtime.rules.TransformationRuleGroup
 import org.eclipse.viatra.emf.runtime.transformation.batch.BatchTransformation
-import org.eclipse.xtext.xbase.lib.Pair
-import java.util.Collections
-import com.google.common.collect.ImmutableList
 
 /**
  * Utility class for simple rule usage
@@ -187,7 +185,7 @@ class BatchTransformationStatements {
 		registerRule(ruleSpecification, filter)
 		val ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter)
 
-		val conflictingActivations = ImmutableList.copyOf(conflictSet.conflictingActivations)
+		val conflictingActivations = ImmutableSet.copyOf(conflictSet.conflictingActivations)
 		for(act : conflictingActivations){
 			(act as Activation<Match>).fireActivation
 		}
