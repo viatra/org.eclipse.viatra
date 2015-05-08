@@ -255,6 +255,7 @@
 				<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
 				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
 				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.tooling</module>
+				<module>../../plugins/org.eclipse.incquery.runtime.evm.transactions</module>
 				<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
 				<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
 				<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
@@ -280,8 +281,11 @@
 				<module>../../tests/org.eclipse.incquery.testing.queries</module>
 				<module>../../tests/org.eclipse.incquery.testing.ui</module>
                 <module>../../tests/org.eclipse.incquery.uml.test</module>
+                
+                <!-- Features -->
 				<module>../../features/org.eclipse.incquery.runtime.feature</module>
 				<module>../../features/org.eclipse.incquery.runtime.generic.feature</module>
+				<module>../../features/org.eclipse.incquery.runtime.evm.transactions.feature</module>
 				<module>../../features/org.eclipse.incquery.runtime.localsearch.feature</module>
 				<module>../../features/org.eclipse.incquery.querybasedfeatures.runtime.feature</module>
 				<module>../../features/org.eclipse.incquery.querybasedfeatures.tooling.feature</module>
@@ -298,7 +302,9 @@
 				<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
-				<module>../../features/org.eclipse.incquery.debugger.tooling.feature</module>				
+				<module>../../features/org.eclipse.incquery.debugger.tooling.feature</module>	
+				
+				<!-- Update sites -->			
 				<module>../../releng/org.eclipse.incquery.update</module>
 				<module>../../releng/org.eclipse.incquery.update.extras</module>
 			</modules>
