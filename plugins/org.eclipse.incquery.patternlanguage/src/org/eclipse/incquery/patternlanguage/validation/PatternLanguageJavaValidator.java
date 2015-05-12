@@ -13,12 +13,14 @@ package org.eclipse.incquery.patternlanguage.validation;
 import static org.eclipse.xtext.util.Strings.equal;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -417,6 +419,13 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private String prettyPrintPatternCall(PatternCall call) {
         return (isNegativePatternCall(call) ? "neg " : "") + call.getPatternRef().getName();
     }
+    
+    private static final Comparator<PatternCall> patternCallComparator = new Comparator<PatternCall>() {
+        @Override
+        public int compare(PatternCall p1, PatternCall p2) {
+            return p1.getPatternRef().getName().compareTo(p2.getPatternRef().getName());
+        }
+    };
 
     private static class CallGraphProvider implements Provider<Map<PatternCall, Set<PatternCall>>> {
 
@@ -435,7 +444,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                 EObject resourceContent = resourceIterator.next();
                 if (resourceContent instanceof PatternCall) {
                     PatternCall source = (PatternCall) resourceContent;
-                    Set<PatternCall> targets = new HashSet<PatternCall>();
+                    Set<PatternCall> targets = new TreeSet<PatternCall>(patternCallComparator);
                     graph.put(source, targets);
 
                     TreeIterator<EObject> headIterator = source.getPatternRef().eAllContents();
