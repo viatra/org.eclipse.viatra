@@ -515,7 +515,7 @@ public class DesignSpaceExplorer {
             sb.append("\n");
             for (SolutionTrajectory trajectory : solution.getTrajectories()) {
                 sb.append("  Trajectory: ");
-                sb.append(trajectory.prettyPrint());
+                sb.append(trajectory.toPrettyString());
                 sb.append("\n");
             }
         }
