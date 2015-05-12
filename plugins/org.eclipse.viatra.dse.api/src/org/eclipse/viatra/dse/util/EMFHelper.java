@@ -54,7 +54,7 @@ public final class EMFHelper {
     public static EditingDomain createEditingDomain(EObject root) {
         // TODO maybe there is already a ted on the eobject
         EditingDomain domain = new AdapterFactoryEditingDomain(null,new BasicCommandStack());
-        Resource createResource = domain.getResourceSet().createResource(URI.createFileURI("DUMMY"));
+        Resource createResource = domain.getResourceSet().createResource(URI.createFileURI("http:///dummy.xml"));
         domain.getCommandStack().execute(new AddCommand(domain, createResource.getContents(), root));
         return domain;
     }
