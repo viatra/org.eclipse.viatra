@@ -122,13 +122,22 @@ public class ValueWrapper implements Comparable<ValueWrapper> {
     @Override
     public int compareTo(ValueWrapper that) {
         if (this.value instanceof ObjectReference && that.value instanceof ObjectReference) {
-            return Long.valueOf(((ObjectReference) this.value).uniqueID()).compareTo(((ObjectReference) that.value)
-                    .uniqueID());
+            return Long.valueOf(((ObjectReference) this.value).uniqueID()).compareTo(
+                    ((ObjectReference) that.value).uniqueID());
         } else {
             return Integer.valueOf(this.hashCode()).compareTo(that.hashCode());
         }
     }
-    
+
+    @Override
+    public int hashCode() {
+        if (this.value == null) {
+            return super.hashCode();
+        } else {
+            return this.value.hashCode();
+        }
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

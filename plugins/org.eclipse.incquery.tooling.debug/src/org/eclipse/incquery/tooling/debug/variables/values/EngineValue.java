@@ -156,6 +156,11 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
     }
     
     @Override
+    public int hashCode() {
+        return this.fValue.hashCode();
+    }
+    
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
