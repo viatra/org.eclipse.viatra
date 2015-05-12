@@ -200,4 +200,43 @@ class RecursivePatternCallTest extends AbstractValidatorTest {
 				"Recursive pattern call: neg p1 -> p2 -> p3 -> neg p1"))
 	}
 
+	@Test
+	def void testCycleRecursionMultiPath() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+			
+			pattern p1(p : Pattern) = {
+				find p2(p);
+			}
+			
+			pattern p2(p : Pattern) = {
+				find p3(p);
+			} or {
+				find p4(p);
+			}
+			
+			pattern p3(p : Pattern) = {
+				find p1(p);
+			}
+			
+			pattern p4(p : Pattern) = {
+				find p1(p);
+			}
+			'
+		)
+
+		val result = tester.validate(model)
+		result.assertAll(
+			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+				"Recursive pattern call: p1 -> p2 -> p3 -> p1"),
+			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+				"Recursive pattern call: p1 -> p2 -> p4 -> p1"), 
+			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+				"Recursive pattern call: p2 -> p3 -> p1 -> p2"), 
+			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+				"Recursive pattern call: p3 -> p1 -> p2 -> p3"),
+			AssertableDiagnostics.warning(IssueCodes::RECURSIVE_PATTERN_CALL,
+				"Recursive pattern call: p4 -> p1 -> p2 -> p4"))
+	}
 }

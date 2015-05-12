@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
@@ -202,8 +201,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                             IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);
                 } else {
 
-                	IInputKey type1 = typeInferrer.getVariableType(patternRef.getParameters().get(0));
-                	IInputKey type2 = typeInferrer.getVariableType(patternRef.getParameters().get(1));
+                    IInputKey type1 = typeInferrer.getVariableType(patternRef.getParameters().get(0));
+                    IInputKey type2 = typeInferrer.getVariableType(patternRef.getParameters().get(1));
                     if (!typeSystem.isConformant(type1, type2) && !typeSystem.isConformant(type2, type1)) {
                         error(String.format(
                                 "The parameter types %s and %s are not compatible, so no transitive references can exist in instance models.",
@@ -349,43 +348,20 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         Map<PatternCall, Set<PatternCall>> graph = cache.get(call.eResource(), call.eResource(), new CallGraphProvider(
                 call.eResource()));
 
-        Queue<PatternCall> queue = new LinkedList<PatternCall>();
-        queue.add(call);
-        Map<PatternCall, PatternCall> parentMap = new HashMap<PatternCall, PatternCall>();
-        parentMap.put(call, null);
+        LinkedList<PatternCall> result = dfsCheckCycle(call, graph);
 
-        // perform a simple BFS, taking care of a possible cycle
-        while (!queue.isEmpty()) {
-            PatternCall head = queue.poll();
-
-            // the check ensures that we are not seeing the call for the first time and it is part of a cycle
-            if (head == call && parentMap.get(call) != null) {
-                break;
-            }
-            if (!graph.containsKey(head)) {
-                break;
-            }
-            
-            for (PatternCall target : graph.get(head)) {
-                if (!parentMap.containsKey(target)) {
-                    queue.add(target);
-                }
-                parentMap.put(target, head);
-            }
-        }
-
-        if (parentMap.get(call) != null) {
+        if (result != null) {
             StringBuffer buffer = new StringBuffer();
 
-            PatternCall act = call;
-            int depth = 0;
-            do {
-                buffer.insert(0, " -> " + prettyPrintPatternCall(act));
-                act = parentMap.get(act);
-                depth++;
-            } while (depth < parentMap.size() && act != call);
-
-            buffer.insert(0, prettyPrintPatternCall(act));
+            boolean first = true;
+            for (PatternCall elem : result) {
+                if (first) {
+                    first = false;
+                } else {
+                    buffer.append(" -> ");
+                }
+                buffer.append(prettyPrintPatternCall(elem));
+            }
 
             if (isNegativePatternCall(call)) {
                 error(String.format(RECURSIVE_PATTERN_CALL, buffer.toString()), call,
@@ -395,6 +371,42 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                         PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF, IssueCodes.RECURSIVE_PATTERN_CALL);
             }
         }
+    }
+
+    private LinkedList<PatternCall> dfsCheckCycle(PatternCall source, Map<PatternCall, Set<PatternCall>> graph) {
+        LinkedList<PatternCall> path = new LinkedList<PatternCall>();
+        path.add(source);
+        return dfsCheckCycle(source, path, new HashSet<PatternCall>(), graph);
+    }
+    
+    /**
+     * Contract:
+     * (1) path is the current path from source to the last element in path
+     * (2) the first element of path is source
+     * (3) seen is maintained globally within the recursive calls of dfsCheckCycle
+     */
+    private LinkedList<PatternCall> dfsCheckCycle(PatternCall source, LinkedList<PatternCall> path, Set<PatternCall> seen,
+            Map<PatternCall, Set<PatternCall>> graph) {
+        PatternCall current = path.getLast();
+
+        if (!seen.contains(current)) {
+            seen.add(current);
+            for (PatternCall target : graph.get(current)) {
+                path.add(target);
+                if (target == source) {
+                    return path;
+                }
+                LinkedList<PatternCall> intermediate = dfsCheckCycle(source, path, seen, graph);
+                if (intermediate != null) {
+                    return intermediate;
+                } else {
+                    path.removeLast();
+                }
+            }
+        }
+
+        // this means that no cycle has been found
+        return null;
     }
 
     private boolean isNegativePatternCall(PatternCall call) {
@@ -829,10 +841,12 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
         if (!elementsWithWarnings.isEmpty()) {
             warning("There is at least one potentially problematic java call in the check()/eval() expression. Custom java calls "
-                    + "are considered unsafe in IncQuery unless they are annotated with @" + Pure.class.getSimpleName() + " or registered with the "
-                    + PureWhitelistExtensionLoader.EXTENSION_ID + " extension point. The possible erroneous calls are the following: "
-                    + elementsWithWarnings + ".", xExpression.eContainer(), feature,
-                    IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
+                    + "are considered unsafe in IncQuery unless they are annotated with @"
+                    + Pure.class.getSimpleName()
+                    + " or registered with the "
+                    + PureWhitelistExtensionLoader.EXTENSION_ID
+                    + " extension point. The possible erroneous calls are the following: " + elementsWithWarnings + ".",
+                    xExpression.eContainer(), feature, IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
         }
     }
 
