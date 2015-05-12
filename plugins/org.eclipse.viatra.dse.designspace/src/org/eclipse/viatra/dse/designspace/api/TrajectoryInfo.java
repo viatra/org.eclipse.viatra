@@ -140,7 +140,7 @@ public class TrajectoryInfo implements Cloneable {
         if (trajectoryUntilInitState != null) {
             SolutionTrajectory solutionTrajectory = trajectoryUntilInitState
                     .createSolutionTrajectory(stateCoderFactory);
-            activationIds = solutionTrajectory.getActivations();
+            activationIds = solutionTrajectory.getActivationCodes();
             rules = solutionTrajectory.getTransformationRules();
         } else {
             activationIds = new ArrayList<Object>();

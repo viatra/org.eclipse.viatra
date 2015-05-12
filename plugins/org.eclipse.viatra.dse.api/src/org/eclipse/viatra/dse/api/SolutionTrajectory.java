@@ -47,27 +47,27 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
  */
 public class SolutionTrajectory {
 
-    private final List<Object> transitionIds;
+    private final List<Object> activationCodes;
     private final List<DSETransformationRule<?, ?>> transformationRules;
     private final IStateCoderFactory stateCoderFactory;
     private Map<String, Double> fitness;
 
     private IncQueryEngine engine;
-    private EObject rootEObject;
+    private EObject model;
     private EditingDomain editingDomain;
     private IStateCoder stateCoder;
 
     private int currentIndex;
 
-    public SolutionTrajectory(final List<Object> transitionIds,
+    public SolutionTrajectory(final List<Object> activationCodes,
             final List<DSETransformationRule<?, ?>> transformationRules, final IStateCoderFactory stateCoderFactory) {
         checkNotNull(transformationRules, "Parameter transformationRules cannot be null!");
-        checkNotNull(stateCoderFactory, "Parameter stateSerializerFactory cannot be null!");
-        checkNotNull(transitionIds, "Parameter activations cannot be null!");
-        checkState(transformationRules.size() == transitionIds.size(),
+        checkNotNull(stateCoderFactory, "Parameter stateCoderFactory cannot be null!");
+        checkNotNull(activationCodes, "Parameter activations cannot be null!");
+        checkState(transformationRules.size() == activationCodes.size(),
                 "The two List parameters must be the same in size.");
 
-        this.transitionIds = transitionIds;
+        this.activationCodes = activationCodes;
         this.transformationRules = transformationRules;
         this.stateCoderFactory = stateCoderFactory;
         currentIndex = 0;
@@ -84,7 +84,7 @@ public class SolutionTrajectory {
     public void setModel(Notifier modelRoot) throws IncQueryException {
         EMFScope scope = new EMFScope(modelRoot);
         this.engine = IncQueryEngine.on(scope);
-        this.rootEObject = (EObject) modelRoot;
+        this.model = (EObject) modelRoot;
         stateCoder = stateCoderFactory.createStateCoder();
         stateCoder.init(modelRoot);
         currentIndex = 0;
@@ -102,7 +102,7 @@ public class SolutionTrajectory {
      */
     public void setModelWithEditingDomain(Notifier modelRoot) throws IncQueryException {
         setModel(modelRoot);
-        editingDomain = EMFHelper.createEditingDomain(rootEObject);
+        editingDomain = EMFHelper.createEditingDomain(model);
     }
 
     /**
@@ -153,7 +153,7 @@ public class SolutionTrajectory {
      * @throws IncQueryException
      */
     public boolean doNextTransformation() throws IncQueryException {
-        if (currentIndex >= transitionIds.size()) {
+        if (currentIndex >= activationCodes.size()) {
             return false;
         } else {
             doNextTransformation(currentIndex++);
@@ -163,7 +163,7 @@ public class SolutionTrajectory {
 
     @SuppressWarnings("unchecked")
     private void doNextTransformation(int index) throws IncQueryException {
-        checkNotNull(rootEObject, "The model cannot be null! Use the setModel method.");
+        checkNotNull(model, "The model cannot be null! Use the setModel method.");
 
         // cast for the ".process(match)" method.
         DSETransformationRule<?, ?> tr = transformationRules.get(index);
@@ -173,14 +173,14 @@ public class SolutionTrajectory {
         boolean isActivationFound = false;
         for (final IPatternMatch match : matcher.getAllMatches()) {
             Object matchHash = stateCoder.createActivationCode(match);
-            if (matchHash.equals(transitionIds.get(index))) {
+            if (matchHash.equals(activationCodes.get(index))) {
                 @SuppressWarnings("rawtypes")
                 final IMatchProcessor action = tr.getAction();
 
                 if (editingDomain != null) {
                     action.process(match);
                 } else {
-                    ChangeCommand cc = new ChangeCommand(rootEObject) {
+                    ChangeCommand cc = new ChangeCommand(model) {
                         @Override
                         protected void doExecute() {
                             action.process(match);
@@ -222,15 +222,15 @@ public class SolutionTrajectory {
         while (undoLastTransformation());
     }
 
-    public List<Object> getActivations() {
-        return transitionIds;
+    public List<Object> getActivationCodes() {
+        return activationCodes;
     }
 
     public List<DSETransformationRule<?, ?>> getTransformationRules() {
         return transformationRules;
     }
 
-    public IStateCoderFactory getStateSerializerFactory() {
+    public IStateCoderFactory getStateCoderFactory() {
         return stateCoderFactory;
     }
 
@@ -238,11 +238,11 @@ public class SolutionTrajectory {
         return engine;
     }
 
-    public EObject getRootEObjcet() {
-        return rootEObject;
+    public Notifier getModel() {
+        return model;
     }
 
-    public IStateCoder getStateSerializer() {
+    public IStateCoder getStateCoder() {
         return stateCoder;
     }
 
@@ -251,11 +251,7 @@ public class SolutionTrajectory {
     }
 
     public int getTrajectoryLength() {
-        return transitionIds.size();
-    }
-
-    public List<Object> getTransitionIds() {
-        return transitionIds;
+        return activationCodes.size();
     }
 
     public Map<String, Double> getFitness() {
@@ -268,7 +264,7 @@ public class SolutionTrajectory {
 
     public String toPrettyString() {
         StringBuilder sb = new StringBuilder();
-        for (Object object : transitionIds) {
+        for (Object object : activationCodes) {
             sb.append(object.toString());
             sb.append(" | ");
         }
