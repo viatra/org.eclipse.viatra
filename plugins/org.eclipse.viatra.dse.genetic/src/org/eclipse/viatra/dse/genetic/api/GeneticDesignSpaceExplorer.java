@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.core.MainGeneticStrategy;
@@ -29,7 +29,6 @@ import org.eclipse.viatra.dse.genetic.interfaces.IFitnessCalculator;
 import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.ISelectNextPopulation;
-import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.solutionstore.DummySolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
@@ -39,7 +38,6 @@ public class GeneticDesignSpaceExplorer {
     private final MainGeneticStrategy MAIN_GENETIC_STRATEGY = new MainGeneticStrategy();
     private DesignSpaceExplorer dse;
     private GeneticSharedObject configuration;
-    private Guidance guidance;
 
     public GeneticDesignSpaceExplorer() {
         dse = new DesignSpaceExplorer();
@@ -62,10 +60,7 @@ public class GeneticDesignSpaceExplorer {
 
     public void addTransformationRule(DSETransformationRule<?, ?> rule, int priority) {
         dse.addTransformationRule(rule);
-        if (guidance == null) {
-            guidance = new Guidance();
-        }
-        guidance.addPriorityRuleInfo(rule, priority);
+        configuration.priorities.put(rule, priority);
     }
 
     public void setInitialPopulationSelector(IInitialPopulationSelector selector) {
@@ -145,19 +140,10 @@ public class GeneticDesignSpaceExplorer {
     }
 
     public void startExploration(boolean waitForTermination) {
-
-        if (guidance != null) {
-            dse.setGuidance(guidance);
-        }
         dse.startExploration(MAIN_GENETIC_STRATEGY, waitForTermination, -1);
     }
 
     public boolean startExploration(long timeOutInMiliSec) {
-
-        if (guidance != null) {
-            dse.setGuidance(guidance);
-        }
-
         dse.startExploration(MAIN_GENETIC_STRATEGY, false, -1);
 
         double start = System.nanoTime() / 1000000;
@@ -215,10 +201,6 @@ public class GeneticDesignSpaceExplorer {
 
     public GeneticSharedObject getGeneticSharedObject() {
         return configuration;
-    }
-
-    public Guidance getGuidance() {
-        return guidance;
     }
 
     public Map<InstanceData, SolutionTrajectory> getSolutions() {

@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.genetic.api.StopCondition;
 import org.eclipse.viatra.dse.genetic.fintesscalculators.SimpleFitnessCalculator;
@@ -52,6 +53,8 @@ public class GeneticSharedObject {
     public ICalculateModelObjectives modelObjectivesCalculator;
     public IInitialPopulationSelector initialPopulationSelector;
     public IFitnessCalculator fitnessCalculator = new SimpleFitnessCalculator();
+    
+    public Map<DSETransformationRule<?, ?>, Integer> priorities = new HashMap<DSETransformationRule<?, ?>, Integer>();
 
     // Basic information
     public EObject initialModel;

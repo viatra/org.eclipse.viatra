@@ -13,18 +13,15 @@ package org.eclipse.viatra.dse.genetic.mutations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.genetic.core.GeneticHelper;
+import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
-import org.eclipse.viatra.dse.guidance.Guidance;
-import org.eclipse.viatra.dse.guidance.RuleInfo;
 
 public class ModifyTransitionByPriorityMutation implements IMutateTrajectory {
 
@@ -43,22 +40,18 @@ public class ModifyTransitionByPriorityMutation implements IMutateTrajectory {
         ITransition oldTransition = GeneticHelper.getByIndex(result, choosenTransitionIndex);
         Collection<? extends ITransition> availableTransitions = oldTransition.getFiredFrom().getOutgoingTransitions();
 
-        Guidance guidance = context.getGuidance();
-        if (guidance == null) {
-            throw new DSEException("Guidance is missing for AddTransitionByPriorityMutation.");
-        }
-        Map<DSETransformationRule<?, ?>, RuleInfo> ruleInfos = guidance.getRuleInfos();
+        GeneticSharedObject sharedObject = (GeneticSharedObject) context.getGlobalContext().getSharedObject();
 
-        double bestPriority = Double.MIN_VALUE;
+        int bestPriority = Integer.MIN_VALUE;
         for (ITransition iTransition : availableTransitions) {
-            double priority = ruleInfos.get(iTransition.getTransitionMetaData().rule).getPriority();
+            int priority = sharedObject.priorities.get(iTransition.getTransitionMetaData().rule).intValue();
             if (priority > bestPriority) {
                 bestPriority = priority;
             }
         }
         List<ITransition> bestTrasitions = new ArrayList<ITransition>();
         for (ITransition iTransition : availableTransitions) {
-            if (ruleInfos.get(iTransition.getTransitionMetaData().rule).getPriority() == bestPriority) {
+            if (sharedObject.priorities.get(iTransition.getTransitionMetaData().rule).intValue() == bestPriority) {
                 bestTrasitions.add(iTransition);
             }
         }

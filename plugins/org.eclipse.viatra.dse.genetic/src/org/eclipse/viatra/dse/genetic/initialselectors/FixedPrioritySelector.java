@@ -20,13 +20,12 @@ import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
-import org.eclipse.viatra.dse.guidance.RuleInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
 import com.google.common.collect.Lists;
@@ -45,8 +44,6 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
 
     private List<PatternWithCardinality> goals;
 
-    private Map<DSETransformationRule<?, ?>, RuleInfo> ruleInfos;
-
     private IncQueryEngine incqueryEngine;
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -54,6 +51,8 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     private boolean isInterrupted = false;
 
     private ThreadContext context;
+
+    private GeneticSharedObject sharedObject;
 
     public FixedPrioritySelector(List<PatternWithCardinality> goals) {
         this.goals = goals;
@@ -76,7 +75,16 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
             throw new DSEException("No IStoreChild is set for the BFSSelector");
         }
         dsm = context.getDesignSpaceManager();
-        ruleInfos = context.getGuidance().getRuleInfos();
+        Object so = context.getGlobalContext().getSharedObject();
+        if (so instanceof GeneticSharedObject) {
+            sharedObject = (GeneticSharedObject) so;
+            if (sharedObject.priorities.size() != context.getGlobalContext().getTransformations().size()) {
+                throw new DSEException("Not all transformation rules has a priortiy.");
+            }
+        }
+        else {
+            throw new DSEException("Bad shared object type.");
+        }
         incqueryEngine = context.getIncqueryEngine();
     }
 
@@ -118,12 +126,12 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
 
             Double bestPriority = bestPriorityInState.get(dsm.getCurrentState().getId());
             if (bestPriority == null) {
-                bestPriority = getBestPriority(dsm.getTransitionsFromCurrentState(), ruleInfos);
+                bestPriority = getBestPriority(dsm.getTransitionsFromCurrentState());
                 bestPriorityInState.put(dsm.getCurrentState().getId(), bestPriority);
             }
             List<ITransition> bestTrasitions = Lists.newArrayList();
             for (ITransition iTransition : dsm.getTransitionsFromCurrentState()) {
-                if (ruleInfos.get(iTransition.getTransitionMetaData().rule).getPriority() == bestPriority) {
+                if (sharedObject.priorities.get(iTransition.getTransitionMetaData().rule).intValue() == bestPriority) {
                     bestTrasitions.add(iTransition);
                 }
             }
@@ -160,12 +168,11 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
         isInterrupted = true;
     }
 
-    private double getBestPriority(Collection<? extends ITransition> transitions,
-            Map<DSETransformationRule<?, ?>, RuleInfo> ruleInfos) {
-        double bestPriority;
-        bestPriority = Double.MIN_VALUE;
+    private double getBestPriority(Collection<? extends ITransition> transitions) {
+        int bestPriority;
+        bestPriority = Integer.MIN_VALUE;
         for (ITransition iTransition : transitions) {
-            double priority = ruleInfos.get(iTransition.getTransitionMetaData().rule).getPriority();
+            int priority = sharedObject.priorities.get(iTransition.getTransitionMetaData().rule).intValue();
             if (priority > bestPriority) {
                 bestPriority = priority;
             }
