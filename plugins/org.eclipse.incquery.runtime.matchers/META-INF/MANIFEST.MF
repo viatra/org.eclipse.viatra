@@ -8,6 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.incquery.runtime.matchers.backend,
  org.eclipse.incquery.runtime.matchers.context,
+ org.eclipse.incquery.runtime.matchers.context.common,
  org.eclipse.incquery.runtime.matchers.context.surrogate,
  org.eclipse.incquery.runtime.matchers.planning,
  org.eclipse.incquery.runtime.matchers.planning.helpers,

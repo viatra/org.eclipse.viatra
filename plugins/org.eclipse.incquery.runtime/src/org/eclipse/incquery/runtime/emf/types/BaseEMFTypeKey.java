@@ -10,49 +10,21 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.emf.types;
 
-import org.eclipse.incquery.runtime.matchers.context.IInputKey;
+import org.eclipse.incquery.runtime.matchers.context.common.BaseInputKeyWrapper;
 
 /**
  * Base class for EMF Type keys. 
  * @author Bergmann Gabor
  *
  */
-public abstract class BaseEMFTypeKey<EMFKey> implements IInputKey {
-	protected EMFKey emfKey;
+public abstract class BaseEMFTypeKey<EMFKey> extends BaseInputKeyWrapper<EMFKey> {
 
 	public BaseEMFTypeKey(EMFKey emfKey) {
-		super();
-		this.emfKey = emfKey;
+		super(emfKey);
 	}
 
 	public EMFKey getEmfKey() {
-		return emfKey;
-	}
-
-	public void setEmfKey(EMFKey emfKey) {
-		this.emfKey = emfKey;
-	}
-
-	@Override
-	public int hashCode() {
-		return ((emfKey == null) ? 0 : emfKey.hashCode());
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(this.getClass().equals(obj.getClass())))
-			return false;
-		BaseEMFTypeKey other = (BaseEMFTypeKey) obj;
-		if (emfKey == null) {
-			if (other.emfKey != null)
-				return false;
-		} else if (!emfKey.equals(other.emfKey))
-			return false;
-		return true;
+		return getWrappedKey();
 	}
 	
 	@Override

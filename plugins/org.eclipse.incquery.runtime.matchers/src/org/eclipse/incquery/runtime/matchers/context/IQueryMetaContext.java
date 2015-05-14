@@ -29,6 +29,12 @@ public interface IQueryMetaContext {
 	boolean isEnumerable(IInputKey key);
 	
 	/**
+	 * Returns true iff the set of instance tuples of the given key is immutable.
+	 * <p> If false, the runtime provides notifications upon change.
+	 */
+	boolean isStateless(IInputKey key);
+	
+	/**
 	 * Returns known implications, e.g. edge supertypes, edge opposites, node type constraints, etc.
 	 */
 	Collection<InputKeyImplication> getImplications(IInputKey implyingKey);

@@ -29,12 +29,12 @@ public class EDataTypeInSlotsKey extends BaseEMFTypeKey<EDataType> {
 
 	@Override
 	public String getPrettyPrintableName() {
-		return "(Attribute Slot Values: " + IncQueryRuntimeHelper.prettyPrintEMFType(emfKey) + ")";
+		return "(Attribute Slot Values: " + IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey) + ")";
 	}
 
 	@Override
 	public String getStringID() {
-		return "slotValue#" + IncQueryRuntimeHelper.prettyPrintEMFType(emfKey);
+		return "slotValue#" + IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override

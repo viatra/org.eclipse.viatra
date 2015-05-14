@@ -27,8 +27,8 @@ import org.eclipse.incquery.runtime.emf.EMFQueryMetaContext;
 import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.incquery.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
-import org.eclipse.incquery.runtime.emf.types.JavaTransitiveInstancesKey;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
+import org.eclipse.incquery.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.TypeReferences;
@@ -109,11 +109,14 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         				((EDataTypeInSlotsKey) expectedType).getEmfKey(), 
         				((EDataTypeInSlotsKey) actualType).getEmfKey());
         } else if (expectedType instanceof JavaTransitiveInstancesKey) {
-        	if (actualType instanceof JavaTransitiveInstancesKey)
-        		return 
-        			(((JavaTransitiveInstancesKey) expectedType).getEmfKey()).isAssignableFrom( 
-        				((JavaTransitiveInstancesKey) actualType).getEmfKey()
-        			);
+        	if (actualType instanceof JavaTransitiveInstancesKey) {
+        		final Class<?> expectedClass = ((JavaTransitiveInstancesKey) expectedType).getInstanceClass();
+				final Class<?> actualClass = ((JavaTransitiveInstancesKey) actualType).getInstanceClass();
+				return 
+						expectedClass == null ||
+						actualClass == null ||
+						expectedClass.isAssignableFrom(actualClass);
+        	}
         }
 
         //This means inconsistent type settings that is reported elsewhere
@@ -177,7 +180,9 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         } else if (type instanceof EDataTypeInSlotsKey) {
             return emfTypeProvider.getJvmType(((EDataTypeInSlotsKey) type).getEmfKey(), context);
         } else if (type instanceof JavaTransitiveInstancesKey) {
-            return typeReferences.getTypeForName(((JavaTransitiveInstancesKey) type).getEmfKey(), context);
+            final Class<?> instanceClass = ((JavaTransitiveInstancesKey) type).getInstanceClass();
+            if (instanceClass != null)
+            	return typeReferences.getTypeForName(instanceClass, context);
         }
 
         return typeReferences.getTypeForName(Object.class, context);

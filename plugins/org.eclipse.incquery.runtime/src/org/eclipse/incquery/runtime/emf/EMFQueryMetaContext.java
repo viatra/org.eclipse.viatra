@@ -29,10 +29,10 @@ import org.eclipse.incquery.runtime.emf.types.BaseEMFTypeKey;
 import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.incquery.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
-import org.eclipse.incquery.runtime.emf.types.JavaTransitiveInstancesKey;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.context.InputKeyImplication;
+import org.eclipse.incquery.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 
 /**
  * The singleton meta context information for EMF scopes.
@@ -53,6 +53,15 @@ public enum EMFQueryMetaContext implements IQueryMetaContext {
 			return false;
 		else
 			return true;
+	}
+	
+	@Override
+	public boolean isStateless(IInputKey key) {
+		ensureValidKey(key);
+		if (key instanceof JavaTransitiveInstancesKey) 
+			return true;
+		else
+			return false;
 	}
 
 	@Override
@@ -87,22 +96,24 @@ public enum EMFQueryMetaContext implements IQueryMetaContext {
 				result.add(new InputKeyImplication(implyingKey, implied, Arrays.asList(0)));
 			}
 		} else if (implyingKey instanceof JavaTransitiveInstancesKey) {
-			Class<?> instanceClass = ((JavaTransitiveInstancesKey) implyingKey).getEmfKey();
-			
-			// direct Java superClass
-			Class<?> superclass = instanceClass.getSuperclass();
-			if (superclass != null) {
-				JavaTransitiveInstancesKey impliedSuper = new JavaTransitiveInstancesKey(superclass);
-				result.add(new InputKeyImplication(implyingKey, impliedSuper, Arrays.asList(0)));
-			}
-			
-			// direct Java superInterfaces
-			for (Class<?> superInterface : instanceClass.getInterfaces()) {
-				if (superInterface != null) {
-					JavaTransitiveInstancesKey impliedInterface = new JavaTransitiveInstancesKey(superInterface);
-					result.add(new InputKeyImplication(implyingKey, impliedInterface, Arrays.asList(0)));
+			Class<?> instanceClass = ((JavaTransitiveInstancesKey) implyingKey).getInstanceClass();
+			if (instanceClass != null) { // resolution successful
+				// direct Java superClass
+				Class<?> superclass = instanceClass.getSuperclass();
+				if (superclass != null) {
+					JavaTransitiveInstancesKey impliedSuper = new JavaTransitiveInstancesKey(superclass);
+					result.add(new InputKeyImplication(implyingKey, impliedSuper, Arrays.asList(0)));
+				}
+				
+				// direct Java superInterfaces
+				for (Class<?> superInterface : instanceClass.getInterfaces()) {
+					if (superInterface != null) {
+						JavaTransitiveInstancesKey impliedInterface = new JavaTransitiveInstancesKey(superInterface);
+						result.add(new InputKeyImplication(implyingKey, impliedInterface, Arrays.asList(0)));
+					}
 				}
 			}
+			
 		} else if (implyingKey instanceof EStructuralFeatureInstancesKey) {
 			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) implyingKey).getEmfKey();
 			
@@ -143,7 +154,7 @@ public enum EMFQueryMetaContext implements IQueryMetaContext {
 	}
 
 	public void ensureValidKey(IInputKey key) {
-		if (! (key instanceof BaseEMFTypeKey<?>))
+		if (! (key instanceof BaseEMFTypeKey<?>) && ! (key instanceof JavaTransitiveInstancesKey))
 			illegalInputKey(key);
 	}
 

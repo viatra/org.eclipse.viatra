@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -30,11 +31,11 @@ import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.incquery.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
-import org.eclipse.incquery.runtime.emf.types.JavaTransitiveInstancesKey;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContextListener;
+import org.eclipse.incquery.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
@@ -58,9 +59,12 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     private final Set<EStructuralFeature> indexedFeatures = new HashSet<EStructuralFeature>();
     
     private final EMFQueryMetaContext metaContext = EMFQueryMetaContext.INSTANCE;
+
+	private Logger logger;
 	
-    public EMFQueryRuntimeContext(NavigationHelper baseIndex) {
+    public EMFQueryRuntimeContext(NavigationHelper baseIndex, Logger logger) {
         this.baseIndex = baseIndex;
+        this.logger = logger;
         //this.listener = new BaseIndexListener(iqEngine);
     }
     
@@ -131,8 +135,11 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     public boolean containsTuple(IInputKey key, Tuple seed) {
     	ensureValidKey(key);
     	if (key instanceof JavaTransitiveInstancesKey) {
-    		Class<?> instanceClass = ((JavaTransitiveInstancesKey) key).getEmfKey();
-    		return instanceClass.isInstance(getFromSeed(seed, 0));
+    		Class<?> instanceClass = forceGetInstanceClass((JavaTransitiveInstancesKey) key);
+			if (instanceClass != null)
+				return instanceClass.isInstance(getFromSeed(seed, 0));
+			else
+				return false;
     	} else {
     		ensureIndexed(key);
     		if (key instanceof EClassTransitiveInstancesKey) {
@@ -151,6 +158,17 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     		}
     	}
     }
+
+	private Class<?> forceGetInstanceClass(JavaTransitiveInstancesKey key) {
+		Class<?> instanceClass;
+		try {
+			instanceClass = key.forceGetInstanceClass();
+		} catch (ClassNotFoundException e) {
+			logger.error("Could not load instance class for type constraint " + key.getWrappedKey(), e);
+			instanceClass = null;
+		}
+		return instanceClass;
+	}
     
     @Override
     public Iterable<Tuple> enumerateTuples(IInputKey key, Tuple seed) {
@@ -492,6 +510,9 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     
     @Override
     public void addUpdateListener(IInputKey key, Tuple seed /* TODO ignored */, IQueryRuntimeContextListener listener) {
+		// stateless, so NOP
+    	if (key instanceof JavaTransitiveInstancesKey) return;
+
     	ensureIndexed(key);
     	if (key instanceof EClassTransitiveInstancesKey) {
     		EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
@@ -511,6 +532,9 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     }
     @Override
     public void removeUpdateListener(IInputKey key, Tuple seed, IQueryRuntimeContextListener listener) {
+		// stateless, so NOP
+    	if (key instanceof JavaTransitiveInstancesKey) return;
+
     	ensureIndexed(key);
     	if (key instanceof EClassTransitiveInstancesKey) {
     		EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();

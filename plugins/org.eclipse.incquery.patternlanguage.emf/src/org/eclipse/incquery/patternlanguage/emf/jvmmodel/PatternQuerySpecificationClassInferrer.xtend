@@ -80,7 +80,7 @@ import org.eclipse.incquery.runtime.emf.types.EDataTypeInSlotsKey
 import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
-import org.eclipse.incquery.runtime.emf.types.JavaTransitiveInstancesKey
+import org.eclipse.incquery.runtime.matchers.context.common.JavaTransitiveInstancesKey
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -359,7 +359,7 @@ class PatternQuerySpecificationClassInferrer {
 						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «EDataTypeInSlotsKey»((«EDataType»)getClassifierLiteral("«packageNsUri»", "«literal.name»")));'''
 					}
 					JavaTransitiveInstancesKey : {
-						val literal = key.emfKey
+						val literal = key.wrappedKey
 						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «JavaTransitiveInstancesKey»(«literal».class));'''
 					}
 				}

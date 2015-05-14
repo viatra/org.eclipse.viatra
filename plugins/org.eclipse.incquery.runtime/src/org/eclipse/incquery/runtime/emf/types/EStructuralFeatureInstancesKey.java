@@ -26,7 +26,7 @@ public class EStructuralFeatureInstancesKey extends BaseEMFTypeKey<EStructuralFe
 
 	@Override
 	public String getPrettyPrintableName() {
-		return IncQueryRuntimeHelper.prettyPrintEMFType(emfKey);
+		return IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override

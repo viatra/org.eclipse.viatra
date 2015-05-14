@@ -26,12 +26,12 @@ public class EClassTransitiveInstancesKey extends BaseEMFTypeKey<EClass> {
 
 	@Override
 	public String getPrettyPrintableName() {
-        return IncQueryRuntimeHelper.prettyPrintEMFType(emfKey);
+        return IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override
 	public String getStringID() {
-		return "eClass#"+ IncQueryRuntimeHelper.prettyPrintEMFType(emfKey);
+		return "eClass#"+ IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override

@@ -86,7 +86,7 @@ class EMFEngineContext implements IEngineContext {
        try {
     	   NavigationHelper nh = getNavHelper(false);
            if (runtimeContext == null) 
-        	   runtimeContext = new EMFQueryRuntimeContext(nh);
+        	   runtimeContext = new EMFQueryRuntimeContext(nh, logger);
            
            initializer.initializeWith(/*logger,*/ runtimeContext);
        } finally {
