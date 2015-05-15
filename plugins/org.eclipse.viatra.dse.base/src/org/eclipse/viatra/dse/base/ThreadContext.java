@@ -152,22 +152,19 @@ public class ThreadContext {
 
         } else {
             objectives = new ArrayList<IObjective>();
-            for (IObjective objective : globalContext.getObjectives()) {
-                objectives.add(objective.createNew());
-            }
-
-            globalConstraints = new ArrayList<IGlobalConstraint>();
-            for (IGlobalConstraint globalConstraint : globalContext.getGlobalConstraints()) {
-                globalConstraints.add(globalConstraint);
-            }
 
             IObjective[][] leveledObjectivesToCopy = globalContext.getLeveledObjectives();
             leveledObjectives = new IObjective[leveledObjectivesToCopy.length][];
             for (int i = 0; i < leveledObjectivesToCopy.length; i++) {
                 leveledObjectives[i] = new IObjective[leveledObjectivesToCopy[i].length];
                 for (int j = 0; j < leveledObjectivesToCopy[i].length; j++) {
-                    leveledObjectives[i][j] = leveledObjectivesToCopy[i][j].createNew();
+                    objectives.add(leveledObjectives[i][j] = leveledObjectivesToCopy[i][j].createNew());
                 }
+            }
+
+            globalConstraints = new ArrayList<IGlobalConstraint>();
+            for (IGlobalConstraint globalConstraint : globalContext.getGlobalConstraints()) {
+                globalConstraints.add(globalConstraint.createNew());
             }
 
         }
@@ -205,7 +202,7 @@ public class ThreadContext {
 
         boolean satisifiesHardObjectives = true;
 
-        for (IObjective objective : globalContext.getObjectives()) {
+        for (IObjective objective : objectives) {
             Double fitness = objective.getFitness(this);
             result.put(objective.getName(), fitness);
             if (objective.isHardObjective() && !objective.satisifiesHardObjective(fitness)) {
