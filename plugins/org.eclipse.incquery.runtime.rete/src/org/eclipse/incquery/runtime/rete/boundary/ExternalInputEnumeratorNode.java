@@ -31,7 +31,7 @@ import org.eclipse.incquery.runtime.rete.remote.Address;
  * @author Bergmann Gabor
  *
  */
-public class ExternalInputNode extends StandardNode implements Disconnectable, Receiver, IQueryRuntimeContextListener {
+public class ExternalInputEnumeratorNode extends StandardNode implements Disconnectable, Receiver, IQueryRuntimeContextListener {
 
 	private IQueryRuntimeContext context = null;
 	private IInputKey inputKey;
@@ -41,7 +41,7 @@ public class ExternalInputNode extends StandardNode implements Disconnectable, R
 	private Address<? extends Receiver> myAddress;
 	private boolean parallelExecutionEnabled;
 
-	public ExternalInputNode(ReteContainer reteContainer) {
+	public ExternalInputEnumeratorNode(ReteContainer reteContainer) {
 		super(reteContainer);
 		this.myAddress = Address.of(this);
 		this.network = reteContainer.getNetwork();
@@ -53,7 +53,14 @@ public class ExternalInputNode extends StandardNode implements Disconnectable, R
 		this.globalSeed = globalSeed; 
 		setTag(inputKey);
 		
-		this.context = engine.getRuntimeContext();
+		final IQueryRuntimeContext context = engine.getRuntimeContext();
+		if (!context.getMetaContext().isEnumerable(inputKey))
+			throw new IllegalArgumentException(
+					this.getClass().getSimpleName() + 
+					" only applicable for enumerable input keys; received instead " + 
+					inputKey);
+		
+		this.context = context;
 		this.parallelExecutionEnabled = engine.isParallelExecutionEnabled();
 		
 		engine.addDisconnectable(this);

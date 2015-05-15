@@ -117,5 +117,9 @@
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//SemiJoinRecipe"/>
     <genClasses ecoreClass="recipes.ecore#//AntiJoinRecipe"/>
+    <genClasses ecoreClass="recipes.ecore#//InputFilterRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputFilterRecipe/inputKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputFilterRecipe/keyID"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

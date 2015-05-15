@@ -19,7 +19,8 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
-import org.eclipse.incquery.runtime.rete.boundary.ExternalInputNode;
+import org.eclipse.incquery.runtime.rete.boundary.ExternalInputEnumeratorNode;
+import org.eclipse.incquery.runtime.rete.boundary.ExternalInputStatelessFilterNode;
 import org.eclipse.incquery.runtime.rete.eval.CachedFunctionEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.eval.CachedPredicateEvaluatorNode;
 import org.eclipse.incquery.runtime.rete.index.AggregatorNode;
@@ -38,6 +39,7 @@ import org.eclipse.incquery.runtime.rete.recipes.EvalRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ExpressionDefinition;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.InputFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.Mask;
@@ -118,6 +120,8 @@ class NodeFactory {
 		
 //		if (recipe instanceof ProjectionIndexer) 
 //			return instantiateNode((ProjectionIndexer)recipe);
+		if (recipe instanceof InputFilterRecipe) 
+			return instantiateNode(reteContainer, (InputFilterRecipe)recipe);
 		if (recipe instanceof InequalityFilterRecipe) 
 			return instantiateNode(reteContainer, (InequalityFilterRecipe)recipe);
 		if (recipe instanceof EqualityFilterRecipe) 
@@ -157,9 +161,11 @@ class NodeFactory {
 	// INSTANTIATION for recipe types
 
 	private Supplier instantiateNode(ReteContainer reteContainer, InputRecipe recipe) {
-		return new ExternalInputNode(reteContainer);
+		return new ExternalInputEnumeratorNode(reteContainer);
 	}
-
+	private Supplier instantiateNode(ReteContainer reteContainer, InputFilterRecipe recipe) {
+		return new ExternalInputStatelessFilterNode(reteContainer);
+	}
 //	private Supplier instantiateNode(ReteContainer reteContainer, BinaryInputRecipe recipe) {
 //		return new InputNode(reteContainer, 2, recipe.getTypeKey());
 //	}

@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.index.OnetimeIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.InputFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
@@ -146,12 +147,14 @@ public class NodeProvisioner {
 			
 			// HOOK UP 
 			// (recursion-tolerant due to this delayed order of initialization)
-			ensureParents(recipeTrace);
-			if (recipe instanceof InputRecipe) 
+			if (recipe instanceof InputRecipe) {
 				inputConnector.connectInput((InputRecipe) recipe, result);
-			else
-				connectionFactory.connectToParents(recipeTrace, result);   
-			
+			} else {
+				if (recipe instanceof InputFilterRecipe) 
+					inputConnector.connectInputFilter((InputFilterRecipe) recipe, result);
+				ensureParents(recipeTrace);
+				connectionFactory.connectToParents(recipeTrace, result);   				
+			}
 			return result;
 		}
 	}

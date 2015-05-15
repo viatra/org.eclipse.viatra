@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.Network;
 import org.eclipse.incquery.runtime.rete.network.Node;
+import org.eclipse.incquery.runtime.rete.recipes.InputFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 
@@ -32,7 +33,7 @@ import com.google.common.collect.Table;
 public final class InputConnector {
 	Network network;
 	
-    protected Table<IInputKey, Tuple, Address<ExternalInputNode>> externalInputRoots = HashBasedTable.create(100, 1);
+    protected Table<IInputKey, Tuple, Address<ExternalInputEnumeratorNode>> externalInputRoots = HashBasedTable.create(100, 1);
 	
 //    /*
 //     * arity:1 used as simple entity constraints label is the object representing the type null label means all entities
@@ -70,14 +71,25 @@ public final class InputConnector {
 
 
 	/**
-	 * Connects a given input node to the external input source.
+	 * Connects a given input filter node to the external input source.
+	 */
+	public void connectInputFilter(InputFilterRecipe recipe, Node freshNode) {
+		final ExternalInputStatelessFilterNode inputNode = (ExternalInputStatelessFilterNode)freshNode;
+		
+		IInputKey inputKey = (IInputKey) recipe.getInputKey();
+		inputNode.connectThroughContext(network.getEngine(), inputKey);
+	}
+
+
+	/**
+	 * Connects a given input enumerator node to the external input source.
 	 */
 	public void connectInput(InputRecipe recipe, Node freshNode) {
-		final ExternalInputNode inputNode = (ExternalInputNode)freshNode;
+		final ExternalInputEnumeratorNode inputNode = (ExternalInputEnumeratorNode)freshNode;
 		
 		IInputKey inputKey = (IInputKey) recipe.getInputKey();
 		Tuple seed = nopSeed(inputKey); // no preseeding as of now
-		final Address<ExternalInputNode> freshAddress = Address.of(inputNode);
+		final Address<ExternalInputEnumeratorNode> freshAddress = Address.of(inputNode);
 		externalInputRoots.put(inputKey, seed, freshAddress);
 		inputNode.connectThroughContext(network.getEngine(), inputKey, seed);
 		
@@ -213,16 +225,16 @@ public final class InputConnector {
 //	}
 
     
-    public Collection<Address<ExternalInputNode>> getAllExternalInputNodes() {
+    public Collection<Address<ExternalInputEnumeratorNode>> getAllExternalInputNodes() {
     	return externalInputRoots.values();
     }
-    public Collection<Address<ExternalInputNode>> getAllExternalInputNodesForKey(IInputKey inputKey) {
+    public Collection<Address<ExternalInputEnumeratorNode>> getAllExternalInputNodesForKey(IInputKey inputKey) {
     	return externalInputRoots.row(inputKey).values();
     }
-    public Address<ExternalInputNode> getExternalInputNodeForKeyUnseeded(IInputKey inputKey) {
+    public Address<ExternalInputEnumeratorNode> getExternalInputNodeForKeyUnseeded(IInputKey inputKey) {
     	return externalInputRoots.get(inputKey, null);
     }
-    public Address<ExternalInputNode> getExternalInputNode(IInputKey inputKey, Tuple seed) {
+    public Address<ExternalInputEnumeratorNode> getExternalInputNode(IInputKey inputKey, Tuple seed) {
     	if (seed == null) seed = nopSeed(inputKey);
     	return externalInputRoots.get(inputKey, seed);
     }

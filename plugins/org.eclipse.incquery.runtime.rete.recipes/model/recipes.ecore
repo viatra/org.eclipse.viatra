@@ -309,4 +309,13 @@
       <details key="documentation" value="An anti-join is TODO&#xA;&#xA;See http://en.wikipedia.org/wiki/Relational_algebra"/>
     </eAnnotations>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InputFilterRecipe" eSuperTypes="#//FilterRecipe">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="keyID" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Temporary construct for identifying types over the wire.&#xA;TODO improve type references"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
 </ecore:EPackage>
