@@ -73,6 +73,14 @@ pattern inequalityFilterRecipe(recipe) {
 	InequalityFilterRecipe(recipe);
 }
 
+
+@Item(item = recipe, label = "InputFilter: $recipe.inputKey$")
+@Format(textColor = "#7F004D", color = "#CCCCCC")
+@QueryExplorer(checked = false)
+pattern inputFilterRecipe(recipe) {
+	InputFilterRecipe(recipe);
+}
+
 @Item(item = recipe, label = "InequalityFilter: $recipe.indices$")
 @QueryExplorer(checked = false)
 pattern equalityFilterRecipe(recipe) {
