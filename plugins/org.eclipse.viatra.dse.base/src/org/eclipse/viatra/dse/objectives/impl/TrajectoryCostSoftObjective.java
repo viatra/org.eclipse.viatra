@@ -19,6 +19,7 @@ import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
+import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 import com.google.common.base.Preconditions;
@@ -35,9 +36,12 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
     public static final String DEFAULT_NAME = "TrajectoryCostObjective";
     protected Map<DSETransformationRule<?, ?>, Double> fixCosts;
     protected Map<DSETransformationRule<?, ?>, ActivationFitnessProcessor> activationCostProcessors;
+    protected double trajectoryLengthWeight = 0.0;
+    protected boolean withTrajectoryLengthWeight;
 
     public TrajectoryCostSoftObjective(String name) {
         super(name);
+        comparator = Comparators.LOWER_IS_BETTER;
     }
 
     public TrajectoryCostSoftObjective() {
@@ -63,6 +67,7 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
 
     /**
      * Sets an activation processor for a rule.
+     * 
      * @param rule
      * @param activationCostProcessor
      * @return The actual instance to enable builder pattern like usage.
@@ -76,6 +81,19 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
         }
         Preconditions.checkArgument(!activationCostProcessors.containsKey(rule));
         activationCostProcessors.put(rule, activationCostProcessor);
+        return this;
+    }
+
+    /**
+     * The length of the trajectory multiplied with given parameter will be added to the fitness value.
+     * 
+     * @param trajectoryLengthWeight
+     *            The weight of a transformation rule application.
+     * @return The actual instance to enable builder pattern like usage.
+     */
+    public TrajectoryCostSoftObjective withTrajectoryLengthWeight(double trajectoryLengthWeight) {
+        this.trajectoryLengthWeight = trajectoryLengthWeight;
+        this.withTrajectoryLengthWeight = true;
         return this;
     }
 
@@ -102,6 +120,10 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
                     result += cost;
                 }
             }
+        }
+
+        if (withTrajectoryLengthWeight) {
+            result += trajectory.size() * trajectoryLengthWeight;
         }
 
         return result;
