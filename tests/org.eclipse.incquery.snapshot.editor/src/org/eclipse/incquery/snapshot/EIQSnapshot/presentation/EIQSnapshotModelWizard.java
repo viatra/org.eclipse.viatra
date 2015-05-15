@@ -176,7 +176,7 @@ public class EIQSnapshotModelWizard extends Wizard implements INewWizard {
 		this.workbench = workbench;
 		this.selection = selection;
 		setWindowTitle(EiqsnapshotEditorPlugin.INSTANCE.getString("_UI_Wizard_label"));
-		setDefaultPageImageDescriptor(ExtendedImageRegistry.INSTANCE.getImageDescriptor(EiqsnapshotEditorPlugin.INSTANCE.getImage("full/wizban/NewEIQSnapshot")));
+		setDefaultPageImageDescriptor(ExtendedImageRegistry.INSTANCE.getImageDescriptor(EiqsnapshotEditorPlugin.INSTANCE.getImage("logo2.png")));
 	}
 
 	/**
