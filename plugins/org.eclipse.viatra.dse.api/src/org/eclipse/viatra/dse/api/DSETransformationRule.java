@@ -41,8 +41,6 @@ public class DSETransformationRule<Match extends IPatternMatch, Matcher extends 
     }
     
     private RuleMetaData metaData;
-    private Map<String, Double> costs;
-    private ActivationCostProcessor<Match> activationCostProcessor;
 
     
     public DSETransformationRule(String name, IQuerySpecification<Matcher> querySpec,
@@ -60,36 +58,10 @@ public class DSETransformationRule<Match extends IPatternMatch, Matcher extends 
         this(querySpec.getFullyQualifiedName(), querySpec, action);
     }
 
-    public Map<String, Double> measureCosts(IPatternMatch match) {
-        if (activationCostProcessor != null) {
-            @SuppressWarnings("unchecked")
-            Match typedMatch = (Match) match;
-            return activationCostProcessor.process(typedMatch);
-        } else {
-            return null;
-        }
-    }
-    
     public RuleMetaData getMetaData() {
         return metaData;
     }
 
-    public Map<String, Double> getCosts() {
-        return costs;
-    }
-
-    public void setCosts(Map<String, Double> costs) {
-        this.costs = costs;
-    }
-
-    public ActivationCostProcessor<Match> getActivationCostProcessor() {
-        return activationCostProcessor;
-    }
-
-    public void setActivationCostProcessor(ActivationCostProcessor<Match> activationCostProcessor) {
-        this.activationCostProcessor = activationCostProcessor;
-    }
-    
     @Override
     public int hashCode() {
         return getPrecondition().getFullyQualifiedName().hashCode();

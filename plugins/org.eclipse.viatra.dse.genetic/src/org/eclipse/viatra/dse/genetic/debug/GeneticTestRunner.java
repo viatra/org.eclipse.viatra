@@ -11,6 +11,7 @@
 package org.eclipse.viatra.dse.genetic.debug;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,6 +32,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
+import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.genetic.api.GeneticDesignSpaceExplorer;
 import org.eclipse.viatra.dse.genetic.api.StopCondition;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
@@ -47,6 +49,7 @@ import org.eclipse.viatra.dse.genetic.mutations.AddTransitionByPriorityMutation;
 import org.eclipse.viatra.dse.genetic.mutations.DeleteRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyTransitionByPriorityMutation;
+import org.eclipse.viatra.dse.objectives.IObjective;
 
 /**
  * This abstract class helps to test out genetic algorithms run by the {@link GeneticDesignSpaceExplorer} if inherited.
@@ -78,7 +81,6 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
     // Results
     public static final String SOLUTIONS = "Solutions";
-    public static final String SOFT_CONSTRAINT = "SoftConstraint";
     public static final String AVG = "Avg";
     public static final String NUMBER_OF_CORRECTIONS = "NumberOfCorrections";
     public static final String NUMBER_OF_DUPLICATIONS = "NumberOfDuplications";
@@ -131,17 +133,17 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
     /**
      * Custom {@link GeneticDebugger} can be registered by returning an instance in the implementation.
+     * @param globalContext 
      * 
      * @return An instance of {@link GeneticDebugger}.
      */
-    public abstract GeneticDebugger getGeneticDebugger();
+    public abstract GeneticDebugger getGeneticDebugger(GlobalContext globalContext);
 
     private void addKeysToResultHeader(GeneticDesignSpaceExplorer gdse) {
         resultKeysInOrder = new ArrayList<String>();
         resultKeysInOrder.add(SOLUTIONS);
-        resultKeysInOrder.add(SOFT_CONSTRAINT);
-        for (String key : gdse.getGeneticSharedObject().comparators.keySet()) {
-            resultKeysInOrder.add(AVG + key);
+        for (IObjective objective : gdse.getGlobalContext().getObjectives()) {
+            resultKeysInOrder.add(AVG + objective.getName());
         }
         for (IMutateTrajectory mutator : gdse.getGeneticSharedObject().mutationApplications.keySet()) {
             resultKeysInOrder.add(mutator.getClass().getSimpleName());
@@ -179,9 +181,9 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         if (lastConfigId != result.configId) {
             lastConfigId = result.configId;
 
-            geneticDebugger = getGeneticDebugger();
+            geneticDebugger = getGeneticDebugger(gdse.getGlobalContext());
             if (geneticDebugger == null) {
-                geneticDebugger = new GeneticDebugger(true);
+                geneticDebugger = new GeneticDebugger(true, gdse.getGlobalContext());
             }
             geneticDebugger.setConfigId(result.configId);
 
@@ -311,8 +313,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         GeneticSharedObject gso = gdse.getGeneticSharedObject();
 
         Map<String, Double> avgObjectives = new HashMap<String, Double>();
-        for (String key : gso.comparators.keySet()) {
-            avgObjectives.put(key, 0d);
+        for (IObjective objective : gdse.getGlobalContext().getObjectives()) {
+            avgObjectives.put(objective.getName(), 0d);
         }
         for (InstanceData solution : solutions.keySet()) {
             addMaps(avgObjectives, solution.objectives);
@@ -323,8 +325,6 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         }
 
         resultsRow.add(SOLUTIONS, solutions.size());
-        InstanceData aSolution = solutions.keySet().iterator().next();
-        resultsRow.add(SOFT_CONSTRAINT, aSolution.sumOfConstraintViolationMeauserement);
 
         for (String objective : avgObjectives.keySet()) {
             resultsRow.add(AVG + objective, avgObjectives.get(objective));

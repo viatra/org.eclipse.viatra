@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.genetic.api;
 
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,18 +17,17 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
+import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.core.MainGeneticStrategy;
-import org.eclipse.viatra.dse.genetic.core.SoftConstraint;
 import org.eclipse.viatra.dse.genetic.debug.GeneticDebugger;
-import org.eclipse.viatra.dse.genetic.interfaces.ICalculateModelObjectives;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
-import org.eclipse.viatra.dse.genetic.interfaces.IFitnessCalculator;
 import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.ISelectNextPopulation;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
+import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.DummySolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
@@ -76,20 +74,16 @@ public class GeneticDesignSpaceExplorer {
         configuration.stopConditionNumber = stopConditionNumber;
     }
 
-    public void addSoftConstraint(SoftConstraint softConstraint) {
-        configuration.softConstraints.add(softConstraint);
+    public void addObjective(IObjective objective) {
+        dse.addObjective(objective);
+    }
+
+    public GlobalContext getGlobalContext() {
+        return dse.getGlobalContext();
     }
 
     public void addGlobalConstraint(IGlobalConstraint constraint) {
         dse.addGlobalConstraint(constraint);
-    }
-
-    public void addObjectiveComparator(String objectiveName, Comparator<InstanceData> comparator) {
-        configuration.comparators.put(objectiveName, comparator);
-    }
-
-    public void setModelObjectiveCalculator(ICalculateModelObjectives calculator) {
-        configuration.modelObjectivesCalculator = calculator;
     }
 
     public void setMutationChanceAtCrossover(float baseChance) {
@@ -125,10 +119,6 @@ public class GeneticDesignSpaceExplorer {
 
     public void setSelector(ISelectNextPopulation selector) {
         configuration.selector = selector;
-    }
-
-    public void setFitnessCalculator(IFitnessCalculator fitnessCalculator) {
-        configuration.fitnessCalculator = fitnessCalculator;
     }
 
     public void setNumberOfWorkerThreads(int workerThreads) {

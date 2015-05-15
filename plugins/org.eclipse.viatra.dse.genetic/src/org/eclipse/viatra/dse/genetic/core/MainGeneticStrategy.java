@@ -33,6 +33,7 @@ import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
 import org.eclipse.viatra.dse.objectives.Fitness;
+import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.util.EMFHelper;
 
 public class MainGeneticStrategy implements IStrategy, IStoreChild {
@@ -53,11 +54,13 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
     private Random random = new Random();
 
     private Logger logger = Logger.getLogger(MainGeneticStrategy.class);
-    private GeneticDebugger geneticDebugger = new GeneticDebugger(false);
+    private GeneticDebugger geneticDebugger;
 
     private double actualBestSoftConstraint = Double.MAX_VALUE;
     private int noBetterSolutionForXIterations = 0;
     private ThreadContext context;
+    private List<IObjective> objectives;
+    private GeneticSoftConstraintHardObjective genObjective;
 
     @Override
     public void init(ThreadContext context) {
@@ -77,6 +80,13 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
         } else {
             throw new DSEException("The shared object is not the type of GeneticSharedObject.");
         }
+        
+        IObjective[][] leveledObjectives = context.getLeveledObjectives();
+        IObjective objective = leveledObjectives[0][0];
+        if (!(objective instanceof GeneticSoftConstraintHardObjective) || leveledObjectives[0].length != 1) {
+            throw new DSEException("The only objective on the first level should be the GeneticSoftConstraintHardObjective.");
+        }
+        
 
         DSEThreadPool pool = gc.getThreadPool();
         int workerThreads = sharedObject.workerThreads;
@@ -90,6 +100,10 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
         sharedObject.initialPopulationSelector.setPopulationSize(sharedObject.sizeOfPopulation);
         sharedObject.initialPopulationSelector.init(context);
 
+        objectives = context.getGlobalContext().getObjectives();
+        
+        genObjective = (GeneticSoftConstraintHardObjective) context.getLeveledObjectives()[0][0];
+        
         logger.debug("MainGeneticStratgey is inited");
     }
 
@@ -133,10 +147,10 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
                     break;
                 }
 
-                // Selection
                 parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
-                        sharedObject.comparators, sharedObject.sizeOfPopulation,
-                        isLastPopulation && !geneticDebugger.isDebug());
+                        objectives, sharedObject.sizeOfPopulation,
+                        isLastPopulation && !geneticDebugger.isDebug(),
+                        context.getObjectiveComparatorHelper());
 
                 geneticDebugger.debug(parentPopulation);
 
@@ -282,9 +296,9 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
                                             .getResultsIn();
                                     if (id1resultState.equals(id2ResultState)
                                             && id1.sumOfConstraintViolationMeauserement == id2.sumOfConstraintViolationMeauserement) {
-                                        for (String objective : sharedObject.comparators.keySet()) {
-                                            Double d1 = id1.getFitnessValue(objective);
-                                            Double d2 = id2.getFitnessValue(objective);
+                                        for (IObjective objective : objectives) {
+                                            Double d1 = id1.getFitnessValue(objective.getName());
+                                            Double d2 = id2.getFitnessValue(objective.getName());
                                             if (Math.abs(d1 - d2) >= 0.000001) {
                                                 isDuplication = false;
                                             }
@@ -332,7 +346,7 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
             if (!gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING)) {
                 logger.debug("Interrupted");
                 parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
-                        sharedObject.comparators, sharedObject.sizeOfPopulation, !geneticDebugger.isDebug());
+                        objectives, sharedObject.sizeOfPopulation, !geneticDebugger.isDebug(), context.getObjectiveComparatorHelper());
                 geneticDebugger.debug(parentPopulation);
                 sharedObject.addInstanceToBestSolutions.set(true);
                 for (InstanceData instanceData : parentPopulation) {
@@ -384,7 +398,10 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
         ArrayList<ITransition> trajectory = new ArrayList<ITransition>(dsm.getTrajectoryInfo()
                 .getTransitionTrajectory());
         InstanceData instance = new InstanceData(trajectory);
-        sharedObject.fitnessCalculator.calculateFitness(sharedObject, context, instance);
+        instance.objectives = context.calculateFitness();
+        for (int i = 0; i<genObjective.getNames().size(); i++) {
+            instance.violations.put(genObjective.getNames().get(i), genObjective.getMatches().get(i));
+        }
         parentPopulation.add(instance);
     }
 

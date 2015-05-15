@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.dse.base.GlobalContext;
+import org.eclipse.viatra.dse.genetic.core.GeneticSoftConstraintHardObjective;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 
 import com.google.common.base.Stopwatch;
@@ -37,9 +39,11 @@ public class GeneticDebugger {
     private ArrayList<String> orderedSoftConstraints;
     private String csvName;
     private Stopwatch stopwatch;
+    private GlobalContext gc;
 
-    public GeneticDebugger(boolean isDebugEnabled) {
+    public GeneticDebugger(boolean isDebugEnabled, GlobalContext gc) {
         this.debug = isDebugEnabled;
+        this.gc = gc;
         stopwatch = Stopwatch.createStarted();
     }
 
@@ -83,8 +87,6 @@ public class GeneticDebugger {
                 sb.append(COMA);
                 sb.append(instanceData.trajectory.size());
                 sb.append(COMA);
-                sb.append(instanceData.sumOfConstraintViolationMeauserement);
-                sb.append(COMA);
 
                 for (String key : orderedSoftConstraints) {
                     sb.append(instanceData.violations.get(key));
@@ -120,12 +122,12 @@ public class GeneticDebugger {
 
     private void printHeader(List<InstanceData> populationToDebug, PrintWriter out) {
         StringBuilder sb = new StringBuilder();
-        sb.append("ConfigId,RunId,Iteration,RunTime[ms],Length,SoftConstraints,");
+        sb.append("ConfigId,RunId,Iteration,RunTime[ms],Length,");
 
         InstanceData individual = populationToDebug.get(0);
 
-        Set<String> softConstraints = individual.violations.keySet();
-        orderedSoftConstraints = new ArrayList<String>(softConstraints);
+        GeneticSoftConstraintHardObjective genObjective = (GeneticSoftConstraintHardObjective) gc.getLeveledObjectives()[0][0];
+        orderedSoftConstraints = new ArrayList<String>(genObjective.getNames());
         Collections.sort(orderedSoftConstraints);
         for (String softConstraint : orderedSoftConstraints) {
             sb.append(softConstraint);

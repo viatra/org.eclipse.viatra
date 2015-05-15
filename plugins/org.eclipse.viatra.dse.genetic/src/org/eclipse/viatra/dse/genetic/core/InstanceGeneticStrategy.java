@@ -41,6 +41,7 @@ public class InstanceGeneticStrategy implements IStrategy {
 
     private boolean correctionWasNeeded = false;
     private ThreadContext context;
+    private GeneticSoftConstraintHardObjective genObjective;
 
     @Override
     public void init(ThreadContext context) {
@@ -61,6 +62,8 @@ public class InstanceGeneticStrategy implements IStrategy {
         } else {
             throw new DSEException("The shared object is not the type of GeneticSharedObject.");
         }
+        
+        genObjective = (GeneticSoftConstraintHardObjective) context.getLeveledObjectives()[0][0];
 
     }
 
@@ -148,7 +151,11 @@ public class InstanceGeneticStrategy implements IStrategy {
             }
             if (state == WorkerState.FITNESS_CALCULATION) {
 
-                sharedObject.fitnessCalculator.calculateFitness(sharedObject, context, actInstanceData);
+                Fitness fitness = context.calculateFitness();
+                actInstanceData.objectives = fitness;
+                for (int i = 0; i<genObjective.getNames().size(); i++) {
+                    actInstanceData.violations.put(genObjective.getNames().get(i), genObjective.getMatches().get(i));
+                }
 
                 if (sharedObject.addInstanceToBestSolutions.get()) {
                     sharedObject.bestSolutions.put(actInstanceData, dsm.createSolutionTrajectroy());

@@ -344,7 +344,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
                 throw new DSEException("spec is null");
             }
 
-            Map<String, Double> measureCosts = specification.measureCosts(match);
+            Map<String, Double> measureCosts = null;
 
             if (activationFitnessProcessors != null && activationFitnessProcessors.containsKey(specification)) {
                 ActivationFitnessProcessor processor = activationFitnessProcessors.get(specification);

@@ -11,16 +11,16 @@
 package org.eclipse.viatra.dse.genetic.interfaces;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
+import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 
 public interface ISelectNextPopulation {
 
     List<InstanceData> selectNextPopulation(Collection<InstanceData> currentPopulation,
-            Map<String, Comparator<InstanceData>> comparators, int numberOfSelectedInstances, boolean finalSelection);
+            List<IObjective> objectives, int numberOfSelectedInstances, boolean finalSelection, ObjectiveComparatorHelper helper);
 
     boolean filtersDuplicates();
 

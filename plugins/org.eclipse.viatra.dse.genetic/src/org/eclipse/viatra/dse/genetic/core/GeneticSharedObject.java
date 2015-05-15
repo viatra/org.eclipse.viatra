@@ -11,7 +11,6 @@
 package org.eclipse.viatra.dse.genetic.core;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +24,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.genetic.api.StopCondition;
-import org.eclipse.viatra.dse.genetic.fintesscalculators.SimpleFitnessCalculator;
-import org.eclipse.viatra.dse.genetic.interfaces.ICalculateModelObjectives;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
-import org.eclipse.viatra.dse.genetic.interfaces.IFitnessCalculator;
 import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.ISelectNextPopulation;
@@ -45,14 +41,10 @@ public class GeneticSharedObject {
     public StopCondition stopCondition = StopCondition.ITERATIONS;
     public int stopConditionNumber;
 
-    public List<SoftConstraint> softConstraints = new ArrayList<SoftConstraint>();
-    public Map<String, Comparator<InstanceData>> comparators = new HashMap<String, Comparator<InstanceData>>();
     public List<IMutateTrajectory> mutatiors = new ArrayList<IMutateTrajectory>();
     public List<ICrossoverTrajectories> crossovers = new ArrayList<ICrossoverTrajectories>();
     public ISelectNextPopulation selector = new NonDominatedAndCrowdingDistanceSelector();
-    public ICalculateModelObjectives modelObjectivesCalculator;
     public IInitialPopulationSelector initialPopulationSelector;
-    public IFitnessCalculator fitnessCalculator = new SimpleFitnessCalculator();
     
     public Map<DSETransformationRule<?, ?>, Integer> priorities = new HashMap<DSETransformationRule<?, ?>, Integer>();
 

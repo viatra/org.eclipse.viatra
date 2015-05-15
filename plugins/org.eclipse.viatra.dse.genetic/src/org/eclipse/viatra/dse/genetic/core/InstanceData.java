@@ -11,6 +11,7 @@
 package org.eclipse.viatra.dse.genetic.core;
 
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class InstanceData {
     public volatile double crowdingDistance;
 
     public volatile double sumOfConstraintViolationMeauserement = 0;
-    public volatile Map<String, Integer> violations;
+    public volatile Map<String, Integer> violations = new HashMap<String, Integer>();
     public volatile Map<String, Double> objectives;
 
     public int survive = 0;

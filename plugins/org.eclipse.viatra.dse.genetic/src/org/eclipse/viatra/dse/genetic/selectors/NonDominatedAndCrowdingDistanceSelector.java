@@ -16,12 +16,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.interfaces.ISelectNextPopulation;
+import org.eclipse.viatra.dse.objectives.Fitness;
+import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 
 public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopulation {
 
@@ -29,11 +31,11 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
 
     @Override
     public List<InstanceData> selectNextPopulation(Collection<InstanceData> currentPopulation,
-            Map<String, Comparator<InstanceData>> comparators, int numberOfSelectedInstances, boolean finalSelection) {
+            List<IObjective> objectives, int numberOfSelectedInstances, boolean finalSelection, ObjectiveComparatorHelper helper) {
 
         List<InstanceData> newPopulation = new LinkedList<InstanceData>();
 
-        LinkedList<LinkedList<InstanceData>> fronts = nonDominatedSort(currentPopulation, comparators);
+        LinkedList<LinkedList<InstanceData>> fronts = nonDominatedSort(currentPopulation, objectives, helper);
 
         if (logger.getLevel() != null && logger.getLevel().equals(Level.DEBUG)) {
             StringBuilder sb = new StringBuilder();
@@ -59,7 +61,7 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
                 }
                 // Selection by crowding distance
                 else {
-                    crowdingDistanceAssignment(front, comparators);
+                    crowdingDistanceAssignment(front, objectives);
                     InstanceData[] sortedFront = sortByCrowdingDistance(front);
                     int size = newPopulation.size();
                     for (int i = 0; i < numberOfSelectedInstances - size; ++i) {
@@ -87,7 +89,7 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
      * @return domination fronts in ascending order by their rank
      */
     public static LinkedList<LinkedList<InstanceData>> nonDominatedSort(Collection<InstanceData> population,
-            Map<String, Comparator<InstanceData>> comparators) {
+            List<IObjective> objectives, ObjectiveComparatorHelper helper) {
 
         LinkedList<LinkedList<InstanceData>> dominationFronts = new LinkedList<LinkedList<InstanceData>>();
 
@@ -101,7 +103,7 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
             dominatingInstances.put(InstanceDataP, 0);
 
             for (InstanceData InstanceDataQ : population) {
-                int dominates = dominates(InstanceDataP, InstanceDataQ, comparators);
+                int dominates = dominates(InstanceDataP, InstanceDataQ, helper);
                 if (dominates > 0) {
                     dominatedInstances.get(InstanceDataP).add(InstanceDataQ);
                 } else if (dominates < 0) {
@@ -150,40 +152,12 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
      * 
      * @param i1
      * @param i2
-     * @param comparators
-     *            The objective comparators.
+     * @param objectives
+     *            The objective comparator helper.
      * @return -1 if i1 is dominated by i2 </br> +1 if i1 dominates i2 </br> 0 if they aren't dominated by each other
      */
-    public static int dominates(InstanceData i1, InstanceData i2, Map<String, Comparator<InstanceData>> comparators) {
-
-        int sgn = Double.compare(i1.sumOfConstraintViolationMeauserement, i2.sumOfConstraintViolationMeauserement);
-        if (sgn != 0) {
-            return -1 * sgn;
-        }
-
-        boolean i1HasBetterFitness = false;
-        boolean i2HasBetterFitness = false;
-
-        for (Comparator<InstanceData> comparator : comparators.values()) {
-            sgn = comparator.compare(i1, i2);
-            if (sgn < 0) {
-                i2HasBetterFitness = true;
-            }
-            if (sgn > 0) {
-                i1HasBetterFitness = true;
-            }
-            if (i1HasBetterFitness && i2HasBetterFitness) {
-                return 0;
-            }
-        }
-
-        if (i2HasBetterFitness && !i1HasBetterFitness) {
-            return -1;
-        } else if (!i2HasBetterFitness && i1HasBetterFitness) {
-            return 1;
-        } else {
-            return 0;
-        }
+    public static int dominates(InstanceData i1, InstanceData i2, ObjectiveComparatorHelper helper) {
+        return helper.compare((Fitness) i1.objectives, (Fitness) i2.objectives);
     }
 
     /**
@@ -193,19 +167,27 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
      *            InstanceDatas //all the specified InstanceDatas must belong to the same front
      */
     public static void crowdingDistanceAssignment(List<InstanceData> front,
-            Map<String, Comparator<InstanceData>> comparators) {
+            List<IObjective> objectives) {
 
         for (InstanceData InstanceData : front) {
             // initialize crowding distance
             InstanceData.crowdingDistance = 0;
         }
 
-        for (String m : comparators.keySet()) {
+        for (final IObjective objective : objectives) {
 
+            final String m = objective.getName();
+            
             InstanceData[] sortedFront = front.toArray(new InstanceData[0]);
 
             // sort using m-th objective value
-            Arrays.sort(sortedFront, comparators.get(m));
+            Arrays.sort(sortedFront, new Comparator<InstanceData>() {
+                @Override
+                public int compare(InstanceData o1, InstanceData o2) {
+                    objective.getComparator().compare(o1.getFitnessValue(m), o2.getFitnessValue(m));
+                    return 0;
+                }
+            });
 
             // so that boundary points are always selected
             sortedFront[0].crowdingDistance = Double.POSITIVE_INFINITY;
