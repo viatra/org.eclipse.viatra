@@ -33,7 +33,7 @@ public abstract class BaseTestRunner {
     private static final String defaultResultFileName = "results";
     private static final String configFileName = "config";
 
-    private String resultsFileName;
+    protected String resultsFileName;
 
     public static class BaseResult {
 
@@ -193,8 +193,8 @@ public abstract class BaseTestRunner {
     }
 
     private void resolveResultsFileName() {
-        int i = 0;
-        resultsFileName = defaultResultFileName + CSV;
+        int i = 1;
+        resultsFileName = defaultResultFileName + i + CSV;
         File f;
         do {
             f = new File(resultsFileName);

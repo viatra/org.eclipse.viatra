@@ -197,7 +197,12 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
             if (configRow.isKeyPresent("ConfigName")) {
                 String configName = configRow.getValueAsString("ConfigName");
-                geneticDebugger.setCsvName("results_" + configName + ".csv");
+                String folderName = super.resultsFileName.substring(0, resultsFileName.indexOf('.'));
+                File dir = new File(folderName);
+                if (!dir.exists()) {
+                    dir.mkdir();
+                }
+                geneticDebugger.setCsvName(folderName + File.separator + configName + ".csv");
             } else {
                 geneticDebugger.setCsvName("results_"
                         + Integer.toString(result.configId) + "_"
