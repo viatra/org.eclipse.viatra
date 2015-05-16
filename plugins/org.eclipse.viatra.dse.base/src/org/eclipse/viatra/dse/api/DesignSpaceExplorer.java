@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EModelElement;
@@ -114,9 +115,9 @@ public class DesignSpaceExplorer {
      * </p>
      * 
      * <p>
-     * By default the state coder used is the generic (not meta-model specific) {@link GraphHash}. You can provide
-     * your custom state coder by implementing the {@link IStateCoderFactory} and {@link IStateCoder}
-     * interfaces, and passing the former to the {@link #setStateCoderFactory(IStateCoderFactory)} method.
+     * By default the state coder used is the generic (not meta-model specific) {@link GraphHash}. You can provide your
+     * custom state coder by implementing the {@link IStateCoderFactory} and {@link IStateCoder} interfaces, and passing
+     * the former to the {@link #setStateCoderFactory(IStateCoderFactory)} method.
      * 
      */
     public DesignSpaceExplorer() {
@@ -322,9 +323,10 @@ public class DesignSpaceExplorer {
      *            The strategy of the exploration.
      * @param timeout
      *            The number of milliseconds before the exploration is forced to stop.
+     * @return Returns true if the exploration stopped by the timeout.
      */
-    public void startExplorationWithTimeout(IStrategy strategy, long timeout) {
-        startExploration(strategy, true, timeout);
+    public boolean startExplorationWithTimeout(IStrategy strategy, long timeout) {
+        return startExploration(strategy, true, timeout);
     }
 
     /**
@@ -335,9 +337,10 @@ public class DesignSpaceExplorer {
      *            The strategy of the exploration.
      * @param timeout
      *            The number of milliseconds before the exploration is forced to stop.
+     * @return Returns true if the exploration stopped by the timeout.
      */
-    public void startExplorationAsyncWithTimeout(IStrategy strategy, long timeout) {
-        startExploration(strategy, false, timeout);
+    public boolean startExplorationAsyncWithTimeout(IStrategy strategy, long timeout) {
+        return startExploration(strategy, false, timeout);
     }
 
     /**
@@ -349,14 +352,16 @@ public class DesignSpaceExplorer {
      * @param strategy
      *            The strategy of the exploration.
      * @param waitForTermination
-     *            True if the method must wait for the engine to stop.
+     *            True if the method must wait for the engine to stop, i.e. whether to start synchronously.
      * @param timeout
      *            The number of milliseconds before the exploration is forced to stop.
+     * @return Returns true if the exploration stopped by the timeout.
      */
-    public void startExploration(IStrategy strategy, boolean waitForTermination, final long timeout) {
+    public boolean startExploration(IStrategy strategy, boolean waitForTermination, final long timeout) {
         initExploration(strategy);
 
         Timer timer = new Timer();
+        final AtomicBoolean wasTimeout = new AtomicBoolean(false);
 
         if (timeout > 0) {
             TimerTask timerTask = new TimerTask() {
@@ -364,6 +369,7 @@ public class DesignSpaceExplorer {
                 public void run() {
                     logger.debug("Timeout, stopping threads...");
                     globalContext.stopAllThreads();
+                    wasTimeout.set(true);
                 }
             };
             timer.schedule(timerTask, timeout);
@@ -378,13 +384,15 @@ public class DesignSpaceExplorer {
 
                 if (globalContext.isDone()) {
                     timer.cancel();
-                    logger.debug("DesignSpaceExplorer finished.");
-                    return;
+                    logger.debug("Design space exploration has finished.");
+                    return wasTimeout.get();
                 }
             } while (true);
         } else {
-            logger.debug("DesignSpaceExplorer working in detached mode.");
+            logger.debug("Design space exploration started asynchronously.");
         }
+
+        return wasTimeout.get();
 
     }
 
@@ -405,7 +413,8 @@ public class DesignSpaceExplorer {
 
             if (guidance.getOccuranceVectorResolver() != null) {
                 List<EModelElement> classesAndReferences = EMFHelper.getClassesAndReferences(metaModelPackages);
-                Map<EModelElement, Integer> initialMarking = Guidance.getInitialMarking(modelRoot, classesAndReferences);
+                Map<EModelElement, Integer> initialMarking = Guidance
+                        .getInitialMarking(modelRoot, classesAndReferences);
                 guidance.resolveOccurrenceVector(classesAndReferences, initialMarking, predicates);
             }
         }
@@ -521,7 +530,7 @@ public class DesignSpaceExplorer {
         }
         return sb.toString();
     }
-    
+
     /**
      * 
      * @deprecated use toStringSolutions instead

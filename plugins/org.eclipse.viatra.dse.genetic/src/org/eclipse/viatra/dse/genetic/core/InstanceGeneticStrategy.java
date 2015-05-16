@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.viatra.dse.api.DSEException;
+import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
@@ -22,6 +23,7 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
+import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 
 public class InstanceGeneticStrategy implements IStrategy {
 
@@ -42,6 +44,7 @@ public class InstanceGeneticStrategy implements IStrategy {
     private boolean correctionWasNeeded = false;
     private ThreadContext context;
     private GeneticSoftConstraintHardObjective genObjective;
+    private ISolutionStore solutionStore;
 
     @Override
     public void init(ThreadContext context) {
@@ -64,6 +67,8 @@ public class InstanceGeneticStrategy implements IStrategy {
         }
         
         genObjective = (GeneticSoftConstraintHardObjective) context.getLeveledObjectives()[0][0];
+        
+        solutionStore = context.getGlobalContext().getSolutionStore();
 
     }
 
@@ -158,7 +163,9 @@ public class InstanceGeneticStrategy implements IStrategy {
                 }
 
                 if (sharedObject.addInstanceToBestSolutions.get()) {
-                    sharedObject.bestSolutions.put(actInstanceData, dsm.createSolutionTrajectroy());
+                    SolutionTrajectory solutionTrajectory = dsm.createSolutionTrajectroy();
+                    sharedObject.bestSolutions.put(actInstanceData, solutionTrajectory);
+                    solutionStore.newSolution(context);
                     state = WorkerState.NEXT_INSTANCE;
                 } else {
                     sharedObject.childPopulation.add(actInstanceData);

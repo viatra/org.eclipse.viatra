@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
+import org.eclipse.viatra.dse.genetic.api.GeneticStrategyBuilder;
 import org.eclipse.viatra.dse.genetic.api.StopCondition;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
@@ -47,6 +48,9 @@ public class GeneticSharedObject {
     public IInitialPopulationSelector initialPopulationSelector;
     
     public Map<DSETransformationRule<?, ?>, Integer> priorities = new HashMap<DSETransformationRule<?, ?>, Integer>();
+
+    public MainGeneticStrategy mainStrategy;
+    public GeneticStrategyBuilder geneticStrategyBuilder;
 
     // Basic information
     public EObject initialModel;

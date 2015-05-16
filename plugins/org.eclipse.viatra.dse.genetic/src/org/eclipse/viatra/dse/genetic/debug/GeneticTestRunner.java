@@ -30,10 +30,11 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
+import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.base.GlobalContext;
-import org.eclipse.viatra.dse.genetic.api.GeneticDesignSpaceExplorer;
+import org.eclipse.viatra.dse.genetic.api.GeneticStrategyBuilder;
 import org.eclipse.viatra.dse.genetic.api.StopCondition;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
@@ -50,6 +51,7 @@ import org.eclipse.viatra.dse.genetic.mutations.DeleteRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyTransitionByPriorityMutation;
 import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.dse.solutionstore.StrategyDependentSolutionStore;
 
 /**
  * This abstract class helps to test out genetic algorithms run by the {@link GeneticDesignSpaceExplorer} if inherited.
@@ -107,7 +109,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
      * @return The configured {@link GeneticDesignSpaceExplorer}.
      * @throws IncQueryException
      */
-    public abstract GeneticDesignSpaceExplorer createGdse(Row configRow) throws IncQueryException;
+    public abstract void configDSE(Row configRow, DesignSpaceExplorer dse, GeneticStrategyBuilder builder) throws IncQueryException;
 
     /**
      * If needed, an XMI serializer can be registered here, for loading the test models.
@@ -139,16 +141,16 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
      */
     public abstract GeneticDebugger getGeneticDebugger(GlobalContext globalContext);
 
-    private void addKeysToResultHeader(GeneticDesignSpaceExplorer gdse) {
+    private void addKeysToResultHeader(GeneticSharedObject gso, DesignSpaceExplorer dse) {
         resultKeysInOrder = new ArrayList<String>();
         resultKeysInOrder.add(SOLUTIONS);
-        for (IObjective objective : gdse.getGlobalContext().getObjectives()) {
+        for (IObjective objective : dse.getGlobalContext().getObjectives()) {
             resultKeysInOrder.add(AVG + objective.getName());
         }
-        for (IMutateTrajectory mutator : gdse.getGeneticSharedObject().mutationApplications.keySet()) {
+        for (IMutateTrajectory mutator : gso.mutationApplications.keySet()) {
             resultKeysInOrder.add(mutator.getClass().getSimpleName());
         }
-        for (ICrossoverTrajectories crossover : gdse.getGeneticSharedObject().crossoverApplications.keySet()) {
+        for (ICrossoverTrajectories crossover : gso.crossoverApplications.keySet()) {
             resultKeysInOrder.add(crossover.getClass().getSimpleName());
         }
         resultKeysInOrder.add(NUMBER_OF_DUPLICATIONS);
@@ -176,14 +178,21 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
     @Override
     public String runTestWithConfig(Row configRow, BaseResult result) throws Exception {
 
-        GeneticDesignSpaceExplorer gdse = createGdse(configRow);
+        
+        DesignSpaceExplorer dse = new DesignSpaceExplorer();
+        GeneticStrategyBuilder builder = new GeneticStrategyBuilder();
+        GeneticSharedObject gso = builder.getSharedObject();
+        
+        dse.setSolutionStore(new StrategyDependentSolutionStore());
+        
+        configDSE(configRow, dse, builder);
 
         if (lastConfigId != result.configId) {
             lastConfigId = result.configId;
 
-            geneticDebugger = getGeneticDebugger(gdse.getGlobalContext());
+            geneticDebugger = getGeneticDebugger(dse.getGlobalContext());
             if (geneticDebugger == null) {
-                geneticDebugger = new GeneticDebugger(true, gdse.getGlobalContext());
+                geneticDebugger = new GeneticDebugger(true, dse.getGlobalContext());
             }
             geneticDebugger.setConfigId(result.configId);
 
@@ -215,7 +224,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         }
 
         geneticDebugger.setRunId(result.runId);
-        gdse.setDebugger(geneticDebugger);
+        builder.setDebugger(geneticDebugger);
 
         registerXMISerailizer();
 
@@ -223,26 +232,26 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         Resource resource = resSet.getResource(URI.createURI(configRow.getValueAsString(MODEL_PATH)), true);
         EObject root = resource.getContents().get(0);
 
-        gdse.setStartingModel(root);
+        dse.setInitialModel(root);
 
         float mutationChance = configRow.getValueAsFloat(MUTATION_RATE);
         float mutationMultiplier = configRow.getValueAsFloat(ADAPTIVE_MUTATION_MULTIPLIER);
-        gdse.setMutationChanceAtCrossover(mutationChance, mutationMultiplier);
+        builder.setMutationChanceAtCrossover(mutationChance, mutationMultiplier);
 
         String valueAsString = configRow.getValueAsString(STOP_CONDITION);
         StopCondition stopCondition = StopCondition.valueOf(valueAsString);
         int stopConditionNumber = configRow.getValueAsInteger(STOP_CONDITION_NUMBER);
-        gdse.setStopCondition(stopCondition, stopConditionNumber);
+        builder.setStopCondition(stopCondition, stopConditionNumber);
 
         int sizeOfPopulation = configRow.getValueAsInteger(POPULATION_SIZE);
-        gdse.setSizeOfPopulation(sizeOfPopulation);
+        builder.setSizeOfPopulation(sizeOfPopulation);
 
         String initialSelector = configRow.getValueAsString(INITIAL_SELECTOR);
         float initialSelectionRate = configRow.getValueAsFloat(INITIAL_SELECTION_RATE);
         if ("BFS".equals(initialSelector)) {
-            gdse.setInitialPopulationSelector(new BFSSelector(initialSelectionRate));
+            builder.setInitialPopulationSelector(new BFSSelector(initialSelectionRate));
         } else if ("Priority".equals(initialSelector)) {
-            gdse.setInitialPopulationSelector(new FixedPrioritySelector(goals));
+            builder.setInitialPopulationSelector(new FixedPrioritySelector(goals));
         } else {
             throw new GeneticConfigurationException("No such initial selector: " + initialSelector);
         }
@@ -250,37 +259,37 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         int cutAndSplice = configRow.getValueAsInteger(CUT_AND_SPLICE_CROSSOVER);
         int singlePoint = configRow.getValueAsInteger(SINGLE_POINT_CROSSOVER);
         int permutation = configRow.getValueAsInteger(PERMUTATION_CROSSOVER);
-        gdse.addCrossover(new CutAndSpliceCrossover(), cutAndSplice);
-        gdse.addCrossover(new OnePointCrossover(), singlePoint);
-        gdse.addCrossover(new PermutationEncodingCrossover(), permutation);
+        builder.addCrossover(new CutAndSpliceCrossover(), cutAndSplice);
+        builder.addCrossover(new OnePointCrossover(), singlePoint);
+        builder.addCrossover(new PermutationEncodingCrossover(), permutation);
 
         int add = configRow.getValueAsInteger(ADD_MUTATION);
         int addByPriority = configRow.getValueAsInteger(ADD_BY_PRIORITY_MUTATION);
         int delete = configRow.getValueAsInteger(DELETE_MUTATION);
         int modify = configRow.getValueAsInteger(MODIFY_MUTATION);
         int modifyByPriority = configRow.getValueAsInteger(MODIFY_BY_PRIORITY_MUTATION);
-        gdse.addMutatitor(new AddRandomTransitionMutation(), add);
-        gdse.addMutatitor(new AddTransitionByPriorityMutation(), addByPriority);
-        gdse.addMutatitor(new DeleteRandomTransitionMutation(), delete);
-        gdse.addMutatitor(new ModifyRandomTransitionMutation(), modify);
-        gdse.addMutatitor(new ModifyTransitionByPriorityMutation(), modifyByPriority);
+        builder.addMutatitor(new AddRandomTransitionMutation(), add);
+        builder.addMutatitor(new AddTransitionByPriorityMutation(), addByPriority);
+        builder.addMutatitor(new DeleteRandomTransitionMutation(), delete);
+        builder.addMutatitor(new ModifyRandomTransitionMutation(), modify);
+        builder.addMutatitor(new ModifyTransitionByPriorityMutation(), modifyByPriority);
 
         long timeout = configRow.getValueAsLong(TIMEOUT);
 
         if (isFirstRun) {
-            addKeysToResultHeader(gdse);
+            addKeysToResultHeader(gso, dse);
             isFirstRun = false;
         }
 
         long start = System.nanoTime();
-        boolean wasTimeout = gdse.startExploration(timeout * 1000);
+        boolean wasTimeout = dse.startExplorationWithTimeout(builder.getStrategy(), timeout * 1000);;
         long end = System.nanoTime();
 
         result.runTime = (end - start) / 1000000000d;
 
         Row resultsRow = new Row(resultKeysInOrder);
 
-        Collection<Throwable> exceptions = gdse.getDseEngine().getGlobalContext().getExceptions();
+        Collection<Throwable> exceptions = dse.getGlobalContext().getExceptions();
         if (!exceptions.isEmpty()) {
             result.report = "Exception happend. See " + EXCEPTIONS_FILE + " for details.";
             PrintWriter out = null;
@@ -305,7 +314,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             result.report = "Timeout";
         }
 
-        Map<InstanceData, SolutionTrajectory> solutions = gdse.getSolutions();
+        Map<InstanceData, SolutionTrajectory> solutions = builder.getSolutions();
 
         if (solutions.isEmpty()) {
             if (!exceptions.isEmpty()) {
@@ -315,10 +324,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             return "No Solution found its a bug";
         }
 
-        GeneticSharedObject gso = gdse.getGeneticSharedObject();
-
         Map<String, Double> avgObjectives = new HashMap<String, Double>();
-        for (IObjective objective : gdse.getGlobalContext().getObjectives()) {
+        for (IObjective objective : dse.getGlobalContext().getObjectives()) {
             avgObjectives.put(objective.getName(), 0d);
         }
         for (InstanceData solution : solutions.keySet()) {

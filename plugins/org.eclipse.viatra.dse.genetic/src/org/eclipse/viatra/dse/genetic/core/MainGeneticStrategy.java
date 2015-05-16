@@ -36,6 +36,8 @@ import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.util.EMFHelper;
 
+import com.google.common.base.Preconditions;
+
 public class MainGeneticStrategy implements IStrategy, IStoreChild {
 
     enum GeneticStrategyState {
@@ -62,23 +64,22 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
     private List<IObjective> objectives;
     private GeneticSoftConstraintHardObjective genObjective;
 
+    public MainGeneticStrategy(GeneticSharedObject sharedObject) {
+        Preconditions.checkNotNull(sharedObject);
+        this.sharedObject = sharedObject;
+    }
+
     @Override
     public void init(ThreadContext context) {
 
         this.context = context;
         gc = context.getGlobalContext();
         dsm = context.getDesignSpaceManager();
+        
+        gc.setSharedObject(sharedObject);
 
-        Object so = gc.getSharedObject();
-
-        if (so == null) {
-            throw new DSEException("No GeneticSharedObject is set");
-        }
-
-        if (so instanceof GeneticSharedObject) {
-            sharedObject = (GeneticSharedObject) so;
-        } else {
-            throw new DSEException("The shared object is not the type of GeneticSharedObject.");
+        if (!gc.getSolutionStore().isStrategyDependent()) {
+            throw new DSEException("The genetic strategy needs a strategy dependent solution store.");
         }
         
         IObjective[][] leveledObjectives = context.getLeveledObjectives();
@@ -87,10 +88,10 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
             throw new DSEException("The only objective on the first level should be the GeneticSoftConstraintHardObjective.");
         }
         
-
         DSEThreadPool pool = gc.getThreadPool();
-        int workerThreads = sharedObject.workerThreads;
-        pool.setMaximumPoolSize(workerThreads == 0 ? pool.getMaximumPoolSize() + 1 : workerThreads + 1);
+        if (pool.getMaximumPoolSize() < 2) {
+            throw new DSEException("The genetic strategy needs at least two threads.");
+        }
 
         sharedObject.initialModel = EMFHelper.clone(context.getModelRoot());
 
