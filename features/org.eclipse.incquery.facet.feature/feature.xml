@@ -8,7 +8,7 @@
       license-feature-version="0.0.0">
 
    <description>
-      Support for UML2 derived features.
+      Integration with EMF Facet.
    </description>
 
    <copyright url="http://www.example.com/copyright">
