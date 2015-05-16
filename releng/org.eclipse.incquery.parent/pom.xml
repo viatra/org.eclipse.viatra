@@ -269,8 +269,9 @@
 				<module>../../plugins/org.eclipse.incquery.viewers.tooling.ui</module>
 				<module>../../plugins/org.eclipse.incquery.viewers.runtime.zest</module>
 				<module>../../plugins/org.eclipse.incquery.viewers.tooling.ui.zest</module>
-				<module>../../tests/org.eclipse.incquery.patternlanguage.tests</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.debug</module>				
+                <module>../../plugins/org.eclipse.incquery.facet.browser</module>
+				<module>../../tests/org.eclipse.incquery.patternlanguage.tests</module>
 				<module>../../tests/org.eclipse.incquery.patternlanguage.emf.tests</module>
 				<module>../../tests/org.eclipse.incquery.runtime.tests</module>
 				<module>../../tests/org.eclipse.incquery.runtime.base.itc.tests</module>
@@ -302,7 +303,8 @@
 				<module>../../features/org.eclipse.incquery.viewers.runtime.zest.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
-				<module>../../features/org.eclipse.incquery.debugger.tooling.feature</module>	
+				<module>../../features/org.eclipse.incquery.debugger.tooling.feature</module>
+				<module>../../features/org.eclipse.incquery.facet.feature</module>	
 				
 				<!-- Update sites -->			
 				<module>../../releng/org.eclipse.incquery.update</module>
