@@ -43,7 +43,7 @@ public class InstanceGeneticStrategy implements IStrategy {
 
     private boolean correctionWasNeeded = false;
     private ThreadContext context;
-    private GeneticSoftConstraintHardObjective genObjective;
+    private GeneticConstraintObjective genObjective;
     private ISolutionStore solutionStore;
 
     @Override
@@ -66,7 +66,7 @@ public class InstanceGeneticStrategy implements IStrategy {
             throw new DSEException("The shared object is not the type of GeneticSharedObject.");
         }
         
-        genObjective = (GeneticSoftConstraintHardObjective) context.getLeveledObjectives()[0][0];
+        genObjective = (GeneticConstraintObjective) context.getLeveledObjectives()[0][0];
         
         solutionStore = context.getGlobalContext().getSolutionStore();
 

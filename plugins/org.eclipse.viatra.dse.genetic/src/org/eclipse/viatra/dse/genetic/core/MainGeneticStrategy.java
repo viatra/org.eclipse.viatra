@@ -62,7 +62,7 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
     private int noBetterSolutionForXIterations = 0;
     private ThreadContext context;
     private List<IObjective> objectives;
-    private GeneticSoftConstraintHardObjective genObjective;
+    private GeneticConstraintObjective genObjective;
 
     public MainGeneticStrategy(GeneticSharedObject sharedObject) {
         Preconditions.checkNotNull(sharedObject);
@@ -84,7 +84,7 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
         
         IObjective[][] leveledObjectives = context.getLeveledObjectives();
         IObjective objective = leveledObjectives[0][0];
-        if (!(objective instanceof GeneticSoftConstraintHardObjective) || leveledObjectives[0].length != 1) {
+        if (!(objective instanceof GeneticConstraintObjective) || leveledObjectives[0].length != 1) {
             throw new DSEException("The only objective on the first level should be the GeneticSoftConstraintHardObjective.");
         }
         
@@ -103,7 +103,7 @@ public class MainGeneticStrategy implements IStrategy, IStoreChild {
 
         objectives = context.getGlobalContext().getObjectives();
         
-        genObjective = (GeneticSoftConstraintHardObjective) context.getLeveledObjectives()[0][0];
+        genObjective = (GeneticConstraintObjective) context.getLeveledObjectives()[0][0];
         
         logger.debug("MainGeneticStratgey is inited");
     }

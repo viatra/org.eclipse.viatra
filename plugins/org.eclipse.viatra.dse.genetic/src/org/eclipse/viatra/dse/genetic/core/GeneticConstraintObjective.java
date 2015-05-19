@@ -24,7 +24,7 @@ import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.impl.BaseObjective;
 
-public class GeneticSoftConstraintHardObjective extends BaseObjective {
+public class GeneticConstraintObjective extends BaseObjective {
 
     public static final String DEFAULT_NAME = "SoftConstraints";
 
@@ -38,7 +38,7 @@ public class GeneticSoftConstraintHardObjective extends BaseObjective {
     protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> hardConstraints;
     protected ArrayList<IncQueryMatcher<? extends IPatternMatch>> hardMatchers;
 
-    public GeneticSoftConstraintHardObjective() {
+    public GeneticConstraintObjective() {
         super(DEFAULT_NAME);
 
         this.constraints = new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>();
@@ -50,7 +50,7 @@ public class GeneticSoftConstraintHardObjective extends BaseObjective {
         level = 1;
     }
 
-    public GeneticSoftConstraintHardObjective withSoftConstraint(String name,
+    public GeneticConstraintObjective withSoftConstraint(String name,
             IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint, double weight) {
         constraints.add(constraint);
         weights.add(new Double(weight));
@@ -58,7 +58,7 @@ public class GeneticSoftConstraintHardObjective extends BaseObjective {
         return this;
     }
     
-    public GeneticSoftConstraintHardObjective withHardConstraint(
+    public GeneticConstraintObjective withHardConstraint(
             IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint) {
         hardConstraints.add(constraint);
         return this;
@@ -104,7 +104,7 @@ public class GeneticSoftConstraintHardObjective extends BaseObjective {
 
     @Override
     public IObjective createNew() {
-        GeneticSoftConstraintHardObjective result = new GeneticSoftConstraintHardObjective();
+        GeneticConstraintObjective result = new GeneticConstraintObjective();
         result.constraints = constraints;
         result.hardConstraints = hardConstraints;
         result.names = names;

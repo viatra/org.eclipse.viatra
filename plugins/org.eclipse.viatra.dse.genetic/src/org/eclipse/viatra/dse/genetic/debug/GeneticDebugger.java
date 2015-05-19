@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.base.GlobalContext;
-import org.eclipse.viatra.dse.genetic.core.GeneticSoftConstraintHardObjective;
+import org.eclipse.viatra.dse.genetic.core.GeneticConstraintObjective;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
 
 import com.google.common.base.Stopwatch;
@@ -126,7 +126,7 @@ public class GeneticDebugger {
 
         InstanceData individual = populationToDebug.get(0);
 
-        GeneticSoftConstraintHardObjective genObjective = (GeneticSoftConstraintHardObjective) gc.getLeveledObjectives()[0][0];
+        GeneticConstraintObjective genObjective = (GeneticConstraintObjective) gc.getLeveledObjectives()[0][0];
         orderedSoftConstraints = new ArrayList<String>(genObjective.getNames());
         Collections.sort(orderedSoftConstraints);
         for (String softConstraint : orderedSoftConstraints) {
