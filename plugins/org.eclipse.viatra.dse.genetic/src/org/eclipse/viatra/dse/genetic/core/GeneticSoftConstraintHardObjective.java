@@ -32,28 +32,38 @@ public class GeneticSoftConstraintHardObjective extends BaseObjective {
     protected List<Double> weights;
     protected List<String> names;
 
-    protected List<IncQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>();
+    protected List<IncQueryMatcher<? extends IPatternMatch>> matchers;
     protected List<Integer> matches;
+
+    protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> hardConstraints;
+    protected ArrayList<IncQueryMatcher<? extends IPatternMatch>> hardMatchers;
 
     public GeneticSoftConstraintHardObjective() {
         super(DEFAULT_NAME);
 
         this.constraints = new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>();
+        this.hardConstraints = new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>();
         this.weights = new ArrayList<Double>();
         this.names = new ArrayList<String>();
-        
+
         comparator = Comparators.LOWER_IS_BETTER;
         level = 1;
     }
 
-    public GeneticSoftConstraintHardObjective withConstraint(String name,
+    public GeneticSoftConstraintHardObjective withSoftConstraint(String name,
             IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint, double weight) {
         constraints.add(constraint);
         weights.add(new Double(weight));
         names.add(name);
         return this;
     }
-
+    
+    public GeneticSoftConstraintHardObjective withHardConstraint(
+            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint) {
+        hardConstraints.add(constraint);
+        return this;
+    }
+    
     @Override
     public Double getFitness(ThreadContext context) {
 
@@ -71,15 +81,20 @@ public class GeneticSoftConstraintHardObjective extends BaseObjective {
     @Override
     public void init(ThreadContext context) {
         matches = new ArrayList<Integer>(constraints.size());
+        matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>(constraints.size());
+        hardMatchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>(hardConstraints.size());
         for (IQuerySpecification<?> qs : constraints) {
             matches.add(0);
         }
         try {
             IncQueryEngine incQueryEngine = context.getIncqueryEngine();
 
-            for (IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification : constraints) {
-                IncQueryMatcher<? extends IPatternMatch> matcher = querySpecification.getMatcher(incQueryEngine);
-                matchers.add(matcher);
+            for (IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> qs : constraints) {
+                matchers.add(qs.getMatcher(incQueryEngine));
+            }
+            
+            for (IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> qs : hardConstraints) {
+                hardMatchers.add(qs.getMatcher(incQueryEngine));
             }
 
         } catch (IncQueryException e) {
@@ -91,6 +106,7 @@ public class GeneticSoftConstraintHardObjective extends BaseObjective {
     public IObjective createNew() {
         GeneticSoftConstraintHardObjective result = new GeneticSoftConstraintHardObjective();
         result.constraints = constraints;
+        result.hardConstraints = hardConstraints;
         result.names = names;
         result.weights = weights;
         return result;
@@ -103,7 +119,13 @@ public class GeneticSoftConstraintHardObjective extends BaseObjective {
 
     @Override
     public boolean satisifiesHardObjective(Double fitness) {
-        return fitness < 0.0001 ? true : false;
+        
+        for (IncQueryMatcher<? extends IPatternMatch> matcher : hardMatchers) {
+            if (matcher.countMatches() <= 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public List<Integer> getMatches() {

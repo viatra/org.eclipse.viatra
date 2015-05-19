@@ -50,6 +50,7 @@ import org.eclipse.viatra.dse.genetic.mutations.AddTransitionByPriorityMutation;
 import org.eclipse.viatra.dse.genetic.mutations.DeleteRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyTransitionByPriorityMutation;
+import org.eclipse.viatra.dse.genetic.selectors.NonDominatedAndCrowdingDistanceSelector;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.StrategyDependentSolutionStore;
 
@@ -184,6 +185,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         GeneticSharedObject gso = builder.getSharedObject();
         
         dse.setSolutionStore(new StrategyDependentSolutionStore());
+        builder.setSelector(new NonDominatedAndCrowdingDistanceSelector());
         
         configDSE(configRow, dse, builder);
 
@@ -251,7 +253,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         if ("BFS".equals(initialSelector)) {
             builder.setInitialPopulationSelector(new BFSSelector(initialSelectionRate));
         } else if ("Priority".equals(initialSelector)) {
-            builder.setInitialPopulationSelector(new FixedPrioritySelector(goals));
+            builder.setInitialPopulationSelector(new FixedPrioritySelector());
         } else {
             throw new GeneticConfigurationException("No such initial selector: " + initialSelector);
         }

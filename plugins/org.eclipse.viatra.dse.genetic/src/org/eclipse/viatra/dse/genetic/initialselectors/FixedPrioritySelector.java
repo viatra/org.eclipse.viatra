@@ -42,10 +42,6 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
 
     private Random random = new Random();
 
-    private List<PatternWithCardinality> goals;
-
-    private IncQueryEngine incqueryEngine;
-
     private Logger logger = Logger.getLogger(this.getClass());
 
     private boolean isInterrupted = false;
@@ -53,10 +49,6 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     private ThreadContext context;
 
     private GeneticSharedObject sharedObject;
-
-    public FixedPrioritySelector(List<PatternWithCardinality> goals) {
-        this.goals = goals;
-    }
 
     @Override
     public void setChildStore(IStoreChild store) {
@@ -85,32 +77,13 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
         else {
             throw new DSEException("Bad shared object type.");
         }
-        incqueryEngine = context.getIncqueryEngine();
     }
 
     @Override
     public ITransition getNextTransition(boolean lastWasSuccessful) {
 
-        if (isInterrupted) {
+        if (isInterrupted || foundInstances >= initialSizeOfPopulation) {
             return null;
-        }
-
-        boolean isGoalState = true;
-        for (PatternWithCardinality goal : goals) {
-            if (!goal.isPatternSatisfied(incqueryEngine)) {
-                isGoalState = false;
-            }
-        }
-
-        if (isGoalState) {
-            foundInstances++;
-            logger.debug("Found goal state " + foundInstances + "/" + initialSizeOfPopulation);
-            store.addChild(context);
-            if (foundInstances >= initialSizeOfPopulation) {
-                return null;
-            } else {
-                while (dsm.undoLastTransformation());
-            }
         }
 
         Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
@@ -157,9 +130,16 @@ public class FixedPrioritySelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness objectives, boolean constraintsNotSatisfied) {
+    public void newStateIsProcessed(boolean isAlreadyTraversed, Fitness fitness, boolean constraintsNotSatisfied) {
         if (constraintsNotSatisfied) {
             dsm.undoLastTransformation();
+        } else if (fitness.isSatisifiesHardObjectives()) {
+            foundInstances++;
+            logger.debug("Found goal state " + foundInstances + "/" + initialSizeOfPopulation);
+            store.addChild(context);
+            if (foundInstances < initialSizeOfPopulation) {
+                while (dsm.undoLastTransformation());
+            }
         }
     }
 
