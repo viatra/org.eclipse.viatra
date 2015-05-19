@@ -38,6 +38,15 @@
 							<filesets>
 								<fileset><!-- EMF generator workspace -->
 									<directory>${emf.workspace.location}</directory>
+									<includes>
+										<include></include>
+									</includes>
+									<excludes>
+										<exclude>.gitignore</exclude>
+									</excludes>
+								</fileset>
+								<fileset><!-- EMF generated code -->
+									<directory>emf-gen</directory>
 									<excludes>
 										<exclude>.gitignore</exclude>
 									</excludes>
