@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -57,18 +56,16 @@ import com.google.common.collect.Sets;
  */
 @SuppressWarnings("unchecked")
 public class ChangeMonitor extends IChangeMonitor {
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, EObject> appearBetweenCheckpoints;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, EObject> updateBetweenCheckpoints;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, EObject> disappearBetweenCheckpoints;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, EObject> appearAccumulator;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, EObject> updateAccumulator;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, EObject> disappearAccumulator;
+    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> appearBetweenCheckpoints;
+    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> updateBetweenCheckpoints;
+    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> disappearBetweenCheckpoints;
+    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> appearAccumulator;
+    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> updateAccumulator;
+    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> disappearAccumulator;
     private Set<RuleSpecification<IPatternMatch>> rules;
     private Map<IQuerySpecification<?>, RuleSpecification<IPatternMatch>> specs;
     private Set<Job<?>> allJobs;
 
-    private boolean deploymentBetweenCheckpointsChanged;
-    private boolean changed;
     private boolean started;
     private ExecutionSchema executionSchema;
 
@@ -91,8 +88,6 @@ public class ChangeMonitor extends IChangeMonitor {
         allJobs = new HashSet<Job<?>>();
         rules = new HashSet<RuleSpecification<IPatternMatch>>();
         specs = new HashMap<IQuerySpecification<?>, RuleSpecification<IPatternMatch>>();
-        deploymentBetweenCheckpointsChanged = false;
-        changed = false;
         started = false;
 
         UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(engine);
@@ -181,10 +176,8 @@ public class ChangeMonitor extends IChangeMonitor {
         appearAccumulator = ArrayListMultimap.create();
         updateAccumulator = ArrayListMultimap.create();
         disappearAccumulator = ArrayListMultimap.create();
-        deploymentBetweenCheckpointsChanged = changed;
 
-        return new ChangeDelta(appearBetweenCheckpoints, updateBetweenCheckpoints, disappearBetweenCheckpoints,
-                deploymentBetweenCheckpointsChanged);
+        return new ChangeDelta(appearBetweenCheckpoints, updateBetweenCheckpoints, disappearBetweenCheckpoints);
     }
 
     /**
@@ -193,7 +186,7 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     @Override
     public ChangeDelta getDeltaSinceLastCheckpoint() {
-        return new ChangeDelta(appearAccumulator, updateAccumulator, disappearAccumulator, changed);
+        return new ChangeDelta(appearAccumulator, updateAccumulator, disappearAccumulator);
     }
 
     /**
@@ -215,6 +208,13 @@ public class ChangeMonitor extends IChangeMonitor {
             enableJob.setEnabled(true);
         }
         started = true;
+    }
+    
+    /**
+     * Disposes the Change monitor's execution schema
+     */
+    public void dispose(){
+        executionSchema.dispose();
     }
 
     /**
@@ -270,15 +270,9 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     private void registerUpdate(IPatternMatch match) {
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = match.specification();
-        Set<EObject> objects = new HashSet<EObject>();
-        int i = 0;
-        while (match.get(i) != null) {
-            objects.add((EObject) match.get(i));
-            i++;
-        }
-        Collection<EObject> updateElements = updateAccumulator
+        Collection<IPatternMatch> updateElements = updateAccumulator
                 .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
-        updateElements.addAll(objects);
+        updateElements.add(match);
     }
 
     /**
@@ -288,15 +282,9 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     private void registerAppear(IPatternMatch match) {
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = match.specification();
-        Set<EObject> objects = new HashSet<EObject>();
-        int i = 0;
-        while (match.get(i) != null) {
-            objects.add((EObject) match.get(i));
-            i++;
-        }
-        Collection<EObject> appearElements = appearAccumulator
+        Collection<IPatternMatch> appearMatches = appearAccumulator
                 .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
-        appearElements.addAll(objects);
+        appearMatches.add(match);
     }
 
     /**
@@ -306,24 +294,19 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     private void registerDisappear(IPatternMatch match) {
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = match.specification();
-        Set<EObject> objects = new HashSet<EObject>();
-        int i = 0;
-        while (match.get(i) != null) {
-            objects.add((EObject) match.get(i));
-            i++;
-        }
-        Collection<EObject> appearElements = appearAccumulator
+        
+        Collection<IPatternMatch> appearMatches = appearAccumulator
                 .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
-        Collection<EObject> updateElements = updateAccumulator
+        Collection<IPatternMatch> updateMatches = updateAccumulator
                 .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
-        Collection<EObject> disappearElements = disappearAccumulator
+        Collection<IPatternMatch> disappearMatches = disappearAccumulator
                 .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
-        for (EObject eObject : objects) {
-            if (updateElements.contains(eObject))
-                updateElements.remove(eObject);
-            if (appearElements.contains(eObject))
-                appearElements.remove(eObject);
-        }
-        disappearElements.addAll(objects);
+        
+        if (updateMatches.contains(match))
+            updateMatches.remove(match);
+        if (appearMatches.contains(match))
+            appearMatches.remove(match);
+        
+        disappearMatches.add(match);
     }
 }

@@ -11,7 +11,6 @@
 package org.eclipse.viatra.emf.runtime.changemonitor
 
 import com.google.common.collect.Multimap
-import org.eclipse.emf.ecore.EObject
 import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
@@ -25,8 +24,7 @@ import org.eclipse.xtend.lib.annotations.Data
  * @author Lunk Péter
  */
 @Data class ChangeDelta {
-	public Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, EObject> appeared
-	public Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, EObject> updated
-	public Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, EObject> disappeared
-	public boolean deploymentChanged
+	public Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> appeared
+	public Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> updated
+	public Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> disappeared
 }
