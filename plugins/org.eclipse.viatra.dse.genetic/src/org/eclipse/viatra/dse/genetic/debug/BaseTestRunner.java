@@ -151,7 +151,9 @@ public abstract class BaseTestRunner {
         } catch (IOException e) {
             throw e;
         } finally {
-            br.close();
+            if (br != null) {
+                br.close();
+            }
         }
 
     }
@@ -175,7 +177,9 @@ public abstract class BaseTestRunner {
         } catch (IOException e) {
             throw e;
         } finally {
-            br.close();
+            if (br != null) {
+                br.close();
+            }
         }
         return length;
     }
@@ -188,7 +192,9 @@ public abstract class BaseTestRunner {
         } catch (IOException e) {
             throw e;
         } finally {
-            out.close();
+            if (out != null) {
+                out.close();
+            }
         }
     }
 
@@ -212,7 +218,9 @@ public abstract class BaseTestRunner {
         } catch (IOException e) {
             throw e;
         } finally {
-            out.close();
+            if (out != null) {
+                out.close();
+            }
         }
     }
 }

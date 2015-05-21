@@ -111,7 +111,9 @@ public class GeneticDebugger {
         } catch (IOException e) {
             Logger.getLogger(getClass()).error("Couldn't write file " + csvName + ".", e);
         } finally {
-            out.close();
+            if (out != null) {
+                out.close();
+            }
         }
 
         iteration++;
