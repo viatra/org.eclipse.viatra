@@ -99,7 +99,7 @@ class RuleGenerator {
 						super(activationState);''')]
 			]
 			var executeMethod = appRule.toMethod("execute", typeRefBuilder.typeRef("void")) [
-				parameters += appRule.toParameter("activation",
+				parameters += appRule.toParameter("ruleInstance",
 					typeRefBuilder.typeRef(typeof(Activation),
 						cloneWithProxies(typeRefBuilder.typeRef(IObservableComplexEventPattern)).wildCardExtends))
 				parameters += appRule.toParameter("context", typeRefBuilder.typeRef(Context))
@@ -114,7 +114,7 @@ class RuleGenerator {
 			]
 			executeMethod.addOverrideAnnotation(appRule)
 			var errorMethod = appRule.toMethod("handleError", typeRefBuilder.typeRef("void")) [
-				parameters += appRule.toParameter("activation",
+				parameters += appRule.toParameter("ruleInstance",
 					typeRefBuilder.typeRef(typeof(Activation),
 						cloneWithProxies(typeRefBuilder.typeRef(IObservableComplexEventPattern)).wildCardExtends))
 				parameters += appRule.toParameter("exception", typeRefBuilder.typeRef(Exception))

@@ -99,7 +99,7 @@ class ModelHandlingRules {
 		action [
 			Preconditions::checkArgument(automaton.finalStates.size == 1)
 			automaton.eventTokens.remove(eventToken)
-			var observedPattern = new ObservedComplexEventPattern(automaton)
+			var observedPattern = new ObservedComplexEventPattern(automaton, eventToken)
 			eventModelManager.callbackOnPatternRecognition(observedPattern)
 			eventModelManager.cepRealm.forwardObservedEventPattern(observedPattern)
 		].build

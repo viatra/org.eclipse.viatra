@@ -11,7 +11,11 @@
 
 package org.eclipse.viatra.cep.core.api.patterns;
 
+import java.util.List;
+
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
+import org.eclipse.viatra.cep.core.metamodels.automaton.ParameterTable;
+import org.eclipse.viatra.cep.core.metamodels.events.Event;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 
 /**
@@ -25,5 +29,9 @@ public interface IObservableComplexEventPattern {
     Automaton getAutomaton();
 
     EventPattern getObservableEventPattern();
+
+    List<Event> getObservedAtomicEventInstances();
+
+    ParameterTable getParameterTable();
 
 }

@@ -11,9 +11,13 @@
 
 package org.eclipse.viatra.cep.core.api.patterns;
 
+import java.util.List;
+
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventToken;
 import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState;
+import org.eclipse.viatra.cep.core.metamodels.automaton.ParameterTable;
+import org.eclipse.viatra.cep.core.metamodels.events.Event;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 
 /**
@@ -31,6 +35,9 @@ public class ObservedComplexEventPattern implements IObservableComplexEventPatte
 
     private Automaton automaton;
     private EventPattern observablePattern;
+    private List<Event> observedAtomicEventInstances;
+    private ParameterTable parameterTable;
+    
 
     @Override
     public Automaton getAutomaton() {
@@ -41,8 +48,20 @@ public class ObservedComplexEventPattern implements IObservableComplexEventPatte
     public EventPattern getObservableEventPattern() {
         return observablePattern;
     }
+    
+    @Override
+    public List<Event> getObservedAtomicEventInstances() {
+        return observedAtomicEventInstances;
+    }
+    
+    @Override
+    public ParameterTable getParameterTable() {
+        return parameterTable;
+    }
 
-    public ObservedComplexEventPattern(Automaton automaton) {
+    public ObservedComplexEventPattern(Automaton automaton, EventToken eventToken) {
+        this.observedAtomicEventInstances = eventToken.getRecordedEvents();
+        this.parameterTable = eventToken.getParameterTable();
         this.automaton = automaton;
         this.observablePattern = automaton.getEventPattern();
     }
