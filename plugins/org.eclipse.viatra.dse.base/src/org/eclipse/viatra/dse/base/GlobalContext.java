@@ -28,7 +28,7 @@ import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.StrategyFactory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThreadFactory;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
@@ -96,7 +96,7 @@ public class GlobalContext {
      *         maximum.
      */
     public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
-            boolean cloneModel, IStrategy strategy) {
+            boolean cloneModel, LocalSearchStrategyBase strategy) {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
 
@@ -165,7 +165,7 @@ public class GlobalContext {
         return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategy());
     }
 
-    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, IStrategy strategyBase) {
+    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, LocalSearchStrategyBase strategyBase) {
         return tryStartNewThread(originalThreadContext, null, true, strategyBase);
     }
 

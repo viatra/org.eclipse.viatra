@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IState;
@@ -23,7 +23,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class BreadthFirstStrategy implements IStrategy {
+public class BreadthFirstStrategy implements LocalSearchStrategyBase {
 
     private class TransitionWrapper {
         private ITransition transition;

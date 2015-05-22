@@ -14,7 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.ThreadContext;
 
 /**
@@ -82,7 +82,7 @@ public interface ISolutionStore {
 
     /**
      * If an {@link ISolutionStore} is exploration strategy dependent the framework passes the responsibility of calling
-     * the {@link ISolutionStore#newSolution(ThreadContext)} method to the {@link IStrategy} implementation.
+     * the {@link ISolutionStore#newSolution(ThreadContext)} method to the {@link LocalSearchStrategyBase} implementation.
      * 
      * @return True if it is strategy dependent.
      */

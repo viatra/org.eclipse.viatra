@@ -17,7 +17,7 @@ import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
@@ -63,7 +63,7 @@ public class ExplorerThread implements IExplorerThread {
     /**
      * Starts the design space exploration. Returns only when
      * {@link ISolutionFoundHandler#solutionFound(Strategy, Solution)} method returns STOP or the
-     * {@link IStrategy#getNextTransition(ThreadContext)} method returns null.
+     * {@link LocalSearchStrategyBase#getNextTransition(ThreadContext)} method returns null.
      * 
      * If this main algorithm is not good for you, you can derive from this class and override this method.
      */
@@ -78,7 +78,7 @@ public class ExplorerThread implements IExplorerThread {
 
             globalContext = threadContext.getGlobalContext();
 
-            IStrategy strategy = threadContext.getStrategy();
+            LocalSearchStrategyBase strategy = threadContext.getStrategy();
             strategy.init(threadContext);
 
             boolean continueExecution = true;

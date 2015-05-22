@@ -18,7 +18,7 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
@@ -38,7 +38,7 @@ import com.google.common.collect.Lists;
  * @author Andras Szabolcs Nagy
  * 
  */
-public class FixedPriorityStrategy implements IStrategy {
+public class FixedPriorityStrategy implements LocalSearchStrategyBase {
 
     private boolean tryBestTransitionsOnly = true;
     private Map<Object, Integer> bestPriorityInState = new HashMap<Object, Integer>();
@@ -50,7 +50,7 @@ public class FixedPriorityStrategy implements IStrategy {
     protected Map<DSETransformationRule<?, ?>, Integer> priorities = new HashMap<DSETransformationRule<?, ?>, Integer>();
     private FilterOptions filterOptions;
 
-    private Logger logger = Logger.getLogger(IStrategy.class);
+    private Logger logger = Logger.getLogger(LocalSearchStrategyBase.class);
     private ThreadContext context;
 
     /**

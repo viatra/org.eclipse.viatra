@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -25,7 +25,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 
-public class InstanceGeneticStrategy implements IStrategy {
+public class InstanceGeneticStrategy implements LocalSearchStrategyBase {
 
     private enum WorkerState {
         NEXT_INSTANCE,

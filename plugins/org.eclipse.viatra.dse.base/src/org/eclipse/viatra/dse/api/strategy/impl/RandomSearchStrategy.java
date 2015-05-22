@@ -16,7 +16,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -24,7 +24,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class RandomSearchStrategy implements IStrategy {
+public class RandomSearchStrategy implements LocalSearchStrategyBase {
 
     private class SharedData {
         public final AtomicInteger triesLeft;

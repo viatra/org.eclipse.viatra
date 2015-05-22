@@ -16,7 +16,7 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
@@ -27,7 +27,7 @@ import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 
-public class HillClimbingStrategy implements IStrategy {
+public class HillClimbingStrategy implements LocalSearchStrategyBase {
 
     enum HillClimbingStrategyState {
         TRY_AND_SAVE,

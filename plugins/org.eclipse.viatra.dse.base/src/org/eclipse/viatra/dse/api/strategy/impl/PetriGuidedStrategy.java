@@ -15,14 +15,14 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.viatra.dse.api.DSETransformationRule;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class PetriGuidedStrategy implements IStrategy {
+public class PetriGuidedStrategy implements LocalSearchStrategyBase {
 
     private List<DSETransformationRule<?, ?>> petriTrajectory;
     private int actIndex = 0;

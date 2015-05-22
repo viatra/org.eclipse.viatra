@@ -21,10 +21,10 @@ import org.eclipse.viatra.dse.objectives.Fitness;
  * @author Andras Szabolcs Nagy
  * 
  */
-public interface IStrategy {
+public interface LocalSearchStrategyBase {
 
     /**
-     * Called once before the first {@link IStrategy#getNextTransition(ThreadContext)} is called for every new thread.
+     * Called once before the first {@link LocalSearchStrategyBase#getNextTransition(ThreadContext)} is called for every new thread.
      * 
      * @param context
      *            The {@link ThreadContext} which contains necessary informations. Should be assigned to a field.
@@ -55,7 +55,7 @@ public interface IStrategy {
 
     /**
      * Called if the exploration process is interrupted for example by timeout. Exit by returning null in the
-     * {@link IStrategy#getNextTransition(ThreadContext, boolean)} method witch is called right after this one.
+     * {@link LocalSearchStrategyBase#getNextTransition(ThreadContext, boolean)} method witch is called right after this one.
      */
     void interrupted();
 }

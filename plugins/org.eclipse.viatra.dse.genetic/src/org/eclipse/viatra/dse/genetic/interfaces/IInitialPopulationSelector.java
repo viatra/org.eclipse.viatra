@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.genetic.interfaces;
 
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 
-public interface IInitialPopulationSelector extends IStrategy {
+public interface IInitialPopulationSelector extends LocalSearchStrategyBase {
 
     /**
      * The initial population selector must call the

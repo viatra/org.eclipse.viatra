@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -24,7 +24,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class DepthFirstStrategy implements IStrategy {
+public class DepthFirstStrategy implements LocalSearchStrategyBase {
 
     private static final String UNDO_TIMER = "undoTimer";
     private static final String GET_LOCAL_FIREABLE_TRANSITIONS = "getLocalFireableTransitions";
