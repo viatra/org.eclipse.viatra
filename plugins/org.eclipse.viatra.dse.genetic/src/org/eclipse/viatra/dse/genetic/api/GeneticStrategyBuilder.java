@@ -18,7 +18,7 @@ import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.core.MainGeneticStrategy;
 import org.eclipse.viatra.dse.genetic.debug.GeneticDebugger;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
-import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
+import org.eclipse.viatra.dse.genetic.interfaces.InitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.ISelectNextPopulation;
 import org.eclipse.viatra.dse.genetic.selectors.NonDominatedAndCrowdingDistanceSelector;
@@ -41,7 +41,7 @@ public class GeneticStrategyBuilder {
         sharedObject.priorities.put(rule, priority);
     }
 
-    public void setInitialPopulationSelector(IInitialPopulationSelector selector) {
+    public void setInitialPopulationSelector(InitialPopulationSelector selector) {
         sharedObject.initialPopulationSelector = selector;
     }
 

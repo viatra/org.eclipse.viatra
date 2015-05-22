@@ -27,7 +27,7 @@ import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 
-public class HillClimbingStrategy implements LocalSearchStrategyBase {
+public class HillClimbingStrategy extends LocalSearchStrategyBase {
 
     enum HillClimbingStrategyState {
         TRY_AND_SAVE,

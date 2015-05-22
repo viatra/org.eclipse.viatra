@@ -38,7 +38,7 @@ import org.eclipse.viatra.dse.util.EMFHelper;
 
 import com.google.common.base.Preconditions;
 
-public class MainGeneticStrategy implements LocalSearchStrategyBase, IStoreChild {
+public class MainGeneticStrategy extends LocalSearchStrategyBase implements IStoreChild {
 
     enum GeneticStrategyState {
         FIRST_POPULATION,

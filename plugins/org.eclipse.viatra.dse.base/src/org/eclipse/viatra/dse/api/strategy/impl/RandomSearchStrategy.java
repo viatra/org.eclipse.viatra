@@ -15,16 +15,16 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
+import org.eclipse.viatra.dse.base.ExplorerThread;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class RandomSearchStrategy implements LocalSearchStrategyBase {
+public class RandomSearchStrategy extends LocalSearchStrategyBase {
 
     private class SharedData {
         public final AtomicInteger triesLeft;
@@ -108,7 +108,7 @@ public class RandomSearchStrategy implements LocalSearchStrategyBase {
         return null;
     }
 
-    private IExplorerThread tryStartNewThread(ThreadContext context) {
+    private ExplorerThread tryStartNewThread(ThreadContext context) {
         return gc.tryStartNewThread(context, context.getModelRoot(), true, new RandomSearchStrategy());
     }
 

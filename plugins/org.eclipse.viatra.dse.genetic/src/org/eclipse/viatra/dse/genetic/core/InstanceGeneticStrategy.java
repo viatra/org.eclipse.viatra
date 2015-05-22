@@ -25,7 +25,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 
-public class InstanceGeneticStrategy implements LocalSearchStrategyBase {
+public class InstanceGeneticStrategy extends LocalSearchStrategyBase {
 
     private enum WorkerState {
         NEXT_INSTANCE,

@@ -24,11 +24,11 @@ import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
-import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
+import org.eclipse.viatra.dse.genetic.interfaces.InitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class BFSSelector implements IInitialPopulationSelector {
+public class BFSSelector extends InitialPopulationSelector {
 
     private DesignSpaceManager dsm;
 

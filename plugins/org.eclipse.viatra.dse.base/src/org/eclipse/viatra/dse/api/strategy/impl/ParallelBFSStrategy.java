@@ -26,7 +26,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class ParallelBFSStrategy implements LocalSearchStrategyBase {
+public class ParallelBFSStrategy extends LocalSearchStrategyBase {
 
     private class TrajectoryWrapper {
         public final LinkedList<ITransition> transitionTrajectory;

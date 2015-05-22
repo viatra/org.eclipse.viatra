@@ -28,8 +28,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThreadFactory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -282,16 +280,6 @@ public class DesignSpaceExplorer {
      */
     public void setSolutionStore(ISolutionStore solutionStore) {
         globalContext.setSolutionStore(solutionStore);
-    }
-
-    /**
-     * By Setting the {@link IExplorerThreadFactory} the default behavior of the exploration process can be overridden.
-     * For advanced users only.
-     * 
-     * @param factory
-     */
-    public void setStrategyFactory(IExplorerThreadFactory factory) {
-        globalContext.setStrategyFactory(factory);
     }
 
     /**

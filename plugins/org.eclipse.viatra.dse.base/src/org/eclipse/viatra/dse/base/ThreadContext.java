@@ -26,14 +26,13 @@ import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
 import org.eclipse.viatra.dse.guidance.Guidance;
+import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
-import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 
 /**
@@ -47,7 +46,7 @@ public class ThreadContext {
 
     private final GlobalContext globalContext;
     private final LocalSearchStrategyBase strategy;
-    private IExplorerThread explorerThread;
+    private ExplorerThread explorerThread;
     private RuleEngine ruleEngine;
     private IncQueryEngine incqueryEngine;
     private EditingDomain domain;
@@ -258,11 +257,11 @@ public class ThreadContext {
         return strategy;
     }
 
-    public IExplorerThread getExplorerThread() {
+    public ExplorerThread getExplorerThread() {
         return explorerThread;
     }
 
-    public void setExplorerThread(IExplorerThread explorerThread) {
+    public void setExplorerThread(ExplorerThread explorerThread) {
         this.explorerThread = explorerThread;
     }
 

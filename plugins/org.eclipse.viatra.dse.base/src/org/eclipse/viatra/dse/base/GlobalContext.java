@@ -25,9 +25,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
-import org.eclipse.viatra.dse.api.strategy.StrategyFactory;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThreadFactory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -63,8 +60,7 @@ public class GlobalContext {
     private ConcurrentLinkedQueue<Throwable> exceptions = new ConcurrentLinkedQueue<Throwable>();
 
     private volatile ExplorationProcessState state = ExplorationProcessState.NOT_STARTED;
-    private IExplorerThreadFactory strategyFactory = new StrategyFactory();
-    private final Set<IExplorerThread> runningThreads = new HashSet<IExplorerThread>();
+    private final Set<ExplorerThread> runningThreads = new HashSet<ExplorerThread>();
     private DSEThreadPool threadPool = new DSEThreadPool();
     private int numberOfStartedThreads = 0;
     private IDesignSpace designSpace;
@@ -95,7 +91,7 @@ public class GlobalContext {
      * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their
      *         maximum.
      */
-    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
+    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
             boolean cloneModel, LocalSearchStrategyBase strategy) {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
@@ -130,7 +126,7 @@ public class GlobalContext {
                 newThreadContext = originalThreadContext;
             }
             // TODO : clone undo list? slave strategy can't go further back...
-            IExplorerThread explorerThread = strategyFactory.createStrategy(newThreadContext);
+            ExplorerThread explorerThread = new ExplorerThread(newThreadContext);
             newThreadContext.setExplorerThread(explorerThread);
 
             boolean isSuccessful = threadPool.tryStartNewStrategy(explorerThread);
@@ -161,23 +157,23 @@ public class GlobalContext {
      * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their
      *         maximum.
      */
-    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext) {
+    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext) {
         return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategy());
     }
 
-    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, LocalSearchStrategyBase strategyBase) {
+    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, LocalSearchStrategyBase strategyBase) {
         return tryStartNewThread(originalThreadContext, null, true, strategyBase);
     }
 
-    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, boolean cloneModel) {
+    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, boolean cloneModel) {
         return tryStartNewThread(originalThreadContext, null, cloneModel, originalThreadContext.getStrategy());
     }
 
-    public synchronized IExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root) {
+    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root) {
         return tryStartNewThread(originalThreadContext, root, true, originalThreadContext.getStrategy());
     }
 
-    public synchronized void strategyFinished(IExplorerThread strategy) {
+    public synchronized void strategyFinished(ExplorerThread strategy) {
         runningThreads.remove(strategy);
 
         if (logger.isDebugEnabled()) {
@@ -209,7 +205,7 @@ public class GlobalContext {
         if (state == ExplorationProcessState.RUNNING) {
             state = ExplorationProcessState.STOPPING;
             logger.debug("Stopping all threads.");
-            for (IExplorerThread strategy : runningThreads) {
+            for (ExplorerThread strategy : runningThreads) {
                 strategy.stopRunning();
             }
         }
@@ -382,14 +378,6 @@ public class GlobalContext {
 
     public DSEThreadPool getThreadPool() {
         return threadPool;
-    }
-
-    public IExplorerThreadFactory getStrategyFactory() {
-        return strategyFactory;
-    }
-
-    public void setStrategyFactory(IExplorerThreadFactory strategyFactory) {
-        this.strategyFactory = strategyFactory;
     }
 
     public IDesignSpace getDesignSpace() {

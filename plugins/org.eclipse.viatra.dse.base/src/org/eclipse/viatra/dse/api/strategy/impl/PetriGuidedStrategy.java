@@ -22,7 +22,7 @@ import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptio
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class PetriGuidedStrategy implements LocalSearchStrategyBase {
+public class PetriGuidedStrategy extends LocalSearchStrategyBase {
 
     private List<DSETransformationRule<?, ?>> petriTrajectory;
     private int actIndex = 0;

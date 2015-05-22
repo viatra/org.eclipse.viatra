@@ -24,13 +24,13 @@ import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
-import org.eclipse.viatra.dse.genetic.interfaces.IInitialPopulationSelector;
+import org.eclipse.viatra.dse.genetic.interfaces.InitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
 import com.google.common.collect.Lists;
 
-public class FixedPrioritySelector implements IInitialPopulationSelector {
+public class FixedPrioritySelector extends InitialPopulationSelector {
 
     private DesignSpaceManager dsm;
 

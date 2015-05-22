@@ -10,54 +10,47 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.base;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.log4j.Logger;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.viatra.dse.api.DSEException;
+import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.Solution;
-import org.eclipse.viatra.dse.api.strategy.interfaces.IExplorerThread;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
-import org.eclipse.viatra.dse.designspace.api.IState;
-import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
-import org.eclipse.viatra.dse.guidance.Guidance;
-import org.eclipse.viatra.dse.guidance.ICriteria.EvaluationResult;
-import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
-import org.eclipse.viatra.dse.objectives.Fitness;
-import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
-import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
-import org.eclipse.viatra.dse.solutionstore.ISolutionStore.StopExecutionType;
 
 /**
+ * Default interface for a strategy that can be execute within the {@link DesignSpaceExplorer} as a valid design space
+ * exploration strategy. It is currently unfinished, and the implementation {@link ExplorerThread} is currently hard
+ * wired into the {@link DesignSpaceExplorer}.
  * 
- * @author Andras Szabolcs Nagy
+ * Possible future implementation will provide a means to specify a custom {@link IExplorerThread}.
+ * 
+ * @author Földenyi Miklos & Nagy Andras Szabolcs
  * 
  */
-public class ExplorerThread implements IExplorerThread {
-
-    private static final String STATE_EVALUATION = "stateEvaluation";
-    private static final String FIRE_ACTIVATION_TIMER = "fireActivationTimer";
-    private static final String GET_NEXT_TRANSITION_ID_TIMER = "getNextTransitionIdTimer";
-    private static final String WALKER_CYCLE = "walkerCycle";
+public class ExplorerThread implements Runnable {
 
     private final ThreadContext threadContext;
     private GlobalContext globalContext;
-    private final AtomicBoolean interrupted = new AtomicBoolean(false);
 
     private final Logger logger = Logger.getLogger(this.getClass());
-    private Fitness fitness;
+    private IStrategy strategy;
 
     public ExplorerThread(final ThreadContext context) {
         this.threadContext = context;
     }
 
     /**
+     * Signals the {@link IExplorerThread} instance that execution should be stopped. By contract, the strategy is to
+     * stop execution at the next stage of execution where stopping and exiting is appropriate.
+     */
+    /**
      * Makes the strategy (the thread) end it's last step, then exit.
      */
-    @Override
     public void stopRunning() {
-        interrupted.set(true);
+        strategy.interruptStrategy();
     }
 
     /**
@@ -67,7 +60,6 @@ public class ExplorerThread implements IExplorerThread {
      * 
      * If this main algorithm is not good for you, you can derive from this class and override this method.
      */
-    @Override
     public void run() {
         try {
 
@@ -77,136 +69,14 @@ public class ExplorerThread implements IExplorerThread {
             threadContext.init();
 
             globalContext = threadContext.getGlobalContext();
+            DesignSpaceManager dsm = threadContext.getDesignSpaceManager();
 
-            LocalSearchStrategyBase strategy = threadContext.getStrategy();
-            strategy.init(threadContext);
+            strategy = threadContext.getStrategy();
+            strategy.initStrategy(threadContext);
 
-            boolean continueExecution = true;
+            logger.debug("Strategy started with state: " + dsm.getCurrentState().getId());
 
-            DesignSpaceManager designSpaceManager = threadContext.getDesignSpaceManager();
-            Guidance guidance = threadContext.getGuidance();
-            ISolutionStore solutionStore = globalContext.getSolutionStore();
-
-            logger.debug("Strategy started with state: " + designSpaceManager.getCurrentState().getId());
-
-
-            mainloop: do {
-
-                PerformanceMonitorManager.startTimer(STATE_EVALUATION);
-
-                IState currentState = designSpaceManager.getCurrentState();
-                boolean isAlreadyTraversed = designSpaceManager.isNewModelStateAlreadyTraversed();
-                boolean areConstraintsSatisfied = true;
-
-                fitness = threadContext.calculateFitness();
-
-                if (isAlreadyTraversed) {
-                    TraversalStateType traversalState = currentState.getTraversalState();
-
-                    // Create new trajectory for solution
-                    if (fitness.isSatisifiesHardObjectives() && !solutionStore.isStrategyDependent()) {
-                        StopExecutionType verdict = solutionStore.newSolution(threadContext);
-                        switch (verdict) {
-                        case STOP_ALL:
-                            continueExecution = false;
-                            globalContext.stopAllThreads();
-                            break;
-                        case STOP_THREAD:
-                            continueExecution = false;
-                            break;
-                        default:
-                            break;
-                        }
-                    } else if (traversalState == TraversalStateType.CUT) {
-                        areConstraintsSatisfied = false;
-                    }
-
-                    logger.debug("State is already traversed.");
-
-                } else {
-                    // if the global constraints are satisfied
-                    areConstraintsSatisfied = checkGlobalConstraints();
-                    if (areConstraintsSatisfied) {
-
-                        // if it is a goal state
-                        if (fitness.isSatisifiesHardObjectives()) {
-
-                            logger.debug("State satisfies all the hard objectives.");
-
-                            currentState.setTraversalState(TraversalStateType.GOAL);
-
-                            if (!solutionStore.isStrategyDependent()) {
-                                StopExecutionType verdict = solutionStore.newSolution(threadContext);
-                                switch (verdict) {
-                                case STOP_ALL:
-                                    continueExecution = false;
-                                    globalContext.stopAllThreads();
-                                    break;
-                                case STOP_THREAD:
-                                    continueExecution = false;
-                                    break;
-                                default:
-                                    break;
-                                }
-                            }
-
-                        }
-                        // if not goal state, check the cut-off criterias
-                        else {
-                            if (guidance != null && guidance.evaluateCutOffCriterias() == EvaluationResult.CUT_OFF) {
-                                currentState.setTraversalState(TraversalStateType.CUT);
-                            }
-
-                        }
-                    }
-                    // if the global constraints are not satisfied
-                    else {
-                        currentState.setTraversalState(TraversalStateType.CUT);
-                        logger.debug("Global constraints are not satisfied.");
-                    }
-                    currentState.setProcessed(); // TODO there is one in addState
-                }
-
-                strategy.newStateIsProcessed(isAlreadyTraversed, fitness, !areConstraintsSatisfied);
-                PerformanceMonitorManager.endTimer(STATE_EVALUATION);
-
-                // do the exploration until {@link StrategyBase#solutionFound}
-                // returns
-                // stop, or interrupted from outside by Strategy#stopRunning
-
-                PerformanceMonitorManager.endTimer(WALKER_CYCLE);
-
-                if (interrupted.get()) {
-                    strategy.interrupted();
-                }
-
-                PerformanceMonitorManager.startTimer(WALKER_CYCLE);
-
-                ITransition transition = null;
-
-                do {
-                    // Get next activation to fire. Eventually calls the
-                    // getNextTransition methods.
-                    PerformanceMonitorManager.startTimer(GET_NEXT_TRANSITION_ID_TIMER);
-                    transition = strategy.getNextTransition(transition == null);
-                    PerformanceMonitorManager.endTimer(GET_NEXT_TRANSITION_ID_TIMER);
-                    // If there are no more transitions to fire, then return and
-                    // stop the exploration.
-                    if (transition == null) {
-                        break mainloop;
-                    }
-                    // if we cannot lock that particular Transition id, we try
-                    // to get a new activation one
-                } while (!transition.tryToLock());
-
-                // fire activation
-                PerformanceMonitorManager.startTimer(FIRE_ACTIVATION_TIMER);
-                designSpaceManager.fireActivation(transition);
-                PerformanceMonitorManager.endTimer(FIRE_ACTIVATION_TIMER);
-
-                logger.debug("Transition fired: " + transition.getId() + " State: " + currentState.getId());
-
-            } while (continueExecution);
+            strategy.explore();
 
             logger.debug("Strategy stopped on Thread " + Thread.currentThread());
             globalContext.strategyFinished(this);
@@ -221,23 +91,25 @@ public class ExplorerThread implements IExplorerThread {
         }
     }
 
-    @Override
+    /**
+     * Disposes of this strategy. Recursively callse dispose on the underlying {@link RuleEngine} and
+     * {@link IncQueryEngine}. Calling this is only required if the design space exploration was launched in thread, as
+     * the underlying engines get collected on the stop of the running {@link Thread}.
+     */
     public void dispose() {
         threadContext.getRuleEngine().dispose();
         // threadContext.getIncqueryEngine().dispose();
     }
 
-    @Override
+    /**
+     * Returns the associated {@link ThreadContext} that houses all the thread specific data about the exploration
+     * process, and is also the gateway to the {@link GlobalContext} which stores data relevant to the design space
+     * exploration process as a whole.
+     * 
+     * @return the relevant {@link ThreadContext}.
+     */
     public ThreadContext getThreadContext() {
         return threadContext;
     }
 
-    private boolean checkGlobalConstraints() {
-        for (IGlobalConstraint globalConstraint : globalContext.getGlobalConstraints()) {
-            if (!globalConstraint.checkGlobalConstraint(threadContext)) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

@@ -23,7 +23,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class BreadthFirstStrategy implements LocalSearchStrategyBase {
+public class BreadthFirstStrategy extends LocalSearchStrategyBase {
 
     private class TransitionWrapper {
         private ITransition transition;

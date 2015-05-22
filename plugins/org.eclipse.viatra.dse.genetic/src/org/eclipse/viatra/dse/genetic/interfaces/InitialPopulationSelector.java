@@ -12,7 +12,7 @@ package org.eclipse.viatra.dse.genetic.interfaces;
 
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 
-public interface IInitialPopulationSelector extends LocalSearchStrategyBase {
+public abstract class InitialPopulationSelector extends LocalSearchStrategyBase {
 
     /**
      * The initial population selector must call the
@@ -22,7 +22,7 @@ public interface IInitialPopulationSelector extends LocalSearchStrategyBase {
      * @param store
      *            An interface with the call back method.
      */
-    void setChildStore(IStoreChild store);
+    public abstract void setChildStore(IStoreChild store);
 
     /**
      * Sets the populations size in the initialization phase. The engine expects this amount of child from the
@@ -31,6 +31,6 @@ public interface IInitialPopulationSelector extends LocalSearchStrategyBase {
      * @param populationSize
      *            Expected number of children.
      */
-    void setPopulationSize(int populationSize);
+    public abstract void setPopulationSize(int populationSize);
 
 }

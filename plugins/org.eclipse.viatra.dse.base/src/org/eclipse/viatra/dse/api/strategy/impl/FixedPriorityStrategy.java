@@ -38,7 +38,7 @@ import com.google.common.collect.Lists;
  * @author Andras Szabolcs Nagy
  * 
  */
-public class FixedPriorityStrategy implements LocalSearchStrategyBase {
+public class FixedPriorityStrategy extends LocalSearchStrategyBase {
 
     private boolean tryBestTransitionsOnly = true;
     private Map<Object, Integer> bestPriorityInState = new HashMap<Object, Integer>();
