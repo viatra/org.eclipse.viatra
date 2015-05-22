@@ -31,9 +31,10 @@ public abstract class BaseTestRunner {
 
     private static final String CSV = ".csv";
     private static final String defaultResultFileName = "results";
-    private static final String configFileName = "config";
+    private String configFileName = "config";
 
-    protected String resultsFileName;
+    protected String resultsFolderName;
+    private String resultsFileName;
 
     public static class BaseResult {
 
@@ -78,12 +79,15 @@ public abstract class BaseTestRunner {
 
     public void runTests() throws Exception {
 
+        
         List<String> configKeysInOrder = new ArrayList<String>();
         int numberOfRows = countRecordsInFile(configKeysInOrder);
 
         boolean timesColumn = configKeysInOrder.contains("Times");
 
-        resolveResultsFileName();
+        resolveResultsFolderName();
+        new File(resultsFolderName).mkdir();
+        resultsFileName = resultsFolderName + File.separator + defaultResultFileName + CSV;
 
         BufferedReader br = null;
         try {
@@ -198,16 +202,17 @@ public abstract class BaseTestRunner {
         }
     }
 
-    private void resolveResultsFileName() {
+    private void resolveResultsFolderName() {
         int i = 1;
-        resultsFileName = defaultResultFileName + i + CSV;
+        String resultsFolderBaseName = configFileName + "-" + defaultResultFileName;
+        resultsFolderName = resultsFolderBaseName;
         File f;
         do {
-            f = new File(resultsFileName);
-            if (f.exists() && !f.isDirectory()) {
-                resultsFileName = defaultResultFileName + ++i + CSV;
+            f = new File(resultsFolderName);
+            if (f.exists() && f.isDirectory()) {
+                resultsFolderName = resultsFolderBaseName + ++i;
             }
-        } while (f.exists() && !f.isDirectory());
+        } while (f.exists() && f.isDirectory());
     }
 
     private void appendResultToFile(String result) throws IOException {
@@ -222,5 +227,13 @@ public abstract class BaseTestRunner {
                 out.close();
             }
         }
+    }
+    
+    public String getConfigFileName() {
+        return configFileName;
+    }
+    
+    public void setConfigFileName(String configFileName) {
+        this.configFileName = configFileName;
     }
 }

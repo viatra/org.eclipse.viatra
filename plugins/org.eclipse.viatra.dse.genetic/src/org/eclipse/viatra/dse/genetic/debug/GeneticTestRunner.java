@@ -31,7 +31,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
-import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.genetic.api.GeneticStrategyBuilder;
@@ -90,17 +89,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
     private List<String> resultKeysInOrder;
     private boolean isFirstRun = true;
-    private List<PatternWithCardinality> goals;
     private GeneticDebugger geneticDebugger;
     private int lastConfigId = -1;
-
-    public GeneticTestRunner() {
-        this(null);
-    }
-
-    public GeneticTestRunner(List<PatternWithCardinality> goals) {
-        this.goals = goals;
-    }
 
     /**
      * Creates a {@link GeneticDesignSpaceExplorer} configured with the transformations, objectives, serializer, etc.
@@ -198,27 +188,14 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             }
             geneticDebugger.setConfigId(result.configId);
 
-            String modelPath = configRow.getValueAsString(MODEL_PATH);
-            int start = modelPath.lastIndexOf('/') + 1;
-            int end = modelPath.lastIndexOf('.');
-            if (end < 0) {
-                end = modelPath.length();
-            }
-            String modelName = modelPath.substring(start, end);
-
             if (configRow.isKeyPresent("ConfigName")) {
                 String configName = configRow.getValueAsString("ConfigName");
-                String folderName = super.resultsFileName.substring(0, resultsFileName.indexOf('.'));
-                File dir = new File(folderName);
-                if (!dir.exists()) {
-                    dir.mkdir();
-                }
-                geneticDebugger.setCsvName(folderName + File.separator + configName + ".csv");
+                geneticDebugger.setCsvName(resultsFolderName + File.separator + configName + ".csv");
             } else {
-                geneticDebugger.setCsvName("results_"
-                        + Integer.toString(result.configId) + "_"
-                        + modelName + "_"
-                        + configRow.getValueAsString(INITIAL_SELECTOR)
+                geneticDebugger.setCsvName(resultsFolderName
+                        + File.separator
+                        +"results-"
+                        + Integer.toString(result.configId)
                         + ".csv");
             }
         } else {
