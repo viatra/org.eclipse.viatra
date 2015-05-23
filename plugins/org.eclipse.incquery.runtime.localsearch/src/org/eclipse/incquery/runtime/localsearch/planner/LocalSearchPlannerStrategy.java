@@ -81,20 +81,22 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
     private PConstraint selectNextPConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IQueryMetaContext context) {
 
         PConstraint pConstraint = null;
-
+ 
         // Strategy: begin with TypeUnary constraints from parameters, if able
         // TODO consider adornment here as well
-        List<PVariable> parameterVariables = pBody.getSymbolicParameterVariables();
-        for (PVariable pVariable : parameterVariables) {
-            Set<PConstraint> referringPConstraints = pVariable.getReferringConstraints();
-            for (PConstraint referringPConstraint : referringPConstraints) {
-                // If the type constraint is unprocessed and is unary, then select it
-                if (constraintSet.contains(referringPConstraint) && 
-                		referringPConstraint instanceof TypeConstraint && 
-                		referringPConstraint.getAffectedVariables().size()==1) {
-                    pConstraint = referringPConstraint;
-                }
-            }
+        if(plan.getOperation() instanceof PStart){
+	        List<PVariable> parameterVariables = pBody.getSymbolicParameterVariables();
+	        for (PVariable pVariable : parameterVariables) {
+	            Set<PConstraint> referringPConstraints = pVariable.getReferringConstraints();
+	            for (PConstraint referringPConstraint : referringPConstraints) {
+	                // If the type constraint is unprocessed and is unary, then select it
+	                if (constraintSet.contains(referringPConstraint) && 
+	                		referringPConstraint instanceof TypeConstraint && 
+	                		referringPConstraint.getAffectedVariables().size()==1) {
+	                    pConstraint = referringPConstraint;
+	                }
+	            }
+	        }
         }
         // If no such constraint left, go with the ordering heuristic for the rest of the constraints
         if (pConstraint == null) {
