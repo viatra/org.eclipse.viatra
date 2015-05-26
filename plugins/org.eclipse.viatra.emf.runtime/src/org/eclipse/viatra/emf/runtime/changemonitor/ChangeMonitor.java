@@ -268,11 +268,12 @@ public class ChangeMonitor extends IChangeMonitor {
      * 
      * @param match
      */
-    private void registerUpdate(IPatternMatch match) {
+    protected void registerUpdate(IPatternMatch match) {
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = match.specification();
-        Collection<IPatternMatch> updateElements = updateAccumulator
-                .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
-        updateElements.add(match);
+        Collection<IPatternMatch> updateMatches = updateAccumulator
+                .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);        	
+        updateMatches.add(match);
+        
     }
 
     /**
@@ -280,7 +281,7 @@ public class ChangeMonitor extends IChangeMonitor {
      * 
      * @param match
      */
-    private void registerAppear(IPatternMatch match) {
+    protected void registerAppear(IPatternMatch match) {
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = match.specification();
         Collection<IPatternMatch> appearMatches = appearAccumulator
                 .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
@@ -292,7 +293,7 @@ public class ChangeMonitor extends IChangeMonitor {
      * 
      * @param match
      */
-    private void registerDisappear(IPatternMatch match) {
+    protected void registerDisappear(IPatternMatch match) {
         IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = match.specification();
         
         Collection<IPatternMatch> appearMatches = appearAccumulator
@@ -304,9 +305,15 @@ public class ChangeMonitor extends IChangeMonitor {
         
         if (updateMatches.contains(match))
             updateMatches.remove(match);
-        if (appearMatches.contains(match))
-            appearMatches.remove(match);
         
-        disappearMatches.add(match);
+        if (appearMatches.contains(match)){
+        	appearMatches.remove(match);
+        }else{
+        	disappearMatches.add(match);
+        }
+        
+            
+        
+        
     }
 }
