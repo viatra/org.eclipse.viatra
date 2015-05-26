@@ -41,6 +41,10 @@ public class EDataTypeInSlotsKey extends BaseEMFTypeKey<EDataType> {
 	public int getArity() {
 		return 1;
 	}
-
+	
+	@Override
+	public boolean isEnumerable() {
+		return true;
+	}
 	
 }

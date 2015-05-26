@@ -45,14 +45,14 @@ public enum EMFQueryMetaContext implements IQueryMetaContext {
 	
 	INSTANCE;
 
-	private Class<?>[] interfaces;
 	@Override
-	public boolean isEnumerable(IInputKey key) {
+	public boolean isEnumerable(IInputKey key) {		
 		ensureValidKey(key);
-		if (key instanceof JavaTransitiveInstancesKey) 
-			return false;
-		else
-			return true;
+		return key.isEnumerable();
+//		if (key instanceof JavaTransitiveInstancesKey) 
+//			return false;
+//		else
+//			return true;
 	}
 	
 	@Override

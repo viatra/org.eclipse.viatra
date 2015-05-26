@@ -42,6 +42,12 @@ public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implem
     public TypeConstraint(PBody pSystem, Tuple variablesTuple, IInputKey inputKey) {
         super(pSystem, variablesTuple, inputKey);
         this.equivalentJudgement = new TypeJudgement(inputKey, variablesTuple);
+        
+        if (! inputKey.isEnumerable())
+        	throw new IllegalArgumentException(
+        			this.getClass().getSimpleName() + 
+        			" applicable for enumerable input keys only; received instead " + 
+        					inputKey);
     }
 
     @Override

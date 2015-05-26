@@ -39,5 +39,9 @@ public class EStructuralFeatureInstancesKey extends BaseEMFTypeKey<EStructuralFe
 		return 2;
 	}
 	
+	@Override
+	public boolean isEnumerable() {
+		return true;
+	}
 
 }

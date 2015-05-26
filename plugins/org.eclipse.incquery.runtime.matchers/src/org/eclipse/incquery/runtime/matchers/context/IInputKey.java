@@ -37,4 +37,11 @@ public interface IInputKey {
 	 */
 	public int getArity();
 	
+	/**
+	 * Returns true iff instance tuples of the key can be enumerated.
+	 * <p> If false, the runtime can only test tuple membership in the extensional relation identified by the key, but not enumerate member tuples in general.
+	 */
+	boolean isEnumerable();
+	
+	
 }

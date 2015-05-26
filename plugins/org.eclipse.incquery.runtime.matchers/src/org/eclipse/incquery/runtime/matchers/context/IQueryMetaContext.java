@@ -25,6 +25,7 @@ public interface IQueryMetaContext {
 	/**
 	 * Returns true iff instance tuples of the given key can be enumerated.
 	 * <p> If false, the runtime can only test tuple membership in the extensional relation identified by the key, but not enumerate member tuples in general.
+	 * <p> Equivalent to {@link IInputKey#isEnumerable()}.
 	 */
 	boolean isEnumerable(IInputKey key);
 	
