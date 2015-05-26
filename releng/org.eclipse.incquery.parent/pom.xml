@@ -282,6 +282,10 @@
 				<module>../../tests/org.eclipse.incquery.testing.queries</module>
 				<module>../../tests/org.eclipse.incquery.testing.ui</module>
                 <module>../../tests/org.eclipse.incquery.uml.test</module>
+                <module>../../plugins/org.eclipse.incquery.xcore.model</module>
+				<module>../../plugins/org.eclipse.incquery.xcore</module>
+				<module>../../plugins/org.eclipse.incquery.xcore.modeleditor</module>
+				<module>../../plugins/org.eclipse.incquery.xcore.ui</module>
                 
                 <!-- Features -->
 				<module>../../features/org.eclipse.incquery.runtime.feature</module>
@@ -304,27 +308,12 @@
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.feature</module>
 				<module>../../features/org.eclipse.incquery.viewers.tooling.ui.zest.feature</module>
 				<module>../../features/org.eclipse.incquery.debugger.tooling.feature</module>
-				<module>../../features/org.eclipse.incquery.facet.feature</module>	
+				<module>../../features/org.eclipse.incquery.facet.feature</module>
+				<module>../../features/org.eclipse.incquery.xcore.feature</module>
 				
 				<!-- Update sites -->			
 				<module>../../releng/org.eclipse.incquery.update</module>
 				<module>../../releng/org.eclipse.incquery.update.extras</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>xcore_integration</id>
-			<activation>
-				<!-- <property>
-					<name>xcore.integration</name>
-				</property>-->
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<modules>
-				<module>../../plugins/org.eclipse.incquery.xcore.model</module>
-				<module>../../plugins/org.eclipse.incquery.xcore</module>
-				<module>../../plugins/org.eclipse.incquery.xcore.modeleditor</module>
-				<module>../../plugins/org.eclipse.incquery.xcore.ui</module>
-				<module>../../features/org.eclipse.incquery.xcore.feature</module>
 			</modules>
 		</profile>
 		<profile>
