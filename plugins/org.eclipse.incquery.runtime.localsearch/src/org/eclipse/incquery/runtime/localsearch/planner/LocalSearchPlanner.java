@@ -10,23 +10,39 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.planner;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.incquery.runtime.localsearch.planner.rewriters.PBodyUnaryTypeNormalizer;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
+import org.eclipse.incquery.runtime.matchers.planning.helpers.TypeHelper;
+import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.TypeJudgement;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyCopier;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PDisjunctionRewriter;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PQueryFlattener;
+import org.eclipse.incquery.runtime.matchers.psystem.rewriters.RewriterException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -39,7 +55,7 @@ import com.google.common.collect.Sets;
  */
 public class LocalSearchPlanner {
 
-    // Fields to track and debug the workflow
+	// Fields to track and debug the workflow
     // Internal data
     private PDisjunction flatDisjunction;
     private PDisjunction normalizedDisjunction;
@@ -97,6 +113,9 @@ public class LocalSearchPlanner {
 
         // Normalize
         normalizedDisjunction = normalizer.rewrite(flatDisjunction);
+        PBodyUnaryTypeNormalizer unaryTypeNormalizer = new PBodyUnaryTypeNormalizer(context);
+		normalizedDisjunction = unaryTypeNormalizer.rewrite(normalizedDisjunction);
+		
         Set<PBody> normalizedBodies = normalizedDisjunction.getBodies();
 
         // Create plans for normalized bodies

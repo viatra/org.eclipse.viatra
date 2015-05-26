@@ -97,7 +97,7 @@ public class MatchingFrame extends Tuple implements Cloneable {
 
     public MatchingFrame clone() {
         MatchingFrame clone = new MatchingFrame(pattern, keySize, frame.length);
-        clone.frame = frame.clone();
+        clone.frame = Arrays.copyOf(frame, frame.length);
         return clone;
     }
     
