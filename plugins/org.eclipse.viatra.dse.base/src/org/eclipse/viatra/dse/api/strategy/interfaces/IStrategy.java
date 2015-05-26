@@ -5,17 +5,38 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * Contributors:
- *   Miklos Foldenyi - initial API and implementation
+ *   Andras Szabolcs Nagy - initial API and implementation
  *******************************************************************************/
 package org.eclipse.viatra.dse.api.strategy.interfaces;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
 
+/**
+ * This high level interface is responsible for defining basic operations of an exploration strategy.
+ * 
+ * @author Andras Szabolcs Nagy
+ *
+ */
 public interface IStrategy {
 
+    /**
+     * Initializes the strategy with a specific {@link ThreadContext}.
+     * 
+     * @param context
+     *            The context.
+     */
     void initStrategy(ThreadContext context);
 
+    /**
+     * This method explores the design space as the implementation specifies. It will be called only once, hence the
+     * exploration loop is run by the implementation. The termination condition is also specified by the implementation
+     * and when it returns the exploration thread will be disposed.
+     */
     void explore();
 
+    /**
+     * The implementation of this interface should be ready to be interrupted. If this method is called, the
+     * {@link IStrategy#explore()} method should return ASAP.
+     */
     void interruptStrategy();
 }

@@ -26,8 +26,15 @@ import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore.StopExecutionType;
 
 /**
- * This interface is the part of the strategy building blocks. Defines a method for selecting the next step in the
- * design space.
+ * This abstract {@link IStrategy} implementation defines an exploration loop especially for local search based
+ * exploration strategies, where a concrete strategy shall derive from this class and define the abstract methods
+ * (template method design pattern):
+ * <ul>
+ * <li>{@link LocalSearchStrategyBase#init(ThreadContext)}</li>
+ * <li>{@link LocalSearchStrategyBase#getNextTransition(boolean)}</li>
+ * <li>{@link LocalSearchStrategyBase#newStateIsProcessed(boolean, Fitness, boolean)}</li>
+ * <li>{@link LocalSearchStrategyBase#interrupted()}</li>
+ * </ul>
  * 
  * @author Andras Szabolcs Nagy
  * 
@@ -49,8 +56,8 @@ public abstract class LocalSearchStrategyBase implements IStrategy {
     private final Logger logger = Logger.getLogger(this.getClass());
 
     /**
-     * Called once before the first {@link LocalSearchStrategyBase#getNextTransition(ThreadContext)} is called for every
-     * new thread.
+     * Initializes the strategy, called once before the first
+     * {@link LocalSearchStrategyBase#getNextTransition(ThreadContext)} is called for every new thread.
      * 
      * @param context
      *            The {@link ThreadContext} which contains necessary informations. Should be assigned to a field.
@@ -62,7 +69,8 @@ public abstract class LocalSearchStrategyBase implements IStrategy {
      * or a simple depth first search.
      * 
      * @param lastWasSuccessful
-     *            False if the last returned transition was already fired by someone, otherwise true.
+     *            False if the last returned transition was already fired by someone and therefore should choose an
+     *            other transition, otherwise true.
      * @return An {@link ITransition} which is <b>not traversed</b> yet. Null if there is no more to fire.
      */
     public abstract ITransition getNextTransition(boolean lastWasSuccessful);
