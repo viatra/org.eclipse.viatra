@@ -37,6 +37,15 @@ public interface IModelManipulations {
 	 * Adds an existing model element to a selected EReference. The feature is
 	 * an EReference, it must <em>not</em> be a containment reference.
 	 */
+    void add(EObject container, EStructuralFeature feature, Object element) throws ModelManipulationException;
+
+    void add(EObject container, EStructuralFeature reference, Collection<? extends Object> element)
+            throws ModelManipulationException;
+
+    /**
+     * Adds an existing model element to a selected EReference. The feature is an EReference, it must <em>not</em> be a
+     * containment reference.
+     */
 	void addTo(EObject container, EStructuralFeature feature, Object element)
 			throws ModelManipulationException;
 
