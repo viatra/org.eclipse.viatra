@@ -19,7 +19,7 @@ import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
  * @author Gabor Bergmann
  * 
  */
-public interface ITypeInfoProviderConstraint {
+public interface ITypeInfoProviderConstraint extends PConstraint {
 
     /**
      * Returns type information implied by this constraint.

@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
-import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
+import org.eclipse.incquery.runtime.matchers.psystem.ITypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
@@ -35,7 +35,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  * @author Zoltan Ujhelyi
  *
  */
-public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implements ITypeInfoProviderConstraint {
+public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implements ITypeConstraint {
     
 	private TypeJudgement equivalentJudgement;
 	
@@ -55,7 +55,8 @@ public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implem
         return supplierKey.getPrettyPrintableName();
     }
     
-    public TypeJudgement getEquivalentJudgement() {
+    @Override
+	public TypeJudgement getEquivalentJudgement() {
 		return equivalentJudgement;
 	}
 

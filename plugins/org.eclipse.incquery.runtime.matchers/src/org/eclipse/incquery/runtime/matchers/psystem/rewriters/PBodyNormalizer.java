@@ -20,13 +20,13 @@ import java.util.Set;
 import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.helpers.TypeHelper;
+import org.eclipse.incquery.runtime.matchers.psystem.ITypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
@@ -145,10 +145,10 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      */
     void eliminateInferrableTypes(final PBody body, IQueryMetaContext context) {
     	Set<TypeJudgement> subsumedByRetainedConstraints = new HashSet<TypeJudgement>();
-    	LinkedList<TypeConstraint> allTypeConstraints = new LinkedList<TypeConstraint>();
+    	LinkedList<ITypeConstraint> allTypeConstraints = new LinkedList<ITypeConstraint>();
         for (PConstraint pConstraint : body.getConstraints()) {
-			if (pConstraint instanceof TypeConstraint) {
-				allTypeConstraints.add((TypeConstraint) pConstraint);
+			if (pConstraint instanceof ITypeConstraint) {
+				allTypeConstraints.add((ITypeConstraint) pConstraint);
 			} else if (pConstraint instanceof ITypeInfoProviderConstraint) { 
 				// non-type constraints are all retained
 				final Set<TypeJudgement> directJudgements = 
@@ -157,15 +157,15 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
 			}
 		}
         Collections.sort(allTypeConstraints, PConstraint.CompareByMonotonousID.INSTANCE);
-        Queue<TypeConstraint> potentialConstraints = allTypeConstraints; // rename for better comprehension
+        Queue<ITypeConstraint> potentialConstraints = allTypeConstraints; // rename for better comprehension
         
         while (!potentialConstraints.isEmpty()) {
-        	TypeConstraint candidate = potentialConstraints.poll();
+        	ITypeConstraint candidate = potentialConstraints.poll();
         	
         	boolean isSubsumed = 
         			subsumedByRetainedConstraints.contains(candidate.getEquivalentJudgement());
         	if (!isSubsumed) 
-	        	for (TypeConstraint subsuming : potentialConstraints) { // the remaining ones
+	        	for (ITypeConstraint subsuming : potentialConstraints) { // the remaining ones
 	        		final Set<TypeJudgement> directJudgements = 
 	        				subsuming.getImpliedJudgements(context);
 	        		final Set<TypeJudgement> typeClosure = TypeHelper.typeClosure(directJudgements, context);
