@@ -310,7 +310,7 @@ public class ReteRecipeCompiler {
         Integer index1 = parentCompiled.getPosMapping().get(constraint.getWho());
         Integer index2 = parentCompiled.getPosMapping().get(constraint.getWithWhom());
         
-        if (index1 != null && index2 != null && index1 != index2 ) {
+        if (index1 != null && index2 != null && index1.intValue() != index2.intValue() ) {
         	Integer indexLower = Math.min(index1, index2);
         	Integer indexHigher = Math.max(index1, index2);
         	
@@ -346,7 +346,7 @@ public class ReteRecipeCompiler {
         Integer index1 = parentCompiled.getPosMapping().get(constraint.getWho());
         Integer index2 = parentCompiled.getPosMapping().get(constraint.getWithWhom());
         
-        if (index1 != null && index2 != null && index1 != index2 ) {
+        if (index1 != null && index2 != null && index1.intValue() != index2.intValue() ) {
         	Integer indexLower = Math.min(index1, index2);
         	Integer indexHigher = Math.max(index1, index2);
         	
