@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA EMF MWE2 Integration
+Bundle-SymbolicName: org.eclipse.viatra.emf.mwe2integration
+Bundle-Version: 0.8.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.eclipse.emf.mwe2.runtime,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.eclipse.incquery.runtime.evm,
+ org.apache.log4j;bundle-version="1.2.15",
+ com.google.guava;bundle-version="15.0.0",
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.macro,
+ com.google.inject,
+ org.eclipse.emf.mwe2.language,
+ org.eclipse.emf.mwe2.launch
+Bundle-Vendor: Eclipse VIATRA Project
+Export-Package: org.eclipse.viatra.emf.mwe2integration,
+ org.eclipse.viatra.emf.mwe2integration.eventdriven,
+ org.eclipse.viatra.emf.mwe2integration.eventdriven.mwe2impl,
+ org.eclipse.viatra.emf.mwe2integration.initializer,
+ org.eclipse.viatra.emf.mwe2integration.mwe2impl,
+ org.eclipse.viatra.emf.mwe2integration.mwe2impl.exceptions,
+ org.eclipse.viatra.emf.mwe2integration.mwe2impl.messages,
+ org.eclipse.viatra.emf.mwe2integration.providers,
+ org.eclipse.viatra.emf.mwe2integration.providers.impl
+
