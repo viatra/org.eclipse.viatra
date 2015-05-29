@@ -20,6 +20,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
@@ -29,31 +30,57 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>>
-        implements ITransformationRule<Match, Matcher> {
-    private IQuerySpecification<Matcher> precondition;
-    private RuleSpecification<Match> ruleSpecification;
+		implements ITransformationRule<Match, Matcher> {
+	private String name;
+	private IQuerySpecification<Matcher> precondition;
+	private RuleSpecification<Match> ruleSpecification;
+	private EventFilter<? super Match> filter;
 
-    public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
-            Multimap<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle) {
-        Set<Job<Match>> jobs = Sets.newHashSet();
+	public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
+			Multimap<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
+			EventFilter<? super Match> filter) {
+		this.name = name;
+		Set<Job<Match>> jobs = Sets.newHashSet();
 
-        for (Entry<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entries()) {
-            IncQueryActivationStateEnum state = stateAction.getKey();
-            IMatchProcessor<Match> action = stateAction.getValue();
+		for (Entry<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entries()) {
+			IncQueryActivationStateEnum state = stateAction.getKey();
+			IMatchProcessor<Match> action = stateAction.getValue();
 
-            jobs.add(Jobs.newStatelessJob(state, action));
-        }
+			jobs.add(Jobs.newStatelessJob(state, action));
+		}
 
-        ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle, jobs);
-    }
+		ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle, jobs);
+		this.filter = filter;
+	}
 
-    @Override
-    public RuleSpecification<Match> getRuleSpecification() {
-        return ruleSpecification;
-    }
+	public EventDrivenTransformationRule(EventDrivenTransformationRule<Match, Matcher> rule, EventFilter<? super Match> filter) {
+		this.name = rule.name;
+		this.precondition = rule.precondition;
+		this.ruleSpecification = rule.ruleSpecification;
+		this.filter = filter;
+	}
+	
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public IQuerySpecification<Matcher> getPrecondition() {
-        return precondition;
-    }
+	@Override
+	public RuleSpecification<Match> getRuleSpecification() {
+		return ruleSpecification;
+	}
+
+	@Override
+	public IQuerySpecification<Matcher> getPrecondition() {
+		return precondition;
+	}
+
+	@Override
+	public EventFilter<? super Match> getFilter() {
+		if (filter == null) {
+			return ruleSpecification.createEmptyFilter();
+		} else {
+			return filter;
+		}
+	}
 }

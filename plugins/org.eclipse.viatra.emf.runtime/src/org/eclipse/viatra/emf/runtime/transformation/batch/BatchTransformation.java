@@ -90,13 +90,10 @@ public class BatchTransformation {
 		rules.add(rule);
 	}
 	
-	public void addRules(TransformationRuleGroup ruleGroup) {
-		for (Pair<?, ?> pair : ruleGroup) {
-			Object key = pair.getKey();
-			if (!(key instanceof BatchTransformationRule)) {
-				continue;
-			}
-			rules.add((BatchTransformationRule<?, ?>) key);
+	@SuppressWarnings("rawtypes")
+	public void addRules(TransformationRuleGroup<BatchTransformationRule> ruleGroup) {
+		for (BatchTransformationRule rule : ruleGroup) {
+			rules.add(rule);
 		}
 	}
 	

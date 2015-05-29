@@ -21,9 +21,8 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet
 import org.eclipse.viatra.emf.runtime.filters.MatchParameterFilter
-import org.eclipse.viatra.emf.runtime.rules.ITransformationRule
-import org.eclipse.viatra.emf.runtime.rules.TransformationRuleGroup
 import org.eclipse.viatra.emf.runtime.transformation.batch.BatchTransformation
+import org.eclipse.viatra.emf.runtime.rules.BatchTransformationRuleGroup
 
 /**
  * Utility class for simple rule usage
@@ -56,7 +55,7 @@ class BatchTransformationStatements {
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> fireUntil (
-		ITransformationRule<Match, ?> rule, Predicate<Match> breakCondition
+		BatchTransformationRule<Match, ?> rule, Predicate<Match> breakCondition
 	) {
 		val filter = rule.ruleSpecification.createEmptyFilter
 		rule.ruleSpecification.fireUntil(breakCondition, filter)
@@ -69,7 +68,7 @@ class BatchTransformationStatements {
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> fireUntil(
-		ITransformationRule<Match, ?> rule,
+		BatchTransformationRule<Match, ?> rule,
 		Predicate<Match> breakCondition,
 		Pair<String, Object>... filterParameters
 	) {
@@ -82,7 +81,7 @@ class BatchTransformationStatements {
 	 * only one of the conflicting matches will cause an execution. 
  	 */
 	def <Match extends IPatternMatch> fireUntil(
-		ITransformationRule<Match, ?> rule,
+		BatchTransformationRule<Match, ?> rule,
 		Predicate<Match> breakCondition,
 		EventFilter<? super Match> filter
 	) {
@@ -95,7 +94,7 @@ class BatchTransformationStatements {
 	 * not fulfilled. The matches are executed one-by-one, in case of conflicts
 	 * only one of the conflicting matches will cause an execution. 
  	 */
-	def fireUntil(TransformationRuleGroup rules, Predicate<IPatternMatch> breakCondition) {
+	def fireUntil(BatchTransformationRuleGroup rules, Predicate<IPatternMatch> breakCondition) {
 		registerRules(rules)
 		val ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(rules.filteredRuleMap)
 		
@@ -133,7 +132,7 @@ class BatchTransformationStatements {
 	 * one-by-one, in case of conflicts only one of the conflicting matches
 	 * will cause an execution. 
  	 */
-	def <Match extends IPatternMatch> fireWhilePossible(ITransformationRule<Match, ?> rule) {
+	def <Match extends IPatternMatch> fireWhilePossible(BatchTransformationRule<Match, ?> rule) {
 		rule.fireUntil[false]	
 	}
 	
@@ -143,7 +142,7 @@ class BatchTransformationStatements {
 	 * one-by-one, in case of conflicts only one of the conflicting matches
 	 * will cause an execution. 
  	 */
-	def <Match extends IPatternMatch> fireWhilePossible(ITransformationRule<Match, ?> rule, EventFilter<? super Match> filter) {
+	def <Match extends IPatternMatch> fireWhilePossible(BatchTransformationRule<Match, ?> rule, EventFilter<? super Match> filter) {
 		rule.fireUntil([false], filter)	
 	}
 	
@@ -154,27 +153,27 @@ class BatchTransformationStatements {
 	 * executed one-by-one, in case of conflicts only one of the conflicting
 	 * matches will cause an execution. 
  	 */
-	def fireWhilePossible(TransformationRuleGroup rules) {
+	def fireWhilePossible(BatchTransformationRuleGroup rules) {
 		rules.fireUntil[false]
 	}
 	
 	/**
 	 * Executes the selected rule with the selected filter on its current match set of the precondition.
  	 */
-	def <Match extends IPatternMatch> fireAllCurrent(ITransformationRule<Match, ?> rule) {
+	def <Match extends IPatternMatch> fireAllCurrent(BatchTransformationRule<Match, ?> rule) {
 		val filter = rule.ruleSpecification.createEmptyFilter
 		rule.ruleSpecification.fireAllCurrent(filter)
 	}
 	/**
 	 * Executes the selected rule with the selected filter on its current match set of the precondition.
  	 */
-	def <Match extends IPatternMatch> fireAllCurrent(ITransformationRule<Match, ?> rule, Pair<String, Object>... parameterFilter) {
+	def <Match extends IPatternMatch> fireAllCurrent(BatchTransformationRule<Match, ?> rule, Pair<String, Object>... parameterFilter) {
 		rule.ruleSpecification.fireAllCurrent(new MatchParameterFilter(parameterFilter))
 	}
 	/**
 	 * Executes the selected rule with the selected filter on its current match set of the precondition.
  	 */
-	def <Match extends IPatternMatch> fireAllCurrent(ITransformationRule<Match, ?> rule, EventFilter<? super Match> filter) {
+	def <Match extends IPatternMatch> fireAllCurrent(BatchTransformationRule<Match, ?> rule, EventFilter<? super Match> filter) {
 		rule.ruleSpecification.fireAllCurrent(filter)
 	}
 
@@ -202,12 +201,9 @@ class BatchTransformationStatements {
 		ruleEngine.addRule(ruleSpecification, filter)
 	}
 	
-	def registerRules(TransformationRuleGroup rules) {
-		rules.forEach[
-			if (value != null)
-				ruleEngine.addRule(key.ruleSpecification, value)
-			else
-				ruleEngine.addRule(key.ruleSpecification)
+	def registerRules(BatchTransformationRuleGroup rules) {
+		rules.filterNull.forEach[
+				ruleEngine.addRule(ruleSpecification, filter as EventFilter<IPatternMatch>)
 		]
 	}
 	
@@ -219,12 +215,9 @@ class BatchTransformationStatements {
 		ruleEngine.removeRule(ruleSpecification, filter)
 	}
 
-	def disposeRules(TransformationRuleGroup rules) {
-		rules.forEach[
-			if (value != null)
-				ruleEngine.removeRule(key.ruleSpecification, value)
-			else
-				ruleEngine.removeRule(key.ruleSpecification)
+	def disposeRules(BatchTransformationRuleGroup rules) {
+		rules.filterNull.forEach[
+				ruleEngine.removeRule(ruleSpecification, filter as EventFilter<IPatternMatch>)
 		]
 	}
 	
@@ -233,7 +226,7 @@ class BatchTransformationStatements {
 	 * 
 	 * <p><strong>Warning</strong>: the selection criteria is not specified - it is neither random nor controllable
 	 */
-	def <Match extends IPatternMatch> fireOne(ITransformationRule<Match, ?> rule) {
+	def <Match extends IPatternMatch> fireOne(BatchTransformationRule<Match, ?> rule) {
 		val filter = rule.ruleSpecification.createEmptyFilter
 		rule.ruleSpecification.fireOne(filter)
 	}
@@ -243,7 +236,7 @@ class BatchTransformationStatements {
 	 * 
 	 * <p><strong>Warning</strong>: the selection criteria is not specified - it is neither random nor controllable
 	 */
-	def <Match extends IPatternMatch> fireOne(ITransformationRule<Match, ?> rule, EventFilter<? super Match> filter) {
+	def <Match extends IPatternMatch> fireOne(BatchTransformationRule<Match, ?> rule, EventFilter<? super Match> filter) {
 		rule.ruleSpecification.fireOne(filter)
 	}
 		

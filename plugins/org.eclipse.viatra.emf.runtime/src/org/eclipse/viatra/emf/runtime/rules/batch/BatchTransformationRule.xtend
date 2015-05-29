@@ -17,11 +17,13 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle
 import org.eclipse.incquery.runtime.evm.api.Job
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.evm.api.event.EventType.RuleEngineEventType
 import org.eclipse.incquery.runtime.evm.specific.Jobs
 import org.eclipse.incquery.runtime.evm.specific.Rules
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventTypeEnum
+import org.eclipse.incquery.runtime.evm.specific.event.IncQuerySinglePatternMatchEventFilter
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.UnmodifiableActivationLifeCycle
 import org.eclipse.viatra.emf.runtime.rules.ITransformationRule
@@ -58,6 +60,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	RuleSpecification<Match> ruleSpec
 	private val IQuerySpecification<Matcher> precondition
 	private val IMatchProcessor<Match> action
+	private val EventFilter<Match> filter
 
 	protected new() {
 		this("", null, STATELESS_RULE_LIFECYCLE, null)
@@ -65,14 +68,33 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	}
 	
 	new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action) {
+	    this(rulename, matcher, lifecycle, action, IncQuerySinglePatternMatchEventFilter.createFilter(matcher.newEmptyMatch.toImmutable as Match))
+	}
+	new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action, EventFilter<Match> filter) {
 		this.ruleName = rulename
 		this.precondition = matcher
 		this.action = action
 		this.lifecycle = lifecycle
+		this.filter = filter
+	}
+	new(BatchTransformationRule<Match, Matcher> rule, EventFilter<Match> filter) {
+	    this.ruleName = rule.ruleName
+	    this.precondition = rule.precondition
+	    this.action = rule.action
+	    this.lifecycle = rule.lifecycle
+	    this.filter = filter
 	}
 	
+	/**
+	 * @deprecated Use {#getName) instead
+	 */
+	@Deprecated()
     def getRuleName() {
-    	ruleName
+    	getName()
+    }
+
+    override getName() {
+        ruleName
     }
 
 	/**
@@ -89,7 +111,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
     }
 	
 	/**
-	 * Returns the IMatcherFactory representing the pattern used as a precondition.
+	 * Returns the query specification representing the pattern used as a precondition.
 	 */
 	override IQuerySpecification<Matcher> getPrecondition() {
 		precondition
@@ -101,4 +123,8 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQue
 	def IMatchProcessor<Match> getAction() {	
 		action
 	}	
+	
+	override EventFilter<? super Match> getFilter() {
+	    filter
+	}
 }

@@ -14,10 +14,19 @@ import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
+import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 
 
 public interface ITransformationRule<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> {
 
+	String getName();
 	RuleSpecification<Match> getRuleSpecification();
 	IQuerySpecification<Matcher> getPrecondition();
+	/**
+	 * Returns the event filter set up for this rule; if no specific filter is
+	 * set up, an dedicated empty filter is returned
+	 * 
+	 * @return the event filter for this rule, never null
+	 */
+	EventFilter<? super Match> getFilter();
 }

@@ -87,4 +87,5 @@ public class BatchTransformationRuleFactory {
 		return new BatchTransformationRule<Match, Matcher>(name, precondition,
 				BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, action);
 	}
+	
 }

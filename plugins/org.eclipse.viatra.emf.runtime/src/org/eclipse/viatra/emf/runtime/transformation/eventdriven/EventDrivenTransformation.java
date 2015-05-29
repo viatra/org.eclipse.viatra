@@ -21,7 +21,6 @@ import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup;
 import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRule;
-import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -67,12 +66,8 @@ public class EventDrivenTransformation {
         }
 
         public EventDrivenTransformationBuilder addRules(EventDrivenTransformationRuleGroup ruleGroup) {
-            for (Pair<?, ?> pair : ruleGroup) {
-                Object key = pair.getKey();
-                if (!(key instanceof EventDrivenTransformationRule)) {
-                    continue;
-                }
-                rules.add((EventDrivenTransformationRule<?, ?>) key);
+            for (EventDrivenTransformationRule<?, ?> rule : ruleGroup) {
+                rules.add(rule);
             }
             return this;
         }
