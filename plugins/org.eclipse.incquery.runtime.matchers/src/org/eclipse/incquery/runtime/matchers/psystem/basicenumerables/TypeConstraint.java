@@ -11,10 +11,7 @@
 package org.eclipse.incquery.runtime.matchers.psystem.basicenumerables;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
@@ -27,10 +24,10 @@ import org.eclipse.incquery.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 /**
- * Represents a type constraint with using an undefined number of parameters. Subclasses are distinguished by the number
- * of parameters and their inferred type information. Such a constraint maintains how to output its type information.
+ * Represents an enumerable type constraint that asserts that values substituted for the given tuple of variables 
+ * 	form a tuple that belongs to an enumerable extensional relation identified by an {@link IInputKey}.
  *
- * <p> InputKey must be enumerable!
+ * <p> The InputKey must be enumerable!
  *
  * @author Zoltan Ujhelyi
  *
@@ -47,6 +44,11 @@ public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implem
         	throw new IllegalArgumentException(
         			this.getClass().getSimpleName() + 
         			" applicable for enumerable input keys only; received instead " + 
+        					inputKey);
+        if (variablesTuple.getSize() != inputKey.getArity())
+        	throw new IllegalArgumentException(
+        			this.getClass().getSimpleName() + 
+        			" applied for variable tuple " + variablesTuple + " having wrong arity for input key " + 
         					inputKey);
     }
 
@@ -68,23 +70,8 @@ public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implem
 	
 	@Override
     public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
-    	final Map<Set<PVariable>, Set<PVariable>> result = new HashMap<Set<PVariable>, Set<PVariable>>();
-    	
-    	Set<Entry<Set<Integer>, Set<Integer>>> dependencies = context.getFunctionalDependencies(supplierKey).entrySet();
-    	for (Entry<Set<Integer>, Set<Integer>> dependency : dependencies) {
-			result.put(transcribeVariables(dependency.getKey()), transcribeVariables(dependency.getValue()));
-		}
-
-    	return result;
+		return TypeConstraintUtil.getFunctionalDependencies(context, supplierKey, variablesTuple);
     }
-
-	private Set<PVariable> transcribeVariables(Set<Integer> indices) {
-		Set<PVariable> result = new HashSet<PVariable>();
-		for (Integer index : indices) {
-			result.add((PVariable) variablesTuple.get(index));
-		}
-		return result;
-	}
 
 
 }

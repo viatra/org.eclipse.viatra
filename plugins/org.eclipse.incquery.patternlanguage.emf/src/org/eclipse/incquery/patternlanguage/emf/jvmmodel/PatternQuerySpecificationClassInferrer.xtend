@@ -81,6 +81,7 @@ import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.incquery.runtime.matchers.context.common.JavaTransitiveInstancesKey
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -358,9 +359,14 @@ class PatternQuerySpecificationClassInferrer {
 						val packageNsUri = literal.EPackage.nsURI
 						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «EDataTypeInSlotsKey»((«EDataType»)getClassifierLiteral("«packageNsUri»", "«literal.name»")));'''
 					}
+				}	
+			}
+			TypeFilterConstraint: {
+				val key = constraint.inputKey
+				switch key {
 					JavaTransitiveInstancesKey : {
 						val literal = key.wrappedKey
-						'''new «TypeConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «JavaTransitiveInstancesKey»(«literal».class));'''
+						'''new «TypeFilterConstraint»(body, new «FlatTuple»(«constraint.variablesTuple.output»), new «JavaTransitiveInstancesKey»(«literal».class));'''
 					}
 				}
 			}

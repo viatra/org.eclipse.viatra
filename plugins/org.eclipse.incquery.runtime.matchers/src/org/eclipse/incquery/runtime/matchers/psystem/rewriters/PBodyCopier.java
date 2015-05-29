@@ -27,6 +27,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternCallBasedDeferred;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -124,6 +125,8 @@ public class PBodyCopier {
             copyInequalityConstraint((Inequality) constraint);
         } else if (constraint instanceof TypeConstraint) {
             copyTypeConstraint((TypeConstraint) constraint);
+        } else if (constraint instanceof TypeFilterConstraint) {
+            copyTypeFilterConstraint((TypeFilterConstraint) constraint);
         } else if (constraint instanceof ConstantValue) {
             copyConstantValueConstraint((ConstantValue) constraint);
         } else if (constraint instanceof PositivePatternCall) {
@@ -162,6 +165,12 @@ public class PBodyCopier {
         PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
         FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
         new TypeConstraint(body, variablesTuple, typeConstraint.getSupplierKey());
+    }
+    
+    protected void copyTypeFilterConstraint(TypeFilterConstraint typeConstraint) {
+        PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
+        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
+        new TypeFilterConstraint(body, variablesTuple, typeConstraint.getInputKey());
     }
 
     protected void copyConstantValueConstraint(ConstantValue constantValue) {
@@ -223,7 +232,15 @@ public class PBodyCopier {
         Object[] pVariables = patternCallBasedDeferred.getActualParametersTuple().getElements();
         return mapVariableList(pVariables);
     }
-    
+
+    /**
+     * For type filters.
+     */
+    private PVariable[] extractMappedVariables(TypeFilterConstraint typeFilterConstraint) {
+        Object[] pVariables = typeFilterConstraint.getVariablesTuple().getElements();
+        return mapVariableList(pVariables);
+    }
+  
     private PVariable[] mapVariableList(Object[] pVariables) {
         List<PVariable> list = new ArrayList<PVariable>();
         for (int i = 0; i < pVariables.length; i++) {
