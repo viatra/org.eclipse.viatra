@@ -58,8 +58,8 @@ class ModelHandlingRules {
 		fixedPriorityResolver.setPriority(createTokenEntersTimedZoneRule.ruleSpecification, 5)
 		fixedPriorityResolver.setPriority(createTokenLeavesTimedZoneRule.ruleSpecification, 1)
 
-		EventDrivenTransformation.forScope(new EMFScope(eventModelManager.resourceSet)).addRules(rules).setConflictResolver(
-			fixedPriorityResolver).create()
+		EventDrivenTransformation.forScope(new EMFScope(eventModelManager.resourceSet)).addRules(rules).
+			setConflictResolver(fixedPriorityResolver).build
 	}
 
 	val createEnabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.emf.runtime.transformation.eventdriven;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Level;
@@ -19,76 +18,112 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
-import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
-import org.eclipse.incquery.runtime.evm.specific.Schedulers;
-import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflictResolver;
-import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup;
 import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRule;
 import org.eclipse.xtext.xbase.lib.Pair;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+
 public class EventDrivenTransformation {
     private IncQueryEngine incQueryEngine;
-    private UpdateCompleteBasedSchedulerFactory schedulerFactory;
     private ExecutionSchema executionSchema;
-    private ConflictResolver conflictResolver;
-    private List<EventDrivenTransformationRule<?, ?>> rules = new ArrayList<EventDrivenTransformationRule<?, ?>>();
 
-    public static EventDrivenTransformation forScope(EMFScope scope) throws IncQueryException {
-    	IncQueryEngine incQueryEngine = IncQueryEngine.on(scope);
-    	return new EventDrivenTransformation(incQueryEngine);
+    public static class EventDrivenTransformationBuilder {
+
+        private final String SCHEMA_ERROR = "Cannot set both Conflict Resolver and Execution Schema properties.";
+
+        private ConflictResolver resolver;
+        private IncQueryEngine engine;
+        private ExecutionSchema schema;
+        private List<EventDrivenTransformationRule<?, ?>> rules = Lists.newArrayList();
+
+        public EventDrivenTransformationBuilder setConflictResolver(ConflictResolver resolver) {
+            Preconditions.checkState(schema == null, SCHEMA_ERROR);
+            this.resolver = resolver;
+            return this;
+        }
+
+        public EventDrivenTransformationBuilder setScope(EMFScope scope) throws IncQueryException {
+            this.engine = IncQueryEngine.on(scope);
+            return this;
+        }
+
+        public EventDrivenTransformationBuilder setEngine(IncQueryEngine engine) {
+            this.engine = engine;
+            return this;
+        }
+
+        public EventDrivenTransformationBuilder setSchema(ExecutionSchema schema) {
+            Preconditions.checkState(resolver == null, SCHEMA_ERROR);
+            this.schema = schema;
+            return this;
+        }
+
+        public EventDrivenTransformationBuilder addRule(EventDrivenTransformationRule<?, ?> rule) {
+            rules.add(rule);
+            return this;
+        }
+
+        public EventDrivenTransformationBuilder addRules(EventDrivenTransformationRuleGroup ruleGroup) {
+            for (Pair<?, ?> pair : ruleGroup) {
+                Object key = pair.getKey();
+                if (!(key instanceof EventDrivenTransformationRule)) {
+                    continue;
+                }
+                rules.add((EventDrivenTransformationRule<?, ?>) key);
+            }
+            return this;
+        }
+        
+        /**
+         * @deprecated Use {@link #build()} instead.
+         */
+        public EventDrivenTransformation create() throws IncQueryException {
+            return build();
+        }
+
+        public EventDrivenTransformation build() throws IncQueryException {
+            Preconditions.checkState(engine != null, "IncQueryEngine must be set.");
+            if (schema == null) {
+                final ExecutionSchemaBuilder builder = new ExecutionSchemaBuilder().setEngine(engine);
+                if (resolver != null) {
+                    builder.setConflictResolver(resolver);
+                }
+                schema = builder.build();
+            }
+            for (EventDrivenTransformationRule<?, ?> rule : rules) {
+                schema.addRule(rule.getRuleSpecification());
+            }
+            return new EventDrivenTransformation(schema, engine);
+
+        }
+    }
+
+    public static EventDrivenTransformationBuilder forScope(EMFScope scope) throws IncQueryException {
+        return forEngine(IncQueryEngine.on(scope));
     }
     
-    public static EventDrivenTransformation forEngine(IncQueryEngine engine) throws IncQueryException {
-    	return new EventDrivenTransformation(engine);
+    public static EventDrivenTransformationBuilder forEngine(IncQueryEngine engine) throws IncQueryException {
+        return new EventDrivenTransformationBuilder().setEngine(engine);
     }
     
     /**
      * @deprecated Use {@link #forScope(EMFScope)} or {@link #forEngine(IncQueryEngine)} instead!
      */
     @Deprecated
-    public static EventDrivenTransformation forSource(Notifier notifier) throws IncQueryException {
+    public static EventDrivenTransformationBuilder forSource(Notifier notifier) throws IncQueryException {
         return EventDrivenTransformation.forScope(new EMFScope(notifier));
     }
 
-    private EventDrivenTransformation(IncQueryEngine engine) throws IncQueryException {
-        incQueryEngine = engine;
-        schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine.getBaseIndex());
-        conflictResolver = new ArbitraryOrderConflictResolver();
-    }
-
-    /**
-     * This method must be called in order to start the execution of the transformation!!!
-     * @return
-     */
-    public EventDrivenTransformation create() {
-        executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory);
-        executionSchema.setConflictResolver(conflictResolver);
-        for (EventDrivenTransformationRule<?, ?> rule : rules) {
-            executionSchema.addRule(rule.getRuleSpecification());
-        }
-        return this;
+    private EventDrivenTransformation(ExecutionSchema executionSchema, IncQueryEngine incQueryEngine) {
+        this.executionSchema = executionSchema;
+        this.incQueryEngine = incQueryEngine;
     }
 
     public EventDrivenTransformation setDebugLevel(Level level) {
         executionSchema.getLogger().setLevel(level);
-        return this;
-    }
-
-    public EventDrivenTransformation addRule(@SuppressWarnings("rawtypes") EventDrivenTransformationRule rule) {
-        rules.add(rule);
-        return this;
-    }
-
-    public EventDrivenTransformation addRules(EventDrivenTransformationRuleGroup ruleGroup) {
-        for (Pair<?, ?> pair : ruleGroup) {
-            Object key = pair.getKey();
-            if (!(key instanceof EventDrivenTransformationRule)) {
-                continue;
-            }
-            rules.add((EventDrivenTransformationRule<?, ?>) key);
-        }
         return this;
     }
 
@@ -98,15 +133,6 @@ public class EventDrivenTransformation {
 
     public ExecutionSchema getExecutionSchema() {
         return executionSchema;
-    }
-
-    public ConflictResolver getConflictResolver() {
-        return conflictResolver;
-    }
-
-    public EventDrivenTransformation setConflictResolver(ConflictResolver conflictResolver) {
-        this.conflictResolver = conflictResolver;
-        return this;
     }
 
     public void useDebugInfo(boolean debug) {
