@@ -294,7 +294,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
         	for (IQueryBackend backend : queryBackends.values()) {
 				backend.dispose();
 			}
-            queryBackends = null;
+            queryBackends.clear();
         }
         hints.clear();
         matchers.clear();
