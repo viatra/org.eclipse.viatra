@@ -135,7 +135,7 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     public boolean containsTuple(IInputKey key, Tuple seed) {
     	ensureValidKey(key);
     	if (key instanceof JavaTransitiveInstancesKey) {
-    		Class<?> instanceClass = forceGetInstanceClass((JavaTransitiveInstancesKey) key);
+    		Class<?> instanceClass = forceGetWrapperInstanceClass((JavaTransitiveInstancesKey) key);
 			if (instanceClass != null)
 				return instanceClass.isInstance(getFromSeed(seed, 0));
 			else
@@ -159,10 +159,10 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     	}
     }
 
-	private Class<?> forceGetInstanceClass(JavaTransitiveInstancesKey key) {
+	private Class<?> forceGetWrapperInstanceClass(JavaTransitiveInstancesKey key) {
 		Class<?> instanceClass;
 		try {
-			instanceClass = key.forceGetInstanceClass();
+			instanceClass = key.forceGetWrapperInstanceClass();
 		} catch (ClassNotFoundException e) {
 			logger.error("Could not load instance class for type constraint " + key.getWrappedKey(), e);
 			instanceClass = null;

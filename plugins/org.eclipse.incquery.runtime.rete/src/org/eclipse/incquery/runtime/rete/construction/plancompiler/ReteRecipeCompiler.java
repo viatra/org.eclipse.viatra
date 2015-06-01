@@ -57,6 +57,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PBodyNormalizer;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PDisjunctionRewriter;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.PDisjunctionRewriterCacher;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.SurrogateQueryRewriter;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.incquery.runtime.rete.recipes.AntiJoinRecipe;
@@ -386,7 +387,7 @@ public class ReteRecipeCompiler {
 		final List<PVariable> parentVariables = parentCompiled.getVariablesTuple();
 		
 		Mask mask; // select elements of the tuple to check against extensional relation
-		if (parentVariables.equals(constraintVariables))
+		if (new FlatTuple(parentVariables.toArray()).equals(constraintVariables))
 			mask = null; // lucky case, parent signature equals that of input key
 		else mask = CompilerHelper.makeProjectionMask(parentCompiled, 
 				Arrays.asList((PVariable[])constraintVariables.getElements()));

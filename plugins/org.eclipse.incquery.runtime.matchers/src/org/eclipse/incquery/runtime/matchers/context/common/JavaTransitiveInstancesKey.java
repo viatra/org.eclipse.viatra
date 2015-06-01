@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.context.common;
 
+import org.apache.commons.lang.ClassUtils;
+
 
 /**
  * Instance tuples are of form (x), where object x is an instance of the given Java class or its subclasses.
@@ -22,13 +24,22 @@ package org.eclipse.incquery.runtime.matchers.context.common;
 */
 public class JavaTransitiveInstancesKey extends BaseInputKeyWrapper<String> {
 	
+	/**
+	 * The actual Class whose (transitive) instances this relation contains. Can be null at compile time, if only the name is available.
+	 * Can be a primitive.  
+	 */
 	private Class<?> cachedInstanceClass;
+	
+	/**
+	 * Same as {@link #cachedInstanceClass}, but primitive classes are replaced with their wrapper classes (e.g. int --> java.lang.Integer).
+	 */
+	private Class<?> cachedWrapperInstanceClass;
 
 	/**
 	 * Preferred constructor.
 	 */
 	public JavaTransitiveInstancesKey(Class<?> instanceClass) {
-		this(instanceClass.getName());
+		this(ClassUtils.primitiveToWrapper(instanceClass).getName());
 		this.cachedInstanceClass = instanceClass;
 	}
 	
@@ -66,18 +77,38 @@ public class JavaTransitiveInstancesKey extends BaseInputKeyWrapper<String> {
 		return cachedInstanceClass;
 	}
 	
+	/**
+	 * @return non-null instance class, wrapped if primitive class
+	 * @throws ClassNotFoundException 
+	 */
+	public Class<?> forceGetWrapperInstanceClass() throws ClassNotFoundException {
+		forceGetInstanceClass();
+		return getWrapperInstanceClass();
+	}
+	
+	/**
+	 * @return instance class, wrapped if primitive class, null if class cannot be loaded
+	 */
+	public Class<?> getWrapperInstanceClass()  {
+		if (cachedWrapperInstanceClass == null) {
+			cachedWrapperInstanceClass = ClassUtils.primitiveToWrapper(getInstanceClass());
+		}
+		return cachedWrapperInstanceClass;
+	}
+	
 	private void resolveClassInternal() throws ClassNotFoundException {
 		cachedInstanceClass = Class.forName(wrappedKey);
 	}
 	
 	@Override
 	public String getPrettyPrintableName() {
-		return wrappedKey;
+		getWrapperInstanceClass();
+		return cachedWrapperInstanceClass == null ? wrappedKey == null ? "<null>" : wrappedKey : cachedWrapperInstanceClass.getName();
 	}
 
 	@Override
 	public String getStringID() {
-		return "javaClass#"+ wrappedKey;
+		return "javaClass#"+ getPrettyPrintableName();
 	}
 
 	@Override
@@ -89,5 +120,11 @@ public class JavaTransitiveInstancesKey extends BaseInputKeyWrapper<String> {
 	public boolean isEnumerable() {
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getPrettyPrintableName();
+	}
+
 
 }

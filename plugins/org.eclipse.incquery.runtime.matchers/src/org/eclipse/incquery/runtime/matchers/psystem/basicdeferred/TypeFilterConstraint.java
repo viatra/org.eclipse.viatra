@@ -44,7 +44,9 @@ public class TypeFilterConstraint extends VariableDeferredPConstraint implements
 	
     public TypeFilterConstraint(PBody pSystem, Tuple variablesTuple, IInputKey inputKey) {
         super(pSystem, variablesTuple.<PVariable> getDistinctElements());
-		this.variablesTuple = variablesTuple;
+        this.equivalentJudgement = new TypeJudgement(inputKey, variablesTuple);
+
+        this.variablesTuple = variablesTuple;
 		this.inputKey = inputKey;
 		
         if (variablesTuple.getSize() != inputKey.getArity())
