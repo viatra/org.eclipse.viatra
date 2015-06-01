@@ -77,9 +77,26 @@ public class QueryBackendRegistry {
     }
     
     /**
-     * Returns a factory for the selected backend class. If no factories are available for the selected backend, an exception is thrown.
+     * Registers a factory instance for a backend class if no class is already registered
+     * 
+     * @throws IllegalStateException
+     *             if a factory is already registered for the selected backend
+     * @since 1.0
+     */
+    public void registerQueryBackendFactoryUnchecked(Class<? extends IQueryBackend> backend,
+            IQueryBackendFactory factory) {
+        if (!queryBackendFactories.containsKey(backend)) {
+            queryBackendFactories.put(backend, factory);
+        }
+    }
+
+    /**
+     * Returns a factory for the selected backend class. If no factories are available for the selected backend, an
+     * exception is thrown.
+     * 
      * @param backend
-     * @throws IllegalStateException if no corresponding backend is registered into the factory
+     * @throws IllegalStateException
+     *             if no corresponding backend is registered into the factory
      */
     public IQueryBackendFactory getFactory(Class<? extends IQueryBackend> backend) {
         Preconditions.checkArgument(queryBackendFactories.containsKey(backend), "Unknown backend %s", backend.getName());
