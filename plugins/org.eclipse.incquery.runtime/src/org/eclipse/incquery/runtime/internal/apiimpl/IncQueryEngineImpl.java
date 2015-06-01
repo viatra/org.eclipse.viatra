@@ -109,8 +109,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 	/**
      * The RETE and other pattern matcher implementations of the IncQuery engine.
      */
-    private volatile Map<Class<? extends IQueryBackend>, IQueryBackend> queryBackends 
- = Maps.newHashMap();
+    private volatile Map<Class<? extends IQueryBackend>, IQueryBackend> queryBackends = Maps.newHashMap();
     
     private final LifecycleProvider lifecycleProvider;
     private final ModelUpdateProvider modelUpdateProvider;
@@ -255,7 +254,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 		    		initialized = true;
 		    	} finally {
 		    		if (!initialized) 
-		    			queryBackends = null;
+                        queryBackends.clear();
 		    	}
 		    }
 		}
