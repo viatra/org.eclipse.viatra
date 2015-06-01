@@ -39,6 +39,16 @@
 			<artifactId>org.eclipse.incquery.runtime.evm</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>15.0</version>
+		</dependency>
 	</dependencies>
 	<properties>
 		<maven.compiler.source>1.6</maven.compiler.source>
