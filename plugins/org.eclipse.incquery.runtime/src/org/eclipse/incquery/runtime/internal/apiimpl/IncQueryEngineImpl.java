@@ -65,8 +65,10 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -108,7 +110,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
      * The RETE and other pattern matcher implementations of the IncQuery engine.
      */
     private volatile Map<Class<? extends IQueryBackend>, IQueryBackend> queryBackends 
-    		= null;
+ = Maps.newHashMap();
     
     private final LifecycleProvider lifecycleProvider;
     private final ModelUpdateProvider modelUpdateProvider;
@@ -219,9 +221,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
      */
     @Override
 	public IQueryBackend getQueryBackend(Class<? extends IQueryBackend> backendClass) throws IncQueryException {
-        if (queryBackends == null) {
-        	initBackends();
-        }
+        initBackends();
         final IQueryBackend iQueryBackend = queryBackends.get(backendClass);
         if (iQueryBackend == null)
         	throw new IncQueryException("Query backend class not registered: " + backendClass.getName(), "Unknown query backend.");
@@ -230,14 +230,23 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 
 	private void initBackends() throws IncQueryException {
 		synchronized (this) {
-		    if (queryBackends == null) {
+            final Iterable<Entry<Class<? extends IQueryBackend>, IQueryBackendFactory>> factories = Iterables.filter(
+                    QueryBackendRegistry.getInstance().getAllKnownFactories(),
+                    new Predicate<Entry<Class<? extends IQueryBackend>, IQueryBackendFactory>>() {
+
+                        @Override
+                        public boolean apply(Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> input) {
+                            return !queryBackends.containsKey(input.getKey());
+                        }
+                    });
+            if (factories.iterator().hasNext()) {
 		    	boolean initialized = false;
 		    	try {
 		    		engineContext.initializeBackends(new IQueryBackendInitializer() {
 		    			@Override
 		    			public void initializeWith(IQueryRuntimeContext runtimeContext) {
 		    				queryBackends = Maps.newHashMap();
-		    				for (Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> factoryEntry : QueryBackendRegistry.getInstance().getAllKnownFactories()) {
+                            for (Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> factoryEntry : factories) {
 		    					IQueryBackend backend = factoryEntry.getValue().create(logger, runtimeContext, IncQueryEngineImpl.this, IncQueryEngineImpl.this);
 		    					queryBackends.put(factoryEntry.getKey(), backend);
 		    				}
