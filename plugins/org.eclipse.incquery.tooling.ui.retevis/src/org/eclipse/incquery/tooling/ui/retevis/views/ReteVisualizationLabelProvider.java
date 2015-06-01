@@ -14,11 +14,9 @@ import java.util.Map;
 
 import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
 import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.BasePQuery;
 import org.eclipse.incquery.runtime.rete.index.IndexerWithMemory;
 import org.eclipse.incquery.runtime.rete.index.IterableIndexer;
 import org.eclipse.incquery.runtime.rete.network.Node;
-import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.single.UniquenessEnforcerNode;
 import org.eclipse.incquery.viewers.runtime.model.Item;
@@ -43,7 +41,8 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider implements
 
     @Override
     public String getText(Object element) {
-        StringBuffer text = new StringBuffer(super.getText(element));
+        String inherited = super.getText(element);
+		StringBuffer text = new StringBuffer(inherited == null? "" : inherited);
         if (element instanceof Item) {
             Item item = (Item) element;
             Object paramObject = item.getParamEObject();

@@ -26,7 +26,9 @@ import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
+import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
@@ -76,7 +78,9 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
             if (object instanceof PatternMatcherContent) {
                 PatternMatcherContent patternMatcherContent = (PatternMatcherContent) object;
                 try {
-                    final IQueryBackend reteEngine = ((AdvancedIncQueryEngine) patternMatcherContent.getMatcher()
+                    IncQueryMatcher<IPatternMatch> matcher = patternMatcherContent.getMatcher();
+                    if (matcher == null) continue;
+					final IQueryBackend reteEngine = ((AdvancedIncQueryEngine) matcher
                             .getEngine()).getQueryBackend(ReteEngine.class);
                     final Collection<Node> allNodes = ((ReteEngine) reteEngine).getReteNet().getHeadContainer()
                             .getAllNodes();

@@ -73,15 +73,26 @@ pattern inequalityFilterRecipe(recipe) {
 	InequalityFilterRecipe(recipe);
 }
 
-
+@Item(item = recipe, label = "InputFilter: $recipe.inputKey$ @ $mask.sourceIndices$/$mask.sourceArity$")
+@Format(textColor = "#7F004D", color = "#CCCCCC")
+@QueryExplorer(checked = false)
+pattern inputFilterRecipeWithMask(recipe, mask) {
+	InputFilterRecipe(recipe);
+	find inputFilterMask(recipe, mask);
+}
 @Item(item = recipe, label = "InputFilter: $recipe.inputKey$")
 @Format(textColor = "#7F004D", color = "#CCCCCC")
 @QueryExplorer(checked = false)
-pattern inputFilterRecipe(recipe) {
+pattern inputFilterRecipeWithoutMask(recipe) {
 	InputFilterRecipe(recipe);
+	neg find inputFilterMask(recipe, _mask);
+}
+@QueryExplorer(checked = false)
+pattern inputFilterMask(recipe, mask) {
+	InputFilterRecipe.mask(recipe, mask);
 }
 
-@Item(item = recipe, label = "InequalityFilter: $recipe.indices$")
+@Item(item = recipe, label = "EqualityFilter: $recipe.indices$")
 @QueryExplorer(checked = false)
 pattern equalityFilterRecipe(recipe) {
 	EqualityFilterRecipe(recipe);
