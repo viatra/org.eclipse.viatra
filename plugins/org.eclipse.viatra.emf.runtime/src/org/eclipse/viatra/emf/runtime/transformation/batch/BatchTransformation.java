@@ -24,6 +24,7 @@ import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.viatra.emf.runtime.rules.BatchTransformationRuleGroup;
 import org.eclipse.viatra.emf.runtime.rules.TransformationRuleGroup;
 import org.eclipse.viatra.emf.runtime.rules.batch.BatchTransformationRule;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -96,6 +97,13 @@ public class BatchTransformation {
 			rules.add(rule);
 		}
 	}
+	
+	public void addRules(BatchTransformationRuleGroup ruleGroup) {
+		for (BatchTransformationRule<?, ?> rule : ruleGroup) {
+			rules.add(rule);
+		}
+	}
+	
 	
 	public void initializeIndexes() throws IncQueryException {
 		GenericPatternGroup.of(Iterables.toArray(Iterables.transform(rules, new Function<BatchTransformationRule<?, ?>, IQuerySpecification<?>>() {
