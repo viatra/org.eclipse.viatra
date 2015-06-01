@@ -31,6 +31,7 @@ import org.eclipse.incquery.runtime.rete.recipes.AggregatorRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.Mask;
 import org.eclipse.incquery.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
@@ -147,15 +148,21 @@ public class CompilerHelper {
 	protected static TrimmerRecipe makeTrimmerRecipe(
 			final PlanningTrace compiledParent,
 			List<PVariable> projectedVariables) {
-		final ReteNodeRecipe parentRecipe = compiledParent.getRecipe();
+		final Mask projectionMask = makeProjectionMask(compiledParent, projectedVariables);
+		final TrimmerRecipe trimmerRecipe = ReteRecipeCompiler.FACTORY.createTrimmerRecipe();
+		trimmerRecipe.setParent(compiledParent.getRecipe());
+		trimmerRecipe.setMask(projectionMask);
+		return trimmerRecipe;
+	}
+
+
+	public static Mask makeProjectionMask(final PlanningTrace compiledParent, Iterable<PVariable> projectedVariables) {
 		List<Integer> projectionSourceIndices = new ArrayList<Integer>();
 		for (PVariable pVariable : projectedVariables) {
 			projectionSourceIndices.add(compiledParent.getPosMapping().get(pVariable));
 		}
-		final TrimmerRecipe trimmerRecipe = ReteRecipeCompiler.FACTORY.createTrimmerRecipe();
-		trimmerRecipe.setParent(parentRecipe);
-		trimmerRecipe.setMask(RecipesHelper.mask(parentRecipe.getArity(), projectionSourceIndices));
-		return trimmerRecipe;
+		final Mask projectionMask = RecipesHelper.mask(compiledParent.getRecipe().getArity(), projectionSourceIndices);
+		return projectionMask;
 	}
 
 

@@ -164,7 +164,7 @@ class NodeFactory {
 		return new ExternalInputEnumeratorNode(reteContainer);
 	}
 	private Supplier instantiateNode(ReteContainer reteContainer, InputFilterRecipe recipe) {
-		return new ExternalInputStatelessFilterNode(reteContainer);
+		return new ExternalInputStatelessFilterNode(reteContainer, toMaskOrNull(recipe.getMask()));
 	}
 //	private Supplier instantiateNode(ReteContainer reteContainer, BinaryInputRecipe recipe) {
 //		return new InputNode(reteContainer, 2, recipe.getTypeKey());
@@ -254,6 +254,15 @@ class NodeFactory {
 		}
 		return result;
 	}
+	
+	/** Mask can be null */
+	private TupleMask toMaskOrNull(Mask mask) {
+		if (mask == null) 
+			return null;
+		else 
+			return toMask(mask);
+	}
+	/** Mask is non-null. */
 	private TupleMask toMask(Mask mask) {
 		return new TupleMask(integersToIntArray(mask.getSourceIndices()), mask.getSourceArity());
 	}

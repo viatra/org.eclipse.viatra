@@ -317,5 +317,7 @@
         <details key="documentation" value="Temporary construct for identifying types over the wire.&#xA;TODO improve type references"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="mask" eType="#//Mask" containment="true"
+        resolveProxies="false"/>
   </eClassifiers>
 </ecore:EPackage>

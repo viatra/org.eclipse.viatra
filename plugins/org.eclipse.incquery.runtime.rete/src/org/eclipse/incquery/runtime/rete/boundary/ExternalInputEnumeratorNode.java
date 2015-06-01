@@ -27,7 +27,10 @@ import org.eclipse.incquery.runtime.rete.network.Supplier;
 import org.eclipse.incquery.runtime.rete.remote.Address;
 
 /**
- * An input node representing an extensional input relation and receiving external updates.
+ * An input node representing an enumerable extensional input relation and receiving external updates.
+ * 
+ * <p> Contains those tuples that are in the extensional relation identified by the input key, and also conform to the global seed (if any).
+ * 
  * @author Bergmann Gabor
  *
  */

@@ -11,6 +11,7 @@
 package org.eclipse.incquery.runtime.rete.construction.plancompiler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExpressionEva
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -64,8 +66,10 @@ import org.eclipse.incquery.runtime.rete.recipes.EqualityFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InequalityFilterRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.InputFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.JoinRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.Mask;
 import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
@@ -298,6 +302,8 @@ public class ReteRecipeCompiler {
             return compileDeferred((PatternMatchCounter)constraint, plan, parentPlan, parentCompiled);
         } else if (constraint instanceof ExpressionEvaluation) {
             return compileDeferred((ExpressionEvaluation)constraint, plan, parentPlan, parentCompiled);
+        } else if (constraint instanceof TypeFilterConstraint) {
+            return compileDeferred((TypeFilterConstraint)constraint, plan, parentPlan, parentCompiled);
         }
         throw new UnsupportedOperationException("Unknown deferred constraint " + constraint);
 	}
@@ -367,6 +373,29 @@ public class ReteRecipeCompiler {
             		)
             );
         }
+    }
+    private CompiledSubPlan compileDeferred(TypeFilterConstraint constraint, 
+    		SubPlan plan, SubPlan parentPlan, CompiledSubPlan parentCompiled) throws QueryProcessingException  
+    {
+    	final IInputKey inputKey = constraint.getInputKey();
+		if (!metaContext.isStateless(inputKey))
+    		throw new UnsupportedOperationException(
+    			"Non-enumerable input keys are currently supported in Rete only if they are stateless, unlike " + inputKey);
+
+		final Tuple constraintVariables = constraint.getVariablesTuple();
+		final List<PVariable> parentVariables = parentCompiled.getVariablesTuple();
+		
+		Mask mask; // select elements of the tuple to check against extensional relation
+		if (parentVariables.equals(constraintVariables))
+			mask = null; // lucky case, parent signature equals that of input key
+		else mask = CompilerHelper.makeProjectionMask(parentCompiled, 
+				Arrays.asList((PVariable[])constraintVariables.getElements()));
+		
+		InputFilterRecipe inputFilterRecipe = 
+				RecipesHelper.inputFilterRecipe(parentCompiled.getRecipe(), 
+						inputKey, inputKey.getStringID(),
+						mask);		
+		return new CompiledSubPlan(plan, parentVariables, inputFilterRecipe, parentCompiled);
     }
     private CompiledSubPlan compileDeferred(NegativePatternCall constraint, 
     		SubPlan plan, SubPlan parentPlan, CompiledSubPlan parentCompiled) throws QueryProcessingException  

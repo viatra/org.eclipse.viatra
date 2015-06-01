@@ -58,5 +58,15 @@ class RecipesHelper {
 		]
 	}
 	
+	/** Mask can be null in case no tuple reordering or trimming is needed  */
+	def public static inputFilterRecipe(ReteNodeRecipe parent, Object inputKey, String inputKeyID, Mask mask) {
+		FACTORY.createInputFilterRecipe() => [
+			it.parent = parent
+			it.inputKey = inputKey
+			it.keyID = inputKeyID
+			it.traceInfo = inputKeyID
+			it.mask = mask
+		]
+	}
 
 }

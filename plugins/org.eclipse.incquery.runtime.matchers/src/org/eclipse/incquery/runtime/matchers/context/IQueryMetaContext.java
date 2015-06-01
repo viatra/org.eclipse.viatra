@@ -37,6 +37,7 @@ public interface IQueryMetaContext {
 	
 	/**
 	 * Returns known implications, e.g. edge supertypes, edge opposites, node type constraints, etc.
+	 * <p> Note that for the obvious reasons, only enumerable keys can imply enumerable keys.
 	 */
 	Collection<InputKeyImplication> getImplications(IInputKey implyingKey);
 	

@@ -13,11 +13,16 @@ package org.eclipse.incquery.runtime.rete.boundary;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.single.FilterNode;
 
 /**
+ * A filter node representing a (stateless, typically non-enumerable) extensional input relation.
+ * 
+ * <p> Contains those tuples of its parents, that (when transformed by a mask, if given) are present in the extensional relation identified by the input key.
+ * 
  * @author Bergmann Gabor
  *
  */
@@ -26,14 +31,18 @@ public class ExternalInputStatelessFilterNode extends FilterNode implements Disc
 	IQueryRuntimeContext context = null;
 	IInputKey inputKey;
 	private InputConnector inputConnector;
+	private TupleMask mask;
 
-	public ExternalInputStatelessFilterNode(ReteContainer reteContainer) {
+	public ExternalInputStatelessFilterNode(ReteContainer reteContainer, TupleMask mask) {
 		super(reteContainer);
+		this.mask = mask;
 		this.inputConnector = reteContainer.getNetwork().getInputConnector();
 	}
 	
 	@Override
 	public boolean check(Tuple ps) {
+		if (mask != null) 
+			ps = mask.transform(ps);
 		return context.containsTuple(inputKey, inputConnector.unwrapTuple(ps));
 	}
 	
