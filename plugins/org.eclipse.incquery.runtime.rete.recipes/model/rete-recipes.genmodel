@@ -120,6 +120,7 @@
     <genClasses ecoreClass="recipes.ecore#//InputFilterRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputFilterRecipe/inputKey"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputFilterRecipe/keyID"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//InputFilterRecipe/mask"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
