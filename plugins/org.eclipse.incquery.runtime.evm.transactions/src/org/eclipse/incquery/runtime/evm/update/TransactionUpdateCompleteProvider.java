@@ -51,6 +51,10 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
         this.lifecycle.removeTransactionalEditingDomainListener(transactionListener);
     }
     
+    protected void sendTransactionUpdateCompleted() {
+        super.updateCompleted();
+    }
+    
     /**
      * Listener implementation that is invoked by the transaction life-cycle.
      * 
@@ -91,7 +95,7 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
             }
 
             if (needsNotification) {
-                updateCompleted();
+                sendTransactionUpdateCompleted();
             }
         }
 
