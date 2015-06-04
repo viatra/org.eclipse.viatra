@@ -26,6 +26,7 @@ import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.genetic.api.GeneticStrategyBuilder;
 import org.eclipse.viatra.dse.genetic.api.StopCondition;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
+import org.eclipse.viatra.dse.genetic.interfaces.IParentSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.InitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.interfaces.ISelectNextPopulation;
@@ -46,6 +47,7 @@ public class GeneticSharedObject {
     public List<ICrossoverTrajectories> crossovers = new ArrayList<ICrossoverTrajectories>();
     public ISelectNextPopulation selector = new NonDominatedAndCrowdingDistanceSelector();
     public InitialPopulationSelector initialPopulationSelector;
+    public IParentSelector parentSelector;
     
     public Map<DSETransformationRule<?, ?>, Integer> priorities = new HashMap<DSETransformationRule<?, ?>, Integer>();
 

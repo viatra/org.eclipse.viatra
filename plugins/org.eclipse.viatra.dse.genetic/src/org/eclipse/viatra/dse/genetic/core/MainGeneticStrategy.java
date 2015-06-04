@@ -100,6 +100,7 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
         sharedObject.initialPopulationSelector.setChildStore(this);
         sharedObject.initialPopulationSelector.setPopulationSize(sharedObject.sizeOfPopulation);
         sharedObject.initialPopulationSelector.init(context);
+        sharedObject.parentSelector.init(context);
 
         objectives = context.getGlobalContext().getObjectives();
         
@@ -190,7 +191,7 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                 // Create children by crossover, everybody selected as a parent at least once
                 ArrayList<InstanceData> tempChildren = new ArrayList<InstanceData>();
                 ArrayList<InstanceData> alreadyTriedChildren = new ArrayList<InstanceData>();
-                Iterator<InstanceData> mainIterator = parentPopulation.iterator();
+                sharedObject.parentSelector.initForPopulation(parentPopulation);
 
                 int paretoFrontSize = 0;
                 for (InstanceData instanceData : parentPopulation) {
@@ -201,8 +202,8 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
 
                 float mutationChance = sharedObject.mutationChanceMultiplier * paretoFrontSize
                         / parentPopulation.size() + sharedObject.chanceOfMutationInsteadOfCrossover;
-                while (mainIterator.hasNext()) {
-                    InstanceData parent1 = mainIterator.next();
+
+                while (sharedObject.childPopulation.size() < sharedObject.sizeOfPopulation) {
 
                     // Mutation (crossover with one parent)
                     if (random.nextFloat() < mutationChance) {
@@ -210,26 +211,21 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                         int rnd = random.nextInt(mutatiors.size());
                         IMutateTrajectory mutator = mutatiors.get(rnd);
                         sharedObject.mutationUsed(mutator);
-                        InstanceData child = mutator.mutate(parent1, context);
+                        InstanceData parent = sharedObject.parentSelector.getNextParents(1).get(0);
+                        InstanceData child = mutator.mutate(parent, context);
                         if (child.trajectory.isEmpty()) {
                             throw new DSEException("Mutation operator (at crossover) "
                                     + mutatiors.get(rnd).getClass().getSimpleName() + " returned an empty trajectory.");
                         }
-                        logger.debug("Mutation: parent: " + parent1 + " child: " + child);
+                        logger.debug("Mutation: parent: " + parent + " child: " + child);
                         tempChildren.add(child);
                     }
                     // Crossover (with two parents)
                     else {
                         // Choose the second parent
-                        int p1Index = random.nextInt(parentPopulation.size());
-                        InstanceData parent2 = parentPopulation.get(p1Index);
-                        if (parent1.equals(parent2)) {
-                            if (p1Index + 1 < parentPopulation.size()) {
-                                parent2 = parentPopulation.get(p1Index + 1);
-                            } else {
-                                parent2 = parentPopulation.get(0);
-                            }
-                        }
+                        List<InstanceData> parents = sharedObject.parentSelector.getNextParents(2);
+                        InstanceData parent1 = parents.get(0);
+                        InstanceData parent2 = parents.get(1);
 
                         // Crossover
                         List<ICrossoverTrajectories> crossovers = sharedObject.crossovers;
@@ -326,9 +322,6 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                         }
                     }
 
-                    if (!mainIterator.hasNext()) {
-                        mainIterator = parentPopulation.iterator();
-                    }
                 }
 
                 parentPopulation.addAll(sharedObject.childPopulation);
