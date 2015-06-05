@@ -48,7 +48,7 @@ public class ExecutionSchemaBuilder {
 
     public ExecutionSchema build() throws IncQueryException {
         if (schedulerFactory == null) {
-            schedulerFactory = Schedulers.getIQBaseSchedulerFactory(incQueryEngine.getBaseIndex());
+            schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
         }
 
         final ExecutionSchema schema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine,
