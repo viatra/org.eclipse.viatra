@@ -30,10 +30,10 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
+import org.eclipse.incquery.runtime.evm.specific.Lifecycles;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
-import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.validation.core.api.IConstraint;
@@ -124,7 +124,7 @@ public class ValidationEngine implements IValidationEngine {
         IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) constraint
                 .getSpecification().getQuerySpecification();
         RuleSpecification<IPatternMatch> rule = Rules.newMatcherRuleSpecification(querySpecification,
-                DefaultActivationLifeCycle.DEFAULT, jobs);
+                Lifecycles.getDefault(true, true), jobs);
         constraint.setRuleSpecification(rule);
         boolean added = executionSchema.addRule(rule);
         executionSchema.startUnscheduledExecution();

@@ -25,11 +25,11 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Jobs;
+import org.eclipse.incquery.runtime.evm.specific.Lifecycles;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.evm.specific.job.SequentialProcessorsJob;
-import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -61,7 +61,7 @@ public final class ObservableCollectionHelper {
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IQuerySpecification<Matcher> querySpecification) {
 
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
-        return Rules.newMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
+        return Rules.newMatcherRuleSpecification(querySpecification, Lifecycles.getDefault(false, true), jobs);
     }
     
     /**
@@ -83,7 +83,7 @@ public final class ObservableCollectionHelper {
                         new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate)
                 )));
         ImmutableSet<Job<Match>> allJobs = ImmutableSet.<Job<Match>> builder().addAll(jobs).add(updateJob).build();
-        return Rules.newMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT, allJobs);
+        return Rules.newMatcherRuleSpecification(querySpecification, Lifecycles.getDefault(true, true), allJobs);
     }
     
     /**
@@ -98,7 +98,7 @@ public final class ObservableCollectionHelper {
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, Matcher matcher) {
         
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
-        return Rules.newMatcherRuleSpecification(matcher, DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs);
+        return Rules.newMatcherRuleSpecification(matcher, Lifecycles.getDefault(false, true), jobs);
     }
 
     private static <Match extends IPatternMatch> Set<Job<Match>> getObservableCollectionJobs(

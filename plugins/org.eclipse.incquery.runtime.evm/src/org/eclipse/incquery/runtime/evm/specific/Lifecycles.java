@@ -21,6 +21,15 @@ import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLife
  */
 public final class Lifecycles {
 
+    /* 
+     * These constants were moved here and made private to make future changes to the default
+     * life-cycle easier without braking the API.
+     */
+    private static final DefaultActivationLifeCycle DEFAULT = new DefaultActivationLifeCycle(true, true);
+    private static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE = new DefaultActivationLifeCycle(false, true);
+    private static final DefaultActivationLifeCycle DEFAULT_NO_DISAPPEAR = new DefaultActivationLifeCycle(true, false);
+    private static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE_AND_DISAPPEAR = new DefaultActivationLifeCycle(false, false);
+    
     private Lifecycles() {}
     
     /**
@@ -33,14 +42,14 @@ public final class Lifecycles {
     public static ActivationLifeCycle getDefault(boolean useUpdate, boolean useDisappear) {
         if(!useUpdate) {
             if(!useDisappear) {
-                return DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
+                return DEFAULT_NO_UPDATE_AND_DISAPPEAR;
             } else {
-                return DefaultActivationLifeCycle.DEFAULT_NO_UPDATE;
+                return DEFAULT_NO_UPDATE;
             }
         } else if(!useDisappear) {
-            return DefaultActivationLifeCycle.DEFAULT_NO_DISAPPEAR;
+            return DEFAULT_NO_DISAPPEAR;
         }
-        return DefaultActivationLifeCycle.DEFAULT;
+        return DEFAULT;
     }
     
 }

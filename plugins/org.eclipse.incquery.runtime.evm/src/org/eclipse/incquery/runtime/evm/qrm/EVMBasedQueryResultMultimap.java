@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.base.api.QueryResultMultimap;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
+import org.eclipse.incquery.runtime.evm.specific.Lifecycles;
 import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
@@ -90,7 +91,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
     public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
             final IQuerySpecification<Matcher> querySpecification) {
         schema.addRule(Rules.newMatcherRuleSpecification(querySpecification,
-                DefaultActivationLifeCycle.DEFAULT_NO_UPDATE, jobs));
+                Lifecycles.getDefault(false, true), jobs));
     }
 
     /**

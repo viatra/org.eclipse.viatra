@@ -59,7 +59,7 @@ public final class Rules {
      * @param jobs
      */
     public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, Set<Job<Match>> jobs){
-        return newMatcherRuleSpecification(querySpecification, DefaultActivationLifeCycle.DEFAULT, jobs);
+        return newMatcherRuleSpecification(querySpecification, Lifecycles.getDefault(true, true), jobs);
     }
     
     public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IncQueryMatcher<Match> matcher, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){

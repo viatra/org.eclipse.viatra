@@ -36,9 +36,21 @@ import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventTypeEnum;
  */
 public final class DefaultActivationLifeCycle extends UnmodifiableActivationLifeCycle {
 
+    /**
+     * @deprecated Use {@link Lifecycles#getDefault(true, true)} instead.
+     */
     public static final DefaultActivationLifeCycle DEFAULT = new DefaultActivationLifeCycle(true, true);
+    /**
+     * @deprecated Use {@link Lifecycles#getDefault(false, true)} instead.
+     */
     public static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE = new DefaultActivationLifeCycle(false, true);
+    /**
+     * @deprecated Use {@link Lifecycles#getDefault(true, false)} instead.
+     */
     public static final DefaultActivationLifeCycle DEFAULT_NO_DISAPPEAR = new DefaultActivationLifeCycle(true, false);
+    /**
+     * @deprecated Use {@link Lifecycles#getDefault(false, false)} instead.
+     */
     public static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE_AND_DISAPPEAR = new DefaultActivationLifeCycle(false, false);
 
     /**
@@ -49,7 +61,7 @@ public final class DefaultActivationLifeCycle extends UnmodifiableActivationLife
      * @param disappearedStateUsed
      *            if set, the Disappeared activations state is also used
      */
-    protected DefaultActivationLifeCycle(
+    public DefaultActivationLifeCycle(
             final boolean updateStateUsed,
             final boolean disappearedStateUsed) {
         
