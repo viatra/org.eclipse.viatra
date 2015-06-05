@@ -14,11 +14,22 @@ import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
 import org.eclipse.incquery.runtime.evm.specific.lifecycle.DefaultActivationLifeCycle;
 
 /**
+ * This utility class provides easy access to default lifcycles.
+ * 
  * @author Abel Hegedus
  *
  */
 public final class Lifecycles {
 
+    private Lifecycles() {}
+    
+    /**
+     * See {@link DefaultActivationLifeCycle} documentation for details.
+     * 
+     * @param useUpdate UPDATED state is used
+     * @param useDisappear DISAPPEARED state is used
+     * @return the life cycle
+     */
     public static ActivationLifeCycle getDefault(boolean useUpdate, boolean useDisappear) {
         if(!useUpdate) {
             if(!useDisappear) {

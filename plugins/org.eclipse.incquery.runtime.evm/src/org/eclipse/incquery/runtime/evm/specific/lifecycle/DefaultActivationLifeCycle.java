@@ -27,7 +27,7 @@ import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventTypeEnum;
  * <li>Updated -Activation fires-> Fired (U)</li>
  * <li>Updated -Match Disappears-> Inactive (U) / Disappeared (UD)</li>
  * <li>Fired -Match Disappears-> Inactive / Disappeared (D)</li>
- * <li>Disappeared -Match Appears-> Fired (D)</li>
+ * <li>Disappeared -Match Appears-> Fired (D) / Updated (UD) </li>
  * <li>Disappeared -Activation fires-> Inactive (D)</li>
  * </ul>
  * 
@@ -36,7 +36,7 @@ import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventTypeEnum;
  */
 public final class DefaultActivationLifeCycle extends UnmodifiableActivationLifeCycle {
 
-    public static final DefaultActivationLifeCycle DEFAULT = new DefaultActivationLifeCycle();
+    public static final DefaultActivationLifeCycle DEFAULT = new DefaultActivationLifeCycle(true, true);
     public static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE = new DefaultActivationLifeCycle(false, true);
     public static final DefaultActivationLifeCycle DEFAULT_NO_DISAPPEAR = new DefaultActivationLifeCycle(true, false);
     public static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE_AND_DISAPPEAR = new DefaultActivationLifeCycle(false, false);
@@ -49,7 +49,9 @@ public final class DefaultActivationLifeCycle extends UnmodifiableActivationLife
      * @param disappearedStateUsed
      *            if set, the Disappeared activations state is also used
      */
-    public DefaultActivationLifeCycle(final boolean updateStateUsed, final boolean disappearedStateUsed) {
+    protected DefaultActivationLifeCycle(
+            final boolean updateStateUsed,
+            final boolean disappearedStateUsed) {
         
         super(IncQueryActivationStateEnum.INACTIVE);
 
@@ -78,8 +80,13 @@ public final class DefaultActivationLifeCycle extends UnmodifiableActivationLife
         if (disappearedStateUsed) {
             internalAddStateTransition(IncQueryActivationStateEnum.FIRED, IncQueryEventTypeEnum.MATCH_DISAPPEARS,
                     IncQueryActivationStateEnum.DISAPPEARED);
-            internalAddStateTransition(IncQueryActivationStateEnum.DISAPPEARED, IncQueryEventTypeEnum.MATCH_APPEARS,
-                    IncQueryActivationStateEnum.FIRED);
+            if(updateStateUsed){
+                internalAddStateTransition(IncQueryActivationStateEnum.DISAPPEARED, IncQueryEventTypeEnum.MATCH_APPEARS,
+                        IncQueryActivationStateEnum.UPDATED);
+            } else {
+                internalAddStateTransition(IncQueryActivationStateEnum.DISAPPEARED, IncQueryEventTypeEnum.MATCH_APPEARS,
+                        IncQueryActivationStateEnum.FIRED);
+            }
             internalAddStateTransition(IncQueryActivationStateEnum.DISAPPEARED, EventType.RuleEngineEventType.FIRE,
                     IncQueryActivationStateEnum.INACTIVE);
         } else {
@@ -88,9 +95,11 @@ public final class DefaultActivationLifeCycle extends UnmodifiableActivationLife
         }
 
     }
-
+    
     /**
      * Creates an activation life cycle with the default state transition map using both Updated and Disappeared states.
+     * 
+     * @deprecated Use {@link DefaultActivationLifeCycle(true, true, false)} instead.
      */
     public DefaultActivationLifeCycle() {
         this(true, true);
