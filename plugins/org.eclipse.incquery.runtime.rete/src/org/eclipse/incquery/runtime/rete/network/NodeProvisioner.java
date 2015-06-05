@@ -25,6 +25,7 @@ import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.incquery.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputFilterRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.InputRecipe;
+import org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.incquery.runtime.rete.recipes.TransparentRecipe;
@@ -36,6 +37,9 @@ import org.eclipse.incquery.runtime.rete.traceability.ActiveNodeConflictTrace;
 import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.incquery.runtime.rete.traceability.UserRequestTrace;
 import org.eclipse.incquery.runtime.rete.util.Options;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 /**
  * Stores the internal parts of a rete network. Nodes are stored according to type and parameters.
@@ -234,12 +238,17 @@ public class NodeProvisioner {
             return reteContainer.resolveLocal(address);
     }
 
+    private Table<RecipeTraceInfo, TupleMask, UserRequestTrace> projectionIndexerUserRequests = HashBasedTable.create();
     // local version
     // TODO remove?
-    public synchronized ProjectionIndexer accessProjectionIndexer(RecipeTraceInfo supplierTrace, TupleMask mask) {
-    	final org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe projectionIndexerRecipe = 
-    			projectionIndexerRecipe(supplierTrace, mask);
-    	final UserRequestTrace indexerTrace = new UserRequestTrace(projectionIndexerRecipe, supplierTrace);
+    public synchronized ProjectionIndexer accessProjectionIndexer(RecipeTraceInfo productionTrace, TupleMask mask) {
+    	UserRequestTrace indexerTrace = projectionIndexerUserRequests.get(productionTrace, mask);
+    	if (indexerTrace == null) {
+    		final org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe projectionIndexerRecipe = 
+    				projectionIndexerRecipe(productionTrace, mask);
+    		indexerTrace = new UserRequestTrace(projectionIndexerRecipe, productionTrace);
+    		projectionIndexerUserRequests.put(productionTrace, mask, indexerTrace);
+    	}
 		final Address<? extends Node> address = 
         		getOrCreateNodeByRecipe(indexerTrace);
     	return (ProjectionIndexer) reteContainer.resolveLocal(address);
@@ -268,12 +277,19 @@ public class NodeProvisioner {
     }
 
     private org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe projectionIndexerRecipe(
-    		RecipeTraceInfo parentTrace, TupleMask mask) {
-    	return RecipesHelper.projectionIndexerRecipe(
-    			parentTrace.getRecipe(), 
-    			RecipesHelper.mask(mask.sourceWidth, mask.indices));
+    		RecipeTraceInfo parentTrace, TupleMask mask) {   	
+    	final ReteNodeRecipe parentRecipe = parentTrace.getRecipe();
+		ProjectionIndexerRecipe projectionIndexerRecipe = resultSeedRecipes.get(parentRecipe, mask);
+    	if (projectionIndexerRecipe == null) {
+    		projectionIndexerRecipe = 
+    				RecipesHelper.projectionIndexerRecipe( parentRecipe, 
+    						RecipesHelper.mask(mask.sourceWidth, mask.indices));
+    		resultSeedRecipes.put(parentRecipe, mask, projectionIndexerRecipe);
+    	}
+		return projectionIndexerRecipe;
     }
-    
+    private Table<ReteNodeRecipe, TupleMask, org.eclipse.incquery.runtime.rete.recipes.ProjectionIndexerRecipe> resultSeedRecipes = HashBasedTable.create();
+   
 //    public synchronized Address<? extends Supplier> accessValueBinderFilterNode(
 //            Address<? extends Supplier> supplierAddress, int bindingIndex, Object bindingValue) {
 //        Supplier supplier = asSupplier(supplierAddress);
