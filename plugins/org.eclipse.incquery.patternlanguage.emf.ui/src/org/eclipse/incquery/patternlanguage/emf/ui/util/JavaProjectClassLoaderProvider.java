@@ -50,7 +50,7 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
         try {
             IFile file = getIFile(pattern);
             ClassLoader l;
-            if (file != null) {
+            if (file != null && file.exists()) {
                 l = getClassLoader(file);
                 if (l == null) {
                     throw new IncQueryException(String.format("No classloader found for pattern %s.", CorePatternLanguageHelper.getFullyQualifiedName(pattern)), "No classloader found.");
@@ -97,7 +97,7 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
      * @throws MalformedURLException
      */
     public ClassLoader getClassLoader(IFile file) throws CoreException, MalformedURLException {
-        if (file != null) {
+        if (file != null && file.exists()) {
             IProject project = file.getProject();
             IJavaProject jp = JavaCore.create(project);
             String[] classPathEntries = JavaRuntime.computeDefaultRuntimeClassPath(jp);
