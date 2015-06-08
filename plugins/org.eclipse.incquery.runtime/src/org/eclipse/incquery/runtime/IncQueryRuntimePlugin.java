@@ -11,6 +11,8 @@
 package org.eclipse.incquery.runtime;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.incquery.runtime.internal.ExtensionBasedSurrogateQueryLoader;
+import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -18,5 +20,11 @@ import org.eclipse.core.runtime.Plugin;
 public class IncQueryRuntimePlugin extends Plugin {
 
     public static final String PLUGIN_ID = "org.eclipse.incquery.runtime";
+
+	@Override
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		ExtensionBasedSurrogateQueryLoader.instance().loadKnownSurrogateQueriesIntoRegistry();
+	}
 
 }

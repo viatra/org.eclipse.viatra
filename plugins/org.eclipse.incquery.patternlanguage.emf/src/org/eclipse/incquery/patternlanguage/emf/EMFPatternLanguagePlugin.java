@@ -1,6 +1,5 @@
 package org.eclipse.incquery.patternlanguage.emf;
 
-import org.eclipse.incquery.patternlanguage.emf.annotations.ExtensionBasedSurrogateQueryLoader;
 import org.eclipse.incquery.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -19,7 +18,6 @@ public class EMFPatternLanguagePlugin implements BundleActivator {
     @Override
     public void start(BundleContext context) throws Exception {
         instance = this;
-        ExtensionBasedSurrogateQueryLoader.instance().loadKnownSurrogateQueriesIntoRegistry();
     }
 
     @Override

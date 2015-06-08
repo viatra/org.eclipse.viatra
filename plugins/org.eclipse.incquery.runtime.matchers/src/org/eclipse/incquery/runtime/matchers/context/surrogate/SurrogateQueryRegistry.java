@@ -27,8 +27,8 @@ import com.google.common.collect.Maps;
  */
 public class SurrogateQueryRegistry {
     
-    private Map<IInputKey, PQuery> registeredSurrogateQueryMap = new WeakHashMap<IInputKey, PQuery>();
-    private Map<IInputKey, PQuery> dynamicSurrogateQueryMap = new WeakHashMap<IInputKey, PQuery>();
+    private Map<IInputKey, PQuery> registeredSurrogateQueryMap = Maps.newHashMap();
+    private Map<IInputKey, PQuery> dynamicSurrogateQueryMap = Maps.newHashMap();
     
     /**
      * Hidden constructor

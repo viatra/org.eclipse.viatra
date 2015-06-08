@@ -8,7 +8,7 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.patternlanguage.emf.annotations;
+package org.eclipse.incquery.runtime.internal;
 
 import static com.google.common.base.Preconditions.checkState;
 
