@@ -70,6 +70,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="query-fqn" type="string">
+            <annotation>
+               <documentation>
+                  The fully qualified name of the query implementing the feature.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="surrogate-query" type="string" use="required">
             <annotation>
                <documentation>

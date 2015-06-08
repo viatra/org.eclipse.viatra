@@ -68,6 +68,7 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
                 contribAttribute(it, "package-nsUri", parameters.ePackage.nsURI)
                 contribAttribute(it, "class-name", parameters.source.name)
                 contribAttribute(it, "feature-name", parameters.feature.name)
+                contribAttribute(it, "query-fqn", pattern.fullyQualifiedName)
                 contribAttribute(it, "surrogate-query", 
                 	typeof(PQueryExtensionFactory).canonicalName + ":" + pattern.utilPackageName + "." + pattern.querySpecificationClassName
                 )
