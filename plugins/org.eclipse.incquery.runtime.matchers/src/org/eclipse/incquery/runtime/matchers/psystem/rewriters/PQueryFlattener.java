@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
+import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
@@ -25,6 +27,8 @@ import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IVariableRenamer.
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 
 /**
@@ -76,71 +80,121 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     }
 
     /**
-     * This function holds the actual flattening logic for a PQuery
-     * 
-     * @param disjunction
-     *            to be flattened
-     * @return the flattened bodies of the pQuery
-     * @throws Exception
-     */
-    private PDisjunction doFlatten(PDisjunction disjunction) {
-        Set<PBody> bodies = disjunction.getBodies();
-        // This stores the flattened bodies; they are disjoint
-        Set<PBody> flattenedBodies = Sets.<PBody> newHashSet();
-        for (PBody pBody : bodies) {
-            // OR connection between the bodies
-            flattenedBodies.addAll(doFlatten(pBody));
-        }
-        return new PDisjunction(disjunction.getQuery(), flattenedBodies);
-    }
+	 * This function holds the actual flattening logic for a PQuery
+	 * 
+	 * @param rootDisjunction
+	 *            to be flattened
+	 * @return the flattened bodies of the pQuery
+	 */
+	private PDisjunction doFlatten(PDisjunction rootDisjunction) {
+
+		Map<PDisjunction, Set<PBody>> flatBodyMapping = Maps.newHashMap();
+
+		Deque<Object> preStack = Queues.newArrayDeque();
+		Deque<Object> postStack = Queues.newArrayDeque();
+
+		List<PositivePatternCall> callsToFlatten = Lists.newArrayList();
+
+		preStack.push(rootDisjunction);
+
+		while (!preStack.isEmpty()) {
+
+			Object item = preStack.pop();
+			postStack.push(item);
+
+			if (item instanceof PDisjunction) {
+
+				PDisjunction disjunction = (PDisjunction) item;
+				// First check if any of the bodies need flattening
+				Set<PBody> flatBodies = Sets.newHashSet();
+				if (isFlatteningNeeded(disjunction)) {
+					// Push to schedule the contained bodies for processing
+					for (PBody pBody : disjunction.getBodies()) {
+						preStack.push(pBody);
+					}
+				} else {
+					// No body needs flattening, simply copy them all
+					for (PBody pBody : disjunction.getBodies()) {
+						flatBodies.add(prepareFlatPBody(pBody));
+					}
+				}
+				flatBodyMapping.put(disjunction, flatBodies);
+
+			} else if (item instanceof PBody) {
+				PBody pBody = (PBody) item;
+				Set<PBody> containerSet = flatBodyMapping.get(pBody.getContainerDisjunction());
+
+				if (isFlatteningNeeded(pBody)) {
+					for (PConstraint pConstraint : pBody.getConstraints()) {
+						if (pConstraint instanceof PositivePatternCall) {
+							PositivePatternCall positivePatternCall = (PositivePatternCall) pConstraint;
+							if (flattenCallPredicate.shouldFlatten(positivePatternCall)) {
+								// If the above preconditions meet, the call should be flattened
+								PDisjunction disjunction = positivePatternCall.getReferredQuery().getDisjunctBodies();
+								preStack.push(disjunction);
+								callsToFlatten.add(positivePatternCall);
+							}
+						}
+					}
+				} else {
+					containerSet.add(prepareFlatPBody(pBody));
+				}
+			}
+		}
+
+		// Post order traversal
+		while (!postStack.isEmpty()) {
+
+			Object item = postStack.pop();
+
+			// There are only actions left for non-leaf PBodies
+			// Post order processing is needed in order to make sure that all called body is
+			// flattened before the caller
+			if (item instanceof PBody) {
+				PBody pBody = (PBody) item;
+				Set<PBody> containerSet = flatBodyMapping.get(pBody.getContainerDisjunction());
+
+				if (isFlatteningNeeded(pBody)) {
+					List<Set<PBody>> flattenedBodies = Lists.newArrayList();
+					for (PConstraint pConstraint : pBody.getConstraints()) {
+
+						if (pConstraint instanceof PositivePatternCall) {
+							PositivePatternCall positivePatternCall = (PositivePatternCall) pConstraint;
+							if (flattenCallPredicate.shouldFlatten(positivePatternCall)) {
+								// If the above preconditions meet, do the flattening and return the disjoint bodies
+								PDisjunction disjunction = positivePatternCall.getReferredQuery().getDisjunctBodies();
+
+								flattenedBodies.add(flatBodyMapping.get(disjunction));
+							}
+						}
+					}
+					containerSet.addAll(createSetOfFlatPBodies(pBody, flattenedBodies, callsToFlatten));
+				}
+
+			}
+
+		}
+
+		return new PDisjunction(rootDisjunction.getQuery(), flatBodyMapping.get(rootDisjunction));
+	}
 
     /**
-     * This function holds the actual flattening logic for a PBody
+     * Creates the flattened bodies based on the caller body and the called (and already flattened) disjunctions
      * 
-     * @param pBody
-     *            to be flattened
-     * @return the flattened equivalent of the given pBody
-     * @throws Exception
+     * @param pBody the body to flatten
+     * @param flattenedDisjunctions the 
+     * @param flattenedCalls
+     * @return
      */
-    private Set<PBody> doFlatten(PBody pBody) {
-
-        Set<PConstraint> constraints = pBody.getConstraints();
-
-        // If the received pBody should not be flattened, return it alone.
-        if (!isFlatteningNeeded(constraints)) {
-            return prepareFlatPBody(pBody);
-        }
-
-        // The calls that are flattened
-        List<PositivePatternCall> flattenedCalls = Lists.newArrayList();
-
-        // This point we know the body needs flattening
-        // Flatten each positive pattern call where shouldFlatten() returns true
-        List<PDisjunction> flattenedDisjunctions = Lists.<PDisjunction> newArrayList();
-        for (PConstraint pConstraint : constraints) {
-            if (pConstraint instanceof PositivePatternCall) {
-                PositivePatternCall positivePatternCall = (PositivePatternCall) pConstraint;
-                if (flattenCallPredicate.shouldFlatten(positivePatternCall)) {
-                    // If the above preconditions meet, do the flattening and return the disjoint bodies
-                    PQuery referredQuery = positivePatternCall.getReferredQuery();
-                    PDisjunction flattenedDisjunction = doFlatten(referredQuery.getDisjunctBodies());
-                    flattenedDisjunctions.add(flattenedDisjunction);
-                    flattenedCalls.add(positivePatternCall);
-                }
-            }
-        }
-
-        return createFlatPDisjunction(pBody, flattenedDisjunctions, flattenedCalls);
-
-    }
-
-    private Set<PBody> createFlatPDisjunction(PBody pBody, List<PDisjunction> flattenedDisjunctions,
-            List<PositivePatternCall> flattenedCalls) {
+    private Set<PBody> createSetOfFlatPBodies(PBody pBody, List<Set<PBody>> flattenedBodies,
+    		List<PositivePatternCall> flattenedCalls) {
         PQuery pQuery = pBody.getPattern();
 
-        // The members of this set are sets containing bodies in disjunction
-        Set<List<PBody>> conjunctBodySets = combineBodies(flattenedDisjunctions);
-
+        // The members of this set are lists containing bodies in conjunction
+        // Ordering is not important within the list, only the cartesian product function requires a list
+      
+        Set<List<PBody>> conjunctBodySets = Sets.cartesianProduct(flattenedBodies);
+        
         // The result set containing the merged conjuncted bodies
         Set<PBody> conjunctedBodies = Sets.<PBody> newHashSet();
 
@@ -148,11 +202,11 @@ public class PQueryFlattener extends PDisjunctionRewriter {
             PBodyCopier copier = createBodyCopier(pQuery, flattenedCalls, bodySet); 
 
             for (PBody calledBody : bodySet) {
-                // Copy each called body
+                // Merge each called body
                 copier.mergeBody(calledBody, new HierarchicalName(), new ExportedParameterFilter());
             }
 
-            // Copy the caller body
+            // Merge the caller's constraints to the conjunct body
             copier.mergeBody(pBody);
 
             PBody copiedBody = copier.getCopiedBody();
@@ -160,7 +214,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
             conjunctedBodies.add(copiedBody);
         }
 
-        // Create a new (flattened) PDisjunction referring to the corresponding query and return it
         return conjunctedBodies;
     }
 
@@ -168,49 +221,29 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     	return new FlattenerCopier(query, flattenedCalls, calledBodies);
     }
     
-    private Set<PBody> prepareFlatPBody(PBody pBody) {
-        Set<PBody> bodySet = Sets.newHashSet();
+    private PBody prepareFlatPBody(PBody pBody) {
         PBodyCopier copier = createBodyCopier(pBody.getPattern(), Lists.<PositivePatternCall> newArrayList(), Lists.<PBody> newArrayList());
         copier.mergeBody(pBody, new SameName(), new AllowAllFilter());
         // the copying of the body here is necessary for only one containing PDisjunction can be assigned to a PBody
-        PBodyCopier flattenerCopier = copier;
-        bodySet.add(flattenerCopier.getCopiedBody());
-        return bodySet;
+        return copier.getCopiedBody();
     }
 
-    private boolean isFlatteningNeeded(Set<PConstraint> constraints) {
+    private boolean isFlatteningNeeded(PDisjunction pDisjunction) {
+		boolean needsFlattening = false;
+		for (PBody pBody : pDisjunction.getBodies()) {
+			needsFlattening |= isFlatteningNeeded(pBody);
+		}
+		return needsFlattening;
+	}
+    
+    private boolean isFlatteningNeeded(PBody pBody) {
         // Check if the body contains positive pattern call AND if it should be flattened
-        for (PConstraint pConstraint : constraints) {
+        for (PConstraint pConstraint : pBody.getConstraints()) {
             if (pConstraint instanceof PositivePatternCall) {
                 return flattenCallPredicate.shouldFlatten((PositivePatternCall) pConstraint);
             }
         }
         return false;
-    }
-
-    /**
-     * Combines the elements of the sets together. Puts all newly created bodies under the parent query.
-     * 
-     * @param pDisjunctions
-     *            the collection of sets; all possible full matchings are created and merged
-     * @return
-     */
-    private Set<List<PBody>> combineBodies(List<PDisjunction> pDisjunctions) {
-        // Note: Sets.cartesianProduct(sets) would also be useful to create matchings
-
-        List<Set<PBody>> setsToCombine = Lists.newArrayList();
-        Set<List<PBody>> result = Sets.<List<PBody>> newHashSet();
-
-        if (pDisjunctions.size() == 0) {
-            // Do nothing (error handling should happen here?)
-        } else {
-            for (PDisjunction pDisjunction : pDisjunctions) {
-                setsToCombine.add(pDisjunction.getBodies());
-            }
-            // Create matchings between the bodies
-            result = Sets.cartesianProduct(setsToCombine);
-        }
-        return result;
     }
 
 }

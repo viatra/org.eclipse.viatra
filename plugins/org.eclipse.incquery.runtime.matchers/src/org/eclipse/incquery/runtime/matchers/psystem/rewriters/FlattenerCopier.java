@@ -27,19 +27,19 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
  */
 public class FlattenerCopier extends PBodyCopier {
 
-    private List<PositivePatternCall> flattenedCalls;
+    private List<PositivePatternCall> callsToFlatten;
     private List<PBody> calledBodies;
 
-    public FlattenerCopier(PQuery query, List<PositivePatternCall> flattenedCalls, List<PBody> calledBodies) {
+    public FlattenerCopier(PQuery query, List<PositivePatternCall> callsToFlatten, List<PBody> calledBodies) {
         super(query);
-        this.flattenedCalls = flattenedCalls;
+        this.callsToFlatten = callsToFlatten;
         this.calledBodies = calledBodies;
     }
     
     @Override
     protected void copyPositivePatternCallConstraint(PositivePatternCall positivePatternCall) {
 
-        if(!flattenedCalls.contains(positivePatternCall)){
+        if(!callsToFlatten.contains(positivePatternCall)){
             // If the call was not flattened, copy the constraint
             super.copyPositivePatternCallConstraint(positivePatternCall);
         } else {
