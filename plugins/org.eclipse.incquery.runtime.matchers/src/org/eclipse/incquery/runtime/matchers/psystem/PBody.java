@@ -220,7 +220,9 @@ public class PBody {
      * @return a non-null, but possibly empty list
      */
     public List<ExportedParameter> getSymbolicParameters() {
-        return symbolicParameters == null ? Lists.<ExportedParameter> newArrayList() : symbolicParameters;
+    	if (symbolicParameters == null) 
+    		symbolicParameters = Lists.<ExportedParameter> newArrayList();
+        return symbolicParameters;
     }
 
     public void setExportedParameters(List<ExportedParameter> symbolicParameters) {
