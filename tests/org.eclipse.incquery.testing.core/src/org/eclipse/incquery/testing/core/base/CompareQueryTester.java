@@ -11,7 +11,7 @@
 package org.eclipse.incquery.testing.core.base;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
@@ -21,7 +21,6 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.junit.Assert;
 
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 /**
  * Helper class for checking the soundness of various pattern matching strategies
@@ -32,7 +31,7 @@ import com.google.common.collect.Sets.SetView;
 public class CompareQueryTester {
 
     /**
-     * Comnpares the results of two queries. It is assumed that the queri specifications are equivalent and use the same
+     * Compares the results of two queries. It is assumed that the query specifications are equivalent and use the same
      * match classes
      */
     public static void assertQueriesEquivalent(IncQueryEngine engine, IQuerySpecification<?> querySpecification1,
@@ -45,15 +44,16 @@ public class CompareQueryTester {
         Collection<? extends IPatternMatch> allMatches = matcher.getAllMatches();
         Collection<? extends IPatternMatch> allFlattenedMatches = flattenedMatcher.getAllMatches();
 
-        HashSet<IPatternMatch> allMatchesSet = Sets.newHashSet();
-        allMatchesSet.addAll(allMatches);
-        HashSet<IPatternMatch> allFlattenedMatchesSet = Sets.newHashSet();
-        allFlattenedMatchesSet.addAll(allFlattenedMatches);
-
-        SetView<? extends IPatternMatch> intersection = Sets.intersection(allMatchesSet, allFlattenedMatchesSet);
-        int intersectionSize = intersection.size();
-        int matchesCount = allMatches.size();
-
-        Assert.assertEquals(intersectionSize, matchesCount);
+        // Cannot compare directly collection of matches, so that first we need to convert matches to arrays
+        Set<Object[]> allMatchArrays = Sets.newHashSet();
+        for (IPatternMatch iPatternMatch : allMatches) {
+            allMatchArrays.add(iPatternMatch.toArray());
+        }
+        Set<Object[]> allFlattenedMatchArrays = Sets.newHashSet();
+        for (IPatternMatch iPatternMatch : allFlattenedMatches) {
+            allFlattenedMatchArrays.add(iPatternMatch.toArray());
+        }
+        
+        Assert.assertTrue(allMatchArrays.equals(allFlattenedMatchArrays));
     }
 }
