@@ -131,6 +131,9 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                         geneticDebugger.debug(parentPopulation);
                         return null;
                     }
+                    for (InstanceData instanceData : parentPopulation) {
+                        instanceData.sumOfConstraintViolationMeauserement = instanceData.objectives.get(genObjective.getName());
+                    }
                     startWorkerThreads(context);
                     state = GeneticStrategyState.CREATING_NEW_POPULATION;
                 }
@@ -174,14 +177,14 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                 if (sharedObject.stopCondition.equals(StopCondition.CANT_FIND_BETTER)) {
                     for (InstanceData instanceData : parentPopulation) {
                         if (instanceData.rank == 1) {
-                            if (!(instanceData.sumOfConstraintViolationMeauserement < actualBestSoftConstraint)) {
+                            if (instanceData.sumOfConstraintViolationMeauserement < actualBestSoftConstraint) {
+                                noBetterSolutionForXIterations = 0;
+                                actualBestSoftConstraint = instanceData.sumOfConstraintViolationMeauserement;
+                            } else {
                                 noBetterSolutionForXIterations++;
                                 if (noBetterSolutionForXIterations >= sharedObject.stopConditionNumber) {
                                     isLastPopulation = true;
                                 }
-                            } else {
-                                noBetterSolutionForXIterations = 0;
-                                actualBestSoftConstraint = instanceData.sumOfConstraintViolationMeauserement;
                             }
                             break;
                         }

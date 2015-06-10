@@ -161,6 +161,7 @@ public class InstanceGeneticStrategy extends LocalSearchStrategyBase {
                 for (int i = 0; i<genObjective.getNames().size(); i++) {
                     actInstanceData.violations.put(genObjective.getNames().get(i), genObjective.getMatches().get(i));
                 }
+                actInstanceData.sumOfConstraintViolationMeauserement = fitness.get(genObjective.getName());
 
                 if (sharedObject.addInstanceToBestSolutions.get()) {
                     SolutionTrajectory solutionTrajectory = dsm.createSolutionTrajectroy();
