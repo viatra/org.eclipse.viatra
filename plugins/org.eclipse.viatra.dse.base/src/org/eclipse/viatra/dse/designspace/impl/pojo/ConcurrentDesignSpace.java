@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpaceChangeHandler;
 import org.eclipse.viatra.dse.designspace.api.IState;
@@ -68,6 +69,9 @@ public class ConcurrentDesignSpace implements IDesignSpace {
                 sourceTransition.setResultsIn(state);
                 state.addInTransition((Transition) sourceTransition);
                 fireTransitionFiredEvent(sourceTransition);
+            }
+            if (sourceTransition != null && sourceTransition.getResultsIn() == null) {
+                throw new DSEException("Bad state coder, a state can't have two incoming transitions with the same id.");
             }
             return false;
         }
