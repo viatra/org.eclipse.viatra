@@ -17,6 +17,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.viewers.runtime.model.ViewerState.ViewerStateFeature;
@@ -46,8 +47,9 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
      * @param patterns
      * @param engine
      * @throws IncQueryException
+     * @throws IncQueryBaseException
      */
-    public IncQueryViewerDataModel(Collection<IQuerySpecification<?>> patterns, IncQueryEngine engine) {
+    public IncQueryViewerDataModel(Collection<IQuerySpecification<?>> patterns, IncQueryEngine engine) throws IncQueryException, IncQueryBaseException {
     	super(engine);
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
@@ -100,7 +102,16 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
  	public static ViewerState newViewerState(IncQueryEngine engine,
  			Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter,
  			Collection<ViewerStateFeature> features) {
- 		IncQueryViewerDataModel m = new IncQueryViewerDataModel(patterns, engine);
+ 		IncQueryViewerDataModel m;
+		try {
+			m = new IncQueryViewerDataModel(patterns, engine);
+		} catch (IncQueryException e) {
+			Logger.getLogger(IncQueryViewerDataModel.class).error(e.getMessage());
+			return null;
+		} catch (IncQueryBaseException e) {
+			Logger.getLogger(IncQueryViewerDataModel.class).error(e.getMessage());
+			return null;
+		}
   		ViewerState r = newViewerState(m, filter, features);
   		r.hasExternalViewerDataModel=false;
   		return r;

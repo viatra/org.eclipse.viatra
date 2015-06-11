@@ -14,12 +14,16 @@ package org.eclipse.incquery.viewers.runtime.model;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
@@ -42,19 +46,14 @@ public abstract class ViewerDataModel {
     protected IncQueryEngine engine;
     protected ResourceSet resourceSet;
 
-    public ViewerDataModel(ResourceSet notifier) throws IncQueryException {
+    public ViewerDataModel(ResourceSet notifier) throws IncQueryException, IncQueryBaseException {
         this(IncQueryEngine.on(new EMFScope(notifier)));
     }
 
-    public ViewerDataModel(IncQueryEngine engine) {
+    public ViewerDataModel(IncQueryEngine engine) throws IncQueryException, IncQueryBaseException {
         if (!(engine.getScope() instanceof EMFScope)) {
             IncQueryLoggingUtil.getLogger(ViewModelManager.class).error(
                     "Only EMFScope is supported currently for IncQueryEngine");
-            return;
-        }
-        if (!(((EMFScope) engine.getScope()).getScopeRoot() instanceof ResourceSet)) {
-            IncQueryLoggingUtil.getLogger(ViewModelManager.class).error(
-                    "Only ResourceSet is supported currently for EMFScope");
             return;
         }
         
@@ -63,20 +62,32 @@ public abstract class ViewerDataModel {
         prepareBaseNotifier();
     }
     
-    private void prepareBaseNotifier() {
+    private void prepareBaseNotifier() throws IncQueryException, IncQueryBaseException {
 
-        ResourceSet resourceSet = (ResourceSet)((EMFScope) engine.getScope()).getScopeRoot();
+    	Collection<? extends Notifier> notifiers = getNotifiers();
         Resource resource = null;
 
-        for (Resource r : resourceSet.getResources()) {
-            if (r.getURI().toString().equals(getNotationResourceId())) {
-                resource = r;
-                break;
-            }
+        for(Notifier notifier : notifiers) {
+        	if(notifier instanceof Resource) {
+        		Resource r = (Resource) notifier;
+        		if(checkNotationResource(r)) {
+        			resource = r;
+        			break;
+        		}
+        	}
+        	if(notifier instanceof ResourceSet) {
+        		ResourceSet resourceSet = (ResourceSet) notifier;
+        		for (Resource r : resourceSet.getResources()) {
+        			if(checkNotationResource(r)) {
+            			resource = r;
+            			break;
+        			}
+    	        }
+        	}
+	        
         }
-
         if (resource == null) {
-            resource = resourceSet.createResource(URI.createURI(getNotationResourceId()));
+            resource = addNotationResource();
         }
 
 //        resource.getContents().clear();
@@ -101,4 +112,22 @@ public abstract class ViewerDataModel {
 
     public abstract Collection<IQuerySpecification<?>> getPatterns();
 
+    private Resource addNotationResource() throws IncQueryException, IncQueryBaseException {
+    	ResourceSet resourceSet = new ResourceSetImpl();
+    	Resource resource = resourceSet.createResource(URI.createURI(getNotationResourceId()));
+    	NavigationHelper helper = EMFScope.extractUnderlyingEMFIndex(engine);
+    	helper.addRoot(resourceSet);
+    	
+    	return resource;
+    }
+    
+    private boolean checkNotationResource(Resource r) {
+    	if (r.getURI().toString().equals(getNotationResourceId()))
+    		return true;
+    	return false;
+    }
+    
+    private Collection<? extends Notifier> getNotifiers() {
+        return ((EMFScope) engine.getScope()).getScopeRoots();
+    }
 }

@@ -15,11 +15,15 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
@@ -53,8 +57,9 @@ public class ViewModelManager {
      * 
      * @throws IncQueryException
      * @throws QueryInitializationException 
+     * @throws IncQueryBaseException 
      */
-    public void initialize() throws IncQueryException, QueryInitializationException {
+    public void initialize() throws IncQueryException, QueryInitializationException, IncQueryBaseException {
 
         prepareBaseNotifier();
         traceability.setId(traceabilityId);
@@ -77,46 +82,70 @@ public class ViewModelManager {
 
     /**
      * Prepare the base notifier. Sets the ResourceSet and adds the traceability Resource.
+     * @throws IncQueryBaseException 
+     * @throws IncQueryException 
      */
-    private void prepareBaseNotifier() {
+    private void prepareBaseNotifier() throws IncQueryException, IncQueryBaseException {
 
-        ResourceSet resourceSet = getResourceSet();
+        Collection<? extends Notifier> notifiers = getNotifiers();
         Resource resource = null;
 
-        for (Resource r : resourceSet.getResources()) {
-            if (r.getURI().toString().equals(getTraceabilityResourceId())) {
-                resource = r;
-                break;
-            }
+        for(Notifier notifier : notifiers) {
+        	if(notifier instanceof Resource) {
+        		Resource r = (Resource) notifier;
+        		if(checkTraceabilityResource(r)) {
+        			resource = r;
+        			break;
+        		}
+        	}
+        	if(notifier instanceof ResourceSet) {
+        		ResourceSet resourceSet = (ResourceSet) notifier;
+        		for (Resource r : resourceSet.getResources()) {
+        			if(checkTraceabilityResource(r)) {
+            			resource = r;
+            			break;
+        			}
+    	        }
+        	}
+	        
         }
-
         if (resource == null) {
-            resource = resourceSet.createResource(URI.createURI(getTraceabilityResourceId()));
+            resource = addTraceabilityResource();
         }
         
         resource.getContents().add(traceability);
     }
 
+    private boolean checkTraceabilityResource(Resource r) {
+    	if (r.getURI().toString().equals(getTraceabilityResourceId()))
+    		return true;
+    	return false;
+    }
+    
     public IncQueryEngine getEngine() {
         return engine;
     }
 
+    private Resource addTraceabilityResource() throws IncQueryException, IncQueryBaseException {
+    	ResourceSet resourceSet = new ResourceSetImpl();
+    	Resource resource = resourceSet.createResource(URI.createURI(getTraceabilityResourceId()));
+    	NavigationHelper helper = EMFScope.extractUnderlyingEMFIndex(engine);
+    	helper.addRoot(resourceSet);
+    	
+    	return resource;
+    }
+    
     public void setEngine(IncQueryEngine engine) {
         if (!(engine.getScope() instanceof EMFScope)) {
             IncQueryLoggingUtil.getLogger(ViewModelManager.class).error(
                     "Only EMFScope is supported currently for IncQueryEngine");
             return;
         }
-        if (!(((EMFScope) engine.getScope()).getScopeRoot() instanceof ResourceSet)) {
-            IncQueryLoggingUtil.getLogger(ViewModelManager.class).error(
-                    "Only ResourceSet is supported currently for EMFScope");
-            return;
-        }
         this.engine = engine;
     }
 
-    private ResourceSet getResourceSet() {
-        return (ResourceSet) ((EMFScope) engine.getScope()).getScopeRoot();
+    private Collection<? extends Notifier> getNotifiers() {
+        return ((EMFScope) engine.getScope()).getScopeRoots();
     }
 
     public void setRules(Collection<ViewModelRule> rules) {

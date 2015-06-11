@@ -16,6 +16,7 @@ import java.util.Collection;
 
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
@@ -75,6 +76,8 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
         } catch (IncQueryException e) {
             IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
         } catch (QueryInitializationException e) {
+            IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
+        } catch (IncQueryBaseException e) {
             IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
         }
     }
