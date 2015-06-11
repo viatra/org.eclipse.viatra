@@ -17,7 +17,10 @@ import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
  * 
  * @author Marton Bur
  *
+ * @deprecated This is used by {@link org.eclipse.incquery.runtime.localsearch.planner.LocalSearchPlannerStrategy}. 
+ * Use the {@link org.eclipse.incquery.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy} and its belonging components instead.
  */
+@Deprecated
 public interface ICostEstimator {
 
     /**

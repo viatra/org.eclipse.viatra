@@ -17,8 +17,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.incquery.runtime.localsearch.planner.cost.EvaluablePConstraint;
 import org.eclipse.incquery.runtime.localsearch.planner.cost.IConstraintEvaluablePredicateProvider;
+import org.eclipse.incquery.runtime.localsearch.planner.cost.EvaluablePConstraint;
 import org.eclipse.incquery.runtime.localsearch.planner.util.OrderingHeuristics;
 import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
@@ -42,7 +42,9 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Marton Bur
  *
+ * @deprecated Use the {@link org.eclipse.incquery.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy} and its belonging components instead.
  */
+@Deprecated
 public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
 
 	private IConstraintEvaluablePredicateProvider constraintPredicateProvider;
@@ -61,6 +63,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
 			}
 		};
 	}
+	
 	public LocalSearchPlannerStrategy(IConstraintEvaluablePredicateProvider constraintEnabler) {
 		this.constraintPredicateProvider = constraintEnabler;
 	}
@@ -96,7 +99,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
         // Repeat constraint processing until all constraints are processed
         while (!constraintSet.isEmpty()) {
             // Select constraint according to the cost and heuristics
-            PConstraint pConstraint = selectNextPConstraint(pBody, plan, constraintSet, context); // TODO rename this method to indicate removal of the constraint
+            PConstraint pConstraint = selectAndRemoveNextPConstraint(pBody, plan, constraintSet, context); // TODO rename this method to indicate removal of the constraint
             plan = subPlanFactory.createSubPlan(new PApply(pConstraint), plan);
         }
 
@@ -125,7 +128,15 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
                 new OrderingHeuristics(plan,context));
     }
     
-    private PConstraint selectNextPConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IQueryMetaContext context) {
+    /**
+     * Selects the next PConstraint that is to be placed in the search plan a.k.a. ordered list of PConstraints
+     * @param pBody the PBody, for which the plan is being created
+     * @param plan the part of the plan which is ready so far
+     * @param constraintSet the set of possibly chosen constraints 
+     * @param context the meta context of the search
+     * @return the selected PConstraint that is removed from the parameter <code>constraintSet</code>
+     */
+    private PConstraint selectAndRemoveNextPConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IQueryMetaContext context) {
 
         PConstraint pConstraint = null;
  

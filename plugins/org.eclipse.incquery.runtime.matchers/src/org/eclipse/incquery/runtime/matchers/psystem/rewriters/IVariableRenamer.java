@@ -40,7 +40,9 @@ public interface IVariableRenamer {
     public class HierarchicalName implements IVariableRenamer {
         @Override
         public String createVariableName(PVariable pVariable, PQuery query) {
-            return getShortName(query) + "_" + pVariable.getName();
+            // make sure to keep the "_" prefix before anonymous variables
+            String newVarName = getShortName(query) + "_" + pVariable.getName();
+            return pVariable.getName().startsWith("_") ? "_" + newVarName : newVarName ;
         }
         
         private String getShortName(PQuery query) {

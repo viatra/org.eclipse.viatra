@@ -147,6 +147,8 @@ public class PBodyCopier {
             copyPatternMatchCounterConstraint((PatternMatchCounter) constraint);
         } else if (constraint instanceof ExpressionEvaluation) {
             copyExpressionEvaluationConstraint((ExpressionEvaluation) constraint);
+        } else {
+        	throw new RuntimeException("Unknown PConstraint encountered while copying PBody: " + constraint.getClass().getName());
         }
     }
 

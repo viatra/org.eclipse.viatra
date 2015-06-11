@@ -36,7 +36,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.extend.IterateOverESt
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlan;
 import org.eclipse.incquery.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.incquery.runtime.localsearch.planner.LocalSearchPlanner;
-import org.eclipse.incquery.runtime.localsearch.planner.LocalSearchPlannerStrategy;
+import org.eclipse.incquery.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy;
 import org.eclipse.incquery.runtime.localsearch.planner.POperationCompiler;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
@@ -69,7 +69,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     private final IQueryBackendHintProvider hintProvider;
     private final PQuery query;
 	private Logger logger;
-	private IQueryRuntimeContext context;
+	private IQueryRuntimeContext runtimeContext;
 	private IQueryCacheContext cacheContext;
 
     private static class Planner {
@@ -77,16 +77,16 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         Map<List<ISearchOperation>, Map<PVariable, Integer>> operationListsWithVarMappings;
         private POperationCompiler compiler;
 
-        public void createPlan(MatcherReference key, Logger logger, IQueryMetaContext context, final ISearchContext searchContext)
+        public void createPlan(MatcherReference key, Logger logger, IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, final ISearchContext searchContext)
                 throws QueryProcessingException {
         	IFlattenCallPredicate flattenCallPredicate = new DefaultFlattenCallPredicate();
             PQueryFlattener flattener = new PQueryFlattener(flattenCallPredicate);
-            PBodyNormalizer normalizer = new PBodyNormalizer(context, false);
-            LocalSearchPlannerStrategy strategy = new LocalSearchPlannerStrategy();
+            PBodyNormalizer normalizer = new PBodyNormalizer(metaContext, false);
+            LocalSearchRuntimeBasedStrategy strategy = new LocalSearchRuntimeBasedStrategy();
             compiler = new POperationCompiler();
 
             LocalSearchPlanner planner = new LocalSearchPlanner();
-            planner.initializePlanner(flattener, logger, context, normalizer, strategy, compiler);
+            planner.initializePlanner(flattener, logger, metaContext, runtimeContext, normalizer, strategy, compiler);
             operationListsWithVarMappings = planner.plan(key.getQuery(), key.getAdornment());
 
             Collection<SearchPlanExecutor> executors = Collections2.transform(operationListsWithVarMappings.entrySet(),
@@ -142,11 +142,11 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     }
 
-    public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext context,
+    public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
             IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query) {
         this.backend = backend;
 		this.logger = logger;
-		this.context = context;
+		this.runtimeContext = runtimeContext;
 		this.cacheContext = cacheContext;
         this.hintProvider = hintProvider;
         this.query = query;
@@ -191,7 +191,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         while (!todo.isEmpty()) {
             final MatcherReference dependency = todo.iterator().next();
             Planner planner = new Planner();
-            planner.createPlan(dependency, logger, context.getMetaContext(), searchContext);
+            planner.createPlan(dependency, logger, runtimeContext.getMetaContext(), runtimeContext, searchContext);
             planner.collectElementsToIndex(classesToIndex, featuresToIndex, dataTypesToIndex);
             planner.collectDependencies(dependencies);
             processedDependencies.add(dependency);
