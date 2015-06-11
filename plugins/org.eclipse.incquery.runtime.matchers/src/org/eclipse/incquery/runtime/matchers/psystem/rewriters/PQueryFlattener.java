@@ -145,7 +145,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         Set<PBody> conjunctedBodies = Sets.<PBody> newHashSet();
 
         for (List<PBody> bodySet : conjunctBodySets) {
-            FlattenerCopier copier = new FlattenerCopier(pQuery, flattenedCalls, bodySet);
+            FlattenerCopier copier = createBodyCopier(pQuery, flattenedCalls, bodySet); 
 
             for (PBody calledBody : bodySet) {
                 // Copy each called body
@@ -170,8 +170,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     
     private Set<PBody> prepareFlatPBody(PBody pBody) {
         Set<PBody> bodySet = Sets.newHashSet();
-        FlattenerCopier copier = new FlattenerCopier(pBody.getPattern(), Lists.<PositivePatternCall> newArrayList(),
-                Lists.<PBody> newArrayList());
+        FlattenerCopier copier = createBodyCopier(pBody.getPattern(), Lists.<PositivePatternCall> newArrayList(), Lists.<PBody> newArrayList());
         copier.mergeBody(pBody, new SameName(), new AllowAllFilter());
         // the copying of the body here is necessary for only one containing PDisjunction can be assigned to a PBody
         FlattenerCopier flattenerCopier = copier;
