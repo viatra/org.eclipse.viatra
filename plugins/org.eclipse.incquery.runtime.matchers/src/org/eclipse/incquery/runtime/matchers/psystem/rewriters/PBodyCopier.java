@@ -50,11 +50,11 @@ public class PBodyCopier {
     /**
      * The created body
      */
-    PBody body;
+    protected PBody body;
     /**
      * Mapping between the original and the copied variables
      */
-    Map<PVariable, PVariable> variableMapping = Maps.newHashMap();
+    protected Map<PVariable, PVariable> variableMapping = Maps.newHashMap();
     
     
     public Map<PVariable, PVariable> getVariableMapping() {
