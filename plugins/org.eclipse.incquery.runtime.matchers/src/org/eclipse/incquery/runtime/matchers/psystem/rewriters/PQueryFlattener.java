@@ -164,6 +164,10 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         return conjunctedBodies;
     }
 
+    protected FlattenerCopier createBodyCopier(PQuery query, List<PositivePatternCall> flattenedCalls, List<PBody> calledBodies) {
+    	return new FlattenerCopier(query, flattenedCalls, calledBodies);
+    }
+    
     private Set<PBody> prepareFlatPBody(PBody pBody) {
         Set<PBody> bodySet = Sets.newHashSet();
         FlattenerCopier copier = new FlattenerCopier(pBody.getPattern(), Lists.<PositivePatternCall> newArrayList(),
