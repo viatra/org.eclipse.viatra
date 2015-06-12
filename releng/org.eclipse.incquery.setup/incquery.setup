@@ -469,6 +469,14 @@
             name="org.eclipse.emf.facet.sdk.feature.feature.group"
             versionRange="[0.4.2,0.5.0)"/>
       </targlet>
+      <targlet
+          name="Xcore">
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/modeling/emf/emf/updates/2.11/"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
   </stream>
   <stream name="0.8-maintenance">
