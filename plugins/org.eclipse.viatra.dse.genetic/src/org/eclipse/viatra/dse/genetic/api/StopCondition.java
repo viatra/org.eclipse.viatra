@@ -13,6 +13,7 @@ package org.eclipse.viatra.dse.genetic.api;
 public enum StopCondition {
     ITERATIONS,
     GOOD_ENOUGH_SOLUTION,
+    CANT_FIND_BETTER_SC,
     CANT_FIND_BETTER,
     FIRST_POPULATION
 }
