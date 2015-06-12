@@ -131,9 +131,15 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                 } else {
                     logger.debug("Initial population is selected, starting workers.");
                     if (sharedObject.stopCondition.equals(StopCondition.FIRST_POPULATION)) {
+                        sharedObject.selector.selectNextPopulation(parentPopulation,
+                                objectives, sharedObject.sizeOfPopulation,
+                                false,
+                                context.getObjectiveComparatorHelper(),
+                                true);
                         geneticDebugger.debug(parentPopulation);
                         return null;
                     }
+                    
                     for (InstanceData instanceData : parentPopulation) {
                         instanceData.sumOfConstraintViolationMeauserement = instanceData.objectives.get(genObjective.getName());
                     }
@@ -166,7 +172,8 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                 parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
                         objectives, sharedObject.sizeOfPopulation,
                         isLastPopulation && !geneticDebugger.isDebug(),
-                        context.getObjectiveComparatorHelper());
+                        context.getObjectiveComparatorHelper(),
+                        true);
 
                 geneticDebugger.debug(parentPopulation);
 
@@ -384,7 +391,11 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
             if (!gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING)) {
                 logger.debug("Interrupted");
                 parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
-                        objectives, sharedObject.sizeOfPopulation, !geneticDebugger.isDebug(), context.getObjectiveComparatorHelper());
+                        objectives,
+                        sharedObject.sizeOfPopulation,
+                        !geneticDebugger.isDebug(),
+                        context.getObjectiveComparatorHelper(),
+                        true);
                 geneticDebugger.debug(parentPopulation);
                 sharedObject.addInstanceToBestSolutions.set(true);
                 for (InstanceData instanceData : parentPopulation) {

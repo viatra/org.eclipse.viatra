@@ -20,7 +20,8 @@ import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 public interface ISelectNextPopulation {
 
     List<InstanceData> selectNextPopulation(Collection<InstanceData> currentPopulation,
-            List<IObjective> objectives, int numberOfSelectedInstances, boolean finalSelection, ObjectiveComparatorHelper helper);
+            List<IObjective> objectives, int numberOfSelectedInstances, boolean finalSelection, ObjectiveComparatorHelper helper,
+            boolean calcCrowdingDistanceForEachFront);
 
     boolean filtersDuplicates();
 
