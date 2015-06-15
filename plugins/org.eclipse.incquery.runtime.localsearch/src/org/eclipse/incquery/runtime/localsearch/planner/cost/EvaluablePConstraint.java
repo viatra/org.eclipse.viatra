@@ -18,6 +18,8 @@ import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Inequality;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
+import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
@@ -31,9 +33,11 @@ import com.google.common.collect.Sets;
  */
 public final class EvaluablePConstraint implements Predicate<PConstraint> {
     private final SubPlan plan;
+	private boolean allowInverseNavigation;
 
-    public EvaluablePConstraint(SubPlan plan) {
+    public EvaluablePConstraint(SubPlan plan, boolean allowInverseNavigation) {
         this.plan = plan;
+		this.allowInverseNavigation = allowInverseNavigation;
     }
 
     @Override
@@ -51,6 +55,13 @@ public final class EvaluablePConstraint implements Predicate<PConstraint> {
             
         } else if (input instanceof ExportedParameter) {
             return plan.getAllDeducedVariables().contains(((ExportedParameter) input).getParameterVariable());
+        } else if (input instanceof TypeConstraint){
+        	if(!allowInverseNavigation && ((TypeConstraint) input).getSupplierKey().getArity() == 2){
+        		Tuple variables = ((TypeConstraint) input).getVariablesTuple();
+        		if(!plan.getAllDeducedVariables().contains(variables.get(0))){
+        			return false;
+        		}
+        	}
         }
         return true;
     }

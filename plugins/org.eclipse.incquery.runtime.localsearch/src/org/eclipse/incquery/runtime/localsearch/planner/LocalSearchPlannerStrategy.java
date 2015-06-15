@@ -43,10 +43,23 @@ import com.google.common.collect.ImmutableSet;
  */
 public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
 
-    // TODO create opportunity to set initial adornment - the prepared adornment could be set via the PStart constructor
- 
+	private boolean allowInverseNavigation;
+
+	public LocalSearchPlannerStrategy() {
+		this(true);
+	}
+
+	public LocalSearchPlannerStrategy(boolean allowInverseNavigation) {
+		this.allowInverseNavigation = allowInverseNavigation;
+	}
+	
     private Set<PVariable> initialBoundVariables = Collections.emptySet();
 
+    /**
+     * Sets the initial adornment of the pattern.
+     * 
+     * @param initialBoundVariables set of PVariables that are bound
+     */
     public void setBoundVariables(Set<PVariable>initialBoundVariables){
         this.initialBoundVariables = ImmutableSet.copyOf(initialBoundVariables);
     }
@@ -101,7 +114,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
         // If no such constraint left, go with the ordering heuristic for the rest of the constraints
         if (pConstraint == null) {
             // TODO use better ordering heuristic based on the runtime context
-            pConstraint = Collections.min(Collections2.filter(constraintSet, new EvaluablePConstraint(plan)),
+            pConstraint = Collections.min(Collections2.filter(constraintSet, new EvaluablePConstraint(plan, allowInverseNavigation)),
                     new OrderingHeuristics(plan,context));
         }
         // Remove it from the to-be-processed constraints list
