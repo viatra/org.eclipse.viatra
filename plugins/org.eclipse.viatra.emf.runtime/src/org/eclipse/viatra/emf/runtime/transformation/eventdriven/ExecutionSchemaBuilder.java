@@ -12,10 +12,12 @@ package org.eclipse.viatra.emf.runtime.transformation.eventdriven;
 
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
+import org.eclipse.incquery.runtime.evm.api.Executor;
+import org.eclipse.incquery.runtime.evm.api.Scheduler;
 import org.eclipse.incquery.runtime.evm.api.Scheduler.ISchedulerFactory;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
-import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
+import org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm;
 import org.eclipse.incquery.runtime.evm.specific.resolver.ArbitraryOrderConflictResolver;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
@@ -30,6 +32,7 @@ public class ExecutionSchemaBuilder {
     private ISchedulerFactory schedulerFactory;
     private IncQueryEngine incQueryEngine;
     private ConflictResolver conflictResolver = new ArbitraryOrderConflictResolver();
+    private Executor executor;
 
     public ExecutionSchemaBuilder setScheduler(ISchedulerFactory schedulerFactory) {
         this.schedulerFactory = schedulerFactory;
@@ -45,14 +48,23 @@ public class ExecutionSchemaBuilder {
         this.conflictResolver = conflictResolver;
         return this;
     }
+    
+    public ExecutionSchemaBuilder setExecutor(Executor executor) {
+        this.executor = executor;
+        return this;
+    }
 
     public ExecutionSchema build() throws IncQueryException {
         if (schedulerFactory == null) {
             schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
         }
+        if (executor == null) {
+            executor = new Executor(IncQueryEventRealm.create(incQueryEngine));
+        }
 
-        final ExecutionSchema schema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine,
-                schedulerFactory);
+        Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
+        final ExecutionSchema schema = ExecutionSchema.create(scheduler);
+        
         schema.setConflictResolver(conflictResolver);
         return schema;
     }
