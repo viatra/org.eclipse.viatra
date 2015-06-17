@@ -264,8 +264,14 @@ public class EPMToPBody {
 
     protected void gatherPathExpression(PathExpressionConstraint pathExpression, final PBody pBody) throws SpecificationBuilderException {
         PathExpressionHead head = pathExpression.getHead();
-        PVariable currentSrc = getPNode(head.getSrc(), pBody);
-        PVariable finalDst = getPNode(head.getDst(), pBody);
+        VariableReference src = head.getSrc();
+        ValueReference dst = head.getDst();
+        if (src == null || dst == null) {
+        	return;
+        }
+        
+		PVariable currentSrc = getPNode(src, pBody);
+		PVariable finalDst = getPNode(dst, pBody);
         PathExpressionTail currentTail = head.getTail();
 
         // type constraint on source
