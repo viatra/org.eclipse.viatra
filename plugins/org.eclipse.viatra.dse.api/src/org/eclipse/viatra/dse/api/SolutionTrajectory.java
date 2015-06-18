@@ -177,7 +177,7 @@ public class SolutionTrajectory {
                 @SuppressWarnings("rawtypes")
                 final IMatchProcessor action = tr.getAction();
 
-                if (editingDomain != null) {
+                if (editingDomain == null) {
                     action.process(match);
                 } else {
                     ChangeCommand cc = new ChangeCommand(model) {
