@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ExplorerThread;
@@ -70,6 +71,12 @@ public class RandomSearchStrategy extends LocalSearchStrategyBase {
         } else {
             shared = (SharedData) sharedObject;
         }
+
+        if (!gc.getSolutionStore().isStrategyDependent()) {
+            throw new DSEException("Random search needs strategy dependent solution store.");
+        }
+
+        maxDepth = rnd.nextInt(shared.maxDepth - shared.minDepth) + shared.minDepth;
     }
 
     @Override
@@ -91,17 +98,22 @@ public class RandomSearchStrategy extends LocalSearchStrategyBase {
                     return transition;
                 }
 
-            } else if ((nth = shared.triesLeft.getAndDecrement()) > 0) {
-
-                while (dsm.undoLastTransformation()) {
-                }
-
-                tryStartNewThread(context);
-
-                maxDepth = rnd.nextInt(shared.maxDepth - shared.minDepth) + shared.minDepth;
-
             } else {
-                return null;
+
+                context.calculateFitness();
+                gc.getSolutionStore().newSolution(context);
+                if ((nth = shared.triesLeft.getAndDecrement()) > 0) {
+
+                    while (dsm.undoLastTransformation()) {
+                    }
+
+                    tryStartNewThread(context);
+
+                    maxDepth = rnd.nextInt(shared.maxDepth - shared.minDepth) + shared.minDepth;
+
+                } else {
+                    return null;
+                }
             }
         } while (gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING));
 
