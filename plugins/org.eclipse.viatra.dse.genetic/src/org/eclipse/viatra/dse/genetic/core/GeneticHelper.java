@@ -31,12 +31,19 @@ public class GeneticHelper {
             return false;
         }
 
-        for (int i = trajectory1.size() - 1; i >= 0; --i) {
+        for (int i = trajectory1.size() - 1; i >= 1; --i) {
             ITransition t1 = trajectory1.get(i);
             ITransition t2 = trajectory2.get(i);
             if (!t1.getId().equals(t2.getId()) || !t1.getFiredFrom().getId().equals(t2.getFiredFrom().getId())) {
                 return false;
             }
+        }
+
+        // The first transitions don't have parent state
+        ITransition t1 = trajectory1.get(0);
+        ITransition t2 = trajectory2.get(0);
+        if (!t1.getId().equals(t2.getId())) {
+            return false;
         }
 
         return true;
