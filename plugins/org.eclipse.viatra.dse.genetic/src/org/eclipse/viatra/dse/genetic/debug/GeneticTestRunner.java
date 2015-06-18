@@ -305,7 +305,11 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             PrintWriter out = null;
             try {
                 out = new PrintWriter(new BufferedWriter(new FileWriter(EXCEPTIONS_FILE, true)));
-                out.println("Exceptions in config id:" + result.configId + ", run id: " + result.runId);
+                String configName = " ";
+                if (configRow.isKeyPresent("ConfigName")) {
+                    configName += configRow.getValueAsString("ConfigName");
+                }
+                out.println("Exceptions in config id:" + result.configId + configName + ", run id: " + result.runId);
                 for (Throwable throwable : exceptions) {
                     StringWriter sw = new StringWriter();
                     throwable.printStackTrace(new PrintWriter(sw));

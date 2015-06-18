@@ -18,7 +18,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -72,8 +71,6 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
     private GeneticConstraintObjective genObjective;
     private String fileName;
     
-    private List<InstanceData> lastParetoFront = new ArrayList<InstanceData>();
-
     public MainGeneticStrategy(GeneticSharedObject sharedObject) {
         Preconditions.checkNotNull(sharedObject);
         this.sharedObject = sharedObject;
@@ -182,33 +179,20 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                 }
 
                 if (sharedObject.stopCondition.equals(StopCondition.CANT_FIND_BETTER)) {
-                    ArrayList<InstanceData> paretoFront = new ArrayList<InstanceData>();
+                    boolean stopConditionIsFulfilled = true;
                     for (InstanceData instanceData : parentPopulation) {
                         if (instanceData.rank == 1) {
-                            paretoFront.add(instanceData);
+                            if (instanceData.survive < sharedObject.stopConditionNumber) {
+                                stopConditionIsFulfilled = false;
+                                break;
+                            }
                         } else {
                             break;
                         }
                     }
-                    if (lastParetoFront.size() != paretoFront.size()) {
-                        noBetterSolutionForXIterations = 0;
-                    } else {
-                        boolean wasEqual = true;
-                        for (InstanceData instanceData : lastParetoFront) {
-                            if (!paretoFront.contains(instanceData)) {
-                                noBetterSolutionForXIterations = 0;
-                                wasEqual = false;
-                                break;
-                            }
-                        }
-                        if (wasEqual) {
-                            noBetterSolutionForXIterations++;
-                        }
-                        if (noBetterSolutionForXIterations >= sharedObject.stopConditionNumber) {
-                            isLastPopulation = true;
-                        }
+                    if (stopConditionIsFulfilled) {
+                        isLastPopulation = true;
                     }
-                    lastParetoFront = paretoFront;
                 }
 
                 if (sharedObject.stopCondition.equals(StopCondition.CANT_FIND_BETTER_SC)) {
