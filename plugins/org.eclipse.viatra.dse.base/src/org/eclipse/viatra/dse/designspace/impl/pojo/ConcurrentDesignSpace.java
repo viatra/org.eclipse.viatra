@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -71,7 +72,23 @@ public class ConcurrentDesignSpace implements IDesignSpace {
                 fireTransitionFiredEvent(sourceTransition);
             }
             if (sourceTransition != null && sourceTransition.getResultsIn() == null) {
-                throw new DSEException("Bad state coder, a state can't have two incoming transitions with the same id.");
+                Iterator<? extends ITransition> it = state.getIncomingTransitions().iterator();
+                ITransition theProblemtaicTransition = null;
+                while (it.hasNext()) {
+                    ITransition type = (ITransition) it.next();
+                    if (sourceTransition.getId().equals(type.getId())) {
+                        theProblemtaicTransition = type;
+                        break;
+                    }
+                }
+                if (theProblemtaicTransition == null) {
+                    throw new DSEException("Shouldn't happen.");
+                }
+                throw new DSEException("Bad activation coder, a state can't have two incoming transitions with the same id." + 
+                        "\nFired Transition: " + sourceTransition.getId() + 
+                        "\nCurrent State:" + sourceTransition.getFiredFrom().getId() + 
+                        "\nPreveious State:" + state.getId() + 
+                        "\nOther State:" + theProblemtaicTransition.getFiredFrom().getId());
             }
             return false;
         }

@@ -111,6 +111,7 @@ public class HillClimbingStrategy extends LocalSearchStrategyBase {
                         }
                         transition = iterator.next();
                     }
+                    triedTransitions++;
                 }
                 logger.debug("Trying " + transition.getId());
                 return transition;
