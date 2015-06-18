@@ -135,9 +135,6 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
  		return s;
  	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.incquery.viewers.runtime.model.ViewerDataModel#getPatterns()
-	 */
 	@Override
 	public Collection<IQuerySpecification<?>> getPatterns() {
 		return patterns;

@@ -44,7 +44,6 @@ public abstract class ViewerDataModel {
     
     protected NotationModel model;
     protected IncQueryEngine engine;
-    protected ResourceSet resourceSet;
 
     public ViewerDataModel(ResourceSet notifier) throws IncQueryException, IncQueryBaseException {
         this(IncQueryEngine.on(new EMFScope(notifier)));

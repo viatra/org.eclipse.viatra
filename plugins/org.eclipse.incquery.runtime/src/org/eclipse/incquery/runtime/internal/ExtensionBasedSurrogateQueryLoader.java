@@ -44,10 +44,10 @@ public class ExtensionBasedSurrogateQueryLoader {
     private Multimap<String, String> contributingPluginOfFeatureMap = HashMultimap.create();
     private Map<EStructuralFeature, PQuery> contributedSurrogateQueries;
 
-    private static final ExtensionBasedSurrogateQueryLoader instance = new ExtensionBasedSurrogateQueryLoader();
+    private static final ExtensionBasedSurrogateQueryLoader INSTANCE = new ExtensionBasedSurrogateQueryLoader();
 
     public static ExtensionBasedSurrogateQueryLoader instance() {
-        return instance;
+        return INSTANCE;
     }
 
     public void loadKnownSurrogateQueriesIntoRegistry() {

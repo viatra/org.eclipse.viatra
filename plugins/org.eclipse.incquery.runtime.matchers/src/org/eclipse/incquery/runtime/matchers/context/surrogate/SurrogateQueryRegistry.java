@@ -13,7 +13,6 @@ package org.eclipse.incquery.runtime.matchers.context.surrogate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.WeakHashMap;
 
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
