@@ -156,4 +156,29 @@ public interface IQueryRuntimeContext {
 	 TODO: uniqueness
 	 */
 	
+    /**
+     * Wraps the external element into the internal representation that is to be used by the query backend 
+     * <p> model element -> internal object
+     */
+    public Object wrapElement(Object externalElement);
+
+    /**
+     * Unwraps the internal representation of the element into its original form  
+     * <p> internal object -> model element
+     */
+    public Object unwrapElement(Object internalElement);
+
+    /**
+     * Unwraps the tuple of elements into the internal representation that is to be used by the query backend
+     * <p> model elements -> internal objects
+     */
+    public Tuple wrapTuple(Tuple externalElements);
+
+    /**
+     * Unwraps the tuple of internal representations of elements into their original forms
+     * <p> internal objects -> model elements
+    */
+    public Tuple unwrapTuple(Tuple internalElements);
+
+	
 }

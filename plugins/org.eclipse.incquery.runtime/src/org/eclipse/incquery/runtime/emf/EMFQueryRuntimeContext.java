@@ -557,5 +557,24 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
     	return seed == null ? null : seed.get(index);
     }
     
+    // TODO wrap / unwrap enum literals 
+    // TODO use this in all other public methods (maybe wrap & delegate?)
+    
+    @Override
+    public Object unwrapElement(Object internalElement) {
+    	return internalElement;
+    }
+    @Override
+    public Tuple unwrapTuple(Tuple internalElements) {
+    	return internalElements;
+    }
+    @Override
+    public Object wrapElement(Object externalElement) {
+    	return externalElement;
+    }
+    @Override
+    public Tuple wrapTuple(Tuple externalElements) {
+    	return externalElements;
+    }
 }
 
