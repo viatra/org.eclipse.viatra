@@ -18,11 +18,8 @@ import com.google.inject.Inject
 import java.util.Arrays
 import java.util.List
 import java.util.Set
-import org.apache.log4j.Logger
 import org.eclipse.emf.common.util.Enumerator
-import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EEnumLiteral
-import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.incquery.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.incquery.patternlanguage.emf.specification.XBaseEvaluator
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
@@ -95,7 +92,6 @@ class PatternQuerySpecificationClassInferrer {
 	@Inject extension JavadocInferrer
 	@Inject extension IEMFTypeProvider
 	@Inject var IErrorFeedback feedback
-	@Inject var Logger logger
 	@Extension private JvmTypeReferenceBuilder builder
 	@Extension private JvmAnnotationReferenceBuilder annBuilder
 
@@ -260,8 +256,9 @@ class PatternQuerySpecificationClassInferrer {
 					addError(new «PProblem»("Inconsistent pattern definition threw exception «e.class.simpleName»  with message: «e.getMessage.escapeToQuotedString»"));
 					return bodies;
 				'''
-				// 	TODO smarter error reporting required
-				logger.warn("Error while building PBodies", e)
+				//TODO smarter error reporting required, see bug 468992
+				//Turned off logging as it is disturbing for users, while the cause of the error should be reported by validation 
+				//logger.warn("Error while building PBodies", e)
 			}
 		]
 		
