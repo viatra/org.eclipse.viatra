@@ -79,14 +79,16 @@ public class SubPlan {
 		
 		this.externallyInferredConstraints = new HashSet<PConstraint>();
 		this.deltaConstraints = new HashSet<PConstraint>(operation.getDeltaConstraints());
-		// TODO does not work for union
-        this.allConstraints = new HashSet<PConstraint>(deltaConstraints);
-        for (SubPlan parentPlan: parentPlans)
+		
+		this.allVariables = new HashSet<PVariable>();
+		for (PConstraint constraint: deltaConstraints) {
+			this.allVariables.addAll(constraint.getDeducedVariables());
+		}
+		this.allConstraints = new HashSet<PConstraint>(deltaConstraints);
+        for (SubPlan parentPlan: parentPlans) {
         	this.allConstraints.addAll(parentPlan.getAllEnforcedConstraints());
-        
-        this.allVariables = new HashSet<PVariable>();
-        for (PConstraint constraint: allConstraints)
-        	this.allVariables.addAll(constraint.getDeducedVariables());
+        	this.allVariables.addAll(parentPlan.getAllDeducedVariables());
+        }     
         
         // TODO this is ugly a bit
         if (operation instanceof PStart) {
