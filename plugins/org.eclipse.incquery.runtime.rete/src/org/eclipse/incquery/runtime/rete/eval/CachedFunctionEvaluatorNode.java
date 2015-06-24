@@ -34,7 +34,7 @@ public class CachedFunctionEvaluatorNode extends OutputCachingEvaluatorNode {
 	@Override
 	protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
 		if (evaluationresult == null) return null;
-		return new LeftInheritanceTuple(incoming, new Object[]{evaluationresult});
+		return new LeftInheritanceTuple(incoming, new Object[]{runtimeContext.wrapElement(evaluationresult)});
 	}
 
 	/* (non-Javadoc)

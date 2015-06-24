@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.rete.eval;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
@@ -38,6 +39,7 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
     protected IExpressionEvaluator evaluator;    
     int sourceTupleWidth;
     private Map<String, Integer> parameterPositions;
+	protected IQueryRuntimeContext runtimeContext;
     
     
     public AbstractEvaluatorNode(ReteContainer reteContainer, Logger logger, IExpressionEvaluator evaluator,
@@ -47,6 +49,7 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
 		this.evaluator = evaluator;
         this.parameterPositions = parameterPositions;
 		this.sourceTupleWidth = sourceTupleWidth;
+		runtimeContext = reteContainer.getNetwork().getEngine().getRuntimeContext();
 	}
 //    protected Map<Tuple, Object> cachedResults = CollectionsFactory.getMap(); 
 	
@@ -67,7 +70,7 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
         // actual evaluation
         Object result = null;
         try {
-            TupleValueProvider tupleParameters = new TupleValueProvider(ps, parameterPositions);
+            TupleValueProvider tupleParameters = new TupleValueProvider(runtimeContext.unwrapTuple(ps), parameterPositions);
             result = evaluator.evaluateExpression(tupleParameters);
         } catch (Exception e) {
             logger.warn(

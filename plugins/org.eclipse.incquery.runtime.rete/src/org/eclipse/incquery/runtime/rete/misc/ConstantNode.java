@@ -28,7 +28,7 @@ public class ConstantNode extends StandardNode {
 
     public ConstantNode(ReteContainer reteContainer, Tuple constant) {
         super(reteContainer);
-        this.constant = constant;
+        this.constant = reteContainer.getNetwork().getEngine().getRuntimeContext().wrapTuple(constant);
     }
 
     public void pullInto(Collection<Tuple> collector) {

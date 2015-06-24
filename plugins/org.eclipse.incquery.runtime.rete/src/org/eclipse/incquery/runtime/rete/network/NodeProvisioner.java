@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
@@ -54,6 +55,7 @@ public class NodeProvisioner {
     NodeFactory nodeFactory; 
     ConnectionFactory connectionFactory; 
     InputConnector inputConnector;
+    IQueryRuntimeContext runtimeContext;
 
     // TODO as recipe? 
     Map<Supplier, RemoteReceiver> remoteReceivers = CollectionsFactory.getMap();//new HashMap<Supplier, RemoteReceiver>();
@@ -71,6 +73,7 @@ public class NodeProvisioner {
         this.nodeFactory = reteContainer.getNodeFactory();
         this.connectionFactory = reteContainer.getConnectionFactory();
         this.inputConnector = reteContainer.getInputConnectionFactory();
+        runtimeContext = reteContainer.getNetwork().getEngine().getRuntimeContext();
     }
     
     

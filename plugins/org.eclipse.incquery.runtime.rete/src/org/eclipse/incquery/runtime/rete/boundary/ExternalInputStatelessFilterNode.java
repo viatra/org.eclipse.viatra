@@ -43,7 +43,7 @@ public class ExternalInputStatelessFilterNode extends FilterNode implements Disc
 	public boolean check(Tuple ps) {
 		if (mask != null) 
 			ps = mask.transform(ps);
-		return context.containsTuple(inputKey, inputConnector.unwrapTuple(ps));
+		return context.containsTuple(inputKey, ps);
 	}
 	
 	

@@ -18,11 +18,11 @@ import java.util.Map;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IUpdateable;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.matchers.util.CollectionsFactory;
-import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.index.Indexer;
 import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.network.Production;
@@ -39,7 +39,7 @@ import org.eclipse.incquery.runtime.rete.traceability.RecipeTraceInfo;
 public class RetePatternMatcher extends TransformerNode implements IQueryResultProvider {
 
     protected ReteEngine engine;
-    protected InputConnector inputConnector;
+    protected IQueryRuntimeContext context;
     protected Production productionNode;
     protected RecipeTraceInfo productionNodeTrace;
     protected Map<String, Integer> posMapping;
@@ -56,7 +56,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
     public RetePatternMatcher(ReteEngine engine, RecipeTraceInfo productionNodeTrace) {
         super(engine.getReteNet().getHeadContainer());
         this.engine = engine;
-        this.inputConnector = engine.getReteNet().getInputConnector();
+        this.context = engine.getRuntimeContext();
         this.productionNodeTrace = productionNodeTrace;
         final Address<? extends Node> productionAddress = reteContainer.getProvisioner().getOrCreateNodeByRecipe(productionNodeTrace);
         if (!reteContainer.isLocal(productionAddress))
@@ -86,7 +86,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
 
         AllMatchFetcher fetcher = new AllMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
-                inputConnector.wrapTuple(inputSignature));
+        		context.wrapTuple(inputSignature));
         engine.reteNet.waitForReteTermination(fetcher);
         ArrayList<Tuple> unscopedMatches = fetcher.getMatches();
 
@@ -104,7 +104,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
 
         SingleMatchFetcher fetcher = new SingleMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
-                inputConnector.wrapTuple(inputSignature));
+        		context.wrapTuple(inputSignature));
         engine.reteNet.waitForReteTermination(fetcher);
         return fetcher.getMatch();
     }
@@ -119,7 +119,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
 
         CountFetcher fetcher = new CountFetcher(engine.accessProjection(productionNodeTrace, mask),
-                inputConnector.wrapTuple(inputSignature));
+        		context.wrapTuple(inputSignature));
         engine.reteNet.waitForReteTermination(fetcher);
 
         return fetcher.getCount();
@@ -185,7 +185,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     @Override
     protected Tuple transform(Tuple input) {
-        return inputConnector.unwrapTuple(input);
+        return context.unwrapTuple(input);
     }
 
     abstract class AbstractMatchFetcher implements Runnable {
@@ -226,7 +226,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
                 this.matches = new ArrayList<Tuple>(matches.size());
                 int i = 0;
                 for (Tuple t : matches)
-                    this.matches.add(i++, inputConnector.unwrapTuple(t));
+                    this.matches.add(i++, context.unwrapTuple(t));
             }
 
         }
@@ -248,7 +248,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         @Override
         protected void fetch(Collection<Tuple> matches) {
             if (matches != null && !matches.isEmpty())
-                match = inputConnector.unwrapTuple(matches.iterator().next());
+                match = context.unwrapTuple(matches.iterator().next());
         }
 
         // public void run() {
