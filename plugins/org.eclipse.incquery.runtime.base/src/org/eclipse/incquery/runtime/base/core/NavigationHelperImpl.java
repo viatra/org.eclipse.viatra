@@ -254,7 +254,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Set<Setting> findByAttributeValue(Object value) {
+    public Set<Setting> findByAttributeValue(Object value_) {
+    	Object value = toCanonicalValueRepresentation(value_);
         Set<Setting> retSet = new HashSet<Setting>();
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
 
@@ -267,9 +268,10 @@ public class NavigationHelperImpl implements NavigationHelper {
 
         return retSet;
     }
-
+    
     @Override
-    public Set<Setting> findByAttributeValue(Object value, Collection<EAttribute> attributes) {
+    public Set<Setting> findByAttributeValue(Object value_, Collection<EAttribute> attributes) {
+    	Object value = toCanonicalValueRepresentation(value_);
         Set<Setting> retSet = new HashSet<Setting>();
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
 
@@ -286,7 +288,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Set<EObject> findByAttributeValue(Object value, EAttribute attribute) {
+    public Set<EObject> findByAttributeValue(Object value_, EAttribute attribute) {
+    	Object value = toCanonicalValueRepresentation(value_);
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
         Object feature = toKey(attribute);
         if (valMap.get(feature) == null) {
@@ -434,6 +437,11 @@ public class NavigationHelperImpl implements NavigationHelper {
 	private Object toKey(EStructuralFeature feature) {
 		return contentAdapter.toKey(feature);
 	}
+	
+	@Override
+	public Object toCanonicalValueRepresentation(Object value) {
+		return contentAdapter.toInternalValueRepresentation(value);
+	}
 
     @Override
     public Set<EObject> getAllInstances(EClass type) {
@@ -458,7 +466,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public Set<EObject> findByFeatureValue(Object value, EStructuralFeature _feature) {
+    public Set<EObject> findByFeatureValue(Object value_, EStructuralFeature _feature) {
+    	Object value = toCanonicalValueRepresentation(value_);
         Object feature = toKey(_feature);
         Set<EObject> retSet = new HashSet<EObject>();
         Map<Object, Set<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);

@@ -211,18 +211,23 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     public void visitAttribute(EObject source, EAttribute feature, Object target) {
     	Object featureKey = toKey(feature);
         final Object eAttributeType = toKey(feature.getEAttributeType());
+        Object internalValueRepresentation = null;
         if (observesFeature(featureKey)) {
+        	// if (internalValueRepresentation == null) // always true
+        		internalValueRepresentation = store.toInternalValueRepresentation(target);
             if (isInsertion) {
-                store.insertFeatureTuple(featureKey, target, source);
+                store.insertFeatureTuple(featureKey, internalValueRepresentation, source);
             } else {
-                store.removeFeatureTuple(featureKey, target, source);
+                store.removeFeatureTuple(featureKey, internalValueRepresentation, source);
             }
         }
         if (observesDataType(eAttributeType)) {
+        	if (internalValueRepresentation == null)
+            	internalValueRepresentation = store.toInternalValueRepresentation(target);
             if (isInsertion) {
-                store.insertIntoDataTypeMap(eAttributeType, target);
+                store.insertIntoDataTypeMap(eAttributeType, internalValueRepresentation);
             } else {
-                store.removeFromDataTypeMap(eAttributeType, target);
+                store.removeFromDataTypeMap(eAttributeType, internalValueRepresentation);
             }
         }
     };

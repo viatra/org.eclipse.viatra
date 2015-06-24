@@ -19,9 +19,12 @@ import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -702,5 +705,21 @@ public interface NavigationHelper {
      * @since 0.8
      */
     boolean removeIndexingErrorListener(IEMFIndexingErrorListener listener);
+
+    /**
+     * Returns the internal, canonicalized implementation of an attribute value.
+     * 
+     * <p> Behaviour: when in dynamic EMF mode, substitutes enum literals with a canonical version of the enum literal.
+     * Otherwise, returns the input. 
+     * 
+     * <p> The canonical enum literal will be guaranteed to be a valid EMF enum literal ({@link Enumerator}), 
+     * 	and the best effort is made to ensure that it will be the same for all versions of the {@link EEnum}, 
+     * 	including {@link EEnumLiteral}s in different versions of ecore packages, as well as Java enums generated from them..
+     * 
+     * <p> Usage is not required when simply querying the indexed model through the {@link NavigationHelper} API, 
+     * 	as both method inputs and the results returned are automatically canonicalized in dynamic EMF mode. 
+     * Using this method is required only if the client wants to do querying/filtering on the results returned, and wants to know what to look for.   
+     */
+	Object toCanonicalValueRepresentation(Object value);
 
 }

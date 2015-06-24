@@ -51,16 +51,16 @@ import com.google.common.collect.Iterables;
  * <p> TODO: {@link #ensureIndexed(EClass)} may be inefficient if supertype already cached.
  */
 public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
-	private final NavigationHelper baseIndex;
+	protected final NavigationHelper baseIndex;
     //private BaseIndexListener listener;
     
-    private final Set<EClass> indexedClasses = new HashSet<EClass>();
-    private final Set<EDataType> indexedDataTypes = new HashSet<EDataType>();
-    private final Set<EStructuralFeature> indexedFeatures = new HashSet<EStructuralFeature>();
+	protected final Set<EClass> indexedClasses = new HashSet<EClass>();
+	protected final Set<EDataType> indexedDataTypes = new HashSet<EDataType>();
+	protected final Set<EStructuralFeature> indexedFeatures = new HashSet<EStructuralFeature>();
     
-    private final EMFQueryMetaContext metaContext = EMFQueryMetaContext.INSTANCE;
+	protected final EMFQueryMetaContext metaContext = EMFQueryMetaContext.INSTANCE;
 
-	private Logger logger;
+	protected Logger logger;
 	
     public EMFQueryRuntimeContext(NavigationHelper baseIndex, Logger logger) {
         this.baseIndex = baseIndex;

@@ -23,9 +23,12 @@ import java.util.concurrent.Callable;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -97,6 +100,11 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private final Map<Object, Map<Object, Integer>> dataTypeMap;
 
     /**
+     *  Supports collision detection and EEnum canonicalization. Used for all EPackages that have types whose instances were encountered at least once.
+     */
+    private final Set<EPackage> knownPackages = new HashSet<EPackage>();
+
+    /**
      *  Field variable because it is needed for collision detection. Used for all EClasses whose instances were encountered at least once.
      */
     private final Set<EClassifier> knownClassifiers = new HashSet<EClassifier>();
@@ -124,9 +132,17 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      */
     private final Map<EClassifier,String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
     private final Map<ETypedElement,String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
+    private final Map<Enumerator,String> uniqueIDFromEnumerator = new HashMap<Enumerator, String>();
     private final Multimap<String,EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
     private final Multimap<String,ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
+    private final Multimap<String,Enumerator> uniqueIDToEnumerator = HashMultimap.create(100, 1);
+    private final Map<String, Enumerator> uniqueIDToCanonicalEnumerator = new HashMap<String, Enumerator>();
     private Object eObjectClassKey = null;
+
+    /**
+     * Map from enum classes generated for {@link EEnum}s to the actual EEnum.
+     */
+	Map<Class<?>, EEnum> generatedEENumClasses = new HashMap<Class<?>, EEnum>();
 
 
     // move optimization to avoid removing and re-adding entire subtrees
@@ -185,6 +201,54 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 		}
 		return id;
 	}
+	private String enumToKeyDynamicInternal(Enumerator enumerator) {
+		String id = uniqueIDFromEnumerator.get(enumerator);
+		if (id == null) {
+			if (enumerator instanceof EEnumLiteral) {
+				EEnumLiteral enumLiteral = (EEnumLiteral) enumerator;
+				final EEnum eEnum = enumLiteral.getEEnum();
+				maintainMetamodel(eEnum);
+				
+				id = constructEnumID(
+						eEnum.getEPackage().getNsURI(), 
+						eEnum.getName(), 
+						enumLiteral.getLiteral());
+				
+				// there might be a generated enum for this enum literal!
+				// generated enum should pre-empt the ecore enum literal as canonical enumerator				
+				Enumerator instanceEnum = enumLiteral.getInstance();
+				if (instanceEnum != null && !uniqueIDToCanonicalEnumerator.containsKey(id)) { 
+					uniqueIDToCanonicalEnumerator.put(id, instanceEnum);
+				}
+				// if generated enum not found... delay selection of canonical enumerator
+			} else { // generated enum
+				final EEnum eEnum = generatedEENumClasses.get(enumerator.getClass());
+				if (eEnum != null)
+					id = constructEnumID(
+							eEnum.getEPackage().getNsURI(), 
+							eEnum.getName(), 
+							enumerator.getLiteral());
+				else
+					id = constructEnumID(
+							"unkownPackage URI", 
+							enumerator.getClass().getSimpleName(), 
+							enumerator.getLiteral());
+				
+				// generated enum should pre-empt the ecore enum literal as canonical enumerator				
+				if (!uniqueIDToCanonicalEnumerator.containsKey(id)) { 
+					uniqueIDToCanonicalEnumerator.put(id, enumerator);
+				}
+			}
+		    uniqueIDFromEnumerator.put(enumerator, id);
+		    uniqueIDToEnumerator.put(id, enumerator);
+		}
+		return id;
+	}
+	private String constructEnumID(String nsURI, String name, String literal) {
+		return String.format("%s##%s##%s", nsURI, name, literal);
+	}
+	
+	
     protected Object toKey(final EStructuralFeature feature) {
     	if (isDynamicModel) {
         	String id = uniqueIDFromTypedElement.get(feature);
@@ -203,6 +267,28 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     	}
     }
 
+    private Enumerator enumToCanonicalDynamicInternal(final Enumerator value) {
+    	final String key = enumToKeyDynamicInternal(value);
+		Enumerator canonicalEnumerator = uniqueIDToCanonicalEnumerator.get(key);
+		if (canonicalEnumerator == null) { // if no canonical version appointed yet, appoint first version
+			canonicalEnumerator = uniqueIDToEnumerator.get(key).iterator().next();
+			uniqueIDToCanonicalEnumerator.put(key, canonicalEnumerator);
+		}
+		return canonicalEnumerator;
+    }
+    /**
+     * If in dynamic EMF mode, substitutes enum literals with a canonical version of the enum literal.
+     */
+    protected Object toInternalValueRepresentation(final Object value) {
+    	if (isDynamicModel) {
+        	if (value instanceof Enumerator)
+        		return enumToCanonicalDynamicInternal((Enumerator) value);
+        	else 
+        		return value;
+    	} else {
+    		return value;
+    	}
+    }
 
     @Override
     public void notifyChanged(final Notification notification) {
@@ -610,6 +696,19 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 	                maintainTypeHierarhyInternal(clazzKey, toKey(superType));
 	            }
 	            maintainTypeHierarhyInternal(clazzKey, getEObjectClassKey());
+            } else if (classifier instanceof EEnum) {
+				EEnum eEnum = (EEnum) classifier;
+            	
+				if (isDynamicModel) { 
+					// if there is a generated enum class, save this model element for describing that class
+					if (eEnum.getInstanceClass() != null)
+						generatedEENumClasses.put(eEnum.getInstanceClass(), eEnum);
+					
+					for (EEnumLiteral eEnumLiteral : eEnum.getELiterals()) {
+						// create string ID; register generated enum values 
+						enumToKeyDynamicInternal(eEnumLiteral); 
+					}
+				}
             }
         }
     }
@@ -624,15 +723,17 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
      */
     private void checkEPackage(final EClassifier classifier) {
         final EPackage ePackage = classifier.getEPackage();
-		final String nsURI = ePackage.getNsURI();
-		final Collection<EPackage> packagesOfURI = uniqueIDToPackage.get(nsURI);
-        if (!packagesOfURI.contains(ePackage)) {
-            uniqueIDToPackage.put(nsURI, ePackage);
-            //collision detection between EPackages (disabled in dynamic model mode)
-            if (!isDynamicModel && packagesOfURI.size() == 2) { // only report the issue if the new EPackage instance is the second for the same URI
-                processingError(new IncQueryBaseException("NsURI ("+nsURI+ ") collision detected between different instances of EPackages. If this is normal, try using dynamic EMF mode."),
-                        "process new metamodel elements.");
-            }
+        if (knownPackages.add(ePackage)) { // this is a new EPackage        	
+        	final String nsURI = ePackage.getNsURI();
+        	final Collection<EPackage> packagesOfURI = uniqueIDToPackage.get(nsURI);
+        	if (!packagesOfURI.contains(ePackage)) { // this should be true
+        		uniqueIDToPackage.put(nsURI, ePackage);
+        		//collision detection between EPackages (disabled in dynamic model mode)
+        		if (!isDynamicModel && packagesOfURI.size() == 2) { // only report the issue if the new EPackage instance is the second for the same URI
+        			processingError(new IncQueryBaseException("NsURI ("+nsURI+ ") collision detected between different instances of EPackages. If this is normal, try using dynamic EMF mode."),
+        					"process new metamodel elements.");
+        		}
+        	}
         }
     }
 
