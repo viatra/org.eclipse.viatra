@@ -25,6 +25,9 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.emf.EMFScope;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.validation.core.ValidationEngine;
 import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
 import org.eclipse.incquery.validation.core.api.IValidationEngine;
@@ -178,9 +181,11 @@ public final class ValidationManager {
      *            An editor Id for which we wish to use the registered constraint specifications at the
      *            org.eclipse.incquery.livevalidation.runtime.constraintspecification extension point.
      * @return The initialized validation engine.
+     * @throws IncQueryException if there is an error creating the engine on the notifier
      */
-    public static IValidationEngine initializeValidationEngine(Notifier notifier, String editorId) {
-        ValidationEngine validationEngine = new ValidationEngine(notifier, logger);
+    public static IValidationEngine initializeValidationEngine(Notifier notifier, String editorId) throws IncQueryException {
+        IncQueryEngine engine = IncQueryEngine.on(new EMFScope(notifier));
+        IValidationEngine validationEngine = ValidationEngine.builder().setEngine(engine).setLogger(logger).build();
 
         for (IConstraintSpecification constraintSpecification : getConstraintSpecificationsForEditorId(editorId)) {
             validationEngine.addConstraintSpecification(constraintSpecification);

@@ -12,6 +12,8 @@
 
 package org.eclipse.incquery.validation.core;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,7 +37,7 @@ import org.eclipse.incquery.runtime.evm.specific.Rules;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.incquery.validation.core.api.ConstraintSpecification;
 import org.eclipse.incquery.validation.core.api.IConstraint;
 import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
 import org.eclipse.incquery.validation.core.api.IValidationEngine;
@@ -43,6 +45,14 @@ import org.eclipse.incquery.validation.core.listeners.ValidationEngineListener;
 
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * This class uses an {@link IncQueryEngine} for tracking violations of {@link ConstraintSpecification}s.
+ * 
+ * Use the {@link #builder()} method for setting up a new instance through the {@link ValidationEngineBuilder}. 
+ * 
+ * @author Abel Hegedus
+ *
+ */
 public class ValidationEngine implements IValidationEngine {
 
     private Logger logger;
@@ -58,9 +68,37 @@ public class ValidationEngine implements IValidationEngine {
     protected ExecutionSchema getExecutionSchema() {
         return executionSchema;
     }
-
+    
+    public static ValidationEngineBuilder builder() {
+        return ValidationEngineBuilder.create();
+    }
+    
+    protected ValidationEngine(IncQueryEngine engine, Logger logger) {
+        checkArgument(engine != null, "Engine cannot be null");
+        checkArgument(logger != null, "Logger cannot be null");
+        this.incQueryEngine = engine;
+        this.logger = logger;
+        
+        this.constraintMap = new HashMap<IConstraintSpecification, Constraint>();
+        this.listeners = new HashSet<ValidationEngineListener>();
+        ISchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
+        this.executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory);
+    }
+    
+    /**
+     * Creates a new validation engine initialized on a managed {@link IncQueryEngine}
+     * with the given Notifier as scope and with the given Logger.
+     * 
+     * @param notifier
+     * @param logger
+     * 
+     * @deprecated use {@link ValidationEngineBuilder} instead.
+     * @throws IllegalArgumentException if either argument is null
+     */
     public ValidationEngine(Notifier notifier, Logger logger) {
 
+        checkArgument(notifier != null, "Notifier cannot be null");
+        checkArgument(logger != null, "Logger cannot be null");
         this.logger = logger;
         this.constraintMap = new HashMap<IConstraintSpecification, Constraint>();
         this.listeners = new HashSet<ValidationEngineListener>();
@@ -70,8 +108,7 @@ public class ValidationEngine implements IValidationEngine {
             ISchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
             this.executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory);
         } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getDefaultLogger().error(
-                    String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
+            logger.error(String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
         }
     }
 
