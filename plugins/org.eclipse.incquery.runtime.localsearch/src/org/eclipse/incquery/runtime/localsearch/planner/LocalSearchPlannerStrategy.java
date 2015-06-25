@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.incquery.runtime.localsearch.planner.cost.EvaluablePConstraint;
+import org.eclipse.incquery.runtime.localsearch.planner.cost.IConstraintEvaluablePredicateProvider;
 import org.eclipse.incquery.runtime.localsearch.planner.util.OrderingHeuristics;
 import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.planning.IQueryPlannerStrategy;
@@ -33,6 +34,7 @@ import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 
@@ -43,14 +45,24 @@ import com.google.common.collect.ImmutableSet;
  */
 public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
 
-	private boolean allowInverseNavigation;
+	private IConstraintEvaluablePredicateProvider constraintPredicateProvider;
 
 	public LocalSearchPlannerStrategy() {
 		this(true);
 	}
 
-	public LocalSearchPlannerStrategy(boolean allowInverseNavigation) {
-		this.allowInverseNavigation = allowInverseNavigation;
+	public LocalSearchPlannerStrategy(final boolean allowInverseNavigation) {
+		//TODO this method should be removed later
+		constraintPredicateProvider = new IConstraintEvaluablePredicateProvider() {
+			
+			@Override
+			public Predicate<PConstraint> getConstraint(SubPlan plan) {
+				return new EvaluablePConstraint(plan, allowInverseNavigation);
+			}
+		};
+	}
+	public LocalSearchPlannerStrategy(IConstraintEvaluablePredicateProvider constraintEnabler) {
+		this.constraintPredicateProvider = constraintEnabler;
 	}
 	
     private Set<PVariable> initialBoundVariables = Collections.emptySet();
@@ -114,7 +126,7 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
         // If no such constraint left, go with the ordering heuristic for the rest of the constraints
         if (pConstraint == null) {
             // TODO use better ordering heuristic based on the runtime context
-            pConstraint = Collections.min(Collections2.filter(constraintSet, new EvaluablePConstraint(plan, allowInverseNavigation)),
+            pConstraint = Collections.min(Collections2.filter(constraintSet, constraintPredicateProvider.getConstraint(plan)),
                     new OrderingHeuristics(plan,context));
         }
         // Remove it from the to-be-processed constraints list
