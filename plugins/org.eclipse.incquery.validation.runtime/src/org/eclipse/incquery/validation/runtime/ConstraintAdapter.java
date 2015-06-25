@@ -22,6 +22,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.incquery.runtime.api.IncQueryEngine;
+import org.eclipse.incquery.runtime.emf.EMFScope;
+import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.validation.core.ValidationEngine;
 import org.eclipse.incquery.validation.core.api.IConstraint;
 import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
@@ -51,15 +54,20 @@ public class ConstraintAdapter {
         this.markerMap = new HashMap<IPatternMatch, IMarker>();
         this.violationMarkerMap = new HashMap<IViolation, IMarker>();
 
-        engine = new ValidationEngine(notifier, logger);
-        engine.initialize();
-
-        MarkerManagerViolationListener markerManagerViolationListener = new MarkerManagerViolationListener(logger, this);
-        Set<IConstraintSpecification> constraintSpecificationsForEditorId = ValidationManager
-                .getConstraintSpecificationsForEditorId(editorPart.getSite().getId());
-        for (IConstraintSpecification constraint : constraintSpecificationsForEditorId) {
-            IConstraint coreConstraint = engine.addConstraintSpecification(constraint);
-            coreConstraint.addListener(markerManagerViolationListener);
+        try {
+            IncQueryEngine iqengine = IncQueryEngine.on(new EMFScope(notifier));
+            engine = ValidationEngine.builder().setEngine(iqengine).setLogger(logger).build();
+            engine.initialize();
+            
+            MarkerManagerViolationListener markerManagerViolationListener = new MarkerManagerViolationListener(logger, this);
+            Set<IConstraintSpecification> constraintSpecificationsForEditorId = ValidationManager
+                    .getConstraintSpecificationsForEditorId(editorPart.getSite().getId());
+            for (IConstraintSpecification constraint : constraintSpecificationsForEditorId) {
+                IConstraint coreConstraint = engine.addConstraintSpecification(constraint);
+                coreConstraint.addListener(markerManagerViolationListener);
+            }
+        } catch (IncQueryException e) {
+            logger.error(String.format("Exception occured during validation initialization: %s", e.getMessage()), e);
         }
 
     }
