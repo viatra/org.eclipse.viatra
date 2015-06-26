@@ -103,6 +103,28 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
         return subPlanFactory.createSubPlan(new PProject(pBody.getSymbolicParameterVariables()), plan);
     }
 
+    protected PConstraint selectFirstConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IQueryMetaContext context) {
+    	List<PVariable> parameterVariables = pBody.getSymbolicParameterVariables();
+        for (PVariable pVariable : parameterVariables) {
+            Set<PConstraint> referringPConstraints = pVariable.getReferringConstraints();
+            for (PConstraint referringPConstraint : referringPConstraints) {
+                // If the type constraint is unprocessed and is unary, then select it
+                if (constraintSet.contains(referringPConstraint) && 
+                		referringPConstraint instanceof TypeConstraint && 
+                		referringPConstraint.getAffectedVariables().size()==1) {
+                    return referringPConstraint;
+                }
+            }
+        }
+        return null;
+    }
+    
+    protected PConstraint selectNextConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IQueryMetaContext context) {
+    	// TODO use better ordering heuristic based on the runtime context
+        return Collections.min(Collections2.filter(constraintSet, constraintPredicateProvider.getConstraint(plan)),
+                new OrderingHeuristics(plan,context));
+    }
+    
     private PConstraint selectNextPConstraint(PBody pBody, final SubPlan plan, Set<PConstraint> constraintSet, IQueryMetaContext context) {
 
         PConstraint pConstraint = null;
@@ -110,24 +132,11 @@ public class LocalSearchPlannerStrategy implements IQueryPlannerStrategy {
         // Strategy: begin with TypeUnary constraints from parameters, if able
         // TODO consider adornment here as well
         if(plan.getOperation() instanceof PStart){
-	        List<PVariable> parameterVariables = pBody.getSymbolicParameterVariables();
-	        for (PVariable pVariable : parameterVariables) {
-	            Set<PConstraint> referringPConstraints = pVariable.getReferringConstraints();
-	            for (PConstraint referringPConstraint : referringPConstraints) {
-	                // If the type constraint is unprocessed and is unary, then select it
-	                if (constraintSet.contains(referringPConstraint) && 
-	                		referringPConstraint instanceof TypeConstraint && 
-	                		referringPConstraint.getAffectedVariables().size()==1) {
-	                    pConstraint = referringPConstraint;
-	                }
-	            }
-	        }
+	        pConstraint = selectFirstConstraint(pBody, plan, constraintSet, context);
         }
         // If no such constraint left, go with the ordering heuristic for the rest of the constraints
         if (pConstraint == null) {
-            // TODO use better ordering heuristic based on the runtime context
-            pConstraint = Collections.min(Collections2.filter(constraintSet, constraintPredicateProvider.getConstraint(plan)),
-                    new OrderingHeuristics(plan,context));
+            pConstraint = selectNextConstraint(pBody, plan, constraintSet, context);
         }
         // Remove it from the to-be-processed constraints list
         constraintSet.remove(pConstraint);
