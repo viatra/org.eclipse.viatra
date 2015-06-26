@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IncQuery Base Indexer - Transitive Closure Support
-Bundle-SymbolicName: org.eclipse.incquery.runtime.base.itc
+Bundle-SymbolicName: org.eclipse.incquery.runtime.base.itc;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
