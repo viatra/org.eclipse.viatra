@@ -116,11 +116,20 @@ ComplexEventExpression:
 ;
 
 ChainedExpression:
-	operator=ComplexEventOperator expression=Primary
+	operator=BinaryOperator expression=Primary
 ;
 
 Primary returns ComplexEventExpression:
-	Atom (multiplicity=AbstractMultiplicity)? (timewindow=Timewindow)? | '('ComplexEventExpression')' (multiplicity=AbstractMultiplicity)? (timewindow=Timewindow)?
+	NormalPrimary | NegatedPrimary
+;
+
+NormalPrimary returns ComplexEventExpression:
+	Atom (multiplicity=AbstractMultiplicity)? (timewindow=Timewindow)? |
+	'('ComplexEventExpression')' (multiplicity=AbstractMultiplicity)? (timewindow=Timewindow)?
+;
+
+NegatedPrimary returns ComplexEventExpression:
+	negOperator = NegOperator primary = NormalPrimary
 ;
 
 Atom:
@@ -164,18 +173,21 @@ PatternCallParameter:
 	name=ID
 ;
 
-NegExpression:
-	{NegExpression}
-	operator=NegOperator '('eventPattern=EventPattern')'
-;
-
 /*******************************************COMPLEX EVENT EXPRESSIONS*******************************************/
 
 
 
 /*******************************************OPERATORS*******************************************/
 ComplexEventOperator:
-	FollowsOperator | OrOperator | UntilOperator | AndOperator //| NegOperator
+	BinaryOperator | UnaryOperator
+;
+
+BinaryOperator:
+	FollowsOperator | OrOperator | AndOperator //| UntilOperator
+;
+
+UnaryOperator:
+	NegOperator
 ;
 
 FollowsOperator:
@@ -200,7 +212,7 @@ UntilOperator:
 
 NegOperator:
 	{NegOperator}
-	'NEG'
+	'NOT'
 ;
 
 /*******************************************OPERATORS*******************************************/

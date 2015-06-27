@@ -69,9 +69,13 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="timewindow" eType="#//Timewindow"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="negOperator" eType="#//NegOperator"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="primary" eType="#//ComplexEventExpression"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ChainedExpression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="operator" eType="#//ComplexEventOperator"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="operator" eType="#//BinaryOperator"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="#//ComplexEventExpression"
         containment="true"/>
@@ -103,11 +107,13 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ComplexEventOperator"/>
-  <eClassifiers xsi:type="ecore:EClass" name="FollowsOperator" eSuperTypes="#//ComplexEventOperator"/>
-  <eClassifiers xsi:type="ecore:EClass" name="OrOperator" eSuperTypes="#//ComplexEventOperator"/>
-  <eClassifiers xsi:type="ecore:EClass" name="AndOperator" eSuperTypes="#//ComplexEventOperator"/>
-  <eClassifiers xsi:type="ecore:EClass" name="UntilOperator" eSuperTypes="#//ComplexEventOperator"/>
-  <eClassifiers xsi:type="ecore:EClass" name="NegOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BinaryOperator" eSuperTypes="#//ComplexEventOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UnaryOperator" eSuperTypes="#//ComplexEventOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="FollowsOperator" eSuperTypes="#//BinaryOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OrOperator" eSuperTypes="#//BinaryOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AndOperator" eSuperTypes="#//BinaryOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UntilOperator"/>
+  <eClassifiers xsi:type="ecore:EClass" name="NegOperator" eSuperTypes="#//UnaryOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="Source" eSuperTypes="#//ModelElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="adapter" upperBound="-1"
         eType="#//Adapter" containment="true"/>

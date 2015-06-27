@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
+import org.eclipse.viatra.cep.vepl.vepl.AbstractMultiplicity;
 import org.eclipse.viatra.cep.vepl.vepl.Atom;
 import org.eclipse.viatra.cep.vepl.vepl.ChainedExpression;
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression;
@@ -54,17 +55,24 @@ public class ExpressionTreeBuilder {
             return new AtomicExpressionTree((Atom) expression, expression.getMultiplicity(), getTimewindow(expression));
         }
 
+        if (expression.getNegOperator() != null) {
+            ComplexEventExpression newExpression = expression.getPrimary();
+            ExpressionTree subTree = buildTree(newExpression);
+
+            createNode(VeplFactory.eINSTANCE.createNegOperator(), newExpression, subTree);
+
+            return subTree;
+        }
+
         if (expressionInParenthesis(expression)) {
             ComplexEventExpression newExpression = expression.getLeft();
 
             ExpressionTree subTree = buildTree(newExpression);
 
             if (!(newExpression instanceof Atom)
+            // the condition below prevents unnecessary bracketing and anonymous pattern creation
                     && (newExpression.getMultiplicity() != null || getTimewindow(newExpression) != null)) {
-                Node node = new Node(VeplFactory.eINSTANCE.createFollowsOperator(), newExpression.getMultiplicity(),
-                        getTimewindow(newExpression));
-                node.addChild(subTree.getRoot());
-                subTree.setRoot(node);
+                createNode(VeplFactory.eINSTANCE.createFollowsOperator(), newExpression, subTree);
             }
 
             return subTree;
@@ -99,6 +107,12 @@ public class ExpressionTreeBuilder {
         packagePatternGroup(lastOperator, currentExpressionGroup, tree);
 
         return tree;
+    }
+
+    private void createNode(ComplexEventOperator operator, ComplexEventExpression newExpression, ExpressionTree subTree) {
+        Node node = new Node(operator, getMultiplicity(newExpression), getTimewindow(newExpression));
+        node.addChild(subTree.getRoot());
+        subTree.setRoot(node);
     }
 
     private void packagePatternGroup(ComplexEventOperator operator, List<ExpressionGroupElement> expressionGroup,
@@ -210,6 +224,15 @@ public class ExpressionTreeBuilder {
             return timeWindow;
         }
         return null;
+    }
+
+    private AbstractMultiplicity getMultiplicity(ComplexEventExpression expression) {
+        if (expression.getMultiplicity() != null) {
+            return expression.getMultiplicity();
+        }
+        org.eclipse.viatra.cep.vepl.vepl.Multiplicity multiplicity = VeplFactory.eINSTANCE.createMultiplicity();
+        multiplicity.setValue(1);
+        return multiplicity;
     }
 
     private boolean expressionInParenthesis(ComplexEventExpression expression) {
