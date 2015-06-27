@@ -22,7 +22,6 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 import org.eclipse.viatra.cep.core.metamodels.events.Multiplicity;
-import org.eclipse.viatra.cep.core.metamodels.events.NEG;
 
 import com.google.common.base.Preconditions;
 
@@ -53,8 +52,6 @@ public class Precompiler {
 
         if (operator instanceof AND) {
             return unfoldAnd((ComplexEventPattern) eventPattern);
-        } else if (operator instanceof NEG) {
-            return unfoldNEG((ComplexEventPattern) eventPattern);
         } else {
             return eventPattern;
         }
@@ -93,9 +90,5 @@ public class Precompiler {
         }
 
         return newPattern;
-    }
-
-    private EventPattern unfoldNEG(ComplexEventPattern eventPattern) {
-        throw new UnsupportedOperationException();
     }
 }
