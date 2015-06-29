@@ -248,7 +248,9 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
                 builder.getStrategy().setTrajectoriesFileName(fileName);
             }
         } else if (initialSelector.startsWith("Priority")) {
-            builder.setInitialPopulationSelector(new FixedPrioritySelector());
+            FixedPrioritySelector selector = new FixedPrioritySelector();
+            selector.withPriorities(gso.priorities);
+            builder.setInitialPopulationSelector(selector);
             if (initialSelector.contains("-")) {
                 String fileName = initialSelector.substring(initialSelector.indexOf('-')+1);
                 builder.getStrategy().setTrajectoriesFileName(fileName);

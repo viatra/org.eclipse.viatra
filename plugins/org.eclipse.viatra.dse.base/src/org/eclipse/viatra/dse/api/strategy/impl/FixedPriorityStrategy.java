@@ -213,4 +213,7 @@ public class FixedPriorityStrategy extends LocalSearchStrategyBase {
         this.depthLimit = depthLimit;
     }
 
+    public Map<DSETransformationRule<?, ?>, Integer> getPriorities() {
+        return priorities;
+    }
 }
