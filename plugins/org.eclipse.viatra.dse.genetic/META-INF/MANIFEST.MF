@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA DSE framework Genetic Algorithms
 Bundle-SymbolicName: org.eclipse.viatra.dse.genetic
-Bundle-Version: 0.7.0.qualifier
+Bundle-Version: 0.8.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.viatra.dse.base;bundle-version="0.7.0",
  org.eclipse.viatra.dse.designspace;bundle-version="0.7.0",
  org.eclipse.emf.ecore,
- org.eclipse.incquery.runtime;bundle-version="[1.0.0,1.1.0)",
- org.eclipse.incquery.runtime.evm;bundle-version="[1.0.0,1.1.0)",
+ org.eclipse.incquery.runtime;bundle-version="[1.1.0,1.2.0)",
+ org.eclipse.incquery.runtime.evm;bundle-version="[1.1.0,1.2.0)",
  org.eclipse.viatra.dse.api;bundle-version="0.7.0"
 Export-Package: org.eclipse.viatra.dse.genetic.api,
  org.eclipse.viatra.dse.genetic.core,
