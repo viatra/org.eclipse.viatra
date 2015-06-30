@@ -26,8 +26,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.incquery.runtime.api.IMatchProcessor;
-import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -53,31 +51,30 @@ import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
  * <p>
  * To parameterize the algorithm one must use the following methods after instantiating:
  * <ul>
- * <li>{@link #setStartingModel(EObject)} or it's overloads to set the starting model.</li>
+ * <li>{@link #setInitialModel(EObject)} or it's overloads to set the starting model.</li>
  * <li>
- * {@link #addTransformationRule(IncQueryMatcher, IMatchProcessor)} to define the transformations.</li>
- * <li> {@link #addGlobalConstraint(Set)} to ensure some patterns on the trajectory's steps.</li>
- * <li {@link #addGoalPattern(Set)} to set the goal patterns.</li>
+ * {@link #addTransformationRule(DSETransformationRule)} to define the transformations.</li>
+ * <li> {@link #addGlobalConstraint(IGlobalConstraint)} to ensure some patterns on the trajectory's steps.</li>
+ * <li {@link #addObjective(IObjective)} to define the objective functions.</li>
+ * <li> {@link #startExploration(LocalSearchStrategyBase) to start an exploration with the given exploration strategy.</li>
  * </ul>
  * </p>
- * 
  * 
  * <p>
  * <b>Designs Space Exploration</b> is the process of finding a sequence (or sequences) of predefined transformation
  * rules ("transitions") that, if applied in order on the starting model, results in a new model state that fulfills
- * some predefined rules, referred to as "goal patterns". You can add goals by invoking
- * {@link #addGoalPattern(PatternWithCardinality)}
+ * the hard constraints defined by the objectives.
  * </p>
  * 
  * <p>
- * An extension to this paradigm is the introduction of "constraints", which guarantees, that no sequence will be
- * returned, which if executed, results in an intermediate model state that violate the specified rules ("constraints"),
- * including the final state. (or in reverse, they all fulfill the negative of the given constraints) You can add
- * constraints by invoking {@link #addGlobalConstraint(PatternWithCardinality)}.
+ * An extension to this paradigm is the introduction of global constraints, which guarantees, that no sequence will be
+ * returned, which if executed, results in an intermediate model state that violate the specified global constraints,
+ * including the final state. (or in reverse, they all fulfill the negative of the given constraints). You can add
+ * constraints by invoking {@link #addGlobalConstraint(IGlobalConstraint)}.
  * </p>
  * 
  * <p>
- * Guidance?
+ * There are several built-in exploration strategies which you can find by using the static methods of Strategies helper class. 
  * </p>
  * 
  * @author Andras Szabolcs Nagy & Miklos Foldenyi
