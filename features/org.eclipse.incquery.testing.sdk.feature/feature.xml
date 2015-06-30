@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.incquery.testing.sdk.feature"
       label="EMF-IncQuery Test Framework"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="The Eclipse EMF-IncQuery Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

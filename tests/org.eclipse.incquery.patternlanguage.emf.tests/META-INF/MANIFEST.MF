@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF Patternlanguage Parsers
 Bundle-Vendor: The Eclipse EMF-IncQuery Project
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-SymbolicName: org.eclipse.incquery.patternlanguage.emf.tests;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.incquery.patternlanguage;bundle-version="0.8.0",

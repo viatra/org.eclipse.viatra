@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.incquery.runtime.generic.feature"
       label="EMF-IncQuery Runtime - Generic API"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="The Eclipse EMF-IncQuery Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

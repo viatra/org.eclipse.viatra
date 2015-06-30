@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IncQuery Validation Tooling
 Bundle-SymbolicName: org.eclipse.incquery.validation.tooling;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Require-Bundle: org.eclipse.incquery.tooling.core;bundle-version="0.8.0",
  org.eclipse.incquery.patternlanguage;bundle-version="0.8.0",
  org.eclipse.incquery.patternlanguage.emf;bundle-version="0.8.0",

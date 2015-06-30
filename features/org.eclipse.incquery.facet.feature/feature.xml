@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.incquery.facet.feature"
       label="EMF Facet Support for EMF-IncQuery (Incubation)"
-      version="0.10.0.qualifier"
+      version="0.11.0.qualifier"
       provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF-IncQuery Snapshot UI
 Bundle-SymbolicName: org.eclipse.incquery.snapshot.edit;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.incquery.snapshot.EIQSnapshot.provider.EiqsnapshotEditPlugin$Implementation
 Bundle-Vendor: The Eclipse EMF-IncQuery Project

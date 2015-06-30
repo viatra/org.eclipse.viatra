@@ -2,10 +2,10 @@
 <feature
       id="org.eclipse.incquery.debugger.tooling.feature"
       label="EMF-IncQuery Debugger Tooling"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="Eclipse EMF-IncQuery Project"
       license-feature="org.eclipse.incquery.runtime.feature"
-      license-feature-version="1.0.0.qualifier">
+      license-feature-version="1.1.0.qualifier">
 
    <description>
       EMF-IncQuery Debugger Tooling project.
