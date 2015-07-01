@@ -40,8 +40,10 @@ import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.genetic.crossovers.CutAndSpliceCrossover;
 import org.eclipse.viatra.dse.genetic.crossovers.OnePointCrossover;
 import org.eclipse.viatra.dse.genetic.crossovers.PermutationEncodingCrossover;
+import org.eclipse.viatra.dse.genetic.crossovers.SwapTransitionCrossover;
 import org.eclipse.viatra.dse.genetic.initialselectors.BFSSelector;
 import org.eclipse.viatra.dse.genetic.initialselectors.FixedPrioritySelector;
+import org.eclipse.viatra.dse.genetic.initialselectors.PredefinedPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.mutations.AddRandomTransitionMutation;
@@ -49,7 +51,7 @@ import org.eclipse.viatra.dse.genetic.mutations.AddTransitionByPriorityMutation;
 import org.eclipse.viatra.dse.genetic.mutations.DeleteRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyTransitionByPriorityMutation;
-import org.eclipse.viatra.dse.genetic.selectors.NonDominatedAndCrowdingDistanceSelector;
+import org.eclipse.viatra.dse.genetic.parentselectors.MyRoundRobinParentSelector;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.StrategyDependentSolutionStore;
 
@@ -75,11 +77,13 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
     public static final String CUT_AND_SPLICE_CROSSOVER = "CutAndSpliceCrossover";
     public static final String SINGLE_POINT_CROSSOVER = "SinglePointCrossover";
     public static final String PERMUTATION_CROSSOVER = "PermutationCrossover";
+    public static final String SWAP_TRANSITIONS_CROSSOVER = "SwapTransitionsCrossover";
     public static final String ADD_MUTATION = "AddMutation";
     public static final String ADD_BY_PRIORITY_MUTATION = "AddByPriorityMutation";
     public static final String MODIFY_MUTATION = "ModifyMutation";
     public static final String MODIFY_BY_PRIORITY_MUTATION = "ModifyByPriorityMutation";
     public static final String DELETE_MUTATION = "DeleteMutation";
+    public static final String PARENT_SELECTOR = "ParentSelector";
 
     // Results
     public static final String SOLUTIONS = "Solutions";
@@ -175,7 +179,6 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         GeneticSharedObject gso = builder.getSharedObject();
         
         dse.setSolutionStore(new StrategyDependentSolutionStore());
-        builder.setSelector(new NonDominatedAndCrowdingDistanceSelector());
         
         configDSE(configRow, dse, builder);
 
@@ -213,6 +216,17 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
         dse.setInitialModel(root);
 
+        if (configRow.isKeyPresent(PARENT_SELECTOR)) {
+            String parentSelector = configRow.getValueAsString(PARENT_SELECTOR);
+            if ("RoundRobin".equals(parentSelector)) {
+                builder.setParentSelector(new MyRoundRobinParentSelector());
+            } else if ("CrowdedTournament".equals(parentSelector)) {
+                builder.setParentSelector(new MyRoundRobinParentSelector());
+            } else {
+                throw new GeneticConfigurationException("Unsupported parent selector: " + parentSelector);
+            }
+        }
+        
         float mutationChance = configRow.getValueAsFloat(MUTATION_RATE);
         float mutationMultiplier = configRow.getValueAsFloat(ADAPTIVE_MUTATION_MULTIPLIER);
         builder.setMutationChanceAtCrossover(mutationChance, mutationMultiplier);
@@ -227,10 +241,23 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
         String initialSelector = configRow.getValueAsString(INITIAL_SELECTOR);
         float initialSelectionRate = configRow.getValueAsFloat(INITIAL_SELECTION_RATE);
-        if ("BFS".equals(initialSelector)) {
+        if (initialSelector.startsWith("BFS")) {
             builder.setInitialPopulationSelector(new BFSSelector(initialSelectionRate));
-        } else if ("Priority".equals(initialSelector)) {
-            builder.setInitialPopulationSelector(new FixedPrioritySelector());
+            if (initialSelector.contains("-")) {
+                String fileName = initialSelector.substring(initialSelector.indexOf('-')+1);
+                builder.getStrategy().setTrajectoriesFileName(fileName);
+            }
+        } else if (initialSelector.startsWith("Priority")) {
+            FixedPrioritySelector selector = new FixedPrioritySelector();
+            selector.withPriorities(gso.priorities);
+            builder.setInitialPopulationSelector(selector);
+            if (initialSelector.contains("-")) {
+                String fileName = initialSelector.substring(initialSelector.indexOf('-')+1);
+                builder.getStrategy().setTrajectoriesFileName(fileName);
+            }
+        } else if (initialSelector.contains("Predefined-")) {
+            String fileName = initialSelector.substring(initialSelector.indexOf('-')+1);
+            builder.setInitialPopulationSelector(new PredefinedPopulationSelector(fileName));
         } else {
             throw new GeneticConfigurationException("No such initial selector: " + initialSelector);
         }
@@ -238,9 +265,11 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         int cutAndSplice = configRow.getValueAsInteger(CUT_AND_SPLICE_CROSSOVER);
         int singlePoint = configRow.getValueAsInteger(SINGLE_POINT_CROSSOVER);
         int permutation = configRow.getValueAsInteger(PERMUTATION_CROSSOVER);
+        int swap = configRow.getValueAsInteger(SWAP_TRANSITIONS_CROSSOVER);
         builder.addCrossover(new CutAndSpliceCrossover(), cutAndSplice);
         builder.addCrossover(new OnePointCrossover(), singlePoint);
         builder.addCrossover(new PermutationEncodingCrossover(), permutation);
+        builder.addCrossover(new SwapTransitionCrossover(), swap);
 
         int add = configRow.getValueAsInteger(ADD_MUTATION);
         int addByPriority = configRow.getValueAsInteger(ADD_BY_PRIORITY_MUTATION);
@@ -266,6 +295,10 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
         result.runTime = (end - start) / 1000000000d;
 
+        if (builder.getStrategy().getTrajectoriesFileName() != null) {
+            builder.getStrategy().saveTrajectoriesToFile();
+        }
+        
         Row resultsRow = new Row(resultKeysInOrder);
 
         Collection<Throwable> exceptions = dse.getGlobalContext().getExceptions();
@@ -274,7 +307,11 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             PrintWriter out = null;
             try {
                 out = new PrintWriter(new BufferedWriter(new FileWriter(EXCEPTIONS_FILE, true)));
-                out.println("Exceptions in config id:" + result.configId + ", run id: " + result.runId);
+                String configName = " ";
+                if (configRow.isKeyPresent("ConfigName")) {
+                    configName += configRow.getValueAsString("ConfigName");
+                }
+                out.println("Exceptions in config id:" + result.configId + configName + ", run id: " + result.runId);
                 for (Throwable throwable : exceptions) {
                     StringWriter sw = new StringWriter();
                     throwable.printStackTrace(new PrintWriter(sw));
@@ -299,8 +336,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             if (!exceptions.isEmpty()) {
                 return "";
             }
-            Logger.getLogger(this.getClass().getSimpleName()).error("Solution collection was empty. It's a bug.");
-            return "No Solution found its a bug";
+            Logger.getLogger(this.getClass().getSimpleName()).warn("Solution collection was empty.");
+            return "No Solution found.";
         }
 
         Map<String, Double> avgObjectives = new HashMap<String, Double>();
@@ -347,5 +384,5 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             }
         }
     }
-
+    
 }

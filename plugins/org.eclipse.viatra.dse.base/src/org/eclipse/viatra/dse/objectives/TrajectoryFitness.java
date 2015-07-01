@@ -32,6 +32,16 @@ public class TrajectoryFitness {
 
     /**
      * Creates a {@link TrajectoryFitness} with the full trajectory.
+     * @param trajectory The trajectory.
+     * @param fitness The fitness.
+     */
+    public TrajectoryFitness(ITransition[] trajectory, Fitness fitness) {
+        this.fitness = fitness;
+        this.trajectory = trajectory;
+    }
+
+    /**
+     * Creates a {@link TrajectoryFitness} with the full trajectory.
      * @param trajectoryInfo The trajectory.
      * @param fitness The fitness.
      */

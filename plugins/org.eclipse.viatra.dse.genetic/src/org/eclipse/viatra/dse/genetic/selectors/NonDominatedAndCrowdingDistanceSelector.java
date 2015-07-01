@@ -31,11 +31,12 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
 
     @Override
     public List<InstanceData> selectNextPopulation(Collection<InstanceData> currentPopulation,
-            List<IObjective> objectives, int numberOfSelectedInstances, boolean finalSelection, ObjectiveComparatorHelper helper) {
+            List<IObjective> objectives, int numberOfSelectedInstances, boolean finalSelection, ObjectiveComparatorHelper helper, 
+            boolean calcCrowdingDistanceForEachFront) {
 
         List<InstanceData> newPopulation = new LinkedList<InstanceData>();
 
-        LinkedList<LinkedList<InstanceData>> fronts = nonDominatedSort(currentPopulation, objectives, helper);
+        LinkedList<LinkedList<InstanceData>> fronts = nonDominatedSort(currentPopulation, objectives, helper, true);
 
         if (logger.getLevel() != null && logger.getLevel().equals(Level.DEBUG)) {
             StringBuilder sb = new StringBuilder();
@@ -61,7 +62,9 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
                 }
                 // Selection by crowding distance
                 else {
-                    crowdingDistanceAssignment(front, objectives);
+                    if (!calcCrowdingDistanceForEachFront) {
+                        crowdingDistanceAssignment(front, objectives);
+                    }
                     InstanceData[] sortedFront = sortByCrowdingDistance(front);
                     int size = newPopulation.size();
                     for (int i = 0; i < numberOfSelectedInstances - size; ++i) {
@@ -89,7 +92,8 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
      * @return domination fronts in ascending order by their rank
      */
     public static LinkedList<LinkedList<InstanceData>> nonDominatedSort(Collection<InstanceData> population,
-            List<IObjective> objectives, ObjectiveComparatorHelper helper) {
+            List<IObjective> objectives, ObjectiveComparatorHelper helper,
+            boolean calcCrowdingDistanceForEachFront) {
 
         LinkedList<LinkedList<InstanceData>> dominationFronts = new LinkedList<LinkedList<InstanceData>>();
 
@@ -140,6 +144,7 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
             }
             i++;
             if (!nextDominationFront.isEmpty()) {
+                crowdingDistanceAssignment(nextDominationFront, objectives);
                 dominationFronts.add(nextDominationFront);
             }
         }

@@ -57,7 +57,7 @@ public abstract class BaseTestRunner {
 
     /**
      * Returns a string which will be the header of the results file. The string should contain one line with column
-     * names separated by semicolons. Note that there are a few predefined columns, see {@link BaseResult} for details.
+     * names separated by commas. Note that there are a few predefined columns, see {@link BaseResult} for details.
      * 
      * @return Column names separated by semicolons.
      */
@@ -87,7 +87,7 @@ public abstract class BaseTestRunner {
 
         resolveResultsFolderName();
         new File(resultsFolderName).mkdir();
-        resultsFileName = resultsFolderName + File.separator + defaultResultFileName + CSV;
+        resultsFileName = resultsFolderName + File.separator + configFileName + "-" + defaultResultFileName + CSV;
 
         BufferedReader br = null;
         try {

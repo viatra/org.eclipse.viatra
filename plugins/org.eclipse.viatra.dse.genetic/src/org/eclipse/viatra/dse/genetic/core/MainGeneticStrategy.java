@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.genetic.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +25,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
+import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
@@ -63,7 +69,8 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
     private ThreadContext context;
     private List<IObjective> objectives;
     private GeneticConstraintObjective genObjective;
-
+    private String fileName;
+    
     public MainGeneticStrategy(GeneticSharedObject sharedObject) {
         Preconditions.checkNotNull(sharedObject);
         this.sharedObject = sharedObject;
@@ -120,6 +127,19 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                     return transition;
                 } else {
                     logger.debug("Initial population is selected, starting workers.");
+                    if (sharedObject.stopCondition.equals(StopCondition.FIRST_POPULATION)) {
+                        sharedObject.selector.selectNextPopulation(parentPopulation,
+                                objectives, sharedObject.sizeOfPopulation,
+                                false,
+                                context.getObjectiveComparatorHelper(),
+                                true);
+                        geneticDebugger.debug(parentPopulation);
+                        return null;
+                    }
+                    
+                    for (InstanceData instanceData : parentPopulation) {
+                        instanceData.sumOfConstraintViolationMeauserement = instanceData.objectives.get(genObjective.getName());
+                    }
                     startWorkerThreads(context);
                     state = GeneticStrategyState.CREATING_NEW_POPULATION;
                 }
@@ -131,9 +151,6 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
 
                 boolean isLastPopulation = false;
                 switch (sharedObject.stopCondition) {
-                case CANT_FIND_BETTER:
-                    // Intended, check after selection
-                    break;
                 case GOOD_ENOUGH_SOLUTION:
                     for (InstanceData instanceData : parentPopulation) {
                         if (instanceData.sumOfConstraintViolationMeauserement < sharedObject.stopConditionNumber) {
@@ -152,7 +169,8 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                 parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
                         objectives, sharedObject.sizeOfPopulation,
                         isLastPopulation && !geneticDebugger.isDebug(),
-                        context.getObjectiveComparatorHelper());
+                        context.getObjectiveComparatorHelper(),
+                        true);
 
                 geneticDebugger.debug(parentPopulation);
 
@@ -161,16 +179,33 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                 }
 
                 if (sharedObject.stopCondition.equals(StopCondition.CANT_FIND_BETTER)) {
+                    boolean stopConditionIsFulfilled = true;
                     for (InstanceData instanceData : parentPopulation) {
                         if (instanceData.rank == 1) {
-                            if (!(instanceData.sumOfConstraintViolationMeauserement < actualBestSoftConstraint)) {
+                            if (instanceData.survive < sharedObject.stopConditionNumber) {
+                                stopConditionIsFulfilled = false;
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    if (stopConditionIsFulfilled) {
+                        isLastPopulation = true;
+                    }
+                }
+
+                if (sharedObject.stopCondition.equals(StopCondition.CANT_FIND_BETTER_SC)) {
+                    for (InstanceData instanceData : parentPopulation) {
+                        if (instanceData.rank == 1) {
+                            if (instanceData.sumOfConstraintViolationMeauserement < actualBestSoftConstraint) {
+                                noBetterSolutionForXIterations = 0;
+                                actualBestSoftConstraint = instanceData.sumOfConstraintViolationMeauserement;
+                            } else {
                                 noBetterSolutionForXIterations++;
                                 if (noBetterSolutionForXIterations >= sharedObject.stopConditionNumber) {
                                     isLastPopulation = true;
                                 }
-                            } else {
-                                noBetterSolutionForXIterations = 0;
-                                actualBestSoftConstraint = instanceData.sumOfConstraintViolationMeauserement;
                             }
                             break;
                         }
@@ -340,7 +375,11 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
             if (!gc.getState().equals(GlobalContext.ExplorationProcessState.RUNNING)) {
                 logger.debug("Interrupted");
                 parentPopulation = sharedObject.selector.selectNextPopulation(parentPopulation,
-                        objectives, sharedObject.sizeOfPopulation, !geneticDebugger.isDebug(), context.getObjectiveComparatorHelper());
+                        objectives,
+                        sharedObject.sizeOfPopulation,
+                        !geneticDebugger.isDebug(),
+                        context.getObjectiveComparatorHelper(),
+                        true);
                 geneticDebugger.debug(parentPopulation);
                 sharedObject.addInstanceToBestSolutions.set(true);
                 for (InstanceData instanceData : parentPopulation) {
@@ -397,6 +436,12 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
             instance.violations.put(genObjective.getNames().get(i), genObjective.getMatches().get(i));
         }
         parentPopulation.add(instance);
+        
+        if (StopCondition.FIRST_POPULATION.equals(sharedObject.stopCondition)) {
+            SolutionTrajectory solutionTrajectory = dsm.createSolutionTrajectroy();
+            sharedObject.bestSolutions.put(instance, solutionTrajectory);
+            context.getGlobalContext().getSolutionStore().newSolution(context);
+        }
     }
 
     public void setGeneticDebugger(GeneticDebugger geneticDebugger) {
@@ -405,6 +450,48 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
 
     public GeneticDebugger getGeneticDebugger() {
         return geneticDebugger;
+    }
+
+    @Override
+    public void setTrajectoriesFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    @Override
+    public String getTrajectoriesFileName() {
+        return fileName;
+    }
+
+    @Override
+    public void saveTrajectoriesToFile() throws IOException {
+        
+        StringBuilder sb = new StringBuilder();
+        
+        for (InstanceData instanceData : parentPopulation) {
+            for (ITransition transition : instanceData.trajectory) {
+                sb.append(transition.getId());
+                sb.append('\t');
+            }
+            sb.append("\r\n");
+        }
+        
+        PrintWriter out = null;
+        File file = new File(fileName);
+        file.createNewFile();
+        try {
+            FileOutputStream outStream = new FileOutputStream(file, false);
+            out = new PrintWriter(outStream);
+            out.println(sb.toString());
+            out.flush();
+        } catch (FileNotFoundException e1) {
+            // Shouldn't happen
+            throw new IOException(fileName,e1);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+        
     }
 
 }

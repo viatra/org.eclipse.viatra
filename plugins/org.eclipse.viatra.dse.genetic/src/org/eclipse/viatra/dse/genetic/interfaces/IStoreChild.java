@@ -10,9 +10,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.genetic.interfaces;
 
+import java.io.IOException;
+
 import org.eclipse.viatra.dse.base.ThreadContext;
 
 public interface IStoreChild {
 
     void addChild(ThreadContext context);
+    
+    void setTrajectoriesFileName(String fileName);
+
+    String getTrajectoriesFileName();
+    
+    void saveTrajectoriesToFile() throws IOException;
 }

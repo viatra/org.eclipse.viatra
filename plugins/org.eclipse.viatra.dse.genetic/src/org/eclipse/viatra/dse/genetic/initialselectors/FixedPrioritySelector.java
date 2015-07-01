@@ -17,15 +17,13 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.PatternWithCardinality;
+import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
-import org.eclipse.viatra.dse.genetic.core.GeneticSharedObject;
-import org.eclipse.viatra.dse.genetic.interfaces.InitialPopulationSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
+import org.eclipse.viatra.dse.genetic.interfaces.InitialPopulationSelector;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
 import com.google.common.collect.Lists;
@@ -37,6 +35,7 @@ public class FixedPrioritySelector extends InitialPopulationSelector {
     private int initialSizeOfPopulation;
     private int foundInstances = 0;
     private Map<Object, Double> bestPriorityInState = new HashMap<Object, Double>();
+    private Map<DSETransformationRule<?, ?>, Integer> priorities;
 
     private IStoreChild store;
 
@@ -48,7 +47,10 @@ public class FixedPrioritySelector extends InitialPopulationSelector {
 
     private ThreadContext context;
 
-    private GeneticSharedObject sharedObject;
+    public FixedPrioritySelector withPriorities(Map<DSETransformationRule<?, ?>, Integer> priorities) {
+        this.priorities = priorities;
+        return this;
+    }
 
     @Override
     public void setChildStore(IStoreChild store) {
@@ -67,15 +69,8 @@ public class FixedPrioritySelector extends InitialPopulationSelector {
             throw new DSEException("No IStoreChild is set for the BFSSelector");
         }
         dsm = context.getDesignSpaceManager();
-        Object so = context.getGlobalContext().getSharedObject();
-        if (so instanceof GeneticSharedObject) {
-            sharedObject = (GeneticSharedObject) so;
-            if (sharedObject.priorities.size() != context.getGlobalContext().getTransformations().size()) {
-                throw new DSEException("Not all transformation rules has a priortiy.");
-            }
-        }
-        else {
-            throw new DSEException("Bad shared object type.");
+        if (priorities == null) {
+            throw new DSEException("Priorities has not been set for this strategy.");
         }
     }
 
@@ -104,7 +99,7 @@ public class FixedPrioritySelector extends InitialPopulationSelector {
             }
             List<ITransition> bestTrasitions = Lists.newArrayList();
             for (ITransition iTransition : dsm.getTransitionsFromCurrentState()) {
-                if (sharedObject.priorities.get(iTransition.getTransitionMetaData().rule).intValue() == bestPriority) {
+                if (priorities.get(iTransition.getTransitionMetaData().rule).intValue() == bestPriority) {
                     bestTrasitions.add(iTransition);
                 }
             }
@@ -152,7 +147,7 @@ public class FixedPrioritySelector extends InitialPopulationSelector {
         int bestPriority;
         bestPriority = Integer.MIN_VALUE;
         for (ITransition iTransition : transitions) {
-            int priority = sharedObject.priorities.get(iTransition.getTransitionMetaData().rule).intValue();
+            int priority = priorities.get(iTransition.getTransitionMetaData().rule).intValue();
             if (priority > bestPriority) {
                 bestPriority = priority;
             }
