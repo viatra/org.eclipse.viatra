@@ -84,10 +84,6 @@
     <genClasses ecoreClass="Vepl.ecore#//PatternCallParameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//PatternCallParameter/name"/>
     </genClasses>
-    <genClasses ecoreClass="Vepl.ecore#//NegExpression">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//NegExpression/operator"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//NegExpression/eventPattern"/>
-    </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//ComplexEventOperator"/>
     <genClasses ecoreClass="Vepl.ecore#//BinaryOperator"/>
     <genClasses ecoreClass="Vepl.ecore#//UnaryOperator"/>

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
@@ -12,6 +12,7 @@ package org.eclipse.viatra.cep.vepl.validation
 
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.EventPattern
@@ -39,6 +40,7 @@ class VeplValidator extends AbstractVeplValidator {
 	public static val NON_POSITIVE_MULTIPLICITY = "nonPositiveMultiplicity"
 	public static val INFINITE_MULTIPLICITY_WITH_TIMEWINDOW = "infiniteMultiplicityWithTimewindow"
 	public static val NO_INFINITE_SUPPORT = "noInfiniteSupport"
+	public static val NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE = "negativeOperatorOnNonAtomicReference"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -170,7 +172,25 @@ class VeplValidator extends AbstractVeplValidator {
 				warning("Using a single plain atomic event pattern in the complex event pattern is a bad design.",
 					VeplPackage.Literals.COMPLEX_EVENT_PATTERN__COMPLEX_EVENT_EXPRESSION,
 					SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION)
+				}
+			}
+		}
+
+		@Check
+		def negativeOperatorOnComplexEventPatternReference(ComplexEventExpression complexEventExpression) {
+			if (complexEventExpression.negOperator == null) {
+				return
+			}
+
+			val primary = complexEventExpression.primary as Atom
+
+			val patternCall = primary.patternCall
+			if (!(patternCall.eventPattern instanceof AtomicEventPattern)) {
+				error(
+					"The NOT operator can be applied only on atomic event pattern references.",
+					VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__NEG_OPERATOR,
+					NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE
+				)
 			}
 		}
 	}
-}

@@ -100,12 +100,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="PatternCallParameter">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="NegExpression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="operator" eType="#//NegOperator"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="eventPattern" eType="#//EventPattern"
-        containment="true"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ComplexEventOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="BinaryOperator" eSuperTypes="#//ComplexEventOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="UnaryOperator" eSuperTypes="#//ComplexEventOperator"/>
