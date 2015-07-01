@@ -25,7 +25,7 @@
 	</modules>
 	<properties>
 		<tycho.version>0.22.0</tycho.version>
-		<tycho.extras.version>0.22.0</tycho.extras.version>
+		<tycho.extras.version>${tycho.version}</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/incquery/org.eclipse.incquery.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery</eclipse.bugzillaUrl>
@@ -37,7 +37,7 @@
 		<xcore.version>1.2.1</xcore.version>
 		<xcore.lib.version>1.1.0</xcore.lib.version>
 		<java.version>1.6</java.version>
-		<incquery.project.version>1.0.0-SNAPSHOT</incquery.project.version>
+		<incquery.project.version>1.1.0-SNAPSHOT</incquery.project.version>
 		<!-- Sonar -->
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
