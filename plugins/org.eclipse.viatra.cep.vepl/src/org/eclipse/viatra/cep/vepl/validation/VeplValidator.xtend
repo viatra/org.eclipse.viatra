@@ -41,6 +41,7 @@ class VeplValidator extends AbstractVeplValidator {
 	public static val INFINITE_MULTIPLICITY_WITH_TIMEWINDOW = "infiniteMultiplicityWithTimewindow"
 	public static val NO_INFINITE_SUPPORT = "noInfiniteSupport"
 	public static val NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE = "negativeOperatorOnNonAtomicReference"
+	public static val UNSAFE_INFINITE_MULTIPLICITY = "unsafeInfiniteMultiplicity"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -117,17 +118,6 @@ class VeplValidator extends AbstractVeplValidator {
 				"Missing 'import-patterns' statement for query reference.",
 				VeplPackage.Literals.QUERY_RESULT_CHANGE_EVENT_PATTERN__QUERY_REFERENCE,
 				MISSING_QUERY_IMPORT
-			)
-		}
-	}
-
-	@Check
-	def infiniteMultiplicityNotYetSupported(Atom atom) {
-		if (atom.multiplicity instanceof Infinite) {
-			error(
-				"Infinite multiplicity not yet supported.",
-				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
-				NO_INFINITE_SUPPORT
 			)
 		}
 	}
