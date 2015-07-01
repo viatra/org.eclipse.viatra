@@ -83,17 +83,18 @@
         eOpposite="#//State/inTransitions"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypedTransition" eSuperTypes="#//Transition">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="guard" lowerBound="1" eType="#//Guard"
-        containment="true" eOpposite="#//Guard/transition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guards" lowerBound="1"
+        upperBound="-1" eType="#//Guard" containment="true" eOpposite="#//Guard/transition"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//Parameter" containment="true" eOpposite="#//Parameter/transition"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NegativeTransition" eSuperTypes="#//TypedTransition"/>
   <eClassifiers xsi:type="ecore:EClass" name="EpsilonTransition" eSuperTypes="#//Transition"/>
   <eClassifiers xsi:type="ecore:EClass" name="Guard">
     <eStructuralFeatures xsi:type="ecore:EReference" name="eventType" lowerBound="1"
         eType="ecore:EClass Cep.ecore#//AtomicEventPattern"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="transition" lowerBound="1"
-        eType="#//TypedTransition" eOpposite="#//TypedTransition/guard"/>
+        eType="#//TypedTransition" eOpposite="#//TypedTransition/guards"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="EventContext">
     <eLiterals name="CHRONICLE"/>

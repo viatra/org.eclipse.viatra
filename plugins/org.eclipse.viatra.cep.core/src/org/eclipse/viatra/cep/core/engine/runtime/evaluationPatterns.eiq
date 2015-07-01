@@ -35,13 +35,34 @@ pattern tokenInTrapState(automaton : Automaton, eventToken : EventToken, eventPa
 pattern enabledTransition(transition : TypedTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern) {
 	find latestEvent(event);
 	Event.type(event, eventType);
-	TypedTransition.guard.eventType.type(transition, eventType);
+	TypedTransition.guards.eventType.type(transition, eventType);
 	TypedTransition.preState.eventTokens(transition, eventToken);
+	neg find negativeTransition(transition);
 	neg find eventProcessedByEventToken(event, eventToken);
 	
 	Automaton.states(automaton, state);
 	State.outTransitions(state, transition);
 	Automaton.eventPattern(automaton, eventPattern);
+}
+
+pattern enabledNegativeTransition(transition : NegativeTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern) {
+	find latestEvent(event);
+	Event.type(event, eventType);
+	neg find transitionWithEventType(transition, eventType);
+	NegativeTransition.preState.eventTokens(transition, eventToken);
+	neg find eventProcessedByEventToken(event, eventToken);
+	
+	Automaton.states(automaton, state);
+	State.outTransitions(state, transition);
+	Automaton.eventPattern(automaton, eventPattern);
+}
+
+pattern transitionWithEventType(transition : Transition, eventType : EString){
+	NegativeTransition.guards.eventType.type(transition, eventType);
+}
+
+pattern negativeTransition(transition : NegativeTransition){
+	NegativeTransition(transition);
 }
 
 pattern eventProcessedByEventToken(event : Event, eventToken : EventToken) {

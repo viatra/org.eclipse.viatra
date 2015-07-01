@@ -42,85 +42,118 @@ class ModelHandlingRules {
 
 	def getRules() {
 		new EventDrivenTransformationRuleGroup(
-			createEnabledTransitionRule,
-			createFinishedAutomatonRule,
-			createTokenInTrapStateRule,
-			createTokenEntersTimedZoneRule,
-			createTokenLeavesTimedZoneRule
+			enabledTransitionRule,
+			enabledNegativeTransitionRule,
+			finishedAutomatonRule,
+			tokenInTrapStateRule,
+			tokenEntersTimedZoneRule,
+			tokenLeavesTimedZoneRule
 		)
 	}
 
 	def registerRulesWithCustomPriorities() {
 		val fixedPriorityResolver = ConflictResolvers.createFixedPriorityResolver();
-		fixedPriorityResolver.setPriority(createEnabledTransitionRule.ruleSpecification, 100)
-		fixedPriorityResolver.setPriority(createFinishedAutomatonRule.ruleSpecification, 50)
-		fixedPriorityResolver.setPriority(createTokenInTrapStateRule.ruleSpecification, 10)
-		fixedPriorityResolver.setPriority(createTokenEntersTimedZoneRule.ruleSpecification, 5)
-		fixedPriorityResolver.setPriority(createTokenLeavesTimedZoneRule.ruleSpecification, 1)
+		fixedPriorityResolver.setPriority(enabledTransitionRule.ruleSpecification, 100)
+		fixedPriorityResolver.setPriority(enabledNegativeTransitionRule.ruleSpecification, 75)
+		fixedPriorityResolver.setPriority(finishedAutomatonRule.ruleSpecification, 50)
+		fixedPriorityResolver.setPriority(tokenInTrapStateRule.ruleSpecification, 10)
+		fixedPriorityResolver.setPriority(tokenEntersTimedZoneRule.ruleSpecification, 5)
+		fixedPriorityResolver.setPriority(tokenLeavesTimedZoneRule.ruleSpecification, 1)
 
 		EventDrivenTransformation.forScope(new EMFScope(eventModelManager.resourceSet)).addRules(rules).
 			setConflictResolver(fixedPriorityResolver).build
 	}
 
-	val createEnabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).
-		action [
-			// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
-			eventModelManager.handleEvent(transition, eventToken)
+	val enabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).action [
+		// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
+		eventModelManager.handleEvent(transition, eventToken)
 
-			if (event instanceof ParameterizableEventInstance) {
-				for (parameter : transition.parameters) {
-					// obtain the value in the observed event instance on the given position
-					val parameterValueToBind = (event as ParameterizableEventInstance).getParameter(parameter.position)
+		if (event instanceof ParameterizableEventInstance) {
+			for (parameter : transition.parameters) {
+				// obtain the value in the observed event instance on the given position
+				val parameterValueToBind = (event as ParameterizableEventInstance).getParameter(parameter.position)
 
-					// check for existing bindings in the parameter table with the given symbolic name
-					val existingBinding = eventToken.parameterTable.parameterBindings.findFirst [ binding |
-						binding.symbolicName.equalsIgnoreCase(parameter.symbolicName)
-					]
+				// check for existing bindings in the parameter table with the given symbolic name
+				val existingBinding = eventToken.parameterTable.parameterBindings.findFirst [ binding |
+					binding.symbolicName.equalsIgnoreCase(parameter.symbolicName)
+				]
 
-					if (existingBinding == null) { // if there was no parameter binding yet, it will be recorded now
-						val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
-						newBinding.symbolicName = parameter.symbolicName
-						newBinding.value = parameterValueToBind
-						eventToken.parameterTable.parameterBindings.add(newBinding)
-					} else {
-						// if there was a parameter binding found, the values should match
-						// otherwise return before the token could be fired
-						if (!existingBinding.value.equals(parameterValueToBind)) {
-							return
-						}
+				if (existingBinding == null) { // if there was no parameter binding yet, it will be recorded now
+					val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
+					newBinding.symbolicName = parameter.symbolicName
+					newBinding.value = parameterValueToBind
+					eventToken.parameterTable.parameterBindings.add(newBinding)
+				} else {
+					// if there was a parameter binding found, the values should match
+					// otherwise return before the token could be fired
+					if (!existingBinding.value.equals(parameterValueToBind)) {
+						return
 					}
 				}
 			}
+		}
 
-			eventModelManager.fireTransition(transition, eventToken)
-		].build
+		eventModelManager.fireTransition(transition, eventToken)
+	].build
 
-	val createFinishedAutomatonRule = createRule().name("finished automaton rule").precondition(finishedAutomaton).
-		action [
-			Preconditions::checkArgument(automaton.finalStates.size == 1)
-			automaton.eventTokens.remove(eventToken)
-			var observedPattern = new ObservedComplexEventPattern(automaton, eventToken)
-			eventModelManager.callbackOnPatternRecognition(observedPattern)
-			eventModelManager.cepRealm.forwardObservedEventPattern(observedPattern)
-		].build
+	val enabledNegativeTransitionRule = createRule().name("enabled negative transition rule").precondition(
+		enabledNegativeTransition).action [
+		// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
+		eventModelManager.handleEvent(transition, eventToken)
 
-	val createTokenInTrapStateRule = createRule().name("trap state rule").precondition(tokenInTrapState).action [
+		// if (event instanceof ParameterizableEventInstance) {
+		// for (parameter : transition.parameters) {
+		// // obtain the value in the observed event instance on the given position
+		// val parameterValueToBind = (event as ParameterizableEventInstance).getParameter(parameter.position)
+		//
+		// // check for existing bindings in the parameter table with the given symbolic name
+		// val existingBinding = eventToken.parameterTable.parameterBindings.findFirst [ binding |
+		// binding.symbolicName.equalsIgnoreCase(parameter.symbolicName)
+		// ]
+		//
+		// if (existingBinding == null) { // if there was no parameter binding yet, it will be recorded now
+		// val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
+		// newBinding.symbolicName = parameter.symbolicName
+		// newBinding.value = parameterValueToBind
+		// eventToken.parameterTable.parameterBindings.add(newBinding)
+		// } else {
+		// // if there was a parameter binding found, the values should match
+		// // otherwise return before the token could be fired
+		// if (!existingBinding.value.equals(parameterValueToBind)) {
+		// return
+		// }
+		// }
+		// }
+		// }
+		// TODO this should be addressed later
+		eventModelManager.fireTransition(transition, eventToken)
+	].build
+
+	val finishedAutomatonRule = createRule().name("finished automaton rule").precondition(finishedAutomaton).action [
+		Preconditions::checkArgument(automaton.finalStates.size == 1)
+		automaton.eventTokens.remove(eventToken)
+		var observedPattern = new ObservedComplexEventPattern(automaton, eventToken)
+		eventModelManager.callbackOnPatternRecognition(observedPattern)
+		eventModelManager.cepRealm.forwardObservedEventPattern(observedPattern)
+	].build
+
+	val tokenInTrapStateRule = createRule().name("trap state rule").precondition(tokenInTrapState).action [
 		debug(String::format("Event token found in the trap state for pattern %s.", eventPattern.id));
 		// var failedPattern = new InTrapComplexEventPattern(automaton)
 		// eventModelManager.cepRealm.forwardFailedEventPattern(failedPattern)
 		automaton.eventTokens.remove(eventToken)
 	].build
 
-	val createTokenEntersTimedZoneRule = createRule().name("token enters timed zone rule").precondition(
-		tokenEntersTimedZone).action [
-		TimingTable.instance.enterTimedZone(timedZone, eventToken)
-	].build
+	val tokenEntersTimedZoneRule = createRule().name("token enters timed zone rule").precondition(tokenEntersTimedZone).
+		action [
+			TimingTable.instance.enterTimedZone(timedZone, eventToken)
+		].build
 
-	val createTokenLeavesTimedZoneRule = createRule().name("token leaves timed zone rule").precondition(
-		tokenLeavesTimedZone).action [
-		val canLeave = TimingTable.instance.leaveTimedZone(timedZone, eventToken);
-		if (!canLeave) {
-			eventToken.setCurrentState(trapState)
-		}
-	].build
+	val tokenLeavesTimedZoneRule = createRule().name("token leaves timed zone rule").precondition(tokenLeavesTimedZone).
+		action [
+			val canLeave = TimingTable.instance.leaveTimedZone(timedZone, eventToken);
+			if (!canLeave) {
+				eventToken.setCurrentState(trapState)
+			}
+		].build
 }

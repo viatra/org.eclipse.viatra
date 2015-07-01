@@ -12,6 +12,7 @@
 package org.eclipse.viatra.cep.core.engine.compiler;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EList;
@@ -22,6 +23,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Guard;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InitState;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
+import org.eclipse.viatra.cep.core.metamodels.automaton.NegativeTransition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Parameter;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TimedZone;
@@ -36,11 +38,15 @@ import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference;
 import org.eclipse.viatra.cep.core.metamodels.events.FOLLOWS;
+import org.eclipse.viatra.cep.core.metamodels.events.Infinite;
 import org.eclipse.viatra.cep.core.metamodels.events.Multiplicity;
+import org.eclipse.viatra.cep.core.metamodels.events.NEG;
 import org.eclipse.viatra.cep.core.metamodels.events.OR;
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Compiler functionality that maps the {@link EventPattern}s, combined via complex event operators to the internal
@@ -96,6 +102,9 @@ public class Compiler {
             map((AtomicEventPattern) unfoldedEventPattern);
         }
 
+        // TODO
+        new Minimize(automaton).minimize();
+
         automaton.setEventPattern(unfoldedEventPattern);
         model.getAutomata().add(automaton);
 
@@ -103,18 +112,27 @@ public class Compiler {
     }
 
     /**
-     * Carries inforamtion about the sub-automaton parts within an automaton during compilation.
+     * Carries information about the sub-automaton parts within an automaton during compilation.
      * 
      * @author Istvan David
      *
      */
-    private static class SubAutomaton {
+    public static class SubAutomaton {
         private List<State> inStates = Lists.newArrayList();
         private State outState;
+        private Set<State> states = Sets.newHashSet();
 
         public SubAutomaton(List<State> inStates, State outState) {
             this.inStates = inStates;
             this.outState = outState;
+            states.addAll(inStates);
+            states.add(outState);
+        }
+
+        public SubAutomaton(List<State> inStates, State outState, List<State> allStates) {
+            this.inStates = inStates;
+            this.outState = outState;
+            this.states.addAll(allStates);
         }
 
         public List<State> getInStates() {
@@ -123,6 +141,10 @@ public class Compiler {
 
         public State getOutState() {
             return outState;
+        }
+
+        public Set<State> getStates() {
+            return states;
         }
     }
 
@@ -144,7 +166,9 @@ public class Compiler {
     private SubAutomaton map(State preState, ComplexEventPattern complexEventPattern) {
         SubAutomaton subAutomatonData = null;
         ComplexEventOperator operator = complexEventPattern.getOperator();
-        if (operator instanceof FOLLOWS) {
+        if (operator instanceof NEG) {
+            subAutomatonData = mapNeg(preState, complexEventPattern);
+        } else if (operator instanceof FOLLOWS) {
             subAutomatonData = mapFollows(preState, complexEventPattern);
         } else if (operator instanceof OR) {
             subAutomatonData = mapOr(preState, complexEventPattern);
@@ -160,6 +184,49 @@ public class Compiler {
         return subAutomatonData;
     }
 
+    private SubAutomaton mapNeg(State preState, ComplexEventPattern complexEventPattern) {
+        Preconditions.checkArgument(complexEventPattern.getContainedEventPatterns().size() == 1);
+        EventPattern eventPattern = complexEventPattern.getContainedEventPatterns().get(0).getEventPattern();
+
+        // it should be an atomic event pattern, i.e.
+        // ...it's represented as an anonymous complex event pattern, but
+        Preconditions.checkArgument(eventPattern instanceof ComplexEventPattern);
+        // ...with multiplicity of 1, and
+        AbstractMultiplicity multiplicity = complexEventPattern.getContainedEventPatterns().get(0).getMultiplicity();
+        Preconditions.checkArgument(multiplicity instanceof Multiplicity);
+        Preconditions.checkArgument(((Multiplicity) multiplicity).getValue() == 1);
+        // ...with a FOLLOWS operator
+        Preconditions.checkArgument(((ComplexEventPattern) eventPattern).getOperator() instanceof FOLLOWS);
+
+        // the actual atomic event pattern
+        Preconditions.checkArgument(((ComplexEventPattern) eventPattern).getContainedEventPatterns().size() == 1);
+        Preconditions.checkArgument(((ComplexEventPattern) eventPattern).getContainedEventPatterns().get(0)
+                .getEventPattern() instanceof AtomicEventPattern);
+
+        AtomicEventPattern atomicEventPattern = (AtomicEventPattern) ((ComplexEventPattern) eventPattern)
+                .getContainedEventPatterns().get(0).getEventPattern();
+        List<String> parameterSymbolicNames = ((ComplexEventPattern) eventPattern).getContainedEventPatterns().get(0)
+                .getParameterSymbolicNames();
+
+        State postState = createState();
+        Guard guard = createGuard(atomicEventPattern);
+        TypedTransition transition = createTransition(preState, postState, guard, parameterSymbolicNames);
+
+        // Negation
+        // ...redirect
+        transition.setPostState(automaton.getTrapState());
+        // ...neg transition
+        NegativeTransition negativeTransition = AutomatonFactory.eINSTANCE.createNegativeTransition();
+        negativeTransition.setPreState(preState);
+        negativeTransition.setPostState(postState);
+        // ... neg guard
+        Guard negativeGuard = AutomatonFactory.eINSTANCE.createGuard();
+        negativeGuard.setEventType(((TypedTransition) transition).getGuards().get(0).getEventType());
+        negativeTransition.getGuards().add(negativeGuard);
+
+        return new SubAutomaton(Lists.newArrayList(postState), postState);
+    }
+
     /**
      * Maps a single non-nested {@link EventPattern} featuring a {@link FOLLOWS} operator onto an {@link Automaton}.
      * 
@@ -171,12 +238,14 @@ public class Compiler {
      */
     private SubAutomaton mapFollows(State preState, ComplexEventPattern complexEventPattern) {
         List<State> inStates = Lists.newArrayList();
+        List<State> allStates = Lists.newArrayList();
         State lastCreatedState = preState;
 
         for (EventPatternReference eventPatternReference : complexEventPattern.getContainedEventPatterns()) {
             EventPattern eventPattern = eventPatternReference.getEventPattern();
             AbstractMultiplicity multiplicity = eventPatternReference.getMultiplicity();
             List<String> parameterSymbolicNames = eventPatternReference.getParameterSymbolicNames();
+
             if (multiplicity instanceof Multiplicity) {
                 for (int i = 0; i < ((Multiplicity) multiplicity).getValue(); i++) {
                     SubAutomaton subAutomatonData = mapFollowsPath(lastCreatedState, eventPattern,
@@ -185,27 +254,33 @@ public class Compiler {
                     if (inStates.isEmpty()) {
                         inStates.addAll(subAutomatonData.getInStates());
                     }
+                    allStates.addAll(subAutomatonData.getInStates());
+                    allStates.add(subAutomatonData.getOutState());
                 }
-            } else if (multiplicity instanceof AtLeastOne) {
+            } else if ((multiplicity instanceof AtLeastOne) || (multiplicity instanceof Infinite)) {
                 SubAutomaton subAutomatonData = mapFollowsPath(lastCreatedState, eventPattern, parameterSymbolicNames);
                 lastCreatedState = subAutomatonData.getOutState();
-
+                allStates.addAll(subAutomatonData.getInStates());
+                allStates.add(subAutomatonData.getOutState());
                 for (Transition transition : preState.getOutTransitions()) {
                     if (!(transition instanceof TypedTransition)) {
                         continue;
                     }
-                    Guard guard = ((TypedTransition) transition).getGuard();
+                    Guard guard = ((TypedTransition) transition).getGuards().get(0);
                     Guard backwardLoopGuard = createGuard(guard.getEventType());
                     createTransition(lastCreatedState, transition.getPostState(), backwardLoopGuard,
                             parameterSymbolicNames);
                 }
+                if (multiplicity instanceof Infinite) {
+                    // return new SubAutomaton(inStates, lastCreatedState, preState);
+                    // TODO
+                }
             } else {
-                throw new UnsupportedOperationException(); // TODO Infinite case should be implemented here
+                throw new UnsupportedOperationException();
             }
-
         }
 
-        return new SubAutomaton(inStates, lastCreatedState);
+        return new SubAutomaton(inStates, lastCreatedState, allStates);
     }
 
     private SubAutomaton mapFollowsPath(State preState, EventPattern eventPattern, List<String> parameterSymbolicNames) {
@@ -315,7 +390,7 @@ public class Compiler {
         TypedTransition transition = FACTORY.createTypedTransition();
         transition.setPreState(preState);
         transition.setPostState(postState);
-        transition.setGuard(guard);
+        transition.getGuards().add(guard);
         return transition;
     }
 
