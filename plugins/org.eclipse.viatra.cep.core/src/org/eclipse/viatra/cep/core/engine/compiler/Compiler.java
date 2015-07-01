@@ -212,19 +212,8 @@ public class Compiler {
 
         State postState = createState();
         Guard guard = createGuard(atomicEventPattern);
-        TypedTransition transition = createTransition(preState, postState, guard, parameterSymbolicNames);
 
-        // Negation
-        // ...redirect
-        transition.setPostState(automaton.getTrapState());
-        // ...neg transition
-        NegativeTransition negativeTransition = AutomatonFactory.eINSTANCE.createNegativeTransition();
-        negativeTransition.setPreState(preState);
-        negativeTransition.setPostState(postState);
-        // ... neg guard
-        Guard negativeGuard = AutomatonFactory.eINSTANCE.createGuard();
-        negativeGuard.setEventType(((TypedTransition) transition).getGuards().get(0).getEventType());
-        negativeTransition.getGuards().add(negativeGuard);
+        createNegativeTransition(preState, postState, guard, parameterSymbolicNames);
 
         return new SubAutomaton(Lists.newArrayList(postState), postState);
     }
@@ -412,15 +401,36 @@ public class Compiler {
 
     private TypedTransition createTransition(State preState, State postState, Guard guard) {
         TypedTransition transition = FACTORY.createTypedTransition();
+        setTransitionProperties(transition, preState, postState, guard);
+        return transition;
+    }
+
+    private NegativeTransition createNegativeTransition(State preState, State postState, Guard guard) {
+        NegativeTransition transition = FACTORY.createNegativeTransition();
+        setTransitionProperties(transition, preState, postState, guard);
+        return transition;
+    }
+
+    private void setTransitionProperties(TypedTransition transition, State preState, State postState, Guard guard) {
         transition.setPreState(preState);
         transition.setPostState(postState);
         transition.getGuards().add(guard);
-        return transition;
     }
 
     private TypedTransition createTransition(State preState, State postState, Guard guard, List<String> parameters) {
         TypedTransition transition = createTransition(preState, postState, guard);
+        setTransitionParameters(transition, parameters);
+        return transition;
+    }
 
+    private NegativeTransition createNegativeTransition(State preState, State postState, Guard guard,
+            List<String> parameters) {
+        NegativeTransition transition = createNegativeTransition(preState, postState, guard);
+        setTransitionParameters(transition, parameters);
+        return transition;
+    }
+
+    private void setTransitionParameters(TypedTransition transition, List<String> parameters) {
         for (int i = 0; i < parameters.size(); i++) {
             String symbolicName = parameters.get(i);
 
@@ -433,8 +443,6 @@ public class Compiler {
             transitionParameter.setPosition(i);
             transition.getParameters().add(transitionParameter);
         }
-
-        return transition;
     }
 
     private Guard createGuard(AtomicEventPattern eventType) {

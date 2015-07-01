@@ -65,6 +65,7 @@ class ModelHandlingRules {
 	}
 
 	val enabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).action [
+		logger.debug("Enabled Transition rule")
 		// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
 		eventModelManager.handleEvent(transition, eventToken)
 
@@ -98,34 +99,34 @@ class ModelHandlingRules {
 
 	val enabledNegativeTransitionRule = createRule().name("enabled negative transition rule").precondition(
 		enabledNegativeTransition).action [
+		logger.debug("Enabled Negative Transition rule")
 		// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
 		eventModelManager.handleEvent(transition, eventToken)
 
-		// if (event instanceof ParameterizableEventInstance) {
-		// for (parameter : transition.parameters) {
-		// // obtain the value in the observed event instance on the given position
-		// val parameterValueToBind = (event as ParameterizableEventInstance).getParameter(parameter.position)
-		//
-		// // check for existing bindings in the parameter table with the given symbolic name
-		// val existingBinding = eventToken.parameterTable.parameterBindings.findFirst [ binding |
-		// binding.symbolicName.equalsIgnoreCase(parameter.symbolicName)
-		// ]
-		//
-		// if (existingBinding == null) { // if there was no parameter binding yet, it will be recorded now
-		// val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
-		// newBinding.symbolicName = parameter.symbolicName
-		// newBinding.value = parameterValueToBind
-		// eventToken.parameterTable.parameterBindings.add(newBinding)
-		// } else {
-		// // if there was a parameter binding found, the values should match
-		// // otherwise return before the token could be fired
-		// if (!existingBinding.value.equals(parameterValueToBind)) {
-		// return
-		// }
-		// }
-		// }
-		// }
-		// TODO this should be addressed later
+		if (event instanceof ParameterizableEventInstance) {
+			for (parameter : transition.parameters) {
+				// obtain the value in the observed event instance on the given position
+				val parameterValueToBind = (event as ParameterizableEventInstance).getParameter(parameter.position)
+
+				// check for existing bindings in the parameter table with the given symbolic name
+				val existingBinding = eventToken.parameterTable.parameterBindings.findFirst [ binding |
+					binding.symbolicName.equalsIgnoreCase(parameter.symbolicName)
+				]
+				
+				if (existingBinding == null) { // if there was no parameter binding yet, it will be recorded now
+					val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
+					newBinding.symbolicName = parameter.symbolicName
+					newBinding.value = parameterValueToBind
+					eventToken.parameterTable.parameterBindings.add(newBinding)
+				} else {
+					// if there was a parameter binding found, the values should match
+					// otherwise return before the token could be fired
+					if (!existingBinding.value.equals(parameterValueToBind)) {
+						return
+					}
+				}
+			}
+		}
 		eventModelManager.fireTransition(transition, eventToken)
 	].build
 
