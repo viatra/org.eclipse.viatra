@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2004-2015, Istvan David, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * Istvan David - initial API and implementation
+ *******************************************************************************/
+ 
 package org.eclipse.viatra.cep.core.engine.compiler
 
 import org.eclipse.incquery.runtime.emf.EMFScope
@@ -22,18 +33,18 @@ class Minimize {
 	}
 
 	def minimize() {
-//		unifyNegativeTransitions.fireWhilePossible
+		unifyNegativeTransitions.fireWhilePossible
 	}
 
 	def getMinimizationRules() {
 		new TransformationRuleGroup(
-//			unifyNegativeTransitions
+			unifyNegativeTransitions
 		)
 	}
 
-//	val unifyNegativeTransitions = createRule(MinimalizableNegativeEdgesMatcher::querySpecification) [
-//		transition1.guards.addAll(transition2.guards)
-//		transition1.parameters.addAll(transition2.parameters)
-//		transition2.remove
-//	]
+	val unifyNegativeTransitions = createRule(MinimalizableNegativeEdgesMatcher::querySpecification) [
+		transition1.guards.addAll(transition2.guards)
+		transition1.parameters.addAll(transition2.parameters)
+		transition2.remove
+	]
 }
