@@ -65,6 +65,8 @@ public class Compiler {
     private InitState initState;
     private FinalState finalState;
 
+    private List<TypedTransition> infiniteTransitions = Lists.newArrayList();
+
     public Compiler(InternalModel model) {
         this.model = model;
     }
@@ -102,7 +104,7 @@ public class Compiler {
             map((AtomicEventPattern) unfoldedEventPattern);
         }
 
-        // TODO
+        mergeAtLeastOneIntoInfiniteTransition();
         new Minimize(automaton).minimize();
 
         automaton.setEventPattern(unfoldedEventPattern);
@@ -270,10 +272,9 @@ public class Compiler {
                     Guard backwardLoopGuard = createGuard(guard.getEventType());
                     createTransition(lastCreatedState, transition.getPostState(), backwardLoopGuard,
                             parameterSymbolicNames);
-                }
-                if (multiplicity instanceof Infinite) {
-                    // return new SubAutomaton(inStates, lastCreatedState, preState);
-                    // TODO
+                    if (multiplicity instanceof Infinite) {
+                        infiniteTransitions.add((TypedTransition) transition);
+                    }
                 }
             } else {
                 throw new UnsupportedOperationException();
@@ -281,6 +282,29 @@ public class Compiler {
         }
 
         return new SubAutomaton(inStates, lastCreatedState, allStates);
+    }
+
+    private void mergeAtLeastOneIntoInfiniteTransition() {
+        for (TypedTransition transition : infiniteTransitions) {
+            State preState = transition.getPreState();
+            State postState = transition.getPostState();
+
+            // Merge
+            // ...copy in states
+            postState.getInTransitions().addAll(preState.getInTransitions());
+            // ...copy out states except the transition itself
+            List<Transition> outTransitionsToCopy = preState.getInTransitions();
+            outTransitionsToCopy.remove(transition);
+            postState.getOutTransitions().addAll(outTransitionsToCopy);
+            // ...copy timed zones
+            postState.getInStateOf().addAll(preState.getInStateOf());
+            postState.getOutStateOf().addAll(preState.getOutStateOf());
+
+            // ...remove transition
+            preState.getOutTransitions().remove(transition);
+            // ...delete preState
+            automaton.getStates().remove(preState);
+        }
     }
 
     private SubAutomaton mapFollowsPath(State preState, EventPattern eventPattern, List<String> parameterSymbolicNames) {
