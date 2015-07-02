@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -92,7 +93,7 @@ public class GlobalContext {
      *         maximum.
      */
     public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
-            boolean cloneModel, LocalSearchStrategyBase strategy) {
+            boolean cloneModel, IStrategy strategy) {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
 

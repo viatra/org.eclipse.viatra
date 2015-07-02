@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.evm.specific.RuleEngines;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
-import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
 import org.eclipse.viatra.dse.guidance.Guidance;
@@ -45,7 +45,7 @@ import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 public class ThreadContext {
 
     private final GlobalContext globalContext;
-    private final LocalSearchStrategyBase strategy;
+    private final IStrategy strategy;
     private ExplorerThread explorerThread;
     private RuleEngine ruleEngine;
     private IncQueryEngine incqueryEngine;
@@ -78,7 +78,7 @@ public class ThreadContext {
      * @param trajectoryInfoToClone
      * @param parentGuidance
      */
-    public ThreadContext(final GlobalContext globalContext, LocalSearchStrategyBase strategy, EditingDomain domain,
+    public ThreadContext(final GlobalContext globalContext, IStrategy strategy, EditingDomain domain,
             TrajectoryInfo trajectoryInfoToClone, Guidance parentGuidance) {
         this.globalContext = globalContext;
         this.strategy = strategy;
@@ -253,7 +253,7 @@ public class ThreadContext {
         this.guidance = guidance;
     }
 
-    public LocalSearchStrategyBase getStrategy() {
+    public IStrategy getStrategy() {
         return strategy;
     }
 

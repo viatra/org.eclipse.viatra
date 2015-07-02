@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -285,7 +286,7 @@ public class DesignSpaceExplorer {
      * @param strategy
      *            The strategy of the exploration.
      */
-    public void startExploration(LocalSearchStrategyBase strategy) {
+    public void startExploration(IStrategy strategy) {
         startExploration(strategy, true, -1);
     }
 
@@ -296,7 +297,7 @@ public class DesignSpaceExplorer {
      * @param strategy
      *            The strategy of the exploration.
      */
-    public void startExplorationAsync(LocalSearchStrategyBase strategy) {
+    public void startExplorationAsync(IStrategy strategy) {
         startExploration(strategy, false, -1);
     }
 
@@ -310,7 +311,7 @@ public class DesignSpaceExplorer {
      *            The number of milliseconds before the exploration is forced to stop.
      * @return Returns true if the exploration stopped by the timeout.
      */
-    public boolean startExplorationWithTimeout(LocalSearchStrategyBase strategy, long timeout) {
+    public boolean startExplorationWithTimeout(IStrategy strategy, long timeout) {
         return startExploration(strategy, true, timeout);
     }
 
@@ -324,7 +325,7 @@ public class DesignSpaceExplorer {
      *            The number of milliseconds before the exploration is forced to stop.
      * @return Returns true if the exploration stopped by the timeout.
      */
-    public boolean startExplorationAsyncWithTimeout(LocalSearchStrategyBase strategy, long timeout) {
+    public boolean startExplorationAsyncWithTimeout(IStrategy strategy, long timeout) {
         return startExploration(strategy, false, timeout);
     }
 
@@ -342,7 +343,7 @@ public class DesignSpaceExplorer {
      *            The number of milliseconds before the exploration is forced to stop.
      * @return Returns true if the exploration stopped by the timeout.
      */
-    public boolean startExploration(LocalSearchStrategyBase strategy, boolean waitForTermination, final long timeout) {
+    public boolean startExploration(IStrategy strategy, boolean waitForTermination, final long timeout) {
         initExploration(strategy);
 
         Timer timer = new Timer();
@@ -381,7 +382,7 @@ public class DesignSpaceExplorer {
 
     }
 
-    private void initExploration(LocalSearchStrategyBase strategy) {
+    private void initExploration(IStrategy strategy) {
         checkArgument(modelRoot != null, MODEL_NOT_YET_GIVEN);
         checkArgument(strategy != null, "A strategy must be given. Use the Strategies helper class.");
         checkState(!globalContext.getTransformations().isEmpty(),
