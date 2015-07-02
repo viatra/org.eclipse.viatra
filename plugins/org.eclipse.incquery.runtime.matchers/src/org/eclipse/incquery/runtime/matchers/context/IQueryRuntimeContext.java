@@ -158,25 +158,29 @@ public interface IQueryRuntimeContext {
 	
     /**
      * Wraps the external element into the internal representation that is to be used by the query backend 
-     * <p> model element -> internal object
+     * <p> model element -> internal object.
+     * <p> null must be mapped to null.
      */
     public Object wrapElement(Object externalElement);
 
     /**
      * Unwraps the internal representation of the element into its original form  
      * <p> internal object -> model element
+     * <p> null must be mapped to null.
      */
     public Object unwrapElement(Object internalElement);
 
     /**
      * Unwraps the tuple of elements into the internal representation that is to be used by the query backend
      * <p> model elements -> internal objects
-     */
+     * <p> null must be mapped to null.
+    */
     public Tuple wrapTuple(Tuple externalElements);
 
     /**
      * Unwraps the tuple of internal representations of elements into their original forms
      * <p> internal objects -> model elements
+     * <p> null must be mapped to null.
     */
     public Tuple unwrapTuple(Tuple internalElements);
 

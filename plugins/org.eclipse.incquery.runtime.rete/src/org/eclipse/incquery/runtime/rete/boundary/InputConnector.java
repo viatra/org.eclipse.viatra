@@ -126,46 +126,7 @@ public final class InputConnector {
 //		}
 		
 	}
-	
-    /**
-     * Wraps the element into a form suitable for entering the network model element -> internal object
-     */
-    public Object wrapElement(Object element) {
-        return element;// .getID();
-    }
-
-    /**
-     * Unwraps the element into its original form internal object -> model element
-     */
-    public Object unwrapElement(Object wrapper) {
-        return wrapper;// modelManager.getElementByID((String)
-                       // wrapper);
-    }
-
-    /**
-     * Unwraps the tuple of elements into a form suitable for entering the network
-     */
-    public Tuple wrapTuple(Tuple unwrapped) {
-        // int size = unwrapped.getSize();
-        // Object[] elements = new Object[size];
-        // for (int i=0; i<size; ++i) elements[i] =
-        // wrapElement(unwrapped.get(i));
-        // return new FlatTuple(elements);
-        return unwrapped;
-    }
-
-    /**
-     * Unwraps the tuple of elements into their original form
-     */
-    public Tuple unwrapTuple(Tuple wrappers) {
-        // int size = wrappers.getSize();
-        // Object[] elements = new Object[size];
-        // for (int i=0; i<size; ++i) elements[i] =
-        // unwrapElement(wrappers.get(i));
-        // return new FlatTuple(elements);
-        return wrappers;
-    }
-	
+		
 //    /**
 //     * fetches the entity Root node under specified label; returns null if it doesn't exist yet
 //     */

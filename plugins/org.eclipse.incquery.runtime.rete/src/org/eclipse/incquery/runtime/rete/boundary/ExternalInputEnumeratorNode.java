@@ -92,10 +92,10 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
 	public void update(IInputKey key, Tuple updateTuple, boolean isInsertion) {
 		if (parallelExecutionEnabled) {
 			// send back to myself as an official external update, and then propagate it transparently
-			network.sendExternalUpdate(myAddress, direction(isInsertion), inputConnector.wrapTuple(updateTuple));			
+			network.sendExternalUpdate(myAddress, direction(isInsertion), updateTuple);			
 		} else {
 			// just propagate the input
-			propagateUpdate(direction(isInsertion), inputConnector.wrapTuple(updateTuple));
+			propagateUpdate(direction(isInsertion), updateTuple);
 			network.waitForReteTermination();
 		}
 	}

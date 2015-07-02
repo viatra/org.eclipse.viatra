@@ -26,7 +26,6 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.boundary.Disconnectable;
-import org.eclipse.incquery.runtime.rete.boundary.InputConnector;
 import org.eclipse.incquery.runtime.rete.index.IdentityIndexer;
 import org.eclipse.incquery.runtime.rete.index.NullIndexer;
 import org.eclipse.incquery.runtime.rete.index.ProjectionIndexer;
@@ -48,10 +47,8 @@ import org.eclipse.incquery.runtime.rete.util.Options;
 public class EStructuralFeatureBinaryInputNode extends StandardNode implements Disconnectable {
 
 	private EStructuralFeature feature;
-	private IncQueryEngine engine;
 	private NavigationHelper baseIndex;
 	private ReteEngine reteEngine;
-	private InputConnector connector;
 		
 	static final TupleMask nullMask = TupleMask.linear(0, 2); 
 	static final TupleMask sourceKnown = TupleMask.selectSingle(0, 2); 
@@ -89,10 +86,6 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	 */
 	public EStructuralFeatureBinaryInputNode(IncQueryEngine engine, ReteContainer reteContainer, EStructuralFeature feature) throws IncQueryBaseException {
 		super(reteContainer);
-		this.engine = engine;
-	//	this.baseIndex = engine.getBaseIndex();
-	//	this.reteEngine = engine.getReteEngine();
-		this.connector = reteEngine.getReteNet().getInputConnector();
 		this.feature = feature;
 		setTag(feature.getName());
 		
@@ -115,10 +108,10 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	}
 	
 	protected Tuple makeTuple(EObject source, Object target) {
-		return new FlatTuple(connector.wrapElement(source), connector.wrapElement(target));
+		return new FlatTuple(source, target);
 	}
 	protected Tuple makeTupleSingle(Object element) {
-		return new FlatTuple(connector.wrapElement(element));
+		return new FlatTuple(element);
 	}
 	
 	protected void propagate(Direction direction, final Tuple tuple) {
