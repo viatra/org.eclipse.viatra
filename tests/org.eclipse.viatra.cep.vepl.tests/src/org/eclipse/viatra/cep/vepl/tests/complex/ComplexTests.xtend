@@ -21,7 +21,7 @@ class ComplexTests extends ComplexVeplTestCase {
 	def getFullExpression(String expression, String multiplicity, String timewindow) {
 		'''
 			ComplexEvent c1(){
-				definition: «expression»)«multiplicity»«timewindow»
+				definition: («expression»)«multiplicity»«timewindow»
 			}
 		'''
 	}
@@ -52,8 +52,7 @@ class ComplexTests extends ComplexVeplTestCase {
 				for (timewindow : timewindows) {
 					val fullExpression = getFullExpression(expression, multiplicity, timewindow)
 
-					println(fullExpression)
-
+					// println(fullExpression)
 					val model = fullExpression.parse
 
 					model.assertNoErrors
