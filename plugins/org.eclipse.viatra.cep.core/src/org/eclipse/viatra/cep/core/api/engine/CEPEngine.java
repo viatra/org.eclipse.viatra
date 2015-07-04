@@ -31,6 +31,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.streams.DefaultStreamManager;
+import org.eclipse.viatra.cep.core.streams.EventStream;
 import org.eclipse.viatra.cep.core.streams.IStreamManager;
 
 import com.google.common.base.Preconditions;
@@ -151,6 +152,17 @@ public class CEPEngine {
      */
     public IStreamManager getStreamManager() {
         return streamManager;
+    }
+
+    /**
+     * Clears the event processing state, including the partial event pattern matches and the event stream
+     */
+    public void reset() {
+        new ResetTransformations(eventModelManager.getModel()).resetAll();
+
+        for (EventStream eventStream : streamManager.getEventStreams()) {
+            eventStream.getQueue().clear();
+        }
     }
 
     /**

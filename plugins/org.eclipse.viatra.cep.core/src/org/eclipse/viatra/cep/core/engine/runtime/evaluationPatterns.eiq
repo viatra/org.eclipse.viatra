@@ -32,6 +32,21 @@ pattern tokenInTrapState(automaton : Automaton, eventToken : EventToken, eventPa
 	Automaton.eventPattern(automaton, eventPattern);
 }
 
+pattern tokenInInitState(automaton : Automaton, eventToken : EventToken) {
+	Automaton.initialState(automaton, initState);
+	InitState.eventTokens(initState, eventToken);
+}
+
+pattern tokenInFinalState(automaton : Automaton, eventToken : EventToken) {
+	Automaton.finalStates(automaton, finalState);
+	FinalState.eventTokens(finalState, eventToken);
+}
+
+pattern resettableEventToken(automaton : Automaton, eventToken : EventToken){
+	neg find tokenInInitState(automaton, eventToken);
+	neg find tokenInFinalState(automaton, eventToken);
+}
+
 pattern enabledTransition(transition : TypedTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern) {
 	find latestEvent(event);
 	Event.type(event, eventType);
