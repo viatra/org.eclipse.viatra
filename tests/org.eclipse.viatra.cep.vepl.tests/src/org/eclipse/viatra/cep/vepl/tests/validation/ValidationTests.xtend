@@ -128,19 +128,6 @@ class ValidationTests extends VeplTestCase {
 	}
 
 	@Test
-	def void infiniteMultiplicityNotYetSupported() {
-		val model = '''
-			AtomicEvent a
-			
-			ComplexEvent c(){
-				definition: a{*}
-			}
-			
-		'''.parse
-		model.assertError(VeplPackage::eINSTANCE.atom, VeplValidator::NO_INFINITE_SUPPORT)
-	}
-
-	@Test
 	def void complexEventPatternWithPlainAtomExpression() {
 		val model = '''
 			AtomicEvent a
