@@ -21,7 +21,7 @@ class ComplexTests extends ComplexVeplTestCase {
 	def getFullExpression(String expression, String multiplicity, String timewindow) {
 		'''
 			ComplexEvent c1(){
-				definition: («expression»)«multiplicity»«timewindow»
+				definition: Â«expressionÂ»)Â«multiplicityÂ»Â«timewindowÂ»
 			}
 		'''
 	}
