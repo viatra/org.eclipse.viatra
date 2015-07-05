@@ -259,8 +259,13 @@ public class Compiler {
                     }
                     Guard guard = ((TypedTransition) transition).getGuards().get(0);
                     Guard backwardLoopGuard = createGuard(guard.getEventType());
-                    createTransition(lastCreatedState, transition.getPostState(), backwardLoopGuard,
-                            parameterSymbolicNames);
+                    if (transition instanceof NegativeTransition) {
+                        createNegativeTransition(lastCreatedState, transition.getPostState(), backwardLoopGuard,
+                                parameterSymbolicNames);
+                    } else { // TypedTransition
+                        createTransition(lastCreatedState, transition.getPostState(), backwardLoopGuard,
+                                parameterSymbolicNames);
+                    }
                     if (multiplicity instanceof Infinite) {
                         infiniteTransitions.add((TypedTransition) transition);
                     }
@@ -282,7 +287,7 @@ public class Compiler {
             // ...copy in states
             postState.getInTransitions().addAll(preState.getInTransitions());
             // ...copy out states except the transition itself
-            List<Transition> outTransitionsToCopy = preState.getInTransitions();
+            List<Transition> outTransitionsToCopy = preState.getOutTransitions();
             outTransitionsToCopy.remove(transition);
             postState.getOutTransitions().addAll(outTransitionsToCopy);
             // ...copy timed zones

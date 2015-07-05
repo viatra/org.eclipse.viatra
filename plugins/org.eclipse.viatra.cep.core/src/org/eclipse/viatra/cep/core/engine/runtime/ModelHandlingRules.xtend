@@ -53,8 +53,8 @@ class ModelHandlingRules {
 
 	def registerRulesWithCustomPriorities() {
 		val fixedPriorityResolver = ConflictResolvers.createFixedPriorityResolver();
+		fixedPriorityResolver.setPriority(enabledNegativeTransitionRule.ruleSpecification, 150)
 		fixedPriorityResolver.setPriority(enabledTransitionRule.ruleSpecification, 100)
-		fixedPriorityResolver.setPriority(enabledNegativeTransitionRule.ruleSpecification, 75)
 		fixedPriorityResolver.setPriority(finishedAutomatonRule.ruleSpecification, 50)
 		fixedPriorityResolver.setPriority(tokenInTrapStateRule.ruleSpecification, 10)
 		fixedPriorityResolver.setPriority(tokenEntersTimedZoneRule.ruleSpecification, 5)
