@@ -92,7 +92,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="EpsilonTransition" eSuperTypes="#//Transition"/>
   <eClassifiers xsi:type="ecore:EClass" name="Guard">
     <eStructuralFeatures xsi:type="ecore:EReference" name="eventType" lowerBound="1"
-        eType="ecore:EClass Cep.ecore#//AtomicEventPattern"/>
+        eType="ecore:EClass Cep.ecore#//EventPattern"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="transition" lowerBound="1"
         eType="#//TypedTransition" eOpposite="#//TypedTransition/guards"/>
   </eClassifiers>

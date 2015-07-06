@@ -6,6 +6,7 @@
     complianceLevel="6.0" copyrightFields="false" operationReflection="true">
   <foreignModel>Automaton.ecore</foreignModel>
   <foreignModel>Cep.ecore</foreignModel>
+  <foreignModel>Cep2AutomatonTrace.ecore</foreignModel>
   <genPackages prefix="Automaton" basePackage="org.eclipse.viatra.cep.core.metamodels"
       disposableProviderFactory="true" ecorePackage="Automaton.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="Automaton.ecore#//EventContext">
@@ -87,7 +88,11 @@
   </genPackages>
   <genPackages prefix="Events" basePackage="org.eclipse.viatra.cep.core.metamodels"
       disposableProviderFactory="true" ecorePackage="Cep.ecore#/">
+    <genClasses ecoreClass="Cep.ecore#//EventModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//EventModel/eventPatterns"/>
+    </genClasses>
     <genClasses ecoreClass="Cep.ecore#//EventPattern">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference Cep.ecore#//EventPattern/eventModel"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep.ecore#//EventPattern/automaton"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//EventPattern/id"/>
     </genClasses>
@@ -127,5 +132,15 @@
     </genClasses>
     <genClasses ecoreClass="Cep.ecore#//Infinite"/>
     <genClasses ecoreClass="Cep.ecore#//AtLeastOne"/>
+  </genPackages>
+  <genPackages prefix="Trace" basePackage="org.eclipse.viatra.cep.core.metamodels"
+      disposableProviderFactory="true" ecorePackage="Cep2AutomatonTrace.ecore#/">
+    <genClasses ecoreClass="Cep2AutomatonTrace.ecore#//TraceModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep2AutomatonTrace.ecore#//TraceModel/traces"/>
+    </genClasses>
+    <genClasses ecoreClass="Cep2AutomatonTrace.ecore#//Trace">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep2AutomatonTrace.ecore#//Trace/eventPattern"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep2AutomatonTrace.ecore#//Trace/automaton"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

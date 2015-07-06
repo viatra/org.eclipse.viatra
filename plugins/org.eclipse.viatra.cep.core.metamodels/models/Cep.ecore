@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="events" nsURI="cep.meta" nsPrefix="org.eclipse.viatra.cep.core.metamodels">
+  <eClassifiers xsi:type="ecore:EClass" name="EventModel">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eventPatterns" upperBound="-1"
+        eType="#//EventPattern" containment="true" eOpposite="#//EventPattern/eventModel"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EventPattern" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eventModel" eType="#//EventModel"
+        eOpposite="#//EventModel/eventPatterns"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="automaton" eType="ecore:EClass Automaton.ecore#//Automaton"
         eOpposite="Automaton.ecore#//Automaton/eventPattern"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
