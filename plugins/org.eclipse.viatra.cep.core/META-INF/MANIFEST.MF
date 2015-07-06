@@ -15,6 +15,8 @@ Export-Package: org.eclipse.viatra.cep.core.api.engine,
  org.eclipse.viatra.cep.core.engine.compiler.util,
  org.eclipse.viatra.cep.core.engine.runtime,
  org.eclipse.viatra.cep.core.engine.runtime.util,
+ org.eclipse.viatra.cep.core.experimental.mtcompiler,
+ org.eclipse.viatra.cep.core.experimental.mtcompiler.util,
  org.eclipse.viatra.cep.core.streams
 Require-Bundle: org.eclipse.emf.ecore,
  org.eclipse.core.runtime,

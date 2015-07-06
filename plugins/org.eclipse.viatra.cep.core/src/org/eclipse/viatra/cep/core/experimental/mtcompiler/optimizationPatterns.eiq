@@ -1,0 +1,45 @@
+/*******************************************************************************
+ * Copyright (c) 2004-2015, Istvan David, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Istvan David - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.viatra.cep.core.experimental.mtcompiler
+
+import "cep.meta"
+import "automaton.meta"
+import "trace.meta"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern epsilonTransition(automaton : Automaton, transition : EpsilonTransition, preState : State, postState : State){
+	Automaton.states(automaton, preState);
+	Automaton.states(automaton, postState);
+	State.outTransitions(preState, transition);
+	State.inTransitions(postState, transition);
+}
+
+pattern equivalentTransitions(transition1 : TypedTransition, transition2 : TypedTransition, preState : State, postState : State){
+	transition1 != transition2;
+	
+	Transition.preState(transition1, preState);
+	Transition.preState(transition2, preState);
+	
+	Transition.postState(transition1, postState);
+	Transition.postState(transition2, postState);
+	
+	TypedTransition.guards(transition1, guard1);
+	TypedTransition.guards(transition2, guard2);
+	
+	Guard.eventType(guard1, et1);
+	Guard.eventType(guard2, et2);
+	
+	et1 == et2;
+	
+	Automaton.states(automaton, preState);
+	Automaton.states(automaton, postState);
+}

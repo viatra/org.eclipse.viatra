@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="org.eclipse.viatra.cep.core.engine.runtime.EvaluationPatterns" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.runtime.EvaluationPatterns" id="org.eclipse.viatra.cep.core.engine.runtime.EvaluationPatterns"/>
+  <extension id="org.eclipse.viatra.cep.core.experimental.mtcompiler.MappingPatterns" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.experimental.mtcompiler.MappingPatterns" id="org.eclipse.viatra.cep.core.experimental.mtcompiler.MappingPatterns"/>
   </extension>
   <extension id="org.eclipse.viatra.cep.core.engine.compiler.AutomatonRewritePatterns" point="org.eclipse.incquery.runtime.queryspecification">
     <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.compiler.AutomatonRewritePatterns" id="org.eclipse.viatra.cep.core.engine.compiler.AutomatonRewritePatterns"/>
+  </extension>
+  <extension id="org.eclipse.viatra.cep.core.engine.runtime.EvaluationPatterns" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.runtime.EvaluationPatterns" id="org.eclipse.viatra.cep.core.engine.runtime.EvaluationPatterns"/>
+  </extension>
+  <extension id="org.eclipse.viatra.cep.core.experimental.mtcompiler.OptimizationPatterns" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.experimental.mtcompiler.OptimizationPatterns" id="org.eclipse.viatra.cep.core.experimental.mtcompiler.OptimizationPatterns"/>
   </extension>
 </plugin>

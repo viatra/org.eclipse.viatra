@@ -50,7 +50,8 @@ pattern resettableEventToken(automaton : Automaton, eventToken : EventToken){
 pattern enabledTransition(transition : TypedTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern) {
 	find latestEvent(event);
 	Event.type(event, eventType);
-	TypedTransition.guards.eventType.type(transition, eventType);
+	TypedTransition.guards.eventType(transition, eventPatternReference);
+	AtomicEventPattern.type(eventPatternReference, eventType);
 	TypedTransition.preState.eventTokens(transition, eventToken);
 	neg find negativeTransition(transition);
 	neg find eventProcessedByEventToken(event, eventToken);
@@ -73,7 +74,8 @@ pattern enabledNegativeTransition(transition : NegativeTransition, eventToken : 
 }
 
 pattern transitionWithEventType(transition : Transition, eventType : EString){
-	NegativeTransition.guards.eventType.type(transition, eventType);
+	NegativeTransition.guards.eventType(transition, eventPatternReference);
+	AtomicEventPattern.type(eventPatternReference, eventType);
 }
 
 pattern negativeTransition(transition : NegativeTransition){

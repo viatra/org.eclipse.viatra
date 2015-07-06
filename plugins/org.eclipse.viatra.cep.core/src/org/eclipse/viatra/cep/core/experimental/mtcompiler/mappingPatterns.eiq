@@ -1,0 +1,89 @@
+/*******************************************************************************
+ * Copyright (c) 2004-2015, Istvan David, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ * Istvan David - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.viatra.cep.core.experimental.mtcompiler
+
+import "cep.meta"
+import "automaton.meta"
+import "trace.meta"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern translatedEventPattern(eventPattern : EventPattern) {
+	TraceModel.traces(_, trace);
+	Trace.eventPattern(trace, eventPattern);
+}
+
+pattern atomicEventPattern(eventPattern : AtomicEventPattern) {
+	EventModel.eventPatterns(_, eventPattern);
+	neg find translatedEventPattern(eventPattern);
+}
+
+private pattern complexPattern(eventPattern : ComplexEventPattern, operator : ComplexEventOperator) {
+	EventModel.eventPatterns(_, eventPattern);
+	neg find translatedEventPattern(eventPattern);
+
+	ComplexEventPattern.operator(eventPattern, operator);
+}
+
+pattern followsPattern(eventPattern : ComplexEventPattern) {
+	find complexPattern(eventPattern, operator);
+	FOLLOWS(operator);
+}
+
+pattern orPattern(eventPattern : ComplexEventPattern) {
+	find complexPattern(eventPattern, operator);
+	OR(operator);
+}
+
+pattern andPattern(eventPattern : ComplexEventPattern) {
+	find complexPattern(eventPattern, operator);
+	AND(operator);
+}
+
+pattern notPattern(eventPattern : ComplexEventPattern) {
+	find complexPattern(eventPattern, operator);
+	NEG(operator);
+}
+
+private pattern complexTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern, operator : ComplexEventOperator){
+	Automaton.states(automaton, preState);
+	Automaton.states(automaton, postState);
+	
+	State.outTransitions(preState, transition);
+	State.inTransitions(postState, transition);
+	
+	TypedTransition.guards(transition, guard);
+	Guard.eventType(guard, eventPattern);
+
+	ComplexEventPattern(eventPattern);
+
+	ComplexEventPattern.operator(eventPattern, operator);
+}
+
+pattern complexFollowsTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern){
+	find complexTransition(automaton, transition, eventPattern, operator);
+	FOLLOWS(operator);
+}
+
+pattern complexOrTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern){
+	find complexTransition(automaton, transition, eventPattern, operator);
+	OR(operator);
+}
+
+pattern complexAndTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern){
+	find complexTransition(automaton, transition, eventPattern, operator);
+	AND(operator);
+}
+
+pattern complexNotTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern){
+	find complexTransition(automaton, transition, eventPattern, operator);
+	NEG(operator);
+}

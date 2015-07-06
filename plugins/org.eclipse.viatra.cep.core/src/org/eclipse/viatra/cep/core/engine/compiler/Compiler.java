@@ -450,7 +450,7 @@ public class Compiler {
         }
     }
 
-    private Guard createGuard(AtomicEventPattern eventType) {
+    private Guard createGuard(EventPattern eventType) {
         Guard guard = FACTORY.createGuard();
         guard.setEventType(eventType);
         return guard;
