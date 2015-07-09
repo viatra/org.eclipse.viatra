@@ -43,11 +43,13 @@ abstract class AbstractImmediateStrategy extends AbstractStrategy {
 				debug(String.format("ImmediateStrategy: Deleting tokens from state: %s.", state.label))
 				state.clear
 			]
-			model.setLatestEvent(null);
+			
 			var initState = automaton.initialState
 			if (initState.empty) {
 				newEventToken(automaton, initState)
 			}
+			
+			model.setLatestEvent(null);
 		]
 	}
 
