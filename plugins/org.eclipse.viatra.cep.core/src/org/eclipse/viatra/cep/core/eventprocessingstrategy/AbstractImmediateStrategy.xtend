@@ -46,14 +46,12 @@ abstract class AbstractImmediateStrategy extends AbstractStrategy {
 			if (initState.empty) {
 				newEventToken(automaton, initState)
 			}
-
-//			model.setLatestEvent(null);
 		]
 	}
 
 	def private prettyLabel(State state) {
-		if(state.label.nullOrEmpty){
-			state.toString
+		if (state.label.nullOrEmpty) {
+			return state.toString
 		}
 		state.label
 	}

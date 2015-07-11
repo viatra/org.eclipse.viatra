@@ -61,7 +61,7 @@ pattern enabledTransition(transition : TypedTransition, eventToken : EventToken,
 	Automaton.eventPattern(automaton, eventPattern);
 }
 
-pattern enabledNegativeTransition(transition : NegativeTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern) {
+pattern enabledNegativeTransition(transition : NegativeTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern, automaton : Automaton) {
 	find latestEvent(event);
 	Event.type(event, eventType);
 	neg find transitionWithEventType(transition, eventType);

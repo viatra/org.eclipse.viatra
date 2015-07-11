@@ -99,7 +99,7 @@ class ModelHandlingRules {
 
 	val enabledNegativeTransitionRule = createRule().name("enabled negative transition rule").precondition(
 		enabledNegativeTransition).action [
-		logger.debug("Enabled Negative Transition rule")
+		logger.debug(String::format("Enabled Negative Transition rule: %s", automaton.eventPattern.id))
 		// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
 		eventModelManager.handleEvent(transition, eventToken)
 
@@ -131,6 +131,7 @@ class ModelHandlingRules {
 	].build
 
 	val finishedAutomatonRule = createRule().name("finished automaton rule").precondition(finishedAutomaton).action [
+		logger.debug(String::format("Finished automaton: %s", automaton.eventPattern.id))
 		Preconditions::checkArgument(automaton.finalStates.size == 1)
 		automaton.eventTokens.remove(eventToken)
 		var observedPattern = new ObservedComplexEventPattern(automaton, eventToken)
