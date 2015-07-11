@@ -65,7 +65,7 @@ class ModelHandlingRules {
 	}
 
 	val enabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).action [
-		logger.debug("Enabled Transition rule")
+		logger.debug(String::format("Enabled Transition rule: %s", automaton.eventPattern.id))
 		// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
 		eventModelManager.handleEvent(transition, eventToken)
 
@@ -112,7 +112,7 @@ class ModelHandlingRules {
 				val existingBinding = eventToken.parameterTable.parameterBindings.findFirst [ binding |
 					binding.symbolicName.equalsIgnoreCase(parameter.symbolicName)
 				]
-				
+
 				if (existingBinding == null) { // if there was no parameter binding yet, it will be recorded now
 					val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
 					newBinding.symbolicName = parameter.symbolicName

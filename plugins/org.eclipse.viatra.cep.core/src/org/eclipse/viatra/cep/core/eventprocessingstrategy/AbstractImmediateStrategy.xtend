@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
@@ -21,12 +21,12 @@ import static extension org.eclipse.viatra.cep.core.utils.AutomatonUtils.*
 import org.apache.log4j.Logger
 
 /**
-* Common ancestor of the <i>immediate</i> type of strategies. Defines how the {@link Automaton} resets should be
-* handled in general.
-*
-* @author Istvan David
-*
-*/
+ * Common ancestor of the <i>immediate</i> type of strategies. Defines how the {@link Automaton} resets should be
+ * handled in general.
+ * 
+ * @author Istvan David
+ * 
+ */
 abstract class AbstractImmediateStrategy extends AbstractStrategy {
 	val extension Logger logger = LoggerUtils.instance.logger;
 
@@ -36,21 +36,26 @@ abstract class AbstractImmediateStrategy extends AbstractStrategy {
 
 	override public handleAutomatonResets(InternalModel model, AutomatonFactory factory) {
 		model.automata.filter[automaton|automaton.needsReset].forEach [ automaton |
-			debug(
-				String.format("ImmediateStrategy: No suitable update in the SM : %s. It's going to be reset.",
-					automaton.id));
+			debug(String.format("ImmediateStrategy: No update in automaton: %s. Resetting automaton.", automaton.id));
 			automaton.normalStates.filter[state|state.notEmpty].forEach [ state |
-				debug(String.format("ImmediateStrategy: Deleting tokens from state: %s.", state.label))
+				debug(String.format("ImmediateStrategy: Deleting tokens from state: %s.", state.prettyLabel))
 				state.clear
 			]
-			
+
 			var initState = automaton.initialState
 			if (initState.empty) {
 				newEventToken(automaton, initState)
 			}
-			
-			model.setLatestEvent(null);
+
+//			model.setLatestEvent(null);
 		]
+	}
+
+	def private prettyLabel(State state) {
+		if(state.label.nullOrEmpty){
+			state.toString
+		}
+		state.label
 	}
 
 	def private clear(State state) {

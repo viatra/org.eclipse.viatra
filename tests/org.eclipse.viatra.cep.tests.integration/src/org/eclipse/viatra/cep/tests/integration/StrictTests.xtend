@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ class StrictTests extends BaseIntegrationTest {
 
 	@Test
 	def void test() {
-//		engine.cepEngineDebugLevel = Level::DEBUG
+		engine.cepEngineDebugLevel = Level::DEBUG
 		engine.addRule(createTestRule());
 
 		eventStream.push(createA1_Event);
@@ -35,15 +35,15 @@ class StrictTests extends BaseIntegrationTest {
 
 		eventStream.push(createA2_Event);
 		assertEquals(3, TestResultHelper.instance.getResults("or"))
-		assertEquals(0, TestResultHelper.instance.getResults("follows"))
-		assertEquals(0, TestResultHelper.instance.getResults("and"))
+		assertEquals(1, TestResultHelper.instance.getResults("follows"))
+		assertEquals(1, TestResultHelper.instance.getResults("and"))
 		assertEquals(1, TestResultHelper.instance.getResults("multiplicityatleast"))
 		assertEquals(0, TestResultHelper.instance.getResults("multiplicity3"))
 
 		eventStream.push(createA2_Event);
 		assertEquals(4, TestResultHelper.instance.getResults("or"))
-		assertEquals(0, TestResultHelper.instance.getResults("follows"))
-		assertEquals(0, TestResultHelper.instance.getResults("and"))
+		assertEquals(1, TestResultHelper.instance.getResults("follows"))
+		assertEquals(1, TestResultHelper.instance.getResults("and"))
 		assertEquals(1, TestResultHelper.instance.getResults("multiplicityatleast"))
 		assertEquals(0, TestResultHelper.instance.getResults("multiplicity3"))
 	}

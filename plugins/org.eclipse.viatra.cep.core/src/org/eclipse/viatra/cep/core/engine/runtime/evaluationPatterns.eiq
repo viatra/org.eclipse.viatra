@@ -47,7 +47,7 @@ pattern resettableEventToken(automaton : Automaton, eventToken : EventToken){
 	neg find tokenInFinalState(automaton, eventToken);
 }
 
-pattern enabledTransition(transition : TypedTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern) {
+pattern enabledTransition(transition : TypedTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern, automaton : Automaton) {
 	find latestEvent(event);
 	Event.type(event, eventType);
 	TypedTransition.guards.eventType(transition, eventPatternReference);
