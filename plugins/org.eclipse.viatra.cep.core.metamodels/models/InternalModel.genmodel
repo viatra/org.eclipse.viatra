@@ -137,10 +137,15 @@
       disposableProviderFactory="true" ecorePackage="Cep2AutomatonTrace.ecore#/">
     <genClasses ecoreClass="Cep2AutomatonTrace.ecore#//TraceModel">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep2AutomatonTrace.ecore#//TraceModel/traces"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep2AutomatonTrace.ecore#//TraceModel/timedZoneTraces"/>
     </genClasses>
     <genClasses ecoreClass="Cep2AutomatonTrace.ecore#//Trace">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep2AutomatonTrace.ecore#//Trace/eventPattern"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep2AutomatonTrace.ecore#//Trace/automaton"/>
+    </genClasses>
+    <genClasses ecoreClass="Cep2AutomatonTrace.ecore#//TimedZoneTrace">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep2AutomatonTrace.ecore#//TimedZoneTrace/timedZone"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep2AutomatonTrace.ecore#//TimedZoneTrace/transition"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
