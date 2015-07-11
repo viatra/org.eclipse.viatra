@@ -9,11 +9,13 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler
+package org.eclipse.viatra.cep.core.experimental.mtcompiler.rules
 
 import java.util.List
+import org.apache.log4j.Logger
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
+import org.eclipse.viatra.cep.core.logging.LoggerUtils
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
@@ -24,6 +26,7 @@ import org.eclipse.viatra.emf.runtime.rules.batch.BatchTransformationRule
 import org.eclipse.viatra.emf.runtime.rules.batch.BatchTransformationRuleFactory
 
 abstract class MappingRules {
+	protected val extension Logger LOGGER = LoggerUtils.getInstance().getLogger();
 	protected val extension BatchTransformationRuleFactory ruleFactory = new BatchTransformationRuleFactory
 
 	protected val extension AutomatonFactory automatonFactory = AutomatonFactory.eINSTANCE

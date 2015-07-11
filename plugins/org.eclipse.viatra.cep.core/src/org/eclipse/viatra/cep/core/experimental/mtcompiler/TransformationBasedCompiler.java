@@ -18,7 +18,8 @@ public class TransformationBasedCompiler {
     public final static URI AUTOMATON_MODEL_URI = URI.createURI("cep/automaton.cep");
     public final static URI EVENT_MODEL_URI = URI.createURI("cep/events.cep");
     public final static URI TRACE_MODEL_URI = URI.createURI("cep/trace.cep");
-
+    public final static String OMITTED_PARAMETER_SYMBOLIC_NAME = "_";
+    
     private Pattern2AutomatonMapping mapping;
 
     public TransformationBasedCompiler(ResourceSet resourceSet) {

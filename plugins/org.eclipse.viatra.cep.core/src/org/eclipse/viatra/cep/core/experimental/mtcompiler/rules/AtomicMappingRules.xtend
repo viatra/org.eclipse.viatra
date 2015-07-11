@@ -9,8 +9,9 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler
+package org.eclipse.viatra.cep.core.experimental.mtcompiler.rules
 
+import org.eclipse.viatra.cep.core.experimental.mtcompiler.AtomicEventPatternMatcher
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
 

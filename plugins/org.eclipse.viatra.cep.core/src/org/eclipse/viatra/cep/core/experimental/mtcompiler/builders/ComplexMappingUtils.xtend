@@ -9,7 +9,7 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler
+package org.eclipse.viatra.cep.core.experimental.mtcompiler.builders
 
 import java.util.List
 import org.eclipse.viatra.cep.core.engine.compiler.PermutationsHelper
@@ -19,46 +19,48 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.State
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceFactory
+import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
 
 class ComplexMappingUtils {
 	protected val extension AutomatonFactory automatonFactory = AutomatonFactory.eINSTANCE
 	protected val extension TraceFactory traceFactory = TraceFactory.eINSTANCE
+	private extension BuilderPrimitives builderPrimitives
+	private TraceModel traceModel
 
-	public def buildFollowsPath(Automaton automaton, List<EventPatternReference> eventPatternReferences, State preState,
+	new(TraceModel traceModel) {
+		this.traceModel = traceModel
+		this.builderPrimitives = new BuilderPrimitives(traceModel)
+	}
+
+	public def buildFollowsPath(Automaton automaton, ComplexEventPattern eventPattern, State preState,
 		State postState) {
-		var State lastState = null
+		buildFollowsPath(automaton, eventPattern.containedEventPatterns, preState, postState)
+	}
+
+	private def buildFollowsPath(Automaton automaton, List<EventPatternReference> eventPatternReferences,
+		State preState, State postState) {
+		var State nextState = null
 
 		for (eventPatternReference : eventPatternReferences) {
-			var newTransition = createTypedTransition
-			var guard = createGuard
-			guard.eventType = eventPatternReference.eventPattern
-			newTransition.guards.add(guard)
-
-			if (lastState == null) {
-				newTransition.preState = preState
+			if (nextState == null) {
+				nextState = mapWithMultiplicity(eventPatternReference, automaton, preState)
 			} else {
-				newTransition.preState = lastState
+				nextState = mapWithMultiplicity(eventPatternReference, automaton, nextState)
 			}
-
-			lastState = createState
-			automaton.states += lastState
-			newTransition.postState = lastState
 		}
+
+		createEpsilon(nextState, postState)
 	}
 
 	public def buildOrPath(Automaton automaton, ComplexEventPattern eventPattern, State preState, State postState) {
-		var State lastState = createState
+		val State lastState = createState
 		automaton.states += lastState
 
 		for (eventPatternReference : eventPattern.containedEventPatterns) {
-			var transition = createTypedTransition
-			var guard = createGuard
-			guard.eventType = eventPatternReference.eventPattern
-			transition.guards.add(guard)
-
-			transition.preState = automaton.initialState
-			transition.postState = lastState
+			mapWithMultiplicity(eventPatternReference, automaton, preState, lastState)
 		}
+
+		createEpsilon(lastState, postState)
 	}
 
 	public def buildAndPath(Automaton automaton, ComplexEventPattern eventPattern, State preState, State postState) {
@@ -68,13 +70,13 @@ class ComplexMappingUtils {
 		}
 	}
 
-	public def buildNotPath(Automaton automaton, ComplexEventPattern eventPattern, State preState, State postState) {
-		var transition = createNegativeTransition
-		var guard = createGuard
-		guard.eventType = eventPattern
-		transition.guards += guard
-
-		transition.preState = preState
-		transition.postState = postState
-	}
+//	public def buildNotPath(Automaton automaton, ComplexEventPattern eventPattern, State preState, State postState) {
+//		var transition = createNegativeTransition
+//		var guard = createGuard
+//		guard.eventType = eventPattern
+//		transition.guards += guard
+//
+//		transition.preState = preState
+//		transition.postState = postState
+//	}
 }
