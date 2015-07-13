@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.vepl.validation
 
+import org.eclipse.viatra.cep.vepl.vepl.AbstractAtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression
@@ -175,7 +176,7 @@ class VeplValidator extends AbstractVeplValidator {
 			val primary = complexEventExpression.primary as Atom
 
 			val patternCall = primary.patternCall
-			if (!(patternCall.eventPattern instanceof AtomicEventPattern)) {
+			if (!(patternCall.eventPattern instanceof AbstractAtomicEventPattern)) {
 				error(
 					"The NOT operator can be applied only on atomic event pattern references.",
 					VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__NEG_OPERATOR,
