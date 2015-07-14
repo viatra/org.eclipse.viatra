@@ -10,7 +10,7 @@
             default="true"
             extensions="vepl"
             icon="icons/cep.jpg"
-            id="org.eclipse.viatra.cep.vepl.EventProcessingLanguage"
+            id="org.eclipse.viatra.cep.vepl.Vepl"
             matchingStrategy="org.eclipse.viatra.cep.vepl.ui.VeplExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.editor.JavaEditorInputMatcher"
             name="EventProcessingLanguage Editor">
         </editor>
