@@ -13,14 +13,16 @@ package org.eclipse.viatra.cep.core.experimental.mtcompiler.rules
 
 import com.google.common.base.Preconditions
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.EpsilonTransitionMatcher
+import org.eclipse.viatra.cep.core.experimental.mtcompiler.EquivalentStatesMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.EquivalentTransitionsMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.builders.BuilderPrimitives
-import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.EpsilonTransition
 import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState
 import org.eclipse.viatra.cep.core.metamodels.automaton.InitState
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.automaton.State
+import org.eclipse.viatra.cep.core.metamodels.automaton.Transition
+import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
 
 class OptimizationRules extends MappingRules {
@@ -33,7 +35,7 @@ class OptimizationRules extends MappingRules {
 	}
 
 	override getAllRules() {
-		return #[mergeUponEpsilonTransitionRule, mergeEquivalentTransitionsRule]
+		return #[mergeUponEpsilonTransitionRule, mergeEquivalentTransitionsRule, mergeEquivalentStatesRule]
 	}
 
 	val mergeUponEpsilonTransitionRule = createRule(EpsilonTransitionMatcher::querySpecification) [
@@ -48,17 +50,47 @@ class OptimizationRules extends MappingRules {
 
 	val mergeEquivalentTransitionsRule = createRule(EquivalentTransitionsMatcher::querySpecification) [
 		transition2.parameters += transition1.parameters
-		
-		transition1.postState = null
-		preState.outTransitions.remove(transition1)
+		removeTransition(transition1)
 	]
+	
+	val mergeEquivalentStatesRule = createRule(EquivalentStatesMatcher::querySpecification) [
+		Preconditions::checkArgument(!((postState1 instanceof InitState) && (postState2 instanceof FinalState)))
+		Preconditions::checkArgument(!((postState1 instanceof FinalState) && (postState2 instanceof InitState)))
+		
+		switch(postState1){
+			InitState: mergeStates(postState1, postState2, transition1, transition2)
+			FinalState: mergeStates(postState1, postState2, transition1, transition2)
+			default:
+				switch(postState2){
+					InitState: mergeStates(postState2, postState1, transition2, transition1)
+					FinalState: mergeStates(postState2, postState1, transition2, transition1)
+					default: mergeStates(postState1, postState2, transition1, transition2)
+			}
+		}
+	]
+
+	private def mergeStates(InitState stateToKeep, State stateToDelete, Transition transition) {
+		mergeStates(stateToDelete, stateToKeep, transition)
+	}
+
+	private def mergeStates(FinalState stateToKeep, State stateToDelete, Transition transition) {
+		mergeStates(stateToDelete, stateToKeep, transition)
+	}
+	
+	private def mergeStates(State stateToDelete, State stateToKeep, TypedTransition transitionToRemove, TypedTransition transitionToKeep) {
+		transitionToKeep.parameters += transitionToRemove.parameters
+		mergeStates(stateToDelete, stateToKeep, transitionToRemove)
+	}
 
 	/**
 	 * merge state1 into state2
 	 */
-	private def mergeStates(State stateToDelete, State stateToKeep, EpsilonTransition transition) {
+	private def mergeStates(State stateToDelete, State stateToKeep, Transition transition) {
 		removeTransition(transition)
-		
+		mergeStates(stateToDelete, stateToKeep)
+	}
+
+	private def mergeStates(State stateToDelete, State stateToKeep) {	
 		stateToKeep.inTransitions += stateToDelete.inTransitions
 		stateToKeep.outTransitions += stateToDelete.outTransitions
 
@@ -66,17 +98,6 @@ class OptimizationRules extends MappingRules {
 		stateToKeep.outStateOf += stateToDelete.outStateOf
 		
 		Preconditions::checkArgument(stateToDelete.outTransitions.forall[t | t instanceof EpsilonTransition])
-		
-		
-		(stateToDelete.eContainer as Automaton).states.remove(stateToDelete)
+		removeState(stateToDelete)
 	}
-
-	private def mergeStates(InitState stateToKeep, State stateToDelete, EpsilonTransition transition) {
-		mergeStates(stateToDelete, stateToKeep, transition)
-	}
-
-	private def mergeStates(FinalState stateToKeep, State stateToDelete, EpsilonTransition transition) {
-		mergeStates(stateToDelete, stateToKeep, transition)
-	}
-
 }

@@ -19,6 +19,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.State
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition
 import org.eclipse.viatra.cep.core.metamodels.events.AtLeastOne
+import org.eclipse.viatra.cep.core.metamodels.events.EventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference
 import org.eclipse.viatra.cep.core.metamodels.events.Infinite
 import org.eclipse.viatra.cep.core.metamodels.events.Multiplicity
@@ -51,15 +52,45 @@ class BuilderPrimitives {
 	 * Connects the preState and the postState using the eventPatternReference as a guard type
 	 */
 	def transitionBetween(EventPatternReference eventPatternReference, State preState, State postState) {
-		var transition = createTypedTransition
-		var guard = createGuard
-		guard.eventType = eventPatternReference.eventPattern
-		transition.guards.add(guard)
+		val transition = newTransition(preState, postState)
+		transition.addGuard(eventPatternReference)
+
+		eventPatternReference.handleTransitionParameters(transition)
+	}
+
+	def negTransitionBetween(EventPatternReference eventPatternReference, State preState, State postState) {
+		val transition = newNegTransition(preState, postState)
+		transition.addGuard(eventPatternReference)
+
+		eventPatternReference.handleTransitionParameters(transition)
+	}
+
+	def newTransition(State preState, State postState) {
+		val transition = createTypedTransition
 
 		transition.preState = preState
 		transition.postState = postState
 
-		eventPatternReference.handleTransitionParameters(transition)
+		transition
+	}
+
+	def newNegTransition(State preState, State postState) {
+		val transition = createNegativeTransition
+
+		transition.preState = preState
+		transition.postState = postState
+
+		transition
+	}
+
+	def addGuard(TypedTransition transition, EventPatternReference eventPatternReference) {
+		transition.addGuard(eventPatternReference.eventPattern)
+	}
+
+	def addGuard(TypedTransition transition, EventPattern eventPattern) {
+		var guard = createGuard
+		guard.eventType = eventPattern
+		transition.guards += guard
 	}
 
 	/**
@@ -149,6 +180,13 @@ class BuilderPrimitives {
 	def removeTransition(Transition transition) {
 		transition.postState = null
 		transition.preState.outTransitions.remove(transition)
+	}
+
+	/**
+	 * Removes a State from the model.
+	 */
+	def removeState(State state) {
+		(state.eContainer as Automaton).states.remove(state)
 	}
 
 	/**

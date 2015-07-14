@@ -11,15 +11,19 @@
 
 package org.eclipse.viatra.cep.core.experimental.mtcompiler.rules
 
+import com.google.common.base.Preconditions
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.AndPatternMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexAndTransitionMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexFollowsTransitionMatcher
+import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexNotTransitionMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexOrTransitionMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.FollowsPatternMatcher
+import org.eclipse.viatra.cep.core.experimental.mtcompiler.NotPatternMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.OrPatternMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.builders.BuilderPrimitives
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.builders.ComplexMappingUtils
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
+import org.eclipse.viatra.cep.core.metamodels.automaton.NegativeTransition
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
 
@@ -36,13 +40,14 @@ class ComplexMappingRules extends MappingRules {
 
 	override getAllRules() {
 		return #[
+			notPattern2AutomatonRule,
+			notUnfoldRule,
 			followsPattern2AutomatonRule,
 			orPattern2AutomatonRule,
 			followUnfoldRule,
 			orUnfoldRule,
 			andPattern2AutomatonRule,
 			andUnfoldRule
-//			, notPattern2AutomatonRule, notUnfoldRule
 		]
 	}
 
@@ -97,24 +102,25 @@ class ComplexMappingRules extends MappingRules {
 
 		automaton.buildAndPath(referredEventPattern, transition.preState, transition.postState)
 
-		transition.preState.outTransitions.remove(transition)
+		removeTransition(transition)
 	]
 
-//	val notPattern2AutomatonRule = createRule(NotPatternMatcher::querySpecification) [
-//		var automaton = eventPattern.initializeAutomaton
-//		val finalState = createFinalState
-//		automaton.states += finalState
-//
-//		automaton.buildNotPath(eventPattern, automaton.initialState, finalState)
-//
-//		createTrace(eventPattern, automaton)
-//	]
-//
-//	val notUnfoldRule = createRule(ComplexNotTransitionMatcher::querySpecification) [
-//		val referredEventPattern = transition.guards.head.eventType as ComplexEventPattern
-//
-//		automaton.buildNotPath(referredEventPattern, transition.preState, transition.postState)
-//
-//		transition.preState.outTransitions.remove(transition)
-//	]
+	val notPattern2AutomatonRule = createRule(NotPatternMatcher::querySpecification) [
+		var automaton = eventPattern.initializeAutomaton
+		val finalState = createFinalState
+		automaton.states += finalState
+
+		Preconditions::checkArgument(eventPattern.containedEventPatterns.size == 1)
+
+		automaton.buildNotPath(eventPattern.containedEventPatterns.head.eventPattern, automaton.initialState,
+			finalState)
+
+		createTrace(eventPattern, automaton)
+	]
+
+	val notUnfoldRule = createRule(ComplexNotTransitionMatcher::querySpecification) [
+		automaton.unfoldNotPath(eventPattern, transition as NegativeTransition)
+
+		removeTransition(transition)
+	]
 }

@@ -8,7 +8,6 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.viatra.cep.core.experimental.mtcompiler
 
 import "cep.meta"
@@ -26,7 +25,8 @@ pattern atomicEventPattern(eventPattern : AtomicEventPattern) {
 	neg find translatedEventPattern(eventPattern);
 }
 
-private pattern complexPattern(eventPattern : ComplexEventPattern, operator : ComplexEventOperator) {
+private pattern
+complexPattern(eventPattern : ComplexEventPattern, operator : ComplexEventOperator) {
 	EventModel.eventPatterns(_, eventPattern);
 	neg find translatedEventPattern(eventPattern);
 
@@ -53,37 +53,47 @@ pattern notPattern(eventPattern : ComplexEventPattern) {
 	NEG(operator);
 }
 
-private pattern complexTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern, operator : ComplexEventOperator){
+private pattern
+complexTransition(automaton : Automaton, transition : TypedTransition, eventPattern : ComplexEventPattern, operator : ComplexEventOperator) {
 	Automaton.states(automaton, preState);
 	Automaton.states(automaton, postState);
-	
+
 	State.outTransitions(preState, transition);
 	State.inTransitions(postState, transition);
-	
+
 	TypedTransition.guards(transition, guard);
 	Guard.eventType(guard, eventPattern);
-
-	ComplexEventPattern(eventPattern);
 
 	ComplexEventPattern.operator(eventPattern, operator);
 }
 
-pattern complexFollowsTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern){
+pattern negativeTransition(transition : TypedTransition) {
+	NegativeTransition(transition);
+}
+
+pattern
+complexFollowsTransition(automaton : Automaton, transition : TypedTransition, eventPattern : ComplexEventPattern) {
 	find complexTransition(automaton, transition, eventPattern, operator);
+	neg find negativeTransition(transition);
 	FOLLOWS(operator);
 }
 
-pattern complexOrTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern){
+pattern
+complexOrTransition(automaton : Automaton, transition : TypedTransition, eventPattern : ComplexEventPattern) {
 	find complexTransition(automaton, transition, eventPattern, operator);
+	neg find negativeTransition(transition);
 	OR(operator);
 }
 
-pattern complexAndTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern){
+pattern
+complexAndTransition(automaton : Automaton, transition : TypedTransition, eventPattern : ComplexEventPattern) {
 	find complexTransition(automaton, transition, eventPattern, operator);
+	neg find negativeTransition(transition);
 	AND(operator);
 }
 
-pattern complexNotTransition(automaton : Automaton, transition : TypedTransition, eventPattern : EventPattern){
-	find complexTransition(automaton, transition, eventPattern, operator);
-	NEG(operator);
+pattern
+complexNotTransition(automaton : Automaton, transition : TypedTransition, eventPattern : ComplexEventPattern) {
+	find complexTransition(automaton, transition, eventPattern, _);
+	find negativeTransition(transition);
 }
