@@ -23,10 +23,6 @@ epsilonTransition(automaton : Automaton, transition : EpsilonTransition, preStat
 	State.inTransitions(postState, transition);
 }
 
-pattern negativeTransition(transition : TypedTransition){
-	NegativeTransition(transition);
-}
-
 pattern sameBooleanTransitionType(transition1 : TypedTransition, transition2 : TypedTransition){
 	find negativeTransition(transition1);
 	find negativeTransition(transition2);

@@ -15,6 +15,9 @@ import com.google.common.base.Preconditions
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.TransformationBasedCompiler
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
+import org.eclipse.viatra.cep.core.metamodels.automaton.EpsilonTransition
+import org.eclipse.viatra.cep.core.metamodels.automaton.Guard
+import org.eclipse.viatra.cep.core.metamodels.automaton.NegativeTransition
 import org.eclipse.viatra.cep.core.metamodels.automaton.State
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition
@@ -37,7 +40,8 @@ class BuilderPrimitives {
 	}
 
 	/**
-	 * Creates a new state and connects it with the preState using the eventPatternReference as a guard type
+	 * Creates a new {@link State}, connects it with the preState and applies a {@link Guard} with the type of the
+	 * {@link EventPatternReference}.
 	 */
 	def transitionToNewState(Automaton automaton, EventPatternReference eventPatternReference, State preState) {
 		var nextState = createState
@@ -49,7 +53,8 @@ class BuilderPrimitives {
 	}
 
 	/**
-	 * Connects the preState and the postState using the eventPatternReference as a guard type
+	 * Connects the preState and the postState and applies a {@link Guard} with the type of the
+	 * {@link EventPatternReference}.
 	 */
 	def transitionBetween(EventPatternReference eventPatternReference, State preState, State postState) {
 		val transition = newTransition(preState, postState)
@@ -58,6 +63,10 @@ class BuilderPrimitives {
 		eventPatternReference.handleTransitionParameters(transition)
 	}
 
+	/**
+	 * Connects the preState and the postState with a {@link NegativeTransition} and applies a {@link Guard}
+	 * with the type of the {@link EventPatternReference}.
+	 */
 	def negTransitionBetween(EventPatternReference eventPatternReference, State preState, State postState) {
 		val transition = newNegTransition(preState, postState)
 		transition.addGuard(eventPatternReference)
@@ -65,6 +74,9 @@ class BuilderPrimitives {
 		eventPatternReference.handleTransitionParameters(transition)
 	}
 
+	/**
+	 * Primitive for creating a new {@link Transition}.
+	 */
 	def newTransition(State preState, State postState) {
 		val transition = createTypedTransition
 
@@ -74,6 +86,9 @@ class BuilderPrimitives {
 		transition
 	}
 
+	/**
+	 * Primitive for creating a new {@link NegativeTransition}.
+	 */
 	def newNegTransition(State preState, State postState) {
 		val transition = createNegativeTransition
 
@@ -83,10 +98,16 @@ class BuilderPrimitives {
 		transition
 	}
 
+	/**
+	 * Applies a {@link Guard} with the type of the {@link EventPatternReference} to the {@link Transition}. 
+	 */
 	def addGuard(TypedTransition transition, EventPatternReference eventPatternReference) {
 		transition.addGuard(eventPatternReference.eventPattern)
 	}
-
+	
+	/**
+	 * Applies a {@link Guard} with the type of the {@link EventPattern} to the {@link Transition}. 
+	 */
 	def addGuard(TypedTransition transition, EventPattern eventPattern) {
 		var guard = createGuard
 		guard.eventType = eventPattern
@@ -94,8 +115,8 @@ class BuilderPrimitives {
 	}
 
 	/**
-	 * Maps the eventPatternReference wrt its multiplicity between the preState and a fixed postState.
-	 * Creates an Epsilon transition between the last created intermediate state and the postState.
+	 * Maps the an {@link EventPatternReference} wrt its multiplicity between the preState and a fixed postState.
+	 * Creates an {@link EpsilonTransition} between the last created intermediate state and the postState.
 	 */
 	def mapWithMultiplicity(EventPatternReference eventPatternReference, Automaton automaton, State preState,
 		State postState) {

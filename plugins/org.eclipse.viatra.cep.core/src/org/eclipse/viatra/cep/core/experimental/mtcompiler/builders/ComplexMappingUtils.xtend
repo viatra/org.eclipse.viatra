@@ -18,6 +18,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
 import org.eclipse.viatra.cep.core.metamodels.automaton.NegativeTransition
 import org.eclipse.viatra.cep.core.metamodels.automaton.State
+import org.eclipse.viatra.cep.core.metamodels.automaton.Transition
 import org.eclipse.viatra.cep.core.metamodels.events.AND
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern
@@ -39,11 +40,19 @@ class ComplexMappingUtils {
 		this.builderPrimitives = new BuilderPrimitives(traceModel)
 	}
 
+	/**
+	 * Builds a path of {@link Transition}s and {@link State}s for the referred {@link EventPattern} with a
+	 * {@link FOLLOWS} operator.
+	 */
 	public def buildFollowsPath(Automaton automaton, ComplexEventPattern eventPattern, State preState,
 		State postState) {
 		buildFollowsPath(automaton, eventPattern.containedEventPatterns, preState, postState)
 	}
 
+	/**
+	 * Builds a path of {@link Transition}s and {@link State}s for the referred {@link EventPatternReference}s combined
+	 * under an {@link OR} operator.
+	 */
 	private def buildFollowsPath(Automaton automaton, List<EventPatternReference> eventPatternReferences,
 		State preState, State postState) {
 		var State nextState = null
@@ -59,6 +68,10 @@ class ComplexMappingUtils {
 		createEpsilon(nextState, postState)
 	}
 
+	/**
+	 * Builds a path of {@link Transition}s and {@link State}s for the referred {@link EventPattern} with an {@link OR}
+	 * operator.
+	 */
 	public def buildOrPath(Automaton automaton, ComplexEventPattern eventPattern, State preState, State postState) {
 		val State lastState = createState
 		automaton.states += lastState
@@ -70,6 +83,10 @@ class ComplexMappingUtils {
 		createEpsilon(lastState, postState)
 	}
 
+	/**
+	 * Builds a path of {@link Transition}s and {@link State}s for the referred {@link EventPattern} with an
+	 * {@link AND} operator.
+	 */
 	public def buildAndPath(Automaton automaton, ComplexEventPattern eventPattern, State preState, State postState) {
 		for (permutation : new PermutationsHelper<EventPatternReference>().getAll(
 			eventPattern.containedEventPatterns)) {
@@ -77,6 +94,10 @@ class ComplexMappingUtils {
 		}
 	}
 
+	/**
+	 * Builds a path of {@link Transition}s and {@link State}s for the referred {@link EventPattern} with a {@link NOT}
+	 * operator.
+	 */
 	public def buildNotPath(Automaton automaton, EventPattern eventPattern, State preState, State postState) {
 		var transition = createNegativeTransition
 		var guard = createGuard
@@ -87,6 +108,9 @@ class ComplexMappingUtils {
 		transition.postState = postState
 	}
 
+	/**
+	 * Unfolds a {@link Transition} guarded by a {@link ComplexEventPattern} with a {@link NEG} operator.
+	 */
 	public def unfoldNotPath(Automaton automaton, ComplexEventPattern eventPattern, NegativeTransition transition) {
 		switch (eventPattern.operator) {
 			NEG: { // double negation -> positive pattern

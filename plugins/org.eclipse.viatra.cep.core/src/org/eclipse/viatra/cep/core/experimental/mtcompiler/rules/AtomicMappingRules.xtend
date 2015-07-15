@@ -14,6 +14,8 @@ package org.eclipse.viatra.cep.core.experimental.mtcompiler.rules
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.AtomicEventPatternMatcher
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
+import org.eclipse.viatra.cep.core.metamodels.events.AtomicEventPattern
+import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 
 class AtomicMappingRules extends MappingRules {
 
@@ -24,7 +26,10 @@ class AtomicMappingRules extends MappingRules {
 	override getAllRules() {
 		return #[atomicPattern2AutomatonRule]
 	}
-
+	
+	/**
+	 * Transformation rule to compile {@link AtomicEventPattern}s to {@link Automaton}.
+	 */
 	val atomicPattern2AutomatonRule = createRule(AtomicEventPatternMatcher::querySpecification) [
 		var automaton = eventPattern.initializeAutomaton
 		var transition = createTypedTransition
