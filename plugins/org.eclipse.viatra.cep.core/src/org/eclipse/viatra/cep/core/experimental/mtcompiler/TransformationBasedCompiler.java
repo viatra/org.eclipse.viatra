@@ -14,19 +14,22 @@ package org.eclipse.viatra.cep.core.experimental.mtcompiler;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
+import com.google.common.base.Preconditions;
+
 public class TransformationBasedCompiler {
     public final static URI AUTOMATON_MODEL_URI = URI.createURI("cep/automaton.cep");
     public final static URI EVENT_MODEL_URI = URI.createURI("cep/events.cep");
     public final static URI TRACE_MODEL_URI = URI.createURI("cep/trace.cep");
     public final static String OMITTED_PARAMETER_SYMBOLIC_NAME = "_";
-    
+
     private Pattern2AutomatonMapping mapping;
 
-    public TransformationBasedCompiler(ResourceSet resourceSet) {
-        mapping = new Pattern2AutomatonMapping(resourceSet);
+    public TransformationBasedCompiler() {
     }
 
-    public void compile() {
+    public void compile(ResourceSet resourceSet) {
+        Preconditions.checkArgument(mapping == null);
+        mapping = new Pattern2AutomatonMapping(resourceSet);
         mapping.mapPatterns();
     }
 }

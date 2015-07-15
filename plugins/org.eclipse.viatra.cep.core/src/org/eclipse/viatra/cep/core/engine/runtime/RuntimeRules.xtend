@@ -27,10 +27,10 @@ import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformatio
 import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformation
 import org.eclipse.xtend.lib.annotations.Accessors
 
-class ModelHandlingRules {
+class RuntimeRules {
 
 	val extension EventDrivenTransformationRuleFactory ruleFactory = new EventDrivenTransformationRuleFactory
-	val extension EvaluationPatterns evaluationPatterns = EvaluationPatterns::instance
+	val extension RuntimePatterns evaluationPatterns = RuntimePatterns::instance
 	val extension Logger logger = LoggerUtils::instance.logger
 
 	@Accessors IEventModelManager eventModelManager;
@@ -135,7 +135,6 @@ class ModelHandlingRules {
 		Preconditions::checkArgument(automaton.finalStates.size == 1)
 		automaton.eventTokens.remove(eventToken)
 		var observedPattern = new ObservedComplexEventPattern(automaton, eventToken)
-		eventModelManager.callbackOnPatternRecognition(observedPattern)
 		eventModelManager.cepRealm.forwardObservedEventPattern(observedPattern)
 	].build
 

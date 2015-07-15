@@ -33,7 +33,7 @@ import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedSc
 import org.eclipse.incquery.runtime.evm.update.UpdateCompleteProvider;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.engine.compiler.Compiler;
-import org.eclipse.viatra.cep.core.engine.runtime.ModelHandlingRules;
+import org.eclipse.viatra.cep.core.engine.runtime.RuntimeRules;
 import org.eclipse.viatra.cep.core.eventprocessingstrategy.EventProcessingStrategyFactory;
 import org.eclipse.viatra.cep.core.eventprocessingstrategy.IEventProcessingStrategy;
 import org.eclipse.viatra.cep.core.evm.CepRealm;
@@ -107,7 +107,7 @@ public class DefaultEventModelManager implements IEventModelManager {
     }
 
     private void initializeLowLevelModelHandling() {
-        new ModelHandlingRules(this).registerRulesWithCustomPriorities();
+        new RuntimeRules(this).registerRulesWithCustomPriorities();
     }
 
     public Automaton getAutomaton(EventPattern eventPattern) {

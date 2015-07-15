@@ -8,7 +8,7 @@
   <extension id="org.eclipse.viatra.cep.core.engine.compiler.AutomatonRewritePatterns" point="org.eclipse.incquery.runtime.queryspecification">
     <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.compiler.AutomatonRewritePatterns" id="org.eclipse.viatra.cep.core.engine.compiler.AutomatonRewritePatterns"/>
   </extension>
-  <extension id="org.eclipse.viatra.cep.core.engine.runtime.EvaluationPatterns" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.runtime.EvaluationPatterns" id="org.eclipse.viatra.cep.core.engine.runtime.EvaluationPatterns"/>
+  <extension id="org.eclipse.viatra.cep.core.engine.runtime.RuntimePatterns" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.runtime.RuntimePatterns" id="org.eclipse.viatra.cep.core.engine.runtime.RuntimePatterns"/>
   </extension>
 </plugin>
