@@ -22,5 +22,5 @@ Export-Package: org.eclipse.incquery.runtime.matchers.backend,
  org.eclipse.incquery.runtime.matchers.tuple,
  org.eclipse.incquery.runtime.matchers.util
 Bundle-ClassPath: .
-Require-Bundle: com.google.guava;bundle-version="10.0.1",
- org.apache.log4j;bundle-version="1.0.0"
+Require-Bundle: com.google.guava;bundle-version="10.0.1"
+Import-Package: org.apache.log4j;version="1.2.15"
