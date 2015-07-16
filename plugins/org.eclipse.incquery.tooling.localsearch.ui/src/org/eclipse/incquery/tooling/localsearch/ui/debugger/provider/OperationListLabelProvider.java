@@ -46,20 +46,14 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
     // TODO proper resource management
     private LocalResourceManager localResourceManager;
     
-    private static final Image notAppliedOperationImage;
-    private static final Image appliedOperationImage;
-    private static final Image currentOperationImage;
+    private static final Image notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+            LocalSearchToolingActivator.PLUGIN_ID, "/icons/help_contents.gif").createImage();
+    private static final Image appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+            LocalSearchToolingActivator.PLUGIN_ID, "/icons/complete_status.gif").createImage();
+    private static final Image currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+            LocalSearchToolingActivator.PLUGIN_ID, "icons/nav_go.gif").createImage();
 
 	private Map<Object, SearchPlanExecutor> dummyMatchOperationMappings = Maps.newHashMap();
-
-	static {
-		// notAppliedOperationImage = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_ELCL_SYNCED);
-		// notAppliedOperationImage = JavaDebugImages.get(JavaDebugImages.IMG_OBJS_CONTENDED_MONITOR);
-		// currentOperationImage = DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_LAUNCH_RUN);
-		notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(LocalSearchToolingActivator.PLUGIN_ID, "/icons/help_contents.gif").createImage();
-		currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(LocalSearchToolingActivator.PLUGIN_ID, "icons/nav_go.gif").createImage();
-		appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(LocalSearchToolingActivator.PLUGIN_ID, "/icons/complete_status.gif").createImage();
-	}
 
 	@Override
 	public void update(final ViewerCell cell) {

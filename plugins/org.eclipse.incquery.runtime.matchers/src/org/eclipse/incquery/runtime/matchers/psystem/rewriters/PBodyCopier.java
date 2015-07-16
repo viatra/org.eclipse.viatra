@@ -11,7 +11,6 @@
 package org.eclipse.incquery.runtime.matchers.psystem.rewriters;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +36,8 @@ import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IConstraintFilter
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -63,9 +64,6 @@ public class PBodyCopier {
     
     public PBodyCopier(PBody body) {
         this.body = new PBody(body.getPattern());
-        
-        // preinitialize parameter list
-        this.body.setExportedParameters(Collections.<ExportedParameter>emptyList());
 
         // do the actual copying
         mergeBody(body);
@@ -95,10 +93,20 @@ public class PBodyCopier {
             }
         }
 
+        // Copy exported parameters
+        this.body.setExportedParameters(Lists.transform(sourceBody.getSymbolicParameters(),
+                new Function<ExportedParameter, ExportedParameter>() {
+
+                    @Override
+                    public ExportedParameter apply(ExportedParameter input) {
+                        return copyExportedParameterConstraint(input);
+                    }
+                }));
+
         // Copy constraints which are not filtered
         Set<PConstraint> constraints = sourceBody.getConstraints();
         for (PConstraint pConstraint : constraints) {
-            if (!filter.filter(pConstraint) ) {
+            if (!(pConstraint instanceof ExportedParameter) && !filter.filter(pConstraint)) {
                 copyConstraint(pConstraint);
             }
         }
@@ -143,10 +151,11 @@ public class PBodyCopier {
     }
 
 
-    protected void copyExportedParameterConstraint(ExportedParameter exportedParameter) {
+    protected ExportedParameter copyExportedParameterConstraint(ExportedParameter exportedParameter) {
         PVariable mappedPVariable = variableMapping.get(exportedParameter.getParameterVariable());
         ExportedParameter newExportedParameter = new ExportedParameter(body, mappedPVariable, exportedParameter.getParameterName());
         body.getSymbolicParameters().add(newExportedParameter);
+        return newExportedParameter;
     }
 
     protected void copyEqualityConstraint(Equality equality) {

@@ -55,7 +55,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         try {
             return this.doFlatten(disjunction);
         } catch (Exception e) {
-            throw new RewriterException(FLATTENING_ERROR_MESSAGE, null, FLATTENING_ERROR_MESSAGE, query, e);
+            throw new RewriterException(FLATTENING_ERROR_MESSAGE, new String[0], FLATTENING_ERROR_MESSAGE, query, e);
         }
     }
 

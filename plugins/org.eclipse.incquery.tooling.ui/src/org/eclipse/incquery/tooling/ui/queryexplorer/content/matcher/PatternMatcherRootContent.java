@@ -194,7 +194,13 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
                     message);
         }
         logger.log(contentStatus);
-        getParent().getViewer().refresh(this);
+        getParent().getViewer().getControl().getDisplay().asyncExec(new Runnable() {
+
+            @Override
+            public void run() {
+                getParent().getViewer().refresh(this);
+            }
+        });
     }
     
     private class ContentEngineTaintListener implements IncQueryEngineLifecycleListener {

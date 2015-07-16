@@ -82,6 +82,10 @@ public interface ISearchContext{
         }
 
         public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
+            if (this.navigationHelper.isInWildcardMode()) {
+                // In wildcard mode, everything is registered (+ register throws an exception)
+                return;
+            }
             this.navigationHelper.registerObservedTypes(classes, dataTypes, features);
         }
         

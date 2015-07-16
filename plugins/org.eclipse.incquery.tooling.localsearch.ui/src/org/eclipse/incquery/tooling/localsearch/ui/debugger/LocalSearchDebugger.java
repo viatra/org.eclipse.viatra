@@ -13,7 +13,7 @@ package org.eclipse.incquery.tooling.localsearch.ui.debugger;
 import java.util.Deque;
 import java.util.List;
 
-import org.apache.log4j.Priority;
+import org.apache.log4j.Level;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 import org.eclipse.incquery.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
@@ -95,7 +95,10 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 						
 						localSearchDebugView.refreshView();
 					} catch (PartInitException e) {
-						IncQueryLoggingUtil.getDefaultLogger().log(Priority.ERROR, "A part init exception occured while executing pattern matcher started handler" + e.getMessage(), e);
+                        IncQueryLoggingUtil.getDefaultLogger().log(
+                                Level.ERROR,
+                                "A part init exception occured while executing pattern matcher started handler"
+                                        + e.getMessage(), e);
 					}
 				}
 			});
