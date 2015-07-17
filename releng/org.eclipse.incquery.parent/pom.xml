@@ -297,6 +297,7 @@
 				<module>../../features/org.eclipse.incquery.databinding.runtime.feature</module>
 				<module>../../features/org.eclipse.incquery.sdk.feature</module>
 				<module>../../features/org.eclipse.incquery.tooling.ui.visualization.feature</module>
+				<module>../../features/org.eclipse.incquery.tooling.ui.localsearch.feature</module>
 				<module>../../features/org.eclipse.incquery.testing.sdk.feature</module>
 				<module>../../features/org.eclipse.incquery.validation.runtime.feature</module>
 				<module>../../features/org.eclipse.incquery.validation.tooling.feature</module>
