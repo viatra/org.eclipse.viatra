@@ -24,7 +24,7 @@
 		<module>../../releng/org.eclipse.incquery.target</module>
 	</modules>
 	<properties>
-		<tycho.version>0.22.0</tycho.version>
+		<tycho.version>0.23.1</tycho.version>
 		<tycho.extras.version>${tycho.version}</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/incquery/org.eclipse.incquery.git</tycho.scmUrl>
