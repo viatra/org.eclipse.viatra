@@ -9,8 +9,18 @@
     <relativePath>../../releng/org.eclipse.viatra.parent/pom.xml</relativePath>
   </parent>
   <artifactId>org.eclipse.viatra.cep.core.tests.mtcompiler.testdata</artifactId>
-  <packaging>eclipse-test-plugin</packaging>
+  <packaging>eclipse-plugin</packaging>
   <properties>
 		<vmargs>-Xmx1024m -XX:MaxPermSize=512m</vmargs>
   </properties>
+  <build>
+		<resources>
+			<resource>
+				<directory>src</directory>
+			</resource>
+			<resource>
+				<directory>src-gen</directory>
+			</resource>
+		</resources>
+	</build>
 </project>
