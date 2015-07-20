@@ -28,6 +28,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.NEG
 import org.eclipse.viatra.cep.core.metamodels.events.OR
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceFactory
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
+import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
 
 class ComplexMappingUtils {
 	protected val extension AutomatonFactory automatonFactory = AutomatonFactory.eINSTANCE
@@ -46,7 +47,9 @@ class ComplexMappingUtils {
 	 */
 	public def buildFollowsPath(Automaton automaton, ComplexEventPattern eventPattern, State preState,
 		State postState) {
-		buildFollowsPath(automaton, eventPattern.containedEventPatterns, preState, postState)
+		val firstCreatedState = buildFollowsPath(automaton, eventPattern.containedEventPatterns, preState, postState)
+
+		handleTimewindow(automaton, eventPattern, preState, postState, firstCreatedState)
 	}
 
 	/**
@@ -55,17 +58,20 @@ class ComplexMappingUtils {
 	 */
 	private def buildFollowsPath(Automaton automaton, List<EventPatternReference> eventPatternReferences,
 		State preState, State postState) {
+		var State firstCreatedState = null
 		var State nextState = null
 
 		for (eventPatternReference : eventPatternReferences) {
 			if (nextState == null) {
 				nextState = mapWithMultiplicity(eventPatternReference, automaton, preState)
+				firstCreatedState = nextState
 			} else {
 				nextState = mapWithMultiplicity(eventPatternReference, automaton, nextState)
 			}
 		}
 
 		createEpsilon(nextState, postState)
+		firstCreatedState
 	}
 
 	/**
@@ -121,14 +127,14 @@ class ComplexMappingUtils {
 			FOLLOWS: {
 				val firstNegBranch = newNegTransition(transition.preState, transition.postState)
 				firstNegBranch.addGuard(eventPattern.containedEventPatterns.head)
-				firstNegBranch.parameters += transition.parameters
-
+				eventPattern.containedEventPatterns.head.handleTransitionParameters(firstNegBranch)
 				if (eventPattern.containedEventPatterns.size > 1) {
-					Preconditions::checkArgument(eventPattern.containedEventPatterns.size == 2) // XXX
+					Preconditions::checkArgument(eventPattern.containedEventPatterns.size == 2) // XXX domain knowledge hard coded!
 					val secondNegBranchState = automaton.transitionToNewState(eventPattern.containedEventPatterns.head,
 						transition.preState)
-					newNegTransition(secondNegBranchState, transition.postState).addGuard(
-						eventPattern.containedEventPatterns.get(1))
+					val secondNegBranch = newNegTransition(secondNegBranchState, transition.postState)
+					secondNegBranch.addGuard(eventPattern.containedEventPatterns.get(1))
+					eventPattern.containedEventPatterns.last.handleTransitionParameters(secondNegBranch)
 				}
 			}
 			OR: {
@@ -139,6 +145,14 @@ class ComplexMappingUtils {
 			// TODO : parameters?
 			}
 			AND: {
+				for (permutation : new PermutationsHelper<EventPatternReference>().getAll(
+					eventPattern.containedEventPatterns)) {
+					val surrogateFollowsPattern = EventsFactory.eINSTANCE.createComplexEventPattern
+					surrogateFollowsPattern.containedEventPatterns += permutation
+					surrogateFollowsPattern.operator = EventsFactory.eINSTANCE.createFOLLOWS
+					transitionBetween(surrogateFollowsPattern, transition.preState, transition.postState)
+				}
+
 				throw new UnsupportedOperationException
 			}
 			default: {

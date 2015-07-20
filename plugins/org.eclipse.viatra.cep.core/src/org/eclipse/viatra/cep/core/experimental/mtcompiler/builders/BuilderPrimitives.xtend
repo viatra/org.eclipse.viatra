@@ -12,6 +12,7 @@
 package org.eclipse.viatra.cep.core.experimental.mtcompiler.builders
 
 import com.google.common.base.Preconditions
+import java.util.List
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.TransformationBasedCompiler
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
@@ -22,8 +23,10 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.State
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition
 import org.eclipse.viatra.cep.core.metamodels.events.AtLeastOne
+import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference
+import org.eclipse.viatra.cep.core.metamodels.events.FOLLOWS
 import org.eclipse.viatra.cep.core.metamodels.events.Infinite
 import org.eclipse.viatra.cep.core.metamodels.events.Multiplicity
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceFactory
@@ -53,6 +56,19 @@ class BuilderPrimitives {
 	}
 
 	/**
+	 * Creates a new {@link State}, connects it with the preState via a {@link NegativeTransition} and applies a
+	 * {@link Guard} with the type of the {@link EventPatternReference}.
+	 */
+	def negTransitionToNewState(Automaton automaton, EventPatternReference eventPatternReference, State preState) {
+		var nextState = createState
+		automaton.states += nextState
+
+		negTransitionBetween(eventPatternReference, preState, nextState)
+
+		nextState
+	}
+
+	/**
 	 * Connects the preState and the postState and applies a {@link Guard} with the type of the
 	 * {@link EventPatternReference}.
 	 */
@@ -61,6 +77,15 @@ class BuilderPrimitives {
 		transition.addGuard(eventPatternReference)
 
 		eventPatternReference.handleTransitionParameters(transition)
+	}
+
+	/**
+	 * Connects the preState and the postState and applies a {@link Guard} with the type of the
+	 * {@link EventPatternReference}.
+	 */
+	def transitionBetween(EventPattern eventPattern, State preState, State postState) {
+		val transition = newTransition(preState, postState)
+		transition.addGuard(eventPattern)
 	}
 
 	/**
@@ -104,7 +129,7 @@ class BuilderPrimitives {
 	def addGuard(TypedTransition transition, EventPatternReference eventPatternReference) {
 		transition.addGuard(eventPatternReference.eventPattern)
 	}
-	
+
 	/**
 	 * Applies a {@link Guard} with the type of the {@link EventPattern} to the {@link Transition}. 
 	 */
@@ -228,35 +253,40 @@ class BuilderPrimitives {
 		}
 	}
 
-//	/**
-//	 * Maps timewindows onto timed zones.
-//	 */
-//	def handleTimewindow(Automaton automaton, ComplexEventPattern eventPattern, List<Transition> transitions) {
-//		if (eventPattern.timewindow == null) {
-//			return
-//		}
-//
+	/**
+	 * Maps timewindows onto timed zones.
+	 */
+	def handleTimewindow(Automaton automaton, ComplexEventPattern eventPattern, List<Transition> transitions) {
+		if (eventPattern.timewindow == null) {
+			return
+		}
+
 //		transitions.forEach [ transition |
 //			handleTimewindow(automaton, eventPattern, transition)
 //		]
-//
-//	}
-//
-//	def handleTimewindow(Automaton automaton, ComplexEventPattern eventPattern, State inState, State outState) {
-//		if (eventPattern.timewindow == null) {
-//			return
-//		}
-//		var timedZone = createWithin
-//		timedZone.time = eventPattern.timewindow.time
-//		timedZone.inState = inState
-//		timedZone.outState = outState
-//		automaton.timedZones += timedZone
-//
-//		if (eventPattern.operator instanceof OR) {
+	}
+
+	def handleTimewindow(Automaton automaton, ComplexEventPattern eventPattern, State inState, State outState,
+		State newlyCreatedState) {
+		if (!inState.inStateOf.empty) {
+			newlyCreatedState.inStateOf += inState.inStateOf
+		}
+		if (eventPattern.timewindow != null) {
+			Preconditions::checkArgument(eventPattern.operator instanceof FOLLOWS)
+
+			var timedZone = createWithin
+			timedZone.time = eventPattern.timewindow.time
+			timedZone.inState = inState
+			timedZone.outState = outState
+			automaton.timedZones += timedZone
+
+		// if (eventPattern.operator instanceof OR) {
 //			val tzTrace = createTimedZoneTrace
 //			tzTrace.timedZone = timedZone
 //			tzTrace.transition = transition
 //			traceModel.timedZoneTraces += tzTrace
 //		}
-//	}
+		}
+
+	}
 }
