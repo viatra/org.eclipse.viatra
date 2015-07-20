@@ -11,10 +11,12 @@ import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.CepFactory;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.TimewinFollows2_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.TimewinFollows_Pattern;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TimewindowTests extends ComplexTest {
 
+    @Ignore
     @Test
     public void timewinFollowsTest() {
         TimewinFollows_Pattern pattern = CepFactory.getInstance().createTimewinFollows_Pattern();
@@ -45,6 +47,7 @@ public class TimewindowTests extends ComplexTest {
         Assert.assertTrue(noOrphanStates(automaton));
     }
 
+    @Ignore
     @Test
     public void timewinFollows2Test() {
         TimewinFollows2_Pattern pattern = CepFactory.getInstance().createTimewinFollows2_Pattern();
