@@ -189,6 +189,7 @@
 				<module>../../plugins/org.eclipse.viatra.dse.designspace.pathfinding</module>
 				<module>../../plugins/org.eclipse.viatra.dse.genetic</module>
 				<module>../../plugins/org.eclipse.viatra.dse.monitor</module>
+				<module>../../tests/org.eclipse.viatra.cep.core.tests.mtcompiler</module>
 				<module>../../tests/org.eclipse.viatra.cep.vepl.tests</module>
 				<module>../../tests/org.eclipse.viatra.cep.tests.integration</module>
 				<module>../../features/org.eclipse.viatra.emf.runtime.feature</module>
