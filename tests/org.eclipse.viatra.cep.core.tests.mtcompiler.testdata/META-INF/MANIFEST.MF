@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: MTCompiler Test Data
+Bundle-SymbolicName: org.eclipse.viatra.cep.core.tests.mtcompiler.testdata;singleton:=true
+Bundle-Version: 0.8.0.qualifier
+Export-Package: org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns,
+ org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.events,
+ org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.jobs,
+ org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic,
+ org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex,
+ org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.rules
+Require-Bundle: org.eclipse.emf.ecore,
+ org.eclipse.viatra.cep.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.log4j
