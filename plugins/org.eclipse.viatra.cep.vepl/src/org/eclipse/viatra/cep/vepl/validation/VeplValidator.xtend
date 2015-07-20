@@ -43,6 +43,9 @@ class VeplValidator extends AbstractVeplValidator {
 	public static val NO_INFINITE_SUPPORT = "noInfiniteSupport"
 	public static val NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE = "negativeOperatorOnNonAtomicReference"
 	public static val UNSAFE_INFINITE_MULTIPLICITY = "unsafeInfiniteMultiplicity"
+	public static val PARAMETER_ON_NON_ATOMIC_PATTERN_CALL = "parameterOnNonAtomicPatternCall"
+	public static val UNDEFINED_PARAMETER = "undefinedParameter"
+	public static val PARAMETER_TYPE_MISMATCH = "parameterTypeMismatch"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -160,28 +163,70 @@ class VeplValidator extends AbstractVeplValidator {
 			val atom = expression.left as Atom
 
 			if (!atom.hasMultiplicity) {
-				warning("Using a single plain atomic event pattern in the complex event pattern is a bad design.",
+				warning(
+					"Using a single plain atomic event pattern in the complex event pattern is a bad design.",
 					VeplPackage.Literals.COMPLEX_EVENT_PATTERN__COMPLEX_EVENT_EXPRESSION,
-					SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION)
-				}
-			}
-		}
-
-		@Check
-		def negativeOperatorOnComplexEventPatternReference(ComplexEventExpression complexEventExpression) {
-			if (complexEventExpression.negOperator == null) {
-				return
-			}
-
-			val primary = complexEventExpression.primary as Atom
-
-			val patternCall = primary.patternCall
-			if (!(patternCall.eventPattern instanceof AbstractAtomicEventPattern)) {
-				error(
-					"The NOT operator can be applied only on atomic event pattern references.",
-					VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__NEG_OPERATOR,
-					NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE
+					SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION
 				)
 			}
 		}
 	}
+
+	@Check
+	def negativeOperatorOnComplexEventPatternReference(ComplexEventExpression complexEventExpression) {
+		if (complexEventExpression.negOperator == null) {
+			return
+		}
+
+		val primary = complexEventExpression.primary as Atom
+
+		val patternCall = primary.patternCall
+		if (!(patternCall.eventPattern instanceof AbstractAtomicEventPattern)) {
+			error(
+				"The NOT operator can be applied only on atomic event pattern references.",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__NEG_OPERATOR,
+				NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE
+			)
+		}
+	}
+
+	@Check
+	def paramOnlyOnAtomicEventPatternReference(ParameterizedPatternCall parameterizedPatternCall) {
+		if (parameterizedPatternCall.parameterList == null) {
+			return
+		}
+		if (parameterizedPatternCall.parameterList.parameters.empty) {
+			return
+		}
+		if (!(parameterizedPatternCall.eventPattern instanceof AtomicEventPattern)) {
+			error(
+				"Parameters are only applicable to atomic event pattern references.",
+				VeplPackage.Literals.PARAMETERIZED_PATTERN_CALL__PARAMETER_LIST,
+				PARAMETER_ON_NON_ATOMIC_PATTERN_CALL
+			)
+		}
+	}
+
+	@Check
+	def undefinedParameter(ParameterizedPatternCall parameterizedPatternCall) {
+		val complexEventPattern = parameterizedPatternCall.findContainingComplexEventPatternDefinition
+
+		val paramIsDefined = parameterizedPatternCall.parameterList.parameters.forall [ callParam |
+			if (callParam.name.equalsIgnoreCase("_")) {
+				return true
+			}
+			val match = complexEventPattern.parameters.parameters.findFirst [ defParam |
+				defParam.name.equals(callParam.name)
+			]
+			match != null
+		]
+
+		if (!paramIsDefined) {
+			error(
+				"Undefined parameter.",
+				VeplPackage.Literals.PARAMETERIZED_PATTERN_CALL__PARAMETER_LIST,
+				UNDEFINED_PARAMETER
+			)
+		}
+	}
+}

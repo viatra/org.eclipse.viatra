@@ -4,14 +4,16 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
 package org.eclipse.viatra.cep.vepl.validation
 
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression
+import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
 import org.eclipse.viatra.cep.vepl.vepl.Rule
 
@@ -45,5 +47,20 @@ class ValidationHelper {
 
 	def static hasActionHandler(Rule rule) {
 		return rule.actionHandler != null
+	}
+
+	def static findContainingComplexEventPatternDefinition(ParameterizedPatternCall parameterizedPatternCall) {
+		var ComplexEventPattern complexEventPattern = null
+		var EObject tmp = parameterizedPatternCall.eContainer
+
+		while (complexEventPattern == null) {
+			if (tmp instanceof ComplexEventPattern) {
+				complexEventPattern = tmp as ComplexEventPattern
+			} else {
+				tmp = tmp.eContainer
+			}
+		}
+
+		return complexEventPattern
 	}
 }
