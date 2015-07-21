@@ -4,7 +4,7 @@ Bundle-Name: MTCompiler Tests
 Bundle-SymbolicName: org.eclipse.viatra.cep.core.tests.mtcompiler
 Bundle-Version: 0.8.0.qualifier
 Fragment-Host: org.eclipse.viatra.cep.core;bundle-version="0.8.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit,
  org.eclipse.viatra.cep.core.tests.mtcompiler.testdata,
  org.eclipse.core.databinding.observable
