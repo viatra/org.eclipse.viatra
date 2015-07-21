@@ -50,7 +50,8 @@ import org.eclipse.viatra.cep.core.streams.EventStream;
 import org.eclipse.viatra.cep.core.streams.IStreamManager;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 /**
@@ -118,7 +119,7 @@ public class TransformationBasedCEPEngine {
         addSingleRule(rule);
     }
 
-    private Map<EventPattern, ICepRule> mappings = Maps.newHashMap();
+    private Multimap<EventPattern, ICepRule> mappings = ArrayListMultimap.create();
 
     private void addSingleRule(ICepRule rule) {
         Preconditions.checkArgument(!rule.getEventPatterns().isEmpty());
@@ -131,9 +132,10 @@ public class TransformationBasedCEPEngine {
     public void start() {
         new TransformationBasedCompiler().compile(resourceSet);
 
+        // XXX this lookup should be fixed
         for (Automaton automaton : internalModel.getAutomata()) {
             for (Trace trace : traceModel.getTraces()) {
-                for (Entry<EventPattern, ICepRule> entry : mappings.entrySet()) { // XXX this lookup should be fixed
+                for (Entry<EventPattern, ICepRule> entry : mappings.entries()) {
                     if (entry.getKey().equals(trace.getEventPattern())) {
                         CepEventSourceSpecification sourceSpec = new CepEventSourceSpecification(automaton);
                         Job<IObservableComplexEventPattern> job = entry.getValue().getJob();
