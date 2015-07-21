@@ -44,8 +44,6 @@ class VeplValidator extends AbstractVeplValidator {
 	public static val NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE = "negativeOperatorOnNonAtomicReference"
 	public static val UNSAFE_INFINITE_MULTIPLICITY = "unsafeInfiniteMultiplicity"
 	public static val PARAMETER_ON_NON_ATOMIC_PATTERN_CALL = "parameterOnNonAtomicPatternCall"
-	public static val UNDEFINED_PARAMETER = "undefinedParameter"
-	public static val PARAMETER_TYPE_MISMATCH = "parameterTypeMismatch"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -172,7 +170,7 @@ class VeplValidator extends AbstractVeplValidator {
 		}
 	}
 
-	@Check
+//	@Check
 	def negativeOperatorOnComplexEventPatternReference(ComplexEventExpression complexEventExpression) {
 		if (complexEventExpression.negOperator == null) {
 			return
@@ -207,26 +205,4 @@ class VeplValidator extends AbstractVeplValidator {
 		}
 	}
 
-	@Check
-	def undefinedParameter(ParameterizedPatternCall parameterizedPatternCall) {
-		val complexEventPattern = parameterizedPatternCall.findContainingComplexEventPatternDefinition
-
-		val paramIsDefined = parameterizedPatternCall.parameterList.parameters.forall [ callParam |
-			if (callParam.name.equalsIgnoreCase("_")) {
-				return true
-			}
-			val match = complexEventPattern.parameters.parameters.findFirst [ defParam |
-				defParam.name.equals(callParam.name)
-			]
-			match != null
-		]
-
-		if (!paramIsDefined) {
-			error(
-				"Undefined parameter.",
-				VeplPackage.Literals.PARAMETERIZED_PATTERN_CALL__PARAMETER_LIST,
-				UNDEFINED_PARAMETER
-			)
-		}
-	}
 }
