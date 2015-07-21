@@ -7,14 +7,14 @@ import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic.
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic.B_1_Pattern;
 
 @SuppressWarnings("all")
-public class _AnonymousPattern_25 extends ParameterizableComplexEventPattern {
-  public _AnonymousPattern_25() {
+public class _AnonymousPattern_27 extends ParameterizableComplexEventPattern {
+  public _AnonymousPattern_27() {
     super();
-    setOperator(EventsFactory.eINSTANCE.createFOLLOWS());
+    setOperator(EventsFactory.eINSTANCE.createAND());
     
     // contained event patterns
     addEventPatternRefrence(new A_1_Pattern(), 1, Lists.newArrayList("param"));
     addEventPatternRefrence(new B_1_Pattern(), 1, Lists.newArrayList("param"));
-    setId("org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._anonymouspattern_25");
+    setId("org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._anonymouspattern_27");
   }
 }

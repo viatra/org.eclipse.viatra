@@ -96,6 +96,18 @@ ComplexEvent timewinFollows3(){
 	definition: ((a -> b) -> c)[1000]
 }
 
+ComplexEvent timewinOr(){
+	definition: (a OR b)[1000]
+}
+
+ComplexEvent timewinAnd(){
+	definition: (a AND b)[1000]
+}
+
+ComplexEvent timewinOr2(){
+	definition: ((a->b) OR (b->a))[1000]
+}
+
 ComplexEvent notAtomic(){
 	definition: NOT a
 }
@@ -126,6 +138,18 @@ ComplexEvent notOrParams(param : String){
 
 ComplexEvent notAndParams(param : String){
 	definition: NOT (a_1(param) AND b_1(param))
+}
+
+ComplexEvent notFollowsTimewin(){
+	definition: NOT ((a->b)[1000])
+}
+
+ComplexEvent notOrTimewin(){
+	definition: NOT ((a OR b)[1000])
+}
+
+ComplexEvent notAndTimewin(){
+	definition: (NOT (a AND b))[1000]
 }
 
 ComplexEvent paramsFollows(param : String){

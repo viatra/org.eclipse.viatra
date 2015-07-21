@@ -47,21 +47,27 @@ import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NestedOrWithFollows2_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NestedOr_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotAndParams_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotAndTimewin_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotAnd_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotAtomic_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollows2_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollowsParams_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollowsTimewin_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollows_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotOrParams_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotOrTimewin_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotOr_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.Or_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.ParamsAnd_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.ParamsFollows_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.ParamsOr_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.Teq1_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.TimewinAnd_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.TimewinFollows2_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.TimewinFollows3_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.TimewinFollows_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.TimewinOr2_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.TimewinOr_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.rules.R;
 
 @SuppressWarnings("all")
@@ -482,6 +488,27 @@ public class CepFactory {
   }
   
   /**
+   * Factory method for complex event pattern {@link TimewinOr_Pattern}.
+   */
+  public TimewinOr_Pattern createTimewinOr_Pattern() {
+    return new TimewinOr_Pattern();
+  }
+  
+  /**
+   * Factory method for complex event pattern {@link TimewinAnd_Pattern}.
+   */
+  public TimewinAnd_Pattern createTimewinAnd_Pattern() {
+    return new TimewinAnd_Pattern();
+  }
+  
+  /**
+   * Factory method for complex event pattern {@link TimewinOr2_Pattern}.
+   */
+  public TimewinOr2_Pattern createTimewinOr2_Pattern() {
+    return new TimewinOr2_Pattern();
+  }
+  
+  /**
    * Factory method for complex event pattern {@link NotAtomic_Pattern}.
    */
   public NotAtomic_Pattern createNotAtomic_Pattern() {
@@ -535,6 +562,27 @@ public class CepFactory {
    */
   public NotAndParams_Pattern createNotAndParams_Pattern() {
     return new NotAndParams_Pattern();
+  }
+  
+  /**
+   * Factory method for complex event pattern {@link NotFollowsTimewin_Pattern}.
+   */
+  public NotFollowsTimewin_Pattern createNotFollowsTimewin_Pattern() {
+    return new NotFollowsTimewin_Pattern();
+  }
+  
+  /**
+   * Factory method for complex event pattern {@link NotOrTimewin_Pattern}.
+   */
+  public NotOrTimewin_Pattern createNotOrTimewin_Pattern() {
+    return new NotOrTimewin_Pattern();
+  }
+  
+  /**
+   * Factory method for complex event pattern {@link NotAndTimewin_Pattern}.
+   */
+  public NotAndTimewin_Pattern createNotAndTimewin_Pattern() {
+    return new NotAndTimewin_Pattern();
   }
   
   /**

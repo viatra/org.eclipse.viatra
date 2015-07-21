@@ -2,7 +2,7 @@ package org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.comple
 
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
-import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._AnonymousPattern_17;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._AnonymousPattern_22;
 
 @SuppressWarnings("all")
 public class NotFollows2_Pattern extends ParameterizableComplexEventPattern {
@@ -11,7 +11,7 @@ public class NotFollows2_Pattern extends ParameterizableComplexEventPattern {
     setOperator(EventsFactory.eINSTANCE.createNEG());
     
     // contained event patterns
-    addEventPatternRefrence(new _AnonymousPattern_17(), 1);
+    addEventPatternRefrence(new _AnonymousPattern_22(), 1);
     setId("org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.notfollows2_pattern");
   }
 }

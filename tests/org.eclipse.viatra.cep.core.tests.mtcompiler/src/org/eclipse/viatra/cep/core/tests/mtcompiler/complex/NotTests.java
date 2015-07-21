@@ -270,6 +270,8 @@ public class NotTests extends ComplexTest {
 
         new TransformationBasedCompiler().compile(resourceSet);
 
+        Assert.assertEquals(1, internalModel.getAutomata().size());
+
     }
 
     @Ignore
