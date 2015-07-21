@@ -29,6 +29,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.OR
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceFactory
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
+import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition
 
 class ComplexMappingUtils {
 	protected val extension AutomatonFactory automatonFactory = AutomatonFactory.eINSTANCE
@@ -47,9 +48,9 @@ class ComplexMappingUtils {
 	 */
 	public def buildFollowsPath(Automaton automaton, ComplexEventPattern eventPattern, State preState,
 		State postState) {
-		val firstCreatedState = buildFollowsPath(automaton, eventPattern.containedEventPatterns, preState, postState)
+		buildFollowsPath(automaton, eventPattern.containedEventPatterns, preState, postState)
 
-		handleTimewindow(automaton, eventPattern, preState, postState, firstCreatedState)
+		initializeTimewindow(automaton, eventPattern, preState, postState)
 	}
 
 	/**
@@ -74,6 +75,13 @@ class ComplexMappingUtils {
 		firstCreatedState
 	}
 
+	public def unfoldFollowsPath(Automaton automaton, ComplexEventPattern eventPattern, TypedTransition transition) {
+		val firstCreatedState = buildFollowsPath(automaton, eventPattern.containedEventPatterns, transition.preState,
+			transition.postState)
+
+		alignTimewindow(automaton, eventPattern, transition, firstCreatedState)
+	}
+
 	/**
 	 * Builds a path of {@link Transition}s and {@link State}s for the referred {@link EventPattern} with an {@link OR}
 	 * operator.
@@ -89,6 +97,12 @@ class ComplexMappingUtils {
 		createEpsilon(lastState, postState)
 	}
 
+	public def unfoldOrPath(Automaton automaton, ComplexEventPattern eventPattern, TypedTransition transition) {
+		buildOrPath(automaton, eventPattern, transition.preState, transition.postState)
+		
+		alignTimewindow(automaton, eventPattern, transition)
+	}
+
 	/**
 	 * Builds a path of {@link Transition}s and {@link State}s for the referred {@link EventPattern} with an
 	 * {@link AND} operator.
@@ -98,6 +112,12 @@ class ComplexMappingUtils {
 			eventPattern.containedEventPatterns)) {
 			automaton.buildFollowsPath(permutation, preState, postState)
 		}
+	}
+
+	public def unfoldAndPath(Automaton automaton, ComplexEventPattern eventPattern, TypedTransition transition) {
+		buildAndPath(automaton, eventPattern, transition.preState, transition.postState)
+		
+		alignTimewindow(automaton, eventPattern, transition)
 	}
 
 	/**

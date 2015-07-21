@@ -26,11 +26,17 @@ class AtomicMappingRules extends MappingRules {
 	override getAllRules() {
 		return #[atomicPattern2AutomatonRule]
 	}
-	
+
 	/**
 	 * Transformation rule to compile {@link AtomicEventPattern}s to {@link Automaton}.
 	 */
 	val atomicPattern2AutomatonRule = createRule(AtomicEventPatternMatcher::querySpecification) [
+		val mappedAutomaton = checkForMappedAutomaton(eventPattern)
+		if (mappedAutomaton != null) {
+			createTrace(eventPattern, mappedAutomaton)
+			return
+		}
+
 		var automaton = eventPattern.initializeAutomaton
 		var transition = createTypedTransition
 		var guard = createGuard

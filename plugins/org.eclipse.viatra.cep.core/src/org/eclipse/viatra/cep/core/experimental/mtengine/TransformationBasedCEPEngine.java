@@ -132,19 +132,19 @@ public class TransformationBasedCEPEngine {
     public void start() {
         new TransformationBasedCompiler().compile(resourceSet);
 
-        // XXX this lookup should be fixed
-        for (Automaton automaton : internalModel.getAutomata()) {
-            for (Trace trace : traceModel.getTraces()) {
-                for (Entry<EventPattern, ICepRule> entry : mappings.entries()) {
-                    if (entry.getKey().equals(trace.getEventPattern())) {
-                        CepEventSourceSpecification sourceSpec = new CepEventSourceSpecification(automaton);
-                        Job<IObservableComplexEventPattern> job = entry.getValue().getJob();
+        // XXX this lookup is ugly, should be replaced by a more efficient technique
+        for (Trace trace : traceModel.getTraces()) {
+            Automaton automaton = trace.getAutomaton();
+            EventPattern eventPattern = trace.getEventPattern();
+            for (Entry<EventPattern, ICepRule> entry : mappings.entries()) {
+                if (entry.getKey().equals(eventPattern)) {
+                    CepEventSourceSpecification sourceSpec = new CepEventSourceSpecification(automaton);
+                    Job<IObservableComplexEventPattern> job = entry.getValue().getJob();
 
-                        @SuppressWarnings("unchecked")
-                        RuleSpecification<IObservableComplexEventPattern> ruleSpec = new RuleSpecification<IObservableComplexEventPattern>(
-                                sourceSpec, getDefaultLifeCycle(), Sets.newHashSet(job));
-                        ruleEngine.addRule(ruleSpec);
-                    }
+                    @SuppressWarnings("unchecked")
+                    RuleSpecification<IObservableComplexEventPattern> ruleSpec = new RuleSpecification<IObservableComplexEventPattern>(
+                            sourceSpec, getDefaultLifeCycle(), Sets.newHashSet(job));
+                    ruleEngine.addRule(ruleSpec);
                 }
             }
         }

@@ -12,7 +12,6 @@
 package org.eclipse.viatra.cep.core.experimental.mtcompiler.builders
 
 import com.google.common.base.Preconditions
-import java.util.List
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.TransformationBasedCompiler
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
@@ -253,40 +252,72 @@ class BuilderPrimitives {
 		}
 	}
 
-	/**
-	 * Maps timewindows onto timed zones.
-	 */
-	def handleTimewindow(Automaton automaton, ComplexEventPattern eventPattern, List<Transition> transitions) {
-		if (eventPattern.timewindow == null) {
+	def alignTimewindow(Automaton automaton, ComplexEventPattern eventPattern, TypedTransition transition) {
+		val timedZoneTrace = traceModel.timedZoneTraces.findFirst [ tzTrace |
+			tzTrace.transition.equals(transition)
+		]
+		if (timedZoneTrace == null) {
 			return
 		}
 
-//		transitions.forEach [ transition |
-//			handleTimewindow(automaton, eventPattern, transition)
-//		]
-	}
+		transition.preState.outTransitions.filter[tr|!tr.equals(transition)].forEach [ tr |
+			Preconditions::checkArgument(tr.postState.outTransitions.size == 1)
 
-	def handleTimewindow(Automaton automaton, ComplexEventPattern eventPattern, State inState, State outState,
-		State newlyCreatedState) {
-		if (!inState.inStateOf.empty) {
-			newlyCreatedState.inStateOf += inState.inStateOf
-		}
-		if (eventPattern.timewindow != null) {
-			Preconditions::checkArgument(eventPattern.operator instanceof FOLLOWS)
-
+			// copy timed zone for every branch
 			var timedZone = createWithin
-			timedZone.time = eventPattern.timewindow.time
-			timedZone.inState = inState
-			timedZone.outState = outState
+			timedZone.time = timedZoneTrace.timedZone.time
+			timedZone.inState = transition.preState
+			timedZone.outState = transition.postState
 			automaton.timedZones += timedZone
 
-		// if (eventPattern.operator instanceof OR) {
-//			val tzTrace = createTimedZoneTrace
-//			tzTrace.timedZone = timedZone
-//			tzTrace.transition = transition
-//			traceModel.timedZoneTraces += tzTrace
-//		}
+			val tzTrace = createTimedZoneTrace
+			tzTrace.timedZone = timedZone
+			tzTrace.transition = tr
+			traceModel.timedZoneTraces += tzTrace
+
+			// if the branch does not continue with an EpsilonTransition, it's a real branch, thus: align zone
+			if (!(tr.postState.outTransitions.head instanceof EpsilonTransition)) {
+				tr.postState.inStateOf += timedZone
+			}
+		]
+
+		// finally, remove original timed zone and its trace
+		automaton.timedZones.remove(timedZoneTrace.timedZone)
+		traceModel.timedZoneTraces.remove(timedZoneTrace)
+	}
+
+	def alignTimewindow(Automaton automaton, ComplexEventPattern eventPattern, TypedTransition transition,
+		State newlyCreatedState) {
+		val timedZoneTrace = traceModel.timedZoneTraces.findFirst [ tzTrace |
+			tzTrace.transition.equals(transition)
+		]
+
+		if (timedZoneTrace != null) {
+			newlyCreatedState.inStateOf += timedZoneTrace.timedZone
+			traceModel.timedZoneTraces.remove(timedZoneTrace)
+		}
+	}
+
+	def initializeTimewindow(Automaton automaton, EventPattern eventPattern, State inState, State outState) {
+		if (!(eventPattern instanceof ComplexEventPattern)) {
+			return
 		}
 
+		if ((eventPattern as ComplexEventPattern).timewindow == null) {
+			return
+		}
+
+		Preconditions::checkArgument((eventPattern as ComplexEventPattern).operator instanceof FOLLOWS)
+
+		var timedZone = createWithin
+		timedZone.time = (eventPattern as ComplexEventPattern).timewindow.time
+		timedZone.inState = inState
+		timedZone.outState = outState
+		automaton.timedZones += timedZone
+
+		val tzTrace = createTimedZoneTrace
+		tzTrace.timedZone = timedZone
+		tzTrace.transition = inState.outTransitions.head
+		traceModel.timedZoneTraces += tzTrace
 	}
 }

@@ -46,6 +46,18 @@ abstract class MappingRules {
 
 	def abstract List<? extends BatchTransformationRule<? extends BasePatternMatch, ? extends BaseMatcher<? extends BasePatternMatch>>> getAllRules()
 
+	def checkForMappedAutomaton(EventPattern eventPattern) {
+		if (traceModel.traces.empty) {
+			return null
+		} else {
+			val existingMapping = traceModel.traces.findFirst[trace|trace.eventPattern.id.equals(eventPattern.id)]
+			if (existingMapping == null) {
+				return null
+			}
+			return existingMapping.automaton
+		}
+	}
+
 	def initializeAutomaton(EventPattern eventPattern) {
 		var automaton = createAutomaton
 		internalModel.automata += automaton
