@@ -198,7 +198,7 @@ class VeplValidator extends AbstractVeplValidator {
 		if (parameterizedPatternCall.parameterList.parameters.empty) {
 			return
 		}
-		if (!(parameterizedPatternCall.eventPattern instanceof AtomicEventPattern)) {
+		if (!(parameterizedPatternCall.eventPattern instanceof AbstractAtomicEventPattern)) {
 			error(
 				"Parameters are only applicable to atomic event pattern references.",
 				VeplPackage.Literals.PARAMETERIZED_PATTERN_CALL__PARAMETER_LIST,
