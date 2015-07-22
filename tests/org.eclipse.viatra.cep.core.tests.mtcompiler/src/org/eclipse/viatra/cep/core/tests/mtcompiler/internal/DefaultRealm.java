@@ -1,4 +1,4 @@
-package org.eclipse.viatra.cep.examples.fowler.internal;
+package org.eclipse.viatra.cep.core.tests.mtcompiler.internal;
 
 import org.eclipse.core.databinding.observable.Realm;
 
