@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra.cep.tests.integration.model
 
-import org.eclipse.viatra.cep.tests.integration.*
+import org.eclipse.viatra.cep.tests.integration.contexts.*
 
 AtomicEvent a1
 AtomicEvent a2
@@ -40,6 +40,6 @@ ComplexEvent multiplicityAtLeast(){
 Rule testRule{
 	events: follows, or, and, multiplicity3, multiplicityAtLeast
 	action{
-		TestResultHelper.instance.incrementById(activation.atom.observableEventPattern.id)
+		TestResultHelper.instance.incrementById(ruleInstance.atom.observableEventPattern.id)
 	}
 }

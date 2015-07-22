@@ -15,16 +15,16 @@ public class TestRule_Job extends Job<IObservableComplexEventPattern> {
   }
   
   @Override
-  public void execute(final Activation<? extends IObservableComplexEventPattern> activation, final Context context) {
+  public void execute(final Activation<? extends IObservableComplexEventPattern> ruleInstance, final Context context) {
     TestResultHelper _instance = TestResultHelper.instance();
-    IObservableComplexEventPattern _atom = activation.getAtom();
+    IObservableComplexEventPattern _atom = ruleInstance.getAtom();
     EventPattern _observableEventPattern = _atom.getObservableEventPattern();
     String _id = _observableEventPattern.getId();
     _instance.incrementById(_id);
   }
   
   @Override
-  public void handleError(final Activation<? extends IObservableComplexEventPattern> activation, final Exception exception, final Context context) {
+  public void handleError(final Activation<? extends IObservableComplexEventPattern> ruleInstance, final Exception exception, final Context context) {
     //not gonna happen
   }
 }
