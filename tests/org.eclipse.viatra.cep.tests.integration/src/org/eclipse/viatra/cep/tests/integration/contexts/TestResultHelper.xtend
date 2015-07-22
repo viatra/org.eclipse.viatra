@@ -8,7 +8,7 @@
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.cep.tests.integration
+package org.eclipse.viatra.cep.tests.integration.contexts
 
 import com.google.common.collect.Maps
 import java.util.Map

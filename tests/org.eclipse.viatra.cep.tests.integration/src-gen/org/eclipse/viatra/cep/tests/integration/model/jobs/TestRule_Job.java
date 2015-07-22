@@ -6,7 +6,7 @@ import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
-import org.eclipse.viatra.cep.tests.integration.TestResultHelper;
+import org.eclipse.viatra.cep.tests.integration.contexts.TestResultHelper;
 
 @SuppressWarnings("all")
 public class TestRule_Job extends Job<IObservableComplexEventPattern> {
