@@ -51,6 +51,7 @@ import org.eclipse.viatra.cep.core.streams.IStreamManager;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -72,13 +73,50 @@ public class TransformationBasedCEPEngine {
     private InternalModel internalModel;
     private EventModel eventModel;
     private TraceModel traceModel;
+    private Multimap<EventPattern, ICepRule> mappings = ArrayListMultimap.create();
 
-    public static TransformationBasedCEPEngine newEngine() {
-        return new TransformationBasedCEPEngine(DEFAULT_EVENT_CONTEXT);
+    /**
+     * Builder class for the {@link TransformationBasedCEPEngine}
+     * 
+     * @author Istvan David
+     *
+     */
+    public static class CEPEngineBuilder {
+        private EventContext eventContext = DEFAULT_EVENT_CONTEXT;
+        private List<ICepRule> rules = Lists.newArrayList();
+
+        public CEPEngineBuilder eventContext(EventContext eventContext) {
+            this.eventContext = eventContext;
+            return this;
+        }
+
+        public CEPEngineBuilder rules(List<ICepRule> rules) {
+            for (ICepRule rule : rules) {
+                this.rule(rule);
+            }
+            return this;
+        }
+
+        public CEPEngineBuilder rule(ICepRule rule) {
+            this.rules.add(rule);
+            return this;
+        }
+
+        public TransformationBasedCEPEngine prepare() {
+            TransformationBasedCEPEngine engine = newEngine(eventContext, rules);
+            engine.prepare();
+            return engine;
+        }
     }
 
-    public static TransformationBasedCEPEngine newEngine(EventContext context) {
-        return new TransformationBasedCEPEngine(context);
+    public static CEPEngineBuilder newEngine() {
+        return new CEPEngineBuilder();
+    }
+
+    private static TransformationBasedCEPEngine newEngine(EventContext context, List<ICepRule> rules) {
+        TransformationBasedCEPEngine engine = new TransformationBasedCEPEngine(context);
+        engine.addRules(rules);
+        return engine;
     }
 
     private TransformationBasedCEPEngine(EventContext context) {
@@ -108,18 +146,12 @@ public class TransformationBasedCEPEngine {
         traceModelResource.getContents().add(traceModel);
     }
 
-    public void addRules(List<ICepRule> rules) {
+    private void addRules(List<ICepRule> rules) {
         Preconditions.checkArgument(!rules.isEmpty());
         for (ICepRule rule : rules) {
             addSingleRule(rule);
         }
     }
-
-    public void addRule(ICepRule rule) {
-        addSingleRule(rule);
-    }
-
-    private Multimap<EventPattern, ICepRule> mappings = ArrayListMultimap.create();
 
     private void addSingleRule(ICepRule rule) {
         Preconditions.checkArgument(!rule.getEventPatterns().isEmpty());
@@ -129,7 +161,7 @@ public class TransformationBasedCEPEngine {
         }
     }
 
-    public void start() {
+    private void prepare() {
         new TransformationBasedCompiler().compile(resourceSet);
 
         // XXX this lookup is ugly, should be replaced by a more efficient technique
