@@ -60,6 +60,8 @@ import com.google.common.collect.Sets;
  * Experimental alternative of the {@link CEPEngine} for the {@link TransformationBasedCompiler}. Will replace the
  * {@link CEPEngine}.
  * 
+ * @since 0.8
+ * 
  * @author Istvan David
  *
  */
@@ -77,7 +79,7 @@ public class TransformationBasedCEPEngine {
     private InternalModel internalModel;
     private EventModel eventModel;
     private TraceModel traceModel;
-    private Multimap<EventPattern, ICepRule> mappings = ArrayListMultimap.create();
+    private Multimap<EventPattern, ICepRule> patternToRuleMappings;
 
     /**
      * Builder class for the {@link TransformationBasedCEPEngine}.
@@ -176,6 +178,7 @@ public class TransformationBasedCEPEngine {
     }
 
     private void addRules(List<ICepRule> rules) {
+        patternToRuleMappings = ArrayListMultimap.create();
         Preconditions.checkArgument(!rules.isEmpty());
         for (ICepRule rule : rules) {
             addSingleRule(rule);
@@ -186,7 +189,7 @@ public class TransformationBasedCEPEngine {
         Preconditions.checkArgument(!rule.getEventPatterns().isEmpty());
         for (EventPattern eventPattern : rule.getEventPatterns()) {
             eventModel.getEventPatterns().add(eventPattern);
-            mappings.put(eventPattern, rule);
+            patternToRuleMappings.put(eventPattern, rule);
         }
     }
 
@@ -198,7 +201,7 @@ public class TransformationBasedCEPEngine {
         for (Trace trace : traceModel.getTraces()) {
             Automaton automaton = trace.getAutomaton();
             EventPattern eventPattern = trace.getEventPattern();
-            for (Entry<EventPattern, ICepRule> entry : mappings.entries()) {
+            for (Entry<EventPattern, ICepRule> entry : patternToRuleMappings.entries()) {
                 if (entry.getKey().equals(eventPattern)) {
                     CepEventSourceSpecification sourceSpec = new CepEventSourceSpecification(automaton);
                     Job<IObservableComplexEventPattern> job = entry.getValue().getJob();
