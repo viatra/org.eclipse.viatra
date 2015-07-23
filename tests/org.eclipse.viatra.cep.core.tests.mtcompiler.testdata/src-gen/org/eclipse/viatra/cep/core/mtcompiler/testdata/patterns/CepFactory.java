@@ -51,6 +51,7 @@ import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotAnd_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotAtomic_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollows2_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollows3_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollowsParams_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollowsTimewin_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollows_Pattern;
@@ -527,6 +528,13 @@ public class CepFactory {
    */
   public NotFollows2_Pattern createNotFollows2_Pattern() {
     return new NotFollows2_Pattern();
+  }
+  
+  /**
+   * Factory method for complex event pattern {@link NotFollows3_Pattern}.
+   */
+  public NotFollows3_Pattern createNotFollows3_Pattern() {
+    return new NotFollows3_Pattern();
   }
   
   /**

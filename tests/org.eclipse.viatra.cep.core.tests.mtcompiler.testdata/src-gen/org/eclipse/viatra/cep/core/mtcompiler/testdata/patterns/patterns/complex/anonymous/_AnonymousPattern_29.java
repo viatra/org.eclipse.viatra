@@ -1,23 +1,20 @@
 package org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous;
 
+import com.google.common.collect.Lists;
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
-import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
-import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._AnonymousPattern_28;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic.A_1_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic.B_1_Pattern;
 
 @SuppressWarnings("all")
 public class _AnonymousPattern_29 extends ParameterizableComplexEventPattern {
   public _AnonymousPattern_29() {
     super();
-    setOperator(EventsFactory.eINSTANCE.createFOLLOWS());
+    setOperator(EventsFactory.eINSTANCE.createOR());
     
     // contained event patterns
-    addEventPatternRefrence(new _AnonymousPattern_28(), 1);
-    						
-    Timewindow timewindow = EventsFactory.eINSTANCE.createTimewindow();
-    timewindow.setTime(1000);
-    setTimewindow(timewindow);
-    	
+    addEventPatternRefrence(new A_1_Pattern(), 1, Lists.newArrayList("param"));
+    addEventPatternRefrence(new B_1_Pattern(), 1, Lists.newArrayList("param"));
     setId("org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._anonymouspattern_29");
   }
 }

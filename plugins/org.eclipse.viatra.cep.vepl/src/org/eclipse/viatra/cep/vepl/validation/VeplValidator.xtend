@@ -44,6 +44,8 @@ class VeplValidator extends AbstractVeplValidator {
 	public static val NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE = "negativeOperatorOnNonAtomicReference"
 	public static val UNSAFE_INFINITE_MULTIPLICITY = "unsafeInfiniteMultiplicity"
 	public static val PARAMETER_ON_NON_ATOMIC_PATTERN_CALL = "parameterOnNonAtomicPatternCall"
+	public static val NEGATIVE_WITH_MULTIPLICITY = "negativeWithMultiplicity"
+	public static val NEGATIVE_WITH_TIMEWINDOW = "negativeWithTimewindow"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -184,6 +186,35 @@ class VeplValidator extends AbstractVeplValidator {
 				"The NOT operator can be applied only on atomic event pattern references.",
 				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__NEG_OPERATOR,
 				NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE
+			)
+		}
+	}
+
+	@Check
+	def negativeOperatorAndOtherOperatorCombinations(ComplexEventExpression complexEventExpression) {
+		if (complexEventExpression.negOperator == null) {
+			return
+		}
+
+		if (!(complexEventExpression.primary instanceof Atom)) {
+			return
+		}
+
+		val primary = complexEventExpression.primary as Atom
+
+		val multiplicity = primary.multiplicity
+		if (!multiplicity.nullOrOneMultiplicity) {
+			error(
+				"Cannot use multiplicity operator with a NOT expression.",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__PRIMARY,
+				NEGATIVE_WITH_MULTIPLICITY
+			)
+		}
+		if (primary.hasTimewindow) {
+			error(
+				"Cannot use timewindow operator with a NOT expression.",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__PRIMARY,
+				NEGATIVE_WITH_TIMEWINDOW
 			)
 		}
 	}

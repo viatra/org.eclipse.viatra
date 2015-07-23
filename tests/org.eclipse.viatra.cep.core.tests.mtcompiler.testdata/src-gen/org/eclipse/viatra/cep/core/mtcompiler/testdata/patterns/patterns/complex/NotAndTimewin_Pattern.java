@@ -3,7 +3,7 @@ package org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.comple
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow;
-import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._AnonymousPattern_33;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._AnonymousPattern_36;
 
 @SuppressWarnings("all")
 public class NotAndTimewin_Pattern extends ParameterizableComplexEventPattern {
@@ -12,7 +12,7 @@ public class NotAndTimewin_Pattern extends ParameterizableComplexEventPattern {
     setOperator(EventsFactory.eINSTANCE.createFOLLOWS());
     
     // contained event patterns
-    addEventPatternRefrence(new _AnonymousPattern_33(), 1);
+    addEventPatternRefrence(new _AnonymousPattern_36(), 1);
     						
     Timewindow timewindow = EventsFactory.eINSTANCE.createTimewindow();
     timewindow.setTime(1000);

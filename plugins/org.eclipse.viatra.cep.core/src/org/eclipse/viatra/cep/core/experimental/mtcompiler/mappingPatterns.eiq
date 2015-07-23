@@ -92,6 +92,13 @@ complexAndTransition(automaton : Automaton, transition : TypedTransition, eventP
 }
 
 pattern
+nonUnfoldedNotTransition(automaton : Automaton, transition : TypedTransition, eventPattern : ComplexEventPattern) {
+	find complexTransition(automaton, transition, eventPattern, operator);
+	neg find negativeTransition(transition);
+	NEG(operator);
+}
+
+pattern
 complexNotTransition(automaton : Automaton, transition : TypedTransition, eventPattern : ComplexEventPattern) {
 	find complexTransition(automaton, transition, eventPattern, _);
 	find negativeTransition(transition);

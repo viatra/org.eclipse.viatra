@@ -11,11 +11,15 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.CepFactory;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic.A_1_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic.A_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic.B_1_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic.B_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.atomic.C_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotAndParams_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotAnd_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotAtomic_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollows2_Pattern;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollows3_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollowsParams_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotFollows_Pattern;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.NotOrParams_Pattern;
@@ -146,6 +150,47 @@ public class NotTests extends ComplexTest {
         Assert.assertEquals(1, nextState2.getOutTransitions().size());
         Assert.assertTrue(nextState2.getOutTransitions().get(0) instanceof NegativeTransition);
         Assert.assertEquals(automaton.getFinalStates().get(0), nextState2.getOutTransitions().get(0).getPostState());
+
+        Assert.assertTrue(noEpsilonTransitions(automaton));
+        Assert.assertTrue(noOrphanTransitions(automaton));
+        Assert.assertTrue(noOrphanStates(automaton));
+    }
+
+    @Test
+    public void notFollows3Test() {
+        NotFollows3_Pattern pattern = CepFactory.getInstance().createNotFollows3_Pattern();
+        eventModel.getEventPatterns().add(pattern);
+
+        Assert.assertEquals(0, internalModel.getAutomata().size());
+
+        new TransformationBasedCompiler().compile(resourceSet);
+
+        Assert.assertEquals(1, internalModel.getAutomata().size());
+
+        Automaton automaton = internalModel.getAutomata().get(0);
+
+        Assert.assertEquals(5, automaton.getStates().size());
+        Assert.assertEquals(1, automaton.getInitialState().getOutTransitions().size());
+
+        Transition transition1 = automaton.getInitialState().getOutTransitions().get(0);
+        Assert.assertTrue(!(transition1 instanceof NegativeTransition));
+        Assert.assertTrue(transitionTypedWith(transition1, A_Pattern.class));
+
+        State nextState1 = transition1.getPostState();
+        Assert.assertEquals(1, nextState1.getOutTransitions().size());
+
+        Transition transition2 = nextState1.getOutTransitions().get(0);
+        Assert.assertTrue(transition2 instanceof NegativeTransition);
+        Assert.assertTrue(transitionTypedWith(transition2, B_Pattern.class));
+
+        State nextState2 = transition2.getPostState();
+        Assert.assertEquals(1, nextState2.getOutTransitions().size());
+
+        Transition transition3 = nextState2.getOutTransitions().get(0);
+        Assert.assertTrue(!(transition3 instanceof NegativeTransition));
+        Assert.assertTrue(transitionTypedWith(transition3, C_Pattern.class));
+
+        Assert.assertEquals(automaton.getFinalStates().get(0), transition3.getPostState());
 
         Assert.assertTrue(noEpsilonTransitions(automaton));
         Assert.assertTrue(noOrphanTransitions(automaton));

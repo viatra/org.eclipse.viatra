@@ -120,6 +120,10 @@ ComplexEvent notFollows2(){
 	definition: NOT (paramsFollows -> c)
 }
 
+ComplexEvent notFollows3(){
+	definition: a -> NOT b -> c
+}
+
 ComplexEvent notOr(){
 	definition: NOT or
 }

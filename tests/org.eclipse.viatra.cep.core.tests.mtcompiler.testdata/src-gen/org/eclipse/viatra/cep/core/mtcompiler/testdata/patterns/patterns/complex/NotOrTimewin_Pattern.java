@@ -2,7 +2,7 @@ package org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.comple
 
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
-import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._AnonymousPattern_31;
+import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.anonymous._AnonymousPattern_34;
 
 @SuppressWarnings("all")
 public class NotOrTimewin_Pattern extends ParameterizableComplexEventPattern {
@@ -11,7 +11,7 @@ public class NotOrTimewin_Pattern extends ParameterizableComplexEventPattern {
     setOperator(EventsFactory.eINSTANCE.createNEG());
     
     // contained event patterns
-    addEventPatternRefrence(new _AnonymousPattern_31(), 1);
+    addEventPatternRefrence(new _AnonymousPattern_34(), 1);
     setId("org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.patterns.complex.notortimewin_pattern");
   }
 }

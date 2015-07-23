@@ -18,6 +18,7 @@ import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexFollowsTransit
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexNotTransitionMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexOrTransitionMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.FollowsPatternMatcher
+import org.eclipse.viatra.cep.core.experimental.mtcompiler.NonUnfoldedNotTransitionMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.NotPatternMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.OrPatternMatcher
 import org.eclipse.viatra.cep.core.experimental.mtcompiler.builders.BuilderPrimitives
@@ -26,6 +27,7 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.automaton.NegativeTransition
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition
+import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition
 import org.eclipse.viatra.cep.core.metamodels.events.AND
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.FOLLOWS
@@ -47,6 +49,7 @@ class ComplexMappingRules extends MappingRules {
 		return #[
 			notPattern2AutomatonRule,
 			notUnfoldRule,
+			negativeTransitionUnfoldRule,
 			followsPattern2AutomatonRule,
 			orPattern2AutomatonRule,
 			followUnfoldRule,
@@ -172,10 +175,26 @@ class ComplexMappingRules extends MappingRules {
 	]
 
 	/**
-	 * Transformation rule to unfold {@link Transition}s in an {@link Automaton} guarded by a
-	 * {@link ComplexEventPattern} with a {@link NOT} operator as a type.
+	 * Transformation rule to unfold {@link TypedTransition}s in an {@link Automaton} guarded with a {@link NOT}
+	 * operator.
 	 */
-	val notUnfoldRule = createRule(ComplexNotTransitionMatcher::querySpecification) [
+	val notUnfoldRule = createRule(NonUnfoldedNotTransitionMatcher::querySpecification) [
+		Preconditions::checkArgument(eventPattern.containedEventPatterns.size == 1)
+
+		automaton.buildNotPath(
+			eventPattern.containedEventPatterns.head.eventPattern,
+			transition.preState,
+			transition.postState
+		)
+
+		removeTransition(transition)
+	]
+
+	/**
+	 * Transformation rule to unfold {@link NegativeTransition}s in an {@link Automaton} guarded by a
+	 * {@link ComplexEventPattern}.
+	 */
+	val negativeTransitionUnfoldRule = createRule(ComplexNotTransitionMatcher::querySpecification) [
 		automaton.unfoldNotPath(eventPattern, transition as NegativeTransition)
 
 		removeTransition(transition)
