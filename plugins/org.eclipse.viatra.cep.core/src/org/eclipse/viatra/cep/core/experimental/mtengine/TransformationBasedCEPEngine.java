@@ -13,6 +13,7 @@ package org.eclipse.viatra.cep.core.experimental.mtengine;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Level;
@@ -64,6 +65,9 @@ import com.google.common.collect.Sets;
  */
 public class TransformationBasedCEPEngine {
     private static final EventContext DEFAULT_EVENT_CONTEXT = EventContext.CHRONICLE;
+    private Logger logger = LoggerUtils.getInstance().getLogger();
+
+    private String engineId;
 
     private MTBasedEventModelManager eventModelManager;
     private ExecutionSchema ruleEngine;
@@ -76,14 +80,27 @@ public class TransformationBasedCEPEngine {
     private Multimap<EventPattern, ICepRule> mappings = ArrayListMultimap.create();
 
     /**
-     * Builder class for the {@link TransformationBasedCEPEngine}
+     * Builder class for the {@link TransformationBasedCEPEngine}.
+     * 
+     * <p>
+     * Use a dedicated {@link CEPEngineBuilder} for every {@link TransformationBasedCEPEngine} to be created, or make
+     * sure the rules assigned to the builder do not interfere among multiple engines.
+     * </p>
+     * 
+     * @since 0.8
      * 
      * @author Istvan David
      *
      */
     public static class CEPEngineBuilder {
+        private String engineId;
         private EventContext eventContext = DEFAULT_EVENT_CONTEXT;
         private List<ICepRule> rules = Lists.newArrayList();
+
+        public CEPEngineBuilder id(String engineId) {
+            this.engineId = engineId;
+            return this;
+        }
 
         public CEPEngineBuilder eventContext(EventContext eventContext) {
             this.eventContext = eventContext;
@@ -103,7 +120,15 @@ public class TransformationBasedCEPEngine {
         }
 
         public TransformationBasedCEPEngine prepare() {
-            TransformationBasedCEPEngine engine = newEngine(eventContext, rules);
+            if (engineId == null) {
+                engineId = UUID.randomUUID().toString();
+            }
+            Preconditions.checkArgument(engineId != null);
+            Preconditions.checkArgument(eventContext != null);
+            Preconditions.checkArgument(!rules.isEmpty(),
+                    String.format("No rules were specified for CEP engine \"%s\" (%s).", engineId, this.toString()));
+
+            TransformationBasedCEPEngine engine = new TransformationBasedCEPEngine(engineId, eventContext, rules);
             engine.prepare();
             return engine;
         }
@@ -113,17 +138,21 @@ public class TransformationBasedCEPEngine {
         return new CEPEngineBuilder();
     }
 
-    private static TransformationBasedCEPEngine newEngine(EventContext context, List<ICepRule> rules) {
-        TransformationBasedCEPEngine engine = new TransformationBasedCEPEngine(context);
-        engine.addRules(rules);
-        return engine;
+    /**
+     * Hidden default constructor.
+     */
+    private TransformationBasedCEPEngine() {
     }
 
-    private TransformationBasedCEPEngine(EventContext context) {
+    private TransformationBasedCEPEngine(String engineId, EventContext eventContext, List<ICepRule> rules) {
+        this.engineId = engineId;
+
         setUpResourceSet();
-        eventModelManager = new MTBasedEventModelManager(context, resourceSet);
-        ruleEngine = eventModelManager.createExecutionSchema();
-        streamManager = new DefaultStreamManager(eventModelManager);
+        this.eventModelManager = new MTBasedEventModelManager(eventContext, resourceSet);
+        this.ruleEngine = eventModelManager.createExecutionSchema();
+        this.streamManager = new DefaultStreamManager(eventModelManager);
+
+        addRules(rules);
     }
 
     private void setUpResourceSet() {
@@ -162,6 +191,7 @@ public class TransformationBasedCEPEngine {
     }
 
     private void prepare() {
+        Preconditions.checkArgument(resourceSet != null);
         new TransformationBasedCompiler().compile(resourceSet);
 
         // XXX this lookup is ugly, should be replaced by a more efficient technique
@@ -182,6 +212,11 @@ public class TransformationBasedCEPEngine {
         }
     }
 
+    /**
+     * Default activation lifecycle for the CEP rules.
+     * 
+     * TODO should be moved to a more common place
+     */
     private ActivationLifeCycle getDefaultLifeCycle() {
         ActivationLifeCycle lifeCycle = ActivationLifeCycle.create(CepActivationStates.INACTIVE);
         lifeCycle.addStateTransition(CepActivationStates.INACTIVE, CepEventType.APPEARED, CepActivationStates.ACTIVE);
@@ -194,11 +229,16 @@ public class TransformationBasedCEPEngine {
      * Clears the event processing state, including the partial event pattern matches and the event stream
      */
     public void reset() {
+        logger.debug(String.format("Resetting engine \"%s\" (%s).", engineId, this.toString()));
         new ResetTransformations(eventModelManager.getModel()).resetAll();
 
         for (EventStream eventStream : streamManager.getEventStreams()) {
             eventStream.getQueue().clear();
         }
+    }
+
+    public String getEngineId() {
+        return engineId;
     }
 
     public IStreamManager getStreamManager() {
