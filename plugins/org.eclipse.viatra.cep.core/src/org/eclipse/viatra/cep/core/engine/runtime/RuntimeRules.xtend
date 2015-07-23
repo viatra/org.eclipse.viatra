@@ -65,7 +65,7 @@ class RuntimeRules {
 	}
 
 	val enabledTransitionRule = createRule().name("enabled transition rule").precondition(enabledTransition).action [
-		logger.debug(String::format("Enabled Transition rule: %s", automaton.eventPattern.id))
+		logger.debug(String::format("Enabled transition in %s (automaton: %s)", automaton.eventPattern.id, automaton))
 		// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
 		eventModelManager.handleEvent(transition, eventToken)
 
@@ -99,7 +99,7 @@ class RuntimeRules {
 
 	val enabledNegativeTransitionRule = createRule().name("enabled negative transition rule").precondition(
 		enabledNegativeTransition).action [
-		logger.debug(String::format("Enabled Negative Transition rule: %s", automaton.eventPattern.id))
+		logger.debug(String::format("Enabled negative transition in %s (automaton: %s)", automaton.eventPattern.id, automaton))
 		// Preconditions::checkArgument(eventPattern instanceof ParameterizableComplexEventPattern)	//AND precompilation causes issue here
 		eventModelManager.handleEvent(transition, eventToken)
 
@@ -131,7 +131,7 @@ class RuntimeRules {
 	].build
 
 	val finishedAutomatonRule = createRule().name("finished automaton rule").precondition(finishedAutomaton).action [
-		logger.debug(String::format("Finished automaton: %s", automaton.eventPattern.id))
+		logger.debug(String::format("Finished automaton of pattern %s (automaton: %s)", automaton.eventPattern.id, automaton))
 		Preconditions::checkArgument(automaton.finalStates.size == 1)
 		automaton.eventTokens.remove(eventToken)
 		var observedPattern = new ObservedComplexEventPattern(automaton, eventToken)
@@ -139,7 +139,7 @@ class RuntimeRules {
 	].build
 
 	val tokenInTrapStateRule = createRule().name("trap state rule").precondition(tokenInTrapState).action [
-		debug(String::format("Event token found in the trap state for pattern %s.", eventPattern.id));
+		debug(String::format("Event token found in the trap state for pattern %s (automaton: %s).", eventPattern.id, automaton));
 		// var failedPattern = new InTrapComplexEventPattern(automaton)
 		// eventModelManager.cepRealm.forwardFailedEventPattern(failedPattern)
 		automaton.eventTokens.remove(eventToken)
