@@ -8,6 +8,7 @@ Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.cep.core.api.engine,
  org.eclipse.viatra.cep.core.api.events,
  org.eclipse.viatra.cep.core.api.evm,
+ org.eclipse.viatra.cep.core.api.helpers,
  org.eclipse.viatra.cep.core.api.patterns,
  org.eclipse.viatra.cep.core.api.rules,
  org.eclipse.viatra.cep.core.engine.compiler,
