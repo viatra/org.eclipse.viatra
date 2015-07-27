@@ -8,8 +8,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="EventPattern" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="eventModel" eType="#//EventModel"
         eOpposite="#//EventModel/eventPatterns"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="automaton" eType="ecore:EClass Automaton.ecore#//Automaton"
-        eOpposite="Automaton.ecore#//Automaton/eventPattern"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="automaton" eType="ecore:EClass Automaton.ecore#//Automaton"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AtomicEventPattern" eSuperTypes="#//EventPattern">
