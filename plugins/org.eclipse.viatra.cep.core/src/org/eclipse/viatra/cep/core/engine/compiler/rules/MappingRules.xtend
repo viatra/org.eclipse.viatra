@@ -9,13 +9,13 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler.rules
+package org.eclipse.viatra.cep.core.engine.compiler.rules
 
 import java.util.List
 import org.apache.log4j.Logger
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.TransformationBasedCompiler
+import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler
 import org.eclipse.viatra.cep.core.logging.LoggerUtils
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory

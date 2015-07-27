@@ -1,7 +1,7 @@
 package org.eclipse.viatra.cep.core.tests.mtcompiler.main;
 
 import org.apache.log4j.Level;
-import org.eclipse.viatra.cep.core.experimental.mtengine.TransformationBasedCEPEngine;
+import org.eclipse.viatra.cep.core.api.engine.CEPEngine;
 import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.mtcompiler.testdata.patterns.CepFactory;
 import org.eclipse.viatra.cep.core.streams.EventStream;
@@ -13,13 +13,13 @@ import org.junit.Test;
 public class MainTest {
 
     private DefaultRealm defaultRealm;
-    private TransformationBasedCEPEngine engine;
+    private CEPEngine engine;
     private EventStream eventStream;
 
     @Before
     public void setUp() {
         defaultRealm = new DefaultRealm();
-        engine = TransformationBasedCEPEngine.newEngine().eventContext(EventContext.CHRONICLE)
+        engine = CEPEngine.newEngine().eventContext(EventContext.CHRONICLE)
                 .rule(CepFactory.getInstance().createR()).prepare();
         eventStream = engine.getStreamManager().newEventStream();
     }

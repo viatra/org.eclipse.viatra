@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
-import org.eclipse.viatra.cep.core.api.engine.CEPEngine;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
 
 /**

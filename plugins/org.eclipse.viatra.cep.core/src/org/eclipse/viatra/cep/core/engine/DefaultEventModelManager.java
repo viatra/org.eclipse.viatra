@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004-2014, Istvan David, Istvan Rath and Daniel Varro
+ * Copyright (c) 2004-2015, Istvan David, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,13 @@ package org.eclipse.viatra.cep.core.engine;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
 import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
@@ -32,7 +27,7 @@ import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedSc
 import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
 import org.eclipse.incquery.runtime.evm.update.UpdateCompleteProvider;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
-import org.eclipse.viatra.cep.core.engine.compiler.Compiler;
+import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler;
 import org.eclipse.viatra.cep.core.engine.runtime.RuntimeRules;
 import org.eclipse.viatra.cep.core.eventprocessingstrategy.EventProcessingStrategyFactory;
 import org.eclipse.viatra.cep.core.eventprocessingstrategy.IEventProcessingStrategy;
@@ -46,9 +41,15 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
-import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.core.streams.EventStream;
 
+/**
+ * 
+ * @since 0.8
+ * 
+ * @author Istvan David
+ *
+ */
 public class DefaultEventModelManager implements IEventModelManager {
     private final Logger logger = LoggerUtils.getInstance().getLogger();
 
@@ -69,12 +70,14 @@ public class DefaultEventModelManager implements IEventModelManager {
         }
     }
 
-    public DefaultEventModelManager() {
-        this(EventContext.CHRONICLE);
+    public DefaultEventModelManager(ResourceSet resourceSet) {
+        this(EventContext.CHRONICLE, resourceSet);
     }
 
-    public DefaultEventModelManager(EventContext context) {
-        prepareModel();
+    public DefaultEventModelManager(EventContext context, ResourceSet resourceSet) {
+        this.resourceSet = resourceSet;
+        this.model = (InternalModel) resourceSet.getResource(TransformationBasedCompiler.AUTOMATON_MODEL_URI, false)
+                .getContents().get(0);
 
         eventAdapter = new AdapterImpl() {
             @Override
@@ -96,27 +99,8 @@ public class DefaultEventModelManager implements IEventModelManager {
         initializeLowLevelModelHandling();
     }
 
-    private void prepareModel() {
-        model = AutomatonFactory.eINSTANCE.createInternalModel();
-        Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-        Map<String, Object> m = reg.getExtensionToFactoryMap();
-        m.put("cep", new XMIResourceFactoryImpl());
-        resourceSet = new ResourceSetImpl();
-        Resource smModelResource = resourceSet.createResource(URI.createURI("cep/sm.cep"));
-        smModelResource.getContents().add(model);
-    }
-
     private void initializeLowLevelModelHandling() {
         new RuntimeRules(this).registerRulesWithCustomPriorities();
-    }
-
-    public Automaton getAutomaton(EventPattern eventPattern) {
-        Compiler compiler = new Compiler(model);
-        Automaton automaton = compiler.compile(eventPattern);
-
-        model.getEnabledForTheLatestEvent().add(automaton);
-
-        return automaton;
     }
 
     private void refreshModel(Event event) {
@@ -186,6 +170,7 @@ public class DefaultEventModelManager implements IEventModelManager {
         model.getEnabledForTheLatestEvent().add(((Automaton) automaton));
     }
 
+    @Deprecated
     @Override
     public void callbackOnPatternRecognition(IObservableComplexEventPattern observedPattern) {
         // NOP

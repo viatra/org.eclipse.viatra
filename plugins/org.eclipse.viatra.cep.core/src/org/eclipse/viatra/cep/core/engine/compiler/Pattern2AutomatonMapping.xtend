@@ -9,13 +9,13 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler
+package org.eclipse.viatra.cep.core.engine.compiler
 
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.incquery.runtime.emf.EMFScope
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.rules.AtomicMappingRules
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.rules.ComplexMappingRules
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.rules.OptimizationRules
+import org.eclipse.viatra.cep.core.engine.compiler.rules.AtomicMappingRules
+import org.eclipse.viatra.cep.core.engine.compiler.rules.ComplexMappingRules
+import org.eclipse.viatra.cep.core.engine.compiler.rules.OptimizationRules
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.events.EventModel
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel

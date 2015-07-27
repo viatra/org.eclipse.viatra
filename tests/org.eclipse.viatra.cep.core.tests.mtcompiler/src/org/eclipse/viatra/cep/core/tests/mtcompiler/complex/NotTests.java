@@ -4,7 +4,7 @@ import static org.eclipse.viatra.cep.core.tests.mtcompiler.complex.Utils.noEpsil
 import static org.eclipse.viatra.cep.core.tests.mtcompiler.complex.Utils.noOrphanStates;
 import static org.eclipse.viatra.cep.core.tests.mtcompiler.complex.Utils.noOrphanTransitions;
 
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.TransformationBasedCompiler;
+import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.NegativeTransition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;

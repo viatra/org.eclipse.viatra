@@ -9,7 +9,7 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler.builders
+package org.eclipse.viatra.cep.core.engine.compiler.builders
 
 import com.google.common.base.Preconditions
 import java.util.List

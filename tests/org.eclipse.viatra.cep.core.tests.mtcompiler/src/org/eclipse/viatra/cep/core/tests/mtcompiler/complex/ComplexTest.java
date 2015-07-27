@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.TransformationBasedCompiler;
+import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler;
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Guard;
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel;

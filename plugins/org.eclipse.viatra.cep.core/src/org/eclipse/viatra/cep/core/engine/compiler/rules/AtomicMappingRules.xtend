@@ -9,13 +9,13 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler.rules
+package org.eclipse.viatra.cep.core.engine.compiler.rules
 
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.AtomicEventPatternMatcher
-import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
-import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
-import org.eclipse.viatra.cep.core.metamodels.events.AtomicEventPattern
+import org.eclipse.viatra.cep.core.engine.compiler.AtomicEventPatternMatcher
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
+import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
+import org.eclipse.viatra.cep.core.metamodels.events.AtomicEventPattern
+import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
 
 class AtomicMappingRules extends MappingRules {
 

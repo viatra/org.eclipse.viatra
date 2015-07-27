@@ -9,20 +9,20 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler.rules
+package org.eclipse.viatra.cep.core.engine.compiler.rules
 
 import com.google.common.base.Preconditions
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.AndPatternMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexAndTransitionMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexFollowsTransitionMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexNotTransitionMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.ComplexOrTransitionMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.FollowsPatternMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.NonUnfoldedNotTransitionMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.NotPatternMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.OrPatternMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.builders.BuilderPrimitives
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.builders.ComplexMappingUtils
+import org.eclipse.viatra.cep.core.engine.compiler.AndPatternMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.ComplexAndTransitionMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.ComplexFollowsTransitionMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.ComplexNotTransitionMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.ComplexOrTransitionMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.FollowsPatternMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.NonUnfoldedNotTransitionMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.NotPatternMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.OrPatternMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.builders.BuilderPrimitives
+import org.eclipse.viatra.cep.core.engine.compiler.builders.ComplexMappingUtils
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.automaton.NegativeTransition

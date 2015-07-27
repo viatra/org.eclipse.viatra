@@ -9,10 +9,10 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler.builders
+package org.eclipse.viatra.cep.core.engine.compiler.builders
 
 import com.google.common.base.Preconditions
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.TransformationBasedCompiler
+import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
 import org.eclipse.viatra.cep.core.metamodels.automaton.EpsilonTransition

@@ -9,13 +9,13 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.cep.core.experimental.mtcompiler.rules
+package org.eclipse.viatra.cep.core.engine.compiler.rules
 
 import com.google.common.base.Preconditions
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.EpsilonTransitionMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.EquivalentStatesMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.EquivalentTransitionsMatcher
-import org.eclipse.viatra.cep.core.experimental.mtcompiler.builders.BuilderPrimitives
+import org.eclipse.viatra.cep.core.engine.compiler.EpsilonTransitionMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.EquivalentStatesMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.EquivalentTransitionsMatcher
+import org.eclipse.viatra.cep.core.engine.compiler.builders.BuilderPrimitives
 import org.eclipse.viatra.cep.core.metamodels.automaton.EpsilonTransition
 import org.eclipse.viatra.cep.core.metamodels.automaton.FinalState
 import org.eclipse.viatra.cep.core.metamodels.automaton.InitState

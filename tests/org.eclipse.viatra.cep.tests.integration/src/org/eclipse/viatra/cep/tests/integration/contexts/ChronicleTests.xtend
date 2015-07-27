@@ -15,8 +15,8 @@ import org.eclipse.viatra.cep.tests.integration.BaseIntegrationTest
 import org.junit.Before
 import org.junit.Test
 
-import static org.eclipse.viatra.cep.core.experimental.mtengine.TransformationBasedCEPEngine.*
 import static org.junit.Assert.*
+import static org.eclipse.viatra.cep.core.api.engine.CEPEngine.*
 
 class ChronicleTests extends BaseIntegrationTest {
 

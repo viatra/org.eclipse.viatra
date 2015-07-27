@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.tests.integration
 
-import org.eclipse.viatra.cep.core.experimental.mtengine.TransformationBasedCEPEngine
+import org.eclipse.viatra.cep.core.api.engine.CEPEngine
 import org.eclipse.viatra.cep.core.streams.EventStream
 import org.eclipse.viatra.cep.tests.integration.contexts.TestResultHelper
 import org.eclipse.viatra.cep.tests.integration.internal.DefaultRealm
@@ -25,7 +25,7 @@ abstract class BaseIntegrationTest {
 
 	private DefaultRealm defaultRealm
 	@Accessors(PROTECTED_GETTER, PROTECTED_SETTER) EventStream eventStream
-	@Accessors(PROTECTED_GETTER, PROTECTED_SETTER) TransformationBasedCEPEngine engine
+	@Accessors(PROTECTED_GETTER, PROTECTED_SETTER) CEPEngine engine
 
 	@Before
 	def void setUp() throws Exception {
