@@ -28,7 +28,7 @@ public interface IObservableComplexEventPattern {
 
     Automaton getAutomaton();
 
-    EventPattern getObservableEventPattern();
+    String getObservedEventPatternId();
 
     List<Event> getObservedAtomicEventInstances();
 

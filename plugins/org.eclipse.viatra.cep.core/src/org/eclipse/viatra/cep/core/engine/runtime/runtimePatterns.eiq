@@ -26,10 +26,9 @@ pattern finishedAutomaton(automaton : Automaton, eventToken : EventToken) {
 	EventToken.currentState(eventToken, finalState);
 }
 
-pattern tokenInTrapState(automaton : Automaton, eventToken : EventToken, eventPattern : EventPattern) {
+pattern tokenInTrapState(automaton : Automaton, eventToken : EventToken) {
 	Automaton.trapState(automaton, trapState);
 	TrapState.eventTokens(trapState, eventToken);
-	Automaton.eventPattern(automaton, eventPattern);
 }
 
 pattern tokenInInitState(automaton : Automaton, eventToken : EventToken) {
@@ -47,7 +46,7 @@ pattern resettableEventToken(automaton : Automaton, eventToken : EventToken){
 	neg find tokenInFinalState(automaton, eventToken);
 }
 
-pattern enabledTransition(transition : TypedTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern, automaton : Automaton) {
+pattern enabledTransition(transition : TypedTransition, eventToken : EventToken, event : Event, automaton : Automaton) {
 	find latestEvent(event);
 	Event.type(event, eventType);
 	TypedTransition.guards.eventType(transition, eventPatternReference);
@@ -58,10 +57,9 @@ pattern enabledTransition(transition : TypedTransition, eventToken : EventToken,
 	
 	Automaton.states(automaton, state);
 	State.outTransitions(state, transition);
-	Automaton.eventPattern(automaton, eventPattern);
 }
 
-pattern enabledNegativeTransition(transition : NegativeTransition, eventToken : EventToken, event : Event, eventPattern : EventPattern, automaton : Automaton) {
+pattern enabledNegativeTransition(transition : NegativeTransition, eventToken : EventToken, event : Event, automaton : Automaton) {
 	find latestEvent(event);
 	Event.type(event, eventType);
 	neg find transitionWithEventType(transition, eventType);
@@ -70,7 +68,6 @@ pattern enabledNegativeTransition(transition : NegativeTransition, eventToken : 
 	
 	Automaton.states(automaton, state);
 	State.outTransitions(state, transition);
-	Automaton.eventPattern(automaton, eventPattern);
 }
 
 pattern transitionWithEventType(transition : Transition, eventType : EString){

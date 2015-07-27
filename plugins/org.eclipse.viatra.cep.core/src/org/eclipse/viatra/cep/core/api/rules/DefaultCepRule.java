@@ -97,7 +97,7 @@ public class DefaultCepRule implements ICepRule {
 
             protected void execute(Activation<? extends IObservableComplexEventPattern> activation, Context context) {
                 LOGGER.debug("CepJobs#DefaultJob: Complex event pattern appeared: "
-                        + activation.getAtom().getObservableEventPattern().getId());
+                        + activation.getAtom().getObservedEventPatternId());
             }
 
             @Override

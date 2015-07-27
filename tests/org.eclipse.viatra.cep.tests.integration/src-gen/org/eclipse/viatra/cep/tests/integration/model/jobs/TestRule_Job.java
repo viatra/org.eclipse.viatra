@@ -5,7 +5,6 @@ import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
-import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 import org.eclipse.viatra.cep.tests.integration.contexts.TestResultHelper;
 
 @SuppressWarnings("all")
@@ -18,9 +17,8 @@ public class TestRule_Job extends Job<IObservableComplexEventPattern> {
   public void execute(final Activation<? extends IObservableComplexEventPattern> ruleInstance, final Context context) {
     TestResultHelper _instance = TestResultHelper.instance();
     IObservableComplexEventPattern _atom = ruleInstance.getAtom();
-    EventPattern _observableEventPattern = _atom.getObservableEventPattern();
-    String _id = _observableEventPattern.getId();
-    _instance.incrementById(_id);
+    String _observedEventPatternId = _atom.getObservedEventPatternId();
+    _instance.incrementById(_observedEventPatternId);
   }
   
   @Override

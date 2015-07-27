@@ -40,6 +40,6 @@ ComplexEvent multiplicityAtLeast(){
 Rule testRule{
 	events: follows, or, and, multiplicity3, multiplicityAtLeast
 	action{
-		TestResultHelper.instance.incrementById(ruleInstance.atom.observableEventPattern.id)
+		TestResultHelper.instance.incrementById(ruleInstance.atom.observedEventPatternId)
 	}
 }

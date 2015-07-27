@@ -34,7 +34,7 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
 public class InTrapComplexEventPattern implements IObservableComplexEventPattern {
 
     private Automaton automaton;
-    private EventPattern observablePattern;
+    private String observableEventPatternId;
     private List<Event> observedAtomicEventInstances;
     private ParameterTable parameterTable;
 
@@ -44,8 +44,8 @@ public class InTrapComplexEventPattern implements IObservableComplexEventPattern
     }
 
     @Override
-    public EventPattern getObservableEventPattern() {
-        return observablePattern;
+    public String getObservedEventPatternId() {
+        return observableEventPatternId;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class InTrapComplexEventPattern implements IObservableComplexEventPattern
         this.observedAtomicEventInstances = eventToken.getRecordedEvents();
         this.parameterTable = eventToken.getParameterTable();
         this.automaton = automaton;
-        this.observablePattern = automaton.getEventPattern();
+        this.observableEventPatternId = automaton.getEventPatternId();
     }
 
 }

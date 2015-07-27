@@ -61,7 +61,7 @@ abstract class MappingRules {
 	def initializeAutomaton(EventPattern eventPattern) {
 		var automaton = createAutomaton
 		internalModel.automata += automaton
-		automaton.eventPattern = eventPattern
+		automaton.eventPatternId = eventPattern.id
 		automaton.states += createInitState
 		automaton.states += createTrapState
 		automaton

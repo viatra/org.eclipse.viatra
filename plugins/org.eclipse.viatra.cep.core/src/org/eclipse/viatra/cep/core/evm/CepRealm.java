@@ -35,8 +35,7 @@ public class CepRealm implements EventRealm {
 
     public void forwardObservedEventPattern(ObservedComplexEventPattern op) {
         for (CepEventSource source : sources) {
-            if (source.getAutomaton().getEventPattern().getId()
-                    .equalsIgnoreCase(op.getObservableEventPattern().getId())) {
+            if (source.getAutomaton().getEventPatternId().equalsIgnoreCase(op.getObservedEventPatternId())) {
                 source.pushEvent(CepEventType.APPEARED, op);
                 // break; //this break is removed to support multiple rule activations from a single automaton
             }
@@ -45,10 +44,9 @@ public class CepRealm implements EventRealm {
 
     public void forwardFailedEventPattern(InTrapComplexEventPattern op) {
         for (CepEventSource source : sources) {
-            if (source.getAutomaton().getEventPattern().getId()
-                    .equalsIgnoreCase(op.getObservableEventPattern().getId())) {
+            if (source.getAutomaton().getEventPatternId().equalsIgnoreCase(op.getObservedEventPatternId())) {
                 source.pushEvent(CepEventType.APPEARED, op);
-                break;
+                break; // this break is removed to support multiple rule activations from a single automaton
             }
         }
     }

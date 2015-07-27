@@ -61,7 +61,7 @@ abstract class AbstractImmediateStrategy extends AbstractStrategy {
 	}
 
 	def private id(Automaton automaton) {
-		automaton.eventPattern.id
+		automaton.eventPatternId
 	}
 
 	def private needsReset(Automaton automaton) {
