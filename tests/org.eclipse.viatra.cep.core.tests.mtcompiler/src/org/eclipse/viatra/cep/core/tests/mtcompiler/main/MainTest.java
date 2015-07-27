@@ -19,8 +19,8 @@ public class MainTest {
     @Before
     public void setUp() {
         defaultRealm = new DefaultRealm();
-        engine = CEPEngine.newEngine().eventContext(EventContext.CHRONICLE)
-                .rule(CepFactory.getInstance().createR()).prepare();
+        engine = CEPEngine.newEngine().eventContext(EventContext.CHRONICLE).rule(CepFactory.getInstance().rule_R())
+                .prepare();
         eventStream = engine.getStreamManager().newEventStream();
     }
 

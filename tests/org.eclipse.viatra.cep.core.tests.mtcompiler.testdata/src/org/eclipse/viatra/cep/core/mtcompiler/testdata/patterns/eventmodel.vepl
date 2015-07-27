@@ -7,7 +7,6 @@ AtomicEvent a_1(p : String)
 AtomicEvent b_1(p : String)
 AtomicEvent c_1(p : String)
 
-
 ComplexEvent follows(){
 	definition: a->b
 }

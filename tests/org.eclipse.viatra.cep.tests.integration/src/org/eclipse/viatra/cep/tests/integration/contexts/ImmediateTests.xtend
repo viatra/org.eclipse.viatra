@@ -23,7 +23,7 @@ class ImmediateTests extends BaseIntegrationTest {
 	@Before
 	override void setUp() {
 		super.setUp
-		engine = newEngine.eventContext(EventContext.IMMEDIATE).rule(createTestRule).prepare
+		engine = newEngine.eventContext(EventContext.IMMEDIATE).rule(rule_TestRule).prepare
 		eventStream = engine.getStreamManager().newEventStream()
 	}
 

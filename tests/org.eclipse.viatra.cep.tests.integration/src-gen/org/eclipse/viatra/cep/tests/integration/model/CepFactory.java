@@ -129,16 +129,16 @@ public class CepFactory {
   /**
    * Factory method for rule {@link TestRule}.
    */
-  public TestRule createTestRule() {
-    return new TestRule();
+  public Class<? extends ICepRule> rule_TestRule() {
+    return TestRule.class;
   }
   
   /**
    * Factory method for instantiating every defined rule.
    */
-  public List<ICepRule> allRules() {
-    List<ICepRule> rules = Lists.newArrayList();
-    rules.add(new TestRule());
+  public List<Class<? extends ICepRule>> allRules() {
+    List<Class<? extends ICepRule>> rules = Lists.newArrayList();
+    rules.add(TestRule.class);
     return rules;
   }
 }

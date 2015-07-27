@@ -23,7 +23,7 @@ class ChronicleTests extends BaseIntegrationTest {
 	@Before
 	override void setUp() {
 		super.setUp
-		engine = newEngine.eventContext(EventContext.CHRONICLE).rule(createTestRule).prepare
+		engine = newEngine.eventContext(EventContext.CHRONICLE).rule(rule_TestRule).prepare
 		eventStream = engine.getStreamManager().newEventStream()
 	}
 
