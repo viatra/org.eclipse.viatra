@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
@@ -39,10 +39,10 @@ class FactoryGenerator {
 				body = [
 					append(
 						'''
-						if(instance == null){
-							instance = new CepFactory();
-						}
-						return instance;''')
+					if(instance == null){
+						instance = new CepFactory();
+					}
+					return instance;''')
 				]
 			]
 			instanceMethod.setStatic(true)
@@ -58,6 +58,10 @@ class FactoryGenerator {
 					var simpleEventMethod = fqn.createFactoryMethod(model, acceptor, members,
 						FactoryMethodParameter.NULL, typeRefBuilder)
 					members += simpleEventMethod
+				} else if (fqn.rule) {
+					var method = fqn.createRuleFactoryMethod(model, acceptor, members, FactoryMethodParameter.EMPTY,
+						typeRefBuilder)
+					members += method
 				} else {
 					var method = fqn.createFactoryMethod(model, acceptor, members, FactoryMethodParameter.EMPTY,
 						typeRefBuilder)
@@ -81,23 +85,39 @@ class FactoryGenerator {
 		method
 	}
 
-	def private createAllRulesMethod(List<QualifiedName> ruleFqns, EventModel model, IJvmDeclaredTypeAcceptor acceptor,
-		List<JvmMember> members, JvmTypeReferenceBuilder typeRefBuilder) {
-		var method = model.toMethod("allRules", typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(ICepRule))) [
+	def private createRuleFactoryMethod(QualifiedName fqn, EventModel model, IJvmDeclaredTypeAcceptor acceptor,
+		List<JvmMember> members, FactoryMethodParameter methodParameter, JvmTypeReferenceBuilder typeRefBuilder) {
+		var method = model.toMethod("rule_" + fqn.lastSegment,
+			typeRefBuilder.typeRef(typeof(Class), cloneWithProxies(typeRefBuilder.typeRef(ICepRule)).wildCardExtends)) [
 			body = [
-				append('''List<ICepRule> rules = ''')
-				append(
-					'''«referClass(typeRefBuilder, model, Lists)».newArrayList();
-						''');
-				for (fqn : ruleFqns) {
-					append('''rules.add(new ''').append('''«referClass(typeRefBuilder, fqn, model)»''').append(
-						'''());
-							''')
-				}
-				append('''return rules;''')
+				append('''return ''').append('''«referClass(it, typeRefBuilder, fqn, model)»''').append(
+					'''.class;''')
 			]
 		]
-		method.setDocumentation('''Factory method for instantiating every defined rule.''')
+		method.setDocumentation('''Factory method for «fqn.type» {@link «fqn.lastSegment»}.''')
 		method
 	}
-}
+
+	def private createAllRulesMethod(List<QualifiedName> ruleFqns, EventModel model, IJvmDeclaredTypeAcceptor acceptor,
+		List<JvmMember> members, JvmTypeReferenceBuilder typeRefBuilder) {
+		var method = model.toMethod("allRules",
+			typeRefBuilder.typeRef(List,
+				typeRefBuilder.typeRef(typeof(Class),
+					cloneWithProxies(typeRefBuilder.typeRef(ICepRule)).wildCardExtends))) [
+				body = [
+					append('''List<Class<? extends ICepRule>> rules = ''')
+					append(
+					'''«referClass(typeRefBuilder, model, Lists)».newArrayList();
+					''');
+					for (fqn : ruleFqns) {
+						append('''rules.add(''').append('''«referClass(typeRefBuilder, fqn, model)»''').append(
+						'''.class);
+						''')
+					}
+					append('''return rules;''')
+				]
+			]
+			method.setDocumentation('''Factory method for instantiating every defined rule.''')
+			method
+		}
+	}

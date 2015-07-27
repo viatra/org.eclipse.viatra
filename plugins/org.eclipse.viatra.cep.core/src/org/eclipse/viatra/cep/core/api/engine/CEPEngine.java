@@ -109,7 +109,7 @@ public class CEPEngine {
     public static class CEPEngineBuilder {
         private String engineId;
         private EventContext eventContext = DEFAULT_EVENT_CONTEXT;
-        private List<ICepRule> rules = Lists.newArrayList();
+        private List<Class<? extends ICepRule>> ruleSpecifications = Lists.newArrayList();
 
         public CEPEngineBuilder id(String engineId) {
             this.engineId = engineId;
@@ -121,15 +121,15 @@ public class CEPEngine {
             return this;
         }
 
-        public CEPEngineBuilder rules(List<ICepRule> rules) {
-            for (ICepRule rule : rules) {
+        public CEPEngineBuilder rules(List<Class<? extends ICepRule>> rules) {
+            for (Class<? extends ICepRule> rule : rules) {
                 this.rule(rule);
             }
             return this;
         }
 
-        public CEPEngineBuilder rule(ICepRule rule) {
-            this.rules.add(rule);
+        public CEPEngineBuilder rule(Class<? extends ICepRule> rule) {
+            this.ruleSpecifications.add(rule);
             return this;
         }
 
@@ -139,10 +139,24 @@ public class CEPEngine {
             }
             Preconditions.checkArgument(engineId != null);
             Preconditions.checkArgument(eventContext != null);
-            Preconditions.checkArgument(!rules.isEmpty(),
-                    String.format("No rules were specified for CEP engine \"%s\" (%s).", engineId, this.toString()));
+            Preconditions.checkArgument(
+                    !ruleSpecifications.isEmpty(),
+                    String.format("No rule specifications added to the CEP engine \"%s\" (%s).", engineId,
+                            this.toString()));
 
-            CEPEngine engine = new CEPEngine(engineId, eventContext, rules);
+            List<ICepRule> ruleInstances = Lists.newArrayList();
+            for (Class<? extends ICepRule> ruleSpecification : ruleSpecifications) {
+                try {
+                    ruleInstances.add(ruleSpecification.newInstance());
+                } catch (Exception e) {
+                    LoggerUtils.getInstance().getLogger().error(e.getMessage());
+                }
+            }
+
+            Preconditions.checkArgument(!ruleInstances.isEmpty(), String.format(
+                    "No rule instances were created from the rule specifications \"%s\" (%s).", engineId,
+                    this.toString()));
+            CEPEngine engine = new CEPEngine(engineId, eventContext, ruleInstances);
             engine.prepare();
             return engine;
         }
