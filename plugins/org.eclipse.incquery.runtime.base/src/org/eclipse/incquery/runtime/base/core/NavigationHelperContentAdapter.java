@@ -396,23 +396,33 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     @Override
+    // OFFICIAL ENTRY POINT
     protected void addAdapter(final Notifier notifier) {
         if (notifier == ignoreInsertionAndDeletion) {
             return;
         }
         try {
+            if (objectFilterConfiguration != null && objectFilterConfiguration.isFiltered(notifier)) {
+                return;
+            }
             this.navigationHelper.coalesceTraversals(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
+                    // the object is really traversed BEFORE the notification listener is added,
+                    // so that if a proxy is resolved due to the traversal, we do not get notified about it
                     if (notifier instanceof EObject) {
                         comprehension.traverseObject(visitor(true), (EObject) notifier);
                     } else if (notifier instanceof Resource) {
-                    	Resource resource = (Resource) notifier;
+                        Resource resource = (Resource) notifier;
+                        if (resourceFilterConfiguration != null
+                                && resourceFilterConfiguration.isResourceFiltered(resource)) {
+                            return null;
+                        }
                     	if (comprehension.isLoading(resource))
                     		navigationHelper.resolutionDelayingResources.add(resource);
                     }
-                    // the notification listener is really added AFTER traversing the object, 
-                    // so that if a proxy is resolved due to the traversal, we do not get notified about it   
+                    // subscribes to the adapter list, will receive setTarget callback that will spread addAdapter to
+                    // children
                     NavigationHelperContentAdapter.super.addAdapter(notifier);
                     return null;
                 }
@@ -425,11 +435,15 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     @Override
+    // OFFICIAL ENTRY POINT
     protected void removeAdapter(final Notifier notifier) {
         if (notifier == ignoreInsertionAndDeletion) {
             return;
         }
         try {
+            if (objectFilterConfiguration != null && objectFilterConfiguration.isFiltered(notifier)) {
+                return;
+            }
             this.navigationHelper.coalesceTraversals(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
@@ -438,8 +452,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 						comprehension.traverseObject(visitor(false), eObject);
                         navigationHelper.delayedProxyResolutions.removeAll(eObject);
                     } else if (notifier instanceof Resource) {
+                        if (resourceFilterConfiguration != null
+                                && resourceFilterConfiguration.isResourceFiltered((Resource) notifier)) {
+                            return null;
+                        }
                         navigationHelper.resolutionDelayingResources.remove(notifier);
                     }
+                    // unsubscribes from the adapter list, will receive unsetTarget callback that will spread
+                    // removeAdapter to children
                     NavigationHelperContentAdapter.super.removeAdapter(notifier);
                     return null;
                 }
@@ -1098,38 +1118,6 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             ENotificationImpl notification = new ENotificationImpl(internalEObject, Notification.SET, feature, oldValue, newValue);
             notifyLightweightObservers(source, feature, notification);
         }
-    }
-
-    @Override
-    public void setTarget(Notifier target) {
-        if (objectFilterConfiguration != null && objectFilterConfiguration.isFiltered(target)) {
-            return;
-        }
-        super.setTarget(target);
-    }
-
-    @Override
-    public void unsetTarget(Notifier target) {
-        if (objectFilterConfiguration != null && objectFilterConfiguration.isFiltered(target)) {
-            return;
-        }
-        super.unsetTarget(target);
-    }
-    
-    @Override
-    public void setTarget(Resource target) {
-        if (resourceFilterConfiguration != null && resourceFilterConfiguration.isResourceFiltered(target)) {
-            return;
-        }
-        super.setTarget(target);
-    }
-    
-    @Override
-    public void unsetTarget(Resource target) {
-        if (resourceFilterConfiguration != null && resourceFilterConfiguration.isResourceFiltered(target)) {
-            return;
-        }
-        super.unsetTarget(target);
     }
 
 
