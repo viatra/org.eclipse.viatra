@@ -46,7 +46,7 @@ public class CepRealm implements EventRealm {
         for (CepEventSource source : sources) {
             if (source.getAutomaton().getEventPatternId().equalsIgnoreCase(op.getObservedEventPatternId())) {
                 source.pushEvent(CepEventType.APPEARED, op);
-                break; // this break is removed to support multiple rule activations from a single automaton
+                // break; // this break is removed to support multiple rule activations from a single automaton
             }
         }
     }

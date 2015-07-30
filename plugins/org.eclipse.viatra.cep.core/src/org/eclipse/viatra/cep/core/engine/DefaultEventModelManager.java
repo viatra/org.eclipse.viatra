@@ -112,8 +112,8 @@ public class DefaultEventModelManager implements IEventModelManager {
         model.getEnabledForTheLatestEvent().clear();
         strategy.handleInitTokenCreation(model, AutomatonFactory.eINSTANCE);
         model.setLatestEvent(event);
-        cepUpdateCompleteProvider.latestEventHandled();
         strategy.handleAutomatonResets(model, AutomatonFactory.eINSTANCE);
+        cepUpdateCompleteProvider.latestEventHandled();
     }
 
     public ExecutionSchema createExecutionSchema() {
