@@ -12,6 +12,7 @@ package org.eclipse.incquery.runtime.evm.api;
 
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.incquery.runtime.evm.api.resolver.ChangeableConflictSet;
@@ -35,13 +36,15 @@ public class Agenda {
     private final IActivationNotificationListener activationListener;
     private final RuleBase ruleBase;
     private ConflictSetUpdater updatingListener;
+    private final Logger logger;
 
     /**
      *
      */
     public Agenda(final RuleBase ruleBase, final ConflictResolver conflictResolver) {
         this.ruleBase = ruleBase;
-        activations = HashMultimap.create();
+        this.logger = ruleBase.getLogger();
+        this.activations = HashMultimap.create();
         this.conflictSet = conflictResolver.createConflictSet();
         this.updatingListener = new ConflictSetUpdater(conflictSet);
         this.activationListener = new DefaultActivationNotificationListener();
@@ -99,6 +102,10 @@ public class Agenda {
         return conflictSet;
     }
 
+    public RuleBase getRuleBase() {
+        return ruleBase;
+    }
+
     /**
      * This class is responsible for handling notifications sent by rule instances when an activation changes state.
      *
@@ -108,11 +115,14 @@ public class Agenda {
      *
      */
     private final class DefaultActivationNotificationListener implements IActivationNotificationListener {
+        
         @Override
         public void activationChanged(final Activation<?> activation,
                 final ActivationState oldState, final EventType event) {
-            ruleBase.getLogger().debug(
+            if(logger.isDebugEnabled()){
+                logger.debug(
                     String.format("%s -- %s --> %s on %s", oldState, event, activation.getState(), activation));
+            }
             getActivations().remove(oldState, activation);
             final ActivationState state = activation.getState();
             if(!state.isInactive()) {
@@ -123,8 +133,10 @@ public class Agenda {
 
         @Override
         public void activationCreated(final Activation<?> activation, final ActivationState inactiveState) {
-            ruleBase.getLogger().debug(
+            if(logger.isDebugEnabled()){
+                logger.debug(
                     String.format("%s -- CREATE --> %s on %s", inactiveState, activation.getState(), activation));
+            }
             updatingListener.activationCreated(activation, inactiveState);
             final ActivationState state = activation.getState();
             getActivations().put(state, activation);
@@ -132,8 +144,10 @@ public class Agenda {
 
         @Override
         public void activationRemoved(final Activation<?> activation, final ActivationState oldState) {
-            ruleBase.getLogger().debug(
+            if(logger.isDebugEnabled()){
+                logger.debug(
                     String.format("%s -- REMOVE --> %s on %s", oldState, activation.getState(), activation));
+            }
             getActivations().remove(oldState, activation);
             updatingListener.activationRemoved(activation, oldState);
         }
