@@ -56,7 +56,7 @@ public class ExpressionTreeBuilder {
         }
 
         if (expression.getNegOperator() != null) {
-            ComplexEventExpression newExpression = expression.getPrimary();
+            ComplexEventExpression newExpression = expression.getLeft();
             ExpressionTree subTree = buildTree(newExpression);
 
             createNode(VeplFactory.eINSTANCE.createNegOperator(), newExpression, subTree);

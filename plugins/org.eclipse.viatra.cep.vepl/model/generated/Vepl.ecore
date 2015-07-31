@@ -71,8 +71,6 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="negOperator" eType="#//NegOperator"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="primary" eType="#//ComplexEventExpression"
-        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ChainedExpression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="operator" eType="#//BinaryOperator"

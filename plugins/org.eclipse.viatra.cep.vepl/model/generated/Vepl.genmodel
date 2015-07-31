@@ -61,7 +61,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//ComplexEventExpression/multiplicity"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//ComplexEventExpression/timewindow"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//ComplexEventExpression/negOperator"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//ComplexEventExpression/primary"/>
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//ChainedExpression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//ChainedExpression/operator"/>

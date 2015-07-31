@@ -11,12 +11,15 @@
 package org.eclipse.viatra.cep.vepl.validation
 
 import org.eclipse.viatra.cep.vepl.vepl.AbstractAtomicEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.AndOperator
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.ChainedExpression
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.EventPattern
+import org.eclipse.viatra.cep.vepl.vepl.FollowsOperator
 import org.eclipse.viatra.cep.vepl.vepl.Infinite
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
 import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
@@ -29,6 +32,7 @@ import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.eclipse.xtext.validation.Check
 
 import static extension org.eclipse.viatra.cep.vepl.validation.ValidationHelper.*
+import org.eclipse.emf.ecore.EStructuralFeature
 
 class VeplValidator extends AbstractVeplValidator {
 
@@ -46,6 +50,7 @@ class VeplValidator extends AbstractVeplValidator {
 	public static val PARAMETER_ON_NON_ATOMIC_PATTERN_CALL = "parameterOnNonAtomicPatternCall"
 	public static val NEGATIVE_WITH_MULTIPLICITY = "negativeWithMultiplicity"
 	public static val NEGATIVE_WITH_TIMEWINDOW = "negativeWithTimewindow"
+	public static val UNSAFE_STAR_OPERATOR = "unsafeStarOperator"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -178,9 +183,9 @@ class VeplValidator extends AbstractVeplValidator {
 			return
 		}
 
-		val primary = complexEventExpression.primary as Atom
+		val left = complexEventExpression.left as Atom
 
-		val patternCall = primary.patternCall
+		val patternCall = left.patternCall
 		if (!(patternCall.eventPattern instanceof AbstractAtomicEventPattern)) {
 			error(
 				"The NOT operator can be applied only on atomic event pattern references.",
@@ -190,30 +195,61 @@ class VeplValidator extends AbstractVeplValidator {
 		}
 	}
 
+//	@Check
+	def unsafeStarOperator(ComplexEventExpression complexEventExpression) {
+		if (!(complexEventExpression.hasInfiniteMultiplicity)) {
+			return
+		}
+
+		val container = complexEventExpression.eContainer
+		if (container instanceof ComplexEventExpression) {
+//			(container as ComplexEventExpression).
+		}
+
+		if (!(container instanceof ChainedExpression)) {
+			error(
+				"Unsafe infinite multiplicity operator (\"{*}\").",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
+				UNSAFE_STAR_OPERATOR
+			)
+		} else {
+			val operator = (container as ChainedExpression).operator
+			if ((operator instanceof FollowsOperator) || (operator instanceof AndOperator)) {
+				return
+			} else {
+				error(
+					"Unsafe infinite multiplicity operator (\"{*}\").",
+					VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
+					UNSAFE_STAR_OPERATOR
+				)
+			}
+		}
+	}
+
 	@Check
 	def negativeOperatorAndOtherOperatorCombinations(ComplexEventExpression complexEventExpression) {
 		if (complexEventExpression.negOperator == null) {
 			return
 		}
 
-		if (!(complexEventExpression.primary instanceof Atom)) {
+		if (!(complexEventExpression.left instanceof Atom)) {
 			return
 		}
 
-		val primary = complexEventExpression.primary as Atom
+		val primary = complexEventExpression.left as Atom
 
 		val multiplicity = primary.multiplicity
 		if (!multiplicity.nullOrOneMultiplicity) {
 			error(
 				"Cannot use multiplicity operator with a NOT expression.",
-				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__PRIMARY,
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__LEFT,
 				NEGATIVE_WITH_MULTIPLICITY
 			)
 		}
 		if (primary.hasTimewindow) {
 			error(
 				"Cannot use timewindow operator with a NOT expression.",
-				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__PRIMARY,
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__LEFT,
 				NEGATIVE_WITH_TIMEWINDOW
 			)
 		}

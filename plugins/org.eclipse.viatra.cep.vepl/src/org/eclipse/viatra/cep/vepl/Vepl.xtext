@@ -129,7 +129,7 @@ NormalPrimary returns ComplexEventExpression:
 ;
 
 NegatedPrimary returns ComplexEventExpression:
-	negOperator = NegOperator primary = NormalPrimary
+	negOperator = NegOperator left = NormalPrimary
 ;
 
 Atom:

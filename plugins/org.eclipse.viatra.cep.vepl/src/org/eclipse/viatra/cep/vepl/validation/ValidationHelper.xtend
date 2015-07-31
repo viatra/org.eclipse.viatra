@@ -18,6 +18,7 @@ import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
 import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.viatra.cep.vepl.vepl.AbstractMultiplicity
 import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
+import org.eclipse.viatra.cep.vepl.vepl.Infinite
 
 /**
  * Helper class for the {@link VeplValidator}.
@@ -37,6 +38,10 @@ class ValidationHelper {
 
 	def static dispatch hasMultiplicity(Atom atom) {
 		return atom.multiplicity != null
+	}
+
+	def static hasInfiniteMultiplicity(ComplexEventExpression complexEventExpression) {
+		return complexEventExpression.multiplicity instanceof Infinite
 	}
 
 	def static nullOrOneMultiplicity(AbstractMultiplicity multiplicity) {
