@@ -50,6 +50,8 @@ import org.eclipse.incquery.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.incquery.runtime.base.api.InstanceListener;
 import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
+import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexObjectFilter;
+import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.incquery.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
@@ -678,7 +680,12 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (expansionAllowed) {
             Resource eResource = obj.eResource();
             if (eResource != null && eResource.getResourceSet() == null) {
-                expandToAdditionalRoot(eResource);
+                IBaseIndexResourceFilter resourceFilter = baseIndexOptions.getResourceFilterConfiguration();
+                final IBaseIndexObjectFilter objectFilter = baseIndexOptions.getObjectFilterConfiguration();
+                if ((resourceFilter == null || !resourceFilter.isResourceFiltered(eResource))
+                        && (objectFilter == null || !objectFilter.isFiltered(eResource))) {
+                    expandToAdditionalRoot(eResource);
+                }
             }
         }
     }
