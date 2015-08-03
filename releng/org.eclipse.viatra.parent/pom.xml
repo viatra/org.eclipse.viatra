@@ -196,6 +196,7 @@
 				<module>../../tests/org.eclipse.viatra.cep.tests.integration</module>
 				<module>../../tests/org.eclipse.viatra.emf.mwe2integration.test</module>
 				<module>../../features/org.eclipse.viatra.emf.runtime.feature</module>
+				<module>../../features/org.eclipse.viatra.emf.mwe2integration.feature</module>
 				<module>../../features/org.eclipse.viatra.cep.feature</module>
 				<module>../../features/org.eclipse.viatra.dse.feature</module>
 				<module>../../releng/org.eclipse.viatra.update</module>

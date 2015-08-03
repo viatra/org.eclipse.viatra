@@ -9,5 +9,8 @@
    <feature url="features/org.eclipse.viatra.cep.feature_0.8.0.qualifier.jar" id="org.eclipse.viatra.cep.feature" version="0.8.0.qualifier">
       <category name="org.eclipse.viatra"/>
    </feature>
+   <feature url="features/org.eclipse.viatra.emf.mwe2integration.feature_0.8.0.qualifier.jar" id="org.eclipse.viatra.emf.mwe2integration.feature" version="0.8.0.qualifier">
+      <category name="org.eclipse.viatra"/>
+   </feature>
    <category-def name="org.eclipse.viatra" label="VIATRA"/>
 </site>
