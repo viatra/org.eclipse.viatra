@@ -174,19 +174,11 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
 
                 geneticDebugger.debug(parentPopulation);
 
-                for (InstanceData instanceData : parentPopulation) {
-                    instanceData.survive++;
-                }
-
                 if (sharedObject.stopCondition.equals(StopCondition.CANT_FIND_BETTER)) {
                     boolean stopConditionIsFulfilled = true;
                     for (InstanceData instanceData : parentPopulation) {
-                        if (instanceData.rank == 1) {
-                            if (instanceData.survive < sharedObject.stopConditionNumber) {
-                                stopConditionIsFulfilled = false;
-                                break;
-                            }
-                        } else {
+                        if (instanceData.rank == 1 && instanceData.survive < sharedObject.stopConditionNumber) {
+                            stopConditionIsFulfilled = false;
                             break;
                         }
                     }
@@ -210,6 +202,10 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                             break;
                         }
                     }
+                }
+
+                for (InstanceData instanceData : parentPopulation) {
+                    instanceData.survive++;
                 }
 
                 if (isLastPopulation) {
