@@ -29,6 +29,8 @@ import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
+import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexObjectFilter;
+import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexResourceFilter;
 
 /**
  * @author Bergmann Gábor
@@ -118,6 +120,9 @@ public class EMFModelComprehension {
         return false;
     }
 
+    /** 
+     * Resource filters not consulted here (for performance), because model roots are assumed to be pre-filtered. 
+     */
     public void traverseModel(EMFVisitor visitor, Notifier source) {
         if (source == null)
             return;
@@ -138,9 +143,20 @@ public class EMFModelComprehension {
             return;
         final List<Resource> resources = new ArrayList<Resource>(source.getResources());
         for (Resource resource : resources) {
-            traverseResource(visitor, resource);
+            traverseResourceIfUnfiltered(visitor, resource);
         }
     }
+
+    public void traverseResourceIfUnfiltered(EMFVisitor visitor, Resource resource) {
+		final IBaseIndexResourceFilter resourceFilter = options.getResourceFilterConfiguration();
+		if (resourceFilter != null && resourceFilter.isResourceFiltered(resource))
+			return;
+		final IBaseIndexObjectFilter objectFilter = options.getObjectFilterConfiguration();
+		if (objectFilter != null && objectFilter.isFiltered(resource))
+			return;
+		
+		traverseResource(visitor, resource);
+	}
 
     public void traverseResource(EMFVisitor visitor, Resource source) {
         if (source == null)
@@ -149,11 +165,20 @@ public class EMFModelComprehension {
             return;
         final EList<EObject> contents = source.getContents();
         for (EObject eObject : contents) {
-            traverseObject(visitor, eObject);
+            traverseObjectIfUnfiltered(visitor, eObject);
         }
     }
 
-    public void traverseObject(EMFVisitor visitor, EObject source) {
+
+	public void traverseObjectIfUnfiltered(EMFVisitor visitor, EObject targetObject) {
+		final IBaseIndexObjectFilter objectFilter = options.getObjectFilterConfiguration();
+		if (objectFilter != null && objectFilter.isFiltered(targetObject))
+			return;
+		
+		traverseObject(visitor, targetObject);
+	}
+
+	public void traverseObject(EMFVisitor visitor, EObject source) {
         if (source == null)
             return;
 
@@ -233,7 +258,7 @@ public class EMFModelComprehension {
                 if (!visitorPrunes)
                     visitor.visitInternalContainment(source, reference, targetObject);
                 if (!visitor.pruneSubtrees(source))
-                    traverseObject(visitor, targetObject);
+                    traverseObjectIfUnfiltered(visitor, targetObject);
 
                 final EReference opposite = reference.getEOpposite();
                 if (opposite != null) { // emulated derived edge based on container opposite

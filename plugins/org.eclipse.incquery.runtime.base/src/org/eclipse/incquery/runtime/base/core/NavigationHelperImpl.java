@@ -680,24 +680,29 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (expansionAllowed) {
             Resource eResource = obj.eResource();
             if (eResource != null && eResource.getResourceSet() == null) {
-                IBaseIndexResourceFilter resourceFilter = baseIndexOptions.getResourceFilterConfiguration();
-                final IBaseIndexObjectFilter objectFilter = baseIndexOptions.getObjectFilterConfiguration();
-                if ((resourceFilter == null || !resourceFilter.isResourceFiltered(eResource))
-                        && (objectFilter == null || !objectFilter.isFiltered(eResource))) {
-                    expandToAdditionalRoot(eResource);
-                }
+            	expandToAdditionalRoot(eResource);
             }
         }
     }
 
     protected void expandToAdditionalRoot(Notifier root) {
-        if (modelRoots.add(root)) {
-            if (root instanceof ResourceSet) {
-                expansionAllowed = true;
-            }
-            contentAdapter.addAdapter(root);
-            contentAdapter.notifyBaseIndexChangeListeners();
-        }
+    	if (modelRoots.contains(root)) return;
+    	
+    	if (root instanceof ResourceSet) {
+    		expansionAllowed = true;
+    	} else if (root instanceof Resource) {
+    		IBaseIndexResourceFilter resourceFilter = baseIndexOptions.getResourceFilterConfiguration();
+    		if (resourceFilter != null && resourceFilter.isResourceFiltered((Resource) root))
+    			return;
+    	}
+		final IBaseIndexObjectFilter objectFilter = baseIndexOptions.getObjectFilterConfiguration();
+		if (objectFilter != null && objectFilter.isFiltered(root))
+			return;
+    	
+		// no veto by filters
+        modelRoots.add(root);
+        contentAdapter.addAdapter(root);
+        contentAdapter.notifyBaseIndexChangeListeners();
     }
 
     /**
