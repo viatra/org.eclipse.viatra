@@ -15,12 +15,15 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 public class PackagePresentationHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        QueryExplorer.getInstance().setPackagePresentation(event.getCommand().getId(), true);
+        final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+        QueryExplorer.getInstance(activeWorkbenchWindow).setPackagePresentation(event.getCommand().getId(), true);
         return null;
     }
 }

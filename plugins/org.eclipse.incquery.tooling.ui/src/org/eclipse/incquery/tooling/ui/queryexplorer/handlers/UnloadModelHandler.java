@@ -18,21 +18,22 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class UnloadModelHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-
+        final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
         ISelection selection = HandlerUtil.getActiveMenuSelection(event);
         if (selection instanceof TreeSelection) {
             PatternMatcherRootContent root = (PatternMatcherRootContent) ((TreeSelection) selection)
                     .getFirstElement();
-            QueryExplorer.getInstance().unload(root.getKey());
+            QueryExplorer.getInstance(activeWorkbenchWindow).unload(root.getKey());
         }
 
-        QueryExplorer.getInstance().clearTableViewer();
+        QueryExplorer.getInstance(activeWorkbenchWindow).clearTableViewer();
         return null;
     }
 }

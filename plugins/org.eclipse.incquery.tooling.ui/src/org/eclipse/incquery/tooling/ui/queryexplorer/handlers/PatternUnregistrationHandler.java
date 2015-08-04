@@ -24,6 +24,8 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.Patt
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternLeaf;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Handler used for pattern unregistration (called from Pattern Registry).
@@ -35,23 +37,26 @@ public class PatternUnregistrationHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        TreeSelection selection = (TreeSelection) QueryExplorer.getInstance().getPatternsViewer().getSelection();
+        final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+        final QueryExplorer queryExplorer = QueryExplorer.getInstance(activeWorkbenchWindow);
+        TreeSelection selection = (TreeSelection) queryExplorer.getPatternsViewer()
+                .getSelection();
 
         for (Object element : selection.toArray()) {
             if (element instanceof PatternLeaf) {
                 PatternLeaf leaf = (PatternLeaf) element;
-                unregisterPattern(leaf.getFullPatternNamePrefix());
+                unregisterPattern(queryExplorer, leaf.getFullPatternNamePrefix());
             } else {
                 PatternComposite composite = (PatternComposite) element;
                 List<PatternLeaf> leaves = composite.getAllLeaves();
                 for (PatternLeaf leaf : leaves) {
-                    unregisterPattern(leaf.getFullPatternNamePrefix());
+                    unregisterPattern(queryExplorer, leaf.getFullPatternNamePrefix());
                 }
             }
         }
 
-        QueryExplorer.getInstance().getPatternsViewerRoot().getGenericPatternsRoot().purge();
-        QueryExplorer.getInstance().getPatternsViewer().refresh();
+        queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().purge();
+        queryExplorer.getPatternsViewer().refresh();
         return null;
     }
 
@@ -61,15 +66,16 @@ public class PatternUnregistrationHandler extends AbstractHandler {
      * @param fqn
      *            the fully qualified name of the pattern
      */
-    public void unregisterPattern(String fqn) {
+    public void unregisterPattern(QueryExplorer queryExplorer, String fqn) {
         IQuerySpecification<?> specification = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(fqn);
         if (specification != null && !QueryExplorerPatternRegistry.getInstance().isGenerated(specification)) {
             List<IQuerySpecification<?>> removedSpecifications = QueryExplorerPatternRegistry.getInstance().unregisterPattern(specification);
             for (IQuerySpecification<?> removedSpecification : removedSpecifications) {
-            	QueryExplorer.getInstance().getPatternsViewerRoot().getGenericPatternsRoot().removeComponent(removedSpecification.getFullyQualifiedName());
+                queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot()
+                        .removeComponent(removedSpecification.getFullyQualifiedName());
 
             	//unregister patterns from observable roots
-            	Iterator<PatternMatcherRootContent> iterator = QueryExplorer.getInstance().getRootContent().getChildrenIterator();
+                Iterator<PatternMatcherRootContent> iterator = queryExplorer.getRootContent().getChildrenIterator();
                 while (iterator.hasNext()) {
                     PatternMatcherRootContent root = iterator.next();
             		root.unregisterPattern(removedSpecification);

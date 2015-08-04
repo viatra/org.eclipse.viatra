@@ -19,6 +19,7 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.AdapterUtil;
 import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
@@ -28,11 +29,13 @@ public class LoadResourceHandler extends LoadResourceSetHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
+        IEditorPart editorPart = HandlerUtil.getActiveEditorChecked(event);
+        final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
         IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart);
         if (modelConnector instanceof EMFModelConnector) {
             modelConnector.loadModel(IModelConnectorTypeEnum.RESOURCE);
-            QueryExplorer.getInstance().load(((EMFModelConnector) modelConnector).getKey(), modelConnector);
+            QueryExplorer.getInstance(activeWorkbenchWindow).load(((EMFModelConnector) modelConnector).getKey(),
+                    modelConnector);
         }
         return null;
     }

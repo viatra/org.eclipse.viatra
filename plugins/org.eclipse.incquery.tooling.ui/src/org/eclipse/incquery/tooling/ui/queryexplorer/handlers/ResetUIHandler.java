@@ -18,12 +18,15 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 public class ResetUIHandler extends AbstractHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        QueryExplorer queryExplorer = QueryExplorer.getInstance();
+        final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+        QueryExplorer queryExplorer = QueryExplorer.getInstance(activeWorkbenchWindow);
         QueryExplorerPatternRegistry patternRegistry = QueryExplorerPatternRegistry.getInstance();
 
         if (queryExplorer != null) {

@@ -18,6 +18,8 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternLeaf;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Show location handler for the pattern registry extension.
@@ -33,7 +35,9 @@ public class PatternRegistryShowLocationHandler extends ShowLocationHandler {
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        TreeSelection selection = (TreeSelection) QueryExplorer.getInstance().getPatternsViewer().getSelection();
+        final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+        TreeSelection selection = (TreeSelection) QueryExplorer.getInstance(activeWorkbenchWindow).getPatternsViewer()
+                .getSelection();
         Object firstElement = selection.getFirstElement();
 
         if (firstElement instanceof PatternLeaf) {

@@ -179,6 +179,13 @@ public class QueryExplorer extends ViewPart {
     public static QueryExplorer getInstance() {
         // In Juno activeWorkbenchWindow will be null when Eclipse is closing
         IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        return getInstance(activeWorkbenchWindow);
+    }
+
+    /**
+     * @since 1.0
+     */
+    public static QueryExplorer getInstance(IWorkbenchWindow activeWorkbenchWindow) {
         if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
             return (QueryExplorer) activeWorkbenchWindow.getActivePage().findView(ID);
         }

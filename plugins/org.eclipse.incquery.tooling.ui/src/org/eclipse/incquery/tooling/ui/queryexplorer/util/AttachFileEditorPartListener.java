@@ -12,11 +12,13 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.util;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.AttachEiqEditorRegistrationHandler;
 import org.eclipse.incquery.tooling.ui.queryexplorer.handlers.PatternUnregistrationHandler;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -43,6 +45,7 @@ public class AttachFileEditorPartListener extends BasePartListener {
         if (part instanceof IEditorPart) {
             IEditorPart closedEditor = (IEditorPart) part;
             IEditorInput editorInput = closedEditor.getEditorInput();
+            final IWorkbenchWindow activeWorkbenchWindow = part.getSite().getWorkbenchWindow();
 
             if (editorInput instanceof FileEditorInput) {
                 IFile file = ((FileEditorInput) editorInput).getFile();
@@ -59,7 +62,8 @@ public class AttachFileEditorPartListener extends BasePartListener {
                     	PatternUnregistrationHandler puh = new PatternUnregistrationHandler();
                     	// collect registered patterns for file
                     	for (IQuerySpecification<?> qs : QueryExplorerPatternRegistry.getInstance().getRegisteredPatternsForFile(file)) {
-                    		puh.unregisterPattern(qs.getFullyQualifiedName());
+                            puh.unregisterPattern(QueryExplorer.getInstance(activeWorkbenchWindow),
+                                    qs.getFullyQualifiedName());
                     	}
                     	
                     }

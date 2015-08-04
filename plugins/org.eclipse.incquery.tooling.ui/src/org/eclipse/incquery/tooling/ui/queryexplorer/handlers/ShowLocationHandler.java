@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.FileEditorInput;
@@ -46,13 +47,15 @@ public class ShowLocationHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         IStructuredSelection selection = (IStructuredSelection) HandlerUtil.getCurrentSelection(event);
+        final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindowChecked(event);
         if (selection instanceof TreeSelection) {
             Object obj = selection.getFirstElement();
 
             if (obj instanceof PatternMatchContent) {
                 PatternMatchContent pm = (PatternMatchContent) obj;
                 PatternMatcherRootContentKey key = pm.getParent().getParent().getKey();
-                QueryExplorer.getInstance().getModelConnector(key).showLocation(pm.getLocationObjects());
+                QueryExplorer.getInstance(activeWorkbenchWindow).getModelConnector(key)
+                        .showLocation(pm.getLocationObjects());
             } else if (obj instanceof PatternMatcherContent) {
                 PatternMatcherContent matcher = (PatternMatcherContent) obj;
                 if (matcher.getSpecification() != null) {
