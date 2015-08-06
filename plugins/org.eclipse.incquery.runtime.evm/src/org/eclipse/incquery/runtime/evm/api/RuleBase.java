@@ -54,8 +54,8 @@ public class RuleBase {
     protected RuleBase(final EventRealm eventRealm) {
         this.eventRealm = checkNotNull(eventRealm, "Cannot create RuleBase with null event source");
         this.ruleInstanceTable = HashBasedTable.create();
-        this.agenda = new Agenda(this, new ArbitraryOrderConflictResolver());
         this.logger = Logger.getLogger(this.toString());
+        this.agenda = new Agenda(this, new ArbitraryOrderConflictResolver());
     }
 
     /**

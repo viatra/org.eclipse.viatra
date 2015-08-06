@@ -20,6 +20,7 @@ import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictSetUpdater;
 import org.eclipse.incquery.runtime.evm.notification.IActivationNotificationListener;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -44,6 +45,7 @@ public class Agenda {
     public Agenda(final RuleBase ruleBase, final ConflictResolver conflictResolver) {
         this.ruleBase = ruleBase;
         this.logger = ruleBase.getLogger();
+        Preconditions.checkState(this.logger == null, "Rulebase logger is null!");
         this.activations = HashMultimap.create();
         this.conflictSet = conflictResolver.createConflictSet();
         this.updatingListener = new ConflictSetUpdater(conflictSet);
