@@ -56,14 +56,6 @@
     </setupTask>
     <setupTask
         xsi:type="setup:CompoundTask"
-        name="org.eclipse.mylyn.team.ui">
-      <setupTask
-          xsi:type="setup:PreferenceTask"
-          key="/instance/org.eclipse.mylyn.team.ui/org.eclipse.mylyn.team.commit.template"
-          value="[$${task.key}]"/>
-    </setupTask>
-    <setupTask
-        xsi:type="setup:CompoundTask"
         name="org.eclipse.ui.editors">
       <setupTask
           xsi:type="setup:PreferenceTask"
@@ -111,31 +103,7 @@
     <requirement
         name="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
     <requirement
-        name="org.eclipse.mylyn.ide_feature.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn.java_feature.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn.pde_feature.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn.team_feature.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn.gerrit.feature.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn.gerrit.dashboard.feature.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn_feature.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn.bugzilla_feature.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn.git.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn.builds.feature.group"/>
-    <requirement
-        name="org.eclipse.mylyn.hudson.feature.group"/>
-    <requirement
         name="org.eclipse.egit.feature.group"/>
-    <requirement
-        name="org.eclipse.egit.mylyn.feature.group"/>
     <requirement
         name="org.eclipse.gmf.runtime.notation.sdk.feature.group"/>
     <requirement
@@ -150,8 +118,6 @@
         url="http://download.eclipse.org/releases/indigo"/>
     <repository
         url="http://download.itemis.com/updates/releases"/>
-    <repository
-        url="http://download.eclipse.org/mylyn/releases/latest"/>
   </setupTask>
   <setupTask
       xsi:type="projects:ProjectsImportTask">
@@ -310,28 +276,59 @@
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
   </setupTask>
-  <stream name="master">
+  <project name="mylyn"
+      label="Mylyn">
     <setupTask
-        xsi:type="setup:VariableTask"
-        name="bugzilla.version"
-        value="1.0.0"/>
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.mylyn.ide_feature.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn.java_feature.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn.pde_feature.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn.team_feature.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn.gerrit.feature.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn.gerrit.dashboard.feature.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn_feature.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn.bugzilla_feature.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn.git.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn.builds.feature.group"/>
+      <requirement
+          name="org.eclipse.mylyn.hudson.feature.group"/>
+      <requirement
+          name="org.eclipse.egit.mylyn.feature.group"/>
+      <repository
+          url="http://download.eclipse.org/mylyn/releases/latest"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.mylyn.team.ui">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.mylyn.team.ui/org.eclipse.mylyn.team.commit.template"
+          value="[$${task.key}]"/>
+    </setupTask>
     <setupTask
         xsi:type="mylyn:MylynQueriesTask"
         repositoryURL="https://bugs.eclipse.org/bugs"
         userID="${bugzilla.id}"
         password="${eclipse.user.password}">
       <query
-          summary="Bugs in ${bugzilla.version}"
-          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;version=${bugzilla.version}&amp;bug_severity=blocker&amp;bug_severity=critical&amp;bug_severity=major&amp;bug_severity=normal&amp;bug_severity=minor&amp;bug_severity=trivial"/>
+          summary="IncQuery Bugs in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_severity=blocker&amp;bug_severity=critical&amp;bug_severity=major&amp;bug_severity=normal&amp;bug_severity=minor&amp;bug_severity=trivial&amp;field0-0-0=target_milestone&amp;type0-0-0=substring&amp;value0-0-0=${bugzilla.version}"/>
       <query
-          summary="Features in ${bugzilla.version}"
-          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;version=${bugzilla.version}&amp;bug_severity=enhancement"/>
+          summary="IncQuery Features in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_severity=enhancement&amp;field0-0-0=target_milestone&amp;type0-0-0=substring&amp;value0-0-0=${bugzilla.version}"/>
       <query
-          summary="Resolved in ${bugzilla.version}"
-          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=RESOLVED&amp;resolution=FIXED&amp;version=${bugzilla.version}"/>
-      <query
-          summary="Unspecified Version"
-          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;version=unspecified"/>
+          summary="IncQuery My Issues"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;emailassigned_to1=1&amp;emailreporter1=1&amp;emailcc1=1&amp;emailtype1=exact&amp;email1=${bugzilla.id}"/>
     </setupTask>
     <setupTask
         xsi:type="mylyn:MylynQueriesTask"
@@ -340,7 +337,7 @@
         userID="${bugzilla.id}"
         password="${eclipse.user.password}">
       <query
-          summary="Reviews in master"
+          summary="Reviews in ${scope.project.stream.name}"
           url="">
         <attribute
             key="gerrit query type"
@@ -350,21 +347,75 @@
             value="incquery/org.eclipse.incquery"/>
         <attribute
             key="gerrit query string"
-            value="project:incquery/org.eclipse.incquery status:open branch:master"/>
+            value="project:incquery/org.eclipse.incquery status:open branch:${scope.project.stream.name}"/>
       </query>
     </setupTask>
-    <setupTask
-        xsi:type="mylyn:MylynBuildsTask"
-        serverURL="https://hudson.eclipse.org/incquery"
-        userID="${bugzilla.id}"
-        password="${eclipse.user.password}">
-      <buildPlan
-          name="incquery-master"/>
-      <buildPlan
-          name="incquery-master-gerrit"/>
-      <buildPlan
-          name="incquery-master-maven"/>
-    </setupTask>
+    <stream
+        name="master">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="1.1"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/incquery"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="incquery-master"/>
+        <buildPlan
+            name="incquery-master-gerrit"/>
+        <buildPlan
+            name="incquery-master-maven"/>
+      </setupTask>
+    </stream>
+    <stream
+        name="0.8-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="0.8.1"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/incquery"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="incquery-maintenance-0.8.0"/>
+      </setupTask>
+    </stream>
+    <stream
+        name="0.9-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="0.9.1"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/incquery"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="incquery-maintenance-0.9.0"/>
+      </setupTask>
+    </stream>
+    <stream
+        name="1.0-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="1.0.0"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/incquery"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="incquery-maintenance-1.0"/>
+      </setupTask>
+    </stream>
+  </project>
+  <stream name="master">
     <setupTask
         xsi:type="setup.p2:P2Task"
         label="Xtext">
@@ -484,8 +535,7 @@
     <setupTask
         xsi:type="setup:VariableTask"
         name="bugzilla.version"
-        value="0.8.1"
-        defaultValue=""/>
+        value="0.8.2"/>
     <setupTask
         xsi:type="mylyn:MylynQueriesTask"
         repositoryURL="https://bugs.eclipse.org/bugs"
@@ -555,8 +605,7 @@
     <setupTask
         xsi:type="setup:VariableTask"
         name="bugzilla.version"
-        value="0.9.1"
-        defaultValue=""/>
+        value="0.9.2"/>
     <setupTask
         xsi:type="mylyn:MylynQueriesTask"
         repositoryURL="https://bugs.eclipse.org/bugs"
@@ -618,6 +667,130 @@
             name="Dependencies">
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
+  </stream>
+  <stream name="1.0-maintenance">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="bugzilla.version"
+        value="1.0.0"/>
+    <setupTask
+        xsi:type="mylyn:MylynQueriesTask"
+        repositoryURL="https://bugs.eclipse.org/bugs"
+        userID="${bugzilla.id}"
+        password="${eclipse.user.password}">
+      <query
+          summary="Bugs in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;version=${bugzilla.version}&amp;bug_severity=blocker&amp;bug_severity=critical&amp;bug_severity=major&amp;bug_severity=normal&amp;bug_severity=minor&amp;bug_severity=trivial"/>
+      <query
+          summary="Features in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;version=${bugzilla.version}&amp;bug_severity=enhancement"/>
+      <query
+          summary="Resolved in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=RESOLVED&amp;resolution=FIXED&amp;version=${bugzilla.version}"/>
+    </setupTask>
+    <setupTask
+        xsi:type="mylyn:MylynBuildsTask"
+        serverURL="https://hudson.eclipse.org/incquery"
+        userID="${bugzilla.id}"
+        password="${eclipse.user.password}">
+      <buildPlan
+          name="incquery-maintenance-1.0"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.p2:P2Task"
+        label="Xtext">
+      <requirement
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.8.0,2.9.0)"/>
+      <requirement
+          name="com.google.inject.multibindings.source"
+          versionRange="[3.0.0,4.0.0)"/>
+      <requirement
+          name="com.google.inject.source"
+          versionRange="[3.0.0,4.0.0)"/>
+      <requirement
+          name="org.eclipse.uml2.sdk.feature.group"
+          versionRange="[5.0.0,6.0.0)"/>
+      <repository
+          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+      <repository
+          url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="Generate Language Architecture">
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          id="launch.incquery.generator.model-1.0"
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateGeneratorModel.launch"/>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          id="launch.incqeury.generator.patternlanguage-1.0"
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GeneratePatternLanguage.launch"/>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          id="launch.incqeury.generator.patternlanguage.emf-1.0"
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateEMFPatternLanguage.launch"/>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          id="launch.incqeury.generator.xcore-1.0"
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateIncQueryXcore.launch"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask">
+      <targlet
+          name="GEF4 Zest">
+        <requirement
+            name="org.eclipse.gef4.geometry.feature.group"/>
+        <requirement
+            name="org.eclipse.gef4.zest.sdk.feature.group"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="https://hudson.eclipse.org/incquery/job/incquery-master/lastSuccessfulBuild/artifact/update-site-extra/"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Guice">
+        <requirement
+            name="com.google.inject"
+            versionRange="[3.0.0,4.0.0)"/>
+        <requirement
+            name="com.google.inject.multibindings"
+            versionRange="[3.0.0,4.0.0)"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="UML">
+        <requirement
+            name="org.eclipse.uml2.sdk.feature.group"
+            versionRange="[5.0.0,6.0.0)"/>
+      </targlet>
+      <targlet
+          name="EMF Facet">
+        <requirement
+            name="org.eclipse.emf.facet.sdk.feature.feature.group"
+            versionRange="[0.4.2,0.5.0)"/>
+      </targlet>
+      <targlet
+          name="Xcore">
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/modeling/emf/emf/updates/2.11/"/>
         </repositoryList>
       </targlet>
     </setupTask>
