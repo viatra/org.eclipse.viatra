@@ -45,7 +45,7 @@ public class Agenda {
     public Agenda(final RuleBase ruleBase, final ConflictResolver conflictResolver) {
         this.ruleBase = ruleBase;
         this.logger = ruleBase.getLogger();
-        Preconditions.checkState(this.logger == null, "Rulebase logger is null!");
+        Preconditions.checkState(this.logger != null, "Rulebase logger is null!");
         this.activations = HashMultimap.create();
         this.conflictSet = conflictResolver.createConflictSet();
         this.updatingListener = new ConflictSetUpdater(conflictSet);
