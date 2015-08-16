@@ -12,6 +12,7 @@
 package org.eclipse.incquery.tooling.ui.wizards.internal;
 
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.incquery.tooling.core.targetplatform.ITargetPlatformMetamodelLoader;
 import org.eclipse.incquery.tooling.ui.wizards.NewEiqFileWizardPatternConfigurationPage;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.IListAdapter;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
@@ -27,19 +28,21 @@ import org.eclipse.ui.PlatformUI;
 @SuppressWarnings("restriction")
 public class ObjectListAdapter implements IListAdapter<ObjectParameter> {
 
-    private ListDialogField<EPackage> importList;
+    private ListDialogField<String> importList;
     private NewEiqFileWizardPatternConfigurationPage page;
+	private ITargetPlatformMetamodelLoader metamodelLoader;
 
-    public ObjectListAdapter(NewEiqFileWizardPatternConfigurationPage page, ListDialogField<EPackage> importList) {
+    public ObjectListAdapter(NewEiqFileWizardPatternConfigurationPage page, ListDialogField<String> importList, ITargetPlatformMetamodelLoader metamodelLoader) {
         this.importList = importList;
         this.page = page;
+		this.metamodelLoader = metamodelLoader;
     }
 
     @Override
     public void customButtonPressed(ListDialogField<ObjectParameter> field, int index) {
         ObjectParameter parameter = new ObjectParameter();
         ObjectParameterConfigurationDialog dialog = new ObjectParameterConfigurationDialog(PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow().getShell(), importList.getElements(), parameter);
+                .getActiveWorkbenchWindow().getShell(), page.getResourceSet(), importList.getElements(), metamodelLoader, parameter);
         // a unique parameter object is needed because the dialog will be disposed after the ok button is pressed
         if (index == 0) {
             // Add

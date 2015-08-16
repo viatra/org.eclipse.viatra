@@ -12,6 +12,7 @@
 package org.eclipse.incquery.tooling.ui.wizards.internal;
 
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -34,52 +35,32 @@ public class ImportListLabelProvider extends StyledCellLabelProvider implements 
         imageRegistry = IncQueryGUIPlugin.getDefault().getImageRegistry();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-     */
     @Override
     public Image getImage(Object element) {
-        if (element instanceof EPackage) {
-            return imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE);
-        }
-        return null;
+        return imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-     */
     @Override
     public String getText(Object element) {
-        if (element instanceof EPackage) {
-            return ((EPackage) element).getNsURI();
-        }
-        return null;
+    	return element.toString();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse. jface.viewers.ViewerCell)
-     */
     @Override
     public void update(ViewerCell cell) {
         Object element = cell.getElement();
         StyledString text = new StyledString();
-        if (element instanceof EPackage) {
-            EPackage ePackage = (EPackage) element;
-            text.append(ePackage.getNsURI());
-            if (ePackage.eResource() != null && ePackage.eResource().getURI().isPlatform()) {
-                text.append(String.format(" (%s)", ePackage.eResource().getURI()), StyledString.QUALIFIER_STYLER);
-            }
+        if (element instanceof String) {
+            String nsUri = (String) element;
+            text.append(nsUri);
+//            if (ePackage.eResource() != null && ePackage.eResource().getURI().isPlatform()) {
+//                text.append(String.format(" (%s)", ePackage.eResource().getURI()), StyledString.QUALIFIER_STYLER);
+//            }
             cell.setImage(imageRegistry.get(IncQueryGUIPlugin.ICON_EPACKAGE));
         }
         cell.setText(text.getString());
         cell.setStyleRanges(text.getStyleRanges());
         super.update(cell);
     }
+
 
 }

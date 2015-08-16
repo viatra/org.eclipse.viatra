@@ -15,7 +15,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.tooling.core.targetplatform.ITargetPlatformMetamodelLoader;
 import org.eclipse.incquery.tooling.ui.wizards.internal.ImportListAdapter;
 import org.eclipse.incquery.tooling.ui.wizards.internal.ImportListLabelProvider;
 import org.eclipse.incquery.tooling.ui.wizards.internal.ObjectListAdapter;
@@ -33,7 +34,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
@@ -50,7 +54,7 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
     private static final String PATTERN_NAME_SHOULD_BE_SPECIFIED = "Pattern name should be specified!";
     private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least one parameter is set!";
     private Text patternText;
-    private ListDialogField<EPackage> importList;
+    private ListDialogField<String> importList;
     private ListDialogField<ObjectParameter> objectList;
     private ImportListLabelProvider importListLabelProvider;
     private ObjectListLabelProvider objectListLabelProvider;
@@ -59,7 +63,11 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
     public boolean parameterSet;
 
     @Inject
-    private IEiqGenmodelProvider metamodelProviderService;
+    private ITargetPlatformMetamodelLoader metamodelLoader;
+    @Inject
+    private IResourceSetProvider resourceSetProvider;
+    
+    private ResourceSet resourceSet;
 
     public NewEiqFileWizardPatternConfigurationPage() {
         super(TITLE);
@@ -72,11 +80,12 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 
         NewEiqFileWizardContainerConfigurationPage firstPage = (NewEiqFileWizardContainerConfigurationPage) this
                 .getPreviousPage();
+        resourceSet = resourceSetProvider.get(firstPage.getProject());
 
-        importListAdapter = new ImportListAdapter(firstPage, metamodelProviderService);
+        importListAdapter = new ImportListAdapter(metamodelLoader);
         importListLabelProvider = new ImportListLabelProvider();
 
-        importList = new ListDialogField<EPackage>(importListAdapter, buttonLiterals, importListLabelProvider);
+        importList = new ListDialogField<String>(importListAdapter, buttonLiterals, importListLabelProvider);
         importList.setLabelText("&Imported packages:");
         importList.setTableColumns(new ListDialogField.ColumnsDescription(new String[] { "EPackage" }, true));
         importList.setRemoveButtonIndex(1);
@@ -85,7 +94,7 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
 
     private void createObjectSelectionControl(Composite parent, int nColumns) {
         String[] buttonLiterals = new String[] { "Add", "Modify", "Remove" };
-        objectListAdapter = new ObjectListAdapter(this, importList);
+        objectListAdapter = new ObjectListAdapter(this, importList, metamodelLoader);
         objectListLabelProvider = new ObjectListLabelProvider();
 
         objectList = new ListDialogField<ObjectParameter>(objectListAdapter, buttonLiterals, objectListLabelProvider);
@@ -180,7 +189,12 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
      * @return the list of imports
      */
     public List<EPackage> getImports() {
-        return importList.getElements();
+    	return Lists.transform(importList.getElements(), new Function<String, EPackage>() {
+
+			@Override
+			public EPackage apply(String input) {
+				return metamodelLoader.loadPackage(resourceSet, input);
+			}});
     }
 
     /**
@@ -191,4 +205,10 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
     public List<ObjectParameter> getParameters() {
         return objectList.getElements();
     }
+
+	public ResourceSet getResourceSet() {
+		return resourceSet;
+	}
+    
+    
 }

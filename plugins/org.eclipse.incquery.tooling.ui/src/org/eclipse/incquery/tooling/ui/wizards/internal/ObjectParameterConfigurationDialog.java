@@ -18,6 +18,8 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.incquery.tooling.core.targetplatform.ITargetPlatformMetamodelLoader;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -50,11 +52,15 @@ public class ObjectParameterConfigurationDialog extends Dialog {
     private static final String TITLE = "&Pattern parameter configuration";
     private Text parameterName;
     private Text parameterType;
-    private List<EPackage> currentPackages;
+    private List<String> currentPackages;
     private ObjectParameter result;
+	private ResourceSet set;
+	private ITargetPlatformMetamodelLoader metamodelLoader;
 
-    protected ObjectParameterConfigurationDialog(Shell shell, List<EPackage> currentPackages, ObjectParameter result) {
+    protected ObjectParameterConfigurationDialog(Shell shell, ResourceSet set, List<String> currentPackages, ITargetPlatformMetamodelLoader metamodelLoader, ObjectParameter result) {
         super(shell);
+		this.set = set;
+		this.metamodelLoader = metamodelLoader;
         shell.setText(TITLE);
         this.currentPackages = currentPackages;
         this.result = result;
@@ -146,7 +152,8 @@ public class ObjectParameterConfigurationDialog extends Dialog {
      */
     private Object[] getElements() {
         List<EObject> result = new ArrayList<EObject>();
-        for (EPackage _package : currentPackages) {
+        for (String _nsURI : currentPackages) {
+        	EPackage _package = metamodelLoader.loadPackage(set, _nsURI);
             TreeIterator<EObject> iterator = _package.eAllContents();
 
             while (iterator.hasNext()) {

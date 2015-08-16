@@ -70,9 +70,6 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
     private IPath filePath;
 
     @Inject
-    private IResourceSetProvider resourceSetProvider;
-
-    @Inject
     private Injector injector;
 
     public NewEiqFileWizard() {
@@ -144,7 +141,7 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
     private IFile createEiqFile(String containerName, String fileName, String packageName, String patternName,
             List<EPackage> imports, List<ObjectParameter> parameters) throws IOException, CoreException {
         IResource containerResource = root.findMember(new Path(containerName));
-        ResourceSet resourceSet = resourceSetProvider.get(containerResource.getProject());
+        ResourceSet resourceSet = page2.getResourceSet();
 
         filePath = containerResource.getFullPath().append(packageName + "/" + fileName);
         IFile file = root.getFile(filePath);
