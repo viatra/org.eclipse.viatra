@@ -66,6 +66,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -186,10 +187,14 @@ public class QueryExplorer extends ViewPart {
      * @since 1.0
      */
     public static QueryExplorer getInstance(IWorkbenchWindow activeWorkbenchWindow) {
+    	IWorkbenchPart instance = null;
         if (activeWorkbenchWindow != null && activeWorkbenchWindow.getActivePage() != null) {
-            return (QueryExplorer) activeWorkbenchWindow.getActivePage().findView(ID);
+        	instance = activeWorkbenchWindow.getActivePage().getActivePart();
+            if (!(instance instanceof QueryExplorer)) {
+            	instance = activeWorkbenchWindow.getActivePage().findView(ID);
+            }
         }
-        return null;
+        return (QueryExplorer) instance;
     }
 
     public TreeViewer getMatcherTreeViewer() {
