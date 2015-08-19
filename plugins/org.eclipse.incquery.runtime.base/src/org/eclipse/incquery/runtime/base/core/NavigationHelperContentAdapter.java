@@ -75,9 +75,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private boolean isDirty = false;
 
     /**
-     *  value -> feature (EAttribute or EReference) -> holder(s)
+     *  value -> feature (EAttribute or EReference) -> holder(s)  <p>
+     *  holder(s) are stored as <ul>
+     *    <li> {@link Set} if feature is unique, 
+     *    <li> {@link Multiset} if the feature is non-unique (a single holder is contained multiple times, once for each time it lists the specific value in its feature vale list)
+     *  <ul> 
+     *  <p> Duplicates of non-unique features are stored in this map only; other index structures consider unique values only.
      */
-    private final Table<Object, Object, Set<EObject>> valueToFeatureToHolderMap;
+    private final Table<Object, Object, Collection<EObject>> valueToFeatureToHolderMap;
 
     /** feature ((String id or EStructuralFeature) -> holder(s)
      *  constructed on-demand
@@ -489,16 +494,19 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
 
     /**
      * This method uses the original {@link EStructuralFeature} instance or the String id.
+     * @return true if this was the first time the value was added to this feature of this holder (false is only possible for non-unique features) 
      */
-    private void addToFeatureMap(final Object featureKey, final Object value, final EObject holder) {
-        Set<EObject> setVal = valueToFeatureToHolderMap.get(value, featureKey);
+    private boolean addToFeatureMap(final Object featureKey, boolean unique, final Object value, final EObject holder) {
+        Collection<EObject> setVal = valueToFeatureToHolderMap.get(value, featureKey);
 
         if (setVal == null) {
-            setVal = new HashSet<EObject>();
+            setVal = unique ? new HashSet<EObject>() : HashMultiset.<EObject>create();
             valueToFeatureToHolderMap.put(value, featureKey, setVal);
 
         }
+        boolean changed = unique || !setVal.contains(holder); 
         setVal.add(holder);
+        return changed;
     }
 
     /**
@@ -544,8 +552,8 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     /**
      * This method uses the original {@link EStructuralFeature} instance.
      */
-    private void removeFromFeatureMap(final Object featureKey, final Object value, final EObject holder) {
-        final Set<EObject> setHolder =
+    private boolean removeFromFeatureMap(final Object featureKey, boolean unique, final Object value, final EObject holder) {
+        final Collection<EObject> setHolder =
         		valueToFeatureToHolderMap.get(value, featureKey);
         if (setHolder != null) {
             setHolder.remove(holder);
@@ -553,7 +561,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             if (setHolder.isEmpty()) {
                 valueToFeatureToHolderMap.remove(value, featureKey);
             }
+            return unique || (!setHolder.contains(holder));
         }
+        return false;
     }
 
     /**
@@ -565,35 +575,39 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             setVal.remove(value);
 
             if (setVal.isEmpty()) {
-                valueToFeatureToHolderMap.remove(holder, feature);
+            	holderToFeatureToValueMap.remove(holder, feature);
             }
         }
     }
 
-    public void insertFeatureTuple(final Object featureKey, final Object value, final EObject holder) {
-        addToFeatureMap(featureKey, value, holder);
-        if (featureToHolderMap != null) {
-            addToReversedFeatureMap(featureKey, holder);
+    public void insertFeatureTuple(final Object featureKey, boolean unique, final Object value, final EObject holder) {
+        boolean changed = addToFeatureMap(featureKey, unique, value, holder);
+        if (changed) { // if not duplicated
+	        if (featureToHolderMap != null) {
+	            addToReversedFeatureMap(featureKey, holder);
+	        }
+	        if (holderToFeatureToValueMap != null) {
+	            addToDirectFeatureMap(holder, featureKey, value);
+	        }
+	
+	        isDirty = true;
+	        notifyFeatureListeners(holder, featureKey, value, true);
         }
-        if (holderToFeatureToValueMap != null) {
-            addToDirectFeatureMap(holder, featureKey, value);
-        }
-
-        isDirty = true;
-        notifyFeatureListeners(holder, featureKey, value, true);
     }
 
-    public void removeFeatureTuple(final Object featureKey, final Object value, final EObject holder) {
-        removeFromFeatureMap(featureKey, value, holder);
-        if (featureToHolderMap != null) {
-            removeFromReversedFeatureMap(featureKey, holder);
+    public void removeFeatureTuple(final Object featureKey, boolean unique, final Object value, final EObject holder) {
+    	boolean changed = removeFromFeatureMap(featureKey, unique, value, holder);
+        if (changed) { // if not duplicated
+        	if (featureToHolderMap != null) {
+	            removeFromReversedFeatureMap(featureKey, holder);
+	        }
+	        if (holderToFeatureToValueMap != null) {
+	            removeFromDirectFeatureMap(holder, featureKey, value);
+	        }
+	
+	        isDirty = true;
+	        notifyFeatureListeners(holder, featureKey, value, false);
         }
-        if (holderToFeatureToValueMap != null) {
-            removeFromDirectFeatureMap(holder, featureKey, value);
-        }
-
-        isDirty = true;
-        notifyFeatureListeners(holder, featureKey, value, false);
     }
 
     // START ********* InstanceSet *********
@@ -846,20 +860,19 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     private void initReversedFeatureMap() {
-        for (final Cell<Object, Object, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap.cellSet()) {
-            final Object feature = valueToFeatureHolderMap.getColumnKey();
-            for (final EObject holder : valueToFeatureHolderMap.getValue()) {
+        for (final Cell<Object, Object, Collection<EObject>> entry : valueToFeatureToHolderMap.cellSet()) {
+            final Object feature = entry.getColumnKey();
+            for (final EObject holder : holderCollectionToUniqueSet(entry.getValue())) {
                 addToReversedFeatureMap(feature, holder);
             }
         }
     }
 
     private void initDirectFeatureMap() {
-        for (final Cell<Object, Object, Set<EObject>> valueToFeatureHolderMap : valueToFeatureToHolderMap
-                .cellSet()) {
-            final Object value = valueToFeatureHolderMap.getRowKey();
-            final Object feature = valueToFeatureHolderMap.getColumnKey();
-            for (final EObject holder : valueToFeatureHolderMap.getValue()) {
+        for (final Cell<Object, Object, Collection<EObject>> entry : valueToFeatureToHolderMap.cellSet()) {
+            final Object value = entry.getRowKey();
+            final Object feature = entry.getColumnKey();
+            for (final EObject holder : holderCollectionToUniqueSet(entry.getValue())) {
                 addToDirectFeatureMap(holder, feature, value);
             }
         }
@@ -935,8 +948,19 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     /**
      * @return the valueToFeatureToHolderMap
      */
-    protected Table<Object, Object, Set<EObject>> getValueToFeatureToHolderMap() {
+    protected Table<Object, Object, Collection<EObject>> getValueToFeatureToHolderMap() {
         return valueToFeatureToHolderMap;
+    }
+    /**
+     * Decodes the collection of holders (potentially non-unique) to a unique set 
+     */
+    protected static Set<EObject> holderCollectionToUniqueSet(Collection<EObject> holders) {
+    	if (holders instanceof Set<?>) {
+    		return (Set<EObject>) holders;
+    	} else if (holders instanceof Multiset<?>) {
+    		Multiset<EObject> multiSet = (Multiset<EObject>) holders;
+    		return multiSet.elementSet();
+    	} else throw new IllegalStateException("Neither Set nor Multiset: " + holders);
     }
 
     /**
@@ -1074,9 +1098,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     private Set<Object> getOldValuesForHolderAndFeature(EObject source, EStructuralFeature feature) {
         // while this is slower than using the holderToFeatureToValueMap, we do not want to construct that to avoid
         // memory overhead
-        Map<Object, Set<EObject>> oldValuesToHolders = valueToFeatureToHolderMap.column(feature);
+        Map<Object, Collection<EObject>> oldValuesToHolders = valueToFeatureToHolderMap.column(feature);
         Set<Object> oldValues = new HashSet<Object>();
-        for (Entry<Object, Set<EObject>> entry : oldValuesToHolders.entrySet()) {
+        for (Entry<Object, Collection<EObject>> entry : oldValuesToHolders.entrySet()) {
             if(entry.getValue().contains(source)) {
                 oldValues.add(entry.getKey());
             }

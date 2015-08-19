@@ -215,10 +215,11 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         if (observesFeature(featureKey)) {
         	// if (internalValueRepresentation == null) // always true
         		internalValueRepresentation = store.toInternalValueRepresentation(target);
+         	boolean unique = feature.isUnique();
             if (isInsertion) {
-                store.insertFeatureTuple(featureKey, internalValueRepresentation, source);
+                store.insertFeatureTuple(featureKey, unique, internalValueRepresentation, source);
             } else {
-                store.removeFeatureTuple(featureKey, internalValueRepresentation, source);
+                store.removeFeatureTuple(featureKey, unique, internalValueRepresentation, source);
             }
         }
         if (observesDataType(eAttributeType)) {
@@ -248,10 +249,11 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     private void visitReference(EObject source, EReference feature, EObject target) {
        Object featureKey = toKey(feature);
        if (observesFeature(featureKey)) {
-            if (isInsertion) {
-                store.insertFeatureTuple(featureKey, target, source);
+    	   boolean unique = feature.isUnique();
+    	   if (isInsertion) {
+                store.insertFeatureTuple(featureKey, unique, target, source);
             } else {
-                store.removeFeatureTuple(featureKey, target, source);
+                store.removeFeatureTuple(featureKey, unique, target, source);
             }
         }
     }
