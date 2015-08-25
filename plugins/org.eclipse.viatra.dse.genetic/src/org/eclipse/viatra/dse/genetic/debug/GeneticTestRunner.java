@@ -43,7 +43,9 @@ import org.eclipse.viatra.dse.genetic.crossovers.PermutationEncodingCrossover;
 import org.eclipse.viatra.dse.genetic.crossovers.SwapTransitionCrossover;
 import org.eclipse.viatra.dse.genetic.initialselectors.BFSSelector;
 import org.eclipse.viatra.dse.genetic.initialselectors.FixedPrioritySelector;
+import org.eclipse.viatra.dse.genetic.initialselectors.HillClimbingSelector;
 import org.eclipse.viatra.dse.genetic.initialselectors.PredefinedPopulationSelector;
+import org.eclipse.viatra.dse.genetic.initialselectors.RandomSearchSelector;
 import org.eclipse.viatra.dse.genetic.interfaces.ICrossoverTrajectories;
 import org.eclipse.viatra.dse.genetic.interfaces.IMutateTrajectory;
 import org.eclipse.viatra.dse.genetic.mutations.AddRandomTransitionMutation;
@@ -51,7 +53,11 @@ import org.eclipse.viatra.dse.genetic.mutations.AddTransitionByPriorityMutation;
 import org.eclipse.viatra.dse.genetic.mutations.DeleteRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyRandomTransitionMutation;
 import org.eclipse.viatra.dse.genetic.mutations.ModifyTransitionByPriorityMutation;
+import org.eclipse.viatra.dse.genetic.parentselectors.CrowdedTournementParentSelector;
 import org.eclipse.viatra.dse.genetic.parentselectors.MyRoundRobinParentSelector;
+import org.eclipse.viatra.dse.genetic.parentselectors.RandomParentSelector;
+import org.eclipse.viatra.dse.genetic.selectors.NonDominatedAndCrowdingDistanceSelector;
+import org.eclipse.viatra.dse.genetic.selectors.ParetoSelector;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.StrategyDependentSolutionStore;
 
@@ -84,6 +90,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
     public static final String MODIFY_BY_PRIORITY_MUTATION = "ModifyByPriorityMutation";
     public static final String DELETE_MUTATION = "DeleteMutation";
     public static final String PARENT_SELECTOR = "ParentSelector";
+    public static final String SELECTOR = "Selector";
 
     // Results
     public static final String SOLUTIONS = "Solutions";
@@ -221,9 +228,28 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             if ("RoundRobin".equals(parentSelector)) {
                 builder.setParentSelector(new MyRoundRobinParentSelector());
             } else if ("CrowdedTournament".equals(parentSelector)) {
-                builder.setParentSelector(new MyRoundRobinParentSelector());
+                builder.setParentSelector(new CrowdedTournementParentSelector());
+            } else if ("Random".equals(parentSelector)) {
+                builder.setParentSelector(new RandomParentSelector());
             } else {
                 throw new GeneticConfigurationException("Unsupported parent selector: " + parentSelector);
+            }
+        }
+
+        if (configRow.isKeyPresent(SELECTOR)) {
+            String selector = configRow.getValueAsString(SELECTOR);
+            if ("NSGA-II".equals(selector)) {
+                builder.setSelector(new NonDominatedAndCrowdingDistanceSelector());
+            } else if (selector.startsWith("Pareto")) {
+                if (selector.contains("-")) {
+                    String maxPopSizeString = selector.substring(selector.indexOf('-')+1);
+                    int maxPopulationSize = Integer.parseInt(maxPopSizeString);
+                    builder.setSelector(new ParetoSelector().withMaxPopulationSize(maxPopulationSize));
+                } else {
+                    builder.setSelector(new ParetoSelector());
+                }
+            } else {
+                throw new GeneticConfigurationException("Unsupported selector: " + selector);
             }
         }
         
@@ -240,8 +266,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         builder.setSizeOfPopulation(sizeOfPopulation);
 
         String initialSelector = configRow.getValueAsString(INITIAL_SELECTOR);
-        float initialSelectionRate = configRow.getValueAsFloat(INITIAL_SELECTION_RATE);
         if (initialSelector.startsWith("BFS")) {
+            float initialSelectionRate = configRow.getValueAsFloat(INITIAL_SELECTION_RATE);
             builder.setInitialPopulationSelector(new BFSSelector(initialSelectionRate));
             if (initialSelector.contains("-")) {
                 String fileName = initialSelector.substring(initialSelector.indexOf('-')+1);
@@ -250,6 +276,25 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         } else if (initialSelector.startsWith("Priority")) {
             FixedPrioritySelector selector = new FixedPrioritySelector();
             selector.withPriorities(gso.priorities);
+            builder.setInitialPopulationSelector(selector);
+            if (initialSelector.contains("-")) {
+                String fileName = initialSelector.substring(initialSelector.indexOf('-')+1);
+                builder.getStrategy().setTrajectoriesFileName(fileName);
+            }
+        } else if (initialSelector.contains("HillClimbing")) {
+            HillClimbingSelector selector = new HillClimbingSelector();
+            selector.withTrialsToMake(configRow.getValueAsInteger(INITIAL_SELECTION_RATE));
+            builder.setInitialPopulationSelector(selector);
+            if (initialSelector.contains("-")) {
+                String fileName = initialSelector.substring(initialSelector.indexOf('-')+1);
+                builder.getStrategy().setTrajectoriesFileName(fileName);
+            }
+        } else if (initialSelector.contains("Random")) {
+            String minAndMaxDepth = configRow.getValueAsString(INITIAL_SELECTION_RATE);
+            String[] tokens = minAndMaxDepth.split("-");
+            int minDepth = Integer.parseInt(tokens[0]);
+            int maxDepth = Integer.parseInt(tokens[1]);
+            RandomSearchSelector selector = new RandomSearchSelector(minDepth, maxDepth);
             builder.setInitialPopulationSelector(selector);
             if (initialSelector.contains("-")) {
                 String fileName = initialSelector.substring(initialSelector.indexOf('-')+1);
