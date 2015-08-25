@@ -14,7 +14,6 @@ import org.eclipse.viatra.cep.vepl.validation.VeplValidator
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.junit.Test
-import org.junit.experimental.theories.DataPoints
 import org.junit.experimental.theories.Theory
 
 import static org.junit.Assert.*
@@ -29,17 +28,14 @@ class ComplexTests extends ComplexVeplTestCase {
 		'''
 	}
 
-	@DataPoints
 	def static String[] expressions() {
 		#['''a1->a2''', '''a1 OR a2''', '''a1 AND a2''', '''NOT a1''']
 	}
 
-	@DataPoints
 	def static String[] multiplicities() {
 		#['''''', '''{10}''', '''{+}''', '''{*}''']
 	}
 
-	@DataPoints
 	def static String[] timewindows() {
 		#['''''', '''[1000]''']
 	}
@@ -67,7 +63,8 @@ class ComplexTests extends ComplexVeplTestCase {
 		val model = fullExpression.parse
 
 		if (assertErrors) {
-			model.assertError(VeplPackage::eINSTANCE.complexEventExpression, VeplValidator::UNSAFE_INFINITE_MULTIPLICITY)
+			model.assertError(VeplPackage::eINSTANCE.complexEventExpression,
+				VeplValidator::UNSAFE_INFINITE_MULTIPLICITY)
 		} else {
 			model.assertNoErrors
 		}
