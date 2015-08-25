@@ -169,7 +169,6 @@ ComplexEvent paramsAnd(param : String){
 
 
 
-
 /* CASE STUDY */
 
 AtomicEvent Left
@@ -188,4 +187,4 @@ Rule r{
 
 ComplexEvent teq1(){
 	definition: Left -> (Left OR Rise OR Fall OR Near OR Far){*} -> Right
-} 
+}

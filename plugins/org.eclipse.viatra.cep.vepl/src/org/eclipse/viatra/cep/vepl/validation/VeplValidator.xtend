@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.vepl.validation
 
+import com.google.common.base.Preconditions
 import org.eclipse.viatra.cep.vepl.vepl.AbstractAtomicEventPattern
-import org.eclipse.viatra.cep.vepl.vepl.AndOperator
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ChainedExpression
@@ -19,7 +19,6 @@ import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.EventPattern
-import org.eclipse.viatra.cep.vepl.vepl.FollowsOperator
 import org.eclipse.viatra.cep.vepl.vepl.Infinite
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
 import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
@@ -32,7 +31,6 @@ import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.eclipse.xtext.validation.Check
 
 import static extension org.eclipse.viatra.cep.vepl.validation.ValidationHelper.*
-import org.eclipse.emf.ecore.EStructuralFeature
 
 class VeplValidator extends AbstractVeplValidator {
 
@@ -178,51 +176,59 @@ class VeplValidator extends AbstractVeplValidator {
 	}
 
 //	@Check
-	def negativeOperatorOnComplexEventPatternReference(ComplexEventExpression complexEventExpression) {
-		if (complexEventExpression.negOperator == null) {
+//	def negativeOperatorOnComplexEventPatternReference(ComplexEventExpression complexEventExpression) {
+//		if (complexEventExpression.negOperator == null) {
+//			return
+//		}
+//
+//		val left = complexEventExpression.left as Atom
+//
+//		val patternCall = left.patternCall
+//		if (!(patternCall.eventPattern instanceof AbstractAtomicEventPattern)) {
+//			error(
+//				"The NOT operator can be applied only on atomic event pattern references.",
+//				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__NEG_OPERATOR,
+//				NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE
+//			)
+//		}
+//	}
+
+	@Check
+	def void unsafeStarOperator(ComplexEventExpression complexEventExpression) {
+		if (!complexEventExpression.hasInfiniteMultiplicity) {
 			return
-		}
-
-		val left = complexEventExpression.left as Atom
-
-		val patternCall = left.patternCall
-		if (!(patternCall.eventPattern instanceof AbstractAtomicEventPattern)) {
-			error(
-				"The NOT operator can be applied only on atomic event pattern references.",
-				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__NEG_OPERATOR,
-				NEGATIVE_OPERATOR_ON_NONATOMIC_REFERENCE
-			)
+		} else if (complexEventExpression.starOperatorIsLast) {
+			error("Unsafe infinite multiplicity operator (\"{*}\").",
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY, UNSAFE_STAR_OPERATOR)
 		}
 	}
 
-//	@Check
-	def unsafeStarOperator(ComplexEventExpression complexEventExpression) {
-		if (!(complexEventExpression.hasInfiniteMultiplicity)) {
-			return
-		}
+	def boolean starOperatorIsLast(ComplexEventExpression expression) {
+		if (expression.eContainer instanceof ComplexEventPattern) { // no followup expressions
+			return true
+		} else if (expression.eContainer instanceof ComplexEventExpression) { // the expression is left
+			val containerExpression = (expression.eContainer as ComplexEventExpression)
+			// if there's a fol() or and() expression, star operator is not last
+			return !containerExpression.right.exists [ che |
+				che.operator.qualifiesAsFollowingOperator
+			]
+		} else if (expression.eContainer instanceof ChainedExpression) { // the expression is one of the rights
+			val containerExpression = (expression.eContainer as ChainedExpression) as ChainedExpression
+			Preconditions::checkArgument(containerExpression.eContainer instanceof ComplexEventExpression)
 
-		val container = complexEventExpression.eContainer
-		if (container instanceof ComplexEventExpression) {
-//			(container as ComplexEventExpression).
-		}
+			val chainedExpressions = (containerExpression.eContainer as ComplexEventExpression).right
 
-		if (!(container instanceof ChainedExpression)) {
-			error(
-				"Unsafe infinite multiplicity operator (\"{*}\").",
-				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
-				UNSAFE_STAR_OPERATOR
-			)
-		} else {
-			val operator = (container as ChainedExpression).operator
-			if ((operator instanceof FollowsOperator) || (operator instanceof AndOperator)) {
-				return
+			val followingExpressions = chainedExpressions.subListFrom(expression)
+			val hasFollowsExpression = followingExpressions.exists [ che |
+				che.operator.qualifiesAsFollowingOperator
+			]
+			if (hasFollowsExpression) {
+				return false
 			} else {
-				error(
-					"Unsafe infinite multiplicity operator (\"{*}\").",
-					VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY,
-					UNSAFE_STAR_OPERATOR
-				)
+				return (containerExpression.eContainer as ComplexEventExpression).starOperatorIsLast
 			}
+		} else {
+			throw new IllegalArgumentException
 		}
 	}
 

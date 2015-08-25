@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.vepl.validation
 
+import java.util.List
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.viatra.cep.vepl.vepl.AbstractMultiplicity
+import org.eclipse.viatra.cep.vepl.vepl.AndOperator
 import org.eclipse.viatra.cep.vepl.vepl.Atom
+import org.eclipse.viatra.cep.vepl.vepl.ChainedExpression
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventExpression
+import org.eclipse.viatra.cep.vepl.vepl.ComplexEventOperator
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.FollowsOperator
+import org.eclipse.viatra.cep.vepl.vepl.Infinite
+import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
 import org.eclipse.viatra.cep.vepl.vepl.Rule
-import org.eclipse.viatra.cep.vepl.vepl.AbstractMultiplicity
-import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
-import org.eclipse.viatra.cep.vepl.vepl.Infinite
 
 /**
  * Helper class for the {@link VeplValidator}.
@@ -64,6 +69,16 @@ class ValidationHelper {
 
 	def static hasActionHandler(Rule rule) {
 		return rule.actionHandler != null
+	}
+
+	def static qualifiesAsFollowingOperator(ComplexEventOperator operator) {
+		return (operator instanceof FollowsOperator) || (operator instanceof AndOperator)
+	}
+
+	def static subListFrom(List<ChainedExpression> list, ComplexEventExpression element) {
+		return list.subList(list.indexOf(list.findFirst [ che |
+			che.expression.equals(element)
+		]) + 1, list.size)
 	}
 
 	def static findContainingComplexEventPatternDefinition(ParameterizedPatternCall parameterizedPatternCall) {
