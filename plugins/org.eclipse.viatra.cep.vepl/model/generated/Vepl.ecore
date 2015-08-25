@@ -22,7 +22,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AbstractAtomicEventPattern" eSuperTypes="#//EventPattern"/>
   <eClassifiers xsi:type="ecore:EClass" name="AtomicEventPattern" eSuperTypes="#//AbstractAtomicEventPattern">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="source" eType="#//Source"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="checkExpression" eType="ecore:EClass platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore#//XExpression"
         containment="true"/>
   </eClassifiers>

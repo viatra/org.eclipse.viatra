@@ -29,7 +29,6 @@
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//AbstractAtomicEventPattern"/>
     <genClasses ecoreClass="Vepl.ecore#//AtomicEventPattern">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Vepl.ecore#//AtomicEventPattern/source"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AtomicEventPattern/checkExpression"/>
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//QueryResultChangeEventPattern">
