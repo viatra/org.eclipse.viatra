@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.genetic.core.InstanceData;
@@ -29,14 +28,9 @@ public class PermutationEncodingCrossover implements ICrossoverTrajectories {
 
     @Override
     public Collection<InstanceData> crossover(List<InstanceData> parents, ThreadContext context) {
-        // TODO question: is it bad, if the initial child already has those
-        // rules from parent2?
-
         List<ITransition> parent1 = parents.get(0).trajectory;
         List<ITransition> parent2 = parents.get(1).trajectory;
 
-        
-        
         if (parent1.size() < 2 || parent2.size() < 2) {
             throw new DSEException("Cannot crossover with empty or one long parent trajectories");
         }
@@ -46,36 +40,28 @@ public class PermutationEncodingCrossover implements ICrossoverTrajectories {
         int index = random.nextInt(shorterSize - 1) + 1;
 
         List<ITransition> child1 = new ArrayList<ITransition>(parent1.subList(0, index));
+        addPermutationToChild(parent2, child1);
+
+        ArrayList<ITransition> child2 = new ArrayList<ITransition>(parent2.subList(0, index));
+        addPermutationToChild(parent1, child2);
+
+        return Arrays.asList(new InstanceData(child1), new InstanceData(child2));
+    }
+
+    private void addPermutationToChild(List<ITransition> parent2, List<ITransition> child1) {
         outerLoop: for (ITransition transition : parent2) {
 
-            DSETransformationRule<?, ?> ruleToAdd = transition.getTransitionMetaData().rule;
+            Object transitionToAdd = transition.getId();
 
             for (ITransition childTransition : child1) {
-                DSETransformationRule<?, ?> childRule = childTransition.getTransitionMetaData().rule;
-                if (ruleToAdd.equals(childRule)) {
+                Object childRule = childTransition.getId();
+                if (transitionToAdd.equals(childRule)) {
                     continue outerLoop;
                 }
             }
 
             child1.add(transition);
         }
-
-        ArrayList<ITransition> child2 = new ArrayList<ITransition>(parent2.subList(0, index));
-        outerLoop: for (ITransition transition : parent1) {
-            
-            DSETransformationRule<?, ?> ruleToAdd = transition.getTransitionMetaData().rule;
-            
-            for (ITransition childTransition : child2) {
-                DSETransformationRule<?, ?> childRule = childTransition.getTransitionMetaData().rule;
-                if (ruleToAdd.equals(childRule)) {
-                    continue outerLoop;
-                }
-            }
-            
-            child2.add(transition);
-        }
-
-        return Arrays.asList(new InstanceData(child1), new InstanceData(child2));
     }
 
     @Override
