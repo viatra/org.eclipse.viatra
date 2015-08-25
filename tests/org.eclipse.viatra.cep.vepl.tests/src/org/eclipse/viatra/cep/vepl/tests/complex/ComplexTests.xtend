@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.vepl.tests.complex
 
+import org.eclipse.viatra.cep.vepl.validation.VeplValidator
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.junit.Test
 import org.junit.experimental.theories.DataPoints
+import org.junit.experimental.theories.Theory
 
 import static org.junit.Assert.*
 
@@ -42,24 +45,32 @@ class ComplexTests extends ComplexVeplTestCase {
 	}
 
 	/*
-	 * This test method should be captured by a {@link org.junit.experimental.theories.Theory},
+	 * This test method should be captured by a {@link Theory},
 	 * but we rely on the XtextRunner and no hybrid Xtext-Theory runner is available currently.
 	 */
 	@Test
 	def void parseOperators() {
 		for (expression : expressions) {
-			for (multiplicity : multiplicities) {
-				for (timewindow : timewindows) {
-					val fullExpression = getFullExpression(expression, multiplicity, timewindow)
-
-					// println(fullExpression)
-					val model = fullExpression.parse
-
-					model.assertNoErrors
-
-					assertEquals(1, model.modelElements.filter[m|m instanceof ComplexEventPattern].size)
+			for (timewindow : timewindows) {
+				for (multiplicity : multiplicities.filter[m|!m.equalsIgnoreCase("{*}")]) {
+					testExpression(expression, multiplicity, timewindow, false)
 				}
+				testExpression(expression, "{*}", timewindow, true)
 			}
 		}
+	}
+
+	def testExpression(String expression, String multiplicity, String timewindow, boolean assertErrors) {
+		val fullExpression = getFullExpression(expression, multiplicity, timewindow)
+
+		// println(fullExpression)
+		val model = fullExpression.parse
+
+		if (assertErrors) {
+			model.assertError(VeplPackage::eINSTANCE.complexEventExpression, VeplValidator::UNSAFE_INFINITE_MULTIPLICITY)
+		} else {
+			model.assertNoErrors
+		}
+		assertEquals(1, model.modelElements.filter[m|m instanceof ComplexEventPattern].size)
 	}
 }

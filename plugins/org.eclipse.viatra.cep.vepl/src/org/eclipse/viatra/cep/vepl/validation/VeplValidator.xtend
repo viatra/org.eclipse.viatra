@@ -48,7 +48,6 @@ class VeplValidator extends AbstractVeplValidator {
 	public static val PARAMETER_ON_NON_ATOMIC_PATTERN_CALL = "parameterOnNonAtomicPatternCall"
 	public static val NEGATIVE_WITH_MULTIPLICITY = "negativeWithMultiplicity"
 	public static val NEGATIVE_WITH_TIMEWINDOW = "negativeWithTimewindow"
-	public static val UNSAFE_STAR_OPERATOR = "unsafeStarOperator"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -199,7 +198,7 @@ class VeplValidator extends AbstractVeplValidator {
 			return
 		} else if (complexEventExpression.starOperatorIsLast) {
 			error("Unsafe infinite multiplicity operator (\"{*}\").",
-				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY, UNSAFE_STAR_OPERATOR)
+				VeplPackage.Literals.COMPLEX_EVENT_EXPRESSION__MULTIPLICITY, UNSAFE_INFINITE_MULTIPLICITY)
 		}
 	}
 
