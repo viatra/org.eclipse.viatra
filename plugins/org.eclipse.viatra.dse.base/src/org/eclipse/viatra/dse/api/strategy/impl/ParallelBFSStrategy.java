@@ -28,7 +28,7 @@ import org.eclipse.viatra.dse.objectives.Fitness;
 
 public class ParallelBFSStrategy extends LocalSearchStrategyBase {
 
-    private class TrajectoryWrapper {
+    private static class TrajectoryWrapper {
         public final LinkedList<ITransition> transitionTrajectory;
 
         @SuppressWarnings("unchecked")
@@ -38,7 +38,7 @@ public class ParallelBFSStrategy extends LocalSearchStrategyBase {
 
     }
 
-    private class SharedData {
+    private static class SharedData {
         public volatile ConcurrentLinkedQueue<TrajectoryWrapper> pullQueue = new ConcurrentLinkedQueue<TrajectoryWrapper>();
         public volatile ConcurrentLinkedQueue<TrajectoryWrapper> pushQueue = new ConcurrentLinkedQueue<TrajectoryWrapper>();
         public volatile int maxDepth = Integer.MAX_VALUE;

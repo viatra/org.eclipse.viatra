@@ -131,7 +131,7 @@ public class FixedPriorityStrategy extends LocalSearchStrategyBase {
                 logger.debug("Best priority in state: " + bestPriority);
                 List<ITransition> bestTrasitions = Lists.newArrayList();
                 for (ITransition iTransition : transitions) {
-                    if (priorities.get(iTransition.getTransitionMetaData().rule) == bestPriority) {
+                    if (priorities.get(iTransition.getTransitionMetaData().rule).equals(bestPriority)) {
                         bestTrasitions.add(iTransition);
                     }
                 }

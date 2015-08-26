@@ -14,6 +14,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 
@@ -57,8 +58,8 @@ public class InstanceData {
             sb.append(iTransition.getId() + "; ");
         }
         sb.append("\n\tviolations: " + sumOfConstraintViolationMeauserement + "; ");
-        for (String objective : objectives.keySet()) {
-            sb.append(objective + ": " + objectives.get(objective) + "; ");
+        for (Entry<String, Double> entry : objectives.entrySet()) {
+            sb.append(entry.getKey() + ": " + entry.getValue() + "; ");
         }
         return sb;
     }

@@ -73,6 +73,18 @@ public abstract class BaseObjective implements IObjective {
     public int hashCode() {
         return name.hashCode();
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof BaseObjective) {
+            BaseObjective baseObjective = (BaseObjective) obj;
+            return name.equals(baseObjective.getName());
+        }
+        return false;
+    }
 
     @Override
     public String toString() {

@@ -66,6 +66,19 @@ public class DSETransformationRule<Match extends IPatternMatch, Matcher extends 
     public int hashCode() {
         return getPrecondition().getFullyQualifiedName().hashCode();
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof DSETransformationRule<?, ?>) {
+            IQuerySpecification<?> precondition2 = ((DSETransformationRule<?,?>) obj).getPrecondition();
+            return getPrecondition().getFullyQualifiedName().equals(precondition2.getFullyQualifiedName());
+        } else {
+            return false;
+        }
+    }
 
     public void setMetaData(RuleMetaData metaData) {
         this.metaData = metaData;

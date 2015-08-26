@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
@@ -71,6 +72,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
     private static final String EXCEPTIONS_FILE = "exceptions.txt";
     // Config
+    private static final String CONFIG_NAME = "ConfigName";
     public static final String MODEL_PATH = "InitialModelPath";
     public static final String TIMEOUT = "Timeout[s]";
     public static final String POPULATION_SIZE = "PopulationSize";
@@ -198,8 +200,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             }
             geneticDebugger.setConfigId(result.configId);
 
-            if (configRow.isKeyPresent("ConfigName")) {
-                String configName = configRow.getValueAsString("ConfigName");
+            if (configRow.isKeyPresent(CONFIG_NAME)) {
+                String configName = configRow.getValueAsString(CONFIG_NAME);
                 geneticDebugger.setCsvName(resultsFolderName + File.separator + configName + ".csv");
             } else {
                 geneticDebugger.setCsvName(resultsFolderName
@@ -335,7 +337,7 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         }
 
         long start = System.nanoTime();
-        boolean wasTimeout = dse.startExplorationWithTimeout(builder.getStrategy(), timeout * 1000);;
+        boolean wasTimeout = dse.startExplorationWithTimeout(builder.getStrategy(), timeout * 1000);
         long end = System.nanoTime();
 
         result.runTime = (end - start) / 1000000000d;
@@ -353,8 +355,8 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             try {
                 out = new PrintWriter(new BufferedWriter(new FileWriter(EXCEPTIONS_FILE, true)));
                 String configName = " ";
-                if (configRow.isKeyPresent("ConfigName")) {
-                    configName += configRow.getValueAsString("ConfigName");
+                if (configRow.isKeyPresent(CONFIG_NAME)) {
+                    configName += configRow.getValueAsString(CONFIG_NAME);
                 }
                 out.println("Exceptions in config id:" + result.configId + configName + ", run id: " + result.runId);
                 for (Throwable throwable : exceptions) {
@@ -369,7 +371,9 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
             } catch (IOException e) {
                 throw e;
             } finally {
-                out.close();
+                if (out != null) {
+                    out.close();
+                }
             }
         } else if (wasTimeout) {
             result.report = "Timeout";
@@ -392,9 +396,9 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
         for (InstanceData solution : solutions.keySet()) {
             addMaps(avgObjectives, solution.objectives);
         }
-        for (String key : avgObjectives.keySet()) {
-            Double d = avgObjectives.get(key);
-            avgObjectives.put(key, d / solutions.size());
+        for (Entry<String, Double> entry : avgObjectives.entrySet()) {
+            Double d = entry.getValue();
+            avgObjectives.put(entry.getKey(), d / solutions.size());
         }
 
         resultsRow.add(SOLUTIONS, solutions.size());
@@ -420,12 +424,12 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
 
     private void addMaps(Map<String, Double> baseMap, Map<String, Double> addMap) {
         if (addMap != null) {
-            for (String key : addMap.keySet()) {
-                Double d = baseMap.get(key);
+            for (Entry<String, Double> entry : addMap.entrySet()) {
+                Double d = entry.getValue();
                 if (d == null) {
-                    throw new DSEException(key + " is missing.");
+                    throw new DSEException(entry.getKey() + " is missing.");
                 }
-                baseMap.put(key, d + addMap.get(key));
+                baseMap.put(entry.getKey(), d + entry.getValue());
             }
         }
     }

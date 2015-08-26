@@ -11,6 +11,7 @@
 package org.eclipse.viatra.dse.dependencygraph;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
             // for each modelElement which is in the RHS of the rule
 
             RuleMetaData ruleMetaData = rule.getMetaData();
-            ArrayList<EModelElement> rhsModelElements = new ArrayList<EModelElement>();
+            List<EModelElement> rhsModelElements = new ArrayList<EModelElement>();
             rhsModelElements.addAll(ruleMetaData.getClasses());
             rhsModelElements.addAll(ruleMetaData.getReferences());
             rhsModelElements.addAll(ruleMetaData.getAttributes());
@@ -78,6 +79,8 @@ public class DependencyGraphResolver implements IDependencyGraphResolver {
                     metaData = ruleMetaData.getMetaDataForReference((EReference) modelElement);
                 } else if (modelElement instanceof EAttribute) {
                     metaData = ruleMetaData.getMetaDataForAttribute((EAttribute) modelElement);
+                } else {
+                    throw new DSEException("Invalid ModelElement.");
                 }
 
                 // If not, than continue

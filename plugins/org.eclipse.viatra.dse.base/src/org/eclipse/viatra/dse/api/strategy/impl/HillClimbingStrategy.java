@@ -37,7 +37,7 @@ public class HillClimbingStrategy extends LocalSearchStrategyBase {
     private DesignSpaceManager dsm;
 
     private double percentOfOpenedStates;
-    private boolean interrupted;
+    private boolean isInterrupted;
     private HillClimbingStrategyState state = HillClimbingStrategyState.TRY_AND_SAVE;
 
     private int triedTransitions = 0;
@@ -77,7 +77,7 @@ public class HillClimbingStrategy extends LocalSearchStrategyBase {
     @Override
     public ITransition getNextTransition(boolean lastWasSuccessful) {
 
-        while (!interrupted) {
+        while (!isInterrupted) {
 
             if (dsm.getTransitionsFromCurrentState().size() <= 0) {
                 if (dsm.getCurrentState().getTraversalState() == TraversalStateType.GOAL) {
@@ -99,7 +99,7 @@ public class HillClimbingStrategy extends LocalSearchStrategyBase {
                 if (percentOfOpenedStates >= 1) {
                     transition = transitions.iterator().next();
                 } else {
-                    if (percentOfOpenedStates <= triedTransitions / dsm.getTransitionsFromCurrentState().size()) {
+                    if (percentOfOpenedStates <= triedTransitions / (double) dsm.getTransitionsFromCurrentState().size()) {
                         state = HillClimbingStrategyState.COMPARE_AND_STEP;
                         continue;
                     } else {
@@ -169,7 +169,7 @@ public class HillClimbingStrategy extends LocalSearchStrategyBase {
 
     @Override
     public void interrupted() {
-        interrupted = true;
+        isInterrupted = true;
     }
 
 }

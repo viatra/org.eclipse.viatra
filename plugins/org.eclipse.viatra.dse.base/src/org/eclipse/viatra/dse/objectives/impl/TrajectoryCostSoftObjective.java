@@ -13,6 +13,7 @@ package org.eclipse.viatra.dse.objectives.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
@@ -132,8 +133,8 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
     @Override
     public void init(ThreadContext context) {
         DesignSpaceManager dsm = context.getDesignSpaceManager();
-        for (DSETransformationRule<?, ?> rule : activationCostProcessors.keySet()) {
-            dsm.registerActivationCostProcessor(name, rule, activationCostProcessors.get(rule));
+        for (Entry<DSETransformationRule<?, ?>, ActivationFitnessProcessor> entry : activationCostProcessors.entrySet()) {
+            dsm.registerActivationCostProcessor(name, entry.getKey(), entry.getValue());
         }
     }
 

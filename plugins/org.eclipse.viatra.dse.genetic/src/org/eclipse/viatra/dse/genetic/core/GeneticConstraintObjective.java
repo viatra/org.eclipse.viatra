@@ -36,7 +36,7 @@ public class GeneticConstraintObjective extends BaseObjective {
     protected List<Integer> matches;
 
     protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> hardConstraints;
-    protected ArrayList<IncQueryMatcher<? extends IPatternMatch>> hardMatchers;
+    protected List<IncQueryMatcher<? extends IPatternMatch>> hardMatchers;
 
     public GeneticConstraintObjective() {
         super(DEFAULT_NAME);

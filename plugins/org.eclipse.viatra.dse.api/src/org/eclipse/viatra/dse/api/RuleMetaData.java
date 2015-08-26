@@ -13,6 +13,7 @@ package org.eclipse.viatra.dse.api;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -137,48 +138,48 @@ public class RuleMetaData {
 
     public Map<EClass, Integer> getLHSNumbersForClasses() {
         HashMap<EClass, Integer> map = new HashMap<EClass, Integer>();
-        for (EClass c : usedClasses.keySet()) {
-            map.put(c, usedClasses.get(c).getAppearsInLHS());
+        for (Entry<EClass, ModelElementMetaData> entry : usedClasses.entrySet()) {
+            map.put(entry.getKey(), entry.getValue().getAppearsInLHS());
         }
         return map;
     }
 
     public Map<EReference, Integer> getLHSNumbersForReferences() {
         HashMap<EReference, Integer> map = new HashMap<EReference, Integer>();
-        for (EReference c : usedReferences.keySet()) {
-            map.put(c, usedReferences.get(c).getAppearsInLHS());
+        for (Entry<EReference, ModelElementMetaData> entry : usedReferences.entrySet()) {
+            map.put(entry.getKey(), entry.getValue().getAppearsInLHS());
         }
         return map;
     }
 
     public Map<EAttribute, Integer> getLHSNumbersForAttributes() {
         HashMap<EAttribute, Integer> map = new HashMap<EAttribute, Integer>();
-        for (EAttribute c : usedAttributes.keySet()) {
-            map.put(c, usedAttributes.get(c).getAppearsInLHS());
+        for (Entry<EAttribute, ModelElementMetaData> entry : usedAttributes.entrySet()) {
+            map.put(entry.getKey(), entry.getValue().getAppearsInLHS());
         }
         return map;
     }
 
     public Map<EClass, Integer> getLHSNACNumbersForClasses() {
         HashMap<EClass, Integer> map = new HashMap<EClass, Integer>();
-        for (EClass c : usedClasses.keySet()) {
-            map.put(c, usedClasses.get(c).getAppearsInLHSNegative());
+        for (Entry<EClass, ModelElementMetaData> entry : usedClasses.entrySet()) {
+            map.put(entry.getKey(), entry.getValue().getAppearsInLHSNegative());
         }
         return map;
     }
 
     public Map<EReference, Integer> getLHSNACNumbersForReferences() {
         HashMap<EReference, Integer> map = new HashMap<EReference, Integer>();
-        for (EReference c : usedReferences.keySet()) {
-            map.put(c, usedReferences.get(c).getAppearsInLHSNegative());
+        for (Entry<EReference, ModelElementMetaData> entry : usedReferences.entrySet()) {
+            map.put(entry.getKey(), entry.getValue().getAppearsInLHSNegative());
         }
         return map;
     }
 
     public Map<EAttribute, Integer> getLHSNACNumbersForAttributes() {
         HashMap<EAttribute, Integer> map = new HashMap<EAttribute, Integer>();
-        for (EAttribute c : usedAttributes.keySet()) {
-            map.put(c, usedAttributes.get(c).getAppearsInLHSNegative());
+        for (Entry<EAttribute, ModelElementMetaData> entry : usedAttributes.entrySet()) {
+            map.put(entry.getKey(), entry.getValue().getAppearsInLHSNegative());
         }
         return map;
     }

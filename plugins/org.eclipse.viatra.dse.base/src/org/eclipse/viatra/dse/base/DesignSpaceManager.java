@@ -187,20 +187,24 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
             }
         }
 
-        String errorMsg = "A retrieved Transition SHOULD have a matching Activation. Possible causes: the state serializer is faulty; the algorithm choosed a wrong Transition.";
-        errorMsg += "\nSought transition: " + transition.getId();
+        StringBuilder sb = new StringBuilder();
+        sb.append("A retrieved Transition SHOULD have a matching Activation. Possible causes: the state serializer is faulty; the algorithm choosed a wrong Transition.");
+        sb.append("\nSought transition: ");
+        sb.append(transition.getId());
         Object firedFromId = transition.getFiredFrom().getId();
-        errorMsg += "\nTransition's source: " + firedFromId;
+        sb.append("\nTransition's source: ");
+        sb.append(firedFromId);
         Object currentStateId = getCurrentState().getId();
-        errorMsg += "\nCurrent state: " + (currentStateId.equals(firedFromId) ? "same" : currentStateId);
-        errorMsg += "\nAvailable transitions:";
+        sb.append("\nCurrent state: " + (currentStateId.equals(firedFromId) ? "same" : currentStateId));
+        sb.append("\nAvailable transitions:");
         for (Activation<?> act : ruleEngine.getConflictingActivations()) {
             IPatternMatch match = (IPatternMatch) act.getAtom();
             Object code = generateMatchCode(match);
-            errorMsg += "\n\t" + code;
+            sb.append("\n\t");
+            sb.append(code);
         }
 
-        throw new DSEException(errorMsg);
+        throw new DSEException(sb.toString());
     }
 
     /**

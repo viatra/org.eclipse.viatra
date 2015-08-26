@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -52,7 +53,7 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
             return fronts.getFirst();
         } else {
             // Creating result from fronts
-            for (LinkedList<InstanceData> front : fronts) {
+            for (List<InstanceData> front : fronts) {
                 int newSize = newPopulation.size() + front.size();
                 if (newSize <= numberOfSelectedInstances) {
                     newPopulation.addAll(front);
@@ -97,8 +98,8 @@ public class NonDominatedAndCrowdingDistanceSelector implements ISelectNextPopul
 
         LinkedList<LinkedList<InstanceData>> dominationFronts = new LinkedList<LinkedList<InstanceData>>();
 
-        HashMap<InstanceData, LinkedList<InstanceData>> dominatedInstances = new HashMap<InstanceData, LinkedList<InstanceData>>();
-        HashMap<InstanceData, Integer> dominatingInstances = new HashMap<InstanceData, Integer>();
+        Map<InstanceData, LinkedList<InstanceData>> dominatedInstances = new HashMap<InstanceData, LinkedList<InstanceData>>();
+        Map<InstanceData, Integer> dominatingInstances = new HashMap<InstanceData, Integer>();
 
         // calculate dominations
         // TODO make this parallel or use dynamic programming
