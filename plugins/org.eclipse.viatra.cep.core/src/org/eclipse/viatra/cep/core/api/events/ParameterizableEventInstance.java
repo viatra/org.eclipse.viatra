@@ -48,4 +48,11 @@ public abstract class ParameterizableEventInstance extends AbstractEventInstance
     public List<Object> getParameters() {
         return parameters;
     }
+
+    /**
+     * Evaluates check expressions specified in the related atomic event.
+     * 
+     * @return logical value of the evaluated expression
+     */
+    public abstract boolean evaluateCheckExpression();
 }

@@ -26,6 +26,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedScheduler;
 import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
 import org.eclipse.incquery.runtime.evm.update.UpdateCompleteProvider;
+import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler;
 import org.eclipse.viatra.cep.core.engine.runtime.RuntimeRules;
@@ -89,7 +90,12 @@ public class DefaultEventModelManager implements IEventModelManager {
                 if (newValue instanceof Event) {
                     Event event = (Event) newValue;
                     logger.debug("EventModelManager: Event " + event.getClass().getName() + " captured...");
-                    refreshModel(event);
+                    if (event instanceof ParameterizableEventInstance) {
+                        boolean checkExpressionTrue = ((ParameterizableEventInstance) event).evaluateCheckExpression();
+                        if (checkExpressionTrue) {
+                            refreshModel(event);
+                        }
+                    }
                 }
             }
         };
