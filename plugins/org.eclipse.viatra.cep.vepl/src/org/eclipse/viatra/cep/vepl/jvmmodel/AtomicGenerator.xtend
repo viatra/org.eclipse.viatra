@@ -67,6 +67,17 @@ class AtomicGenerator {
 						i = i + 1
 					}
 				}
+				
+				members += pattern.toMethod("evaluateCheckExpression", typeRefBuilder.typeRef("boolean")) [
+					addOverrideAnnotation(it, pattern)
+					if (pattern.checkExpression == null) {
+						body = [
+							append('''return true;''')
+						]
+					} else {
+						body = pattern.checkExpression
+					}
+				]
 			]
 			FactoryManager.instance.add(pattern.classFqn)
 		}
@@ -77,6 +88,12 @@ class AtomicGenerator {
 			acceptor.accept(pattern.toClass(pattern.patternFqn)) [
 				documentation = pattern.documentation
 				superTypes += typeRefBuilder.typeRef(AtomicEventPatternImpl)
+				val paramList = getParamList(pattern)
+				if (paramList != null) {
+					for (parameter : paramList.parameters) {
+						members += pattern.toField(parameter.name, parameter.type)
+					}
+				}
 				members += pattern.toConstructor [
 					body = [
 						append(
@@ -88,15 +105,6 @@ class AtomicGenerator {
 							
 							setId("«pattern.patternFqn.toString.toLowerCase»");'''
 						)]
-				]
-				members += pattern.toMethod("evaluateCheckExpression", typeRefBuilder.typeRef("boolean")) [
-					if (pattern.checkExpression == null) {
-						body = [
-							append('''return true;''')
-						]
-					} else {
-						body = pattern.checkExpression
-					}
 				]
 			]
 			FactoryManager.instance.add(pattern.patternFqn)
