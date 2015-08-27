@@ -8,4 +8,9 @@ public class Fall_Event extends ParameterizableEventInstance {
   public Fall_Event(final EventSource eventSource) {
     super(eventSource);
   }
+  
+  @Override
+  public boolean evaluateCheckExpression() {
+    return true;
+  }
 }

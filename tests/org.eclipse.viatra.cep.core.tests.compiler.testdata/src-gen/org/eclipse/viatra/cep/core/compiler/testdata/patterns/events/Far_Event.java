@@ -8,4 +8,9 @@ public class Far_Event extends ParameterizableEventInstance {
   public Far_Event(final EventSource eventSource) {
     super(eventSource);
   }
+  
+  @Override
+  public boolean evaluateCheckExpression() {
+    return true;
+  }
 }

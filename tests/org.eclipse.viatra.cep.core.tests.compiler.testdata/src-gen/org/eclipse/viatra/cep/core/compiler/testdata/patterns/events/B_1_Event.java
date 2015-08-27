@@ -21,4 +21,9 @@ public class B_1_Event extends ParameterizableEventInstance {
     this.p = p;
     getParameters().set(0, p);
   }
+  
+  @Override
+  public boolean evaluateCheckExpression() {
+    return true;
+  }
 }

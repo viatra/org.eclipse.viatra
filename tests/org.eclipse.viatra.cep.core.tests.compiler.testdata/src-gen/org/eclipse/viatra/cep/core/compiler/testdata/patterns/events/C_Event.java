@@ -8,4 +8,9 @@ public class C_Event extends ParameterizableEventInstance {
   public C_Event(final EventSource eventSource) {
     super(eventSource);
   }
+  
+  @Override
+  public boolean evaluateCheckExpression() {
+    return true;
+  }
 }

@@ -10,8 +10,4 @@ public class Near_Pattern extends AtomicEventPatternImpl {
     setType(Near_Event.class.getCanonicalName());
     setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.near_pattern");
   }
-  
-  public boolean evaluateCheckExpression() {
-    return true;
-  }
 }

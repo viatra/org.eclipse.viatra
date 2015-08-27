@@ -10,8 +10,4 @@ public class Fall_Pattern extends AtomicEventPatternImpl {
     setType(Fall_Event.class.getCanonicalName());
     setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.fall_pattern");
   }
-  
-  public boolean evaluateCheckExpression() {
-    return true;
-  }
 }

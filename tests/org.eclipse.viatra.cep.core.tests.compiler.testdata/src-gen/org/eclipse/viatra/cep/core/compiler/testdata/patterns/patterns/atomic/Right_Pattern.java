@@ -10,8 +10,4 @@ public class Right_Pattern extends AtomicEventPatternImpl {
     setType(Right_Event.class.getCanonicalName());
     setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.right_pattern");
   }
-  
-  public boolean evaluateCheckExpression() {
-    return true;
-  }
 }

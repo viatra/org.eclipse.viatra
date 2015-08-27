@@ -10,8 +10,4 @@ public class C_Pattern extends AtomicEventPatternImpl {
     setType(C_Event.class.getCanonicalName());
     setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.c_pattern");
   }
-  
-  public boolean evaluateCheckExpression() {
-    return true;
-  }
 }

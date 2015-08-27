@@ -8,4 +8,9 @@ public class A2_Event extends ParameterizableEventInstance {
   public A2_Event(final EventSource eventSource) {
     super(eventSource);
   }
+  
+  @Override
+  public boolean evaluateCheckExpression() {
+    return true;
+  }
 }

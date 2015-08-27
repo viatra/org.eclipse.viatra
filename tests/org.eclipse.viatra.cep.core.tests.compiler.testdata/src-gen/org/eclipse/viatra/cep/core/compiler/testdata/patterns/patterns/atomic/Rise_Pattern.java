@@ -10,8 +10,4 @@ public class Rise_Pattern extends AtomicEventPatternImpl {
     setType(Rise_Event.class.getCanonicalName());
     setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.rise_pattern");
   }
-  
-  public boolean evaluateCheckExpression() {
-    return true;
-  }
 }

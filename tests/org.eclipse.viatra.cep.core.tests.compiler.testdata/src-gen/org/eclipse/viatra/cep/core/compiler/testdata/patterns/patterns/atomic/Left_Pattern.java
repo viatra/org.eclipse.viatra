@@ -13,8 +13,4 @@ public class Left_Pattern extends AtomicEventPatternImpl {
     setType(Left_Event.class.getCanonicalName());
     setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.left_pattern");
   }
-  
-  public boolean evaluateCheckExpression() {
-    return true;
-  }
 }

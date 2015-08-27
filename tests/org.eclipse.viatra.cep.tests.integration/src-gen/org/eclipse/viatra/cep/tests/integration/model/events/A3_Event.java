@@ -8,4 +8,9 @@ public class A3_Event extends ParameterizableEventInstance {
   public A3_Event(final EventSource eventSource) {
     super(eventSource);
   }
+  
+  @Override
+  public boolean evaluateCheckExpression() {
+    return true;
+  }
 }

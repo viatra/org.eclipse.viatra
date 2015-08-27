@@ -10,8 +10,4 @@ public class Far_Pattern extends AtomicEventPatternImpl {
     setType(Far_Event.class.getCanonicalName());
     setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.far_pattern");
   }
-  
-  public boolean evaluateCheckExpression() {
-    return true;
-  }
 }

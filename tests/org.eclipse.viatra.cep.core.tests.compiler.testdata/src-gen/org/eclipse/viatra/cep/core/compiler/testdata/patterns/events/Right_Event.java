@@ -8,4 +8,9 @@ public class Right_Event extends ParameterizableEventInstance {
   public Right_Event(final EventSource eventSource) {
     super(eventSource);
   }
+  
+  @Override
+  public boolean evaluateCheckExpression() {
+    return true;
+  }
 }

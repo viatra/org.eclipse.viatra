@@ -10,8 +10,4 @@ public class A2_Pattern extends AtomicEventPatternImpl {
     setType(A2_Event.class.getCanonicalName());
     setId("org.eclipse.viatra.cep.tests.integration.model.patterns.atomic.a2_pattern");
   }
-  
-  public boolean evaluateCheckExpression() {
-    return true;
-  }
 }

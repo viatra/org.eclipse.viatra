@@ -11,4 +11,9 @@ public class Left_Event extends ParameterizableEventInstance {
   public Left_Event(final EventSource eventSource) {
     super(eventSource);
   }
+  
+  @Override
+  public boolean evaluateCheckExpression() {
+    return true;
+  }
 }
