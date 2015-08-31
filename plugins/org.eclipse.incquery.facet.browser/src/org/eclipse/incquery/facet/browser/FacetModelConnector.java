@@ -12,7 +12,7 @@ package org.eclipse.incquery.facet.browser;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.facet.infra.browser.editors.EcoreBrowser;
+import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
 import org.eclipse.incquery.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.incquery.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.jface.viewers.ISelection;
@@ -22,6 +22,7 @@ import org.eclipse.ui.IEditorPart;
 /**
  * Model connector implementation for the EMF Facet Model Browser editor.
  */
+@SuppressWarnings("restriction")
 public class FacetModelConnector extends EMFModelConnector {
 
     public FacetModelConnector(IEditorPart editorPart) {
@@ -32,12 +33,11 @@ public class FacetModelConnector extends EMFModelConnector {
     public Notifier getNotifier(IModelConnectorTypeEnum modelConnectorTypeEnum) {
         Notifier result = null;
         if (editorPart instanceof EcoreBrowser) {
+            EcoreBrowser ecoreBrowser = (EcoreBrowser) editorPart;
             if (IModelConnectorTypeEnum.RESOURCESET.equals(modelConnectorTypeEnum)) {
-                EcoreBrowser EcoreBrowser = (EcoreBrowser) editorPart;
-                return EcoreBrowser.getEditingDomain().getResourceSet();
+                return ecoreBrowser.getEditingDomain().getResourceSet();
             } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
-                EcoreBrowser EcoreBrowser = (EcoreBrowser) editorPart;
-                ISelection selection = EcoreBrowser.getSelection();
+                ISelection selection = ecoreBrowser.getSelection();
                 if (selection instanceof IStructuredSelection) {
                     final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
                     Object firstElement = structuredSelection.getFirstElement();

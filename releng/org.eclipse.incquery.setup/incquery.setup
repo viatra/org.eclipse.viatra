@@ -466,8 +466,15 @@
       <targlet
           name="EMF Facet">
         <requirement
-            name="org.eclipse.emf.facet.sdk.feature.feature.group"
-            versionRange="[0.4.2,0.5.0)"/>
+            name="org.eclipse.modisco.sdk.feature.feature.group"
+            versionRange="[0.13.0,0.14.0)"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          <repository
+              url="http://download.eclipse.org/facet/updates/release"/>
+        </repositoryList>
       </targlet>
       <targlet
           name="Xcore">
