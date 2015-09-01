@@ -466,7 +466,7 @@
       <targlet
           name="EMF Facet">
         <requirement
-            name="org.eclipse.modisco.sdk.feature.feature.group"
+            name="org.eclipse.modisco.infrastructure.feature.feature.group"
             versionRange="[0.13.0,0.14.0)"/>
         <repositoryList
             name="Dependencies">
