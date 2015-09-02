@@ -149,8 +149,6 @@
     <repository
         url="http://download.eclipse.org/releases/indigo"/>
     <repository
-        url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
-    <repository
         url="http://download.itemis.com/updates/releases"/>
     <repository
         url="http://download.eclipse.org/mylyn/releases/latest"/>
@@ -177,12 +175,20 @@
       <requirement
           name="org.eclipse.sdk.feature.group"/>
       <requirement
-          name="org.eclipse.xtext.sdk.feature.group"/>
-      <requirement
           name="de.itemis.xtext.antlr.feature.feature.group"/>
       <requirement
           name="org.eclipse.gef4.zest.sdk.feature.group"
           versionRange="[0.1.0.201406280202,0.1.0.201406280202]"/>
+      <requirement
+          name="org.eclipse.emf.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.gmf.runtime.notation.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.gmf.runtime.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.graphiti.sdk.feature.feature.group"/>
       <repositoryList
           name="Dependencies">
         <repository
@@ -190,32 +196,8 @@
         <repository
             url="http://download.eclipse.org/releases/indigo"/>
         <repository
-            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
-        <repository
             url="http://download.itemis.com/updates/releases"/>
       </repositoryList>
-    </targlet>
-    <targlet
-        name="EMF-IncQuery">
-      <requirement
-          name="org.eclipse.incquery.sdk.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.incquery.testing.sdk.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.incquery.runtime.gmf.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.incquery.runtime.graphiti.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.incquery.viewers.tooling.ui.zest.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.incquery.tooling.ui.visualization.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.incquery.xcore.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.incquery.runtime.localsearch.feature.feature.group"/>
-      <sourceLocator
-          rootFolder="${git.clone.incquery.location}"
-          locateNestedProjects="true"/>
     </targlet>
   </setupTask>
   <setupTask
@@ -388,7 +370,7 @@
         label="Xtext">
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
-          versionRange="[2.8.0,2.9.0)"/>
+          versionRange="[2.9.0,2.10.0)"/>
       <requirement
           name="com.google.inject.multibindings.source"
           versionRange="[3.0.0,4.0.0)"/>
@@ -399,7 +381,7 @@
           name="org.eclipse.uml2.sdk.feature.group"
           versionRange="[5.0.0,6.0.0)"/>
       <repository
-          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones"/>
       <repository
           url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
     </setupTask>
@@ -484,6 +466,18 @@
               url="http://download.eclipse.org/modeling/emf/emf/updates/2.11/"/>
         </repositoryList>
       </targlet>
+      <targlet
+          name="Xtext"
+          activeRepositoryList="">
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.9.0,2.10.0)"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
   </stream>
   <stream name="0.8-maintenance">
@@ -525,7 +519,7 @@
           name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.6.0,2.7.0)"/>
       <repository
-          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask">
@@ -541,6 +535,18 @@
               url="http://download.eclipse.org/incquery/updates-extra/release"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Xtext"
+          activeRepositoryList="">
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.6.0,2.7.0)"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
         </repositoryList>
       </targlet>
     </setupTask>
@@ -584,7 +590,7 @@
           name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.7.0,2.8.0)"/>
       <repository
-          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask">
@@ -600,6 +606,18 @@
               url="http://download.eclipse.org/incquery/updates-extra/release"/>
           <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Xtext"
+          activeRepositoryList="">
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.7.0,2.8.0)"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
         </repositoryList>
       </targlet>
     </setupTask>
