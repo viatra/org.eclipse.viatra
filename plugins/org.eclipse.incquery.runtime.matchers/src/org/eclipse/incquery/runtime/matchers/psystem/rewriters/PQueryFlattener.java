@@ -51,9 +51,12 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         PQuery query = disjunction.getQuery();
 
         // Check for recursion
-        if (disjunction.getAllReferredQueries().contains(query)) {
-            throw new RewriterException("Recursive queries are not supported, can't flatten query named \"{1}\"", 
-                    new String[] {query.getFullyQualifiedName()}, "Unsupported recursive query", query);
+        Set<PQuery> allReferredQueries = disjunction.getAllReferredQueries();
+        for (PQuery referredQuery : allReferredQueries) {
+            if (referredQuery.getAllReferredQueries().contains(referredQuery)) {
+                throw new RewriterException("Recursive queries are not supported, can't flatten query named \"{1}\"", 
+                        new String[] {query.getFullyQualifiedName()}, "Unsupported recursive query", query);
+            }
         }
 
         try {
