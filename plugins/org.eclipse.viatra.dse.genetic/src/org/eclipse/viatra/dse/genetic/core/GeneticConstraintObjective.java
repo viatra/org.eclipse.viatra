@@ -72,7 +72,7 @@ public class GeneticConstraintObjective extends BaseObjective {
         for (int i = 0; i < constraints.size(); i++) {
             int countMatches = matchers.get(i).countMatches();
             result += countMatches * weights.get(i);
-            matches.set(i, new Integer(countMatches));
+            matches.set(i, Integer.valueOf(countMatches));
         }
 
         return new Double(result);

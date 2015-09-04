@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.objectives;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -119,8 +120,8 @@ public class ObjectiveComparatorHelper {
     public List<ArrayList<TrajectoryFitness>> getFronts() {
         List<ArrayList<TrajectoryFitness>> fronts = new ArrayList<ArrayList<TrajectoryFitness>>();
 
-        HashMap<TrajectoryFitness, ArrayList<TrajectoryFitness>> dominatedInstances = new HashMap<TrajectoryFitness, ArrayList<TrajectoryFitness>>();
-        HashMap<TrajectoryFitness, Integer> dominatingInstances = new HashMap<TrajectoryFitness, Integer>();
+        Map<TrajectoryFitness, ArrayList<TrajectoryFitness>> dominatedInstances = new HashMap<TrajectoryFitness, ArrayList<TrajectoryFitness>>();
+        Map<TrajectoryFitness, Integer> dominatingInstances = new HashMap<TrajectoryFitness, Integer>();
 
         // calculate dominations
         for (TrajectoryFitness TrajectoryFitnessP : trajectoryFitnesses) {
@@ -144,7 +145,7 @@ public class ObjectiveComparatorHelper {
                     firstDominationFront.add(TrajectoryFitnessP);
                     fronts.add(firstDominationFront);
                 } else {
-                    ArrayList<TrajectoryFitness> firstDominationFront = fronts.get(0);
+                    List<TrajectoryFitness> firstDominationFront = fronts.get(0);
                     firstDominationFront.add(TrajectoryFitnessP);
                 }
             }

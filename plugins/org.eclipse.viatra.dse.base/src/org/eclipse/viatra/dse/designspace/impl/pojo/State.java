@@ -12,6 +12,7 @@ package org.eclipse.viatra.dse.designspace.impl.pojo;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,10 +33,10 @@ public class State implements IState {
     private final AtomicReference<TraversalStateType> traversalState = new AtomicReference<TraversalStateType>(
             TraversalStateType.TRAVERSED);
     private final Object id;
-    private final CopyOnWriteArrayList<Transition> incomingTransitions = new CopyOnWriteArrayList<Transition>();
+    private final List<Transition> incomingTransitions = new CopyOnWriteArrayList<Transition>();
     private ThreadsafeImmutableList<Transition> outgoingTransitions;
 
-    private final AtomicBoolean isProcessed = new AtomicBoolean(false);
+    private final AtomicBoolean processed = new AtomicBoolean(false);
 
     private final Collection<? extends ITransition> incomingTransitionsView;
 
@@ -82,12 +83,12 @@ public class State implements IState {
 
     @Override
     public boolean isProcessed() {
-        return isProcessed.get();
+        return processed.get();
     }
 
     @Override
     public void setProcessed() {
-        isProcessed.set(true);
+        processed.set(true);
         logger.debug(Thread.currentThread() + " State with id " + id + " isProcessed set to true");
     }
 
