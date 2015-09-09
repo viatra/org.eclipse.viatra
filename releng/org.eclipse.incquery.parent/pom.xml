@@ -185,6 +185,7 @@
 					<configuration>
 						<!-- need to prefix by basedir to generate to currently built module -->
 						<outputDirectory>${basedir}/xtend-gen</outputDirectory>
+						<javaSourceVersion>${java.version}</javaSourceVersion>
 					</configuration>
 				</plugin>
 			</plugins>
