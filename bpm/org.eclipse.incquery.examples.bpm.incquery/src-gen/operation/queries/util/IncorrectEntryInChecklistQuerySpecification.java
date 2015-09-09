@@ -9,18 +9,22 @@ import operation.queries.IncorrectEntryInChecklistMatcher;
 import operation.queries.util.ChecklistEntryTaskCorrespondenceQuerySpecification;
 import operation.queries.util.ChecklistProcessCorrespondenceQuerySpecification;
 import operation.queries.util.TaskInProcessQuerySpecification;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
@@ -96,32 +100,35 @@ public final class IncorrectEntryInChecklistQuerySpecification extends BaseGener
     public Set<PBody> doGetContainedBodies() throws QueryInitializationException {
       Set<PBody> bodies = Sets.newLinkedHashSet();
       try {
-      {
-      	PBody body = new PBody(this);
-      	PVariable var_ChecklistEntry = body.getOrCreateVariableByName("ChecklistEntry");
-      	PVariable var_Task = body.getOrCreateVariableByName("Task");
-      	PVariable var_Process = body.getOrCreateVariableByName("Process");
-      	PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
-      	body.setExportedParameters(Arrays.<ExportedParameter>asList(
-      		new ExportedParameter(body, var_ChecklistEntry, "ChecklistEntry"),
-      				
-      		new ExportedParameter(body, var_Task, "Task"),
-      				
-      		new ExportedParameter(body, var_Process, "Process")
-      	));
-      	new TypeBinary(body, CONTEXT, var_Checklist, var_ChecklistEntry, getFeatureLiteral("http://operation/1.0", "Checklist", "entries"), "http://operation/1.0/Checklist.entries");
-      	new PositivePatternCall(body, new FlatTuple(var_Checklist, var_Process), ChecklistProcessCorrespondenceQuerySpecification.instance().getInternalQueryRepresentation());
-      	new PositivePatternCall(body, new FlatTuple(var_ChecklistEntry, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance().getInternalQueryRepresentation());
-      	new NegativePatternCall(body, new FlatTuple(var_Task, var_Process), TaskInProcessQuerySpecification.instance().getInternalQueryRepresentation());
-      	bodies.add(body);
-      }
       	{
-      	PAnnotation annotation = new PAnnotation("Constraint");
-      	annotation.addAttribute("message", "Entry $ChecklistEntry.name$ corresponds to Task $Task.name$ outside of process $Process.name$ defined for the checklist!");
-      	annotation.addAttribute("location", new ParameterReference("ChecklistEntry"));
-      	annotation.addAttribute("severity", "error");
-      	addAnnotation(annotation);
-      }
+      		PBody body = new PBody(this);
+      		PVariable var_ChecklistEntry = body.getOrCreateVariableByName("ChecklistEntry");
+      		PVariable var_Task = body.getOrCreateVariableByName("Task");
+      		PVariable var_Process = body.getOrCreateVariableByName("Process");
+      		PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
+      		PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
+      		body.setExportedParameters(Arrays.<ExportedParameter>asList(
+      			new ExportedParameter(body, var_ChecklistEntry, "ChecklistEntry"),
+      			
+      			new ExportedParameter(body, var_Task, "Task"),
+      			
+      			new ExportedParameter(body, var_Process, "Process")
+      		));
+      		new TypeConstraint(body, new FlatTuple(var_Checklist), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://operation/1.0", "Checklist")));
+      		new TypeConstraint(body, new FlatTuple(var_Checklist, var__virtual_0_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://operation/1.0", "Checklist", "entries")));
+      		new Equality(body, var__virtual_0_, var_ChecklistEntry);
+      		new PositivePatternCall(body, new FlatTuple(var_Checklist, var_Process), ChecklistProcessCorrespondenceQuerySpecification.instance().getInternalQueryRepresentation());
+      		new PositivePatternCall(body, new FlatTuple(var_ChecklistEntry, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance().getInternalQueryRepresentation());
+      		new NegativePatternCall(body, new FlatTuple(var_Task, var_Process), TaskInProcessQuerySpecification.instance().getInternalQueryRepresentation());
+      		bodies.add(body);
+      	}
+      	{
+      		PAnnotation annotation = new PAnnotation("Constraint");
+      		annotation.addAttribute("severity", "error");
+      		annotation.addAttribute("location", new ParameterReference("ChecklistEntry"));
+      		annotation.addAttribute("message", "Entry $ChecklistEntry.name$ corresponds to Task $Task.name$ outside of process $Process.name$ defined for the checklist!");
+      		addAnnotation(annotation);
+      	}
       	// to silence compiler error
       	if (false) throw new IncQueryException("Never", "happens");
       } catch (IncQueryException ex) {

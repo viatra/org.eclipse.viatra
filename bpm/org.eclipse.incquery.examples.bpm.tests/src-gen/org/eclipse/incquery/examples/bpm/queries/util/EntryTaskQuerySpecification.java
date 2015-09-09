@@ -4,18 +4,23 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.incquery.examples.bpm.queries.EntryTaskMatch;
 import org.eclipse.incquery.examples.bpm.queries.EntryTaskMatcher;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
 /**
  * A pattern-specific query specification that can instantiate EntryTaskMatcher in a type-safe way.
@@ -88,18 +93,21 @@ public final class EntryTaskQuerySpecification extends BaseGeneratedEMFQuerySpec
     public Set<PBody> doGetContainedBodies() throws QueryInitializationException {
       Set<PBody> bodies = Sets.newLinkedHashSet();
       try {
-      {
-      	PBody body = new PBody(this);
-      	PVariable var_Entry = body.getOrCreateVariableByName("Entry");
-      	PVariable var_Task = body.getOrCreateVariableByName("Task");
-      	body.setExportedParameters(Arrays.<ExportedParameter>asList(
-      		new ExportedParameter(body, var_Entry, "Entry"),
-      				
-      		new ExportedParameter(body, var_Task, "Task")
-      	));
-      	new TypeBinary(body, CONTEXT, var_Entry, var_Task, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "task"), "http://operation/1.0/ChecklistEntry.task");
-      	bodies.add(body);
-      }
+      	{
+      		PBody body = new PBody(this);
+      		PVariable var_Entry = body.getOrCreateVariableByName("Entry");
+      		PVariable var_Task = body.getOrCreateVariableByName("Task");
+      		PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
+      		body.setExportedParameters(Arrays.<ExportedParameter>asList(
+      			new ExportedParameter(body, var_Entry, "Entry"),
+      			
+      			new ExportedParameter(body, var_Task, "Task")
+      		));
+      		new TypeConstraint(body, new FlatTuple(var_Entry), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://operation/1.0", "ChecklistEntry")));
+      		new TypeConstraint(body, new FlatTuple(var_Entry, var__virtual_0_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "task")));
+      		new Equality(body, var__virtual_0_, var_Task);
+      		bodies.add(body);
+      	}
       	// to silence compiler error
       	if (false) throw new IncQueryException("Never", "happens");
       } catch (IncQueryException ex) {

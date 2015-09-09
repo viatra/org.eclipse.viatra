@@ -4,9 +4,9 @@ Bundle-Name: BPM Related  Runtime Tests
 Bundle-SymbolicName: org.eclipse.incquery.examples.bpm.tests;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Budapest University of Technology and Economics
-Export-Package: org.eclipse.incquery.examples.bpm.queries,org.eclipse.
- incquery.examples.bpm.queries.util,org.eclipse.incquery.examples.bpm.
- tests
+Export-Package: org.eclipse.incquery.examples.bpm.queries,
+ org.eclipse.incquery.examples.bpm.queries.util,
+ org.eclipse.incquery.examples.bpm.tests
 Require-Bundle: org.eclipse.incquery.querybasedfeatures.runtime;bundle-version="0.7.0",
  org.eclipse.incquery.runtime;bundle-version="0.7.0",
  org.eclipse.incquery.testing.core;bundle-version="0.7.0",

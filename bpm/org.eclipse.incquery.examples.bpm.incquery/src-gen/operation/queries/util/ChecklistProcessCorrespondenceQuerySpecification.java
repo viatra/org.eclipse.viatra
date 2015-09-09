@@ -6,18 +6,22 @@ import java.util.List;
 import java.util.Set;
 import operation.queries.ChecklistProcessCorrespondenceMatch;
 import operation.queries.ChecklistProcessCorrespondenceMatcher;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeUnary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
 /**
  * A pattern-specific query specification that can instantiate ChecklistProcessCorrespondenceMatcher in a type-safe way.
@@ -90,26 +94,33 @@ public final class ChecklistProcessCorrespondenceQuerySpecification extends Base
     public Set<PBody> doGetContainedBodies() throws QueryInitializationException {
       Set<PBody> bodies = Sets.newLinkedHashSet();
       try {
-      {
-      	PBody body = new PBody(this);
-      	PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
-      	PVariable var_Process = body.getOrCreateVariableByName("Process");
-      	PVariable var_ProcessId = body.getOrCreateVariableByName("ProcessId");
-      	body.setExportedParameters(Arrays.<ExportedParameter>asList(
-      		new ExportedParameter(body, var_Checklist, "Checklist"),
-      				
-      		new ExportedParameter(body, var_Process, "Process")
-      	));
-      	new TypeUnary(body, var_Process, getClassifierLiteral("http://process/1.0", "Process"), "http://process/1.0/Process");
-      	new TypeBinary(body, CONTEXT, var_Process, var_ProcessId, getFeatureLiteral("http://process/1.0", "ProcessElement", "id"), "http://process/1.0/ProcessElement.id");
-      	new TypeBinary(body, CONTEXT, var_Checklist, var_ProcessId, getFeatureLiteral("http://operation/1.0", "Checklist", "processId"), "http://operation/1.0/Checklist.processId");
-      	bodies.add(body);
-      }
       	{
-      	PAnnotation annotation = new PAnnotation("QueryBasedFeature");
-      	annotation.addAttribute("feature", "process");
-      	addAnnotation(annotation);
-      }
+      		PBody body = new PBody(this);
+      		PVariable var_Checklist = body.getOrCreateVariableByName("Checklist");
+      		PVariable var_Process = body.getOrCreateVariableByName("Process");
+      		PVariable var_ProcessId = body.getOrCreateVariableByName("ProcessId");
+      		PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
+      		PVariable var__virtual_1_ = body.getOrCreateVariableByName(".virtual{1}");
+      		body.setExportedParameters(Arrays.<ExportedParameter>asList(
+      			new ExportedParameter(body, var_Checklist, "Checklist"),
+      			
+      			new ExportedParameter(body, var_Process, "Process")
+      		));
+      		new TypeConstraint(body, new FlatTuple(var_Checklist), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://operation/1.0", "Checklist")));
+      		new TypeConstraint(body, new FlatTuple(var_Process), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://process/1.0", "Process")));
+      		new TypeConstraint(body, new FlatTuple(var_Process), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://process/1.0", "Process")));
+      		new TypeConstraint(body, new FlatTuple(var_Process, var__virtual_0_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://process/1.0", "ProcessElement", "id")));
+      		new Equality(body, var__virtual_0_, var_ProcessId);
+      		new TypeConstraint(body, new FlatTuple(var_Checklist), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://operation/1.0", "Checklist")));
+      		new TypeConstraint(body, new FlatTuple(var_Checklist, var__virtual_1_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://operation/1.0", "Checklist", "processId")));
+      		new Equality(body, var__virtual_1_, var_ProcessId);
+      		bodies.add(body);
+      	}
+      	{
+      		PAnnotation annotation = new PAnnotation("QueryBasedFeature");
+      		annotation.addAttribute("feature", "process");
+      		addAnnotation(annotation);
+      	}
       	// to silence compiler error
       	if (false) throw new IncQueryException("Never", "happens");
       } catch (IncQueryException ex) {

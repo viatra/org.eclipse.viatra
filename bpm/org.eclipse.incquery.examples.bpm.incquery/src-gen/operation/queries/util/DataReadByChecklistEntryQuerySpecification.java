@@ -93,29 +93,29 @@ public final class DataReadByChecklistEntryQuerySpecification extends BaseGenera
     public Set<PBody> doGetContainedBodies() throws QueryInitializationException {
       Set<PBody> bodies = Sets.newLinkedHashSet();
       try {
-      {
-      	PBody body = new PBody(this);
-      	PVariable var_CLE = body.getOrCreateVariableByName("CLE");
-      	PVariable var_Task = body.getOrCreateVariableByName("Task");
-      	PVariable var_Data = body.getOrCreateVariableByName("Data");
-      	body.setExportedParameters(Arrays.<ExportedParameter>asList(
-      		new ExportedParameter(body, var_CLE, "CLE"),
-      				
-      		new ExportedParameter(body, var_Task, "Task"),
-      				
-      		new ExportedParameter(body, var_Data, "Data")
-      	));
-      	new PositivePatternCall(body, new FlatTuple(var_CLE, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance().getInternalQueryRepresentation());
-      	new PositivePatternCall(body, new FlatTuple(var_Data, var_Task), DataTaskReadCorrespondenceQuerySpecification.instance().getInternalQueryRepresentation());
-      	bodies.add(body);
-      }
       	{
-      	PAnnotation annotation = new PAnnotation("Constraint");
-      	annotation.addAttribute("message", "Entry $CLE.name$ connected to $Data.name$ through $Task.name$");
-      	annotation.addAttribute("location", new ParameterReference("CLE"));
-      	annotation.addAttribute("severity", "warning");
-      	addAnnotation(annotation);
-      }
+      		PBody body = new PBody(this);
+      		PVariable var_CLE = body.getOrCreateVariableByName("CLE");
+      		PVariable var_Task = body.getOrCreateVariableByName("Task");
+      		PVariable var_Data = body.getOrCreateVariableByName("Data");
+      		body.setExportedParameters(Arrays.<ExportedParameter>asList(
+      			new ExportedParameter(body, var_CLE, "CLE"),
+      			
+      			new ExportedParameter(body, var_Task, "Task"),
+      			
+      			new ExportedParameter(body, var_Data, "Data")
+      		));
+      		new PositivePatternCall(body, new FlatTuple(var_CLE, var_Task), ChecklistEntryTaskCorrespondenceQuerySpecification.instance().getInternalQueryRepresentation());
+      		new PositivePatternCall(body, new FlatTuple(var_Data, var_Task), DataTaskReadCorrespondenceQuerySpecification.instance().getInternalQueryRepresentation());
+      		bodies.add(body);
+      	}
+      	{
+      		PAnnotation annotation = new PAnnotation("Constraint");
+      		annotation.addAttribute("severity", "warning");
+      		annotation.addAttribute("location", new ParameterReference("CLE"));
+      		annotation.addAttribute("message", "Entry $CLE.name$ connected to $Data.name$ through $Task.name$");
+      		addAnnotation(annotation);
+      	}
       	// to silence compiler error
       	if (false) throw new IncQueryException("Never", "happens");
       } catch (IncQueryException ex) {

@@ -6,20 +6,25 @@ import java.util.List;
 import java.util.Set;
 import operation.queries.ChecklistEntryJobCorrespondenceMatch;
 import operation.queries.ChecklistEntryJobCorrespondenceMatcher;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.incquery.runtime.matchers.psystem.IValueProvider;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 
 /**
  * A pattern-specific query specification that can instantiate ChecklistEntryJobCorrespondenceMatcher in a type-safe way.
@@ -92,51 +97,65 @@ public final class ChecklistEntryJobCorrespondenceQuerySpecification extends Bas
     public Set<PBody> doGetContainedBodies() throws QueryInitializationException {
       Set<PBody> bodies = Sets.newLinkedHashSet();
       try {
-      {
-      	PBody body = new PBody(this);
-      	PVariable var_CLE = body.getOrCreateVariableByName("CLE");
-      	PVariable var_Job = body.getOrCreateVariableByName("Job");
-      	PVariable var_JobName = body.getOrCreateVariableByName("JobName");
-      	PVariable var_System = body.getOrCreateVariableByName("System");
-      	PVariable var_SysName = body.getOrCreateVariableByName("SysName");
-      	PVariable var_JobPath = body.getOrCreateVariableByName("JobPath");
-      	body.setExportedParameters(Arrays.<ExportedParameter>asList(
-      		new ExportedParameter(body, var_CLE, "CLE"),
-      				
-      		new ExportedParameter(body, var_Job, "Job")
-      	));
-      	new TypeBinary(body, CONTEXT, var_Job, var_JobName, getFeatureLiteral("http://system/1.0", "ResourceElement", "name"), "http://system/1.0/ResourceElement.name");
-      	new TypeBinary(body, CONTEXT, var_System, var_SysName, getFeatureLiteral("http://system/1.0", "ResourceElement", "name"), "http://system/1.0/ResourceElement.name");
-      	new TypeBinary(body, CONTEXT, var_Job, var_System, getFeatureLiteral("http://system/1.0", "Job", "runsOn"), "http://system/1.0/Job.runsOn");
-      	new TypeBinary(body, CONTEXT, var_CLE, var_JobPath, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobPaths"), "http://operation/1.0/ChecklistEntry.jobPaths");
-      new ExpressionEvaluation(body, new IExpressionEvaluator() {
-      	
-      	@Override
-      	public String getShortDescription() {
-      		return "Expression evaluation from pattern ChecklistEntryJobCorrespondence";
-      	}
-      
-      	@Override
-      	public Iterable<String> getInputParameterNames() {
-      		return Arrays.asList("JobName", "JobPath", "SysName");
-      	}
-      
-      	@Override
-      	public Object evaluateExpression(IValueProvider provider) throws Exception {
-      			java.lang.String JobName = (java.lang.String) provider.getValue("JobName");
-      			java.lang.String JobPath = (java.lang.String) provider.getValue("JobPath");
-      			java.lang.String SysName = (java.lang.String) provider.getValue("SysName");
-      			return evaluateExpression_1_1(JobName, JobPath, SysName);
-      		}
-      
-      },  null); 
-      	bodies.add(body);
-      }
       	{
-      	PAnnotation annotation = new PAnnotation("QueryBasedFeature");
-      	annotation.addAttribute("feature", "jobs");
-      	addAnnotation(annotation);
-      }
+      		PBody body = new PBody(this);
+      		PVariable var_CLE = body.getOrCreateVariableByName("CLE");
+      		PVariable var_Job = body.getOrCreateVariableByName("Job");
+      		PVariable var_JobName = body.getOrCreateVariableByName("JobName");
+      		PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
+      		PVariable var_System = body.getOrCreateVariableByName("System");
+      		PVariable var_SysName = body.getOrCreateVariableByName("SysName");
+      		PVariable var__virtual_1_ = body.getOrCreateVariableByName(".virtual{1}");
+      		PVariable var__virtual_2_ = body.getOrCreateVariableByName(".virtual{2}");
+      		PVariable var_JobPath = body.getOrCreateVariableByName("JobPath");
+      		PVariable var__virtual_3_ = body.getOrCreateVariableByName(".virtual{3}");
+      		body.setExportedParameters(Arrays.<ExportedParameter>asList(
+      			new ExportedParameter(body, var_CLE, "CLE"),
+      			
+      			new ExportedParameter(body, var_Job, "Job")
+      		));
+      		new TypeConstraint(body, new FlatTuple(var_CLE), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://operation/1.0", "ChecklistEntry")));
+      		new TypeConstraint(body, new FlatTuple(var_Job), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://system/1.0", "Job")));
+      		new TypeConstraint(body, new FlatTuple(var_Job), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://system/1.0", "Job")));
+      		new TypeConstraint(body, new FlatTuple(var_Job, var__virtual_0_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://system/1.0", "ResourceElement", "name")));
+      		new Equality(body, var__virtual_0_, var_JobName);
+      		new TypeConstraint(body, new FlatTuple(var_System), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://system/1.0", "System")));
+      		new TypeConstraint(body, new FlatTuple(var_System, var__virtual_1_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://system/1.0", "ResourceElement", "name")));
+      		new Equality(body, var__virtual_1_, var_SysName);
+      		new TypeConstraint(body, new FlatTuple(var_Job), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://system/1.0", "Job")));
+      		new TypeConstraint(body, new FlatTuple(var_Job, var__virtual_2_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://system/1.0", "Job", "runsOn")));
+      		new Equality(body, var__virtual_2_, var_System);
+      		new TypeConstraint(body, new FlatTuple(var_CLE), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://operation/1.0", "ChecklistEntry")));
+      		new TypeConstraint(body, new FlatTuple(var_CLE, var__virtual_3_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobPaths")));
+      		new Equality(body, var__virtual_3_, var_JobPath);
+      		new ExpressionEvaluation(body, new IExpressionEvaluator() {
+      			
+      			@Override
+      			public String getShortDescription() {
+      				return "Expression evaluation from pattern ChecklistEntryJobCorrespondence";
+      			}
+      		
+      			@Override
+      			public Iterable<String> getInputParameterNames() {
+      				return Arrays.asList("JobName", "JobPath", "SysName");
+      			}
+      		
+      			@Override
+      			public Object evaluateExpression(IValueProvider provider) throws Exception {
+      					java.lang.String JobName = (java.lang.String) provider.getValue("JobName");
+      					java.lang.String JobPath = (java.lang.String) provider.getValue("JobPath");
+      					java.lang.String SysName = (java.lang.String) provider.getValue("SysName");
+      					return evaluateExpression_1_1(JobName, JobPath, SysName);
+      				}
+      		
+      		},  null); 
+      		bodies.add(body);
+      	}
+      	{
+      		PAnnotation annotation = new PAnnotation("QueryBasedFeature");
+      		annotation.addAttribute("feature", "jobs");
+      		addAnnotation(annotation);
+      	}
       	// to silence compiler error
       	if (false) throw new IncQueryException("Never", "happens");
       } catch (IncQueryException ex) {

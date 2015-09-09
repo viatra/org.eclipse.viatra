@@ -4,17 +4,22 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFPQuery;
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
+import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
-import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeBinary;
+import org.eclipse.incquery.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitializationException;
+import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
 import system.queries.JobInfoCorrespondenceMatch;
 import system.queries.JobInfoCorrespondenceMatcher;
 
@@ -89,25 +94,33 @@ public final class JobInfoCorrespondenceQuerySpecification extends BaseGenerated
     public Set<PBody> doGetContainedBodies() throws QueryInitializationException {
       Set<PBody> bodies = Sets.newLinkedHashSet();
       try {
-      {
-      	PBody body = new PBody(this);
-      	PVariable var_Job = body.getOrCreateVariableByName("Job");
-      	PVariable var_Info = body.getOrCreateVariableByName("Info");
-      	PVariable var_CLE = body.getOrCreateVariableByName("CLE");
-      	body.setExportedParameters(Arrays.<ExportedParameter>asList(
-      		new ExportedParameter(body, var_Job, "Job"),
-      				
-      		new ExportedParameter(body, var_Info, "Info")
-      	));
-      	new TypeBinary(body, CONTEXT, var_CLE, var_Info, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "info"), "http://operation/1.0/ChecklistEntry.info");
-      	new TypeBinary(body, CONTEXT, var_CLE, var_Job, getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobs"), "http://operation/1.0/ChecklistEntry.jobs");
-      	bodies.add(body);
-      }
       	{
-      	PAnnotation annotation = new PAnnotation("QueryBasedFeature");
-      	annotation.addAttribute("feature", "info");
-      	addAnnotation(annotation);
-      }
+      		PBody body = new PBody(this);
+      		PVariable var_Job = body.getOrCreateVariableByName("Job");
+      		PVariable var_Info = body.getOrCreateVariableByName("Info");
+      		PVariable var_CLE = body.getOrCreateVariableByName("CLE");
+      		PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
+      		PVariable var__virtual_1_ = body.getOrCreateVariableByName(".virtual{1}");
+      		body.setExportedParameters(Arrays.<ExportedParameter>asList(
+      			new ExportedParameter(body, var_Job, "Job"),
+      			
+      			new ExportedParameter(body, var_Info, "Info")
+      		));
+      		new TypeConstraint(body, new FlatTuple(var_Job), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://system/1.0", "Job")));
+      		new TypeConstraint(body, new FlatTuple(var_Info), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://operation/1.0", "RuntimeInformation")));
+      		new TypeConstraint(body, new FlatTuple(var_CLE), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://operation/1.0", "ChecklistEntry")));
+      		new TypeConstraint(body, new FlatTuple(var_CLE, var__virtual_0_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "info")));
+      		new Equality(body, var__virtual_0_, var_Info);
+      		new TypeConstraint(body, new FlatTuple(var_CLE), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://operation/1.0", "ChecklistEntry")));
+      		new TypeConstraint(body, new FlatTuple(var_CLE, var__virtual_1_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://operation/1.0", "ChecklistEntry", "jobs")));
+      		new Equality(body, var__virtual_1_, var_Job);
+      		bodies.add(body);
+      	}
+      	{
+      		PAnnotation annotation = new PAnnotation("QueryBasedFeature");
+      		annotation.addAttribute("feature", "info");
+      		addAnnotation(annotation);
+      	}
       	// to silence compiler error
       	if (false) throw new IncQueryException("Never", "happens");
       } catch (IncQueryException ex) {
