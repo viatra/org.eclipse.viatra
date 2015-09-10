@@ -60,6 +60,9 @@ Workflow {
 
 			// the Antlr parser
 			fragment = parser.antlr.XtextAntlrGeneratorFragment {
+			    antlrTool = parser.antlr.AntlrToolFacade {
+                    askBeforeDownload = false
+                }
 				options = {
 					classSplitting = true
 				}

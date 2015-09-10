@@ -70,7 +70,9 @@ Workflow {
 
             // The antlr parser generator fragment.
             fragment = parser.antlr.XtextAntlrGeneratorFragment {
-
+                antlrTool = parser.antlr.AntlrToolFacade {
+                    askBeforeDownload = false
+                }
             //  options = {
             //      backtrack = true
             //  }
