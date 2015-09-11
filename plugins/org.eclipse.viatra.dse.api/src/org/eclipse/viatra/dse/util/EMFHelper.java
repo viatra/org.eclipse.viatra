@@ -54,7 +54,8 @@ public final class EMFHelper {
     public static EditingDomain createEditingDomain(EObject root) {
         // TODO maybe there is already a ted on the eobject
         EditingDomain domain = new AdapterFactoryEditingDomain(null,new BasicCommandStack());
-        Resource createResource = domain.getResourceSet().createResource(URI.createFileURI("http:///dummy.xml"));
+        registerExtensionForXmiSerializer("xmi");
+        Resource createResource = domain.getResourceSet().createResource(URI.createFileURI("dummy.xmi"));
         domain.getCommandStack().execute(new AddCommand(domain, createResource.getContents(), root));
         return domain;
     }
@@ -67,11 +68,7 @@ public final class EMFHelper {
      */
     public static void serializeModel(EObject root, String name, String ext) {
 
-        Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
-        Map<String, Object> m = reg.getExtensionToFactoryMap();
-        if (m.get(ext) == null) {
-            m.put(ext, new XMIResourceFactoryImpl());
-        }
+        registerExtensionForXmiSerializer(ext);
 
         ResourceSet resSet = new ResourceSetImpl();
         URI uri = URI.createFileURI(name + "." + ext);
@@ -83,6 +80,18 @@ public final class EMFHelper {
             resource.save(Collections.EMPTY_MAP);
         } catch (IOException e) {
             logger.error(e);
+        }
+    }
+
+    /**
+     * Registers an {@link XMIResourceFactoryImpl} for the given extension.
+     * @param ext The extension as a String.
+     */
+    public static void registerExtensionForXmiSerializer(String ext) {
+        Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
+        Map<String, Object> m = reg.getExtensionToFactoryMap();
+        if (m.get(ext) == null) {
+            m.put(ext, new XMIResourceFactoryImpl());
         }
     }
 
