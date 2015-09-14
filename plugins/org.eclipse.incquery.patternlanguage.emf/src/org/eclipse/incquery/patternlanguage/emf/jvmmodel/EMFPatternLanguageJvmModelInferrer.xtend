@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.patternlanguage.emf.jvmmodel
 
-import com.google.common.collect.Sets
 import com.google.inject.Inject
 import org.apache.log4j.Logger
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
@@ -25,9 +24,6 @@ import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher
 import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
-import org.eclipse.incquery.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry
-import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry
-import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
@@ -69,23 +65,25 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	 * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
 	 *                   current resource.
 	 * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
-	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
+	 *        must not rely on linking using the index if this is <code>true</code>
 	 */
    	def void infer(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
 		boolean isPrelinkingPhase) {
-		val isPublic = !CorePatternLanguageHelper::isPrivate(pattern);
-		try {
-			if (!pattern.name.nullOrEmpty && isPublic) {
-				pattern.inferPublic(acceptor, builder, isPrelinkingPhase)
-			} else if (!pattern.name.nullOrEmpty) {
-				pattern.inferPrivate(acceptor, builder, isPrelinkingPhase)
-			}
-		} catch (Exception e) {
-				logger.error("Exception during Jvm Model Infer for: " + pattern, e)
+		if (!pattern.name.nullOrEmpty) {
+    		val isPublic = !CorePatternLanguageHelper::isPrivate(pattern);
+    		try {
+    			if (isPublic) {
+    				pattern.inferPublic(acceptor, builder, isPrelinkingPhase)
+    			} else {
+    				pattern.inferPrivate(acceptor, builder, isPrelinkingPhase)
+    			}
+    		} catch (Exception e) {
+    				logger.error("Exception during Jvm Model Infer for: " + pattern, e)
+    		}
 		}
 	}
 
-	def void inferPublic(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
+	private def void inferPublic(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
 		boolean isPrelinkingPhase) {
 		logger.debug("Inferring Jvm Model for pattern" + pattern.name);
 		val packageName = pattern.getPackageName
@@ -96,7 +94,6 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 			superTypes += typeRef(typeof(BasePatternMatch))
 		]
 
-		//pattern.inferMatchClass(isPrelinkingPhase, packageName)
 		val matcherClass = pattern.toClass(pattern.matcherClassName) [
 			it.packageName = packageName
 			superTypes += typeRef(typeof(BaseMatcher), typeRef(matchClass))
@@ -128,7 +125,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	}
 
 
-	def void inferPrivate(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
+	private def void inferPrivate(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
 		boolean isPrelinkingPhase) {
 		logger.debug("Inferring Jvm Model for private pattern " + pattern.name);
 		val utilPackageName = pattern.utilPackageName
@@ -144,13 +141,13 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	}
 		
    	/**
-	 * Is called for each Pattern instance in a resource.
+	 * Is called for each PatternModel instance in a resource.
 	 *
-	 * @param pattern - the model to create one or more JvmDeclaredTypes from.
+	 * @param model - the model to create one or more JvmDeclaredTypes from.
 	 * @param acceptor - each created JvmDeclaredType without a container should be passed to the acceptor in order get attached to the
 	 *                   current resource.
 	 * @param isPreLinkingPhase - whether the method is called in a pre linking phase, i.e. when the global index isn't fully updated. You
-	 *        must not rely on linking using the index if iPrelinkingPhase is <code>true</code>
+	 *        must not rely on linking using the index if this is <code>true</code>
 	 */
    	def dispatch void infer(PatternModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPrelinkingPhase) {
 	   	try {

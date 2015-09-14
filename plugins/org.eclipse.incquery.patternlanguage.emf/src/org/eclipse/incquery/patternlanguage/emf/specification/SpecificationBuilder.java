@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.eclipse.incquery.patternlanguage.emf.specification.builder.EPMToPBody;
 import org.eclipse.incquery.patternlanguage.emf.specification.builder.NameToSpecificationMap;
 import org.eclipse.incquery.patternlanguage.emf.specification.builder.PatternSanitizer;
@@ -59,7 +58,6 @@ import com.google.common.collect.Sets;
  */
 public class SpecificationBuilder {
 
-    private Logger logger = Logger.getLogger(SpecificationBuilder.class);
     private NameToSpecificationMap patternMap;
     /**
      * This map is used to detect a re-addition of a pattern with a fqn that is used by a previously added pattern.
