@@ -37,7 +37,7 @@ The created update sites will be available in:
 
 ## Contributing to EMF-IncQuery
 
-Please read https://wiki.eclipse.org/EMFIncQuery/DeveloperDocumentation/Contributing to understand our contribution process.
+Please read http://wiki.eclipse.org/EMFIncQuery/DeveloperDocumentation/Contributing to understand our contribution process.
 
 # License
 
