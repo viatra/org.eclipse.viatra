@@ -34,15 +34,11 @@ The created update sites will be available in:
   * **Core plug-ins**: releng/org.eclipse.incquery.update/target/repository/
   * **All plug-ins** (including experimental ones): releng/org.eclipse.incquery.update.extras/target/repository/
 
-## Contributing
 
-The development of EMF-IncQuery follows the [Eclipse Development Process](http://www.eclipse.org/projects/dev_process/development_process.php). For contributions, this means that all potential contributors need to
+## Contributing to EMF-IncQuery
 
- * Fill out an [Contributor Licence Agreement](http://www.eclipse.org/legal/CLA.php) by logging in to the [Eclipse Project Forge](https://projects.eclipse.org/user/login/sso) and selecting the Contributor Licence Agreement. This is required for all projects hosted at eclipse.org, but it is enough to do it once for all projects.
- * Upload the contributions to the eclipse.org infrastructure. The preferred way is using Gerrit, but we also accept patches to Bugzilla issues. 
-   * Gerrit url: ssh://«username»@git.eclipse.org:29418/incquery/org.eclipse.incquery
-   * Bugzilla issues: [https://bugs.eclipse.org/bugs/buglist.cgi?list_id=7877175&query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&product=Incquery]()
-   * An up-to-date description of this information is available from the [Eclipse Wiki Contribution Page](http://wiki.eclipse.org/Development_Resources/Contributing_via_Git)
+Please read https://wiki.eclipse.org/EMFIncQuery/DeveloperDocumentation/Contributing to understand our contribution process.
 
-----
+# License
+
 All code in this repository is available under the Eclipse Public License v1.0: [http://www.eclipse.org/legal/epl-v10.html]()
