@@ -215,7 +215,7 @@ public class PBody {
     }
 
     /**
-     * Returns the exported parameter constraints of the body
+     * Returns the exported parameter constraints of the body.
      * 
      * @return a non-null, but possibly empty list
      */
@@ -225,7 +225,18 @@ public class PBody {
         return symbolicParameters;
     }
 
+    /**
+     * @deprecated Use {@link #setSymbolicParameters(List<ExportedParameter>)} instead
+     */
     public void setExportedParameters(List<ExportedParameter> symbolicParameters) {
+        setSymbolicParameters(symbolicParameters);
+    }
+
+    /**
+     * Sets the exported parameter constraints of the body, if this instance is mutable.
+     * @param symbolicParameters the new value
+     */
+    public void setSymbolicParameters(List<ExportedParameter> symbolicParameters) {
         checkMutability();
         this.symbolicParameters = Lists.newArrayList(symbolicParameters);
     }

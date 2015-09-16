@@ -21,9 +21,9 @@ public abstract class KeyedEnumerablePConstraint<KeyType> extends EnumerablePCon
 
     protected KeyType supplierKey;
 
-    public KeyedEnumerablePConstraint(PBody pSystem, Tuple variablesTuple,
+    public KeyedEnumerablePConstraint(PBody pBody, Tuple variablesTuple,
             KeyType supplierKey) {
-        super(pSystem, variablesTuple);
+        super(pBody, variablesTuple);
         this.supplierKey = supplierKey;
     }
 

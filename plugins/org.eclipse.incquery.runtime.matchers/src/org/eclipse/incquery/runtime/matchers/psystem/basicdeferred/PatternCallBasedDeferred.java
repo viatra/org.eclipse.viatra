@@ -39,16 +39,16 @@ public abstract class PatternCallBasedDeferred extends VariableDeferredPConstrai
     protected PQuery query;
     private Set<PVariable> deferringVariables;
 
-    public PatternCallBasedDeferred(PBody pSystem, Tuple actualParametersTuple,
+    public PatternCallBasedDeferred(PBody pBody, Tuple actualParametersTuple,
             PQuery pattern, Set<PVariable> additionalAffectedVariables) {
-        super(pSystem, union(actualParametersTuple.<PVariable> getDistinctElements(), additionalAffectedVariables));
+        super(pBody, union(actualParametersTuple.<PVariable> getDistinctElements(), additionalAffectedVariables));
         this.actualParametersTuple = actualParametersTuple;
         this.query = pattern;
     }
 
-    public PatternCallBasedDeferred(PBody pSystem, Tuple actualParametersTuple,
+    public PatternCallBasedDeferred(PBody pBody, Tuple actualParametersTuple,
             PQuery pattern) {
-        this(pSystem, actualParametersTuple, pattern, Collections.<PVariable> emptySet());
+        this(pBody, actualParametersTuple, pattern, Collections.<PVariable> emptySet());
     }
 
     private static Set<PVariable> union(Set<PVariable> a, Set<PVariable> b) {

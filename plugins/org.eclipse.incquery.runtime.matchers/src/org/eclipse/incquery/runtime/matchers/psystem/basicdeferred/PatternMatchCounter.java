@@ -30,9 +30,9 @@ public class PatternMatchCounter extends PatternCallBasedDeferred {
 
     private PVariable resultVariable;
 
-    public PatternMatchCounter(PBody pSystem, Tuple actualParametersTuple,
+    public PatternMatchCounter(PBody pBody, Tuple actualParametersTuple,
             PQuery query, PVariable resultVariable) {
-        super(pSystem, actualParametersTuple, query, Collections.singleton(resultVariable));
+        super(pBody, actualParametersTuple, query, Collections.singleton(resultVariable));
         this.resultVariable = resultVariable;
     }
 

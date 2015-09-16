@@ -28,8 +28,8 @@ import org.eclipse.incquery.runtime.matchers.tuple.FlatTuple;
  */
 public class ConstantValue extends KeyedEnumerablePConstraint<Object> {
 
-    public ConstantValue(PBody pSystem, PVariable variable, Object value) {
-        super(pSystem, new FlatTuple(variable), value);
+    public ConstantValue(PBody pBody, PVariable variable, Object value) {
+        super(pBody, new FlatTuple(variable), value);
     }
 
     @Override

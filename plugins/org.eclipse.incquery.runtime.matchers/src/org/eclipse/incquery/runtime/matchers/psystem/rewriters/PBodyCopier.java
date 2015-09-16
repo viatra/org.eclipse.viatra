@@ -94,7 +94,7 @@ public class PBodyCopier {
         }
 
         // Copy exported parameters
-        this.body.setExportedParameters(Lists.transform(sourceBody.getSymbolicParameters(),
+        this.body.setSymbolicParameters(Lists.transform(sourceBody.getSymbolicParameters(),
                 new Function<ExportedParameter, ExportedParameter>() {
 
                     @Override

@@ -115,7 +115,7 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
             newVariables.add(var_param);
         }
 
-        body.setExportedParameters(symbolicParameters);
+        body.setSymbolicParameters(symbolicParameters);
         new PositivePatternCall(body, new FlatTuple(newVariables.toArray()), baseQuery);
         try {
             insertTraceCall(body);

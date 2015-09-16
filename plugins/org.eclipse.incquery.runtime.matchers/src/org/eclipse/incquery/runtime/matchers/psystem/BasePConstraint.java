@@ -26,7 +26,7 @@ import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 public abstract class BasePConstraint implements PConstraint {
 	
 	
-    protected PBody pSystem;
+    protected PBody pBody;
     private final Set<PVariable> affectedVariables;
     
     
@@ -34,15 +34,15 @@ public abstract class BasePConstraint implements PConstraint {
 
 	private static int nextID = 0;
 
-    public BasePConstraint(PBody pSystem, Set<PVariable> affectedVariables) {
+    public BasePConstraint(PBody pBody, Set<PVariable> affectedVariables) {
         super();
-        this.pSystem = pSystem;
+        this.pBody = pBody;
         this.affectedVariables = new HashSet<PVariable>(affectedVariables);
 
         for (PVariable pVariable : affectedVariables) {
             pVariable.refer(this);
         }
-        pSystem.registerConstraint(this);
+        pBody.registerConstraint(this);
     }
 
     @Override
@@ -64,7 +64,7 @@ public abstract class BasePConstraint implements PConstraint {
 
     @Override
     public void replaceVariable(PVariable obsolete, PVariable replacement) {
-        pSystem.checkMutability();
+        pBody.checkMutability();
         if (affectedVariables.remove(obsolete)) {
             affectedVariables.add(replacement);
             obsolete.unrefer(this);
@@ -77,11 +77,11 @@ public abstract class BasePConstraint implements PConstraint {
 
     @Override
     public void delete() {
-        pSystem.checkMutability();
+        pBody.checkMutability();
         for (PVariable pVariable : affectedVariables) {
             pVariable.unrefer(this);
         }
-        pSystem.unregisterConstraint(this);
+        pBody.unregisterConstraint(this);
     }
 
     @Override
@@ -89,7 +89,7 @@ public abstract class BasePConstraint implements PConstraint {
     }
 
     public PBody getPSystem() {
-        return pSystem;
+        return pBody;
     }
     
     @Override

@@ -30,8 +30,8 @@ public class ExpressionEvaluation extends BaseTypeSafeConstraint {
 
     private IExpressionEvaluator evaluator;
 
-    public ExpressionEvaluation(PBody pSystem, IExpressionEvaluator evaluator, PVariable outputVariable) {
-        super(pSystem, getPVariablesOfExpression(pSystem, evaluator), outputVariable);
+    public ExpressionEvaluation(PBody pBody, IExpressionEvaluator evaluator, PVariable outputVariable) {
+        super(pBody, getPVariablesOfExpression(pBody, evaluator), outputVariable);
         this.evaluator = evaluator;
     }
     
@@ -53,11 +53,11 @@ public class ExpressionEvaluation extends BaseTypeSafeConstraint {
             return Collections.singletonMap(inputVariables, Collections.singleton(outputVariable));
     }
     
-    private static Set<PVariable> getPVariablesOfExpression(PBody pSystem,
+    private static Set<PVariable> getPVariablesOfExpression(PBody pBody,
             IExpressionEvaluator evaluator) {
         Set<PVariable> result = new HashSet<PVariable>();
         for (String name : evaluator.getInputParameterNames()) {
-            PVariable variable = pSystem.getOrCreateVariableByName(name);
+            PVariable variable = pBody.getOrCreateVariableByName(name);
             result.add(variable);
         }
         return result;

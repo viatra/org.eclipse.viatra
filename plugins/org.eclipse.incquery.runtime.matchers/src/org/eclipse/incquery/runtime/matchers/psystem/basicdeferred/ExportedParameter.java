@@ -27,9 +27,9 @@ public class ExportedParameter extends VariableDeferredPConstraint {
     PVariable parameterVariable;
     String parameterName;
 
-    public ExportedParameter(PBody pSystem, PVariable parameterVariable,
+    public ExportedParameter(PBody pBody, PVariable parameterVariable,
             String parameterName) {
-        super(pSystem, Collections.singleton(parameterVariable));
+        super(pBody, Collections.singleton(parameterVariable));
         this.parameterVariable = parameterVariable;
         this.parameterName = parameterVariable.getName();
     }
