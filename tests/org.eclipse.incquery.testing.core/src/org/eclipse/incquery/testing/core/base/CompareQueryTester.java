@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.incquery.testing.core.base;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -45,13 +47,13 @@ public class CompareQueryTester {
         Collection<? extends IPatternMatch> allFlattenedMatches = flattenedMatcher.getAllMatches();
 
         // Cannot compare directly collection of matches, so that first we need to convert matches to arrays
-        Set<Object[]> allMatchArrays = Sets.newHashSet();
+        Set<List<Object>> allMatchArrays = Sets.newHashSet();
         for (IPatternMatch iPatternMatch : allMatches) {
-            allMatchArrays.add(iPatternMatch.toArray());
+            allMatchArrays.add(Arrays.asList(iPatternMatch.toArray()));
         }
-        Set<Object[]> allFlattenedMatchArrays = Sets.newHashSet();
+        Set<List<Object>> allFlattenedMatchArrays = Sets.newHashSet();
         for (IPatternMatch iPatternMatch : allFlattenedMatches) {
-            allFlattenedMatchArrays.add(iPatternMatch.toArray());
+            allFlattenedMatchArrays.add(Arrays.asList(iPatternMatch.toArray()));
         }
         
         Assert.assertTrue(allMatchArrays.equals(allFlattenedMatchArrays));
