@@ -24,8 +24,8 @@ import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
  */
 public abstract class DeferredPConstraint extends BasePConstraint {
 
-    public DeferredPConstraint(PBody pSystem, Set<PVariable> affectedVariables) {
-        super(pSystem, affectedVariables);
+    public DeferredPConstraint(PBody pBody, Set<PVariable> affectedVariables) {
+        super(pBody, affectedVariables);
     }
 
     public abstract boolean isReadyAt(SubPlan plan, IQueryMetaContext context);

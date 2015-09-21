@@ -223,7 +223,7 @@ public class EPMToPBody {
             }
             exportedParameters.add(exportedParameter);
         }
-        pBody.setExportedParameters(exportedParameters);
+        pBody.setSymbolicParameters(exportedParameters);
     }
 
 	private IInputKey classifierToInputKey(EClassifier classifier) {

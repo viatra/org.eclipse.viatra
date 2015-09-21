@@ -25,8 +25,8 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  */
 public class NegativePatternCall extends PatternCallBasedDeferred {
 
-    public NegativePatternCall(PBody pSystem, Tuple actualParametersTuple, PQuery query) {
-        super(pSystem, actualParametersTuple, query);
+    public NegativePatternCall(PBody pBody, Tuple actualParametersTuple, PQuery query) {
+        super(pBody, actualParametersTuple, query);
     }
 
     @Override

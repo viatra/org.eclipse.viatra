@@ -19,7 +19,7 @@ import java.util.Set;
  *
  */
 public class PVariable {
-    private PBody pSystem;
+    private PBody pBody;
     /**
      * The name of the pattern variable. This is the unique key of the pattern node.
      */
@@ -46,13 +46,13 @@ public class PVariable {
      */
     private PVariable unifiedInto;
 
-    PVariable(PBody pSystem, String name) {
-        this(pSystem, name, false);
+    PVariable(PBody pBody, String name) {
+        this(pBody, name, false);
     }
 
-    PVariable(PBody pSystem, String name, boolean virtual) {
+    PVariable(PBody pBody, String name, boolean virtual) {
         super();
-        this.pSystem = pSystem;
+        this.pBody = pBody;
         this.name = name;
         this.virtual = virtual;
         // this.exportedParameter = false;
@@ -68,7 +68,7 @@ public class PVariable {
      * @param replacement
      */
     public void unifyInto(PVariable replacement) {
-        pSystem.checkMutability();
+        pBody.checkMutability();
         replacementCheck();
         replacement = replacement.getUnifiedIntoRoot();
 
@@ -92,7 +92,7 @@ public class PVariable {
             }
             // replacementCheck() will fail from this point
             this.unifiedInto = replacement;
-            pSystem.noLongerUnique(this);
+            pBody.noLongerUnique(this);
         }
     }
 
@@ -119,7 +119,7 @@ public class PVariable {
      * @param constraint
      */
     public void refer(PConstraint constraint) {
-        pSystem.checkMutability();
+        pBody.checkMutability();
         replacementCheck();
         deducable = null;
         referringConstraints.add(constraint);
@@ -131,7 +131,7 @@ public class PVariable {
      * @param constraint
      */
     public void unrefer(PConstraint constraint) {
-        pSystem.checkMutability();
+        pBody.checkMutability();
         replacementCheck();
         deducable = null;
         referringConstraints.remove(constraint);

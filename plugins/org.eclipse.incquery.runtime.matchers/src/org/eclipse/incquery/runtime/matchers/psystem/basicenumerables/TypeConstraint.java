@@ -36,8 +36,8 @@ public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implem
     
 	private TypeJudgement equivalentJudgement;
 	
-    public TypeConstraint(PBody pSystem, Tuple variablesTuple, IInputKey inputKey) {
-        super(pSystem, variablesTuple, inputKey);
+    public TypeConstraint(PBody pBody, Tuple variablesTuple, IInputKey inputKey) {
+        super(pBody, variablesTuple, inputKey);
         this.equivalentJudgement = new TypeJudgement(inputKey, variablesTuple);
         
         if (! inputKey.isEnumerable())

@@ -32,8 +32,8 @@ public class Equality extends DeferredPConstraint {
     private PVariable who;
     private PVariable withWhom;
 
-    public Equality(PBody pSystem, PVariable who, PVariable withWhom) {
-        super(pSystem, buildSet(who, withWhom));
+    public Equality(PBody pBody, PVariable who, PVariable withWhom) {
+        super(pBody, buildSet(who, withWhom));
         this.who = who;
         this.withWhom = withWhom;
     }

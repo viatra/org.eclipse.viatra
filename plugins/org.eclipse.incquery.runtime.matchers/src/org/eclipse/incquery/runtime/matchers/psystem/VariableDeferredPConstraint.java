@@ -24,9 +24,9 @@ import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
  */
 public abstract class VariableDeferredPConstraint extends DeferredPConstraint {
 
-    public VariableDeferredPConstraint(PBody pSystem,
+    public VariableDeferredPConstraint(PBody pBody,
             Set<PVariable> affectedVariables) {
-        super(pSystem, affectedVariables);
+        super(pBody, affectedVariables);
     }
 
     public abstract Set<PVariable> getDeferringVariables();

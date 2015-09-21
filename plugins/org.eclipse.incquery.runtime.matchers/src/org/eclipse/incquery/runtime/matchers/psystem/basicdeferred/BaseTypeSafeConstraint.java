@@ -38,13 +38,13 @@ public abstract class BaseTypeSafeConstraint extends
     }
 
     /**
-     * @param pSystem
+     * @param pBody
      * @param inputVariables
      * @param outputVariable null iff no output (check-only)
      */
-    public BaseTypeSafeConstraint(PBody pSystem,
+    public BaseTypeSafeConstraint(PBody pBody,
             Set<PVariable> inputVariables, final PVariable outputVariable) {
-        super(pSystem, 
+        super(pBody, 
         		(outputVariable == null) ? 
         				inputVariables : 
         				ImmutableSet.<PVariable>builder().addAll(inputVariables).add(outputVariable).build()
@@ -84,7 +84,7 @@ public abstract class BaseTypeSafeConstraint extends
     	Set<TypeJudgement> impliedJudgements = plan.getAllImpliedTypeJudgements(context);
     	
         for (PVariable pVariable : inputVariables) {
-            Set<TypeJudgement> allTypeRestrictionsForVariable = pSystem.getAllUnaryTypeRestrictions(context).get(pVariable);
+            Set<TypeJudgement> allTypeRestrictionsForVariable = pBody.getAllUnaryTypeRestrictions(context).get(pVariable);
         	if (allTypeRestrictionsForVariable != null && !impliedJudgements.containsAll(allTypeRestrictionsForVariable))
                 return pVariable;
         }

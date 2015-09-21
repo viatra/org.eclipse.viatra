@@ -35,13 +35,13 @@ public class Inequality extends VariableDeferredPConstraint {
      */
     private boolean weak;
 
-    public Inequality(PBody pSystem, PVariable who, PVariable withWhom) {
-        this(pSystem, who, withWhom, false);
+    public Inequality(PBody pBody, PVariable who, PVariable withWhom) {
+        this(pBody, who, withWhom, false);
     }
 
-    public Inequality(PBody pSystem, PVariable who, PVariable withWhom,
+    public Inequality(PBody pBody, PVariable who, PVariable withWhom,
             boolean weak) {
-        super(pSystem, new HashSet<PVariable>(Arrays.asList(new PVariable[] { who, withWhom }) ));
+        super(pBody, new HashSet<PVariable>(Arrays.asList(new PVariable[] { who, withWhom }) ));
         // this(pSystem, who, Collections.singleton(withWhom));
         this.who = who;
         this.withWhom = withWhom;

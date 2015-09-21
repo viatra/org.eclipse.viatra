@@ -63,7 +63,7 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
         List<ExportedParameter> symbolicParameters = body.getSymbolicParameters();
         symbolicParameters.add(new ExportedParameter(body, var_trace, var_trace.getName()));
         getParameters().add(new PParameter(var_trace.getName()));
-        body.setExportedParameters(symbolicParameters);
+        body.setSymbolicParameters(symbolicParameters);
         
         for (ExportedParameter parameter : symbolicParameters) {
             if(parameter.getParameterVariable() != var_trace) {

@@ -25,9 +25,9 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  */
 public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> implements IQueryReference {
 
-    public BinaryTransitiveClosure(PBody pSystem, Tuple variablesTuple,
+    public BinaryTransitiveClosure(PBody pBody, Tuple variablesTuple,
             PQuery pattern) {
-        super(pSystem, variablesTuple, pattern);
+        super(pBody, variablesTuple, pattern);
     }
 
     @Override

@@ -42,8 +42,8 @@ public class TypeFilterConstraint extends VariableDeferredPConstraint implements
 	private TypeJudgement equivalentJudgement;
 
 	
-    public TypeFilterConstraint(PBody pSystem, Tuple variablesTuple, IInputKey inputKey) {
-        super(pSystem, variablesTuple.<PVariable> getDistinctElements());
+    public TypeFilterConstraint(PBody pBody, Tuple variablesTuple, IInputKey inputKey) {
+        super(pBody, variablesTuple.<PVariable> getDistinctElements());
         this.equivalentJudgement = new TypeJudgement(inputKey, variablesTuple);
 
         this.variablesTuple = variablesTuple;

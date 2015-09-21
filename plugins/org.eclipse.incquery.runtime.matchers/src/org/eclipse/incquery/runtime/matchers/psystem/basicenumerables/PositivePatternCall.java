@@ -28,9 +28,9 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  */
 public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> implements IQueryReference {
 
-    public PositivePatternCall(PBody pSystem, Tuple variablesTuple,
+    public PositivePatternCall(PBody pBody, Tuple variablesTuple,
             PQuery pattern) {
-        super(pSystem, variablesTuple, pattern);
+        super(pBody, variablesTuple, pattern);
     }
 
     @Override

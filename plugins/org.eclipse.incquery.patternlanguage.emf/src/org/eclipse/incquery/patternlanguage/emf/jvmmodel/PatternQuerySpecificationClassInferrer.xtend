@@ -272,7 +272,7 @@ class PatternQuerySpecificationClassInferrer {
 				«FOR variable : pBody.uniqueVariables »
 					«PVariable» «variable.escapedName» = body.getOrCreateVariableByName("«variable.name»");
 				«ENDFOR»
-				body.setExportedParameters(«Arrays».<«ExportedParameter»>asList(
+				body.setSymbolicParameters(«Arrays».<«ExportedParameter»>asList(
 					«FOR parameter : pBody.symbolicParameters SEPARATOR ",\n"»
 						«parameter.inferExportedParameterConstraint(pBody, pattern)»
 					«ENDFOR»
