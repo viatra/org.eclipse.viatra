@@ -7,13 +7,19 @@
     editorPluginID="org.eclipse.viatra.cep.vepl.editor" runtimeVersion="2.10" usedGenPackages="platform:/resource/org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.genmodel#//patternLanguage platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel#//xbase">
   <genPackages prefix="Vepl" basePackage="org.eclipse.viatra.cep.vepl" disposableProviderFactory="true"
       fileExtensions="vepl" ecorePackage="Vepl.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Vepl.ecore#//Context">
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//Context/chronicle"/>
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//Context/immediate"/>
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//Context/strict"/>
+    </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="Vepl.ecore#//QueryResultChangeType">
-      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//QueryResultChangeType/NEW_MATCH_FOUND"/>
-      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//QueryResultChangeType/EXISTING_MATCH_LOST"/>
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//QueryResultChangeType/found"/>
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//QueryResultChangeType/lost"/>
     </genEnums>
     <genClasses ecoreClass="Vepl.ecore#//EventModel">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//EventModel/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventModel/imports"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//EventModel/context"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventModel/modelElements"/>
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//Import">
@@ -37,10 +43,10 @@
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//ComplexEventPattern">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//ComplexEventPattern/complexEventExpression"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//ComplexEventPattern/context"/>
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//Rule">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//Rule/eventPatterns"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Rule/actionHandler"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//Rule/action"/>
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//TypedParameterList">
@@ -49,6 +55,13 @@
     <genClasses ecoreClass="Vepl.ecore#//TypedParameter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//TypedParameter/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TypedParameter/type"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//TypedParameterWithDefaultValue">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TypedParameterWithDefaultValue/typedParameter"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TypedParameterWithDefaultValue/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//TraitTypedParameterList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TraitTypedParameterList/parameters"/>
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//ParametrizedQueryReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Vepl.ecore#//ParametrizedQueryReference/query"/>
@@ -90,12 +103,6 @@
     <genClasses ecoreClass="Vepl.ecore#//AndOperator"/>
     <genClasses ecoreClass="Vepl.ecore#//UntilOperator"/>
     <genClasses ecoreClass="Vepl.ecore#//NegOperator"/>
-    <genClasses ecoreClass="Vepl.ecore#//Source">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//Source/adapter"/>
-    </genClasses>
-    <genClasses ecoreClass="Vepl.ecore#//Adapter">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Adapter/name"/>
-    </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//Multiplicity">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//Multiplicity/value"/>
     </genClasses>

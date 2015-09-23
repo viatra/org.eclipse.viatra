@@ -5,6 +5,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
         eType="#//Import" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//Context"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="modelElements" upperBound="-1"
         eType="#//ModelElement" containment="true"/>
   </eClassifiers>
@@ -13,6 +14,11 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="GenericImport" eSuperTypes="#//Import"/>
   <eClassifiers xsi:type="ecore:EClass" name="QueryImport" eSuperTypes="#//Import"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="Context">
+    <eLiterals name="chronicle" literal="chronicle"/>
+    <eLiterals name="immediate" value="1" literal="immediate"/>
+    <eLiterals name="strict" value="2" literal="strict"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -33,17 +39,17 @@
   <eClassifiers xsi:type="ecore:EClass" name="ComplexEventPattern" eSuperTypes="#//EventPattern">
     <eStructuralFeatures xsi:type="ecore:EReference" name="complexEventExpression"
         eType="#//ComplexEventExpression" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//Context"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Rule" eSuperTypes="#//ModelElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="eventPatterns" upperBound="-1"
         eType="#//ParameterizedPatternCall" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionHandler" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="ecore:EClass platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore#//XExpression"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="QueryResultChangeType">
-    <eLiterals name="NEW_MATCH_FOUND" literal="NEW_MATCH_FOUND"/>
-    <eLiterals name="EXISTING_MATCH_LOST" value="1" literal="EXISTING_MATCH_LOST"/>
+    <eLiterals name="found" literal="found"/>
+    <eLiterals name="lost" value="1" literal="lost"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypedParameterList">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
@@ -53,6 +59,16 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmTypeReference"
         containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TypedParameterWithDefaultValue">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="typedParameter" eType="#//TypedParameter"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore#//XExpression"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TraitTypedParameterList">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+        eType="#//TypedParameterWithDefaultValue" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ParametrizedQueryReference">
     <eStructuralFeatures xsi:type="ecore:EReference" name="query" eType="ecore:EClass platform:/resource/org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.ecore#//Pattern"/>
@@ -105,13 +121,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="AndOperator" eSuperTypes="#//BinaryOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="UntilOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="NegOperator" eSuperTypes="#//UnaryOperator"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Source" eSuperTypes="#//ModelElement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="adapter" upperBound="-1"
-        eType="#//Adapter" containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Adapter">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Multiplicity" eSuperTypes="#//AbstractMultiplicity">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
