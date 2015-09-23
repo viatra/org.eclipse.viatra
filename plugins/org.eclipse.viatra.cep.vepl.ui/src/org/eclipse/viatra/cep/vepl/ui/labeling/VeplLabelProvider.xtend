@@ -13,6 +13,7 @@ import org.eclipse.viatra.cep.vepl.vepl.Import
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.viatra.cep.vepl.vepl.Timewindow
+import org.eclipse.viatra.cep.vepl.vepl.Trait
 import org.eclipse.xtext.xbase.ui.labeling.XbaseLabelProvider
 
 /**
@@ -41,6 +42,8 @@ class VeplLabelProvider extends XbaseLabelProvider {
 		switch element {
 			EventModel:
 				'package.gif'
+			Trait:
+				'trait.png'
 			AtomicEventPattern:
 				'atomic-event.png'
 			ComplexEventPattern:

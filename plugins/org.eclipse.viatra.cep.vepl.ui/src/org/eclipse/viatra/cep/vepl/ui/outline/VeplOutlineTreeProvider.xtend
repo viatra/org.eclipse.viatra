@@ -8,6 +8,7 @@ import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Import
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
+import org.eclipse.viatra.cep.vepl.vepl.Trait
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
 
@@ -19,6 +20,10 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
 class VeplOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	protected def _createNode(IOutlineNode parentNode, Import modelElement) {
+	}
+
+	def _isLeaf(Trait model) {
+		true
 	}
 
 	def _isLeaf(AtomicEventPattern model) {

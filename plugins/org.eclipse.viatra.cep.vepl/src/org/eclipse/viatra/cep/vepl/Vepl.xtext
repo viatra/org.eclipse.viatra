@@ -43,17 +43,17 @@ enum Context returns ContextEnum:
 ;
 
 ModelElement:
-	/*Trait |*/ EventPattern | Rule
+	Trait | EventPattern | Rule
 ;
 
 /*******************************************MAIN MODEL ELEMENTS*******************************************/
 
-//Trait:
-//	'trait' name=ID'{'
-//		parameters=TraitTypedParameterList
-//		('check' checkExpression = XBlockExpression)?
-//	'}'
-//;
+Trait:
+	'trait' name=ID'{'
+		parameters=TraitTypedParameterList
+		//('check' checkExpression = XBlockExpression)?
+	'}'
+;
 
 EventPattern:
 	AbstractAtomicEventPattern | ComplexEventPattern
@@ -64,7 +64,7 @@ AbstractAtomicEventPattern:
 ;
 	
 AtomicEventPattern:
-	'atomicEvent' name=ID ('('parameters=TypedParameterList?')')? /*('with' trait=[Trait])?*/ ('{'
+	'atomicEvent' name=ID ('('parameters=TypedParameterList?')')? ('with' traits=TraitList)? ('{'
 		('check' checkExpression = XBlockExpression)?
 	'}')?
 ;
@@ -100,6 +100,11 @@ enum QueryResultChangeType:
 
 
 /*******************************************FUNCTION ARGUMENT PARAMETERS*******************************************/
+TraitList:
+	{TraitList}
+	traits+=[Trait] (',' traits+=[Trait])*
+;
+
 TypedParameterList:
 	{TypedParameterList}
 	parameters+=TypedParameter (',' parameters+=TypedParameter)*

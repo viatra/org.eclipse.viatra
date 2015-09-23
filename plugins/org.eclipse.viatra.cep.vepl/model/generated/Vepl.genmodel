@@ -31,11 +31,15 @@
     <genClasses ecoreClass="Vepl.ecore#//ModelElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Vepl.ecore#//ModelElement/name"/>
     </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//Trait">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//Trait/parameters"/>
+    </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//EventPattern">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//EventPattern/parameters"/>
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//AbstractAtomicEventPattern"/>
     <genClasses ecoreClass="Vepl.ecore#//AtomicEventPattern">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AtomicEventPattern/traits"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//AtomicEventPattern/checkExpression"/>
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//QueryResultChangeEventPattern">
@@ -49,6 +53,9 @@
     <genClasses ecoreClass="Vepl.ecore#//Rule">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//Rule/eventPatterns"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//Rule/action"/>
+    </genClasses>
+    <genClasses ecoreClass="Vepl.ecore#//TraitList">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Vepl.ecore#//TraitList/traits"/>
     </genClasses>
     <genClasses ecoreClass="Vepl.ecore#//TypedParameterList">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Vepl.ecore#//TypedParameterList/parameters"/>

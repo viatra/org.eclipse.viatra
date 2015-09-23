@@ -23,12 +23,18 @@
   <eClassifiers xsi:type="ecore:EClass" name="ModelElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Trait" eSuperTypes="#//ModelElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" eType="#//TraitTypedParameterList"
+        containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EventPattern" eSuperTypes="#//ModelElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" eType="#//TypedParameterList"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AbstractAtomicEventPattern" eSuperTypes="#//EventPattern"/>
   <eClassifiers xsi:type="ecore:EClass" name="AtomicEventPattern" eSuperTypes="#//AbstractAtomicEventPattern">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="traits" eType="#//TraitList"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="checkExpression" eType="ecore:EClass platform:/resource/org.eclipse.xtext.xbase/model/Xbase.ecore#//XExpression"
         containment="true"/>
   </eClassifiers>
@@ -51,6 +57,10 @@
   <eClassifiers xsi:type="ecore:EEnum" name="QueryResultChangeType">
     <eLiterals name="found" literal="found"/>
     <eLiterals name="lost" value="1" literal="lost"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TraitList">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="traits" unique="false"
+        upperBound="-1" eType="#//Trait"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypedParameterList">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"

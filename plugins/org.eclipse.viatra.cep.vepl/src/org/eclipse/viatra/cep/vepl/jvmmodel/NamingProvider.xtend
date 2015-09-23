@@ -19,6 +19,7 @@ import org.eclipse.viatra.cep.vepl.vepl.EventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
+import org.eclipse.viatra.cep.vepl.vepl.Trait
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.naming.QualifiedName
 
@@ -76,12 +77,12 @@ class NamingProvider {
 		val associatedPackages = <NamingPurpose, QualifiedName>newHashMap()
 
 		switch modelElement {
-//			Trait case modelElement: {
-//				associatedPackages.put(
-//					NamingPurpose::TRAIT,
-//					modelElement.packageName.append(TRAIT_PACKAGE_NAME_ELEMENT)
-//				)
-//			}
+			Trait case modelElement: {
+				associatedPackages.put(
+					NamingPurpose::TRAIT,
+					modelElement.packageName.append(TRAIT_PACKAGE_NAME_ELEMENT)
+				)
+			}
 			AtomicEventPattern case modelElement: {
 				associatedPackages.put(NamingPurpose::EVENT,
 					modelElement.packageName.append(EVENTCLASS_PACKAGE_NAME_ELEMENT))

@@ -16,8 +16,6 @@ import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter
 import org.eclipse.xtext.formatting.impl.FormattingConfig
 
-// import com.google.inject.Inject;
-// import org.eclipse.viatra.cep.vepl.services.VeplGrammarAccess
 /**
  * This class contains custom formatting description.
  * 
@@ -81,19 +79,20 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		// separate logical blocks with an empty line
 		c.setLinewrap(2).after(grammar.eventPatternAccess.rule)
 		c.setLinewrap(2).after(grammar.ruleAccess.rule)
-//		c.setLinewrap(2).after(grammar.traitAccess.rule)
+		c.setLinewrap(2).after(grammar.traitAccess.rule)
 
 		// handle line breaks and indentation in patterns' and rules' bodies
 //		c.lineBreakAndIncrementIndentation(grammar.atomicEventPatternAccess.leftCurlyBracketKeyword_4_0)
 		c.lineBreakAndIncrementIndentation(grammar.queryResultChangeEventPatternAccess.asKeyword_5)
 		c.lineBreakAndIncrementIndentation(grammar.complexEventPatternAccess.leftCurlyBracketKeyword_5)
-//		c.lineBreakAndIncrementIndentation(grammar.traitAccess.leftCurlyBracketKeyword_2)
+		c.lineBreakAndIncrementIndentation(grammar.traitAccess.leftCurlyBracketKeyword_2)
 
 //		c.lineBreakAndDecrementIndentation(grammar.atomicEventPatternAccess.rightCurlyBracketKeyword_4_2)
 //		c.lineBreakAndDecrementIndentation(grammar.queryResultChangeEventPatternAccess.) //FIXME
 		c.lineBreakAndDecrementIndentation(grammar.complexEventPatternAccess.rightCurlyBracketKeyword_9)
-//		c.lineBreakAndDecrementIndentation(grammar.traitAccess.rightCurlyBracketKeyword_5)
+		c.lineBreakAndDecrementIndentation(grammar.traitAccess.rightCurlyBracketKeyword_4)
 
+		// TODO: handle line breaks in TRAIT bodies
 		// handle line breaks in ATOMIC bodies
 //		c.setLinewrap().after(grammar.atomicEventPatternAccess.checkExpressionAssignment_4_1_1)
 		c.lineBreakAndIncrementIndentation(grammar.XBlockExpressionAccess.leftCurlyBracketKeyword_1)
@@ -102,7 +101,6 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		// handle line breaks in IQ bodies
 //		c.setLinewrap().after(grammar.queryResultChangeEventPatternAccess.queryReferenceAssignment_8)
 //		c.setLinewrap().after(grammar.queryResultChangeEventPatternAccess.resultChangeTypeAssignment_9_2)
-
 		// handle line breaks in complex bodies
 		c.setLinewrap().after(grammar.complexEventPatternAccess.complexEventExpressionAssignment_7)
 		c.setSpace().after(grammar.complexEventPatternAccess.asKeyword_6)

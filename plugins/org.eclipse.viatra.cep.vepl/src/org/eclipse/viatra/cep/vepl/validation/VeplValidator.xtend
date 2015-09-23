@@ -11,6 +11,7 @@
 package org.eclipse.viatra.cep.vepl.validation
 
 import com.google.common.base.Preconditions
+import com.google.common.collect.Lists
 import org.eclipse.viatra.cep.vepl.vepl.AbstractAtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
@@ -25,6 +26,8 @@ import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
 import org.eclipse.viatra.cep.vepl.vepl.QueryImport
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.Trait
+import org.eclipse.viatra.cep.vepl.vepl.TraitList
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameterList
 import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.eclipse.xtext.validation.Check
@@ -46,6 +49,8 @@ class VeplValidator extends AbstractVeplValidator {
 	public static val PARAMETER_ON_NON_ATOMIC_PATTERN_CALL = "parameterOnNonAtomicPatternCall"
 	public static val NEGATIVE_WITH_MULTIPLICITY = "negativeWithMultiplicity"
 	public static val NEGATIVE_WITH_TIMEWINDOW = "negativeWithTimewindow"
+	public static val DUPLICATE_TRAIT_PARAMETER_NAMES = "duplicateTraitParameterNames"
+	public static val TRAIT_EXPERIMENTAL = "traitExperimental"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -88,10 +93,14 @@ class VeplValidator extends AbstractVeplValidator {
 
 	def private int getParameterNumber(EventPattern eventPattern) {
 		switch (eventPattern) {
-			AtomicEventPattern: getTypedParameterListSize(eventPattern.parameters)
-			QueryResultChangeEventPattern: getTypedParameterListSize(eventPattern.parameters)
-			ComplexEventPattern: getTypedParameterListSize(eventPattern.parameters)
-			default: 0
+			AtomicEventPattern:
+				getTypedParameterListSize(eventPattern.parameters) + getTraitParameterListSize(eventPattern.traits)
+			QueryResultChangeEventPattern:
+				getTypedParameterListSize(eventPattern.parameters)
+			ComplexEventPattern:
+				getTypedParameterListSize(eventPattern.parameters)
+			default:
+				0
 		}
 	}
 
@@ -99,6 +108,14 @@ class VeplValidator extends AbstractVeplValidator {
 		if(parameterList == null) return 0
 		if(parameterList.parameters.nullOrEmpty) return 0
 		return parameterList.parameters.size
+	}
+
+	def private int getTraitParameterListSize(TraitList traitList) {
+		if (traitList == null) {
+			return 0
+		} else {
+			traitList.traits.fold(0)[count, trait|count + trait.parameters.parameters.size]
+		}
 	}
 
 	@Check
@@ -176,7 +193,6 @@ class VeplValidator extends AbstractVeplValidator {
 //			)
 //		}
 //	}
-
 	@Check
 	def void unsafeStarOperator(ComplexEventExpression complexEventExpression) {
 		if (!complexEventExpression.hasInfiniteMultiplicity) {
@@ -262,4 +278,37 @@ class VeplValidator extends AbstractVeplValidator {
 		}
 	}
 
+	@Check
+	def duplicateTraitParameterNames(AtomicEventPattern atomicEventPattern) {
+		val traitList = atomicEventPattern.traits
+		if (traitList == null) {
+			return
+		}
+
+		val paramNames = Lists::newArrayList
+
+		for (trait : traitList.traits) {
+			for (param : trait.parameters.parameters) {
+				val parameter = param.typedParameter
+				if (paramNames.contains(parameter.name)) {
+					error(
+						"Duplicate parameter definition in traits. (" + parameter.name + ")",
+						VeplPackage.Literals.ATOMIC_EVENT_PATTERN__TRAITS,
+						DUPLICATE_TRAIT_PARAMETER_NAMES
+					)
+				} else {
+					paramNames += parameter.name
+				}
+			}
+		}
+	}
+
+	@Check
+	def traitsAreExperimentalFeature(Trait trait) {
+		info(
+			"Traits are experimental features, use them carefully.",
+			VeplPackage.Literals.TRAIT__PARAMETERS,
+			TRAIT_EXPERIMENTAL
+		)
+	}
 }

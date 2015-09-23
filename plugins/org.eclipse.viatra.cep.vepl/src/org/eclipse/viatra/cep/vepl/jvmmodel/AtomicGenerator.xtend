@@ -43,6 +43,17 @@ class AtomicGenerator {
 						members += pattern.toField(parameter.name, parameter.type)
 					}
 				}
+				if(pattern instanceof AtomicEventPattern){
+					val traitList = (pattern as AtomicEventPattern).traits
+					if(traitList!=null){
+						for(trait : traitList.traits){
+							for(param : trait.parameters.parameters){
+								val parameter = param.typedParameter
+								members += pattern.toField(parameter.name, parameter.type)								
+							}
+						}
+					}
+				}
 				members += pattern.toConstructor [
 					parameters += pattern.toParameter("eventSource", typeRefBuilder.typeRef(EventSource))
 					body = [
@@ -65,6 +76,19 @@ class AtomicGenerator {
 						members += pattern.toGetter(parameter.name, parameter.type)
 						members += pattern.toAdvancedSetter(parameter.name, parameter.type, typeRefBuilder, i)
 						i = i + 1
+					}
+					if(pattern instanceof AtomicEventPattern){
+						val traitList = (pattern as AtomicEventPattern).traits
+						if(traitList!=null){
+							for(trait : traitList.traits){
+								for(param : trait.parameters.parameters){
+									val parameter = param.typedParameter
+									members += pattern.toGetter(parameter.name, parameter.type)
+									members += pattern.toAdvancedSetter(parameter.name, parameter.type, typeRefBuilder, i)
+									i = i + 1								
+								}
+							}
+						}
 					}
 				}
 				
