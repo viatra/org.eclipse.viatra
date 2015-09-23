@@ -1,6 +1,7 @@
 package org.eclipse.viatra.cep.tests.integration.model.patterns.complex;
 
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern;
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 import org.eclipse.viatra.cep.tests.integration.model.patterns.atomic.A1_Pattern;
 import org.eclipse.viatra.cep.tests.integration.model.patterns.atomic.A2_Pattern;
@@ -14,6 +15,6 @@ public class Or_Pattern extends ParameterizableComplexEventPattern {
     // contained event patterns
     addEventPatternRefrence(new A1_Pattern(), 1);
     addEventPatternRefrence(new A2_Pattern(), 1);
-    setId("org.eclipse.viatra.cep.tests.integration.model.patterns.complex.or_pattern");
+    setId("org.eclipse.viatra.cep.tests.integration.model.patterns.complex.or_pattern");setEventContext(EventContext.CHRONICLE);
   }
 }

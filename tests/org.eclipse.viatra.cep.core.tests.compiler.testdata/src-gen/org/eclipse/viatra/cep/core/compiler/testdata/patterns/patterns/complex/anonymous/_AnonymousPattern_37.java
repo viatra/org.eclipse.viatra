@@ -6,6 +6,7 @@ import org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.Fa
 import org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.Left_Pattern;
 import org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.Near_Pattern;
 import org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.Rise_Pattern;
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 
 @SuppressWarnings("all")
@@ -20,6 +21,6 @@ public class _AnonymousPattern_37 extends ParameterizableComplexEventPattern {
     addEventPatternRefrence(new Fall_Pattern(), 1);
     addEventPatternRefrence(new Near_Pattern(), 1);
     addEventPatternRefrence(new Far_Pattern(), 1);
-    setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.complex.anonymous._anonymouspattern_37");
+    setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.complex.anonymous._anonymouspattern_37");setEventContext(EventContext.CHRONICLE);
   }
 }

@@ -1,190 +1,187 @@
 package org.eclipse.viatra.cep.core.compiler.testdata.patterns
 
-AtomicEvent a
-AtomicEvent b
-AtomicEvent c
-AtomicEvent a_1(p : String)
-AtomicEvent b_1(p : String)
-AtomicEvent c_1(p : String)
+atomicEvent a
+atomicEvent b
+atomicEvent c
+atomicEvent a_1(p : String)
+atomicEvent b_1(p : String)
+atomicEvent c_1(p : String)
 
-ComplexEvent follows(){
-	definition: a->b
+complexEvent follows(){
+	as a->b
 }
 
-ComplexEvent nestedFollows(){
-	definition: follows -> c
+complexEvent nestedFollows(){
+	as follows -> c
 }
 
-ComplexEvent or(){
-	definition: a OR b
+complexEvent or(){
+	as a OR b
 }
 
-ComplexEvent nestedOr(){
-	definition: or OR c
+complexEvent nestedOr(){
+	as or OR c
 }
 
-ComplexEvent nestedOrWithFollows1(){
-	definition: follows OR c
+complexEvent nestedOrWithFollows1(){
+	as follows OR c
 }
 
-ComplexEvent nestedOrWithFollows2(){
-	definition: or -> c
+complexEvent nestedOrWithFollows2(){
+	as or -> c
 }
 
-ComplexEvent and(){
-	definition: a AND b
+complexEvent and(){
+	as a AND b
 }
 
-ComplexEvent and2(){
-	definition: follows AND c
+complexEvent and2(){
+	as follows AND c
 }
 
-ComplexEvent duplicate(){
-	definition: follows -> b
+complexEvent duplicate(){
+	as follows -> b
 }
 
-ComplexEvent duplicate2(){
-	definition: or OR b
+complexEvent duplicate2(){
+	as or OR b
 }
 
-ComplexEvent multiplicityOnAtomic(){
-	definition: a->b{2}
+complexEvent multiplicityOnAtomic(){
+	as a->b{2}
 }
 
-ComplexEvent multiplicityOnComplex1(){
-	definition: (a->b){2}
+complexEvent multiplicityOnComplex1(){
+	as (a->b){2}
 }
 
-ComplexEvent multiplicityOnComplex2(){
-	definition: follows{2}
+complexEvent multiplicityOnComplex2(){
+	as follows{2}
 }
 
-ComplexEvent multiplicityOnComplex3(){
-	definition: (a OR b){2}
+complexEvent multiplicityOnComplex3(){
+	as (a OR b){2}
 }
 
-ComplexEvent multiplicityOnComplex4(){
-	definition: or{2}
+complexEvent multiplicityOnComplex4(){
+	as or{2}
 }
 
-ComplexEvent inf1(){
-	definition: a{*}->b
+complexEvent inf1(){
+	as a{*}->b
 }
 
-ComplexEvent inf2(){
-	definition: (a->b){*}->c
+complexEvent inf2(){
+	as (a->b){*}->c
 }
 
-ComplexEvent atLeast1(){
-	definition: a{+}->b
+complexEvent atLeast1(){
+	as a{+}->b
 }
 
-ComplexEvent atLeast2(){
-	definition: (a->b){+}->c
+complexEvent atLeast2(){
+	as (a->b){+}->c
 }
 
-ComplexEvent timewinFollows(){
-	definition: (a->b)[1000]
+complexEvent timewinFollows(){
+	as (a->b)[1000]
 }
 
-ComplexEvent timewinFollows2(){
-	definition: (a -> b -> c)[1000]
+complexEvent timewinFollows2(){
+	as (a -> b -> c)[1000]
 }
 
-ComplexEvent timewinFollows3(){
-	definition: ((a -> b) -> c)[1000]
+complexEvent timewinFollows3(){
+	as ((a -> b) -> c)[1000]
 }
 
-ComplexEvent timewinOr(){
-	definition: (a OR b)[1000]
+complexEvent timewinOr(){
+	as (a OR b)[1000]
 }
 
-ComplexEvent timewinAnd(){
-	definition: (a AND b)[1000]
+complexEvent timewinAnd(){
+	as (a AND b)[1000]
 }
 
-ComplexEvent timewinOr2(){
-	definition: ((a->b) OR (b->a))[1000]
+complexEvent timewinOr2(){
+	as ((a->b) OR (b->a))[1000]
 }
 
-ComplexEvent notAtomic(){
-	definition: NOT a
+complexEvent notAtomic(){
+	as NOT a
 }
 
-ComplexEvent notFollows(){
-	definition: NOT paramsFollows
+complexEvent notFollows(){
+	as NOT paramsFollows
 }
 
-ComplexEvent notFollows2(){
-	definition: NOT (paramsFollows -> c)
+complexEvent notFollows2(){
+	as NOT (paramsFollows -> c)
 }
 
-ComplexEvent notFollows3(){
-	definition: a -> NOT b -> c
+complexEvent notFollows3(){
+	as a -> NOT b -> c
 }
 
-ComplexEvent notOr(){
-	definition: NOT or
+complexEvent notOr(){
+	as NOT or
 }
 
-ComplexEvent notAnd(){
-	definition: NOT (a AND b)
+complexEvent notAnd(){
+	as NOT (a AND b)
 }
 
-ComplexEvent notFollowsParams(param : String){
-	definition: NOT (a_1(param) -> b_1(param))
+complexEvent notFollowsParams(param : String){
+	as NOT (a_1(param) -> b_1(param))
 }
 
-ComplexEvent notOrParams(param : String){
-	definition: NOT (a_1(param) OR b_1(param))
+complexEvent notOrParams(param : String){
+	as NOT (a_1(param) OR b_1(param))
 }
 
-ComplexEvent notAndParams(param : String){
-	definition: NOT (a_1(param) AND b_1(param))
+complexEvent notAndParams(param : String){
+	as NOT (a_1(param) AND b_1(param))
 }
 
-ComplexEvent notFollowsTimewin(){
-	definition: NOT ((a->b)[1000])
+complexEvent notFollowsTimewin(){
+	as NOT ((a->b)[1000])
 }
 
-ComplexEvent notOrTimewin(){
-	definition: NOT ((a OR b)[1000])
+complexEvent notOrTimewin(){
+	as NOT ((a OR b)[1000])
 }
 
-ComplexEvent notAndTimewin(){
-	definition: (NOT (a AND b))[1000]
+complexEvent notAndTimewin(){
+	as (NOT (a AND b))[1000]
 }
 
-ComplexEvent paramsFollows(param : String){
-	definition: a_1(param) -> b_1(param)
+complexEvent paramsFollows(param : String){
+	as a_1(param) -> b_1(param)
 }
 
-ComplexEvent paramsOr(param : String){
-	definition: a_1(param) OR b_1(param)
+complexEvent paramsOr(param : String){
+	as a_1(param) OR b_1(param)
 }
 
-ComplexEvent paramsAnd(param : String){
-	definition: a_1(param) AND b_1(param)
+complexEvent paramsAnd(param : String){
+	as a_1(param) AND b_1(param)
 }
 
 
 
 /* CASE STUDY */
 
-AtomicEvent Left
-AtomicEvent Right
-AtomicEvent Rise
-AtomicEvent Fall
-AtomicEvent Near
-AtomicEvent Far
+atomicEvent Left
+atomicEvent Right
+atomicEvent Rise
+atomicEvent Fall
+atomicEvent Near
+atomicEvent Far
 
-Rule r{
-	events: follows
-	action{
-		System.out.println("rule r")
-	}
+rule r on follows{
+	System.out.println("rule r")
 }
 
-ComplexEvent teq1(){
-	definition: Left -> (Left OR Rise OR Fall OR Near OR Far){*} -> Right
+complexEvent teq1(){
+	as Left -> (Left OR Rise OR Fall OR Near OR Far){*} -> Right
 }

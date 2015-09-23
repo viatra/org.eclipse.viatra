@@ -2,6 +2,7 @@ package org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.complex.
 
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern;
 import org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.complex.anonymous._AnonymousPattern_23;
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext;
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory;
 
 @SuppressWarnings("all")
@@ -12,6 +13,6 @@ public class _AnonymousPattern_24 extends ParameterizableComplexEventPattern {
     
     // contained event patterns
     addEventPatternRefrence(new _AnonymousPattern_23(), 1);
-    setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.complex.anonymous._anonymouspattern_24");
+    setId("org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.complex.anonymous._anonymouspattern_24");setEventContext(EventContext.CHRONICLE);
   }
 }
