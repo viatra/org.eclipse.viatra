@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
 import org.eclipse.incquery.runtime.api.IMatchProcessor
+import org.eclipse.incquery.runtime.emf.EMFScope
 import org.eclipse.incquery.runtime.evm.specific.Lifecycles
 import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
 import org.eclipse.incquery.runtime.exception.IncQueryException
@@ -37,7 +38,6 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.incquery.runtime.emf.EMFScope
 
 @SuppressWarnings("restriction", "discouraged")
 class IQGenerator {
@@ -158,24 +158,24 @@ class IQGenerator {
 								toList
 							var counter = 0
 							for (eventPattern : appearActionPatterns) {
-								generateAction(QueryResultChangeType.NEW_MATCH_FOUND, it, typeRefBuilder, eventPattern,
+								generateAction(QueryResultChangeType.FOUND, it, typeRefBuilder, eventPattern,
 									match, p, counter)
 								counter = counter + 1
 							}
 							if (appearActionPatterns.empty) {
 								val eventPattern = disappearActionPatterns.head
-								generateAction(QueryResultChangeType.NEW_MATCH_FOUND, it, typeRefBuilder, eventPattern,
+								generateAction(QueryResultChangeType.FOUND, it, typeRefBuilder, eventPattern,
 									match, p, counter, true)
 							}
 							counter = 0
 							for (eventPattern : disappearActionPatterns) {
-								generateAction(QueryResultChangeType.EXISTING_MATCH_LOST, it, typeRefBuilder,
+								generateAction(QueryResultChangeType.LOST, it, typeRefBuilder,
 									eventPattern, match, p, counter)
 								counter = counter + 1
 							}
 							if (disappearActionPatterns.empty) {
 								val eventPattern = appearActionPatterns.head
-								generateAction(QueryResultChangeType.EXISTING_MATCH_LOST, it, typeRefBuilder,
+								generateAction(QueryResultChangeType.LOST, it, typeRefBuilder,
 									eventPattern, match, p, counter, true)
 							}
 							newLine
@@ -215,7 +215,7 @@ class IQGenerator {
 
 	def requiresAppearAction(QueryResultChangeEventPattern pattern) {
 		val changeType = pattern.resultChangeType
-		if (changeType == null || changeType.equals(QueryResultChangeType.NEW_MATCH_FOUND)) {
+		if (changeType == null || changeType.equals(QueryResultChangeType.FOUND)) {
 			return true
 		}
 		return false
@@ -227,7 +227,7 @@ class IQGenerator {
 
 	def requiresDisappearAction(QueryResultChangeEventPattern pattern) {
 		val changeType = pattern.resultChangeType
-		if (changeType.equals(QueryResultChangeType.EXISTING_MATCH_LOST)) {
+		if (changeType.equals(QueryResultChangeType.LOST)) {
 			return true
 		}
 		return false
@@ -297,15 +297,15 @@ class IQGenerator {
 
 	def private getActivationState(QueryResultChangeType changeType) {
 		switch (changeType) {
-			case QueryResultChangeType.NEW_MATCH_FOUND: return IncQueryActivationStateEnum.APPEARED
-			case QueryResultChangeType.EXISTING_MATCH_LOST: return IncQueryActivationStateEnum.DISAPPEARED
+			case QueryResultChangeType.FOUND: return IncQueryActivationStateEnum.APPEARED
+			case QueryResultChangeType.LOST: return IncQueryActivationStateEnum.DISAPPEARED
 		}
 	}
 
 	def private getActionName(QueryResultChangeType changeType) {
 		switch (changeType) {
-			case QueryResultChangeType.NEW_MATCH_FOUND: return "actionOnAppear"
-			case QueryResultChangeType.EXISTING_MATCH_LOST: return "actionOnDisappear"
+			case QueryResultChangeType.FOUND: return "actionOnAppear"
+			case QueryResultChangeType.LOST: return "actionOnDisappear"
 		}
 	}
 

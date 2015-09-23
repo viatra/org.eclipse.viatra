@@ -36,6 +36,8 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
+import org.eclipse.viatra.cep.core.metamodels.events.EventModel
 
 class ComplexGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
@@ -74,8 +76,7 @@ class ComplexGenerator {
 		QualifiedName className,
 		IJvmDeclaredTypeAcceptor acceptor
 	) {
-		var List<Pair<QualifiedName, List<String>>> compositionEvents = Lists.
-			newArrayList
+		var List<Pair<QualifiedName, List<String>>> compositionEvents = Lists.newArrayList
 
 		for (child : node.children) {
 			if (child instanceof Node) {
@@ -121,8 +122,8 @@ class ComplexGenerator {
 	}
 
 	def generateComplexEventPattern(ComplexEventPattern pattern, Node node, QualifiedName className,
-		List<Pair<QualifiedName, List<String>>> compositionPatterns,
-		IJvmDeclaredTypeAcceptor acceptor, ComplexPatternType complexPatternType) {
+		List<Pair<QualifiedName, List<String>>> compositionPatterns, IJvmDeclaredTypeAcceptor acceptor,
+		ComplexPatternType complexPatternType) {
 		acceptor.accept(pattern.toClass(className)) [
 			superTypes += typeRefBuilder.typeRef(ParameterizableComplexEventPattern)
 			members += pattern.toConstructor [
@@ -187,6 +188,10 @@ class ComplexGenerator {
 					it.append(
 						'''
 					setId("«className.toLowerCase»");''')
+					it.append(
+						'''
+					setEventContext(''').append('''«referClass(it, typeRefBuilder, pattern, EventContext)»''').
+						append('''.''').append('''«pattern.deriveContext.literal»''').append(''');''')
 				]
 			]
 		]
@@ -195,6 +200,21 @@ class ComplexGenerator {
 		} else if (complexPatternType.anonymous) {
 			anonManager.add(className.toString)
 			return className
+		}
+	}
+
+	def deriveContext(ComplexEventPattern pattern) {
+		if (pattern.context != null) {//FIXME
+			val l1 = pattern.context.literal
+			val f = EventContext.values.findFirst[value|value.literal.equalsIgnoreCase(l1)]
+			f
+		} else {
+			val mainContext = (pattern.eContainer as org.eclipse.viatra.cep.vepl.vepl.EventModel).context
+			if (mainContext == null) {
+				EventContext.CHRONICLE
+			} else {
+				return EventContext.values.findFirst[value|value.literal.equalsIgnoreCase(mainContext.literal)];
+			}
 		}
 	}
 

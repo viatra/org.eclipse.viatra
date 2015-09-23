@@ -21,8 +21,8 @@ class ValidationTests extends VeplTestCase {
 	@Test
 	def void uniqueName() {
 		val model1 = '''
-			AtomicEvent a
-			AtomicEvent a
+			atomicEvent a
+			atomicEvent a
 		'''.parse
 
 		val erroneousElements = model1.modelElements.filter[e|e instanceof AtomicEventPattern]
@@ -31,8 +31,8 @@ class ValidationTests extends VeplTestCase {
 			e.assertError(VeplPackage::eINSTANCE.atomicEventPattern, VeplValidator::INVALID_NAME)]
 
 		val model2 = '''
-			AtomicEvent a
-			AtomicEvent b
+			atomicEvent a
+			atomicEvent b
 		'''.parse
 		model2.assertNoErrors
 	}
@@ -40,66 +40,40 @@ class ValidationTests extends VeplTestCase {
 	@Test
 	def void validPatternCallArguments() {
 		val model1 = '''
-			AtomicEvent a(p1:String, p2:int)
-			AtomicEvent b(p1:String, p2:int)
+			atomicEvent a(p1:String, p2:int)
+			atomicEvent b(p1:String, p2:int)
 			
-			ComplexEvent c(p1:String, p2:int){
-				definition: a->b(p1, _)
+			complexEvent c(p1:String, p2:int){
+				as a->b(p1, _)
 			}
 		'''.parse
 		model1.assertNoErrors
 
 		val model2 = '''
-			AtomicEvent a(p1:String, p2:int)
-			AtomicEvent b(p1:String, p2:int)
+			atomicEvent a(p1:String, p2:int)
+			atomicEvent b(p1:String, p2:int)
 			
-			ComplexEvent c(p1:String, p2:int){
-				definition: a(p1)->b
+			complexEvent c(p1:String, p2:int){
+				as a(p1)->b
 			}
 		'''.parse
 		model2.assertError(VeplPackage::eINSTANCE.parameterizedPatternCall, VeplValidator::INVALID_ARGUMENTS)
 
 		val model3 = '''
-			AtomicEvent a(p1:String, p2:int)
-			AtomicEvent b(p1:String, p2:int)
+			atomicEvent a(p1:String, p2:int)
+			atomicEvent b(p1:String, p2:int)
 			
-			ComplexEvent c(p1:String, p2:int){
-				definition: a(p1)->b()
+			complexEvent c(p1:String, p2:int){
+				as a(p1)->b()
 			}
 		'''.parse
 		model3.assertError(VeplPackage::eINSTANCE.parameterizedPatternCall, VeplValidator::INVALID_ARGUMENTS)
 	}
 
 	@Test
-	def void ruleActions() {
-		val model1 = '''
-			AtomicEvent a
-			
-			Rule r{
-				events: a
-			}
-		'''.parse
-		model1.assertError(VeplPackage::eINSTANCE.rule, VeplValidator::INVALID_ACTION_IN_RULE)
-
-		val model2 = '''
-			AtomicEvent a
-			
-			Rule r{
-				events: a
-				actionHandler: org.eclipse.some.Handler
-				action{}
-			}
-		'''.parse
-
-		model2.assertError(VeplPackage::eINSTANCE.rule, VeplValidator::INVALID_ACTION_IN_RULE)
-	}
-
-	@Test
 	def void explicitlyImportedQueryPackage() {
 		val model = '''
-			QueryResultChangeEvent ce(){
-				query: someUnimportedQuery
-			}
+			queryEvent ce() as someUnimportedQuery
 		'''.parse
 		model.assertError(VeplPackage::eINSTANCE.queryResultChangeEventPattern, VeplValidator::MISSING_QUERY_IMPORT)
 	}
@@ -107,21 +81,21 @@ class ValidationTests extends VeplTestCase {
 	@Test
 	def void expressionAtomWithTimewindowMustFeatureMultiplicity() {
 		val model1 = '''
-			AtomicEvent a
+			atomicEvent a
 			
-			ComplexEvent c(){
-				definition: a[1000]
+			complexEvent c(){
+				as a[1000]
 			}
 			
 		'''.parse
 		model1.assertError(VeplPackage::eINSTANCE.atom, VeplValidator::ATOM_TIMEWINDOW_NO_MULTIPLICITY)
 
 		val model2 = '''
-			AtomicEvent a
+			atomicEvent a
 			
 			
-			ComplexEvent c(){
-				definition: a{1}
+			complexEvent c(){
+				as a{1}
 			}
 		'''.parse
 		model2.assertError(VeplPackage::eINSTANCE.atom, VeplValidator::ATOM_TIMEWINDOW_NO_MULTIPLICITY)
@@ -130,10 +104,10 @@ class ValidationTests extends VeplTestCase {
 	@Test
 	def void complexEventPatternWithPlainAtomExpression() {
 		val model = '''
-			AtomicEvent a
+			atomicEvent a
 			
-			ComplexEvent c1(){
-				definition: a
+			complexEvent c1(){
+				as a
 			}
 			
 		'''.parse

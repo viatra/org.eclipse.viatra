@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
@@ -25,6 +25,7 @@ import org.eclipse.xtext.naming.QualifiedName
 class NamingProvider {
 	@Inject extension IQualifiedNameProvider
 
+	public static final String TRAIT_PACKAGE_NAME_ELEMENT = "traits"
 	public static final String EVENTCLASS_PACKAGE_NAME_ELEMENT = "events"
 	public static final String QUERYRESULT_EVENTCLASS_PACKAGE_NAME_ELEMENT = "events.queryresult"
 	public static final String ATOMIC_PATTERN_PACKAGE_NAME_ELEMENT = "patterns.atomic"
@@ -42,17 +43,28 @@ class NamingProvider {
 	private static final String PATTERN_SUFFIX = "_Pattern"
 	private static final String JOB_SUFFIX = "_Job"
 
+	def getTraitInterfaceFqn(ModelElement element) {
+		val className = element.fullyQualifiedName.lastSegment
+		element.packageNames.get(NamingPurpose::TRAIT).append("I" + className.toFirstUpper)
+	}
+
+	def getTraitSpecificationFqn(ModelElement element) {
+		val className = element.fullyQualifiedName.lastSegment
+		element.packageNames.get(NamingPurpose::TRAIT).append(className.toFirstUpper)
+	}
+
 	def getClassFqn(ModelElement element) {
-		var className = element.fullyQualifiedName.lastSegment
+		val className = element.fullyQualifiedName.lastSegment
 		element.packageNames.get(NamingPurpose::EVENT).append(className.toFirstUpper + EVENT_SUFFIX)
 	}
 
 	def getPatternFqn(ModelElement element) {
-		var className = element.fullyQualifiedName.lastSegment
+		val className = element.fullyQualifiedName.lastSegment
 		element.packageNames.get(NamingPurpose::PATTERN).append(className.toFirstUpper + PATTERN_SUFFIX)
 	}
 
 	enum NamingPurpose {
+		TRAIT,
 		EVENT,
 		PATTERN,
 		RULE,
@@ -64,6 +76,12 @@ class NamingProvider {
 		val associatedPackages = <NamingPurpose, QualifiedName>newHashMap()
 
 		switch modelElement {
+//			Trait case modelElement: {
+//				associatedPackages.put(
+//					NamingPurpose::TRAIT,
+//					modelElement.packageName.append(TRAIT_PACKAGE_NAME_ELEMENT)
+//				)
+//			}
 			AtomicEventPattern case modelElement: {
 				associatedPackages.put(NamingPurpose::EVENT,
 					modelElement.packageName.append(EVENTCLASS_PACKAGE_NAME_ELEMENT))

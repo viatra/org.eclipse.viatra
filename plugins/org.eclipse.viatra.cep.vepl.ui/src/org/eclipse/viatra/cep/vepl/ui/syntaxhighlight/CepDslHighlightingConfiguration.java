@@ -18,12 +18,12 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcce
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
 
 public class CepDslHighlightingConfiguration extends DefaultHighlightingConfiguration {
-    public static final String EDL_ENUM_ID = "edlEnum";
+    public static final String VEPL_ENUM_ID = "veplEnum";
 
     @Override
     public void configure(IHighlightingConfigurationAcceptor acceptor) {
         super.configure(acceptor);
-        acceptor.acceptDefaultHighlighting(EDL_ENUM_ID, "Edl enums", edlEnumTextStyle());
+        acceptor.acceptDefaultHighlighting(VEPL_ENUM_ID, "VEPL enums", veplEnumTextStyle());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class CepDslHighlightingConfiguration extends DefaultHighlightingConfigur
         return stringTextStyle;
     }
 
-    public TextStyle edlEnumTextStyle() {
+    public TextStyle veplEnumTextStyle() {
         TextStyle textStyle = defaultTextStyle().copy();
         textStyle.setColor(new RGB(128, 0, 255));
         return textStyle;

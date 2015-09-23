@@ -25,7 +25,6 @@ import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
 import org.eclipse.viatra.cep.vepl.vepl.QueryImport
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
-import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameterList
 import org.eclipse.viatra.cep.vepl.vepl.VeplPackage
 import org.eclipse.xtext.validation.Check
@@ -36,7 +35,6 @@ class VeplValidator extends AbstractVeplValidator {
 
 	public static val INVALID_NAME = 'invalidName'
 	public static val INVALID_ARGUMENTS = 'invalidArguments'
-	public static val INVALID_ACTION_IN_RULE = "invalidRuleActions"
 	public static val MISSING_QUERY_IMPORT = "missingQueryImport"
 	public static val ATOM_TIMEWINDOW_NO_MULTIPLICITY = "atomTimewindowNoMultiplicity"
 	public static val SINGE_PLAIN_ATOM_IN_COMPLEX_EVENT_EXPRESSION = "singlePlainAtomInComplexEventExpression"
@@ -101,19 +99,6 @@ class VeplValidator extends AbstractVeplValidator {
 		if(parameterList == null) return 0
 		if(parameterList.parameters.nullOrEmpty) return 0
 		return parameterList.parameters.size
-	}
-
-	@Check
-	def checkRuleActions(Rule rule) {
-		if (!rule.hasActionHandler && !rule.hasAction) {
-			error("There must be either an action handler or an action registered for this rule.",
-				VeplPackage.Literals.MODEL_ELEMENT__NAME, INVALID_ACTION_IN_RULE)
-		}
-
-		if (rule.hasActionHandler && rule.hasAction) {
-			error("The rule has both an action handler and additional actions defined.",
-				VeplPackage.Literals.MODEL_ELEMENT__NAME, INVALID_ACTION_IN_RULE)
-		}
 	}
 
 	@Check

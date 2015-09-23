@@ -23,7 +23,6 @@ import org.eclipse.viatra.cep.vepl.vepl.FollowsOperator
 import org.eclipse.viatra.cep.vepl.vepl.Infinite
 import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
 import org.eclipse.viatra.cep.vepl.vepl.ParameterizedPatternCall
-import org.eclipse.viatra.cep.vepl.vepl.Rule
 
 /**
  * Helper class for the {@link VeplValidator}.
@@ -61,14 +60,6 @@ class ValidationHelper {
 
 	def static hasParameterList(ParameterizedPatternCall patternCall) {
 		return patternCall.parameterList != null
-	}
-
-	def static hasAction(Rule rule) {
-		return rule.action != null
-	}
-
-	def static hasActionHandler(Rule rule) {
-		return rule.actionHandler != null
 	}
 
 	def static qualifiesAsFollowingOperator(ComplexEventOperator operator) {

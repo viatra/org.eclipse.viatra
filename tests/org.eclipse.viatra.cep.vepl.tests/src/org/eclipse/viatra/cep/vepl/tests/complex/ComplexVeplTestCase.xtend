@@ -26,12 +26,12 @@ abstract class ComplexVeplTestCase extends VeplTestCase {
 	}
 
 	val baseModel = '''
-		AtomicEvent a1
-		AtomicEvent a2
-		AtomicEvent a3
-		AtomicEvent a4
-		AtomicEvent a5
-		AtomicEvent a6
+		atomicEvent a1
+		atomicEvent a2
+		atomicEvent a3
+		atomicEvent a4
+		atomicEvent a5
+		atomicEvent a6
 		
 	'''
 }

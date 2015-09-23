@@ -13,21 +13,19 @@ package org.eclipse.viatra.cep.vepl.jvmmodel
 import com.google.common.collect.Lists
 import com.google.inject.Inject
 import java.util.List
-import org.eclipse.emf.ecore.EObject
 import org.eclipse.incquery.runtime.evm.api.Activation
 import org.eclipse.incquery.runtime.evm.api.Context
 import org.eclipse.incquery.runtime.evm.api.Job
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState
 import org.eclipse.viatra.cep.core.api.evm.CepActivationStates
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern
-import org.eclipse.viatra.cep.core.api.rules.IActionHandler
 import org.eclipse.viatra.cep.core.api.rules.ICepRule
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 
 @SuppressWarnings("discouraged", "restriction")
 class RuleGenerator {
@@ -106,11 +104,6 @@ class RuleGenerator {
 				if (appRule.action != null) {
 					body = appRule.action
 				}
-				if (appRule.actionHandler != null) {
-					body = [
-						generateActionHandlerBody(appRule)
-					]
-				}
 			]
 			executeMethod.addOverrideAnnotation(appRule)
 			var errorMethod = appRule.toMethod("handleError", typeRefBuilder.typeRef("void")) [
@@ -128,15 +121,6 @@ class RuleGenerator {
 			members += executeMethod
 			members += errorMethod
 		]
-	}
-
-	def private generateActionHandlerBody(ITreeAppendable appendable, EObject ctx) {
-		var actionHandler = (ctx as Rule).actionHandler
-		appendable.append(
-			'''
-			«referClass(appendable, typeRefBuilder, ctx, IActionHandler)» actionHandler = new «actionHandler»();
-			actionHandler.handle(activation);'''
-		)
 	}
 
 	def enumerateAssignableEventPatterns(ITreeAppendable appendable, Rule rule) {

@@ -20,11 +20,9 @@ generate vepl "http://www.eclipse.org/viatra/cep/vepl/Vepl"
 EventModel:
 	'package' name=QualifiedName
 	imports+=Import*
+	('context' context = Context)?
 	modelElements+=ModelElement*	
 ;
-
-DOUBLE returns ecore::EDouble:
-	('-')? INT('.' INT)?;
 
 Import:
 	GenericImport | QueryImport
@@ -35,12 +33,23 @@ GenericImport:
 	
 QueryImport:
 	'import-queries' importedNamespace=QualifiedNameWithWildcard;
+	
+enum Context:
+	chronicle | immediate | strict
+;
 
 ModelElement:
-	EventPattern | Rule | Source
+	/*Trait |*/ EventPattern | Rule
 ;
 
 /*******************************************MAIN MODEL ELEMENTS*******************************************/
+
+//Trait:
+//	'trait' name=ID'{'
+//		parameters=TraitTypedParameterList
+//		('check' checkExpression = XBlockExpression)?
+//	'}'
+//;
 
 EventPattern:
 	AbstractAtomicEventPattern | ComplexEventPattern
@@ -51,31 +60,26 @@ AbstractAtomicEventPattern:
 ;
 	
 AtomicEventPattern:
-	'AtomicEvent' name=ID ('('parameters=TypedParameterList?')')? ('{'
-//		('source' ':' source=[Source])?
+	'atomicEvent' name=ID ('('parameters=TypedParameterList?')')? /*('with' trait=[Trait])?*/ ('{'
 		('check' checkExpression = XBlockExpression)?
 	'}')?
 ;
 	
 QueryResultChangeEventPattern:
-	'QueryResultChangeEvent' name=ID '('parameters=TypedParameterList?')' '{'
-		'query' ':' queryReference=ParametrizedQueryReference
-		('resultChangeType' ':' resultChangeType=QueryResultChangeType)?
-	'}'
+	'queryEvent' name=ID '('parameters=TypedParameterList?')' 'as'
+		queryReference=ParametrizedQueryReference (resultChangeType=QueryResultChangeType)?
 ;
 
 ComplexEventPattern:
-	'ComplexEvent' name=ID '('parameters=TypedParameterList?')' '{'
-		('definition'':'complexEventExpression=ComplexEventExpression)?
+	'complexEvent' name=ID '('parameters=TypedParameterList?')' '{'
+		'as' complexEventExpression=ComplexEventExpression
+		('context' context=Context)?
 	'}'
 ;
 
 Rule:
-	'Rule' name=ID '{'
-		'events' ':' eventPatterns+=ParameterizedPatternCall (','eventPatterns+=ParameterizedPatternCall)*
-		('actionHandler' ':' actionHandler=QualifiedName)?
-		('action' action = XBlockExpression)?
-	'}'
+	'rule' name=ID 'on' eventPatterns+=ParameterizedPatternCall (','eventPatterns+=ParameterizedPatternCall)*
+		action = XBlockExpression
 ;
 
 
@@ -85,7 +89,7 @@ Rule:
 	
 /*******************************************IQ PATTERN ELEMENTS*******************************************/
 enum QueryResultChangeType:
-	NEW_MATCH_FOUND | EXISTING_MATCH_LOST 
+	found | lost 
 ;
 /*******************************************IQ PATTERN ELEMENTS*******************************************/
 
@@ -101,6 +105,15 @@ TypedParameter:
 	{TypedParameter}
 	name=ID ':' type = JvmTypeReference
 ;
+
+TypedParameterWithDefaultValue:
+	typedParameter = TypedParameter ('=' value=XAssignment)?
+;
+
+TraitTypedParameterList:
+	parameters+=TypedParameterWithDefaultValue (',' parameters+=TypedParameterWithDefaultValue)*
+;
+
 /*******************************************FUNCTION ARGUMENT PARAMETERS*******************************************/
 
 /*******************************************INCQUERY INTEGRATION*******************************************/
@@ -216,16 +229,3 @@ NegOperator:
 ;
 
 /*******************************************OPERATORS*******************************************/
-
-
-/*******************************************STRUCTURAL/INTEGRATION FEATURES*******************************************/
-Source:
-	'Source' name=ID '{'
-		('register' adapter+=Adapter)+
-	'}'
-;
-
-Adapter:
-	name=QualifiedName
-;
-/*******************************************STRUCTURAL/INTEGRATION FEATURES*******************************************/

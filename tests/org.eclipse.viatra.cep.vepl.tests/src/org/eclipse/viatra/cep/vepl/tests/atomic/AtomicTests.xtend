@@ -21,10 +21,10 @@ class AtomicTests extends VeplTestCase {
 	@Test
 	def void parseAtomicPatterns() {
 		val model = '''
-			AtomicEvent a1		//no parameters no body
-			AtomicEvent a2()	//parameters present but no body
-			AtomicEvent a3{}	//no parameters but body present
-			AtomicEvent a4(){}	//both parameters and body present
+			atomicEvent a1		//no parameters no body
+			atomicEvent a2()	//parameters present but no body
+			atomicEvent a3{}	//no parameters but body present
+			atomicEvent a4(){}	//both parameters and body present
 			
 		'''.parse
 

@@ -17,13 +17,13 @@ class InfinityTests extends ComplexVeplTestCase {
 	@Test
 	def void parseExpressions() {
 		for (expression : validExpressions) {
-			'''ComplexEvent c1(){
-				definition: («expression»)
+			'''complexEvent c1(){
+				as («expression»)
 			}'''.parse.assertNoErrors
 		}
 		for (expression : invalidExpressions) {
-			'''ComplexEvent c1(){
-				definition: («expression»)
+			'''complexEvent c1(){
+				as («expression»)
 			}'''.parse.assertError(VeplPackage::eINSTANCE.complexEventExpression,
 				VeplValidator::UNSAFE_INFINITE_MULTIPLICITY)
 		}

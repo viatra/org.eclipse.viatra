@@ -103,6 +103,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/operator"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/timewindow"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Cep.ecore#//ComplexEventPattern/containedEventPatterns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Cep.ecore#//ComplexEventPattern/eventContext"/>
     </genClasses>
     <genClasses ecoreClass="Cep.ecore#//EventPatternReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Cep.ecore#//EventPatternReference/eventPattern"/>
