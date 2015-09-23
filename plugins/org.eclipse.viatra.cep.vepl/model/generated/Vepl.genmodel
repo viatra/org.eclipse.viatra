@@ -4,7 +4,7 @@
     editorDirectory="/org.eclipse.viatra.cep.vepl.editor/src" modelPluginID="org.eclipse.viatra.cep.vepl"
     forceOverwrite="true" modelName="Vepl" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="6.0" copyrightFields="false" editPluginID="org.eclipse.viatra.cep.vepl.edit"
-    editorPluginID="org.eclipse.viatra.cep.vepl.editor" runtimeVersion="2.10" usedGenPackages="platform:/resource/org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.genmodel#//patternLanguage platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel#//xbase">
+    editorPluginID="org.eclipse.viatra.cep.vepl.editor" runtimeVersion="2.11" usedGenPackages="platform:/resource/org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.genmodel#//patternLanguage platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel#//xbase">
   <genPackages prefix="Vepl" basePackage="org.eclipse.viatra.cep.vepl" disposableProviderFactory="true"
       fileExtensions="vepl" ecorePackage="Vepl.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="Vepl.ecore#//Context">
