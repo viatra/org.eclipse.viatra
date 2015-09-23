@@ -34,7 +34,11 @@ GenericImport:
 QueryImport:
 	'import-queries' importedNamespace=QualifiedNameWithWildcard;
 	
-enum Context:
+enum ContextEnum:
+	not_set | chronicle | immediate | strict
+;
+
+enum Context returns ContextEnum:
 	chronicle | immediate | strict
 ;
 

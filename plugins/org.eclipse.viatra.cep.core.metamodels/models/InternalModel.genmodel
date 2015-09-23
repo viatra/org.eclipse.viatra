@@ -10,6 +10,7 @@
   <genPackages prefix="Automaton" basePackage="org.eclipse.viatra.cep.core.metamodels"
       disposableProviderFactory="true" ecorePackage="Automaton.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="Automaton.ecore#//EventContext">
+      <genEnumLiterals ecoreEnumLiteral="Automaton.ecore#//EventContext/NOT_SET"/>
       <genEnumLiterals ecoreEnumLiteral="Automaton.ecore#//EventContext/CHRONICLE"/>
       <genEnumLiterals ecoreEnumLiteral="Automaton.ecore#//EventContext/RECENT"/>
       <genEnumLiterals ecoreEnumLiteral="Automaton.ecore#//EventContext/UNRESTRICTED"/>

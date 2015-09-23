@@ -97,11 +97,12 @@
         eType="#//TypedTransition" eOpposite="#//TypedTransition/guards"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="EventContext">
-    <eLiterals name="CHRONICLE"/>
-    <eLiterals name="RECENT" value="1"/>
-    <eLiterals name="UNRESTRICTED" value="2"/>
-    <eLiterals name="IMMEDIATE" value="3"/>
-    <eLiterals name="STRICT_IMMEDIATE" value="4"/>
+    <eLiterals name="NOT_SET"/>
+    <eLiterals name="CHRONICLE" value="1"/>
+    <eLiterals name="RECENT" value="2"/>
+    <eLiterals name="UNRESTRICTED" value="3"/>
+    <eLiterals name="IMMEDIATE" value="4"/>
+    <eLiterals name="STRICT_IMMEDIATE" value="5"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TimedZone" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EReference" name="inState" lowerBound="1"

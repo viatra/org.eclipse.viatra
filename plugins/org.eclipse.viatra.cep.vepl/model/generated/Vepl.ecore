@@ -5,7 +5,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
         eType="#//Import" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//Context"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//ContextEnum"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="modelElements" upperBound="-1"
         eType="#//ModelElement" containment="true"/>
   </eClassifiers>
@@ -14,10 +14,11 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="GenericImport" eSuperTypes="#//Import"/>
   <eClassifiers xsi:type="ecore:EClass" name="QueryImport" eSuperTypes="#//Import"/>
-  <eClassifiers xsi:type="ecore:EEnum" name="Context">
-    <eLiterals name="chronicle" literal="chronicle"/>
-    <eLiterals name="immediate" value="1" literal="immediate"/>
-    <eLiterals name="strict" value="2" literal="strict"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="ContextEnum">
+    <eLiterals name="not_set" literal="not_set"/>
+    <eLiterals name="chronicle" value="1" literal="chronicle"/>
+    <eLiterals name="immediate" value="2" literal="immediate"/>
+    <eLiterals name="strict" value="3" literal="strict"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ModelElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -39,7 +40,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="ComplexEventPattern" eSuperTypes="#//EventPattern">
     <eStructuralFeatures xsi:type="ecore:EReference" name="complexEventExpression"
         eType="#//ComplexEventExpression" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//Context"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//ContextEnum"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Rule" eSuperTypes="#//ModelElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="eventPatterns" upperBound="-1"

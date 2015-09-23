@@ -7,10 +7,11 @@
     editorPluginID="org.eclipse.viatra.cep.vepl.editor" runtimeVersion="2.11" usedGenPackages="platform:/resource/org.eclipse.incquery.patternlanguage/model/generated/PatternLanguage.genmodel#//patternLanguage platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.genmodel#//types platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel#//xbase">
   <genPackages prefix="Vepl" basePackage="org.eclipse.viatra.cep.vepl" disposableProviderFactory="true"
       fileExtensions="vepl" ecorePackage="Vepl.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Vepl.ecore#//Context">
-      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//Context/chronicle"/>
-      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//Context/immediate"/>
-      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//Context/strict"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Vepl.ecore#//ContextEnum">
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//ContextEnum/not_set"/>
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//ContextEnum/chronicle"/>
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//ContextEnum/immediate"/>
+      <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//ContextEnum/strict"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="Vepl.ecore#//QueryResultChangeType">
       <genEnumLiterals ecoreEnumLiteral="Vepl.ecore#//QueryResultChangeType/found"/>

@@ -11,11 +11,13 @@
 package org.eclipse.viatra.cep.vepl.jvmmodel
 
 import com.google.common.collect.Lists
+import com.google.common.collect.Maps
 import com.google.inject.Inject
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.internal.xtend.util.Pair
 import org.eclipse.viatra.cep.core.api.patterns.ParameterizableComplexEventPattern
+import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
 import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
 import org.eclipse.viatra.cep.core.metamodels.events.Timewindow
 import org.eclipse.viatra.cep.vepl.jvmmodel.expressiontree.ExpressionTreeBuilder
@@ -25,6 +27,8 @@ import org.eclipse.viatra.cep.vepl.vepl.AndOperator
 import org.eclipse.viatra.cep.vepl.vepl.AtLeastOne
 import org.eclipse.viatra.cep.vepl.vepl.Atom
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.ContextEnum
+import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.FollowsOperator
 import org.eclipse.viatra.cep.vepl.vepl.Infinite
 import org.eclipse.viatra.cep.vepl.vepl.Multiplicity
@@ -36,8 +40,6 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.viatra.cep.core.metamodels.automaton.EventContext
-import org.eclipse.viatra.cep.core.metamodels.events.EventModel
 
 class ComplexGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
@@ -204,18 +206,27 @@ class ComplexGenerator {
 	}
 
 	def deriveContext(ComplexEventPattern pattern) {
-		if (pattern.context != null) {//FIXME
-			val l1 = pattern.context.literal
-			val f = EventContext.values.findFirst[value|value.literal.equalsIgnoreCase(l1)]
-			f
+		val patternContext = pattern.context
+		val defaultContext = (pattern.eContainer as EventModel).context
+
+		if (!(patternContext.equals(ContextEnum.NOT_SET))) {
+			contextMap.get(patternContext)
 		} else {
-			val mainContext = (pattern.eContainer as org.eclipse.viatra.cep.vepl.vepl.EventModel).context
-			if (mainContext == null) {
+			if (defaultContext.equals(ContextEnum.NOT_SET)) {
 				EventContext.CHRONICLE
 			} else {
-				return EventContext.values.findFirst[value|value.literal.equalsIgnoreCase(mainContext.literal)];
+				contextMap.get(defaultContext)
 			}
 		}
+	}
+
+	private def contextMap() {
+		val map = Maps::newHashMap
+		map.put(ContextEnum.NOT_SET, EventContext.NOT_SET)
+		map.put(ContextEnum.CHRONICLE, EventContext.CHRONICLE)
+		map.put(ContextEnum.IMMEDIATE, EventContext.IMMEDIATE)
+		map.put(ContextEnum.STRICT, EventContext.STRICT_IMMEDIATE)
+		map
 	}
 
 	def expandMultiplicity(Node node, ITreeAppendable treeAppendable, ComplexEventPattern pattern) {

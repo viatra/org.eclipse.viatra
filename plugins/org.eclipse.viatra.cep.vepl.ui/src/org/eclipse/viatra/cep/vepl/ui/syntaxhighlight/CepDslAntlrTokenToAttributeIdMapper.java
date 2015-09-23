@@ -11,7 +11,7 @@
 
 package org.eclipse.viatra.cep.vepl.ui.syntaxhighlight;
 
-import org.eclipse.viatra.cep.vepl.vepl.Context;
+import org.eclipse.viatra.cep.vepl.vepl.ContextEnum;
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeType;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration;
@@ -26,13 +26,13 @@ public class CepDslAntlrTokenToAttributeIdMapper extends DefaultAntlrTokenToAttr
 
         if (getApostrophedKeyword(QueryResultChangeType.FOUND.getLiteral()).equals(tokenName)
                 || getApostrophedKeyword(QueryResultChangeType.LOST.getLiteral()).equals(tokenName)
-                || getApostrophedKeyword(Context.CHRONICLE.getLiteral()).equals(tokenName)
-                || getApostrophedKeyword(Context.IMMEDIATE.getLiteral()).equals(tokenName)
-                || getApostrophedKeyword(Context.STRICT.getLiteral()).equals(tokenName)) {
+                || getApostrophedKeyword(ContextEnum.CHRONICLE.getLiteral()).equals(tokenName)
+                || getApostrophedKeyword(ContextEnum.IMMEDIATE.getLiteral()).equals(tokenName)
+                || getApostrophedKeyword(ContextEnum.STRICT.getLiteral()).equals(tokenName)) {
             return CepDslHighlightingConfiguration.VEPL_ENUM_ID;
         }
-        
-        if(tokenName.equals(getApostrophedKeyword("->"))){
+
+        if (tokenName.equals(getApostrophedKeyword("->"))) {
             return DefaultHighlightingConfiguration.KEYWORD_ID;
         }
 
