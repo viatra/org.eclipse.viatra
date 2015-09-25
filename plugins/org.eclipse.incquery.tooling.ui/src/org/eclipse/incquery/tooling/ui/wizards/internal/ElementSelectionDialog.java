@@ -13,7 +13,6 @@ package org.eclipse.incquery.tooling.ui.wizards.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -67,10 +66,8 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
         @Override
         public boolean select(Viewer viewer, Object parentElement, Object element) {
             StringMatcher matcher = new StringMatcher("*" + filterString + "*", true, false);
-            if (element instanceof EPackage) {
-                return matcher.match(((EPackage) element).getNsURI());
-            }
-            return true;
+            String label = element == null ? "" : element.toString();
+            return matcher.match(label);
         }
 
     }
