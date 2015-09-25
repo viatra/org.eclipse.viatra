@@ -8,36 +8,78 @@
 			<groupId>org.eclipse.incquery</groupId>
 			<artifactId>org.eclipse.incquery.runtime</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+		        <exclusion>
+        		    <groupId>*</groupId>
+		            <artifactId>*</artifactId>
+			    </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.incquery</groupId>
 			<artifactId>org.eclipse.incquery.runtime.rete</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+		        <exclusion>
+        		    <groupId>*</groupId>
+		            <artifactId>*</artifactId>
+			    </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.incquery</groupId>
 			<artifactId>org.eclipse.incquery.runtime.rete.recipes</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+		        <exclusion>
+        		    <groupId>*</groupId>
+		            <artifactId>*</artifactId>
+			    </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.incquery</groupId>
 			<artifactId>org.eclipse.incquery.runtime.matchers</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+		        <exclusion>
+        		    <groupId>*</groupId>
+		            <artifactId>*</artifactId>
+			    </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.incquery</groupId>
 			<artifactId>org.eclipse.incquery.runtime.base</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+		        <exclusion>
+        		    <groupId>*</groupId>
+		            <artifactId>*</artifactId>
+			    </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.incquery</groupId>
 			<artifactId>org.eclipse.incquery.runtime.base.itc</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+		        <exclusion>
+        		    <groupId>*</groupId>
+		            <artifactId>*</artifactId>
+			    </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.incquery</groupId>
 			<artifactId>org.eclipse.incquery.runtime.evm</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+		        <exclusion>
+        		    <groupId>*</groupId>
+		            <artifactId>*</artifactId>
+			    </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
