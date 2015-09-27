@@ -74,13 +74,13 @@ class PConstraintInfo {
 	protected def dispatch void calculateCost(TypeConstraint typeConstraint) {
 
 		var IInputKey supplierKey = (constraint as TypeConstraint).getSupplierKey()
-		var int arity = supplierKey.getArity()
+		var long arity = supplierKey.getArity()
 		if (arity == 1) {
 			// unary constraint
 			calculateUnaryConstraintCost(supplierKey)
 		} else if (arity == 2) {
 			// binary constraint
-			var int edgeCount = runtimeContext.countTuples(supplierKey, null)
+			var long edgeCount = runtimeContext.countTuples(supplierKey, null)
 			var srcVariable = (constraint as TypeConstraint).getVariablesTuple().get(0) as PVariable
 			var dstVariable = (constraint as TypeConstraint).getVariablesTuple().get(1) as PVariable
 			var isInverse = false
@@ -98,16 +98,16 @@ class PConstraintInfo {
 			}
 		} else {
 			// n-ary constraint
-			throw new RuntimeException('''Cost calculation for arity «arity» is not implemented yet''')
+			throw new RuntimeException('''Cost calculation for arity ï¿½arityï¿½ is not implemented yet''')
 		}
 	}
 	
-	protected def calculateBinaryExtendCost(IInputKey supplierKey, PVariable srcVariable, PVariable dstVariable, boolean isInverse, int edgeCount) {
+	protected def calculateBinaryExtendCost(IInputKey supplierKey, PVariable srcVariable, PVariable dstVariable, boolean isInverse, long edgeCount) {
 		var metaContext = runtimeContext.getMetaContext()
 		var Collection<InputKeyImplication> implications = metaContext.getImplications(supplierKey)
 		// TODO prepare for cases when this info is not available - use only metamodel related cost calculation (see TODO at the beginning of the function)
-		var int srcCount = -1
-		var int dstCount = -1
+		var long srcCount = -1
+		var long dstCount = -1
 		// Obtain runtime information
 		for (InputKeyImplication implication : implications) {
 			var List<Integer> impliedIndices = implication.getImpliedIndices()
@@ -123,8 +123,8 @@ class PConstraintInfo {
 		if (freeMaskVariables.contains(srcVariable) && freeMaskVariables.contains(dstVariable)) {
 			cost = dstCount * srcCount
 		} else {
-			var int srcNodeCount = -1
-			var int dstNodeCount = -1
+			var long srcNodeCount = -1
+			var long dstNodeCount = -1
 			if (isInverse) {
 				srcNodeCount = dstCount
 				dstNodeCount = srcCount
@@ -160,6 +160,7 @@ class PConstraintInfo {
 				}
 			}
 		}
+		return
 	}
 	
 	protected def calculateUnaryConstraintCost(IInputKey supplierKey) {
@@ -218,7 +219,7 @@ class PConstraintInfo {
 	}
 
 	override String toString()
-		'''«String.format("\n")»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''	
+		'''Â«String.format(System.lineSeparator)Â»Â«constraint.toStringÂ», bound variables: Â«boundMaskVariablesÂ», cost: Â«String.format("%.2f",cost)Â»'''	
 	
 
 }
