@@ -142,6 +142,8 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
             for (ListDiffEntry entry : event.diff.getDifferences()) {
                 if (!entry.isAddition()) {
                     ((PatternMatchContent) entry.getElement()).dispose();
+                } else {
+                    ((PatternMatchContent) entry.getElement()).initialize();
                 }
             }
 

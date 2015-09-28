@@ -42,10 +42,13 @@ public class PatternMatchContent extends BaseContent<PatternMatcherContent> {
         this.listener = new ParameterValueChangedListener();
         if (message != null) {
             setText(IncQueryRuntimeHelper.getMessage(match, message));
-            affectedValues = IncQueryObservables.observeFeatures(match, listener, message);
         } else {
             this.text = match.toString();
         }
+    }
+
+    protected void initialize() {
+        affectedValues = IncQueryObservables.observeFeatures(match, listener, message);
     }
 
     @Override
