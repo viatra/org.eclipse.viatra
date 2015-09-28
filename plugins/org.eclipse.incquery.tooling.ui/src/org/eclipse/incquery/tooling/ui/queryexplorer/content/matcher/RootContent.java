@@ -59,6 +59,7 @@ public class RootContent extends CompositeContent<Object, PatternMatcherRootCont
 
             this.mapping.put(key, root);
             this.children.addChild(root);
+            viewer.setExpandedState(root, true);
         }
     }
 
