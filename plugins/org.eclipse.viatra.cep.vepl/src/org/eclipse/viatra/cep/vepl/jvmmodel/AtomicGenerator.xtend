@@ -49,7 +49,11 @@ class AtomicGenerator {
 						for(trait : traitList.traits){
 							for(param : trait.parameters.parameters){
 								val parameter = param.typedParameter
-								members += pattern.toField(parameter.name, parameter.type)								
+								members += pattern.toField(parameter.name, parameter.type)[
+									if(param.value!=null){
+										initializer = param.value										
+									}
+								]								
 							}
 						}
 					}
@@ -66,6 +70,15 @@ class AtomicGenerator {
 									«FOR parameter : paramList.parameters»
 										getParameters().add(«parameter.name»);
 									«ENDFOR»
+								«ENDIF»
+								«IF pattern instanceof AtomicEventPattern»
+									«IF (pattern as AtomicEventPattern).traits!=null»
+										«FOR trait : (pattern as AtomicEventPattern).traits.traits»
+											«FOR param : trait.parameters.parameters»
+												getParameters().add(«param.typedParameter.name»);
+											«ENDFOR»
+										«ENDFOR»
+									«ENDIF»
 								«ENDIF»
 							''')
 					]
