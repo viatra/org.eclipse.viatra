@@ -53,6 +53,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -275,7 +276,7 @@ public abstract class ProjectGenerationHelper {
      * @throws CoreException
      */
     public static void ensureBundleDependencies(IProject project, final List<String> dependencies) throws CoreException {
-        ensureBundleDependencies(project, dependencies, Collections.<String>emptyList(), new NullProgressMonitor());
+        ensureBundleDependenciesAndPackageImports(project, dependencies, Collections.<String>emptyList(), new NullProgressMonitor());
     }
 
     /**
@@ -287,7 +288,7 @@ public abstract class ProjectGenerationHelper {
      * @throws CoreException
      */
     public static void ensurePackageImports(IProject project, final List<String> packageImports) throws CoreException {
-        ensureBundleDependencies(project, Collections.<String>emptyList(), packageImports, new NullProgressMonitor());
+        ensureBundleDependenciesAndPackageImports(project, Collections.<String>emptyList(), packageImports, new NullProgressMonitor());
     }
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
@@ -299,7 +300,7 @@ public abstract class ProjectGenerationHelper {
      * @param monitor
      * @throws CoreException
      */
-    public static void ensureBundleDependencies(IProject project, final List<String> dependencies, final List<String> importPackages,
+    public static void ensureBundleDependenciesAndPackageImports(IProject project, final List<String> dependencies, final List<String> importPackages,
             IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
         		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
@@ -333,38 +334,33 @@ public abstract class ProjectGenerationHelper {
      *
      * @param service
      * @param bundleDesc
-     * @param dependencies
+     * @param dependencyNames
      */
     static void ensureBundleDependencies(IBundleProjectService service, IBundleProjectDescription bundleDesc,
-            final List<String> dependencies) {
-        IRequiredBundleDescription[] requiredBundles = bundleDesc.getRequiredBundles();
-        if (requiredBundles == null) {
+            final List<String> dependencyNames) {
+        IRequiredBundleDescription[] existingDependencies = bundleDesc.getRequiredBundles();
+        if (existingDependencies == null) {
             return;
         }
-        List<String> updatedDependencies = new ArrayList<String>(dependencies);
+
+        List<String> missingDependencyNames = new ArrayList<String>(dependencyNames);
+        for (IRequiredBundleDescription bundle : existingDependencies) {
+            if (missingDependencyNames.contains(bundle.getName())) {
+                missingDependencyNames.remove(bundle.getName());
+            }
+        }
+        List<IRequiredBundleDescription> missingDependencies = Lists.transform(missingDependencyNames, new IDToRequireBundleTransformer(service));
 
         // XXX for compatibility two different versions are needed
         final Version pdeVersion = Platform.getBundle("org.eclipse.pde.core").getVersion();
-        if (pdeVersion.compareTo(new Version(3, 9, 0)) < 0) {
+        Iterable<IRequiredBundleDescription> dependenciesToSet =
+            pdeVersion.compareTo(new Version(3, 9, 0)) < 0 ?
             // Before Kepler setRequiredBundles only adds dependencies, does not remove
-            List<String> missingDependencies = new ArrayList<String>(dependencies);
-            for (IRequiredBundleDescription bundle : requiredBundles) {
-                if (missingDependencies.contains(bundle.getName())) {
-                    missingDependencies.remove(bundle.getName());
-                }
-            }
-            bundleDesc.setRequiredBundles(Lists.transform(missingDependencies, new IDToRequireBundleTransformer(service))
-                    .toArray(new IRequiredBundleDescription[missingDependencies.size()]));
-        } else {
+            missingDependencies :
             // Since Kepler setRequiredBundles overwrites existing dependencies
-            for (IRequiredBundleDescription bundle : requiredBundles) {
-                if (!updatedDependencies.contains(bundle.getName())) {
-                    updatedDependencies.add(bundle.getName());
-                }
-            }
-            bundleDesc.setRequiredBundles(Lists.transform(updatedDependencies, new IDToRequireBundleTransformer(service))
-                    .toArray(new IRequiredBundleDescription[updatedDependencies.size()]));
-        }
+            Iterables.concat(missingDependencies, Arrays.asList(existingDependencies));
+
+        bundleDesc.setRequiredBundles(Iterables.toArray(dependenciesToSet, IRequiredBundleDescription.class));
     }
     
     /**
