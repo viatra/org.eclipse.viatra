@@ -33,6 +33,8 @@ import org.eclipse.xtext.xbase.XExpression;
  * It has the responsibility to maintain an internal representation of the {@link Variable}s
  * both present in the {@link PatternBody} and additional {@link Variable}s needed for the {@link Constraint}s in the {@link PatternBody}.
  * The methods use variable names which identify these internal variables.
+ * <p>
+ * WARNING! Implementations of this interface are typically stateful, so don't reuse instances of them!
  * @param <Result> the type of the result
  * @since 1.1 
  */

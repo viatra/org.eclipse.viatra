@@ -197,9 +197,8 @@ public class SpecificationBuilder {
             	GenericQuerySpecification specification = (GenericQuerySpecification) patternMap.get(patternFqn);
             	GenericEMFPatternPQuery pQuery = specification.getInternalQueryRepresentation();
                 try {
-                	EPMToPBody converter = new EPMToPBody(newPattern, pQuery, patternMap);
                 	buildAnnotations(newPattern, pQuery);
-                	buildBodies(newPattern, pQuery, converter);
+                	buildBodies(newPattern, pQuery);
             	} catch (IncQueryException e) {
             		pQuery.addError(new PProblem(e, e.getShortMessage()));
                 } catch (RewriterException e) {
@@ -248,28 +247,20 @@ public class SpecificationBuilder {
     }
 
     public Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query) throws QueryInitializationException {
-        return buildBodies(pattern, query, new EPMToPBody(pattern, query, patternMap));
-    }
-
-    protected Set<PBody> buildBodies(Pattern pattern, InitializablePQuery query, EPMToPBody converter)
-            throws QueryInitializationException {
-        Set<PBody> bodies = getBodies(pattern, converter);
+        Set<PBody> bodies = getBodies(pattern, query);
         query.initializeBodies(bodies);
         return bodies;
     }
 
     public Set<PBody> getBodies(Pattern pattern, PQuery query) throws QueryInitializationException {
-        return getBodies(pattern, new EPMToPBody(pattern, query, patternMap));
-    }
-    
-    public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws QueryInitializationException {
-        Set<PBody> bodies = Sets.newLinkedHashSet();
+        PatternBodyTransformer transformer = new PatternBodyTransformer(pattern);
+        Set<PBody> pBodies = Sets.newLinkedHashSet();
         for (PatternBody body : pattern.getBodies()) {
-            PatternBodyTransformer patternModelVisitor = new PatternBodyTransformer(pattern);
-            PBody pBody = patternModelVisitor.transform(body, converter);
-			bodies.add(pBody);
+            EPMToPBody acceptor = new EPMToPBody(pattern, query, patternMap);
+            PBody pBody = transformer.transform(body, acceptor);
+			pBodies.add(pBody);
         }
-        return bodies;
+        return pBodies;
     }
 
     public IQuerySpecification<?> getSpecification(Pattern pattern) {
