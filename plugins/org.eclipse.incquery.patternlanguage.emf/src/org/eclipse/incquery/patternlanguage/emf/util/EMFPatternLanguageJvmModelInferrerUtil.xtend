@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.patternlanguage.emf.util
 
+import com.google.common.base.Preconditions
 import com.google.common.base.Splitter
 import com.google.inject.Inject
 import java.util.regex.Matcher
@@ -20,15 +21,19 @@ import org.eclipse.incquery.patternlanguage.emf.types.EMFPatternTypeProvider
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.incquery.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.xtend2.lib.StringConcatenation
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import org.eclipse.xtext.xbase.XExpression
+import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 
@@ -342,4 +347,35 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	def isPublic(Pattern pattern) {
 		!CorePatternLanguageHelper::isPrivate(pattern)
 	}
+
+    def variables(XExpression ex) {
+        val body = EcoreUtil2.getContainerOfType(ex, PatternBody)
+        val valNames = (ex.eAllContents + newImmutableList(ex).iterator).
+                filter(typeof(XFeatureCall)).map[concreteSyntaxFeatureName].
+                toList
+        body.variables.filter[valNames.contains(it.name)].sortBy[name]
+    }
+    
+    def expressionMethodName(XExpression ex) {
+        "evaluateExpression_" + getExpressionPostfix(ex)
+    }
+
+    private static def getExpressionPostfix(XExpression xExpression) {
+        val pattern = EcoreUtil2.getContainerOfType(xExpression, typeof(Pattern))
+        Preconditions.checkArgument(pattern != null, "Expression is not inside a pattern")
+        var bodyNo = 0
+        for (patternBody : pattern.getBodies()) {
+            bodyNo = bodyNo + 1
+            var exNo = 0
+            for (xExpression2 : CorePatternLanguageHelper.getAllTopLevelXBaseExpressions(patternBody)) {
+                    exNo = exNo + 1
+                    if (xExpression.equals(xExpression2)) {
+                        return bodyNo + "_" + exNo
+                    }
+            }
+        }
+        //Shall never be executed
+        throw new RuntimeException("Expression not found in pattern")
+    }
+    
 }

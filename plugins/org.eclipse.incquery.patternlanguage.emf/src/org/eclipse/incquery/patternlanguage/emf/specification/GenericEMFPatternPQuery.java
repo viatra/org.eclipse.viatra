@@ -138,9 +138,9 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
 
     @Override
     protected Set<PBody> doGetContainedBodies() throws QueryInitializationException {
-        SpecificationBuilder converter = new SpecificationBuilder();
+        SpecificationBuilder specificationBuilder = new SpecificationBuilder();
         try {
-			return converter.getBodies(pattern, this);
+			return specificationBuilder.getBodies(pattern, this);
 		} catch (RewriterException e) {
             addError(new PProblem(e, e.getShortMessage()));
             throw e;

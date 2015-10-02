@@ -14,10 +14,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.incquery.patternlanguage.emf.specification.builder.EPMToPBody;
 import org.eclipse.incquery.patternlanguage.emf.specification.builder.NameToSpecificationMap;
+import org.eclipse.incquery.patternlanguage.emf.specification.builder.PatternBodyTransformer;
 import org.eclipse.incquery.patternlanguage.emf.specification.builder.PatternSanitizer;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Annotation;
@@ -193,17 +195,18 @@ public class SpecificationBuilder {
             for (Pattern newPattern : newPatterns) {
             	String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
             	GenericQuerySpecification specification = (GenericQuerySpecification) patternMap.get(patternFqn);
-            	try {
-                	EPMToPBody converter = new EPMToPBody(newPattern, specification.getInternalQueryRepresentation(), patternMap);
-                	buildAnnotations(newPattern, specification.getInternalQueryRepresentation(), converter);
-                	buildBodies(newPattern, specification.getInternalQueryRepresentation(), converter);
+            	GenericEMFPatternPQuery pQuery = specification.getInternalQueryRepresentation();
+                try {
+                	EPMToPBody converter = new EPMToPBody(newPattern, pQuery, patternMap);
+                	buildAnnotations(newPattern, pQuery);
+                	buildBodies(newPattern, pQuery, converter);
             	} catch (IncQueryException e) {
-            		specification.getInternalQueryRepresentation().addError(new PProblem(e, e.getShortMessage()));
+            		pQuery.addError(new PProblem(e, e.getShortMessage()));
                 } catch (RewriterException e) {
-                	specification.getInternalQueryRepresentation().addError(new PProblem(e, e.getShortMessage()));
+                	pQuery.addError(new PProblem(e, e.getShortMessage()));
                 }
-                if (!PQueryStatus.ERROR.equals(specification.getInternalQueryRepresentation().getStatus())) {
-                    for (PQuery query : specification.getInternalQueryRepresentation().getDirectReferredQueries()) {
+                if (!PQueryStatus.ERROR.equals(pQuery.getStatus())) {
+                    for (PQuery query : pQuery.getDirectReferredQueries()) {
                         dependantQueries.put(query, specification);
                     }
                 }
@@ -233,10 +236,13 @@ public class SpecificationBuilder {
         return specification;
     }
 
-    protected void buildAnnotations(Pattern pattern, InitializablePQuery query, EPMToPBody converter)
+    protected void buildAnnotations(Pattern pattern, InitializablePQuery query)
             throws IncQueryException {
         for (Annotation annotation : pattern.getAnnotations()) {
-            PAnnotation pAnnotation = converter.toPAnnotation(annotation);
+            PAnnotation pAnnotation = new PAnnotation(annotation.getName());
+            for (Entry<String, Object> attribute : CorePatternLanguageHelper.evaluateAnnotationParameters(annotation).entrySet()) {
+                pAnnotation.addAttribute(attribute.getKey(), attribute.getValue());
+            }
             query.addAnnotation(pAnnotation);
         }
     }
@@ -259,7 +265,8 @@ public class SpecificationBuilder {
     public Set<PBody> getBodies(Pattern pattern, EPMToPBody converter) throws QueryInitializationException {
         Set<PBody> bodies = Sets.newLinkedHashSet();
         for (PatternBody body : pattern.getBodies()) {
-            PBody pBody = converter.toPBody(body);
+            PatternBodyTransformer patternModelVisitor = new PatternBodyTransformer(pattern);
+            PBody pBody = patternModelVisitor.transform(body, converter);
 			bodies.add(pBody);
         }
         return bodies;

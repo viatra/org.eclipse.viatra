@@ -30,7 +30,10 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.incquery.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Constraint;
+import org.eclipse.incquery.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.FunctionEvaluationValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.IntValue;
+import org.eclipse.incquery.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Modifiers;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PathExpressionConstraint;
@@ -41,10 +44,12 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguageFactory;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
+import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.incquery.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
@@ -55,11 +60,13 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public final class CorePatternLanguageHelper {
@@ -359,14 +366,6 @@ public final class CorePatternLanguageHelper {
         return Collections2.filter(pattern.getAnnotations(), new AnnotationNameFilter(name));
     }
 
-    public static ListMultimap<String, ValueReference> getAnnotationParameters(Annotation annotation) {
-        ListMultimap<String, ValueReference> parameterMap = ArrayListMultimap.create();
-        for (AnnotationParameter param : annotation.getParameters()) {
-            parameterMap.put(param.getName(), param.getValue());
-        }
-        return parameterMap;
-    }
-
     /**
      * Returns all annotation parameters with a selected name
      *
@@ -534,6 +533,49 @@ public final class CorePatternLanguageHelper {
             }
         }
         return resultSet;
+    }
+
+
+    public static Map<String, Object> evaluateAnnotationParameters(Annotation annotation) {
+        Map<String, Object> result = Maps.newHashMap();
+        for (AnnotationParameter param : annotation.getParameters()) {
+            String parameterName = param.getName();
+            ValueReference ref = param.getValue();
+            if (ref != null) {
+                final Object valueReference = CorePatternLanguageHelper.getValue(ref);
+                if (!Strings.isNullOrEmpty(parameterName) && valueReference != null) {
+                    result.put(parameterName, valueReference);
+                }
+            }
+        }
+        return result;
+    }
+
+    private static Object getValue(ValueReference ref) {
+        Object value = null;
+        if (ref instanceof BoolValue) {
+            value = ((BoolValue)ref).isValue();
+        } else if (ref instanceof DoubleValue) {
+            value = ((DoubleValue)ref).getValue();
+        } else if (ref instanceof IntValue) {
+            value = ((IntValue)ref).getValue();
+        } else if (ref instanceof StringValue) {
+            value = ((StringValue)ref).getValue();
+        } else if (ref instanceof VariableReference) {
+            value = new ParameterReference(((VariableReference) ref).getVar());
+        } else if (ref instanceof VariableValue) {
+            value = new ParameterReference(((VariableValue)ref).getValue().getVar());
+        } else if (ref instanceof ListValue) {
+            value = Lists.transform(((ListValue) ref).getValues(), new Function<ValueReference, Object>() {
+                @Override
+                public Object apply(ValueReference ref) {
+                    return getValue(ref);
+                }
+            });
+        } else {
+            throw new UnsupportedOperationException("Unknown attribute parameter type");
+        }
+        return value;
     }
 
 }
