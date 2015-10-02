@@ -142,7 +142,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
             }
         
             override acceptConstraint(Constraint constraint) {
-                target.append('''// «serializer.serialize(constraint).replace('\n','')»
+                target.append('''// «serializer.serialize(constraint).replaceAll('\r\n?|\n','')»
                 ''')
             }
         
