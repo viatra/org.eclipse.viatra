@@ -12,20 +12,18 @@ package org.eclipse.viatra.dse.statecode.incrementalgraph;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.impl.EClassImpl;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecode.incrementalgraph.impl.IncrementalGraphHasher;
 import org.eclipse.viatra.dse.util.EMFHelper;
+import org.eclipse.viatra.dse.util.EMFHelper.MetaModelElements;
 
 public class IncrementalGraphHasherFactory implements IStateCoderFactory {
 
@@ -38,19 +36,9 @@ public class IncrementalGraphHasherFactory implements IStateCoderFactory {
 
     public IncrementalGraphHasherFactory(Collection<EPackage> metaModelPackages) {
         this(DEFAULT_MAX_UNFOLDING_DEPTH);
-        Collection<EModelElement> modelElements = EMFHelper.getClassesAndReferences(metaModelPackages);
-        classes = new ArrayList<EClass>();
-        features = new ArrayList<EStructuralFeature>();
-        for (EModelElement modelElement : modelElements) {
-            if (modelElement instanceof EClassImpl) {
-                EClassImpl eClass = (EClassImpl) modelElement;
-                classes.add(eClass);
-            }
-            if (modelElement instanceof EStructuralFeature) {
-                EStructuralFeature eStructuralFeature = (EStructuralFeature) modelElement;
-                features.add(eStructuralFeature);
-            }
-        }
+        MetaModelElements metaModelElements = EMFHelper.getAllMetaModelElements(new HashSet<EPackage>(metaModelPackages));
+        classes = metaModelElements.classes;
+        features = new ArrayList<EStructuralFeature>(metaModelElements.references);
     }
 
     IncrementalGraphHasherFactory(int maxDepth) {

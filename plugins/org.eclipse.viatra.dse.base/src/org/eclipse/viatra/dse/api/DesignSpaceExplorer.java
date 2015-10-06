@@ -13,6 +13,7 @@ package org.eclipse.viatra.dse.api;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecode.graph.GraphHasherFactory;
 import org.eclipse.viatra.dse.statecode.graph.impl.GraphHash;
 import org.eclipse.viatra.dse.util.EMFHelper;
+import org.eclipse.viatra.dse.util.EMFHelper.MetaModelElements;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 
 /**
@@ -398,7 +400,9 @@ public class DesignSpaceExplorer {
             guidance.resolveDependencyGraph();
 
             if (guidance.getOccuranceVectorResolver() != null) {
-                List<EModelElement> classesAndReferences = EMFHelper.getClassesAndReferences(metaModelPackages);
+                MetaModelElements metaModelElements = EMFHelper.getAllMetaModelElements(metaModelPackages);
+                List<EModelElement> classesAndReferences = new ArrayList<EModelElement>(metaModelElements.attributes);
+                classesAndReferences.addAll(metaModelElements.references);
                 Map<EModelElement, Integer> initialMarking = Guidance
                         .getInitialMarking(modelRoot, classesAndReferences);
                 guidance.resolveOccurrenceVector(classesAndReferences, initialMarking, predicates);

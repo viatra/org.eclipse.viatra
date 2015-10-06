@@ -14,15 +14,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -113,6 +120,8 @@ public final class EMFHelper {
      * Collects all the classes and references from the given {@link EPackage}s.
      * @param metaModelPackages
      * @return
+     * 
+     * @deprecated Use {@link #getAllMetaModelElements(Set)} instead.
      */
     public static List<EModelElement> getClassesAndReferences(Collection<EPackage> metaModelPackages) {
         List<EModelElement> result = new ArrayList<EModelElement>();
@@ -127,6 +136,126 @@ public final class EMFHelper {
                     }
                     for (EReference eReference : eClass.getEAllReferences()) {
                         addToListIfNotContains(result, eReference);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public static class ENamedElementComparator implements Comparator<ENamedElement> {
+        @Override
+        public int compare(ENamedElement eClass1, ENamedElement eClass2) {
+            return eClass1.getName().compareTo(eClass2.getName());
+        }
+    }
+
+    /**
+     * This class is used to store
+     * <ul>
+     * <li>{@link EClass}es,</li>
+     * <li>{@link EAttribute}s,</li>
+     * <li>{@link EReference}s,</li>
+     * <li>EAttributes by EClasses,</li>
+     * <li>EReferences by EClasses</li>
+     * </ul>
+     * for a given set of {@link EPackage}s.
+     *
+     */
+    public static class MetaModelElements {
+        public Set<EPackage> metaModelPackages;
+        public Set<EClass> classes;
+        public Set<EAttribute> attributes;
+        public Set<EReference> references;
+        public Map<EClass, Set<EAttribute>> attributesOfClass;
+        public Map<EClass, Set<EReference>> referencesOfClass;
+    }
+
+    /**
+     * Traverses the full metamodel on the given {@link EPackage}s and returns all the classes, attributes and
+     * references it contains.
+     * 
+     * @param metaModelPackages
+     *            The set of {@link EPackage}s.
+     * @return A {@link MetaModelElements} instance containing the metamodel elements.
+     */
+    public static MetaModelElements getAllMetaModelElements(Set<EPackage> metaModelPackages) {
+        return getMetaModelElements(metaModelPackages, true, true, true);
+    }
+
+    /**
+     * Return a {@link MetaModelElements} instance populated with its {@link MetaModelElements#classes}.
+     * 
+     * @param metaModelPackages
+     *            The set of {@link EPackage}s.
+     * @return AA {@link MetaModelElements} instance.
+     */
+    public static MetaModelElements getClasses(Set<EPackage> metaModelPackages) {
+        return getMetaModelElements(metaModelPackages, true, true, true);
+    }
+
+    /**
+     * Return a {@link MetaModelElements} instance populated with its {@link MetaModelElements#references} and
+     * {@link MetaModelElements#referencesOfClass}.
+     * 
+     * @param metaModelPackages
+     *            The set of {@link EPackage}s.
+     * @return AA {@link MetaModelElements} instance.
+     */
+    public static MetaModelElements getReferences(Set<EPackage> metaModelPackages) {
+        return getMetaModelElements(metaModelPackages, true, true, true);
+    }
+
+    /**
+     * Return a {@link MetaModelElements} instance populated with its {@link MetaModelElements#attributes} and
+     * {@link MetaModelElements#attributesOfClass}.
+     * 
+     * @param metaModelPackages
+     *            The set of {@link EPackage}s.
+     * @return AA {@link MetaModelElements} instance.
+     */
+    public static MetaModelElements getAttrbiutes(Set<EPackage> metaModelPackages) {
+        return getMetaModelElements(metaModelPackages, true, true, true);
+    }
+
+    private static MetaModelElements getMetaModelElements(Set<EPackage> metaModelPackages, boolean getClasses,
+            boolean getReferences, boolean getAttrbiutes) {
+
+        Comparator<ENamedElement> comparator = new ENamedElementComparator();
+
+        MetaModelElements result = new MetaModelElements();
+        result.metaModelPackages = metaModelPackages;
+        if (getClasses) {
+            result.classes = new TreeSet<EClass>(comparator);
+        }
+        if (getReferences) {
+            result.references = new HashSet<EReference>();
+            result.referencesOfClass = new HashMap<EClass, Set<EReference>>();
+        }
+        if (getAttrbiutes) {
+            result.attributes = new HashSet<EAttribute>();
+            result.attributesOfClass = new HashMap<EClass, Set<EAttribute>>();
+        }
+        for (EPackage ePackage : metaModelPackages) {
+            for (EClassifier eClassifier : ePackage.getEClassifiers()) {
+                if (eClassifier instanceof EClass) {
+                    EClass eClass = ((EClass) eClassifier);
+                    if (getClasses) {
+                        result.classes.add(eClass);
+                    }
+                    if (getReferences) {
+                        result.referencesOfClass.put(eClass, new TreeSet<EReference>(comparator));
+                        for (EReference eReference : eClass.getEAllReferences()) {
+                            result.references.add(eReference);
+                            result.referencesOfClass.get(eClass).add(eReference);
+                        }
+                    }
+                    if (getAttrbiutes) {
+                        result.attributesOfClass.put(eClass, new TreeSet<EAttribute>(comparator));
+                        for (EAttribute eAttribute : eClass.getEAllAttributes()) {
+                            result.attributes.add(eAttribute);
+                            result.attributesOfClass.get(eClass).add(eAttribute);
+                        }
                     }
                 }
             }

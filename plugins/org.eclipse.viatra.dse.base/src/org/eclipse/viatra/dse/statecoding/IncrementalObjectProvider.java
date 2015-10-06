@@ -26,7 +26,7 @@ import org.eclipse.viatra.dse.api.DSEException;
 public class IncrementalObjectProvider implements IObjectsProvider {
 
     private IncQueryEngine incqueryEngine;
-    private Logger logger;
+    private Logger logger = Logger.getLogger(getClass());
     private NavigationHelper baseIndex;
 
     @Override
