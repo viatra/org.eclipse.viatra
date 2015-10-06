@@ -36,7 +36,7 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.util.EMFHelper.MetaModelElements;
-import org.eclipse.viatra.dse.util.ValueComparableMap;
+import org.eclipse.viatra.dse.util.ValueComparableEObjectStringMap;
 
 import com.google.common.collect.Ordering;
 
@@ -82,14 +82,7 @@ public class SimpleStateCoder implements IStateCoder {
 
         objectCodes = new HashMap<EClass, Map<EObject, String>>();
         for (EClass eClass : classes) {
-            Map<EObject, String> codes = new ValueComparableMap<EObject, String>(Ordering.natural(),
-                    new Comparator<EObject>() {
-                        @Override
-                        public int compare(EObject o1, EObject o2) {
-                            // will this work??
-                            return Integer.valueOf(System.identityHashCode(o1)).compareTo(Integer.valueOf(System.identityHashCode(o2)));
-                        }
-                    });
+            Map<EObject, String> codes = new ValueComparableEObjectStringMap();
 
             objectCodes.put(eClass, codes);
 
