@@ -42,6 +42,7 @@ import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecode.graph.GraphHasherFactory;
 import org.eclipse.viatra.dse.statecode.graph.impl.GraphHash;
+import org.eclipse.viatra.dse.statecoding.simple.SimpleStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.util.EMFHelper.MetaModelElements;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
@@ -389,6 +390,14 @@ public class DesignSpaceExplorer {
         checkArgument(strategy != null, "A strategy must be given. Use the Strategies helper class.");
         checkState(!globalContext.getTransformations().isEmpty(),
                 "At least one transformation rule must be added to start the exploration.");
+
+        if (globalContext.getStateCoderFactory() == null) {
+            if (getMetaModelPackages() == null || getMetaModelPackages().isEmpty()) {
+                throw new DSEException("Cannot initialize state coder."
+                        + " Please specifiy the EPackages your model uses with addMetaModelPackage(EPackage)");
+            }
+            globalContext.setStateCoderFactory(new SimpleStateCoderFactory(getMetaModelPackages()));
+        }
 
         if (guidance != null) {
 

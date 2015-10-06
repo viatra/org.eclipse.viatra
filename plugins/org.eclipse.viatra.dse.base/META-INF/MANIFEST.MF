@@ -34,6 +34,7 @@ Export-Package: org.eclipse.viatra.dse,
  org.eclipse.viatra.dse.statecode.incrementalgraph,
  org.eclipse.viatra.dse.statecode.incrementalgraph.impl,
  org.eclipse.viatra.dse.statecoding,
+ org.eclipse.viatra.dse.statecoding.simple,
  org.eclipse.viatra.dse.visualizer
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.viatra.dse.DSEActivator
