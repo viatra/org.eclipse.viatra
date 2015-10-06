@@ -62,15 +62,18 @@ public class MatcherValue extends IncQueryDebugValue {
         } else {
             fVariables = new ArrayList<IJavaVariable>();
 
-            ValueWrapper matches = fValue.invoke("getAllMatches").get("elementData");
-            if (matches.isArray()) {
-                for (Value match : ((ArrayReference) matches.getValue()).getValues()) {
-                    if (match != null) {
-                        ValueWrapper wrappedMatch = ValueWrapper.wrap(match, fValue.getThreadReference());
-                        IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
-                        MatchValue value = new MatchValue(debugTarget, wrappedMatch);
-                        var.setValue(value);
-                        fVariables.add(var);
+            ValueWrapper matchesWrapper = fValue.invoke("getAllMatches").get("elementData");
+            if (matchesWrapper.isArray()) {
+                ArrayReference matches = (ArrayReference) matchesWrapper.getValue();
+                if (matches.length() > 0) { // XXX https://bugs.eclipse.org/bugs/show_bug.cgi?id=478279 necessary because of bug in org.eclipse.jdi.internal.ArrayReferenceImpl.getValues
+                    for (Value match : matches.getValues()) {
+                        if (match != null) {
+                            ValueWrapper wrappedMatch = ValueWrapper.wrap(match, fValue.getThreadReference());
+                            IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
+                            MatchValue value = new MatchValue(debugTarget, wrappedMatch);
+                            var.setValue(value);
+                            fVariables.add(var);
+                        }
                     }
                 }
             }
