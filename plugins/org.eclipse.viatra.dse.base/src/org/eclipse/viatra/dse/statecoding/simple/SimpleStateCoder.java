@@ -50,20 +50,19 @@ public class SimpleStateCoder implements IStateCoder {
     private Set<EClass> classes;
     private Set<EStructuralFeature> features;
     private IncQueryEngine iqEngine;
-    private Logger logger = Logger.getLogger(getClass());
     private NavigationHelper navigationHelper;
     private MetaModelElements metaModelElements;
-    
+
     private Map<EClass, Map<EObject, String>> objectCodes;
     private int maxDepth;
 
     private Set<EObject> changedOrNewEObjects = new HashSet<EObject>();
     private Set<EObject> deletedClasses = new HashSet<EObject>();
-    
+
     public SimpleStateCoder(MetaModelElements metaModelElements) {
         this.metaModelElements = metaModelElements;
         this.maxDepth = 1;
-        
+
         classes = metaModelElements.classes;
         features = new HashSet<EStructuralFeature>(metaModelElements.attributes);
         features.addAll(metaModelElements.references);
@@ -80,7 +79,7 @@ public class SimpleStateCoder implements IStateCoder {
         } catch (IncQueryException e) {
             throw new DSEException(e);
         }
-        
+
         objectCodes = new HashMap<EClass, Map<EObject, String>>();
         for (EClass eClass : classes) {
             Map<EObject, String> codes = new ValueComparableMap<EObject, String>(Ordering.natural(),
@@ -90,47 +89,41 @@ public class SimpleStateCoder implements IStateCoder {
                             // will this work??
                             return Integer.compare(System.identityHashCode(o1), System.identityHashCode(o2));
                         }
-            });
-            
+                    });
+
             objectCodes.put(eClass, codes);
-            
+
             for (EObject eObject : navigationHelper.getDirectInstances(eClass)) {
-                codes.put(eObject, createObjectCodeWithDepth(eObject,maxDepth));
+                codes.put(eObject, createObjectCodeWithDepth(eObject, maxDepth));
             }
         }
 
         navigationHelper.addFeatureListener(features, new FeatureListener() {
-            
+
             @Override
             public void featureInserted(EObject host, EStructuralFeature feature, Object value) {
                 changedOrNewEObjects.add(host);
-                logger.debug("Feature inserted: " + host.toString() + " | "
-                        + feature.getName() + " = " + value.toString());
             }
-            
+
             @Override
             public void featureDeleted(EObject host, EStructuralFeature feature, Object value) {
                 changedOrNewEObjects.add(host);
                 if (value instanceof EObject) {
                     changedOrNewEObjects.add((EObject) value);
                 }
-                logger.debug("Feature deleted: " + host.toString() + " | "
-                        + feature.getName() + " = " + value.toString());
             }
         });
-        
+
         navigationHelper.addInstanceListener(classes, new InstanceListener() {
-            
+
             @Override
             public void instanceInserted(EClass clazz, EObject instance) {
                 changedOrNewEObjects.add(instance);
-                logger.debug("Instance inserted: " + clazz.getName() + " = " + instance.toString());
             }
-            
+
             @Override
             public void instanceDeleted(EClass clazz, EObject instance) {
                 deletedClasses.add(instance);
-                logger.debug("Instance deleted: " + clazz.getName() + " = " + instance.toString());
             }
         });
     }
@@ -139,7 +132,7 @@ public class SimpleStateCoder implements IStateCoder {
 
         StringBuilder sb = new StringBuilder();
         EClass eClass = eObject.eClass();
-        
+
         Set<EAttribute> attributes = metaModelElements.attributesOfClass.get(eClass);
         for (EAttribute eAttribute : attributes) {
             Object value = eObject.eGet(eAttribute);
@@ -147,7 +140,7 @@ public class SimpleStateCoder implements IStateCoder {
             sb.append(',');
         }
         if (!attributes.isEmpty()) {
-            sb.deleteCharAt(sb.length()-1);
+            sb.deleteCharAt(sb.length() - 1);
         }
         if (depth > 0) {
             sb.append('-');
@@ -157,16 +150,16 @@ public class SimpleStateCoder implements IStateCoder {
                 if (value == null) {
                     sb.append("null,");
                 } else if (value instanceof EObject) {
-                    sb.append(createObjectCodeWithDepth((EObject) value, depth-1));
+                    sb.append(createObjectCodeWithDepth((EObject) value, depth - 1));
                     sb.append(',');
                 } else {
                     List<EObject> referencedEObjects = (List<EObject>) value;
                     if (!referencedEObjects.isEmpty()) {
-                            
+
                         String[] codes = new String[referencedEObjects.size()];
                         int index = 0;
                         for (EObject referencedEObject : referencedEObjects) {
-                            codes[index++] = createObjectCodeWithDepth(referencedEObject, depth-1);
+                            codes[index++] = createObjectCodeWithDepth(referencedEObject, depth - 1);
                         }
                         Arrays.sort(codes);
                         sb.append('(');
@@ -177,28 +170,28 @@ public class SimpleStateCoder implements IStateCoder {
                     }
                 }
             }
-            sb.deleteCharAt(sb.length()-1);
+            sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
     }
-    
+
     @Override
     public Object createStateCode() {
-        
+
         refreshObjectCodes();
-        
+
         StringBuilder sb = new StringBuilder();
-        
+
         for (EClass eClass : classes) {
 
             Set<EObject> instances = navigationHelper.getDirectInstances(eClass);
 
             if (!instances.isEmpty()) {
-                
+
                 sb.append(eClass.getName());
                 sb.append(':');
-                
-                String[] codesToSort = new String[instances.size()]; 
+
+                String[] codesToSort = new String[instances.size()];
                 int index = 0;
                 Map<EObject, String> codes = objectCodes.get(eClass);
                 for (EObject eObject : instances) {
@@ -209,12 +202,12 @@ public class SimpleStateCoder implements IStateCoder {
                     sb.append(string);
                     sb.append(';');
                 }
-                sb.deleteCharAt(sb.length()-1);
+                sb.deleteCharAt(sb.length() - 1);
                 sb.append('|');
             }
         }
         if (sb.length() != 0) {
-            sb.deleteCharAt(sb.length()-1);
+            sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
     }
@@ -225,7 +218,7 @@ public class SimpleStateCoder implements IStateCoder {
             objectCodes.get(eClass).remove(eObject);
         }
         deletedClasses.clear();
-        
+
         Set<EObject> objectsToRecode = new HashSet<EObject>();
         for (EObject eObject : changedOrNewEObjects) {
             objectsToRecode.add(eObject);
@@ -233,7 +226,7 @@ public class SimpleStateCoder implements IStateCoder {
                 objectsToRecode.add(setting.getEObject());
             }
         }
-        
+
         for (EObject eObject : objectsToRecode) {
             EClass eClass = eObject.eClass();
             objectCodes.get(eClass).put(eObject, createObjectCodeWithDepth(eObject, maxDepth));
@@ -246,14 +239,14 @@ public class SimpleStateCoder implements IStateCoder {
 
         StringBuilder sb = new StringBuilder();
         String[] tokens = match.specification().getFullyQualifiedName().split("\\.");
-        sb.append(tokens[tokens.length-1]);
+        sb.append(tokens[tokens.length - 1]);
         sb.append(':');
         Object param;
-        for (int i = 0; (param = match.get(i))!=null; i++) {
+        for (int i = 0; (param = match.get(i)) != null; i++) {
             EObject eObject = (EObject) param;
-            
+
             EClass eClass = eObject.eClass();
-            
+
             Set<EAttribute> attributes = metaModelElements.attributesOfClass.get(eClass);
             for (EAttribute eAttribute : attributes) {
                 Object value = eObject.eGet(eAttribute);
@@ -261,12 +254,12 @@ public class SimpleStateCoder implements IStateCoder {
                 sb.append(',');
             }
             if (!attributes.isEmpty()) {
-                sb.deleteCharAt(sb.length()-1);
+                sb.deleteCharAt(sb.length() - 1);
             }
-            
+
             sb.append('|');
         }
-        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length() - 1);
         return sb.toString().intern();
     }
 
