@@ -21,6 +21,15 @@ import com.google.common.collect.Ordering;
 
 /**
  * 
+ * This custom {@link TreeMap} implementation enables to store {@link EObject}-{@link String} pairs sorted by values
+ * (strings). It works as expected if the map is modified in any way, hence the map will still be sorted by values on
+ * the new set of entries.
+ * 
+ * It is allowed to have two entries with the same EObject key (and also with same values).
+ * 
+ * The short coming of the class is that EObjects are compared to each other by their
+ * {@link System#identityHashCode(Object)}, which may lead to unexpected errors.
+ * 
  * @author Andras Szabolcs Nagy
  *
  */
