@@ -87,7 +87,7 @@ public class SimpleStateCoder implements IStateCoder {
                         @Override
                         public int compare(EObject o1, EObject o2) {
                             // will this work??
-                            return Integer.compare(System.identityHashCode(o1), System.identityHashCode(o2));
+                            return Integer.valueOf(System.identityHashCode(o1)).compareTo(Integer.valueOf(System.identityHashCode(o2)));
                         }
                     });
 
