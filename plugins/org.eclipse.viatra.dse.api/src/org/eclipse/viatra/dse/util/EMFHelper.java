@@ -191,7 +191,7 @@ public final class EMFHelper {
      * @return AA {@link MetaModelElements} instance.
      */
     public static MetaModelElements getClasses(Set<EPackage> metaModelPackages) {
-        return getMetaModelElements(metaModelPackages, true, true, true);
+        return getMetaModelElements(metaModelPackages, true, false, false);
     }
 
     /**
@@ -203,7 +203,7 @@ public final class EMFHelper {
      * @return AA {@link MetaModelElements} instance.
      */
     public static MetaModelElements getReferences(Set<EPackage> metaModelPackages) {
-        return getMetaModelElements(metaModelPackages, true, true, true);
+        return getMetaModelElements(metaModelPackages, false, true, false);
     }
 
     /**
@@ -215,7 +215,7 @@ public final class EMFHelper {
      * @return AA {@link MetaModelElements} instance.
      */
     public static MetaModelElements getAttrbiutes(Set<EPackage> metaModelPackages) {
-        return getMetaModelElements(metaModelPackages, true, true, true);
+        return getMetaModelElements(metaModelPackages, false, false, true);
     }
 
     private static MetaModelElements getMetaModelElements(Set<EPackage> metaModelPackages, boolean getClasses,
