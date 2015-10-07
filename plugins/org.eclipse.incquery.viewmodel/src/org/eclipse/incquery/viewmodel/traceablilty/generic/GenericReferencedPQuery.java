@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.viewmodel.traceablilty.generic;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -182,6 +183,10 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
         return literal;
     }
 
+	protected Collection<String> getBaseParameters() {
+		return baseQuery.getParameterNames();
+	}
+	
     public Multimap<PParameter, PParameter> getReferenceSources() {
         return traceSources;
     }

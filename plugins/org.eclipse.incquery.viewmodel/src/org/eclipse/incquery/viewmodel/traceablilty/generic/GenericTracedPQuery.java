@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.viewmodel.traceablilty.generic;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -61,12 +62,13 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
         PVariable var_traceability = body.newConstantVariable(traceabilityId);
         
         List<ExportedParameter> symbolicParameters = body.getSymbolicParameters();
+        Collection<String> baseParameters = getBaseParameters();
         symbolicParameters.add(new ExportedParameter(body, var_trace, var_trace.getName()));
         getParameters().add(new PParameter(var_trace.getName()));
         body.setSymbolicParameters(symbolicParameters);
         
         for (ExportedParameter parameter : symbolicParameters) {
-            if(parameter.getParameterVariable() != var_trace) {
+            if(baseParameters.contains(parameter.getParameterName())) {
                 try {
                     new PositivePatternCall(body, new FlatTuple(parameter.getParameterVariable(), var_id, var_su, var_trace, var_traceability),
                             TraceQuerySpecification.instance().getInternalQueryRepresentation());

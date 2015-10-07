@@ -59,3 +59,9 @@ pattern param2containment(source, target, trace, containment : Containment) {
 	Trace.objects(trace, target);
 	Trace.targets(trace, containment);
 }
+
+pattern children(parent:Item, child:Item) {
+	Containment.source(c, parent);
+	Containment.target(c, child);
+}
+

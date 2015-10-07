@@ -70,7 +70,7 @@ public class ItemRule extends ViewModelRule {
                         EObject eObject = ViewModelUtil.<Item> create(NotationPackage.eINSTANCE.getItem(),
                                 state.getNotationModel(), NotationPackage.eINSTANCE.getNotationModel_Items());
 
-                        ViewModelUtil.trace(state.getManager(), getBaseSpecification().getFullyQualifiedName(),
+                        ViewModelUtil.trace(state.getManager(), getReferencedSpecification().getFullyQualifiedName(),
                                 Collections.singleton(eObject), param);
 
                         Item item = (Item) eObject;

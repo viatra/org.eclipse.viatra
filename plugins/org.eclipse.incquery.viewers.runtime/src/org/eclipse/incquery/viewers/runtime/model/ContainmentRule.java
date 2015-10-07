@@ -12,8 +12,10 @@ package org.eclipse.incquery.viewers.runtime.model;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.incquery.runtime.api.IMatchProcessor;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
@@ -72,12 +74,11 @@ public class ContainmentRule extends ViewModelRule {
 
                         EObject eObject = ViewModelUtil.create(NotationPackage.eINSTANCE.getContainment(),
                                 state.getNotationModel(), NotationPackage.eINSTANCE.getNotationModel_Containments());
-                        ViewModelUtil.trace(state.getManager(), getBaseSpecification().getFullyQualifiedName(),
+                        ViewModelUtil.trace(state.getManager(), getReferencedSpecification().getFullyQualifiedName(),
                                 Collections.singleton(eObject), match.get(descriptor.getContainer()),
                                 match.get(descriptor.getItem()));
 
                         Containment edge = (Containment) eObject;
-                        target.setParent(source);
                         edge.setSource(source);
                         edge.setTarget(target);
 
@@ -90,6 +91,18 @@ public class ContainmentRule extends ViewModelRule {
     }
 
     @Override
+    protected Job<GenericPatternMatch> getUpdatedJob() {
+    	return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.UPDATED,
+                new IMatchProcessor<GenericPatternMatch>() {
+
+                    @Override
+                    public void process(GenericPatternMatch match) {
+                        return;
+                    }
+                }));
+    }
+    
+    @Override
     public Job<GenericPatternMatch> getDisappearedJob() {
         return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED,
                 new IMatchProcessor<GenericPatternMatch>() {
@@ -98,10 +111,14 @@ public class ContainmentRule extends ViewModelRule {
                     public void process(GenericPatternMatch match) {
                         if (ViewModelUtil.target(match) instanceof Containment) {
                             Collection<EObject> edges = ViewModelUtil.delete(match);
-                            for (EObject edge : edges) {
+                            Iterator<EObject> iterator = edges.iterator();
+                            while(iterator.hasNext()) {
+                            	EObject edge = iterator.next();
+                            	EcoreUtil.delete(edge);
                                 state.containmentDisappeared((Containment) edge);
                                 logger.debug("Containment disappeared: " + "<"+getTracedSpecification().getFullyQualifiedName()+">" + edge.toString());
                             }
+                            
                         }
                     }
                 }));

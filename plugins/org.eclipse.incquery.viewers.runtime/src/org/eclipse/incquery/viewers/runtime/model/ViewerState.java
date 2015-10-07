@@ -13,6 +13,7 @@
 package org.eclipse.incquery.viewers.runtime.model;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
@@ -23,6 +24,9 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.QueryInitialization
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerLabelListener;
 import org.eclipse.incquery.viewers.runtime.model.listeners.IViewerStateListener;
+import org.eclipse.incquery.viewers.runtime.model.patterns.ChildrenMatch;
+import org.eclipse.incquery.viewers.runtime.model.patterns.ChildrenMatcher;
+import org.eclipse.incquery.viewers.runtime.model.patterns.util.ChildrenQuerySpecification;
 import org.eclipse.incquery.viewers.runtime.specifications.ContainmentQuerySpecificationDescriptor;
 import org.eclipse.incquery.viewers.runtime.specifications.EdgeQuerySpecificationDescriptor;
 import org.eclipse.incquery.viewers.runtime.specifications.ItemQuerySpecificationDescriptor;
@@ -101,7 +105,18 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
     }
 
     public Collection<Item> getChildren(Item parent) {
-        return parent.getChildren();
+    	try {
+			ChildrenMatcher matcher = model.getEngine().getMatcher(ChildrenQuerySpecification.instance());
+			Collection<ChildrenMatch> matches = matcher.getAllMatches(parent, null);
+			Collection<Item> items = Lists.newArrayList();
+			for (ChildrenMatch match: matches) {
+				items.add(match.getChild());
+			}
+			return items;
+		} catch (IncQueryException e) {
+			IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
+		}
+    	return Collections.emptyList();
     }
 
     public Item getParent(Item child) {
