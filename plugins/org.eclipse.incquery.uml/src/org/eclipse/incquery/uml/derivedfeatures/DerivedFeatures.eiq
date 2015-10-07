@@ -295,38 +295,6 @@ pattern featureFeaturingClassifier(source: Feature, target: Classifier)
 { Property.interface(source, target); } or 
 { Property.owningAssociation(source, target); }
 
-@Surrogate(feature = "namespace")
-@QueryExplorer(checked = false)
-pattern namedElementNamespace(source: NamedElement, target: Namespace)
-{ ConnectionPointReference.state(source, target); } or 
-{ Constraint.context(source, target); } or 
-{ EnumerationLiteral.enumeration(source, target); } or 
-{ Extend.^extension(source, target); } or 
-{ ExtensionPoint.useCase(source, target); } or 
-{ Include.includingCase(source, target); } or 
-{ InteractionFragment.enclosingInteraction(source, target); } or 
-{ InteractionFragment.enclosingOperand(source, target); } or 
-{ Lifeline.interaction(source, target); } or 
-{ Message.interaction(source, target); } or 
-{ Operation.class(source, target); } or 
-{ Operation.datatype(source, target); } or 
-{ Operation.interface(source, target); } or
-{ find packageNestingPackage(source, target); } or 
-//{ find parameterOperation(source, target); } or 
-//{ find propertyClass(source, target); } or 
-{ Property.datatype(source, target); } or 
-{ Property.interface(source, target); } or 
-{ Property.owningAssociation(source, target); } or 
-{ Pseudostate.state(source, target); } or 
-{ Pseudostate.stateMachine(source, target); } or 
-{ Region.state(source, target); } or 
-{ Region.stateMachine(source, target); } or 
-{ Transition.container(source, target); } or 
-{ find typePackage(source, target); } or 
-{ Variable.activityScope(source, target); } or 
-{ Variable.scope(source, target); } or 
-{ Vertex.container(source, target); }
-
 @Surrogate(feature = "member")
 @QueryExplorer(checked = false)
 pattern namespaceMember(source: Namespace, target: NamedElement)
@@ -956,11 +924,20 @@ pattern stateIsComposite(
 }
 
 @QueryExplorer(checked = false)
-pattern stateIsComposite_0(
+private pattern stateIsComposite_0(
     self : State,
     region : Region
 ) {
     State.region(self, region);
+}
+
+/*
+NamedElementOperations.getNamespace
+*/
+@Surrogate(feature = "namespace")
+@QueryExplorer(checked = false)
+pattern namedElementNamespace(source: NamedElement, target: Namespace) {
+	find namespaceMember(target, source);
 }
 
 // * Handwritten
@@ -969,9 +946,8 @@ pattern stateIsComposite_0(
 Specifies the owning Package of this Type, if any.
 */
 @Surrogate(feature = "package")
-pattern typePackage(source: Type, target: Package)
-{ 
-Package.packagedElement(target,source);
+pattern typePackage(source: Type, target: Package) { 
+	Package.packagedElement(target,source);
 }
 
 /*
@@ -1132,6 +1108,7 @@ private pattern packageImportedPackage(package_: Package, importedPackage: Packa
     PackageImport.importedPackage(packageImport, importedPackage);
 }
 
+@Surrogate(feature = "nestingPackage")
 @QueryExplorer(checked = false)
 pattern packageNestingPackage(nested: Package, nesting: Package) {
     find packageNestedPackage(nesting, nested);
