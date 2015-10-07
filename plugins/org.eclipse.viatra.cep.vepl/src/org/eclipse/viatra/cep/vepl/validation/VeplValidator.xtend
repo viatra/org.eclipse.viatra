@@ -51,6 +51,7 @@ class VeplValidator extends AbstractVeplValidator {
 	public static val NEGATIVE_WITH_TIMEWINDOW = "negativeWithTimewindow"
 	public static val DUPLICATE_TRAIT_PARAMETER_NAMES = "duplicateTraitParameterNames"
 	public static val TRAIT_EXPERIMENTAL = "traitExperimental"
+	public static val SHADOWED_TRAIT_PARAMETERS = "shadowedTraitParameters"
 
 	@Check
 	def uniqueName(ModelElement modelElement) {
@@ -279,27 +280,60 @@ class VeplValidator extends AbstractVeplValidator {
 	}
 
 	@Check
-	def duplicateTraitParameterNames(AtomicEventPattern atomicEventPattern) {
+	def duplicateTraitParameterNamesInDiamondInheritance(AtomicEventPattern atomicEventPattern) {
 		val traitList = atomicEventPattern.traits
 		if (traitList == null) {
 			return
 		}
 
 		val paramNames = Lists::newArrayList
+		val errorousParamNames = Lists::newArrayList
 
 		for (trait : traitList.traits) {
 			for (param : trait.parameters.parameters) {
 				val parameter = param.typedParameter
 				if (paramNames.contains(parameter.name)) {
-					error(
-						"Duplicate parameter definition in traits. (" + parameter.name + ")",
-						VeplPackage.Literals.ATOMIC_EVENT_PATTERN__TRAITS,
-						DUPLICATE_TRAIT_PARAMETER_NAMES
-					)
+					errorousParamNames += parameter.name
 				} else {
 					paramNames += parameter.name
 				}
 			}
+		}
+
+		if (!errorousParamNames.empty) {
+			error(
+				"Duplicate parameter definition in traits. (" + errorousParamNames.foldWithComma,
+				VeplPackage.Literals.ATOMIC_EVENT_PATTERN__TRAITS,
+				DUPLICATE_TRAIT_PARAMETER_NAMES
+			)
+		}
+	}
+
+	@Check
+	def traitParameterShadowing(AtomicEventPattern atomicEventPattern) {
+		val traitList = atomicEventPattern.traits
+		if (traitList == null) {
+			return
+		}
+
+		val shadowedParameters = Lists::newArrayList
+
+		for (parameter : atomicEventPattern.parameters.parameters) {
+			for (trait : traitList.traits) {
+				for (traitParam : trait.parameters.parameters) {
+					if (traitParam.typedParameter.name.equals(parameter.name)) {
+						shadowedParameters += traitParam.typedParameter.name
+					}
+				}
+			}
+		}
+
+		if (!shadowedParameters.empty) {
+			warning(
+				"Parameters " + shadowedParameters.foldWithComma + " shadow parameters in the associated traits.",
+				VeplPackage.Literals.ATOMIC_EVENT_PATTERN__TRAITS,
+				SHADOWED_TRAIT_PARAMETERS
+			)
 		}
 	}
 

@@ -86,4 +86,8 @@ class ValidationHelper {
 
 		return complexEventPattern
 	}
+
+	def static foldWithComma(Iterable<String> iterable) {
+		iterable.fold("")[a, b|if (a.empty) {a +  b} else {a +", " +b}]
+	}
 }

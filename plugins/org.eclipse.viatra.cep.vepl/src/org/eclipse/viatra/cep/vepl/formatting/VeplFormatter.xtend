@@ -11,8 +11,8 @@
 package org.eclipse.viatra.cep.vepl.formatting
 
 import com.google.inject.Inject
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.cep.vepl.services.VeplGrammarAccess
-import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter
 import org.eclipse.xtext.formatting.impl.FormattingConfig
 
@@ -42,7 +42,7 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 
 		for (k : grammar.findKeywords(";")) {
 			c.setNoSpace.before(k)
-			c.linewrap = 0
+			c.setLinewrap().after(k)
 		}
 
 		for (k : grammar.findKeywords(":")) {
@@ -56,9 +56,10 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 			c.setNoSpace().before(pair.getSecond());
 		}
 
-		val packageKeyword = grammar.eventModelAccess.packageKeyword_0
-		// grammar.findKeywords("package").head //FIXME linebreak when there's a comment/header before the package
-		c.setNoLinewrap.before(packageKeyword)
+		c.setLinewrap(0, 1, 2).before(SL_COMMENTRule)
+		c.setLinewrap(0, 1, 2).before(ML_COMMENTRule)
+		c.setLinewrap(0, 1, 1).after(ML_COMMENTRule)
+
 		c.setLinewrap(2).after(grammar.eventModelAccess.nameAssignment_1)
 
 		val imports = grammar.eventModelAccess.importsImportParserRuleCall_2_0
@@ -82,25 +83,21 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		c.setLinewrap(2).after(grammar.traitAccess.rule)
 
 		// handle line breaks and indentation in patterns' and rules' bodies
-//		c.lineBreakAndIncrementIndentation(grammar.atomicEventPatternAccess.leftCurlyBracketKeyword_4_0)
-		c.lineBreakAndIncrementIndentation(grammar.queryResultChangeEventPatternAccess.asKeyword_5)
+		c.lineBreakAndIncrementIndentation(grammar.atomicEventPatternAccess.leftCurlyBracketKeyword_4_0)
+		c.lineBreakAndIncrementIndentationBefore(grammar.queryResultChangeEventPatternAccess.asKeyword_5)
 		c.lineBreakAndIncrementIndentation(grammar.complexEventPatternAccess.leftCurlyBracketKeyword_5)
 		c.lineBreakAndIncrementIndentation(grammar.traitAccess.leftCurlyBracketKeyword_2)
 
-//		c.lineBreakAndDecrementIndentation(grammar.atomicEventPatternAccess.rightCurlyBracketKeyword_4_2)
-//		c.lineBreakAndDecrementIndentation(grammar.queryResultChangeEventPatternAccess.) //FIXME
+		c.lineBreakAndDecrementIndentation(grammar.atomicEventPatternAccess.rightCurlyBracketKeyword_4_2)
+		c.lineBreakAndDecrementIndentationAfter(grammar.queryResultChangeEventPatternAccess.rule)
 		c.lineBreakAndDecrementIndentation(grammar.complexEventPatternAccess.rightCurlyBracketKeyword_9)
 		c.lineBreakAndDecrementIndentation(grammar.traitAccess.rightCurlyBracketKeyword_4)
 
 		// TODO: handle line breaks in TRAIT bodies
 		// handle line breaks in ATOMIC bodies
-//		c.setLinewrap().after(grammar.atomicEventPatternAccess.checkExpressionAssignment_4_1_1)
 		c.lineBreakAndIncrementIndentation(grammar.XBlockExpressionAccess.leftCurlyBracketKeyword_1)
 		c.lineBreakAndDecrementIndentation(grammar.XBlockExpressionAccess.rightCurlyBracketKeyword_3)
 
-		// handle line breaks in IQ bodies
-//		c.setLinewrap().after(grammar.queryResultChangeEventPatternAccess.queryReferenceAssignment_8)
-//		c.setLinewrap().after(grammar.queryResultChangeEventPatternAccess.resultChangeTypeAssignment_9_2)
 		// handle line breaks in complex bodies
 		c.setLinewrap().after(grammar.complexEventPatternAccess.complexEventExpressionAssignment_7)
 		c.setSpace().after(grammar.complexEventPatternAccess.asKeyword_6)
@@ -140,22 +137,55 @@ class VeplFormatter extends AbstractDeclarativeFormatter {
 		c.setSpace(" ")
 	}
 
-	def private lineBreakAndIncrementIndentation(FormattingConfig c, Keyword keyword) {
-		lineBreakAndIncrementIndentation(c, keyword, 1)
+	def private lineBreakAndIncrementIndentation(FormattingConfig c, EObject eObject) {
+		lineBreakAndIncrementIndentation(c, eObject, 1, Location::AFTER)
 	}
 
-	def private lineBreakAndIncrementIndentation(FormattingConfig c, Keyword keyword, int lineWrap) {
-		c.setNoSpace.before(keyword)
-		c.setLinewrap(lineWrap).after(keyword)
-		c.setIndentationIncrement.after(keyword)
+	def private lineBreakAndIncrementIndentationBefore(FormattingConfig c, EObject eObject) {
+		lineBreakAndIncrementIndentation(c, eObject, 1, Location::BEFORE)
 	}
 
-	def private lineBreakAndDecrementIndentation(FormattingConfig c, Keyword keyword) {
-		lineBreakAndDecrementIndentation(c, keyword, 1)
+	def private lineBreakAndDecrementIndentation(FormattingConfig c, EObject eObject) {
+		lineBreakAndDecrementIndentation(c, eObject, 1, Location::BEFORE)
 	}
 
-	def private lineBreakAndDecrementIndentation(FormattingConfig c, Keyword keyword, int lineWrap) {
-		c.setLinewrap(lineWrap).before(keyword)
-		c.setIndentationDecrement.before(keyword)
+	def private lineBreakAndDecrementIndentationAfter(FormattingConfig c, EObject eObject) {
+		lineBreakAndDecrementIndentation(c, eObject, 1, Location::AFTER)
+	}
+
+	enum Location {
+		BEFORE,
+		AFTER
+	}
+
+	def private lineBreakAndIncrementIndentation(FormattingConfig c, EObject eObject, int lineWrap, Location location) {
+		switch (location) {
+			case BEFORE: {
+				c.setLinewrap(lineWrap).before(eObject)
+				c.setIndentationIncrement.before(eObject)
+			}
+			case AFTER: {
+				c.setNoSpace.before(eObject)
+				c.setLinewrap(lineWrap).after(eObject)
+				c.setIndentationIncrement.after(eObject)
+			}
+			default:
+				IllegalArgumentException
+		}
+	}
+
+	def private lineBreakAndDecrementIndentation(FormattingConfig c, EObject eObject, int lineWrap, Location location) {
+		switch (location) {
+			case BEFORE: {
+				c.setLinewrap(lineWrap).before(eObject)
+				c.setIndentationDecrement.before(eObject)
+			}
+			case AFTER: {
+				c.setLinewrap(lineWrap).after(eObject)
+				c.setIndentationDecrement.after(eObject)
+			}
+			default:
+				IllegalArgumentException
+		}
 	}
 }
