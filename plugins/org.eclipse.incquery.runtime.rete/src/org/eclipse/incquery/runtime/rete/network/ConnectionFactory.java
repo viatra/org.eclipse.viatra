@@ -117,7 +117,8 @@ class ConnectionFactory {
             ((TransitiveClosureNode) freshNode).reinitializeWith(tuples);
 			reteContainer.connect(parentSupplier, freshNode); 
 		} else { // default case
-			if (isStateful(recipe)) {
+			// stateless nodes do not have to be synced with contents UNLESS they already have children (recursive corner case)
+			if (isStateful(recipe) || ((freshNode instanceof Supplier) && !((Supplier)freshNode).getReceivers().isEmpty())) {
 				reteContainer.connectAndSynchronize(parentSupplier, freshNode); 
 			} else {
 				// stateless node, no synch

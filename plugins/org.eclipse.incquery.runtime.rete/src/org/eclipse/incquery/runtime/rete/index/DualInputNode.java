@@ -16,6 +16,7 @@ import java.util.Collection;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
 import org.eclipse.incquery.runtime.rete.network.Direction;
+import org.eclipse.incquery.runtime.rete.network.Receiver;
 import org.eclipse.incquery.runtime.rete.network.ReteContainer;
 import org.eclipse.incquery.runtime.rete.network.StandardNode;
 import org.eclipse.incquery.runtime.rete.traceability.TraceInfo;
@@ -92,9 +93,19 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 	public void connectToIndexers(IterableIndexer primarySlot, Indexer secondarySlot) {
 		this.primarySlot = primarySlot;
         this.secondarySlot = secondarySlot;
-        coincidence = primarySlot.equals(secondarySlot);
+  
+        // beta nodes are stateless, no need to synch contents to children...
+        // ...unless in a weird corner case of recursive queries, when there are already receivers attached
+        // so we prepare contents to be synced NOW
+        Collection<Tuple> contentsToSync = 
+        		getReceivers().isEmpty()? null 
+        				: reteContainer.pullContents(this);       
+        
+        // attach listeners
+        // if there is syncing, do this after the flush done for pulling, but before syncing updates
+        coincidence = primarySlot.equals(secondarySlot); 
         final DualInputNode me = this;
-        if (!coincidence) {
+        if (!coincidence) { // regular case
             primarySlot.attachListener(new DefaultIndexerListener(this) {
                 public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature,
                         boolean change) {
@@ -117,7 +128,7 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
                     return "secondary@" + me;
                 }
             });
-        } else {
+        } else { // if the two slots are the same, updates have to be handéed carefully
             primarySlot.attachListener(new DefaultIndexerListener(this) {
                 public void notifyIndexerUpdate(Direction direction, Tuple updateElement, Tuple signature,
                         boolean change) {
@@ -130,9 +141,18 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
                 }
             });
         }
-	}
+        
+        // synch contents to receivers now... if any
+        if (contentsToSync != null) {
+    		for (Receiver receiver : getReceivers()) {			
+    			reteContainer.sendConstructionUpdates(receiver, Direction.INSERT, contentsToSync);
+    		}
+    		reteContainer.flushUpdates();
+        }
 
-    // public Indexer createPrimarySlot(TupleMask mask)
+   	}
+
+	// public Indexer createPrimarySlot(TupleMask mask)
     // {
     // return accessSlot(mask, Side.PRIMARY);
     // }
