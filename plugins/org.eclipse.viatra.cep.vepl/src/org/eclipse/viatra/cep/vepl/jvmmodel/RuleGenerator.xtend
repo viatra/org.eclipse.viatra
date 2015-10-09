@@ -15,10 +15,10 @@ import com.google.inject.Inject
 import java.util.List
 import org.eclipse.incquery.runtime.evm.api.Activation
 import org.eclipse.incquery.runtime.evm.api.Context
-import org.eclipse.incquery.runtime.evm.api.Job
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState
 import org.eclipse.viatra.cep.core.api.evm.CepActivationStates
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern
+import org.eclipse.viatra.cep.core.api.rules.CepJob
 import org.eclipse.viatra.cep.core.api.rules.ICepRule
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
@@ -63,7 +63,7 @@ class RuleGenerator {
 				initializer = [append('''«referClass(typeRefBuilder, rule, Lists)».newArrayList()''')]
 			]
 			members += rule.toField("job",
-				typeRefBuilder.typeRef(Job, typeRefBuilder.typeRef(IObservableComplexEventPattern))) [
+				typeRefBuilder.typeRef(CepJob, typeRefBuilder.typeRef(IObservableComplexEventPattern))) [
 				initializer = [
 					append('''new ''').append('''«it.referClass(typeRefBuilder, rule.jobClassName, rule)»''').
 						append('''(''').append('''«referClass(typeRefBuilder, rule, CepActivationStates)».ACTIVE)''')]
@@ -76,7 +76,7 @@ class RuleGenerator {
 			var patternsGetter = rule.toGetter("eventPatterns",
 				typeRefBuilder.typeRef(List, typeRefBuilder.typeRef(EventPattern)))
 			var jobGetter = rule.toGetter("job",
-				typeRefBuilder.typeRef(Job, typeRefBuilder.typeRef(IObservableComplexEventPattern)))
+				typeRefBuilder.typeRef(CepJob, typeRefBuilder.typeRef(IObservableComplexEventPattern)))
 			patternsGetter.addOverrideAnnotation(rule)
 			jobGetter.addOverrideAnnotation(rule)
 			members += patternsGetter
@@ -88,7 +88,7 @@ class RuleGenerator {
 	def private generateJobClass(Rule appRule, IJvmDeclaredTypeAcceptor acceptor) {
 		acceptor.accept(appRule.toClass(appRule.jobClassName)) [
 			documentation = appRule.documentation
-			superTypes += typeRefBuilder.typeRef(Job, typeRefBuilder.typeRef(IObservableComplexEventPattern))
+			superTypes += typeRefBuilder.typeRef(CepJob, typeRefBuilder.typeRef(IObservableComplexEventPattern))
 			members += appRule.toConstructor [
 				parameters += appRule.toParameter("activationState", typeRefBuilder.typeRef(ActivationState))
 				body = [

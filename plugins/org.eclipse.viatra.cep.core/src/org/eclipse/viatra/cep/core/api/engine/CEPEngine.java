@@ -235,6 +235,8 @@ public class CEPEngine {
                     @SuppressWarnings("unchecked")
                     RuleSpecification<IObservableComplexEventPattern> ruleSpec = new RuleSpecification<IObservableComplexEventPattern>(
                             sourceSpec, getDefaultLifeCycle(), Sets.newHashSet(job));
+
+                    // ((CepJob<IObservableComplexEventPattern>) job).setCepEngine(this); //473187
                     ruleEngine.addRule(ruleSpec);
                 }
             }

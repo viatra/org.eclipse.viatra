@@ -16,7 +16,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.incquery.runtime.evm.api.Context;
-import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.viatra.cep.core.api.evm.CepActivationStates;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.logging.LoggerUtils;
@@ -34,23 +33,23 @@ public class DefaultCepRule implements ICepRule {
     private static final Logger LOGGER = LoggerUtils.getInstance().getLogger();
 
     private List<EventPattern> eventPatterns = Lists.newArrayList();
-    private Job<IObservableComplexEventPattern> job;
+    private CepJob<IObservableComplexEventPattern> job;
 
     /**
-     * Creates a new rule with the specified {@link EventPattern}s and {@link Job}.
+     * Creates a new rule with the specified {@link EventPattern}s and {@link CepJob}.
      * 
      * @param eventPatterns
      *            the {@link EventPattern}s the rule should be activated upon
      * @param job
-     *            the {@link Job} to be executed when patterns get matched
+     *            the {@link CepJob} to be executed when patterns get matched
      */
-    public DefaultCepRule(List<EventPattern> eventPatterns, Job<IObservableComplexEventPattern> job) {
+    public DefaultCepRule(List<EventPattern> eventPatterns, CepJob<IObservableComplexEventPattern> job) {
         this.eventPatterns = eventPatterns;
         this.job = job;
     }
 
     /**
-     * Creates a new rule with the specified {@link EventPattern}s and a default {@link Job}.
+     * Creates a new rule with the specified {@link EventPattern}s and a default {@link CepJob}.
      * 
      * @param eventPatterns
      *            the {@link EventPattern}s the rule should be activated upon
@@ -85,15 +84,15 @@ public class DefaultCepRule implements ICepRule {
     }
 
     @Override
-    public Job<IObservableComplexEventPattern> getJob() {
-        return job;
+    public CepJob<IObservableComplexEventPattern> getJob() {
+        return (CepJob<IObservableComplexEventPattern>) job;
     }
 
     /**
-     * @return default {@link Job} that logs diagnostic information on the console.
+     * @return default {@link CepJob} that logs diagnostic information on the console.
      */
-    private static Job<IObservableComplexEventPattern> getDefaultJob() {
-        return new Job<IObservableComplexEventPattern>(CepActivationStates.ACTIVE) {
+    private static CepJob<IObservableComplexEventPattern> getDefaultJob() {
+        return new CepJob<IObservableComplexEventPattern>(CepActivationStates.ACTIVE) {
 
             protected void execute(Activation<? extends IObservableComplexEventPattern> activation, Context context) {
                 LOGGER.debug("CepJobs#DefaultJob: Complex event pattern appeared: "
