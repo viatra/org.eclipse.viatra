@@ -12,8 +12,10 @@
 package org.eclipse.incquery.runtime.rete.network;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 import org.eclipse.incquery.runtime.matchers.tuple.TupleMask;
@@ -52,6 +54,13 @@ public abstract class StandardNode extends BaseNode implements Supplier {
     @Override
     public Collection<Receiver> getReceivers() {
         return children;
+    }
+    
+    @Override
+    public Set<Tuple> getPulledContents() {
+    	HashSet<Tuple> results = new HashSet<Tuple>();
+    	pullInto(results);
+    	return results;
     }
 
     @Override
