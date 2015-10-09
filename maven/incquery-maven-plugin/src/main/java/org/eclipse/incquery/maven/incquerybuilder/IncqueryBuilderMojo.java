@@ -35,7 +35,6 @@ import org.eclipse.incquery.maven.incquerybuilder.setup.EMFPatternLanguageMavenS
 import org.eclipse.incquery.maven.incquerybuilder.setup.MavenBuilderGenmodelLoader;
 import org.eclipse.xtext.maven.Language;
 import org.eclipse.xtext.maven.OutputConfiguration;
-import org.eclipse.xtext.maven.XtextGenerator;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
@@ -126,7 +125,7 @@ public class IncqueryBuilderMojo extends AbstractMojo {
 
         registerMetamodels();
 
-        XtextGenerator generator = new XtextGenerator();
+        ResourceOrderingXtextGenerator generator = new ResourceOrderingXtextGenerator();
 
         setupXtextGenerator(generator);
 
@@ -140,7 +139,7 @@ public class IncqueryBuilderMojo extends AbstractMojo {
      * @param generator
      *            The XtextGenerator object
      */
-    private void setupXtextGenerator(XtextGenerator generator) {
+    private void setupXtextGenerator(ResourceOrderingXtextGenerator generator) {
         generator.setLog(getLog()); // it's needed to give our Logger to the
                                     // other plugin to avoid exceptions
 
