@@ -98,7 +98,7 @@ class PConstraintInfo {
 			}
 		} else {
 			// n-ary constraint
-			throw new RuntimeException('''Cost calculation for arity �arity� is not implemented yet''')
+			throw new RuntimeException('''Cost calculation for arity «arity» is not implemented yet''')
 		}
 	}
 	
@@ -153,7 +153,7 @@ class PConstraintInfo {
 				// Strategy: try to navigate along many-to-one relations
 				var Map<Set<PVariable>, Set<PVariable>> functionalDependencies = constraint.getFunctionalDependencies(metaContext);
 				var impliedVariables = functionalDependencies.get(boundMaskVariables)
-				if(impliedVariables.containsAll(freeMaskVariables)){
+				if(impliedVariables != null && impliedVariables.containsAll(freeMaskVariables)){
 					cost = 1.0f;
 				} else {
 					cost = DEFAULT_COST
@@ -219,7 +219,7 @@ class PConstraintInfo {
 	}
 
 	override String toString()
-		'''«String.format(System.lineSeparator)»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''	
+		'''«String.format("\n")»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''	
 	
 
 }
