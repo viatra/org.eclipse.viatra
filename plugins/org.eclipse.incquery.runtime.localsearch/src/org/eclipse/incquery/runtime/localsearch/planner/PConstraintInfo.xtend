@@ -39,12 +39,9 @@ class PConstraintInfo {
 	private Set<PVariable> freeMaskVariables
 	private Set<PConstraintInfo> sameWithDifferentBindings
 	private IQueryRuntimeContext runtimeContext
-	private boolean useIndex
 
 	private static float MAX_COST = 250.0f
 	private static float DEFAULT_COST = MAX_COST-100.0f
-	private static long DEFAULT_COUNT = DEFAULT_COST.intValue
-	private static long DEFAULT_UNARY_COUNT = 2*DEFAULT_COUNT
 	private float cost
 
 	/** 
@@ -58,13 +55,12 @@ class PConstraintInfo {
 	 * @param runtimeContextthe runtime query context
 	 */
 	new(PConstraint constraint, Set<PVariable> boundMaskVariables, Set<PVariable> freeMaskVariables,
-		Set<PConstraintInfo> sameWithDifferentBindings, IQueryRuntimeContext runtimeContext, boolean useIndex) {
+		Set<PConstraintInfo> sameWithDifferentBindings, IQueryRuntimeContext runtimeContext) {
 		this.constraint = constraint
 		this.boundMaskVariables = boundMaskVariables
 		this.freeMaskVariables = freeMaskVariables
 		this.sameWithDifferentBindings = sameWithDifferentBindings
 		this.runtimeContext = runtimeContext
-		this.useIndex = useIndex
 
 		// Calculate cost of the constraint based on its type
 		calculateCost(constraint);
@@ -84,10 +80,7 @@ class PConstraintInfo {
 			calculateUnaryConstraintCost(supplierKey)
 		} else if (arity == 2) {
 			// binary constraint
-			var long edgeCount = DEFAULT_COUNT
-			if(useIndex || runtimeContext.isIndexed(supplierKey) || useIndex){
-				edgeCount = runtimeContext.countTuples(supplierKey, null)
-			}
+			var long edgeCount = runtimeContext.countTuples(supplierKey, null)
 			var srcVariable = (constraint as TypeConstraint).getVariablesTuple().get(0) as PVariable
 			var dstVariable = (constraint as TypeConstraint).getVariablesTuple().get(1) as PVariable
 			var isInverse = false
@@ -105,7 +98,7 @@ class PConstraintInfo {
 			}
 		} else {
 			// n-ary constraint
-			throw new RuntimeException('''Cost calculation for arity «arity» is not implemented yet''')
+			throw new RuntimeException('''Cost calculation for arity �arity� is not implemented yet''')
 		}
 	}
 	
@@ -120,19 +113,15 @@ class PConstraintInfo {
 			var List<Integer> impliedIndices = implication.getImpliedIndices()
 			if (impliedIndices.size() == 1 && impliedIndices.contains(0)) {
 				// Source key implication
-				if(useIndex || runtimeContext.isIndexed(implication.impliedKey)){
-					srcCount = runtimeContext.countTuples(implication.getImpliedKey(), null)				
-				}
+				srcCount = runtimeContext.countTuples(implication.getImpliedKey(), null)
 			} else if (impliedIndices.size() == 1 && impliedIndices.contains(1)) {
 				// Target key implication
-				if(useIndex || runtimeContext.isIndexed(implication.impliedKey)){
-					dstCount = runtimeContext.countTuples(implication.getImpliedKey(), null)
-				}
+				dstCount = runtimeContext.countTuples(implication.getImpliedKey(), null)
 			}
 		
 		}
 		if (freeMaskVariables.contains(srcVariable) && freeMaskVariables.contains(dstVariable)) {
-			cost = dstCount * srcCount * MAX_COST
+			cost = dstCount * srcCount
 		} else {
 			var long srcNodeCount = -1
 			var long dstNodeCount = -1
@@ -164,7 +153,7 @@ class PConstraintInfo {
 				// Strategy: try to navigate along many-to-one relations
 				var Map<Set<PVariable>, Set<PVariable>> functionalDependencies = constraint.getFunctionalDependencies(metaContext);
 				var impliedVariables = functionalDependencies.get(boundMaskVariables)
-				if(impliedVariables != null && impliedVariables.containsAll(freeMaskVariables)){
+				if(impliedVariables.containsAll(freeMaskVariables)){
 					cost = 1.0f;
 				} else {
 					cost = DEFAULT_COST
@@ -177,12 +166,9 @@ class PConstraintInfo {
 	protected def calculateUnaryConstraintCost(IInputKey supplierKey) {
 		var variable = (constraint as TypeConstraint).getVariablesTuple().get(0) as PVariable
 		if (boundMaskVariables.contains(variable)) {
-			cost = 0.9f
+			cost = 1
 		} else {
-			cost = DEFAULT_UNARY_COUNT 
-			if(useIndex || runtimeContext.isIndexed(supplierKey)){
-				cost = runtimeContext.countTuples(supplierKey, null)
-			}
+			cost = runtimeContext.countTuples(supplierKey, null)
 		}
 	}
 
@@ -233,7 +219,7 @@ class PConstraintInfo {
 	}
 
 	override String toString()
-		'''«String.format("\n")»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''	
+		'''«String.format(System.lineSeparator)»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''	
 	
 
 }
