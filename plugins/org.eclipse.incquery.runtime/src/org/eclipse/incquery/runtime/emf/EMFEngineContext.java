@@ -88,8 +88,8 @@ class EMFEngineContext implements IEngineContext {
            if (runtimeContext == null) 
         	   runtimeContext = 
         	   		emfScope.getOptions().isDynamicEMFMode() ?
-        				new DynamicEMFQueryRuntimeContext(nh, logger) :
-        				new EMFQueryRuntimeContext(nh, logger);
+        				new DynamicEMFQueryRuntimeContext(nh, logger, emfScope) :
+        				new EMFQueryRuntimeContext(nh, logger, emfScope);
            
            initializer.initializeWith(/*logger,*/ runtimeContext);
        } finally {

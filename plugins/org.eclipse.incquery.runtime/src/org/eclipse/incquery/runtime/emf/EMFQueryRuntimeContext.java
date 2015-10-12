@@ -61,11 +61,18 @@ public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
 	protected final EMFQueryMetaContext metaContext = EMFQueryMetaContext.INSTANCE;
 
 	protected Logger logger;
-	
-    public EMFQueryRuntimeContext(NavigationHelper baseIndex, Logger logger) {
+
+    private EMFScope emfScope;
+
+    public EMFQueryRuntimeContext(NavigationHelper baseIndex, Logger logger, EMFScope emfScope) {
         this.baseIndex = baseIndex;
         this.logger = logger;
         //this.listener = new BaseIndexListener(iqEngine);
+        this.emfScope = emfScope;
+    }
+    
+    public EMFScope getEmfScope() {
+        return emfScope;
     }
     
     public void dispose() {

@@ -27,8 +27,8 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
  */
 public class DynamicEMFQueryRuntimeContext extends EMFQueryRuntimeContext {
 
-	public DynamicEMFQueryRuntimeContext(NavigationHelper baseIndex, Logger logger) {
-		super(baseIndex, logger);
+	public DynamicEMFQueryRuntimeContext(NavigationHelper baseIndex, Logger logger, EMFScope emfScope) {
+		super(baseIndex, logger, emfScope);
 	}	
 	
 	@Override
