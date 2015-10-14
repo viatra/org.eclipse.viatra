@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  * Istvan David - initial API and implementation
  *******************************************************************************/
@@ -26,11 +26,11 @@ class AtomicGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
 	@Inject extension Utils
 	@Inject extension NamingProvider
-	
 
-	def public generateAtomicEventClasses(Iterable<ModelElement> patterns, IJvmDeclaredTypeAcceptor acceptor, JvmTypeReferenceBuilder typeRefBuilder) {
+	def public generateAtomicEventClasses(Iterable<ModelElement> patterns, IJvmDeclaredTypeAcceptor acceptor,
+		JvmTypeReferenceBuilder typeRefBuilder) {
 		for (pattern : patterns) {
-			acceptor.accept(pattern.toClass(pattern.classFqn))[
+			acceptor.accept(pattern.toClass(pattern.classFqn)) [
 				documentation = pattern.documentation
 				if (pattern instanceof QueryResultChangeEventPattern) {
 					superTypes += typeRefBuilder.typeRef(ParameterizableIncQueryPatternEventInstance)
@@ -43,17 +43,17 @@ class AtomicGenerator {
 						members += pattern.toField(parameter.name, parameter.type)
 					}
 				}
-				if(pattern instanceof AtomicEventPattern){
+				if (pattern instanceof AtomicEventPattern) {
 					val traitList = (pattern as AtomicEventPattern).traits
-					if(traitList!=null){
-						for(trait : traitList.traits){
-							for(param : trait.parameters.parameters){
+					if (traitList != null) {
+						for (trait : traitList.traits) {
+							for (param : trait.parameters.parameters) {
 								val parameter = param.typedParameter
-								members += pattern.toField(parameter.name, parameter.type)[
-									if(param.value!=null){
-										initializer = param.value										
+								members += pattern.toField(parameter.name, parameter.type) [
+									if (param.value != null) {
+										initializer = param.value
 									}
-								]								
+								]
 							}
 						}
 					}
@@ -63,48 +63,50 @@ class AtomicGenerator {
 					body = [
 						append(
 							'''
-							super(eventSource);''').append(
+						super(eventSource);''').append(
 							'''
-								«IF paramList != null»
-
-									«FOR parameter : paramList.parameters»
+							
+							«IF paramList != null»
+								«FOR parameter : paramList.parameters»
 										getParameters().add(«parameter.name»);
+								«ENDFOR»
+							«ENDIF»
+						''').append(
+							'''
+							«IF pattern instanceof AtomicEventPattern»
+								«IF (pattern as AtomicEventPattern).traits!=null»
+									«FOR trait : (pattern as AtomicEventPattern).traits.traits»
+										«FOR param : trait.parameters.parameters»				
+												getParameters().add(«param.typedParameter.name»);
+										«ENDFOR»
 									«ENDFOR»
 								«ENDIF»
-								«IF pattern instanceof AtomicEventPattern»
-									«IF (pattern as AtomicEventPattern).traits!=null»
-										«FOR trait : (pattern as AtomicEventPattern).traits.traits»
-											«FOR param : trait.parameters.parameters»
-												getParameters().add(«param.typedParameter.name»);
-											«ENDFOR»
-										«ENDFOR»
-									«ENDIF»
-								«ENDIF»
-							''')
+							«ENDIF»
+						''')
 					]
 				]
+				var i = 0
 				if (paramList != null) {
-					var i = 0
 					for (parameter : paramList.parameters) {
 						members += pattern.toGetter(parameter.name, parameter.type)
 						members += pattern.toAdvancedSetter(parameter.name, parameter.type, typeRefBuilder, i)
 						i = i + 1
 					}
-					if(pattern instanceof AtomicEventPattern){
-						val traitList = (pattern as AtomicEventPattern).traits
-						if(traitList!=null){
-							for(trait : traitList.traits){
-								for(param : trait.parameters.parameters){
-									val parameter = param.typedParameter
-									members += pattern.toGetter(parameter.name, parameter.type)
-									members += pattern.toAdvancedSetter(parameter.name, parameter.type, typeRefBuilder, i)
-									i = i + 1								
-								}
+				}
+				if (pattern instanceof AtomicEventPattern) {
+					val traitList = (pattern as AtomicEventPattern).traits
+					if (traitList != null) {
+						for (trait : traitList.traits) {
+							for (param : trait.parameters.parameters) {
+								val parameter = param.typedParameter
+								members += pattern.toGetter(parameter.name, parameter.type)
+								members += pattern.toAdvancedSetter(parameter.name, parameter.type, typeRefBuilder, i)
+								i = i + 1
 							}
 						}
 					}
 				}
-				
+
 				members += pattern.toMethod("evaluateCheckExpression", typeRefBuilder.typeRef("boolean")) [
 					addOverrideAnnotation(it, pattern)
 					if (pattern.checkExpression == null) {
@@ -120,7 +122,8 @@ class AtomicGenerator {
 		}
 	}
 
-	def void generateAtomicEventPatterns(Iterable<ModelElement> patterns, IJvmDeclaredTypeAcceptor acceptor, JvmTypeReferenceBuilder typeRefBuilder) {
+	def void generateAtomicEventPatterns(Iterable<ModelElement> patterns, IJvmDeclaredTypeAcceptor acceptor,
+		JvmTypeReferenceBuilder typeRefBuilder) {
 		for (pattern : patterns) {
 			acceptor.accept(pattern.toClass(pattern.patternFqn)) [
 				documentation = pattern.documentation
@@ -135,13 +138,14 @@ class AtomicGenerator {
 					body = [
 						append(
 							'''
-							super();
-							setType(''').append('''«it.referClass(typeRefBuilder, pattern.classFqn, pattern)»''').append(
+						super();
+						setType(''').append('''«it.referClass(typeRefBuilder, pattern.classFqn, pattern)»''').append(
 							'''.class.getCanonicalName());''').append(
 							'''
 							
 							setId("«pattern.patternFqn.toString.toLowerCase»");'''
-						)]
+						)
+					]
 				]
 			]
 			FactoryManager.instance.add(pattern.patternFqn)
@@ -158,9 +162,9 @@ class AtomicGenerator {
 	}
 
 	def private getParamList(ModelElement modelElement) {
-		if(modelElement instanceof AtomicEventPattern){
+		if (modelElement instanceof AtomicEventPattern) {
 			return (modelElement as AtomicEventPattern).parameters
-		}else if(modelElement instanceof QueryResultChangeEventPattern){
+		} else if (modelElement instanceof QueryResultChangeEventPattern) {
 			return (modelElement as QueryResultChangeEventPattern).parameters
 		}
 	}
