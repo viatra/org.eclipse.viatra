@@ -46,12 +46,12 @@ class NamingProvider {
 
 	def getTraitInterfaceFqn(ModelElement element) {
 		val className = element.fullyQualifiedName.lastSegment
-		element.packageNames.get(NamingPurpose::TRAIT).append("I" + className.toFirstUpper)
+		element.packageNames.get(NamingPurpose::TRAIT).append(className.toFirstUpper)
 	}
 
 	def getTraitSpecificationFqn(ModelElement element) {
 		val className = element.fullyQualifiedName.lastSegment
-		element.packageNames.get(NamingPurpose::TRAIT).append(className.toFirstUpper)
+		element.packageNames.get(NamingPurpose::TRAIT).append(className.toFirstUpper + "Specification")
 	}
 
 	def getClassFqn(ModelElement element) {

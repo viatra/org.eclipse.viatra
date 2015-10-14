@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.vepl.jvmmodel
 
-import com.google.common.collect.Lists
 import com.google.inject.Inject
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
 import org.eclipse.xtext.common.types.JvmAnnotationType
-import org.eclipse.xtext.common.types.JvmMember
 import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
@@ -33,7 +31,7 @@ class Utils {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
 	@Inject extension TypeReferences references
 
-	def Iterable<? extends JvmMember> toAdvancedSetter(ModelElement element, String name, JvmTypeReference type,
+	def JvmOperation toAdvancedSetter(ModelElement element, String name, JvmTypeReference type,
 		JvmTypeReferenceBuilder typeRefBuilder, int index) {
 		val advancedSetter = TypesFactory.eINSTANCE.createJvmOperation
 		advancedSetter.simpleName = "set" + name.toFirstUpper
@@ -46,7 +44,7 @@ class Utils {
 				this.«name» = «name»;
 				getParameters().set(«index», «name»);''')
 		]
-		return Lists.newArrayList(advancedSetter)
+		return advancedSetter
 	}
 
 	def addOverrideAnnotation(JvmOperation method, EObject context) {

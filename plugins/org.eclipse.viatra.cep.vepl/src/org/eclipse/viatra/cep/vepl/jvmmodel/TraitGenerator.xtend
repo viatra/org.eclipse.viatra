@@ -16,6 +16,7 @@ import org.eclipse.viatra.cep.vepl.vepl.Trait
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.xtext.common.types.JvmVisibility
 
 class TraitGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
@@ -24,27 +25,17 @@ class TraitGenerator {
 	def public generateInterface(Iterable<ModelElement> traits, IJvmDeclaredTypeAcceptor acceptor,
 		JvmTypeReferenceBuilder typeRefBuilder) {
 		for (trait : traits) {
-			acceptor.accept(trait.toClass(trait.traitSpecificationFqn)) [
-				final = true
+			acceptor.accept(trait.toInterface(trait.traitInterfaceFqn.toString) [
 				for (param : (trait as Trait).parameters.parameters) {
-					members += param.toField(param.typedParameter.name, param.typedParameter.type)
-					members += param.toGetter(param.typedParameter.name, param.typedParameter.type)
-					members += param.toSetter(param.typedParameter.name, param.typedParameter.type)
+					members += param.toMethod("get"+param.typedParameter.name.toFirstUpper, param.typedParameter.type)[
+						visibility = JvmVisibility.DEFAULT 
+					]
+					members += param.toMethod("set"+param.typedParameter.name.toFirstUpper, typeRefBuilder.typeRef("void"))[
+						visibility = JvmVisibility.DEFAULT
+						parameters += param.toParameter(param.typedParameter.name, param.typedParameter.type)
+					]
 				}
-
-//				members += trait.toMethod("evaluateCheckExpression", typeRefBuilder.typeRef("boolean")) [
-//					for (param : (trait as Trait).parameters.parameters) {
-//						parameters += trait.toParameter(param.typedParameter.name, param.typedParameter.type)
-//					}
-//					if ((trait as Trait).checkExpression == null) {
-//						body = [
-//							append('''return true;''')
-//						]
-//					} else {
-//						body = (trait as Trait).checkExpression
-//					}
-//				]
-			]
+			])
 		}
 	}
 }

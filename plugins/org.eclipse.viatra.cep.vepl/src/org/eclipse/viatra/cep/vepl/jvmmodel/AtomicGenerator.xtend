@@ -17,10 +17,10 @@ import org.eclipse.viatra.cep.core.metamodels.events.EventSource
 import org.eclipse.viatra.cep.core.metamodels.events.impl.AtomicEventPatternImpl
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
-import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
+import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 
 class AtomicGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
@@ -36,6 +36,13 @@ class AtomicGenerator {
 					superTypes += typeRefBuilder.typeRef(ParameterizableIncQueryPatternEventInstance)
 				} else if (pattern instanceof AtomicEventPattern) {
 					superTypes += typeRefBuilder.typeRef(ParameterizableEventInstance)
+					if((pattern as AtomicEventPattern).traits!=null){
+						if(!(pattern as AtomicEventPattern).traits.traits.empty){
+							for(trait : (pattern as AtomicEventPattern).traits.traits){
+								superTypes += typeRefBuilder.typeRef(trait.traitInterfaceFqn.toString)
+							}
+						}
+					}
 				}
 				val paramList = getParamList(pattern)
 				if (paramList != null) {
@@ -99,8 +106,14 @@ class AtomicGenerator {
 						for (trait : traitList.traits) {
 							for (param : trait.parameters.parameters) {
 								val parameter = param.typedParameter
-								members += pattern.toGetter(parameter.name, parameter.type)
-								members += pattern.toAdvancedSetter(parameter.name, parameter.type, typeRefBuilder, i)
+								
+								val getter = pattern.toGetter(parameter.name, parameter.type)
+								getter.addOverrideAnnotation(parameter)
+								members += getter
+								
+								val setter = pattern.toAdvancedSetter(parameter.name, parameter.type, typeRefBuilder, i)
+								setter.addOverrideAnnotation(pattern)
+								members += setter
 								i = i + 1
 							}
 						}
