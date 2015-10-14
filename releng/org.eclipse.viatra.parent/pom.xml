@@ -178,6 +178,7 @@
 			<modules>
 				<module>../../plugins/org.eclipse.viatra.cep.core</module>
 				<module>../../plugins/org.eclipse.viatra.cep.core.metamodels</module>
+				<module>../../plugins/org.eclipse.viatra.cep.emf.notification</module>
 				<module>../../plugins/org.eclipse.viatra.cep.tooling.core</module>
 				<module>../../plugins/org.eclipse.viatra.cep.tooling.ui</module>
 				<module>../../plugins/org.eclipse.viatra.cep.vepl</module>

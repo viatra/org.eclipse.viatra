@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA-CEP EMF Integration
+Bundle-SymbolicName: org.eclipse.viatra.cep.emf.notification;singleton:=true
+Bundle-Version: 0.8.0.qualifier
+Bundle-Vendor: Eclipse VIATRA Project
+Export-Package: org.eclipse.viatra.cep.emf.notification.integration,
+ org.eclipse.viatra.cep.emf.notification.model,
+ org.eclipse.viatra.cep.emf.notification.model.events,
+ org.eclipse.viatra.cep.emf.notification.model.patterns.atomic
+Require-Bundle: org.eclipse.emf.ecore,
+ org.eclipse.viatra.cep.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.log4j
