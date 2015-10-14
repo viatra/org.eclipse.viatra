@@ -94,7 +94,7 @@ public class DepthFirstStrategy extends LocalSearchStrategyBase {
         }
 
         if (transitions.size() > 1 && context.getGlobalContext().canStartNewThread()) {
-            context.getGlobalContext().tryStartNewThread(context);
+            context.getGlobalContext().tryStartNewThread(context, context.getModelRoot(), true, new DepthFirstStrategy(initMaxDepth));
         }
 
         int index = random.nextInt(transitions.size());

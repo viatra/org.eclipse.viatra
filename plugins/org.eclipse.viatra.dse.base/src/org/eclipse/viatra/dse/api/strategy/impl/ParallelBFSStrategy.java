@@ -79,7 +79,7 @@ public class ParallelBFSStrategy extends LocalSearchStrategyBase {
             sharedData.maxNumberOfThreads = context.getGlobalContext().getThreadPool().getMaximumPoolSize();
             gc.setSharedObject(sharedData);
 
-            while (context.getGlobalContext().tryStartNewThread(context) != null) {
+            while (context.getGlobalContext().tryStartNewThread(context, context.getModelRoot(), true, new ParallelBFSStrategy(initMaxDepth)) != null) {
             }
         } else {
             sharedData = (SharedData) gc.getSharedObject();
