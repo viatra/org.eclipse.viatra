@@ -19,6 +19,7 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
+import org.eclipse.viatra.cep.vepl.vepl.Trait
 
 /**
  * <p>Infers a JVM model from the source model.</p> 
@@ -28,6 +29,7 @@ import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
  */
 class VeplJvmModelInferrer extends AbstractModelInferrer {
 
+	@Inject extension TraitGenerator traitGenerator
 	@Inject extension AtomicGenerator atomicGenerator
 	@Inject extension IQGenerator iqGenerator
 	@Inject extension ComplexGenerator complexGenerator
@@ -65,6 +67,12 @@ class VeplJvmModelInferrer extends AbstractModelInferrer {
 		}
 
 		FactoryManager.instance.flush
+		
+		//generate traits
+		var traits = element.modelElements.filter[e|(e instanceof Trait)]
+		if (!traits.empty) {
+			traits.generateInterface(acceptor, _typeReferenceBuilder)
+		}
 
 		//generate atomic event classes and patterns
 		var patterns = element.modelElements.filter[e|(e instanceof AtomicEventPattern)]
