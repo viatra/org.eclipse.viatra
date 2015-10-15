@@ -35,6 +35,7 @@ import org.eclipse.incquery.runtime.localsearch.operations.check.InstanceOfClass
 import org.eclipse.incquery.runtime.localsearch.operations.check.InstanceOfDataTypeCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.check.StructuralFeatureCheck;
+import org.eclipse.incquery.runtime.localsearch.operations.check.nobase.ScopeCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExpressionEval;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendConstant;
@@ -308,20 +309,23 @@ public class POperationCompiler {
     	    if(baseIndexAvailable){
     	        operations.add(new IterateOverEDatatypeInstances(variableMapping.get(typeConstraint.getVariableInTuple(0)), ((EDataTypeInSlotsKey) inputKey).getEmfKey()));		        
             } else {
+                int position = variableMapping.get(typeConstraint.getVariableInTuple(0));
                 operations
-                        .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.IterateOverEDatatypeInstances(
-                                variableMapping.get(typeConstraint.getVariableInTuple(0)),
+                        .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.IterateOverEDatatypeInstances(position,
                                 ((EDataTypeInSlotsKey) inputKey).getEmfKey(), allModelContents, backend));
+                operations.add(new ScopeCheck(position, runtimeContext.getEmfScope()));
             }
     	} else if (inputKey instanceof EClassTransitiveInstancesKey) {
 		    if(baseIndexAvailable){
                 operations.add(new IterateOverEClassInstances(variableMapping.get(typeConstraint.getVariableInTuple(0)),
                         ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
             } else {
+                int position = variableMapping.get(typeConstraint.getVariableInTuple(0));
                 operations
                         .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.IterateOverEClassInstances(
-                                variableMapping.get(typeConstraint.getVariableInTuple(0)),
+                                position,
                                 ((EClassTransitiveInstancesKey) inputKey).getEmfKey(), allModelContents));
+                operations.add(new ScopeCheck(position, runtimeContext.getEmfScope()));
             }
 	    } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
 	    	final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
@@ -339,14 +343,18 @@ public class POperationCompiler {
                     operations
                             .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureTarget(
                                     sourcePosition, targetPosition, feature));
+                    operations.add(new ScopeCheck(targetPosition, runtimeContext.getEmfScope()));
                 }
             }
 	        else if(!fromBound && toBound){
 	            if(baseIndexAvailable){
 	                operations.add(new ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));	                
 	            } else {
-	                operations.add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));	                
-	            }
+                    operations
+                            .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureSource(
+                                    sourcePosition, targetPosition, feature));
+                    operations.add(new ScopeCheck(sourcePosition, runtimeContext.getEmfScope()));
+                }
 	        } else {
 	            // TODO Elaborate solution based on the navigability of edges
 	            // As of now a static solution is implemented
@@ -357,9 +365,11 @@ public class POperationCompiler {
                     operations
                             .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.IterateOverEClassInstances(
                                     sourcePosition, feature.getEContainingClass(), allModelContents));
+                    operations.add(new ScopeCheck(sourcePosition, runtimeContext.getEmfScope()));
                     operations
                             .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureTarget(
                                     sourcePosition, targetPosition, feature));
+                    operations.add(new ScopeCheck(targetPosition, runtimeContext.getEmfScope()));
                 }
             }
 
