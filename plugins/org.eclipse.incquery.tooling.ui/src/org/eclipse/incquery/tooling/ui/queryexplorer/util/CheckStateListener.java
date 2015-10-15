@@ -14,7 +14,11 @@ package org.eclipse.incquery.tooling.ui.queryexplorer.util;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.patternsviewer.PatternComponent;
@@ -23,6 +27,8 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 
 public class CheckStateListener implements ICheckStateListener {
+
+    private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
 
     @Override
     public void checkStateChanged(CheckStateChangedEvent event) {
@@ -35,25 +41,28 @@ public class CheckStateListener implements ICheckStateListener {
                 String patternFqn = ((PatternLeaf) component).getFullPatternNamePrefix();
                 IQuerySpecification<?> specification = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(
                         patternFqn);
-
-                if (event.getChecked() && !QueryExplorerPatternRegistry.getInstance().isActive(patternFqn)) {
-                    Iterator<PatternMatcherRootContent> iterator = QueryExplorer.getInstance().getRootContent()
-                            .getChildrenIterator();
-                    while (iterator.hasNext()) {
-                        PatternMatcherRootContent root = iterator.next();
-                        root.registerPattern(specification);
-                        root.updateHasChildren();
+                if (specification != null) {
+                    if (event.getChecked() && !QueryExplorerPatternRegistry.getInstance().isActive(patternFqn)) {
+                        Iterator<PatternMatcherRootContent> iterator = QueryExplorer.getInstance().getRootContent()
+                                .getChildrenIterator();
+                        while (iterator.hasNext()) {
+                            PatternMatcherRootContent root = iterator.next();
+                            root.registerPattern(specification);
+                            root.updateHasChildren();
+                        }
+                        QueryExplorerPatternRegistry.getInstance().addActivePattern(specification);
+                    } else if (!event.getChecked()) {
+                        Iterator<PatternMatcherRootContent> iterator = QueryExplorer.getInstance().getRootContent()
+                                .getChildrenIterator();
+                        while (iterator.hasNext()) {
+                            PatternMatcherRootContent root = iterator.next();
+                            root.unregisterPattern(specification);
+                            root.updateHasChildren();
+                        }
+                        QueryExplorerPatternRegistry.getInstance().removeActivePattern(specification);
                     }
-                    QueryExplorerPatternRegistry.getInstance().addActivePattern(specification);
-                } else if (!event.getChecked()) {
-                    Iterator<PatternMatcherRootContent> iterator = QueryExplorer.getInstance().getRootContent()
-                            .getChildrenIterator();
-                    while (iterator.hasNext()) {
-                        PatternMatcherRootContent root = iterator.next();
-                        root.unregisterPattern(specification);
-                        root.updateHasChildren();
-                    }
-                    QueryExplorerPatternRegistry.getInstance().removeActivePattern(specification);
+                } else {
+                    logger.log(new Status(IStatus.WARNING, IncQueryGUIPlugin.PLUGIN_ID, patternFqn + "not found in QueryExplorerPatternRegistry"));
                 }
             }
         }
