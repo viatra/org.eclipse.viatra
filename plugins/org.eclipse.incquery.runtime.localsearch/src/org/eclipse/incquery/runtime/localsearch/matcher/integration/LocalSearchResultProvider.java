@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.prefs.BackingStoreException;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -76,17 +77,33 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
         Map<List<ISearchOperation>, Map<PVariable, Integer>> operationListsWithVarMappings;
         private POperationCompiler compiler;
+        private IQueryBackend backend;
+        private IQueryBackendHintProvider hintProvider;
+        private PQuery query;
+
+        public Planner(IQueryBackend backend, IQueryBackendHintProvider hintProvider, PQuery query) {
+            this.backend = backend;
+            this.hintProvider = hintProvider;
+            this.query = query;
+        }
 
         public void createPlan(MatcherReference key, Logger logger, IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, final ISearchContext searchContext)
                 throws QueryProcessingException {
         	IFlattenCallPredicate flattenCallPredicate = new DefaultFlattenCallPredicate();
             PQueryFlattener flattener = new PQueryFlattener(flattenCallPredicate);
             PBodyNormalizer normalizer = new PBodyNormalizer(metaContext, false);
-            LocalSearchRuntimeBasedStrategy strategy = new LocalSearchRuntimeBasedStrategy();
-            compiler = new POperationCompiler();
+            
+            Map<String, Object> hints = hintProvider.getHints(query);
+            Boolean allowInverse = (Boolean) hints.get(LocalSearchHintKeys.ALLOW_INVERSE_NAVIGATION);
+            allowInverse = allowInverse == null ? false : allowInverse; 
+            Boolean useBase = (Boolean) hints.get(LocalSearchHintKeys.USE_BASE_INDEX);
+            useBase = useBase == null ? false : useBase; 
+            
+            LocalSearchRuntimeBasedStrategy strategy = new LocalSearchRuntimeBasedStrategy(allowInverse,useBase);
+            compiler = new POperationCompiler(runtimeContext, backend);
 
             LocalSearchPlanner planner = new LocalSearchPlanner();
-            planner.initializePlanner(flattener, logger, metaContext, runtimeContext, normalizer, strategy, compiler);
+            planner.initializePlanner(flattener, logger, metaContext, runtimeContext, normalizer, strategy, compiler, hints);
             operationListsWithVarMappings = planner.plan(key.getQuery(), key.getAdornment());
 
             Collection<SearchPlanExecutor> executors = Collections2.transform(operationListsWithVarMappings.entrySet(),
@@ -190,7 +207,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         
         while (!todo.isEmpty()) {
             final MatcherReference dependency = todo.iterator().next();
-            Planner planner = new Planner();
+            Planner planner = new Planner(backend, hintProvider, query);
             planner.createPlan(dependency, logger, runtimeContext.getMetaContext(), runtimeContext, searchContext);
             planner.collectElementsToIndex(classesToIndex, featuresToIndex, dataTypesToIndex);
             planner.collectDependencies(dependencies);

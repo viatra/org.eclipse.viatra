@@ -14,8 +14,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.incquery.runtime.emf.EMFQueryRuntimeContext;
+import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.incquery.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.incquery.runtime.localsearch.operations.ISearchOperation;
@@ -24,7 +31,8 @@ import org.eclipse.incquery.runtime.localsearch.operations.check.CheckConstant;
 import org.eclipse.incquery.runtime.localsearch.operations.check.CountCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.check.ExpressionCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.check.InequalityCheck;
-import org.eclipse.incquery.runtime.localsearch.operations.check.InstanceOfCheck;
+import org.eclipse.incquery.runtime.localsearch.operations.check.InstanceOfClassCheck;
+import org.eclipse.incquery.runtime.localsearch.operations.check.InstanceOfDataTypeCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.incquery.runtime.localsearch.operations.check.StructuralFeatureCheck;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.CountOperation;
@@ -33,8 +41,11 @@ import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendConstant
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureSource;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureTarget;
 import org.eclipse.incquery.runtime.localsearch.operations.extend.IterateOverEClassInstances;
+import org.eclipse.incquery.runtime.localsearch.operations.extend.IterateOverEDatatypeInstances;
 import org.eclipse.incquery.runtime.localsearch.planner.util.CompilerHelper;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.planning.operations.PApply;
@@ -60,6 +71,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
+ * An EMF specific plan compiler for the local search-based pattern matcher
  * 
  * @author Marton Bur
  *
@@ -70,14 +82,39 @@ public class POperationCompiler {
     private Set<MatcherReference> dependencies = Sets.newHashSet();
     private Map<PConstraint, Set<Integer>> variableBindings;
 	private Map<PVariable, Integer> variableMappings;
+    private boolean baseIndexAvailable;
+    private EMFQueryRuntimeContext runtimeContext;
+    private Set<EObject> allModelContents;
+    private IQueryBackend backend;
 
+    public POperationCompiler(IQueryRuntimeContext runtimeContext, IQueryBackend backend) {
+        this(runtimeContext, backend, false);
+    }
 
+    public POperationCompiler(IQueryRuntimeContext runtimeContext, IQueryBackend backend, boolean baseIndexAvailable) {
+        this.backend = backend;
+        this.runtimeContext = (EMFQueryRuntimeContext) runtimeContext;
+        this.baseIndexAvailable = baseIndexAvailable;
+        if(!baseIndexAvailable){
+            // TODO obtain here the contents of the scope and pass it to operations that need it
+            allModelContents = Sets.newHashSet();
+            EMFScope emfScope = this.runtimeContext.getEmfScope();
+            Set<? extends Notifier> scopeRoots = emfScope.getScopeRoots();
+            for (Notifier notifier : scopeRoots) {
+                if(notifier instanceof Resource){
+                    TreeIterator<EObject> allContents = ((Resource) notifier).getAllContents();
+                    this.allModelContents.addAll(Sets.newHashSet(allContents));
+                }
+            }
+        }
+    }
 
 	/**
      * Compiles a plan of <code>POperation</code>s to a list of type <code>List&ltISearchOperation></code>
      * 
      * @param plan
      * @param boundVariableIndexes 
+	 * @return an ordered list of POperations that make up the compiled search plan
      * @throws QueryProcessingException 
      */
     public List<ISearchOperation> compile(SubPlan plan, Set<Integer> boundVariableIndexes) throws QueryProcessingException {
@@ -158,10 +195,6 @@ public class POperationCompiler {
 
     }
 
-    /**
-     * @param pConstraint
-     * @param variableMapping
-     */
     private void createCheck(ConstantValue constant, Map<PVariable, Integer> variableMapping) {
         int position = variableMapping.get(constant.getVariablesTuple().get(0));
         operations.add(new CheckConstant(position, constant.getSupplierKey()));
@@ -170,13 +203,16 @@ public class POperationCompiler {
     private void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
     	final IInputKey inputKey = typeConstraint.getSupplierKey();
 		if (inputKey instanceof EClassTransitiveInstancesKey) {
-	        // TODO is this cast always ok? (EClass vs EClassifier)
-	        operations.add(new InstanceOfCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
+	        operations.add(new InstanceOfClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
 	    } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
-	        int sourcePosition = variableMapping.get(typeConstraint.getVariablesTuple().get(0));
-	        int targetPosition = variableMapping.get(typeConstraint.getVariablesTuple().get(1));
-	        operations.add(new StructuralFeatureCheck(sourcePosition, targetPosition, ((EStructuralFeatureInstancesKey) inputKey).getEmfKey()));
-	    } else {
+            int sourcePosition = variableMapping.get(typeConstraint.getVariablesTuple().get(0));
+            int targetPosition = variableMapping.get(typeConstraint.getVariablesTuple().get(1));
+            operations.add(new StructuralFeatureCheck(sourcePosition, targetPosition,
+                    ((EStructuralFeatureInstancesKey) inputKey).getEmfKey()));
+        } else if (inputKey instanceof EDataTypeInSlotsKey) {
+            operations.add(new InstanceOfDataTypeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)),
+                    ((EDataTypeInSlotsKey) inputKey).getEmfKey()));
+        } else {
 	    	throw new IllegalArgumentException("Unsupported type: " + inputKey);
 	    }
     }
@@ -254,19 +290,13 @@ public class POperationCompiler {
 
         if (pConstraint instanceof BinaryTransitiveClosure) {
             createExtend((BinaryTransitiveClosure) pConstraint, variableMapping);
-        } 
-        else if (pConstraint instanceof ConstantValue) {
+        } else if (pConstraint instanceof ConstantValue) {
             createExtend((ConstantValue) pConstraint, variableMapping);
-        } 
-        else if (pConstraint instanceof TypeConstraint) {
-            createExtend((TypeConstraint) pConstraint,variableMapping);
+        } else if (pConstraint instanceof TypeConstraint) {
+            createExtend((TypeConstraint) pConstraint, variableMapping);
         }
     }
 
-    /**
-     * @param pConstraint
-     * @param variableMapping
-     */
     private void createExtend(ConstantValue constant, Map<PVariable, Integer> variableMapping) {
         int position = variableMapping.get(constant.getVariablesTuple().get(0));
         operations.add(new ExtendConstant(position, constant.getSupplierKey()));        
@@ -274,9 +304,25 @@ public class POperationCompiler {
 
     private void createExtend(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
     	final IInputKey inputKey = typeConstraint.getSupplierKey();
-		if (inputKey instanceof EClassTransitiveInstancesKey) {
-	        // TODO is this cast always ok? (EClass vs EClassifier)
-	        operations.add(new IterateOverEClassInstances(variableMapping.get(typeConstraint.getVariableInTuple(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
+    	if (inputKey instanceof EDataTypeInSlotsKey) {
+    	    if(baseIndexAvailable){
+    	        operations.add(new IterateOverEDatatypeInstances(variableMapping.get(typeConstraint.getVariableInTuple(0)), ((EDataTypeInSlotsKey) inputKey).getEmfKey()));		        
+            } else {
+                operations
+                        .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.IterateOverEDatatypeInstances(
+                                variableMapping.get(typeConstraint.getVariableInTuple(0)),
+                                ((EDataTypeInSlotsKey) inputKey).getEmfKey(), allModelContents, backend));
+            }
+    	} else if (inputKey instanceof EClassTransitiveInstancesKey) {
+		    if(baseIndexAvailable){
+                operations.add(new IterateOverEClassInstances(variableMapping.get(typeConstraint.getVariableInTuple(0)),
+                        ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
+            } else {
+                operations
+                        .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.IterateOverEClassInstances(
+                                variableMapping.get(typeConstraint.getVariableInTuple(0)),
+                                ((EClassTransitiveInstancesKey) inputKey).getEmfKey(), allModelContents));
+            }
 	    } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
 	    	final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
 	    	
@@ -286,17 +332,36 @@ public class POperationCompiler {
 	        boolean fromBound = variableBindings.get(typeConstraint).contains(sourcePosition);
 	        boolean toBound = variableBindings.get(typeConstraint).contains(targetPosition);
 
-	        if(fromBound && !toBound){
-	            operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
-	        }
+            if (fromBound && !toBound) {
+                if (baseIndexAvailable) {
+                    operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
+                } else {
+                    operations
+                            .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureTarget(
+                                    sourcePosition, targetPosition, feature));
+                }
+            }
 	        else if(!fromBound && toBound){
-	            operations.add(new ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));
+	            if(baseIndexAvailable){
+	                operations.add(new ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));	                
+	            } else {
+	                operations.add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureSource(sourcePosition, targetPosition, feature));	                
+	            }
 	        } else {
 	            // TODO Elaborate solution based on the navigability of edges
 	            // As of now a static solution is implemented
-	            operations.add(new IterateOverEClassInstances(sourcePosition, feature.getEContainingClass()));
-				operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
-	        }
+                if (baseIndexAvailable) {
+                    operations.add(new IterateOverEClassInstances(sourcePosition, feature.getEContainingClass()));
+                    operations.add(new ExtendToEStructuralFeatureTarget(sourcePosition, targetPosition, feature));
+                } else {
+                    operations
+                            .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.IterateOverEClassInstances(
+                                    sourcePosition, feature.getEContainingClass(), allModelContents));
+                    operations
+                            .add(new org.eclipse.incquery.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureTarget(
+                                    sourcePosition, targetPosition, feature));
+                }
+            }
 
 	    } else {
 	    	throw new IllegalArgumentException("Unsupported type: " + inputKey);

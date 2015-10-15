@@ -13,15 +13,21 @@ package org.eclipse.incquery.runtime.localsearch.planner;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.incquery.runtime.localsearch.planner.cost.IConstraintEvaluablePredicateProvider;
-import org.eclipse.incquery.runtime.localsearch.planner.cost.EvaluablePConstraint;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.incquery.runtime.localsearch.matcher.integration.LocalSearchHintKeys;
 import org.eclipse.incquery.runtime.localsearch.planner.util.OperationCostComparator;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
+import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
@@ -49,7 +55,7 @@ import com.google.common.collect.Sets.SetView;
  * the model on which the matching is initiated. When no runtime info is available, it falls back to 
  * the information available from the metamodel durint operation cost calculation.
  * 
- * The implementation is based on the paper "Gergely Varró, Frederik Deckwerth, Martin Wieber, and Andy Schürr: 
+ * The implementation is based on the paper "Gergely VarrÃ³, Frederik Deckwerth, Martin Wieber, and Andy SchÃ¼rr: 
  * An algorithm for generating model-sensitive search plans for pattern matching on EMF models" 
  * (DOI: 10.1007/s10270-013-0372-2)
  * 
@@ -58,33 +64,31 @@ import com.google.common.collect.Sets.SetView;
  */
 public class LocalSearchRuntimeBasedStrategy {
 
-	private IConstraintEvaluablePredicateProvider constraintPredicateProvider;
-
+	private boolean allowInverseNavigation;
+	private boolean useIndex;
+	
     public LocalSearchRuntimeBasedStrategy() {
-        this(true);
+        this(true,true);
     }
 
-	public LocalSearchRuntimeBasedStrategy(final boolean allowInverseNavigation) {
-		//TODO this method should be removed later
-		constraintPredicateProvider = new IConstraintEvaluablePredicateProvider() {
-			
-			@Override
-			public Predicate<PConstraint> getConstraint(SubPlan plan) {
-				return new EvaluablePConstraint(plan, allowInverseNavigation);
-			}
-		};
-	}
-
-	public LocalSearchRuntimeBasedStrategy(IConstraintEvaluablePredicateProvider constraintEnabler) {
-		this.constraintPredicateProvider = constraintEnabler;
-	}
+    public LocalSearchRuntimeBasedStrategy(final boolean allowInverseNavigation, boolean useIndex) {
+        this.allowInverseNavigation = allowInverseNavigation;
+        this.useIndex = useIndex;
+    }
 	
     /**
      * The implementation of a local search-based algorithm to create a search plan for a flattened (and normalized)
      * PBody
+     * @param pBody for which the plan is to be created
+     * @param logger that logs the happenings
+     * @param initialBoundVariables variables that are known to have already assigned values
+     * @param metaContext the metamodel related information
+     * @param runtimeContext the instance model related information
+     * @param hints the optional hints for the plan creation
+     * @return the complete search plan for the given {@link PBody}
      */
     public SubPlan plan(PBody pBody, Logger logger, Set<PVariable> initialBoundVariables,
-            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext) {
+            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, Map<String, Object> hints) {
 
         // 1. INITIALIZATION
         // Create a starting plan
@@ -102,7 +106,11 @@ public class LocalSearchRuntimeBasedStrategy {
         // The characteristic function is represented as a set of set of variables
         // TODO this calculation is not not implemented yet, thus the contents of the returned set is not considered later
         List<Set<PVariable>> reachableBoundVariableSets = reachabilityAnalysis(pBody, constraintInfos);
-        int k = 2;
+        int k = 4;
+        Integer rowCountHint= (Integer) hints.get(LocalSearchHintKeys.PLANNER_TABLE_ROW_COUNT);
+        if(rowCountHint != null){
+            k = rowCountHint;
+        }
         PlanState searchPlan = calculateSearchPlan(pBody, initialBoundVariables, k, reachableBoundVariableSets, constraintInfos);
 
         List<PConstraintInfo> operations = searchPlan.getOperations();
@@ -160,6 +168,7 @@ public class LocalSearchRuntimeBasedStrategy {
                 }
             }
         }
+        
         return stateTable.get(0).get(0);
     }
 
@@ -277,7 +286,7 @@ public class LocalSearchRuntimeBasedStrategy {
             if(pConstraint instanceof TypeConstraint){
                 Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
                 Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
-                doCreateConstraintInfos(runtimeContext, constraintInfos, pConstraint, affectedVariables, bindings);
+                doCreateConstraintInfosForTypeConstraint(runtimeContext, constraintInfos, (TypeConstraint)pConstraint, affectedVariables, bindings);
             } else {
                 // Create constraint infos so that only single use variables can be unbound
                 Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
@@ -326,6 +335,57 @@ public class LocalSearchRuntimeBasedStrategy {
             }
         }
         return constraintInfos;
+    }
+
+    private void doCreateConstraintInfosForTypeConstraint(IQueryRuntimeContext runtimeContext,
+            List<PConstraintInfo> constraintInfos, TypeConstraint typeConstraint, Set<PVariable> affectedVariables,
+            Set<Set<PVariable>> bindings) {
+        if(!allowInverseNavigation){
+            // When inverse navigation is not allowed, filter out operation masks, where
+            // the first variable would be free AND the feature is an EReference and has no EOpposite
+            bindings = excludeInverseNavigationOperationMasks(typeConstraint, bindings);
+        } else {
+            // Also do the above case, if it is an EReference with no EOpposite, or is an EAttribute
+            IInputKey inputKey = typeConstraint.getSupplierKey();
+            if(inputKey instanceof EStructuralFeatureInstancesKey){
+                final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
+                if(feature instanceof EReference){
+                    if(((EReference) feature).getEOpposite() == null){                        
+                        bindings = excludeInverseNavigationOperationMasks(typeConstraint, bindings);
+                    }
+                } else {
+                    bindings = excludeInverseNavigationOperationMasks(typeConstraint, bindings);
+                }
+            }
+        }
+        doCreateConstraintInfos(runtimeContext, constraintInfos, typeConstraint, affectedVariables, bindings);
+    }
+    private Set<Set<PVariable>> excludeInverseNavigationOperationMasks(TypeConstraint typeConstraint, Set<Set<PVariable>> bindings) {
+        PVariable firstVariable = typeConstraint.getVariableInTuple(0);
+        Iterator<Set<PVariable>> iterator = bindings.iterator();
+        Set<Set<PVariable>>elementsToRemove = Sets.newHashSet();
+        while (iterator.hasNext()) {
+            Set<PVariable> boundVariablesSet = iterator.next();
+            if(!boundVariablesSet.isEmpty() && !boundVariablesSet.contains(firstVariable) && !hasEOpposite(typeConstraint)){
+                elementsToRemove.add(boundVariablesSet);
+            }
+        }
+        bindings = Sets.difference(bindings, elementsToRemove);
+        return bindings;
+    }
+    
+    private boolean hasEOpposite(TypeConstraint typeConstraint) {
+        IInputKey supplierKey = typeConstraint.getSupplierKey();
+        if(supplierKey instanceof EStructuralFeatureInstancesKey){
+            EStructuralFeature wrappedKey = ((EStructuralFeatureInstancesKey) supplierKey).getWrappedKey();
+            if(wrappedKey instanceof EReference){
+                EReference eOpposite = ((EReference) wrappedKey).getEOpposite();
+                if(eOpposite != null){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void doCreateConstraintInfos(IQueryRuntimeContext runtimeContext, List<PConstraintInfo> constraintInfos,

@@ -13,6 +13,7 @@ package org.eclipse.incquery.runtime.localsearch.operations.check;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
 
@@ -23,24 +24,21 @@ import com.google.common.collect.Lists;
  * @author Zoltan Ujhelyi
  *
  */
-public class InstanceOfCheck extends CheckOperation {
+public class InstanceOfDataTypeCheck extends CheckOperation {
 
     private Integer position;
-    private EClass clazz;
+    private EDataType dataType;
 
-    public InstanceOfCheck(int position, EClass clazz) {
+    public InstanceOfDataTypeCheck(int position, EDataType dataType) {
         this.position = position;
-        this.clazz = clazz;
+        this.dataType = dataType;
 
     }
 
     @Override
     protected boolean check(MatchingFrame frame) {
         Preconditions.checkNotNull(frame.getValue(position), "Invalid plan, variable %s unbound", position);
-        if (frame.getValue(position) instanceof EObject) {
-            return clazz.isSuperTypeOf(((EObject) frame.getValue(position)).eClass());
-        }
-        return false;
+        return dataType.getInstanceClassName().equals(frame.getValue(position).getClass().getName());
     }
 
     @Override

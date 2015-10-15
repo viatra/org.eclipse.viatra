@@ -166,7 +166,7 @@ class PConstraintInfo {
 	protected def calculateUnaryConstraintCost(IInputKey supplierKey) {
 		var variable = (constraint as TypeConstraint).getVariablesTuple().get(0) as PVariable
 		if (boundMaskVariables.contains(variable)) {
-			cost = 1
+			cost = 0.9f
 		} else {
 			cost = runtimeContext.countTuples(supplierKey, null)
 		}

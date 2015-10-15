@@ -67,10 +67,11 @@ public class LocalSearchPlanner {
     private Logger logger;
     private IQueryMetaContext metaContext;
     private IQueryRuntimeContext runtimeContext;
+    private Map<String, Object> hints;
 
     public void initializePlanner(PQueryFlattener pQueryFlattener, Logger logger, IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext,
             PBodyNormalizer pBodyNormalizer, LocalSearchRuntimeBasedStrategy localSearchPlannerStrategy,
-            POperationCompiler pOperationCompiler) {
+            POperationCompiler pOperationCompiler, Map<String, Object> hints) {
         this.flattener = pQueryFlattener;
         this.logger = logger;
         this.metaContext = metaContext;
@@ -78,6 +79,7 @@ public class LocalSearchPlanner {
         this.normalizer = pBodyNormalizer;
         this.plannerStrategy = localSearchPlannerStrategy;
         this.operationCompiler = pOperationCompiler;
+        this.hints = hints;
     }
 
     /**
@@ -103,7 +105,7 @@ public class LocalSearchPlanner {
 
         for (PBody normalizedBody : normalizedBodies) {
             Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundVarIndices, normalizedBody);
-            SubPlan plan = plannerStrategy.plan(normalizedBody, logger, boundVariables, metaContext, runtimeContext);
+            SubPlan plan = plannerStrategy.plan(normalizedBody, logger, boundVariables, metaContext, runtimeContext, hints);
             plansForBodies.add(plan);
         }
 
