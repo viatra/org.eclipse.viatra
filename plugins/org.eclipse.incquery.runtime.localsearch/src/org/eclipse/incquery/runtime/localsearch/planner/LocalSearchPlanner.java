@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.planning.SubPlan;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
+import org.eclipse.incquery.runtime.matchers.psystem.PConstraint;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
@@ -129,7 +130,35 @@ public class LocalSearchPlanner {
         // Normalize
         normalizedDisjunction = normalizer.rewrite(flatDisjunction);
         Set<PBody> normalizedBodies = normalizedDisjunction.getBodies();
+        
+        removeDuplicateConstraints(normalizedBodies);
+        
         return normalizedBodies;
+    }
+
+    private void removeDuplicateConstraints(Set<PBody> normalizedBodies) {
+        for (PBody pBody : normalizedBodies) {
+            pBody.setStatus(PQueryStatus.UNINITIALIZED);
+            Set<PConstraint> constraintsToRemove = Sets.newHashSet();
+            Set<PConstraint> duplicateConstraints = Sets.newHashSet();
+            Set<PConstraint> constraints = pBody.getConstraints();
+            for (PConstraint pConstraint1 : constraints) {
+                for (PConstraint pConstraint2 : constraints) {
+                    if(!constraintsToRemove.contains(pConstraint2) && pConstraint1.toString().equals(pConstraint2.toString())){
+                        duplicateConstraints.add(pConstraint1);
+                        constraintsToRemove.add(pConstraint1);
+                        constraintsToRemove.add(pConstraint2);                        
+                    }
+                }
+            }            
+            for (PConstraint pConstraint : constraintsToRemove) {                
+                pBody.getConstraints().remove(pConstraint);
+            }
+            for (PConstraint pConstraint : duplicateConstraints) {
+                pBody.getConstraints().add(pConstraint);
+            }
+            pBody.setStatus(PQueryStatus.OK);
+        }
     }
 
     private void prepareFlatBodiesForNormalize(Set<PBody> flatBodies) {
