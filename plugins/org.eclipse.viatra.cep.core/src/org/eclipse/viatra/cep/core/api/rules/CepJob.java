@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.cep.core.api.rules;
 
+import org.apache.log4j.Logger;
 import org.eclipse.incquery.runtime.evm.api.Job;
 import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.viatra.cep.core.logging.LoggerUtils;
 
 /**
  * CEP-specific EVM {@link Job}.
@@ -20,7 +22,13 @@ import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
  * 
  */
 public abstract class CepJob<IObservableComplexEventPattern> extends Job<IObservableComplexEventPattern> {
+    private Logger logger = LoggerUtils.getInstance().getLogger();
+
     protected CepJob(ActivationState activationState) {
         super(activationState);
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 }
