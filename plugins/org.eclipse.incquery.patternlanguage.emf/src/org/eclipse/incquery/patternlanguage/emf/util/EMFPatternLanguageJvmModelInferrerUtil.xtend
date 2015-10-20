@@ -65,7 +65,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 
 	def validClassName(String simpleName) {
 		Character.isJavaIdentifierStart(simpleName.charAt(0)) && 
-		  simpleName.split("\\.").tail.forall[ch |Character.isJavaIdentifierPart(ch.charAt(0))]
+		  simpleName.toCharArray.forall[Character.isJavaIdentifierPart(it)]
 	}
 
 	def modelFileName(EObject object) {
