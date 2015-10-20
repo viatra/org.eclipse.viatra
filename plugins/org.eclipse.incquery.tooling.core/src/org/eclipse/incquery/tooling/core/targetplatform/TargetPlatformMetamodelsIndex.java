@@ -26,6 +26,7 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
@@ -62,6 +63,8 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 
 	private final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
 	private Set<URI> reportedProblematicGenmodelUris = Sets.newHashSet();
+    private Map<URI, URI> platformURIMap;
+//    private Map<String, URI> ePackageNsURIToGenModelLocationMap;
 	
 	private void update(){
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
@@ -90,6 +93,11 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		/* Add new entries */
 		Set<String> added = new HashSet<String>(pluginset.keySet());
 		added.removeAll(entries.keySet());
+		if(!added.isEmpty()){
+		    platformURIMap = EcorePlugin.computePlatformURIMap(true);
+		    // TODO this map could be used instead of reading the extensions ourselves
+//		    ePackageNsURIToGenModelLocationMap = EcorePlugin.getEPackageNsURIToGenModelLocationMap(true);
+		}
 		for(String id : added){
 			IPluginBase base = pluginset.get(id);
 			entries.putAll(id, load(base));
@@ -221,6 +229,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	    // FIXME we need to ensure that only one caller modifies entries at any given time
 		synchronized (TargetPlatformMetamodelsIndex.class) {
 		    update();
+		    
 		    return Iterables.filter(new ArrayList<TargetPlatformMetamodel>(entries.values()), Predicates.notNull());
         }
 	}
@@ -236,6 +245,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 
 	@Override
 	public EPackage loadPackage(ResourceSet resourceSet, String nsURI) {
+	    resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
 		for(TargetPlatformMetamodel mm : load()){
 			if (nsURI.equals(mm.packageURI)){
 				return mm.loadPackage(resourceSet);
@@ -246,6 +256,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 
 	@Override
 	public GenPackage loadGenPackage(ResourceSet resourceSet, String nsURI) {
+	    resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
 		for(TargetPlatformMetamodel mm : load()){
 			if (nsURI.equals(mm.packageURI)){
 				return mm.loadGenPackage(resourceSet);
