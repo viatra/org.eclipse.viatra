@@ -63,7 +63,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 
 	private final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
 	private Set<URI> reportedProblematicGenmodelUris = Sets.newHashSet();
-    private Map<URI, URI> platformURIMap;
+    private Map<URI, URI> platformURIMap = new HashMap<URI, URI>();
 //    private Map<String, URI> ePackageNsURIToGenModelLocationMap;
 	
 	private void update(){
@@ -245,8 +245,9 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 
 	@Override
 	public EPackage loadPackage(ResourceSet resourceSet, String nsURI) {
+	    Iterable<TargetPlatformMetamodel> targetPlatformMetamodels = load();
 	    resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
-		for(TargetPlatformMetamodel mm : load()){
+        for(TargetPlatformMetamodel mm : targetPlatformMetamodels){
 			if (nsURI.equals(mm.packageURI)){
 				return mm.loadPackage(resourceSet);
 			}
@@ -256,8 +257,9 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 
 	@Override
 	public GenPackage loadGenPackage(ResourceSet resourceSet, String nsURI) {
+	    Iterable<TargetPlatformMetamodel> targetPlatformMetamodels = load();
 	    resourceSet.getURIConverter().getURIMap().putAll(platformURIMap);
-		for(TargetPlatformMetamodel mm : load()){
+        for(TargetPlatformMetamodel mm : targetPlatformMetamodels){
 			if (nsURI.equals(mm.packageURI)){
 				return mm.loadGenPackage(resourceSet);
 			}
