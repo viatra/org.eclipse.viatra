@@ -90,7 +90,7 @@ class EnumResolutionTest {
 			}
 		') as PatternModel
 		model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
-			Diagnostic::LINKING_DIAGNOSTIC, "reference to EEnumLiteral")
+			Diagnostic::LINKING_DIAGNOSTIC, "NOTEXIST")
 	}
 	@Test
 	def eEnumResolutionNotEnum() {
@@ -105,7 +105,7 @@ class EnumResolutionTest {
 		') as PatternModel
 		//XXX With better type inference this error message should be replaced
 		model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
-			Diagnostic::LINKING_DIAGNOSTIC, "reference to EEnumLiteral")
+			Diagnostic::LINKING_DIAGNOSTIC, "EMF23")
 	}
 		
 	@Test
@@ -124,7 +124,7 @@ class EnumResolutionTest {
 			}
 		') as PatternModel
 		model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
-			Diagnostic::LINKING_DIAGNOSTIC, "reference to EEnumLiteral")
+			Diagnostic::LINKING_DIAGNOSTIC, "EMF24")
 	}
 	
 	@Test
@@ -140,7 +140,7 @@ class EnumResolutionTest {
 			}
 		') as PatternModel
 		model.assertError(EMFPatternLanguagePackage$Literals::ENUM_VALUE,
-			Diagnostic::LINKING_DIAGNOSTIC, "reference to EEnumLiteral")
+			Diagnostic::LINKING_DIAGNOSTIC, "EMF23")
 	}
 	
 }

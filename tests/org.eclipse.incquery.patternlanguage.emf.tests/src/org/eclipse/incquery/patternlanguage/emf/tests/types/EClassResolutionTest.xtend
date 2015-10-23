@@ -84,7 +84,7 @@ class EClassResolutionTest {
 		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		val type = constraint.type as ClassType
 		type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
-			Diagnostic::LINKING_DIAGNOSTIC, "reference to EClass")		
+			Diagnostic::LINKING_DIAGNOSTIC, "UndefinedType")		
 	}
 	
 	@Test
@@ -99,6 +99,6 @@ class EClassResolutionTest {
 		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
 		val type = constraint.type as ClassType
 		type.assertError(EMFPatternLanguagePackage$Literals::CLASS_TYPE, 
-			Diagnostic::LINKING_DIAGNOSTIC, "reference to EClass")		
+			Diagnostic::LINKING_DIAGNOSTIC, "Pattern")		
 	}
 }
