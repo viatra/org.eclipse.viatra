@@ -12,6 +12,7 @@ package org.eclipse.viatra.emf.runtime.rules.batch
 
 import com.google.common.base.Predicate
 import com.google.common.collect.ImmutableSet
+import org.eclipse.incquery.runtime.api.GenericPatternGroup
 import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.evm.api.Activation
@@ -21,9 +22,10 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification
 import org.eclipse.incquery.runtime.evm.api.event.EventFilter
 import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet
 import org.eclipse.viatra.emf.runtime.filters.MatchParameterFilter
-import org.eclipse.viatra.emf.runtime.transformation.batch.BatchTransformation
 import org.eclipse.viatra.emf.runtime.rules.BatchTransformationRuleGroup
-import org.eclipse.incquery.runtime.api.GenericPatternGroup
+import org.eclipse.viatra.emf.runtime.transformation.batch.BatchTransformation
+import org.eclipse.incquery.runtime.api.IQuerySpecification
+import com.google.common.collect.Sets
 
 /**
  * Utility class for simple rule usage
@@ -203,7 +205,8 @@ class BatchTransformationStatements {
 	}
 
 	def registerRules(BatchTransformationRuleGroup rules) {
-		GenericPatternGroup.of(rules.filterNull.map[precondition].filterNull.toSet).prepare(iqEngine)
+		val notNullPreconditions = rules.filterNull.map[precondition]
+		GenericPatternGroup.of(Sets.newHashSet(notNullPreconditions)).prepare(iqEngine)
 		rules.filterNull.forEach[
 				ruleEngine.addRule(ruleSpecification, filter as EventFilter<IPatternMatch>)
 		]
