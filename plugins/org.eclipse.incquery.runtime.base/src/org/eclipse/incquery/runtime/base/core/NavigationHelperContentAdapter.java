@@ -343,33 +343,32 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         final int positionInt = notification.getPosition();
         final Integer position = positionInt == Notification.NO_INDEX ? null : positionInt;
         final int eventType = notification.getEventType();
-        boolean notifyLightweightObservers = false;
+        boolean notifyLightweightObservers = true;
 		switch (eventType) {
         case Notification.ADD:
             featureUpdate(true, notifier, feature, newValue, position);
-            notifyLightweightObservers = true;
             break;
         case Notification.ADD_MANY:
             for (final Object newElement : (Collection<?>) newValue) {
                 featureUpdate(true, notifier, feature, newElement, position);
             }
-            notifyLightweightObservers = true;
             break;
         case Notification.CREATE:
+            notifyLightweightObservers = false;
             break;
         case Notification.MOVE:
+            // lightweight observers should be notified on MOVE
             break; // currently no support for ordering
         case Notification.REMOVE:
             featureUpdate(false, notifier, feature, oldValue, position);
-            notifyLightweightObservers = true;
             break;
         case Notification.REMOVE_MANY:
             for (final Object oldElement : (Collection<?>) oldValue) {
                 featureUpdate(false, notifier, feature, oldElement, position);
             }
-            notifyLightweightObservers = true;
             break;
         case Notification.REMOVING_ADAPTER:
+            notifyLightweightObservers = false;
             break;
         case Notification.RESOLVE:
         	if (navigationHelper.isFeatureResolveIgnored(feature)) break; // otherwise same as SET
@@ -381,8 +380,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         case Notification.SET:
             featureUpdate(false, notifier, feature, oldValue, position);
             featureUpdate(true, notifier, feature, newValue, position);
-            notifyLightweightObservers = true;
+            break;
         default:
+            notifyLightweightObservers = false;
             break;
         }
         return notifyLightweightObservers;
