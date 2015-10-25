@@ -112,7 +112,7 @@ public class EventDrivenTransformation {
 					return rule.getPrecondition();
 				}
 			});
-			return preconditions;
+			return Iterables.filter(preconditions, Predicates.notNull());
 		}
     }
 
