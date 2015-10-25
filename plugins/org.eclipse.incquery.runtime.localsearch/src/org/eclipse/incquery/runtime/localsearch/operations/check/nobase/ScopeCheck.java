@@ -56,7 +56,7 @@ public class ScopeCheck extends CheckOperation {
                 EObject container = eObject;
                 while (container.eContainer() != null) {
                     Resource eResource = container.eResource();
-                    if (!scope.getScopeRoots().contains(eResource)) {
+                    if (!scope.getScopeRoots().contains(eResource) && !scope.getScopeRoots().contains(eResource.getResourceSet())) {
                         return false;
                     }
                     container = container.eContainer();

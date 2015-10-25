@@ -15,10 +15,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.emf.EMFQueryRuntimeContext;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.emf.types.EClassTransitiveInstancesKey;
@@ -102,12 +104,22 @@ public class POperationCompiler {
             EMFScope emfScope = this.runtimeContext.getEmfScope();
             Set<? extends Notifier> scopeRoots = emfScope.getScopeRoots();
             for (Notifier notifier : scopeRoots) {
-                if(notifier instanceof Resource){
-                    TreeIterator<EObject> allContents = ((Resource) notifier).getAllContents();
-                    this.allModelContents.addAll(Sets.newHashSet(allContents));
+                if(notifier instanceof ResourceSet){
+                    EList<Resource> allResources = ((ResourceSet) notifier).getResources();
+                    for (Resource resource : allResources) {
+                           storeAllEObjects(resource);
+                    }
+                }
+                else if(notifier instanceof Resource){
+                    storeAllEObjects((Resource) notifier);
                 }
             }
         }
+    }
+
+    private void storeAllEObjects(Resource resource) {
+        TreeIterator<EObject> allContents = resource.getAllContents();
+        this.allModelContents.addAll(Sets.newHashSet(allContents));
     }
 
 	/**
