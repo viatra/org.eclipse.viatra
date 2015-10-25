@@ -23,6 +23,7 @@ import org.eclipse.incquery.runtime.evm.api.resolver.ScopedConflictSet
 import org.eclipse.viatra.emf.runtime.filters.MatchParameterFilter
 import org.eclipse.viatra.emf.runtime.transformation.batch.BatchTransformation
 import org.eclipse.viatra.emf.runtime.rules.BatchTransformationRuleGroup
+import org.eclipse.incquery.runtime.api.GenericPatternGroup
 
 /**
  * Utility class for simple rule usage
@@ -200,8 +201,9 @@ class BatchTransformationStatements {
 	def <Match extends IPatternMatch> registerRule(RuleSpecification<Match> ruleSpecification, EventFilter<? super Match> filter) {
 		ruleEngine.addRule(ruleSpecification, filter)
 	}
-	
+
 	def registerRules(BatchTransformationRuleGroup rules) {
+		GenericPatternGroup.of(rules.filterNull.map[precondition].filterNull.toSet).prepare(iqEngine)
 		rules.filterNull.forEach[
 				ruleEngine.addRule(ruleSpecification, filter as EventFilter<IPatternMatch>)
 		]

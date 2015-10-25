@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.incquery.runtime.api.GenericPatternGroup;
+import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
@@ -22,8 +24,12 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup;
 import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRule;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public class EventDrivenTransformation {
     private IncQueryEngine incQueryEngine;
@@ -75,7 +81,8 @@ public class EventDrivenTransformation {
         /**
          * @deprecated Use {@link #build()} instead.
          */
-        public EventDrivenTransformation create() throws IncQueryException {
+        @Deprecated
+		public EventDrivenTransformation create() throws IncQueryException {
             return build();
         }
 
@@ -88,12 +95,25 @@ public class EventDrivenTransformation {
                 }
                 schema = builder.build();
             }
+            Iterable<IQuerySpecification<?>> preconditions = collectPreconditions();
+            GenericPatternGroup.of(Sets.newHashSet(preconditions)).prepare(engine);
             for (EventDrivenTransformationRule<?, ?> rule : rules) {
                 schema.addRule(rule.getRuleSpecification());
             }
             return new EventDrivenTransformation(schema, engine);
 
         }
+
+		private Iterable<IQuerySpecification<?>> collectPreconditions() {
+			Iterable<EventDrivenTransformationRule<?, ?>> notNullRules = Iterables.filter(rules, Predicates.notNull());
+			Iterable<IQuerySpecification<?>> preconditions = Iterables.transform(notNullRules, new Function<EventDrivenTransformationRule<?, ?>, IQuerySpecification<?>>(){
+				@Override
+				public IQuerySpecification<?> apply(EventDrivenTransformationRule<?, ?> rule) {
+					return rule.getPrecondition();
+				}
+			});
+			return preconditions;
+		}
     }
 
     public static EventDrivenTransformationBuilder forScope(EMFScope scope) throws IncQueryException {
