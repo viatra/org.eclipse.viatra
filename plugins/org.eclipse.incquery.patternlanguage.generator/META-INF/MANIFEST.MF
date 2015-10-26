@@ -4,8 +4,8 @@ Bundle-Name: Pattern Language Generator Extension
 Bundle-SymbolicName: org.eclipse.incquery.patternlanguage.generator
 Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eclipse.xtext;bundle-version="[2.9.0,2.10.0)";visibility:=reexport,
- org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional;visibility:=reexport,
+Require-Bundle: org.eclipse.xtext;bundle-version="[2.9.0,2.10.0)",
+ org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional,
  org.eclipse.xtext.generator;bundle-version="[2.9.0,2.10.0)";resolution:=optional,
  org.eclipse.emf.codegen.ecore;resolution:=optional,
  org.eclipse.emf.mwe.utils;resolution:=optional,
