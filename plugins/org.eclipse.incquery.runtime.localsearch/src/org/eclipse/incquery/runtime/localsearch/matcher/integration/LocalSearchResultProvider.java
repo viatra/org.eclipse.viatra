@@ -100,7 +100,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
             useBase = useBase == null ? false : useBase; 
             
             LocalSearchRuntimeBasedStrategy strategy = new LocalSearchRuntimeBasedStrategy(allowInverse,useBase);
-            compiler = new POperationCompiler(runtimeContext, backend);
+            compiler = new POperationCompiler(runtimeContext, backend, useBase);
 
             LocalSearchPlanner planner = new LocalSearchPlanner();
             planner.initializePlanner(flattener, logger, metaContext, runtimeContext, normalizer, strategy, compiler, hints);
@@ -219,20 +219,6 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     }
 
     @Override
-    public int countMatches(Object[] parameters) {
-        try {
-            final LocalSearchMatcher matcher = initializeMatcher(parameters);
-            final MatchingFrame frame = matcher.editableMatchingFrame();
-            for (int i = 0; i < parameters.length; i++) {
-                frame.setValue(i, parameters[i]);
-            }
-            return matcher.countMatches(frame);
-        } catch (LocalSearchException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public Tuple getOneArbitraryMatch(Object[] parameters) {
         try {
             final LocalSearchMatcher matcher = initializeMatcher(parameters);
@@ -241,6 +227,20 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
                 frame.setValue(i, parameters[i]);
             }
             return matcher.getOneArbitraryMatch(frame);
+        } catch (LocalSearchException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    @Override
+    public int countMatches(Object[] parameters) {
+        try {
+            final LocalSearchMatcher matcher = initializeMatcher(parameters);
+            final MatchingFrame frame = matcher.editableMatchingFrame();
+            for (int i = 0; i < parameters.length; i++) {
+                frame.setValue(i, parameters[i]);
+            }
+            return matcher.countMatches(frame);
         } catch (LocalSearchException e) {
             throw new RuntimeException(e);
         }
