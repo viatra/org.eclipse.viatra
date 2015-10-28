@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.incquery.runtime.evm;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: com.google.guava,
- org.eclipse.incquery.runtime
+ org.eclipse.incquery.runtime;bundle-version="[1.1.0,1.2.0)"
 Export-Package: org.eclipse.incquery.runtime.evm.api,org.eclipse.incqu
  ery.runtime.evm.api.event,org.eclipse.incquery.runtime.evm.api.event.
  adapter,org.eclipse.incquery.runtime.evm.api.resolver,org.eclipse.inc
