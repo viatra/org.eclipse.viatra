@@ -103,6 +103,6 @@ class EReferenceResolutionTest {
 			}
 		') as PatternModel
 		model.assertError(EMFPatternLanguagePackage$Literals::REFERENCE_TYPE,
-			Diagnostic::LINKING_DIAGNOSTIC, "reference to EStructuralFeature")
+			Diagnostic::LINKING_DIAGNOSTIC, "notExist")
 	}
 }

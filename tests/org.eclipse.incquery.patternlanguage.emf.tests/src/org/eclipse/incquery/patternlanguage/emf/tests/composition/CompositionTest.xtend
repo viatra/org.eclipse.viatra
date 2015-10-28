@@ -111,7 +111,7 @@ class CompositionTest extends AbstractValidatorTest { //} extends AbstractEMFPat
 		
 		model.assertError(PatternLanguagePackage::eINSTANCE.patternCall, 
 			Diagnostic::LINKING_DIAGNOSTIC, 
-			"Couldn't resolve reference to Pattern 'calledPatternMissing'."
+			"calledPatternMissing"
 		)
 	}
 
