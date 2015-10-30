@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra.debug.example.tracemodel/src"
+    modelPluginID="org.eclipse.viatra.debug.example.tracemodel" modelName="Tracemodel"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="8.0" copyrightFields="false" usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>tracemodel.ecore</foreignModel>
+  <genPackages prefix="Tracemodel" disposableProviderFactory="true" ecorePackage="tracemodel.ecore#/">
+    <genClasses ecoreClass="tracemodel.ecore#//TraceRoot">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference tracemodel.ecore#//TraceRoot/trace"/>
+    </genClasses>
+    <genClasses ecoreClass="tracemodel.ecore#//Trace">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tracemodel.ecore#//Trace/dtUMLElement"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tracemodel.ecore#//Trace/umlElement"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

@@ -1,0 +1,14 @@
+module org.eclipse.viatra.debug.example
+
+import org.eclipse.viatra.emf.mwe2integration.*
+import org.eclipse.viatra.emf.mwe2integration.mwe2impl.*
+import org.eclipse.viatra.debug.example.transformation.mwe2.*
+
+Workflow {
+	component = TransformationChain {
+		step = MWE2ViatraTraceExecutorTransformation{
+			location = "/org.eclipse.viatra.debug.example/testmodel/model.uml"
+			dtLocation = "D://model_dt/model.dtuml"
+		}		
+	}
+}

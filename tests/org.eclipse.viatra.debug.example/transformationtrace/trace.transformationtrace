@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ASCII"?>
+<transformationtrace:TransformationTrace xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:transformationtrace="http://org.eclipse.viatra/model/transformationtrace">
+  <activationTraces ruleName="classRule">
+    <ruleParameterTraces parameterName="umlClass" objectId="platform:/plugin/org.eclipse.viatra.debug.example/testmodel/model.uml#_I9qiEBmkEeWkDIIs2OLK7g"/>
+  </activationTraces>
+  <activationTraces ruleName="classRule">
+    <ruleParameterTraces parameterName="umlClass" objectId="platform:/plugin/org.eclipse.viatra.debug.example/testmodel/model.uml#_LbgdgBmkEeWkDIIs2OLK7g"/>
+  </activationTraces>
+  <activationTraces ruleName="propertyRule">
+    <ruleParameterTraces parameterName="prop" objectId="platform:/plugin/org.eclipse.viatra.debug.example/testmodel/model.uml#_ZPPHwGzVEeWHx6wJV3jSJA"/>
+    <ruleParameterTraces parameterName="cl" objectId="platform:/plugin/org.eclipse.viatra.debug.example/testmodel/model.uml#_I9qiEBmkEeWkDIIs2OLK7g"/>
+  </activationTraces>
+  <activationTraces ruleName="operationRule">
+    <ruleParameterTraces parameterName="op" objectId="platform:/plugin/org.eclipse.viatra.debug.example/testmodel/model.uml#_wMUrYGzREeWHx6wJV3jSJA"/>
+    <ruleParameterTraces parameterName="cl" objectId="platform:/plugin/org.eclipse.viatra.debug.example/testmodel/model.uml#_I9qiEBmkEeWkDIIs2OLK7g"/>
+  </activationTraces>
+  <activationTraces ruleName="propertyRule">
+    <ruleParameterTraces parameterName="prop" objectId="platform:/plugin/org.eclipse.viatra.debug.example/testmodel/model.uml#_d3E20GwrEeWP-6u5H9WDwQ"/>
+    <ruleParameterTraces parameterName="cl" objectId="platform:/plugin/org.eclipse.viatra.debug.example/testmodel/model.uml#_LbgdgBmkEeWkDIIs2OLK7g"/>
+  </activationTraces>
+</transformationtrace:TransformationTrace>

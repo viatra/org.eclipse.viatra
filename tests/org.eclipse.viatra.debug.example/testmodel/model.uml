@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_ZvNCEBmjEeWkDIIs2OLK7g" name="PingPongSimple">
+  <packagedElement xmi:type="uml:Class" xmi:id="_LbgdgBmkEeWkDIIs2OLK7g" name="Pong">
+    <ownedAttribute xmi:id="_d3E20GwrEeWP-6u5H9WDwQ" name="prop" type="_I9qiEBmkEeWkDIIs2OLK7g"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_I9qiEBmkEeWkDIIs2OLK7g" name="Ping">
+    <ownedAttribute xmi:id="_ZPPHwGzVEeWHx6wJV3jSJA" name="prop2" type="_I9qiEBmkEeWkDIIs2OLK7g"/>
+    <ownedOperation xmi:id="_wMUrYGzREeWHx6wJV3jSJA" name="op">
+      <ownedParameter xmi:id="_3GtqoGzREeWHx6wJV3jSJA" name="return" type="_I9qiEBmkEeWkDIIs2OLK7g" direction="return"/>
+    </ownedOperation>
+  </packagedElement>
+</uml:Model>

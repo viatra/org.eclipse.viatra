@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: com.incquerylabs.uml.text.generator.queries
+Bundle-SymbolicName: org.eclipse.viatra.debug.example.queries;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Export-Package: com.incquerylabs.uml.text.generator.queries,
+ com.incquerylabs.uml.text.generator.queries.util
+Require-Bundle: org.eclipse.emf.ecore,
+ org.eclipse.incquery.runtime,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.uml2.uml;bundle-version="5.1.0",
+ org.eclipse.uml2;bundle-version="5.0.0",
+ org.eclipse.viatra.debug.example.tracemodel;bundle-version="1.0.0",
+ org.eclipse.viatra.debug.example.targetmodel;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.log4j
