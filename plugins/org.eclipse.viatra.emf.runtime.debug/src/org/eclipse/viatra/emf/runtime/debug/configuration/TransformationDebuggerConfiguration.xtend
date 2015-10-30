@@ -14,26 +14,27 @@ import com.google.common.collect.Lists
 import java.util.List
 import org.eclipse.viatra.emf.runtime.adapter.IAdapterConfiguration
 import org.eclipse.viatra.emf.runtime.adapter.ITransformationAdapter
-import org.eclipse.viatra.emf.runtime.debug.ManualConflictResolver
+import org.eclipse.viatra.emf.runtime.debug.TransformationDebugger
+import org.eclipse.viatra.emf.runtime.debug.breakpoints.ITransformationBreakpoint
 import org.eclipse.viatra.emf.runtime.debug.ui.IDebuggerUI
 import org.eclipse.viatra.emf.runtime.debug.ui.impl.ConsoleDebuggerUI
 
 /**
- * Configuration class that defines the manual conflict resolver.
+ * Configuration class that defines the debugger.
  * 
  */
-class ManualConflictResolverConfiguration implements IAdapterConfiguration{
+class TransformationDebuggerConfiguration implements IAdapterConfiguration{
 	List<ITransformationAdapter> adapters
 	
-	new(IDebuggerUI usedUI){
+	new(IDebuggerUI usedUI, ITransformationBreakpoint ... breakpoints){
 		adapters = Lists.newArrayList
-		adapters.add(new ManualConflictResolver(usedUI))
+		adapters.add(new TransformationDebugger(breakpoints.toList, usedUI))
 	}
 	
-	new(){
+	new(ITransformationBreakpoint ... breakpoints){
 		val usedUI = new ConsoleDebuggerUI
 		adapters = Lists.newArrayList
-		adapters.add(new ManualConflictResolver(usedUI))
+		adapters.add(new TransformationDebugger(breakpoints.toList, usedUI))
 	}
 	
 	override getAdapters() {
