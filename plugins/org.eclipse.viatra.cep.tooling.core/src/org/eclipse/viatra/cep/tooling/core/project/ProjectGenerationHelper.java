@@ -108,7 +108,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void createProject(IProjectDescription description, IProject proj,
             List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
-        List<String> dependencies = Lists.newArrayList("org.eclipse.emf.ecore", "org.eclipse.viatra.cep.core");
+        List<String> dependencies = Lists.newArrayList("org.eclipse.emf.ecore", "org.eclipse.viatra.cep.core", "com.google.guava");
         List<String> importPackages = Lists.newArrayList("org.apache.log4j");
         if (additionalDependencies != null) {
             dependencies.addAll(additionalDependencies);
