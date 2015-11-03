@@ -179,6 +179,7 @@
 				<module>../../plugins/org.eclipse.viatra.emf.runtime.debug</module>
 				<module>../../plugins/org.eclipse.viatra.emf.runtime.debug.ui</module>
 				<module>../../plugins/org.eclipse.viatra.emf.mwe2integration.debug</module>
+				<module>../../plugins/org.eclipse.viatra.emf.runtime.tracer</module>
 				<module>../../plugins/org.eclipse.viatra.cep.core</module>
 				<module>../../plugins/org.eclipse.viatra.cep.core.metamodels</module>
 				<module>../../plugins/org.eclipse.viatra.cep.emf.notification</module>
