@@ -17,7 +17,7 @@ import java.util.Set;
 
 /**
  * @author Gabor Bergmann
- * 
+ * @deprecated Use {@link org.eclipse.incquery.runtime.base.itc.alg.incscc.UnionFind} instead.
  */
 public class UnionFind<T> implements Map<T, T> {
     class Node {
