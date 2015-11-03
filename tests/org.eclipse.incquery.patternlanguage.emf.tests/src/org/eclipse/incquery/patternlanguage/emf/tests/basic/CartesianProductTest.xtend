@@ -14,6 +14,7 @@ package org.eclipse.incquery.patternlanguage.emf.tests.basic
 import com.google.inject.Inject
 import com.google.inject.Injector
 import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
 import org.eclipse.xtext.junit4.InjectWith
@@ -24,7 +25,8 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
+import org.eclipse.xtext.junit4.validation.AssertableDiagnostics
+import org.junit.Assert
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -43,309 +45,329 @@ class CartesianProductTest {
 
 	extension ValidatorTester<EMFPatternLanguageJavaValidator> tester
 
+	def assertOk(AssertableDiagnostics diagnostics) {
+		Assert.assertEquals(#[], diagnostics.allDiagnostics.toList)
+	}
+
 	@Before
 	def void initialize() {
 		tester = new ValidatorTester(validator, injector)
 	}
 
 	@Test
-	def testGood1() {
+	def testGoodEquality() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
+		tester.validate(model).assertOk
 	}
 
 	@Test
-	def testGood2() {
+	def testGoodFind() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Good2(X, Y) {
+			pattern Find(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
-				find Good1(X,Y);
+				find Equality(X,Y);
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
+		tester.validate(model).assertOk
 	}
 
 	@Test
-	def testGood3() {
+	def testGoodCountFind() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Good3(X, Y) {
+			pattern CountFind(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
-				Z == count find Good1(X,Y);
+				Z == count find Equality(X,Y);
 				check(Z > 10);
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
+		tester.validate(model).assertOk
 	}
 
 	@Test
-	def testGood4() {
+	def testGoodFindPathExpressionWithCountFind() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern IntAndClassPattern(X, Y) {
+			pattern PathExpression(X, Y : EClass) {
 				EInt(X);
 				EClass(Y);
 				EClass.eStructuralFeatures.upperBound(Y,X);
 			}
 
-			pattern Good4(X, Y, Z) {
+			pattern FindPathExpressionWithCountFind(X : EClass, Y : EClass, Z : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 				EClass(Z);
-				find IntAndClassPattern(count find Good1(X,Y), Z);
+				find PathExpression(count find Equality(X,Y), Z);
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
+		tester.validate(model).assertOk
 	}
 
 	@Test
-	def testGood5() {
+	def testGoodPathExpressionWithCountFind() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X, Y) {
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Good5(X, Y, Z) {
+			pattern PathExpressionWithCountFind(X : EClass, Y : EClass, Z : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 				EClass(Z);
-				EClass.eStructuralFeatures.upperBound(Z,count find Good1(X,Y));
+				EClass.eStructuralFeatures.upperBound(Z,count find Equality(X,Y));
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
+		tester.validate(model).assertOk
 	}
 
 	@Test
-	def testGood6() {
+	def testGoodNegFindWithRunningVariable() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X : EClass, Y : EClass) {
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Good6(X : EClass) {
+			pattern NegFindWithRunningVariable(X : EClass) {
 				EClass(X);
-				neg find Good1(X,_A);
+				neg find Equality(X,_A);
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertOk
 	}
-
+	
 	@Test
-	def testGood7() {
+	def testGoodNegFindUnrelatedRunningVariables() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X : EClass, Y : EClass) {
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Good7(X : EClass) {
+			pattern NegFindUnrelatedRunningVariables(X : EClass) {
 				EClass(X);
-				neg find Good1(_A,_B);
+				neg find Equality(_A,_B);
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertOk
 	}
 
 	@Test
-	def testGood8() {
+	def testGoodPathExpressionInequality() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X : EClass, Y : EClass) {
+			pattern PathExpressionInequality(X : EClass, Y) {
+				EClass.eStructuralFeatures.upperBound(X, Y);
+				Y != 1;
+			}
+		')
+		model.assertNoErrors
+		tester.validate(model).assertOk
+	}
+
+	@Test
+	def testGoodCountFindWithRunningVariable() {
+		val model = parseHelper.parse('
+			package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Good8(X : EClass) {
+			pattern CountFindWithRunningVariable(X : EClass) {
 				EClass(X);
-				M == count find Good1(X,_A);
+				M == count find Equality(X,_A);
 				check(M>10);
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertOk
 	}
 
 	@Test
-	def testGood9() {
+	def testGoodUnconnectedButSingleton() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good9(X : EClass, Y) {
+			pattern UnconnectedButSingleton(X : EClass, Y) {
 				EClass(X);
 				EInt(Y);
 				Y == 10;
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertOk
 	}
 
-
 	@Test
-	def testSoft1() {
+	def testSoftCheck() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Soft1(X, Y) {
+			pattern Check(X, Y) {
 				EInt(X);
 				EInt(Y);
 				check(X == Y);
 			}
 		')
+		model.assertNoErrors
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
 	}
 
 	@Test
-	def testSoft2() {
+	def testSoftCountFindRunningVariableResult() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X : EClass, Y : EClass) {
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Soft2(X : EClass, Y : EClass) {
+			pattern CountFindRunningVariableResult(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
-				_A == count find Good1(X,Y);
+				_A == count find Equality(X,Y);
 			}
 		')
+		model.assertNoErrors
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
 	}
 
 	@Test
-	def testSoft3() {
+	def testSoftNegFind() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Good1(X : EClass, Y : EClass) {
+			pattern Equality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X == Y;
 			}
 
-			pattern Soft3(X : EClass, Y : EClass) {
+			pattern NegFind(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
-				neg find Good1(X,Y);
+				neg find Equality(X,Y);
 			}
 		')
+		model.assertNoErrors
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
 	}
 
 	@Test
-	def testSoft4() {
+	def testSoftInequality() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Soft4(X : EClass, Y : EClass) {
+			pattern Inequality(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 				X != Y;
 			}
 		')
+		model.assertNoErrors
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
 	}
 
 	@Test
-	def testStrict1() {
+	def testStrictUnconnected() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Strict1(X : EClass, Y : EClass) {
+			pattern NoConnectingConstraint(X : EClass, Y : EClass) {
 				EClass(X);
 				EClass(Y);
 			}
 		')
+		model.assertNoErrors
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
 	}
 
 	@Test
-	def testStrict2() {
+	def testStrictUnconnectedRunningVariable() {
 		val model = parseHelper.parse('
 			package org.eclipse.incquery.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern Strict1(X : EClass) {
+			pattern UnconnectedRunningVariable(X : EClass) {
 				EClass(X);
 				EClass(_Y);
 			}
 		')
+		model.assertNoErrors
 		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
 	}
 

@@ -59,6 +59,7 @@ import org.eclipse.incquery.patternlanguage.typing.ITypeSystem;
 import org.eclipse.incquery.patternlanguage.validation.VariableReferenceCount.ReferenceType;
 import org.eclipse.incquery.patternlanguage.validation.whitelist.PureWhitelistExtensionLoader;
 import org.eclipse.incquery.patternlanguage.validation.whitelist.PurityChecker;
+import org.eclipse.incquery.runtime.base.itc.alg.incscc.UnionFind;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
@@ -75,7 +76,6 @@ import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
 import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -596,7 +596,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Check(CheckType.NORMAL)
     public void checkVariableUsageCounters(PatternBody body) {
-        UnionFindForVariables variableUnions = calculateEqualVariables(body);
+        UnionFind<Variable> variableUnions = calculateEqualVariables(body);
         Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters = new HashMap<Set<Variable>, VariableReferenceCount>();
         Map<Variable, VariableReferenceCount> individualRefCounters = new HashMap<Variable, VariableReferenceCount>();
         calculateUsageCounts(body, variableUnions, individualRefCounters, unifiedRefCounters);
@@ -611,11 +611,11 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     private void checkParameterUsageCounter(ParameterRef var, Map<Variable, VariableReferenceCount> individualCounters,
-            Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters, UnionFindForVariables variableUnions,
+            Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters, UnionFind<Variable> variableUnions,
             PatternBody body) {
         Variable parameter = var.getReferredParam();
         VariableReferenceCount individualCounter = individualCounters.get(var);
-        VariableReferenceCount unifiedCounter = unifiedRefCounters.get(variableUnions.getPartitionOfVariable(var));
+        VariableReferenceCount unifiedCounter = unifiedRefCounters.get(variableUnions.getPartition(var));
         if (individualCounter.getReferenceCount() == 0) {
             error(String.format("Parameter '%s' is never referenced in body '%s'.", parameter.getName(),
                     getPatternBodyName(body)), parameter, PatternLanguagePackage.Literals.VARIABLE__NAME,
@@ -628,9 +628,9 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     private void checkLocalVariableUsageCounter(Variable var, Map<Variable, VariableReferenceCount> individualCounters,
-            Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters, UnionFindForVariables variableUnions) {
+            Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters, UnionFind<Variable> variableUnions) {
         VariableReferenceCount individualCounter = individualCounters.get(var);
-        VariableReferenceCount unifiedCounter = unifiedRefCounters.get(variableUnions.getPartitionOfVariable(var));
+        VariableReferenceCount unifiedCounter = unifiedRefCounters.get(variableUnions.getPartition(var));
         if (individualCounter.getReferenceCount(ReferenceType.POSITIVE) == 1
                 && individualCounter.getReferenceCount() == 1 && !isNamedSingleUse(var)
                 && !isUnnamedSingleUseVariable(var)) {
@@ -671,15 +671,15 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     // private int getReferenceCount(Variable var, ReferenceType type, Map<Variable, VariableReferenceCount>
     // refCounters,
-    // UnionFindForVariables variableUnions) {
+    // UnionFind<Variable> variableUnions) {
     // int sum = 0;
-    // for (Variable unionVar : variableUnions.getPartitionOfVariable(var)) {
+    // for (Variable unionVar : variableUnions.getPartition(var)) {
     // sum += refCounters.get(unionVar).getReferenceCount(type);
     // }
     // return sum;
     // }
 
-    private void calculateUsageCounts(PatternBody body, UnionFindForVariables variableUnions,
+    private void calculateUsageCounts(PatternBody body, UnionFind<Variable> variableUnions,
             Map<Variable, VariableReferenceCount> individualRefCounters,
             Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters) {
         for (Variable var : body.getVariables()) {
@@ -705,7 +705,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                 for (Variable var : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(expression,
                         associations)) {
                     individualRefCounters.get(var).incrementCounter(ReferenceType.READ_ONLY);
-                    unifiedRefCounters.get(variableUnions.getPartitionOfVariable(var)).incrementCounter(
+                    unifiedRefCounters.get(variableUnions.getPartition(var)).incrementCounter(
                             ReferenceType.READ_ONLY);
                 }
                 it.prune();
@@ -715,13 +715,13 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                 final Variable var = ref.getVariable();
                 final ReferenceType referenceClass = classifyReference(ref);
                 individualRefCounters.get(var).incrementCounter(referenceClass);
-                unifiedRefCounters.get(variableUnions.getPartitionOfVariable(var)).incrementCounter(referenceClass);
+                unifiedRefCounters.get(variableUnions.getPartition(var)).incrementCounter(referenceClass);
             }
         }
     }
 
-    private UnionFindForVariables calculateEqualVariables(PatternBody body) {
-        UnionFindForVariables unions = new UnionFindForVariables(body.getVariables());
+    private UnionFind<Variable> calculateEqualVariables(PatternBody body) {
+        UnionFind<Variable> unions = new UnionFind<Variable>(body.getVariables());
         TreeIterator<EObject> it = body.eAllContents();
         while (it.hasNext()) {
             EObject obj = it.next();
@@ -731,8 +731,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                     ValueReference left = constraint.getLeftOperand();
                     ValueReference right = constraint.getRightOperand();
                     if (left instanceof VariableValue && right instanceof VariableValue) {
-                        unions.unite(ImmutableSet.of(((VariableValue) left).getValue().getVariable(),
-                                ((VariableValue) right).getValue().getVariable()));
+                        unions.union(((VariableValue) left).getValue().getVariable(),
+                                ((VariableValue) right).getValue().getVariable());
                     }
                 }
                 it.prune();
