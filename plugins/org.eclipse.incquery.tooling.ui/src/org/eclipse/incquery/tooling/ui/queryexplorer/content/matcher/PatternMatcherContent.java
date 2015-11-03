@@ -22,12 +22,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.incquery.databinding.runtime.collection.ObservablePatternMatchList;
+import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
@@ -62,8 +64,10 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     private MatchComparator matchComparator;
     private IListChangeListener listChangeListener;
 
-    public PatternMatcherContent(PatternMatcherRootContent parent, IncQueryEngine engine, RuleEngine ruleEngine, 
-            final IQuerySpecification<?> specification, boolean generated) {
+    private Class<? extends IQueryBackend> usedBackend = null;
+    
+    public PatternMatcherContent(PatternMatcherRootContent parent, AdvancedIncQueryEngine engine, RuleEngine ruleEngine, 
+            final IQuerySpecification<?> specification, boolean generated, QueryEvaluationHint hint) {
         super(parent);
         this.specification = specification;
         this.transformerFunction = new TransformerFunction(this);
@@ -71,7 +75,8 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
 
         if (specification.getInternalQueryRepresentation().getStatus() != PQueryStatus.ERROR) {
 	        try {
-	            matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification);
+	            usedBackend = hint.getQueryBackendClass();
+	            matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification, hint);
 	        } catch (IncQueryException e) {
 	            this.exceptionMessage = e.getShortMessage();
 	            this.exception = e;
@@ -98,11 +103,11 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
             children.addListChangeListener(listChangeListener);
             // label needs to be set explicitly, in case of no matches setText will not be invoked at all
             setText(DisplayUtil.getMessage(matcher, children.size(), specification.getFullyQualifiedName(),
-                    isGenerated(), isFiltered(), exceptionMessage));
+                    isGenerated(), isFiltered(), exceptionMessage, usedBackend));
         }
         else {
             setText(DisplayUtil.getMessage(null, 0, specification.getFullyQualifiedName(),
-                    isGenerated(), isFiltered(), exceptionMessage));
+                    isGenerated(), isFiltered(), exceptionMessage, null));
         }
     }
     
@@ -148,7 +153,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
             }
 
             setText(DisplayUtil.getMessage(matcher, children.size(), specification.getFullyQualifiedName(),
-                    isGenerated(), isFiltered(), exceptionMessage));
+                    isGenerated(), isFiltered(), exceptionMessage, usedBackend));
             
             // 462706 - if no match is present initially, the user will not be able to expand it otherwise
             updateHasChildren();

@@ -48,6 +48,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
@@ -189,9 +190,22 @@ public class DisplayUtil {
      * @return
      */
     public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn) {
-        return getMessage(matcher, matchesSize, patternFqn, false, false, null);
+        return getMessage(matcher, matchesSize, patternFqn, false, false, null, null);
     }
-
+    
+    /**
+     * Returns a text message for a generated, not filtered matcher about the current match size.
+     *
+     * @param matcher
+     * @param matchesSize
+     * @param patternFqn
+     * @param backend
+     * @return
+     */
+    public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, Class<? extends IQueryBackend> backend) {
+        return getMessage(matcher, matchesSize, patternFqn, false, false, null, backend);
+    }
+    
     /**
      * Returns a text message about the matches size for the given matcher.
      *
@@ -208,7 +222,7 @@ public class DisplayUtil {
      * @return the label associated to the matcher
      */
     public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
-            String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage) {
+            String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage, Class<? extends IQueryBackend> backend) {
         if (matcher == null) {
         	if (exceptionMessage != null)
         		return String.format("%s - %s", patternFqn, exceptionMessage);
@@ -229,10 +243,20 @@ public class DisplayUtil {
             }
 
             String isFilteredString = isFiltered ? " - Filtered" : "";
-            String isGeneratedString = isGenerated ? " (Generated)" : " (Runtime)";
+            String isGeneratedString = isGenerated ? "Generated" : "Runtime";
+            String backendText = backend == null ? "" : " "+getQueryBackendName(backend);
 
-            return String.format("%s - %s %s %s", matcher.getPatternName(), matchString, isFilteredString, isGeneratedString);
+            return String.format("%s - %s %s (%s%s)", matcher.getPatternName(), matchString, isFilteredString, isGeneratedString, backendText);
         }
+    }
+    
+    /**
+     * 
+     * @param backend
+     * @return a user-readable name for the given {@link IQueryBackend} implementation.
+     */
+    public static String getQueryBackendName(Class<? extends IQueryBackend> backend){
+        return backend.getSimpleName();
     }
 
     /**

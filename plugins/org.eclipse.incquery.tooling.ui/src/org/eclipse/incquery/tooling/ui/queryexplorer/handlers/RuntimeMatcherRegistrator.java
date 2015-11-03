@@ -23,6 +23,7 @@ import org.eclipse.incquery.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.IFlyoutPreferences;
@@ -72,7 +73,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
                 // remove labels from pattern registry for the corresponding pattern model
                 removeLabelsFromPatternRegistry(queryExplorer, viewerInput);
                 // REGISTERING PATTERNS
-                Set<IQuerySpecification<?>> newPatterns = registerPatternsFromPatternModel(vr);
+                Set<IQuerySpecification<?>> newPatterns = registerPatternsFromPatternModel(vr, queryExplorer.getHints());
                 setCheckedStatesOnNewPatterns(queryExplorer, viewerInput, newPatterns);
                 
                 queryExplorer.getPatternsViewer().refresh();
@@ -111,7 +112,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
         queryExplorerInstance.getPatternsViewer().refresh();
     }
 
-    private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr) throws IncQueryException {
+    private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr, QueryEvaluationHint hint) throws IncQueryException {
     	PatternModel newParsedModel = null;
     	if (this.resource!=null) {
     		newParsedModel = dbUtil.extractPatternModelFromResource(resource);
@@ -126,7 +127,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
         Iterator<PatternMatcherRootContent> iterator = vr.getChildrenIterator();
         while (iterator.hasNext()) {
             PatternMatcherRootContent root = iterator.next();
-            root.registerPattern(allActivePatterns.toArray(new IQuerySpecification<?>[allActivePatterns.size()]));
+            root.registerPattern(hint, allActivePatterns.toArray(new IQuerySpecification<?>[allActivePatterns.size()]));
             root.updateHasChildren();
         }
         return newPatterns;

@@ -23,6 +23,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.extensibility.QueryBackendRegistry;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.detail.DetailsViewerUtil;
 import org.eclipse.incquery.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
@@ -72,6 +74,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -125,6 +128,8 @@ public class QueryExplorer extends ViewPart {
 
     private String mementoPackagePresentation = "flat";
 
+    private QueryEvaluationHint hints;
+    
     public QueryExplorer() {
         modelConnectorMap = new HashMap<PatternMatcherRootContentKey, IModelConnector>();
         modelConnectorMapReversed = new HashMap<IModelConnector, PatternMatcherRootContentKey>();
@@ -134,6 +139,23 @@ public class QueryExplorer extends ViewPart {
         flatLP = new PatternsViewerFlatLabelProvider(patternsViewerInput);
         hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
         hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
+        hints = new QueryEvaluationHint(QueryBackendRegistry.getInstance().getDefaultBackendClass(), new HashMap<String, Object>());
+    }
+    
+    /**
+     * @return the {@link QueryEvaluationHint} instance used when creating matchers
+     */
+    public QueryEvaluationHint getHints() {
+        return hints;
+    }
+    
+    /**
+     * @param hints the hints to set
+     * @throws NullPointerException if the given hint instance is null
+     */
+    public void setHints(QueryEvaluationHint hints) {
+        Preconditions.checkNotNull(hints);
+        this.hints = hints;
     }
 
     public RootContent getRootContent() {
@@ -144,7 +166,7 @@ public class QueryExplorer extends ViewPart {
         if (!this.modelConnectorMap.containsKey(key)) {
             this.modelConnectorMap.put(key, modelConnector);
             this.modelConnectorMapReversed.put(modelConnector, key);
-            treeViewerRootContent.addPatternMatcherRoot(key);
+            treeViewerRootContent.addPatternMatcherRoot(key, getHints());
         }
     }
 
@@ -279,7 +301,7 @@ public class QueryExplorer extends ViewPart {
         patternsTreeViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER
                 | SWT.MULTI);
         patternsTreeViewer.setCheckStateProvider(new CheckStateProvider());
-        patternsTreeViewer.addCheckStateListener(new CheckStateListener());
+        patternsTreeViewer.addCheckStateListener(new CheckStateListener(this));
         setPackagePresentation(mementoPackagePresentation, false);
         patternsTreeViewer.setInput(patternsViewerInput);
 

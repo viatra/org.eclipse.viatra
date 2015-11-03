@@ -28,6 +28,15 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 
 public class CheckStateListener implements ICheckStateListener {
 
+    private final QueryExplorer queryExplorer;
+    
+    /**
+     * 
+     */
+    public CheckStateListener(QueryExplorer queryExplorer) {
+       this.queryExplorer = queryExplorer; 
+    }
+    
     private final ILog logger = IncQueryGUIPlugin.getDefault().getLog();
 
     @Override
@@ -47,7 +56,7 @@ public class CheckStateListener implements ICheckStateListener {
                                 .getChildrenIterator();
                         while (iterator.hasNext()) {
                             PatternMatcherRootContent root = iterator.next();
-                            root.registerPattern(specification);
+                            root.registerPattern(queryExplorer.getHints(), specification);
                             root.updateHasChildren();
                         }
                         QueryExplorerPatternRegistry.getInstance().addActivePattern(specification);

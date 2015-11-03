@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -43,19 +44,19 @@ public class RootContent extends CompositeContent<Object, PatternMatcherRootCont
         this.mapping = new HashMap<PatternMatcherRootContentKey, PatternMatcherRootContent>();
     }
 
-    public void addPatternMatcherRoot(IEditorPart editorPart, Notifier notifier) {
+    public void addPatternMatcherRoot(IEditorPart editorPart, Notifier notifier, QueryEvaluationHint hint) {
         PatternMatcherRootContentKey key = new PatternMatcherRootContentKey(editorPart,
                 notifier);
-        addPatternMatcherRoot(key);
+        addPatternMatcherRoot(key, hint);
     }
 
-    public void addPatternMatcherRoot(PatternMatcherRootContentKey key) {
+    public void addPatternMatcherRoot(PatternMatcherRootContentKey key, QueryEvaluationHint hint) {
         if (!mapping.containsKey(key)) {
             PatternMatcherRootContent root = new PatternMatcherRootContent(this, key);
             List<IQuerySpecification<?>> activePatterns = QueryExplorerPatternRegistry.getInstance()
                     .getActivePatterns();
             // runtime & generated matchers
-            root.registerPattern(activePatterns.toArray(new IQuerySpecification<?>[activePatterns.size()]));
+            root.registerPattern(hint, activePatterns.toArray(new IQuerySpecification<?>[activePatterns.size()]));
 
             this.mapping.put(key, root);
             this.children.addChild(root);

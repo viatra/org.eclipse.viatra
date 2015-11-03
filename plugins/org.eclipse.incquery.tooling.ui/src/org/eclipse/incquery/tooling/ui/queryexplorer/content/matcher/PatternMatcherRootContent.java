@@ -34,6 +34,7 @@ import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.incquery.runtime.evm.specific.ExecutionSchemas;
 import org.eclipse.incquery.runtime.evm.specific.Schedulers;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.incquery.tooling.ui.IncQueryGUIPlugin;
 import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.incquery.tooling.ui.queryexplorer.preference.PreferenceConstants;
@@ -95,7 +96,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         }
     }
 
-    public void registerPattern(final IQuerySpecification<?>... patterns) {
+    public void registerPattern(final QueryEvaluationHint hint, final IQuerySpecification<?>... patterns) {
         IncQueryEngine engine = null;
         try {
             engine = key.getEngine();
@@ -103,7 +104,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
             engine.getBaseIndex().coalesceTraversals(new Callable<Void>() {
                 @Override
                 public Void call() {
-                    addMatchersForPatterns(patterns);
+                    addMatchersForPatterns(hint, patterns);
                     return null;
                 }
             });
@@ -115,18 +116,18 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         }
     }
 
-    private void addMatchersForPatterns(IQuerySpecification<?>... queries) {
+    private void addMatchersForPatterns(QueryEvaluationHint hint, IQuerySpecification<?>... queries) {
         for (IQuerySpecification<?> query : queries) {
             boolean isGenerated = QueryExplorerPatternRegistry.getInstance().isGenerated(query);
-            addMatcher(key.getEngine(), key.getRuleEngine(), query, isGenerated);
+            addMatcher(key.getEngine(), key.getRuleEngine(), query, isGenerated, hint);
         }
     }
 
-    public void addMatcher(IncQueryEngine engine, RuleEngine ruleEngine, IQuerySpecification<?> specification, boolean generated) {
+    public void addMatcher(AdvancedIncQueryEngine engine, RuleEngine ruleEngine, IQuerySpecification<?> specification, boolean generated,  QueryEvaluationHint hint) {
         String fqn = specification.getFullyQualifiedName();
 
         PatternMatcherContent pm = new PatternMatcherContent(this, engine, ruleEngine, specification,
-                generated);
+                generated, hint);
         this.mapping.put(fqn, pm);
 
         if (generated) {

@@ -308,6 +308,9 @@
       <menuContribution
             allPopups="false"
             locationURI="toolbar:org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer">
+         <control
+               class="org.eclipse.incquery.tooling.ui.queryexplorer.BackendSelectionControl">
+         </control>
          <command
                commandId="org.eclipse.incquery.tooling.ui.loadmodel"
                icon="icons/load.gif"

@@ -15,6 +15,9 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.incquery.runtime.extensibility.QueryBackendRegistry;
+import org.eclipse.incquery.runtime.localsearch.matcher.integration.LocalSearchBackend;
+import org.eclipse.incquery.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
@@ -54,6 +57,13 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        
+        /*
+         * TODO this line is currently needed to ensure that the Local search backend is registered. This line may be removed 
+         * when a proper register is implemented.
+         * Refer to https://bugs.eclipse.org/bugs/show_bug.cgi?id=466336 for more information.
+         */
+        QueryBackendRegistry.getInstance().registerQueryBackendFactory(LocalSearchBackend.class, new LocalSearchBackendFactory());
     }
 
     /*

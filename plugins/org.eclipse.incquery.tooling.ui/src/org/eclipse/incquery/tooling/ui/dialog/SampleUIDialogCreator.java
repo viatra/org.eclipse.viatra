@@ -39,7 +39,7 @@ public class SampleUIDialogCreator {
         final ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell,
                 new PatternMatchDialogLabelProvider(), new PatternMatchDialogContentProvider(matcher, matches));
         dialog.setTitle(String.format("Matchset of the pattern %s", patternFqn));
-        dialog.setMessage(DisplayUtil.getMessage(matcher, matches.size(), patternFqn));
+        dialog.setMessage(DisplayUtil.getMessage(matcher, matches.size(), patternFqn, null));
         dialog.setEmptyListMessage("No matches!");
         dialog.setAllowMultiple(false);
         dialog.setDoubleClickSelects(false);
