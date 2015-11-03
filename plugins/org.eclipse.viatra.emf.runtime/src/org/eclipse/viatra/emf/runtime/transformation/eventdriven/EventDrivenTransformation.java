@@ -11,6 +11,7 @@
 package org.eclipse.viatra.emf.runtime.transformation.eventdriven;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.eclipse.emf.common.notify.Notifier;
@@ -19,6 +20,7 @@ import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
+import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import org.eclipse.incquery.runtime.evm.api.resolver.ConflictResolver;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup;
@@ -29,12 +31,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class EventDrivenTransformation {
     private IncQueryEngine incQueryEngine;
     private ExecutionSchema executionSchema;
-
+    private Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rules;
+    
     public static class EventDrivenTransformationBuilder {
 
         private final String SCHEMA_ERROR = "Cannot set both Conflict Resolver and Execution Schema properties.";
@@ -88,6 +92,8 @@ public class EventDrivenTransformation {
 
         public EventDrivenTransformation build() throws IncQueryException {
             Preconditions.checkState(engine != null, "IncQueryEngine must be set.");
+            Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rulesToAdd = Maps.newHashMap();
+            
             if (schema == null) {
                 final ExecutionSchemaBuilder builder = new ExecutionSchemaBuilder().setEngine(engine);
                 if (resolver != null) {
@@ -99,8 +105,11 @@ public class EventDrivenTransformation {
             GenericPatternGroup.of(Sets.newHashSet(preconditions)).prepare(engine);
             for (EventDrivenTransformationRule<?, ?> rule : rules) {
                 schema.addRule(rule.getRuleSpecification());
+                rulesToAdd.put(rule.getRuleSpecification(), rule);
             }
-            return new EventDrivenTransformation(schema, engine);
+            EventDrivenTransformation transformation = new EventDrivenTransformation(schema, engine);
+            transformation.setRules(rulesToAdd);
+            return transformation;
 
         }
 
@@ -154,5 +163,13 @@ public class EventDrivenTransformation {
         if (debug) {
             executionSchema.getLogger().setLevel(Level.DEBUG);
         }
+    }
+    
+    public Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> getTransformationRules() {
+        return rules;
+    }
+
+    public void setRules(Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rules) {
+        this.rules = rules;
     }
 }
