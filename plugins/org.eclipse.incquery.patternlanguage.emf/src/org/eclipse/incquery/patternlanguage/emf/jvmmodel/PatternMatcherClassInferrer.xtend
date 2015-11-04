@@ -35,6 +35,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple
 import java.util.Collection
 import org.eclipse.incquery.runtime.api.IQuerySpecification
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
+import org.eclipse.xtend2.lib.StringConcatenationClient
 
 /**
  * {@link IncQueryMatcher} implementation inferrer.
@@ -298,10 +299,10 @@ class PatternMatcherClassInferrer {
   	/**
   	 * Infers the tupleToMatch method body.
   	 */
-  	def inferTupleToMatchMethodBody(Pattern pattern) {
+  	def StringConcatenationClient inferTupleToMatchMethodBody(Pattern pattern) {
    		'''
 			try {
-				return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») t.get(«p.positionConstant»)«ENDFOR»);
+				return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.type») t.get(«p.positionConstant»)«ENDFOR»);
 			} catch(ClassCastException e) {
 				«inferErrorLogging("Element(s) in tuple not properly typed!", "e")»
 				return null;
@@ -312,10 +313,10 @@ class PatternMatcherClassInferrer {
   	/**
   	 * Infers the arrayToMatch method body.
   	 */
-  	def inferArrayToMatchMethodBody(Pattern pattern) {
+  	def StringConcatenationClient inferArrayToMatchMethodBody(Pattern pattern) {
   		'''
 			try {
-				return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
+				return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.type») match[«p.positionConstant»]«ENDFOR»);
 			} catch(ClassCastException e) {
 				«inferErrorLogging("Element(s) in array not properly typed!", "e")»
 				return null;
@@ -325,10 +326,10 @@ class PatternMatcherClassInferrer {
   	/**
   	 * Infers the arrayToMatch method body.
   	 */
-  	def inferArrayToMatchMutableMethodBody(Pattern pattern) {
+  	def StringConcatenationClient inferArrayToMatchMutableMethodBody(Pattern pattern) {
   		'''
    			try {
-   				return «pattern.matchClassName».newMutableMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») match[«p.positionConstant»]«ENDFOR»);
+   				return «pattern.matchClassName».newMutableMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.type») match[«p.positionConstant»]«ENDFOR»);
    			} catch(ClassCastException e) {
    				«inferErrorLogging("Element(s) in array not properly typed!", "e")»
    				return null;

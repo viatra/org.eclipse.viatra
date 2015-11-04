@@ -21,14 +21,14 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.Variable
 import org.eclipse.incquery.runtime.api.IPatternMatch
 import org.eclipse.incquery.runtime.exception.IncQueryException
 import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
-import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -131,9 +131,8 @@ class PatternMatchClassInferrer {
    				if (!isMutable()) throw new java.lang.UnsupportedOperationException();
    				«FOR variable : pattern.parameters»
    				«val type = variable.calculateType»
-   				«val typeName = type.qualifiedName»
-   				if ("«variable.name»".equals(parameterName) «IF typeReference.is(type, typeof(Object))»&& newValue instanceof «typeName»«ENDIF») {
-   					this.«variable.fieldName» = («typeName») newValue;
+   				if ("«variable.name»".equals(parameterName) «IF typeReference.is(type, typeof(Object))»&& newValue instanceof «type»«ENDIF») {
+   					this.«variable.fieldName» = («type») newValue;
    					return true;
    				}
    				«ENDFOR»
