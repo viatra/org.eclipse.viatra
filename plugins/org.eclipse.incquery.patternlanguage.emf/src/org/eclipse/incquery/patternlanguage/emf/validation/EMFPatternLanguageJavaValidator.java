@@ -40,6 +40,7 @@ import org.eclipse.incquery.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.incquery.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.incquery.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.incquery.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.CompareFeature;
@@ -58,10 +59,10 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePacka
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
 import org.eclipse.incquery.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.incquery.patternlanguage.validation.UnionFindForVariables;
 import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.comprehension.EMFModelComprehension;
-import org.eclipse.incquery.runtime.base.itc.alg.incscc.UnionFind;
 import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
@@ -75,7 +76,6 @@ import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -358,10 +358,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     @Check(CheckType.NORMAL)
     public void checkForCartesianProduct(PatternBody patternBody) {
         List<Variable> variables = patternBody.getVariables();
-        List<Variable> unnamedRunningVariables = CorePatternLanguageHelper.getUnnamedRunningVariables(patternBody);
-        variables.removeAll(unnamedRunningVariables);
-        UnionFind<Variable> justPositiveUnionFindForVariables = new UnionFind<Variable>(variables);
-        UnionFind<Variable> generalUnionFindForVariables = new UnionFind<Variable>(variables);
+        variables.removeAll(CorePatternLanguageHelper.getUnnamedRunningVariables(patternBody));
+        UnionFindForVariables justPositiveUnionFindForVariables = new UnionFindForVariables(variables);
+        UnionFindForVariables generalUnionFindForVariables = new UnionFindForVariables(variables);
         boolean isSecondRunNeeded = false;
 
         // First run
@@ -465,10 +464,16 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         ValueReference rightValueReference = compareConstraint.getRightOperand();
                         if (isValueReferenceComputed(leftValueReference)
                                 || isValueReferenceComputed(rightValueReference)) {
-                            addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables, positiveVariables,
-                                    leftValueReference);
-                            addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables, positiveVariables,
-                                    rightValueReference);
+                            Set<Variable> leftVariables = CorePatternLanguageHelper
+                                    .getVariablesFromValueReference(leftValueReference);
+                            Set<Variable> rightVariables = CorePatternLanguageHelper
+                                    .getVariablesFromValueReference(rightValueReference);
+                            if (justPositiveUnionFindForVariables.isSameUnion(leftVariables)) {
+                                positiveVariables.addAll(leftVariables);
+                            }
+                            if (justPositiveUnionFindForVariables.isSameUnion(rightVariables)) {
+                                positiveVariables.addAll(rightVariables);
+                            }
                         }
                     }
                 } else if (constraint instanceof PatternCompositionConstraint) {
@@ -476,8 +481,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     if (!patternCompositionConstraint.isNegative()) {
                         // Positive composition (find), with aggregates in it
                         for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
-                            addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables, positiveVariables,
-                                    valueReference);
+                            Set<Variable> actualVariables = CorePatternLanguageHelper
+                                    .getVariablesFromValueReference(valueReference);
+                            if (justPositiveUnionFindForVariables.isSameUnion(actualVariables)) {
+                                positiveVariables.addAll(actualVariables);
+                            }
                         }
                     }
                 } else if (constraint instanceof PathExpressionConstraint) {
@@ -490,8 +498,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     }
                     positiveVariables.add(pathExpressionHeadSourceVariable);
                     ValueReference valueReference = pathExpressionHead.getDst();
-                    addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables, positiveVariables,
-                            valueReference);
+                    Set<Variable> actualVariables = CorePatternLanguageHelper
+                            .getVariablesFromValueReference(valueReference);
+                    if (justPositiveUnionFindForVariables.isSameUnion(actualVariables)) {
+                        positiveVariables.addAll(actualVariables);
+                    }
                 }
                 justPositiveUnionFindForVariables.unite(positiveVariables);
             }
@@ -509,70 +520,34 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                             && rightValueReference instanceof VariableValue) {
                         VariableValue variableValue = (VariableValue) rightValueReference;
                         Variable variableToRemove = variableValue.getValue().getVariable();
-                        generalUnionFindForVariables = copyAndRemove(generalUnionFindForVariables, variableToRemove);
-                        justPositiveUnionFindForVariables = copyAndRemove(justPositiveUnionFindForVariables, variableToRemove);
+                        generalUnionFindForVariables.removeVariable(variableToRemove);
+                        justPositiveUnionFindForVariables.removeVariable(variableToRemove);
                     } else if (leftValueReference instanceof VariableValue
                             && (rightValueReference instanceof LiteralValueReference || rightValueReference instanceof EnumValue)) {
                         VariableValue variableValue = (VariableValue) leftValueReference;
                         Variable variableToRemove = variableValue.getValue().getVariable();
-                        generalUnionFindForVariables = copyAndRemove(generalUnionFindForVariables, variableToRemove);
-                        justPositiveUnionFindForVariables = copyAndRemove(justPositiveUnionFindForVariables, variableToRemove);
+                        generalUnionFindForVariables.removeVariable(variableToRemove);
+                        justPositiveUnionFindForVariables.removeVariable(variableToRemove);
                     }
                 }
             }
         }
 
-        if (generalUnionFindForVariables.getPartitions().size() > 1) {
+        if (generalUnionFindForVariables.isMoreThanOneUnion()) {
             // Giving strict warning in this case
             warning("The pattern body contains isolated constraints (\"cartesian products\") that can lead to severe performance and memory footprint issues. The independent partitions are: "
-                    + prettyPrintPartitions(generalUnionFindForVariables) + ".", patternBody, null,
+                    + generalUnionFindForVariables.getCurrentPartitionsFormatted() + ".", patternBody, null,
                     EMFIssueCodes.CARTESIAN_STRICT_WARNING);
-        } else if (justPositiveUnionFindForVariables.getPartitions().size() > 1) {
+        } else if (justPositiveUnionFindForVariables.isMoreThanOneUnion()) {
             // Giving soft warning in this case
             warning("The pattern body contains constraints which are only loosely connected. This may negatively impact performance. The weakly dependent partitions are: "
-                    + prettyPrintPartitions(justPositiveUnionFindForVariables), patternBody, null,
+                    + justPositiveUnionFindForVariables.getCurrentPartitionsFormatted(), patternBody, null,
                     EMFIssueCodes.CARTESIAN_SOFT_WARNING);
         }
     }
 
-    private void addPositiveVariablesFromValueReference(List<Variable> unnamedRunningVariables,
-            UnionFind<Variable> justPositiveUnionFindForVariables, Set<Variable> positiveVariables,
-            ValueReference valueReference) {
-        Set<Variable> leftVariables = CorePatternLanguageHelper.getVariablesFromValueReference(valueReference);
-        leftVariables.removeAll(unnamedRunningVariables);
-        if (justPositiveUnionFindForVariables.isSameUnion(leftVariables)) {
-            positiveVariables.addAll(leftVariables);
-        }
-    }
-
-    /**
-     * Returns a copy of this with the given value removed.
-     * The given value does not have to be a set's root node.
-     */
-    private static <V> UnionFind<V> copyAndRemove(UnionFind<V> unionFind, V element) {
-        UnionFind<V> result = new UnionFind<V>();
-        for (Set<V> partition : unionFind.getPartitions()) {
-            Set<V> filteredPartition = new HashSet<V>(partition);
-            filteredPartition.remove(element);
-            result.makeSet(filteredPartition);
-        }
-        return result;
-    }
-
-    private static String prettyPrintPartitions(UnionFind<Variable> unionFind) {
-        StringBuilder result = new StringBuilder();
-        for (Set<Variable> partition : unionFind.getPartitions()) {
-            result.append("[");
-            Iterable<String> variableNames = Iterables.transform(partition, new Function<Variable, String>() {
-                @Override
-                public String apply(Variable variable) {
-                    return variable.getName();
-                }
-            });
-            result.append(Joiner.on(", ").join(variableNames));
-            result.append("]");
-        }
-        return result.toString();
+    private static boolean isValueReferenceAggregated(ValueReference valueReference) {
+        return valueReference instanceof AggregatedValue;
     }
 
     private static boolean isValueReferenceComputed(ValueReference valueReference) {

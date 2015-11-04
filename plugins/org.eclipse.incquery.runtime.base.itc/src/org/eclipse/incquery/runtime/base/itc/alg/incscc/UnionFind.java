@@ -11,6 +11,7 @@
 
 package org.eclipse.incquery.runtime.base.itc.alg.incscc;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,8 +30,8 @@ import java.util.Set;
  */
 public class UnionFind<V> {
 
-    private final Map<V, UnionFindNodeProperty<V>> nodeMap;
-    final Map<V, Set<V>> setMap;
+    public Map<V, UnionFindNodeProperty<V>> nodeMap;
+    public Map<V, Set<V>> setMap;
 
     /**
      * Instantiate a new union-find data structure.
@@ -41,17 +42,18 @@ public class UnionFind<V> {
     }
 
     /**
-     * Instantiate a new union-find data structure with the given elements as separate sets.
+     * Creates a new set from the array of elements.
+     * 
+     * @param nodes
+     *            the array of elements
+     * @return the root element
      */
-    public UnionFind(Iterable<V> elements) {
-        this();
-        for (V element : elements) {
-            makeSet(element);
-        }
+    public V makeSet(V[] nodes) {
+        return makeSet(Arrays.asList(nodes));
     }
 
     /**
-     * Creates a new union set from a collection of elements.
+     * Creates a new set from a collection of elements.
      * 
      * @param nodes
      *            the collection of elements
@@ -148,26 +150,6 @@ public class UnionFind<V> {
     }
 
     /**
-     * Places the given elements in to the same partition.
-     */
-    public void unite(Set<V> elements) {
-        if (elements.size() > 1) {
-            V current = null;
-            for (V element : elements) {
-                if (current != null) {
-                    if (getPartition(element) != null) {
-                        union(current, element);
-                    }
-                } else {
-                    if (getPartition(element) != null) {
-                        current = element;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Delete the set whose root is the given node.
      * 
      * @param root
@@ -180,32 +162,4 @@ public class UnionFind<V> {
         }
         setMap.remove(root);
     }
-
-    /**
-     * Returns if all given elements are in the same partition.
-     */
-    public boolean isSameUnion(Set<V> elements) {
-        for (Set<V> partition : setMap.values()) {
-            if (partition.containsAll(elements)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns the partition in which the given element can be found, or null otherwise.
-     */
-    public Set<V> getPartition(V element) {
-        V root = find(element);
-        return setMap.get(root);
-    }
-
-    /**
-     * Returns all partitions.
-     */
-    public Collection<Set<V>> getPartitions() {
-        return setMap.values();
-    }
-
 }
