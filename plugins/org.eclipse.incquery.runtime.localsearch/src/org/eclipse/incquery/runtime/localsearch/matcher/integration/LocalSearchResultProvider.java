@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.localsearch.matcher.integration;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.incquery.runtime.matchers.psystem.PBody;
 import org.eclipse.incquery.runtime.matchers.psystem.PVariable;
+import org.eclipse.incquery.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.DefaultFlattenCallPredicate;
 import org.eclipse.incquery.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
@@ -58,6 +60,7 @@ import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -123,7 +126,27 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
                 @Override
                 public Integer apply(PBody input) {
-                    return input.getUniqueVariables().size();
+                    Set<PVariable> uniqueVariables = input.getUniqueVariables();
+                    
+                    // Calculate the equal pairs in the parameter list of the pattern, because they 
+                    // should be present multiple times at the beginning of the matching frame, and the 
+                    // matching frame should be large enough
+                    List<ExportedParameter> symbolicParameters = Lists.newArrayList(input.getSymbolicParameters());
+                    
+                    int numberOfEqualParameterPairs = 0;
+                    
+                    for (int i = 0; i < symbolicParameters.size(); i++) {
+                        for (int j = i+1; j < symbolicParameters.size(); j++) {
+                            ExportedParameter exportedParameter1 = symbolicParameters.get(i);
+                            ExportedParameter exportedParameter2 = symbolicParameters.get(j);
+                            boolean toStringNotEquals = ! (exportedParameter1.toString().equals(exportedParameter2.toString()));
+                            boolean parameterEquals = exportedParameter1.getParameterVariable().equals(exportedParameter2.getParameterVariable());
+                            if(toStringNotEquals && parameterEquals){
+                                numberOfEqualParameterPairs++;
+                            }
+                        }
+                    }
+                    return uniqueVariables.size() + numberOfEqualParameterPairs;
                 }
             });
 

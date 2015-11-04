@@ -26,7 +26,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.incquery.runtime.localsearch.matcher.integration.LocalSearchHintKeys;
 import org.eclipse.incquery.runtime.localsearch.planner.util.OperationCostComparator;
-import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
@@ -117,6 +116,9 @@ public class LocalSearchRuntimeBasedStrategy {
         for (PConstraintInfo pConstraintPlanInfo : operations) {
             PConstraint pConstraint = pConstraintPlanInfo.getConstraint();
             plan = subPlanFactory.createSubPlan(new PApply(pConstraint), plan);
+        }
+        for (ExportedParameter exportedParameter : pBody.getConstraintsOfType(ExportedParameter.class)) {
+            plan = subPlanFactory.createSubPlan(new PApply(exportedParameter), plan);
         }
 
         return subPlanFactory.createSubPlan(new PProject(pBody.getSymbolicParameterVariables()), plan);
@@ -283,6 +285,10 @@ public class LocalSearchRuntimeBasedStrategy {
         List<PConstraintInfo> constraintInfos = Lists.newArrayList();
 
         for (PConstraint pConstraint : constraintSet) {
+            if(pConstraint instanceof ExportedParameter){
+                // Do not create mask info for exported parameter, for it is only a symbolic constraint
+                continue;
+            }
             if(pConstraint instanceof TypeConstraint){
                 Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
                 Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);

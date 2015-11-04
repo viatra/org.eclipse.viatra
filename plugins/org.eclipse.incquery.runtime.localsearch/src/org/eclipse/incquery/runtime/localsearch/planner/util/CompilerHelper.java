@@ -38,6 +38,8 @@ public class CompilerHelper {
 
         int variableNumber = 0;
 
+        // Important note: this list might contain duplications when parameters are made equal inside the pattern
+        // This is the expected and normal behavior
         List<PVariable> symbolicParameterVariables = plan.getBody().getSymbolicParameterVariables();
         for (PVariable pVariable : symbolicParameterVariables) {
             variableMapping.put(pVariable, variableNumber++);
