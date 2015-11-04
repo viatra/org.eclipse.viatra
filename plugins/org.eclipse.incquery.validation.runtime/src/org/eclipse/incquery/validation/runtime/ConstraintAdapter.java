@@ -60,7 +60,7 @@ public class ConstraintAdapter {
             engine.initialize();
             
             MarkerManagerViolationListener markerManagerViolationListener = new MarkerManagerViolationListener(logger, this);
-            Set<IConstraintSpecification> constraintSpecificationsForEditorId = ValidationManager
+            Set<IConstraintSpecification> constraintSpecificationsForEditorId = ConstraintExtensionRegistry
                     .getConstraintSpecificationsForEditorId(editorPart.getSite().getId());
             for (IConstraintSpecification constraint : constraintSpecificationsForEditorId) {
                 IConstraint coreConstraint = engine.addConstraintSpecification(constraint);

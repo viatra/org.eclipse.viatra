@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.ui.IEditorPart;
@@ -31,8 +30,6 @@ public final class ValidationUtil {
 
     }
 
-    private static Logger logger = IncQueryLoggingUtil.getLogger(ValidationUtil.class);
-
     private static Map<IWorkbenchPage, Set<IEditorPart>> pageMap = new HashMap<IWorkbenchPage, Set<IEditorPart>>();
 
     private static Map<IEditorPart, ConstraintAdapter> adapterMap = new HashMap<IEditorPart, ConstraintAdapter>();
@@ -42,7 +39,7 @@ public final class ValidationUtil {
     }
 
     public static synchronized void addNotifier(IEditorPart editorPart, Notifier notifier) {
-        adapterMap.put(editorPart, new ConstraintAdapter(editorPart, notifier, logger));
+        adapterMap.put(editorPart, new ConstraintAdapter(editorPart, notifier, IncQueryLoggingUtil.getLogger(ValidationUtil.class)));
     }
 
     public static void registerEditorPart(IEditorPart editorPart) {
@@ -76,6 +73,6 @@ public final class ValidationUtil {
      * @return <code>true</code> if there are registered constraint specifications
      */
     public static boolean isConstraintsRegisteredForEditorId(String editorId) {
-        return ValidationManager.isConstraintSpecificationsRegisteredForEditorId(editorId);
+        return ConstraintExtensionRegistry.isConstraintSpecificationsRegisteredForEditorId(editorId);
     }
 }

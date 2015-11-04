@@ -12,50 +12,32 @@
 
 package org.eclipse.incquery.validation.runtime;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.validation.core.ValidationEngine;
 import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
 import org.eclipse.incquery.validation.core.api.IValidationEngine;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 /**
  * The validation manager is singleton that serves as a single entry point for using the validation.
  * <p>
  * It provides capabilities for:
  * <ul>
- * <li>accessing the constraint specifications registered through extensions (see EMF- IncQuery @Constraint annotation)
+ * <li>accessing the constraint specifications registered through extensions (see EMF-IncQuery @Constraint annotation)
  * <li>initializing a new validation engine
  * </ul>
+ * 
+ * @deprecated Use {@link ConstraintExtensionRegistry} and {@link ValidationInitializerUtil} instead.
  * 
  * @author Balint Lorand
  *
  */
 public final class ValidationManager {
-
-    private static final String CONSTRAINT_ATTRIBUTE_NAME = "constraint";
-    private static final String VALIDATION_RUNTIME_CONSTRAINT_EXTENSION_ID = "org.eclipse.incquery.validation.runtime.constraint";
-    private static final String EDITOR_ID_ATTRIBUTE_NAME = "editorId";
-    private static final String ENABLED_FOR_EDITOR_ATTRIBUTE_NAME = "enabledForEditor";
-    private static final String CLASS_ATTRIBUTE_NAME = "class";
 
     /**
      * Constructor hidden for utility class
@@ -64,24 +46,14 @@ public final class ValidationManager {
 
     }
 
-    private static Logger logger = Logger.getLogger(ValidationManager.class);
-
-    private static Set<String> genericEditorIds = Sets.newHashSet(
-            "org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID",
-            "org.eclipse.emf.ecore.presentation.ReflectiveEditorID", "org.eclipse.emf.genericEditor");
-
-    private static Multimap<String, IConstraintSpecification> editorConstraintSpecificationMap;
-
     /**
      * Returns the map of all the registered constraint specifications for the particular editor Ids.
      * 
      * @return A Multimap containing all the registered constraint specifications for each editor Id.
+     * @deprecated Use {@link ConstraintExtensionRegistry#getEditorConstraintSpecificationMap()} instead
      */
     public static synchronized Multimap<String, IConstraintSpecification> getEditorConstraintSpecificationMap() {
-        if (editorConstraintSpecificationMap == null) {
-            editorConstraintSpecificationMap = loadConstraintSpecificationsFromExtensions();
-        }
-        return editorConstraintSpecificationMap;
+        return ConstraintExtensionRegistry.getEditorConstraintSpecificationMap();
     }
 
     /**
@@ -90,9 +62,10 @@ public final class ValidationManager {
      * @param editorId
      *            The editor Id which should be checked
      * @return <code>true</code> if there are registered constraint specifications
+     * @deprecated Use {@link ConstraintExtensionRegistry#isConstraintSpecificationsRegisteredForEditorId(String)} instead
      */
     public static synchronized boolean isConstraintSpecificationsRegisteredForEditorId(String editorId) {
-        return getEditorConstraintSpecificationMap().containsKey(editorId);
+        return ConstraintExtensionRegistry.isConstraintSpecificationsRegisteredForEditorId(editorId);
     }
 
     /**
@@ -101,74 +74,10 @@ public final class ValidationManager {
      * @param editorId
      *            The editor Id for which the constraint specifications should be retrieved.
      * @return The Set of constraint specifications registered.
+     * @deprecated Use {@link ConstraintExtensionRegistry#getConstraintSpecificationsForEditorId(String)} instead
      */
     public static synchronized Set<IConstraintSpecification> getConstraintSpecificationsForEditorId(String editorId) {
-        if (genericEditorIds.contains(editorId)) {
-            return ImmutableSet.copyOf(getEditorConstraintSpecificationMap().values());
-        }
-        Set<IConstraintSpecification> set = new HashSet<IConstraintSpecification>(getEditorConstraintSpecificationMap()
-                .get(editorId));
-        set.addAll(getEditorConstraintSpecificationMap().get("*"));
-        return set;
-    }
-
-    /**
-     * Loads and returns the constraint specifications registered in the available extensions. (constraintspecification
-     * extension point extensions)
-     * 
-     * @return A Multimap containing all the registered constraint specifications from the available extension for each
-     *         editor Id.
-     */
-    private static synchronized Multimap<String, IConstraintSpecification> loadConstraintSpecificationsFromExtensions() {
-        Multimap<String, IConstraintSpecification> result = HashMultimap.create();
-
-        IExtensionRegistry reg = Platform.getExtensionRegistry();
-        IExtensionPoint ep = reg.getExtensionPoint(VALIDATION_RUNTIME_CONSTRAINT_EXTENSION_ID);
-
-        for (IExtension extension : ep.getExtensions()) {
-            for (IConfigurationElement ce : extension.getConfigurationElements()) {
-                if (ce.getName().equals(CONSTRAINT_ATTRIBUTE_NAME)) {
-                    processConstraintSpecificationConfigurationElement(result, ce);
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Processes the given configuration element: in case if it is an instance of IConstraintSpecification it puts it in
-     * the provided Multimap with the editor Ids it is registered for.
-     * 
-     * @param result
-     *            The Multimap in which the constraint specification will be placed with it's editorIds.
-     * @param ce
-     *            The configuration element to be processed.
-     */
-    private static void processConstraintSpecificationConfigurationElement(
-            Multimap<String, IConstraintSpecification> result, IConfigurationElement ce) {
-        try {
-            List<String> ids = new ArrayList<String>();
-            for (IConfigurationElement child : ce.getChildren()) {
-                if (child.getName().equals(ENABLED_FOR_EDITOR_ATTRIBUTE_NAME)) {
-                    String id = child.getAttribute(EDITOR_ID_ATTRIBUTE_NAME);
-                    if (id != null && !id.equals("")) {
-                        ids.add(id);
-                    }
-                }
-            }
-
-            Object o = ce.createExecutableExtension(CLASS_ATTRIBUTE_NAME);
-            if (o instanceof IConstraintSpecification) {
-                if (ids.isEmpty()) {
-                    ids.add("*");
-                }
-                for (String id : ids) {
-                    result.put(id, (IConstraintSpecification) o);
-                }
-            }
-        } catch (CoreException e) {
-            logger.error("Error loading EMF-IncQuery Validation ConstraintSpecification", e);
-        }
+        return ConstraintExtensionRegistry.getConstraintSpecificationsForEditorId(editorId);
     }
 
     /**
@@ -182,17 +91,11 @@ public final class ValidationManager {
      *            org.eclipse.incquery.livevalidation.runtime.constraintspecification extension point.
      * @return The initialized validation engine.
      * @throws IncQueryException if there is an error creating the engine on the notifier
+     * @deprecated Use {@link ValidationInitializerUtil#initializeValidationWithRegisteredConstraintsOnNotifier} instead.
      */
     public static IValidationEngine initializeValidationEngine(Notifier notifier, String editorId) throws IncQueryException {
-        IncQueryEngine engine = IncQueryEngine.on(new EMFScope(notifier));
-        IValidationEngine validationEngine = ValidationEngine.builder().setEngine(engine).setLogger(logger).build();
-
-        for (IConstraintSpecification constraintSpecification : getConstraintSpecificationsForEditorId(editorId)) {
-            validationEngine.addConstraintSpecification(constraintSpecification);
-        }
-        validationEngine.initialize();
-
-        return validationEngine;
+        EMFScope scope = new EMFScope(notifier);
+        return ValidationInitializerUtil.initializeValidationWithRegisteredConstraintsOnScope(scope, editorId);
     }
 
 }
