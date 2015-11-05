@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.incquery.patternlanguage.patternLanguage.Variable;
+import org.eclipse.incquery.runtime.base.itc.alg.incscc.UnionFind;
 
 /**
  * Just a basic Union-Find algorithm implementation for a validation problem.
+ * @deprecated Use {@link UnionFind} instead.
  */
 public class UnionFindForVariables {
 
