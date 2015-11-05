@@ -51,7 +51,7 @@ public class ExtensionBasedSurrogateQueryLoader {
 
     /**
      * A provider implementation for PQuery instances based on extension elements. It is expected that the getter will only
-     * @author stampie
+     * @author Zoltan Ujhelyi
      *
      */
     private static final class PQueryProvider implements IProvider<PQuery> {
