@@ -38,10 +38,17 @@ public interface IVariableRenamer {
     }
     
     public class HierarchicalName implements IVariableRenamer {
+
+        private int callCount;
+
+        public void setCallCount(int callCount) {
+            this.callCount = callCount;
+        }
+
         @Override
         public String createVariableName(PVariable pVariable, PQuery query) {
             // make sure to keep the "_" prefix before anonymous variables
-            String newVarName = getShortName(query) + "_" + pVariable.getName();
+            String newVarName = getShortName(query) + "[" + callCount + "]" + "_" + pVariable.getName();
             return pVariable.getName().startsWith("_") ? "_" + newVarName : newVarName ;
         }
         

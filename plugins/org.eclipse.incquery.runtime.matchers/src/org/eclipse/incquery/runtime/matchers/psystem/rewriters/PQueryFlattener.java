@@ -196,17 +196,20 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         // The members of this set are lists containing bodies in conjunction
         // Ordering is not important within the list, only the cartesian product function requires a list
       
-        Set<List<PBody>> conjunctBodySets = Sets.cartesianProduct(flattenedBodies);
+        Set<List<PBody>> conjunctBodyLists = Sets.cartesianProduct(flattenedBodies);
         
         // The result set containing the merged conjuncted bodies
         Set<PBody> conjunctedBodies = Sets.<PBody> newHashSet();
 
-        for (List<PBody> bodySet : conjunctBodySets) {
-            PBodyCopier copier = createBodyCopier(pQuery, flattenedCalls, bodySet); 
+        for (List<PBody> bodyList : conjunctBodyLists) {
+            PBodyCopier copier = createBodyCopier(pQuery, flattenedCalls, bodyList); 
 
-            for (PBody calledBody : bodySet) {
+            int i = 0;
+            HierarchicalName hierarchicalNamingTool = new HierarchicalName();
+            for (PBody calledBody : bodyList) {
                 // Merge each called body
-                copier.mergeBody(calledBody, new HierarchicalName(), new ExportedParameterFilter());
+                hierarchicalNamingTool.setCallCount(i++);
+                copier.mergeBody(calledBody, hierarchicalNamingTool, new ExportedParameterFilter());
             }
 
             // Merge the caller's constraints to the conjunct body
