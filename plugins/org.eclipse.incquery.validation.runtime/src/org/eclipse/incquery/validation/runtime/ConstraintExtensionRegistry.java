@@ -11,6 +11,7 @@
 package org.eclipse.incquery.validation.runtime;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,11 +23,16 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.incquery.runtime.matchers.util.IProvider;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -50,7 +56,7 @@ public class ConstraintExtensionRegistry {
             "org.eclipse.emf.ecore.presentation.XMLReflectiveEditorID",
             "org.eclipse.emf.ecore.presentation.ReflectiveEditorID", "org.eclipse.emf.genericEditor");
     
-    private static Multimap<String, IConstraintSpecification> editorConstraintSpecificationMap;
+    private static Multimap<String, IProvider<IConstraintSpecification>> editorConstraintSpecificationMap;
 
     /**
      * Constructor hidden for utility class
@@ -64,13 +70,13 @@ public class ConstraintExtensionRegistry {
      * 
      * @return A Multimap containing all the registered constraint specifications for each editor Id.
      */
-    public static synchronized Multimap<String, IConstraintSpecification> getEditorConstraintSpecificationMap() {
+    protected static synchronized Multimap<String, IProvider<IConstraintSpecification>> getEditorConstraintSpecificationMap() {
         if (editorConstraintSpecificationMap == null) {
             editorConstraintSpecificationMap = loadConstraintSpecificationsFromExtensions();
         }
         return editorConstraintSpecificationMap;
     }
-
+    
     /**
      * Returns whether there are constraint specifications registered for an editor Id.
      * 
@@ -91,12 +97,24 @@ public class ConstraintExtensionRegistry {
      */
     public static synchronized Set<IConstraintSpecification> getConstraintSpecificationsForEditorId(String editorId) {
         if (genericEditorIds.contains(editorId)) {
-            return ImmutableSet.copyOf(getEditorConstraintSpecificationMap().values());
+            Iterable<IConstraintSpecification> constraintSpecifications = unwrapConstraintSpecifications(getEditorConstraintSpecificationMap().values());
+            return ImmutableSet.copyOf(constraintSpecifications);
         }
-        Set<IConstraintSpecification> set = new HashSet<IConstraintSpecification>(getEditorConstraintSpecificationMap()
-                .get(editorId));
-        set.addAll(getEditorConstraintSpecificationMap().get("*"));
+        Set<IConstraintSpecification> set = Sets.newHashSet(unwrapConstraintSpecifications(getEditorConstraintSpecificationMap()
+                .get(editorId)));
+        Iterables.addAll(set, unwrapConstraintSpecifications(getEditorConstraintSpecificationMap().get("*")));
         return set;
+    }
+
+    private static Iterable<IConstraintSpecification> unwrapConstraintSpecifications(Collection<IProvider<IConstraintSpecification>> providers) {
+        Iterable<IProvider<IConstraintSpecification>> notNullProviders = Iterables.filter(providers, Predicates.notNull());
+        Iterable<IConstraintSpecification> constraintSpecifications = Iterables.transform(notNullProviders, new Function<IProvider<IConstraintSpecification>, IConstraintSpecification>() {
+            @Override
+            public IConstraintSpecification apply(IProvider<IConstraintSpecification> provider) {
+                return provider.get();
+            }
+        });
+        return constraintSpecifications;
     }
 
     /**
@@ -106,8 +124,8 @@ public class ConstraintExtensionRegistry {
      * @return A Multimap containing all the registered constraint specifications from the available extension for each
      *         editor Id.
      */
-    private static synchronized Multimap<String, IConstraintSpecification> loadConstraintSpecificationsFromExtensions() {
-        Multimap<String, IConstraintSpecification> result = HashMultimap.create();
+    private static synchronized Multimap<String, IProvider<IConstraintSpecification>> loadConstraintSpecificationsFromExtensions() {
+        Multimap<String, IProvider<IConstraintSpecification>> result = HashMultimap.create();
     
         IExtensionRegistry reg = Platform.getExtensionRegistry();
         IExtensionPoint ep = reg.getExtensionPoint(VALIDATION_RUNTIME_CONSTRAINT_EXTENSION_ID);
@@ -132,30 +150,51 @@ public class ConstraintExtensionRegistry {
      *            The configuration element to be processed.
      */
     private static void processConstraintSpecificationConfigurationElement(
-            Multimap<String, IConstraintSpecification> result, IConfigurationElement ce) {
-        try {
-            List<String> ids = new ArrayList<String>();
-            for (IConfigurationElement child : ce.getChildren()) {
-                if (child.getName().equals(ENABLED_FOR_EDITOR_ATTRIBUTE_NAME)) {
-                    String id = child.getAttribute(EDITOR_ID_ATTRIBUTE_NAME);
-                    if (id != null && !id.equals("")) {
-                        ids.add(id);
-                    }
+            Multimap<String, IProvider<IConstraintSpecification>> result, IConfigurationElement ce) {
+        List<String> ids = new ArrayList<String>();
+        for (IConfigurationElement child : ce.getChildren()) {
+            if (child.getName().equals(ENABLED_FOR_EDITOR_ATTRIBUTE_NAME)) {
+                String id = child.getAttribute(EDITOR_ID_ATTRIBUTE_NAME);
+                if (id != null && !id.equals("")) {
+                    ids.add(id);
                 }
             }
+        }
+
+        ConstraintSpecificationProvider constraintSpecificationProvider = new ConstraintSpecificationProvider(ce);
+        if (ids.isEmpty()) {
+            ids.add("*");
+        }
+        for (String id : ids) {
+            result.put(id, constraintSpecificationProvider);
+        }
+    }
     
-            Object o = ce.createExecutableExtension(CLASS_ATTRIBUTE_NAME);
-            if (o instanceof IConstraintSpecification) {
-                if (ids.isEmpty()) {
-                    ids.add("*");
+    /**
+     * A provider implementation for PQuery instances based on extension elements. It is expected that the getter will only
+     * @author stampie
+     *
+     */
+    private static final class ConstraintSpecificationProvider implements IProvider<IConstraintSpecification> {
+
+        private final IConfigurationElement element;
+        private IConstraintSpecification constraintSpecification;
+        
+        public ConstraintSpecificationProvider(IConfigurationElement element) {
+            this.element = element;
+            this.constraintSpecification = null;
+        }
+
+        @Override
+        public IConstraintSpecification get() {
+            try {
+                if (constraintSpecification == null) {
+                    constraintSpecification = (IConstraintSpecification) element.createExecutableExtension(CLASS_ATTRIBUTE_NAME);
                 }
-                for (String id : ids) {
-                    result.put(id, (IConstraintSpecification) o);
-                }
+                return constraintSpecification;
+            } catch (CoreException e) {
+                throw new IllegalArgumentException("Error initializing constraint specification", e);
             }
-        } catch (CoreException e) {
-            Logger logger = IncQueryLoggingUtil.getLogger(ConstraintExtensionRegistry.class);
-            logger.error("Error loading EMF-IncQuery Validation ConstraintSpecification", e);
         }
     }
     

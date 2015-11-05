@@ -12,16 +12,22 @@
 
 package org.eclipse.incquery.validation.runtime;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.util.IProvider;
 import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
 import org.eclipse.incquery.validation.core.api.IValidationEngine;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * The validation manager is singleton that serves as a single entry point for using the validation.
@@ -53,9 +59,16 @@ public final class ValidationManager {
      * @deprecated Use {@link ConstraintExtensionRegistry#getEditorConstraintSpecificationMap()} instead
      */
     public static synchronized Multimap<String, IConstraintSpecification> getEditorConstraintSpecificationMap() {
-        return ConstraintExtensionRegistry.getEditorConstraintSpecificationMap();
+        Multimap<String, IProvider<IConstraintSpecification>> constraintSpecificationMap = ConstraintExtensionRegistry.getEditorConstraintSpecificationMap();
+        Multimap<String, IConstraintSpecification> unwrappedMap = Multimaps.transformValues(constraintSpecificationMap, new Function<IProvider<IConstraintSpecification>, IConstraintSpecification>() {
+            @Override
+            public IConstraintSpecification apply(IProvider<IConstraintSpecification> provider) {
+                return provider.get();
+            }
+        });
+        return unwrappedMap;
     }
-
+    
     /**
      * Returns whether there are constraint specifications registered for an editor Id.
      * 
