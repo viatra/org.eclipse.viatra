@@ -12,10 +12,8 @@
 
 package org.eclipse.incquery.validation.runtime;
 
-import java.util.Collection;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
@@ -24,8 +22,6 @@ import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
 import org.eclipse.incquery.validation.core.api.IValidationEngine;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
