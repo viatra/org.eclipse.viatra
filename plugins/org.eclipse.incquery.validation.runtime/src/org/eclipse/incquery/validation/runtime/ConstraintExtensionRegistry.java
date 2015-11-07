@@ -12,20 +12,16 @@ package org.eclipse.incquery.validation.runtime;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.util.IProvider;
-import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.incquery.validation.core.api.IConstraintSpecification;
 
 import com.google.common.base.Function;
