@@ -13,7 +13,7 @@ package org.eclipse.incquery.runtime.localsearch.operations.check.nobase;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.localsearch.MatchingFrame;
@@ -52,16 +52,8 @@ public class ScopeCheck extends CheckOperation {
             }
             if(filtered){
                 return false;
-            } else {                
-                EObject container = eObject;
-                while (container.eContainer() != null) {
-                    Resource eResource = container.eResource();
-                    if (!scope.getScopeRoots().contains(eResource) && !scope.getScopeRoots().contains(eResource.getResourceSet())) {
-                        return false;
-                    }
-                    container = container.eContainer();
-                }
-                return true;
+            } else {
+                return EcoreUtil.isAncestor(scope.getScopeRoots(), eObject);
             }
         } else {
             return true;            
