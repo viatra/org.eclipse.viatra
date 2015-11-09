@@ -27,7 +27,9 @@ import com.google.common.collect.Maps;
  * @author Zoltan Ujhelyi
  * @since 0.9
  *
+ * @deprecated engine runtime does not need a backend registry anymore 
  */
+@Deprecated
 public class QueryBackendRegistry {
 
     private static final QueryBackendRegistry INSTANCE = new QueryBackendRegistry(); 
@@ -38,7 +40,7 @@ public class QueryBackendRegistry {
      */
     private Class<? extends IQueryBackend> defaultBackendClass = ReteEngine.class;
     /**
-     * Default caching backend implementation (in case the regular deafult is non-caching).
+     * Default caching backend implementation (in case the regular default is non-caching).
      */
     private Class<? extends IQueryBackend> defaultCachingBackendClass = ReteEngine.class;
     

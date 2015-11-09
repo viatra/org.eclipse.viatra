@@ -63,7 +63,7 @@ public class IncQueryGUIPlugin extends AbstractUIPlugin {
          * when a proper register is implemented.
          * Refer to https://bugs.eclipse.org/bugs/show_bug.cgi?id=466336 for more information.
          */
-        QueryBackendRegistry.getInstance().registerQueryBackendFactory(LocalSearchBackend.class, new LocalSearchBackendFactory());
+        QueryBackendRegistry.getInstance().registerQueryBackendFactory(LocalSearchBackend.class, LocalSearchBackendFactory.INSTANCE);
     }
 
     /*

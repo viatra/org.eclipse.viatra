@@ -15,15 +15,30 @@ import org.eclipse.incquery.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 
 /**
- * Factory for instantiating {@link IQueryBackend}.
+ * A Query Backend Factory identifies a query evaluator implementation, and can create an evaluator instance (an {@link IQueryBackend}) tied to a specific IncQuery engine upon request. 
+ * 
+ * <p> The factory is used as a lookup key for the backend instance, 
+ *   therefore implementors should either be singletons, or implement equals() / hashCode() accordingly. 
+ * 
  * @author Bergmann Gabor
  *
  */
 public interface IQueryBackendFactory {
+	/**
+	 * Creates a new {@link IQueryBackend} instance tied to the given context elements. 
+	 * 
+	 * @return an instance of the class returned by {@link #getBackendClass()} that operates in the given context.
+	 */
 	public IQueryBackend 
 		create(Logger logger,
 				IQueryRuntimeContext runtimeContext,
 				IQueryCacheContext queryCacheContext,
 				IQueryBackendHintProvider hintProvider);
+	
+	
+	/**
+	 * The backend instances created by this factory are guaranteed to conform to the returned class.
+	 */
+	public Class<? extends IQueryBackend> getBackendClass();
 
 }

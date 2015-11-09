@@ -16,7 +16,7 @@ import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
 import org.eclipse.incquery.runtime.api.IQuerySpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.localsearch.matcher.LocalSearchMatcher;
-import org.eclipse.incquery.runtime.localsearch.matcher.integration.LocalSearchBackend;
+import org.eclipse.incquery.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
 import org.eclipse.incquery.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.incquery.runtime.matchers.planning.QueryProcessingException;
@@ -47,7 +47,7 @@ public class StartLocalSearchHandler extends AbstractHandler {
 				PatternMatcherContent content = (PatternMatcherContent) obj;
 				final IQuerySpecification<?> specification = content.getSpecification();
 				final AdvancedIncQueryEngine engine = content.getParent().getKey().getEngine();
-				final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackend.class);
+				final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE);
 				final Object[] adornment = content.getFilter();
 
 				final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend

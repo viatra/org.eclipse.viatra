@@ -23,7 +23,7 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     /**
      * EXPERIMENTAL
      */
-    private final int reteThreads = 0;
+    private final static int reteThreads = 0;
     
     @Override
     public IQueryBackend create(Logger logger,
@@ -44,4 +44,30 @@ public class ReteBackendFactory implements IQueryBackendFactory {
 	    engine.setCompiler(compiler);
 	    return engine;
 	}
+    
+    @Override
+    public Class<? extends IQueryBackend> getBackendClass() {
+    	return ReteEngine.class;
+    }
+
+	@Override
+	public int hashCode() {
+		return ReteBackendFactory.class.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof ReteBackendFactory)) {
+			return false;
+		}
+		return true;
+	}
+    
+    
 }

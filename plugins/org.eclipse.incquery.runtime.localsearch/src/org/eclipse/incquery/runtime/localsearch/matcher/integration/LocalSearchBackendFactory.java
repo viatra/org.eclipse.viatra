@@ -21,7 +21,9 @@ import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
  * @author Marton Bur, Zoltan Ujhelyi
  *
  */
-public class LocalSearchBackendFactory implements IQueryBackendFactory{
+public enum LocalSearchBackendFactory implements IQueryBackendFactory {
+	
+	INSTANCE;
     
     @Override
     public IQueryBackend create(Logger logger,
@@ -33,6 +35,11 @@ public class LocalSearchBackendFactory implements IQueryBackendFactory{
         		runtimeContext,
         		queryCacheContext,
         		hintProvider);
+    }
+    
+    @Override
+    public Class<? extends IQueryBackend> getBackendClass() {
+    	return LocalSearchBackend.class;
     }
 
 }

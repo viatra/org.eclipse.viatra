@@ -17,6 +17,7 @@ import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.internal.apiimpl.IncQueryEngineImpl;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.incquery.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.incquery.runtime.matchers.backend.QueryEvaluationHint;
 
 /**
@@ -403,7 +404,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * Provides access to the selected query backend component of the IncQuery engine.
      * @noreference for internal use only
      */
-	public abstract IQueryBackend getQueryBackend(Class<? extends IQueryBackend> backendClass)
+	public abstract IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory)
 			throws IncQueryException;
 
 

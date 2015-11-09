@@ -27,18 +27,6 @@ public interface IEngineContext {
 	 * @throws IncQueryException 
 	 */	
 	IBaseIndex getBaseIndex() throws IncQueryException;
-	
-	/**
-	 * Invokes the given initializer code with a runtime context for pattern matching. 
-	 * 
-	 * If the base index has not yet been initialized, 
-	 * it will be only loaded with content after the callback.
-	 * @throws IncQueryException 
-	 */
-	void initializeBackends(IQueryBackendInitializer initializer) throws IncQueryException;
-	public static interface IQueryBackendInitializer {
-		public void initializeWith(IQueryRuntimeContext runtimeContext);
-	}
 
 	/**
 	 * Disposes this context object. Resources in the index may now be freed up.
@@ -47,4 +35,16 @@ public interface IEngineContext {
      * @throws IllegalStateException if there are any active listeners to the underlying index
 	 */
 	void dispose();
+
+	/**
+	 * Provides instance model information for pattern matching.
+	 * 
+	 * <p> Implementors note: must be reentrant. 
+	 * If called while index loading is already in progress, must return the single runtime context instance that will eventually index the model. 
+	 * When the runtime query context is invoked in such a case, incomplete indexes are tolerable, but change notifications must be correctly provided as loading commences. 
+	 * 
+	 * @return a runtime context for pattern matching
+	 * @since 1.2
+	 */
+	public IQueryRuntimeContext getQueryRuntimeContext() throws IncQueryException;
 }

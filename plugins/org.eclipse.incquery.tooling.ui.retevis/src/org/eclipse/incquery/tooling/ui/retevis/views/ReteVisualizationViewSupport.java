@@ -31,6 +31,7 @@ import org.eclipse.incquery.runtime.api.IncQueryEngine;
 import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.incquery.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.incquery.runtime.rete.matcher.ReteEngine;
 import org.eclipse.incquery.runtime.rete.network.Node;
 import org.eclipse.incquery.runtime.rete.recipes.ReteNodeRecipe;
@@ -81,7 +82,7 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
                     IncQueryMatcher<IPatternMatch> matcher = patternMatcherContent.getMatcher();
                     if (matcher == null) continue;
 					final IQueryBackend reteEngine = ((AdvancedIncQueryEngine) matcher
-                            .getEngine()).getQueryBackend(ReteEngine.class);
+                            .getEngine()).getQueryBackend(new ReteBackendFactory());
                     final Collection<Node> allNodes = ((ReteEngine) reteEngine).getReteNet().getHeadContainer()
                             .getAllNodes();
                     for (Node node : allNodes) {

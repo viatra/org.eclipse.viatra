@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -38,12 +37,10 @@ import org.eclipse.incquery.runtime.api.IncQueryModelUpdateListener;
 import org.eclipse.incquery.runtime.api.impl.BaseMatcher;
 import org.eclipse.incquery.runtime.api.scope.IBaseIndex;
 import org.eclipse.incquery.runtime.api.scope.IEngineContext;
-import org.eclipse.incquery.runtime.api.scope.IEngineContext.IQueryBackendInitializer;
 import org.eclipse.incquery.runtime.api.scope.IIndexingErrorListener;
 import org.eclipse.incquery.runtime.api.scope.IncQueryScope;
 import org.eclipse.incquery.runtime.emf.EMFScope;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.extensibility.QueryBackendRegistry;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.incquery.runtime.internal.engine.ModelUpdateProvider;
@@ -60,15 +57,14 @@ import org.eclipse.incquery.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.incquery.runtime.matchers.tuple.Tuple;
+import org.eclipse.incquery.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -87,7 +83,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
      * The model to which the engine is attached.
      */
     private final IncQueryScope scope;
-//    private final Notifier emfRoot;
     
     /**
      * The context of the engine, provided by the scope.
@@ -109,7 +104,17 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 	/**
      * The RETE and other pattern matcher implementations of the IncQuery engine.
      */
-    private volatile Map<Class<? extends IQueryBackend>, IQueryBackend> queryBackends = Maps.newHashMap();
+    private volatile Map<IQueryBackendFactory, IQueryBackend> queryBackends = Maps.newHashMap();
+    
+    
+    /**
+     * Default backend implementation. TODO: move to engine options.
+     */
+    private IQueryBackendFactory defaultBackendFactory = new ReteBackendFactory();
+    /**
+     * Default caching backend implementation (in case the regular default is non-caching). TODO: move to engine options.
+     */
+    private IQueryBackendFactory defaultCachingBackendFactory = new ReteBackendFactory();
     
     private final LifecycleProvider lifecycleProvider;
     private final ModelUpdateProvider modelUpdateProvider;
@@ -219,46 +224,24 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
      * Provides access to the selected query backend component of the IncQuery engine.
      */
     @Override
-	public IQueryBackend getQueryBackend(Class<? extends IQueryBackend> backendClass) throws IncQueryException {
-        initBackends();
-        final IQueryBackend iQueryBackend = queryBackends.get(backendClass);
-        if (iQueryBackend == null)
-        	throw new IncQueryException("Query backend class not registered: " + backendClass.getName(), "Unknown query backend.");
+	public IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory) throws IncQueryException {
+    	IQueryBackend iQueryBackend = queryBackends.get(iQueryBackendFactory);
+        if (iQueryBackend == null) {
+        	// do this first, to make sure the runtime context exists
+        	final IQueryRuntimeContext queryRuntimeContext = engineContext.getQueryRuntimeContext();
+        	
+        	// maybe the backend has been created in the meantime when the indexer was initialized and queried for derived features
+        	// no need to instantiate a new backend in that case
+        	iQueryBackend = queryBackends.get(iQueryBackendFactory);
+            if (iQueryBackend == null) {
+            	
+            	// need to instantiate the backend
+            	iQueryBackend = iQueryBackendFactory.create(logger, queryRuntimeContext, IncQueryEngineImpl.this, IncQueryEngineImpl.this);
+            	queryBackends.put(iQueryBackendFactory, iQueryBackend);            	
+            }        	
+        }
 		return iQueryBackend;
     }
-
-	private void initBackends() throws IncQueryException {
-		synchronized (this) {
-            final Iterable<Entry<Class<? extends IQueryBackend>, IQueryBackendFactory>> factories = Iterables.filter(
-                    QueryBackendRegistry.getInstance().getAllKnownFactories(),
-                    new Predicate<Entry<Class<? extends IQueryBackend>, IQueryBackendFactory>>() {
-
-                        @Override
-                        public boolean apply(Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> input) {
-                            return !queryBackends.containsKey(input.getKey());
-                        }
-                    });
-            if (factories.iterator().hasNext()) {
-		    	boolean initialized = false;
-		    	try {
-		    		engineContext.initializeBackends(new IQueryBackendInitializer() {
-		    			@Override
-		    			public void initializeWith(IQueryRuntimeContext runtimeContext) {
-		    				queryBackends = Maps.newHashMap();
-                            for (Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> factoryEntry : factories) {
-		    					IQueryBackend backend = factoryEntry.getValue().create(logger, runtimeContext, IncQueryEngineImpl.this, IncQueryEngineImpl.this);
-		    					queryBackends.put(factoryEntry.getKey(), backend);
-		    				}
-		    			}
-		    		});
-		    		initialized = true;
-		    	} finally {
-		    		if (!initialized) 
-                        queryBackends.clear();
-		    	}
-		    }
-		}
-	}
 
     ///////////////// advanced stuff /////////////
     
@@ -407,7 +390,6 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
         checkArgument(listener != null, "Cannot remove null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot remove listener from matcher of different engine!");
         checkArgument(!disposed, "Cannot remove listener from matcher of disposed engine!");
-        //((BaseMatcher<Match>)matcher).removeCallbackOnMatchUpdate(listener);
         
         final BaseMatcher<Match> bm = (BaseMatcher<Match>)matcher;
         
@@ -466,7 +448,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 	 * Returns the query backend (influenced by the hint system), even if it is a non-caching backend.
 	 */
 	private IQueryBackend getQueryBackend(PQuery query) throws IncQueryException {
-		return getQueryBackend(getCurrentHint(query).getQueryBackendClass());
+		return getQueryBackend(getCurrentHint(query).getQueryBackendFactory());
 	}
 	/**
 	 * Returns a caching query backend (influenced by the hint system).
@@ -476,7 +458,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 		if (regularBackend.isCaching()) 
 			return regularBackend; 
 		else
-			return getQueryBackend(QueryBackendRegistry.getInstance().getDefaultCachingBackendClass());
+			return getQueryBackend(defaultCachingBackendFactory);
 	}
 	
 	@Override
@@ -516,7 +498,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 		QueryEvaluationHint hint = hints.get(query);
 		if (hint == null) {
 			// global default
-			hint = new QueryEvaluationHint(QueryBackendRegistry.getInstance().getDefaultBackendClass(), new HashMap<String, Object>());
+			hint = new QueryEvaluationHint(defaultBackendFactory, new HashMap<String, Object>());
 			hints.put(query, hint);
 			
 			// overrides provided in query specification
@@ -538,18 +520,18 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 		if (overridingHint == null)
 			return currentHint;
 		
-		Class<? extends IQueryBackend> queryBackendClass = 
-				currentHint.getQueryBackendClass();
-		if (overridingHint.getQueryBackendClass() != null)
-			queryBackendClass = overridingHint.getQueryBackendClass();
-					
+		IQueryBackendFactory queryBackendFactory = 
+				currentHint.getQueryBackendFactory();
+		if (overridingHint.getQueryBackendFactory() != null)
+			queryBackendFactory = overridingHint.getQueryBackendFactory();
+		
 		Map<String, Object> backendHints = 
 				new HashMap<String, Object>(currentHint.getBackendHints());
 		if (overridingHint.getBackendHints() != null)
 			backendHints.putAll(overridingHint.getBackendHints());
 		
 		QueryEvaluationHint consolidatendHint = 
-				new QueryEvaluationHint(queryBackendClass, backendHints);
+				new QueryEvaluationHint(queryBackendFactory, backendHints);
 		hints.put(query, consolidatendHint);
 		return consolidatendHint;
       

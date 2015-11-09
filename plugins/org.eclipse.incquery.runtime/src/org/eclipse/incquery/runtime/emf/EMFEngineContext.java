@@ -21,6 +21,7 @@ import org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory;
 import org.eclipse.incquery.runtime.base.api.NavigationHelper;
 import org.eclipse.incquery.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
+import org.eclipse.incquery.runtime.matchers.context.IQueryRuntimeContext;
 
 /**
  * Implements an engine context on EMF models.
@@ -82,21 +83,19 @@ class EMFEngineContext implements IEngineContext {
     }
 
     @Override
-    public void initializeBackends(IQueryBackendInitializer initializer) throws IncQueryException {
-       try {
-    	   NavigationHelper nh = getNavHelper(false);
-           if (runtimeContext == null) 
-        	   runtimeContext = 
-        	   		emfScope.getOptions().isDynamicEMFMode() ?
-        				new DynamicEMFQueryRuntimeContext(nh, logger, emfScope) :
-        				new EMFQueryRuntimeContext(nh, logger, emfScope);
-           
-           initializer.initializeWith(/*logger,*/ runtimeContext);
-       } finally {
-           // lazy navHelper initialization now,
-           ensureIndexLoaded();
-       }        
-    }   
+    public IQueryRuntimeContext getQueryRuntimeContext() throws IncQueryException {
+    	NavigationHelper nh = getNavHelper(false);
+        if (runtimeContext == null) {
+     	   runtimeContext = 
+     	   		emfScope.getOptions().isDynamicEMFMode() ?
+     				new DynamicEMFQueryRuntimeContext(nh, logger, emfScope) :
+     				new EMFQueryRuntimeContext(nh, logger, emfScope);
+     				
+     		ensureIndexLoaded();
+        }
+        
+        return runtimeContext;
+    }
     
     @Override
     public void dispose() {
