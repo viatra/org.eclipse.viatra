@@ -54,11 +54,13 @@ public class ViewersMultiSandoxViewComponentSettings {
 
 	private CheckboxTreeViewer activatedPatternsViewer;
 	
-	private ViewersMultiSandboxViewComponent owner;
+	private final ViewersMultiSandboxViewComponent owner;
 	
-	private Map<IQuerySpecification<?>, Boolean> checkedPatterns = Maps.newHashMap();
+	private final Map<IQuerySpecification<?>, Boolean> checkedPatterns = Maps.newHashMap();
 	
 	private ViewersComponentConfiguration currentConfiguration;
+
+    private Button applyButton;
 	
 	public ViewersMultiSandoxViewComponentSettings(ViewersMultiSandboxViewComponent c) {
 		this.owner = c;
@@ -71,11 +73,18 @@ public class ViewersMultiSandoxViewComponentSettings {
 		for (IQuerySpecification<?> p : this.currentConfiguration.getPatterns()) {
 			this.checkedPatterns.put(p,	true);
 		}
-		this.activatedPatternsViewer.setInput(this.checkedPatterns.keySet());
+		if (activatedPatternsViewer != null) {
+		    this.activatedPatternsViewer.setInput(this.checkedPatterns.keySet());
+		}
+		if (applyButton != null) {
+		    applyButton.setEnabled(true);
+		}
 	}
 	
 	private void applyConfiguration() {
-		owner.applyConfiguration(currentConfiguration);
+	    if (currentConfiguration != null) {
+	        owner.applyConfiguration(currentConfiguration);
+	    }
 	}
 	
 	public void createUI() {
@@ -104,10 +113,11 @@ public class ViewersMultiSandoxViewComponentSettings {
 	    // switch between resource and resourceset mode (?)
 	    // dynamic, wildcard mode switches
 	    
-	    Button applyButton = new Button(sTabComposite, SWT.PUSH);
+	    applyButton = new Button(sTabComposite, SWT.PUSH);
 	    applyButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 	    applyButton.setBounds(0, 0, 94, 28);
 	    applyButton.setText("Apply");
+	    applyButton.setEnabled(false);
 	    applyButton.addSelectionListener(new SelectionListener() {
 			
 			@Override
