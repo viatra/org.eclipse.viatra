@@ -26,12 +26,14 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.incquery.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.incquery.runtime.extensibility.IncQueryRuntimeConstants;
 import org.eclipse.incquery.runtime.matchers.context.IInputKey;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.incquery.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.incquery.runtime.matchers.util.IProvider;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
@@ -42,8 +44,7 @@ import com.google.common.collect.Multimap;
 public class ExtensionBasedSurrogateQueryLoader {
 
     private static final String DUPLICATE_SURROGATE_QUERY = "Duplicate surrogate query definition %s for feature %s of EClass %s in package %s (FQN in map %s, contributing plug-ins %s, plug-in %s)";
-    static final String EXTENSIONID = "org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf";
-
+    
     private Multimap<String, String> contributingPluginOfFeatureMap = HashMultimap.create();
     private Map<EStructuralFeature, PQueryProvider> contributedSurrogateQueries;
 
@@ -96,8 +97,11 @@ public class ExtensionBasedSurrogateQueryLoader {
         contributedSurrogateQueries = Maps.newHashMap();
         if (Platform.isRunning()) {
 
-            final IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor(
-                    EXTENSIONID);
+            final Iterable<IConfigurationElement> config = ImmutableList.<IConfigurationElement>builder()
+                .add(Platform.getExtensionRegistry().getConfigurationElementsFor(IncQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID))
+                // FIXME remove when deprecated extension point is removed
+                .add(Platform.getExtensionRegistry().getConfigurationElementsFor(IncQueryRuntimeConstants.SURROGATE_QUERY_DEPRECATED_EXTENSIONID))
+                .build();
             for (IConfigurationElement e : config) {
             	if (e.isValid()) {
             		processExtension(e);
