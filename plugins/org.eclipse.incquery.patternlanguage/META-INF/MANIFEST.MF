@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.7.0",
  org.eclipse.xtext.xbase.lib,
  org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
  org.eclipse.incquery.runtime.matchers;bundle-version="[1.1.0,1.2.0)",
- org.eclipse.incquery.runtime.base.itc
+ org.eclipse.incquery.runtime.base.itc,
+ org.antlr.runtime
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.incquery.patternlanguage,
@@ -35,6 +36,7 @@ Export-Package: org.eclipse.incquery.patternlanguage,
  org.eclipse.incquery.patternlanguage.services,
  org.eclipse.incquery.patternlanguage.typing,
  org.eclipse.incquery.patternlanguage.validation,
- org.eclipse.incquery.patternlanguage.validation.whitelist
+ org.eclipse.incquery.patternlanguage.validation.whitelist,
+ org.eclipse.incquery.patternlanguage.parser.antlr,
+ org.eclipse.incquery.patternlanguage.parser.antlr.internal
 Bundle-Activator: org.eclipse.incquery.patternlanguage.PatternLanguagePlugin
-

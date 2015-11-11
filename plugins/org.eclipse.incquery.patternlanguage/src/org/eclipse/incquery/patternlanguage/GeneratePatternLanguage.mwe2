@@ -66,6 +66,16 @@ Workflow {
                 fileExtensions = file.extensions
             }
 
+            // The antlr parser generator fragment.
+            fragment = parser.antlr.XtextAntlrGeneratorFragment {
+                antlrTool = parser.antlr.AntlrToolFacade {
+                    askBeforeDownload = false
+                }
+            //  options = {
+            //      backtrack = true
+            //  }
+            }
+
             // java-based API for validation
             fragment = validation.JavaValidatorFragment {
                 //composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
