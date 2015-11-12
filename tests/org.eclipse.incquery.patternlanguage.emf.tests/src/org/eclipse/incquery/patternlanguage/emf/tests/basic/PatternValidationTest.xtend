@@ -69,7 +69,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 				Pattern(Pattern);
 			}
 		')
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::UNUSED_PRIVATE_PATTERN), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::UNUSED_PRIVATE_PATTERN), getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 	
 	@Test
@@ -81,7 +81,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 				Pattern(_Pattern);
 			}
 		')
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::SINGLEUSE_PARAMETER), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::SINGLEUSE_PARAMETER), getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 	
 	@Test
@@ -94,7 +94,7 @@ class PatternValidationTest extends AbstractValidatorTest {
 				Pattern.name(p, _p);
 			}
 		''')
-		tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME), getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 	
 	@Test
@@ -107,6 +107,6 @@ class PatternValidationTest extends AbstractValidatorTest {
 				Pattern.name(p, _P);
 			}
 		''')
-		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 }
