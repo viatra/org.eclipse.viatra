@@ -29,6 +29,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import static extension org.eclipse.incquery.patternlanguage.helper.CorePatternLanguageHelper.*
 import org.eclipse.incquery.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory
+import org.eclipse.incquery.runtime.extensibility.IncQueryRuntimeConstants
 
 /**
  * @author Abel Hegedus
@@ -43,26 +44,29 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
     @Inject protected extension DerivedFeatureSourceCodeUtil codeGen
     @Inject protected extension EMFPatternLanguageJvmModelInferrerUtil inferrerUtil
     
-    protected static String SURROGATE_EXTENSION_POINT   = "org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf"
-    protected static String SURROGATE_ERROR_CODE        = "org.eclipse.incquery.patternlanguage.emf.surrogatequeryemf.e.error"
+    protected static String SURROGATE_ERROR_CODE        = "org.eclipse.incquery.runtime.surrogatequeryemf.error"
     protected static String SURROGATE_EXTENSION_PREFIX  = "extension.surrogate."
   
     override getRemovableExtensions() {
         newArrayList(
-            Pair::of(SURROGATE_EXTENSION_PREFIX, SURROGATE_EXTENSION_POINT)
+            Pair::of(SURROGATE_EXTENSION_PREFIX, IncQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID)
+            // FIXME remove when deprecated extension point is removed
+            ,Pair::of(SURROGATE_EXTENSION_PREFIX, IncQueryRuntimeConstants.SURROGATE_QUERY_DEPRECATED_EXTENSIONID)
         )
     }
     
     override removeExtension(Pattern pattern) {
         newArrayList(
-            Pair::of(pattern.derivedContributionId, SURROGATE_EXTENSION_POINT)
+            Pair::of(pattern.derivedContributionId, IncQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID)
+            // FIXME remove when deprecated extension point is removed
+            ,Pair::of(pattern.derivedContributionId, IncQueryRuntimeConstants.SURROGATE_QUERY_DEPRECATED_EXTENSIONID)
         )
     }
     
     override extensionContribution(Pattern pattern) {
         val surrogateExtension = newArrayList(
           // create surrogate query extension using nsUri, classifier name, feature name and query FQN
-          contribExtension(pattern.derivedContributionId, SURROGATE_EXTENSION_POINT) [
+          contribExtension(pattern.derivedContributionId, IncQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID) [
             pattern.gatherSurrogateParameters.forEach [ parameters |
               contribElement(it, "surrogate-query-emf") [
                 contribAttribute(it, "package-nsUri", parameters.ePackage.nsURI)

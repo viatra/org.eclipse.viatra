@@ -6,17 +6,14 @@
          <meta.schema plugin="org.eclipse.incquery.runtime" id="surrogatequeryemf" name="EMF-IncQuery Surrogate Query"/>
       </appInfo>
       <documentation>
-         This extension point will be removed in a future release. At that time, also remove references to it from:
-* IncQueryRuntimeConstants
-* SurrogateGeneratorFragment
-* ExtensionBasedSurrogateQueryLoader
+         This extension point can be used to register surrogate queries for derived features.
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element deprecated="true" replacement="org.eclipse.incquery.runtime.surrogatequeryemf" />
+            <meta.element />
          </appInfo>
       </annotation>
       <complexType>
@@ -51,11 +48,6 @@
    </element>
 
    <element name="surrogate-query-emf">
-      <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
-      </annotation>
       <complexType>
          <attribute name="package-nsUri" type="string" use="required">
             <annotation>
