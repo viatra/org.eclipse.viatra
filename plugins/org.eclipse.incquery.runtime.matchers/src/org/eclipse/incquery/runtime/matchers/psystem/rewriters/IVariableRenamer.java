@@ -48,7 +48,7 @@ public interface IVariableRenamer {
         @Override
         public String createVariableName(PVariable pVariable, PQuery query) {
             // make sure to keep the "_" prefix before anonymous variables
-            String newVarName = getShortName(query) + "[" + callCount + "]" + "_" + pVariable.getName();
+            String newVarName = getShortName(query) + "<" + callCount + ">" + "_" + pVariable.getName();
             return pVariable.getName().startsWith("_") ? "_" + newVarName : newVarName ;
         }
         
