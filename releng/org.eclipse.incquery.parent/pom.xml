@@ -22,6 +22,9 @@
 		<module>../../plugins/org.eclipse.incquery.runtime.rete.recipes</module>
 		<module>../../plugins/org.eclipse.incquery.runtime.evm</module>
 		<module>../../releng/org.eclipse.incquery.target</module>
+		<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
+        <module>../../plugins/org.eclipse.incquery.uml</module>
+        <module>../../plugins/org.eclipse.incquery.validation.core</module>
 	</modules>
 	<properties>
 		<tycho.version>0.22.0</tycho.version>
@@ -254,14 +257,11 @@
 				<module>../../plugins/org.eclipse.incquery.tooling.ui</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.localsearch.ui</module>
 				<module>../../plugins/org.eclipse.incquery.tooling.ui.retevis</module>
-				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.runtime</module>
 				<module>../../plugins/org.eclipse.incquery.querybasedfeatures.tooling</module>
 				<module>../../plugins/org.eclipse.incquery.runtime.evm.transactions</module>
 				<module>../../plugins/org.eclipse.incquery.runtime.gmf</module>
 				<module>../../plugins/org.eclipse.incquery.runtime.graphiti</module>
 				<module>../../plugins/org.eclipse.incquery.databinding.runtime</module>
-				<module>../../plugins/org.eclipse.incquery.uml</module>
-				<module>../../plugins/org.eclipse.incquery.validation.core</module>
 				<module>../../plugins/org.eclipse.incquery.validation.runtime</module>
 				<module>../../plugins/org.eclipse.incquery.validation.runtime.ui</module>
 				<module>../../plugins/org.eclipse.incquery.validation.tooling</module>
