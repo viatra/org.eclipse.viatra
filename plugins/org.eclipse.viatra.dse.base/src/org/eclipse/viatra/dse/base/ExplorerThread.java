@@ -68,7 +68,6 @@ public class ExplorerThread implements Runnable {
         } catch (Throwable e) {
             logger.error("Thread stopped unexpectedly!", e);
             globalContext.registerException(e);
-            throw new DSEException(e);
         } finally {
             globalContext.strategyFinished(this);
             dispose();
