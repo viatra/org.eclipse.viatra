@@ -170,7 +170,7 @@ public class LocalSearchRuntimeBasedStrategy {
                 }
             }
         }
-        
+
         return stateTable.get(0).get(0);
     }
 
@@ -349,24 +349,24 @@ public class LocalSearchRuntimeBasedStrategy {
         if(!allowInverseNavigation){
             // When inverse navigation is not allowed, filter out operation masks, where
             // the first variable would be free AND the feature is an EReference and has no EOpposite
-            bindings = excludeInverseNavigationOperationMasks(typeConstraint, bindings);
+            bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
         } else {
             // Also do the above case, if it is an EReference with no EOpposite, or is an EAttribute
             IInputKey inputKey = typeConstraint.getSupplierKey();
             if(inputKey instanceof EStructuralFeatureInstancesKey){
                 final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
                 if(feature instanceof EReference){
-                    if(((EReference) feature).getEOpposite() == null){                        
-                        bindings = excludeInverseNavigationOperationMasks(typeConstraint, bindings);
+                    if(!useIndex){                        
+                        bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
                     }
                 } else {
-                    bindings = excludeInverseNavigationOperationMasks(typeConstraint, bindings);
+                    bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
                 }
             }
         }
         doCreateConstraintInfos(runtimeContext, constraintInfos, typeConstraint, affectedVariables, bindings);
     }
-    private Set<Set<PVariable>> excludeInverseNavigationOperationMasks(TypeConstraint typeConstraint, Set<Set<PVariable>> bindings) {
+    private Set<Set<PVariable>> excludeUnnavigableOperationMasks(TypeConstraint typeConstraint, Set<Set<PVariable>> bindings) {
         PVariable firstVariable = typeConstraint.getVariableInTuple(0);
         Iterator<Set<PVariable>> iterator = bindings.iterator();
         Set<Set<PVariable>>elementsToRemove = Sets.newHashSet();
