@@ -98,9 +98,9 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
             
             Map<String, Object> hints = hintProvider.getHints(query);
             Boolean allowInverse = (Boolean) hints.get(LocalSearchHintKeys.ALLOW_INVERSE_NAVIGATION);
-            allowInverse = allowInverse == null ? false : allowInverse; 
+            allowInverse = allowInverse == null ? true : allowInverse; 
             Boolean useBase = (Boolean) hints.get(LocalSearchHintKeys.USE_BASE_INDEX);
-            useBase = useBase == null ? false : useBase; 
+            useBase = useBase == null ? true : useBase; 
             
             LocalSearchRuntimeBasedStrategy strategy = new LocalSearchRuntimeBasedStrategy(allowInverse,useBase);
             compiler = new POperationCompiler(runtimeContext, backend, useBase);
