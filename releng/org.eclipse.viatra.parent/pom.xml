@@ -11,7 +11,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>../../plugins/org.eclipse.viatra.emf.runtime</module>
-
+        <module>../../plugins/org.eclipse.viatra.emf.mwe2integration</module>
 		<module>../../releng/org.eclipse.viatra.target</module>
 	</modules>
 	<properties>
@@ -190,7 +190,6 @@
 				<module>../../plugins/org.eclipse.viatra.dse.designspace.pathfinding</module>
 				<module>../../plugins/org.eclipse.viatra.dse.genetic</module>
 				<module>../../plugins/org.eclipse.viatra.dse.monitor</module>
-				<module>../../plugins/org.eclipse.viatra.emf.mwe2integration</module>
 				<module>../../tests/org.eclipse.viatra.cep.core.tests.compiler</module>
 				<module>../../tests/org.eclipse.viatra.cep.core.tests.compiler.testdata</module>
 				<module>../../tests/org.eclipse.viatra.cep.vepl.tests</module>
