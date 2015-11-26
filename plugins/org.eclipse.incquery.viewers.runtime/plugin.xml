@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
-  <extension id="org.eclipse.incquery.viewers.runtime.model.patterns.Traceability" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.viewers.runtime.model.patterns.Traceability" id="org.eclipse.incquery.viewers.runtime.model.patterns.Traceability"/>
-  </extension>
   <extension point="org.eclipse.emf.ecore.generated_package">
     <!-- @generated notation -->
     <package class="org.eclipse.incquery.viewers.runtime.model.NotationPackage" genModel="model/notation.genmodel" uri="http://org.eclipse.incquery/viewmodel/notation/1.0"/>
@@ -30,5 +27,8 @@
       <annotationparameter description="The style of the line's arrow at the source end (none, standard, diamond, triangle). Only available for Edges." mandatory="false" multiple="false" name="arrowSourceEnd" type="string"/>
       <annotationparameter description="The style of the line's arrow at the target end (none, standard, diamond, triangle). Only available for Edges." mandatory="false" multiple="false" name="arrowTargetEnd" type="string"/>
     </annotation>
+  </extension>
+  <extension id="org.eclipse.incquery.viewers.runtime.model.patterns.Traceability" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.viewers.runtime.model.patterns.Traceability" id="org.eclipse.incquery.viewers.runtime.model.patterns.Traceability"/>
   </extension>
 </plugin>

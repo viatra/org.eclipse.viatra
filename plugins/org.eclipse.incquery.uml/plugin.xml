@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures" id="org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures"/>
-  </extension>
   <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.stateIsComposite" point="org.eclipse.incquery.runtime.surrogatequeryemf">
     <surrogate-query-emf class-name="State" feature-name="isComposite" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" query-fqn="org.eclipse.incquery.uml.derivedfeatures.stateIsComposite" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.StateIsCompositeQuerySpecification"/>
   </extension>
@@ -154,5 +151,8 @@
   </extension>
   <extension id="extension.surrogate.org.eclipse.incquery.uml.derivedfeatures.actionInput" point="org.eclipse.incquery.runtime.surrogatequeryemf">
     <surrogate-query-emf class-name="Action" feature-name="input" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" query-fqn="org.eclipse.incquery.uml.derivedfeatures.actionInput" surrogate-query="org.eclipse.incquery.runtime.extensibility.PQueryExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.util.ActionInputQuerySpecification"/>
+  </extension>
+  <extension id="org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures" id="org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures"/>
   </extension>
 </plugin>

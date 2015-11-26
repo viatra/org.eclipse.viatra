@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.incquery.runtime.evm.transactions.feature"
       label="EMF-IncQuery EVM Support for EMF Transactions"
-      version="1.1.0.qualifier"
+      version="1.2.0.qualifier"
       provider-name="The Eclipse EMF-IncQuery Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
