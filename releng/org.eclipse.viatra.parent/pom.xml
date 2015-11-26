@@ -7,7 +7,7 @@
 	<artifactId>org.eclipse.viatra.parent</artifactId>
 	<name>VIATRA EMF Support</name>
 	<url>http://eclipse.org/viatra2</url>
-	<version>0.8.0-SNAPSHOT</version>
+	<version>0.9.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
 		<module>../../plugins/org.eclipse.viatra.emf.runtime</module>
