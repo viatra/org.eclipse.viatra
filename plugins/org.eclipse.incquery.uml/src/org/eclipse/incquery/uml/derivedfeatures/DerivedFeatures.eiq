@@ -69,11 +69,25 @@ pattern activityGroup(source: Activity, target: ActivityGroup)
 { Activity.partition(source, target); } or 
 { Activity.structuredNode(source, target); }
 
+@Surrogate(feature = "inActivity")
+@QueryExplorer(checked = false)
+pattern activityGroupInActivity(source: ActivityGroup, target: Activity){
+    // opposite of Activity.group
+    find activityGroup(target, source);
+}
+
 @Surrogate(feature = "node")
 @QueryExplorer(checked = false)
 pattern activityNode(source: Activity, target: ActivityNode)
 { Activity.ownedNode(source, target); } or 
 { Activity.structuredNode(source, target); }
+
+@Surrogate(feature = "activity")
+@QueryExplorer(checked = false)
+pattern activityNodeActivity(source: ActivityNode, target: Activity){
+    // opposite of Activity.node
+    find activityNode(target, source);
+}
 
 @Surrogate(feature = "inGroup")
 @QueryExplorer(checked = false)
@@ -84,8 +98,10 @@ pattern activityEdgeInGroup(source: ActivityEdge, target: ActivityGroup)
 @Surrogate(feature = "containedEdge")
 @QueryExplorer(checked = false)
 pattern activityGroupContainedEdge(source: ActivityGroup, target: ActivityEdge)
-{ ActivityPartition.edge(source, target); } or 
-{ StructuredActivityNode.edge(source, target); }
+{
+    // opposite of ActivityGroup.containedEdge
+    find activityEdgeInGroup(target, source);
+}
 
 @Surrogate(feature = "containedNode")
 @QueryExplorer(checked = false)
@@ -93,6 +109,14 @@ pattern activityGroupContainedNode(source: ActivityGroup, target: ActivityNode)
 { ActivityPartition.node(source, target); } or 
 { InterruptibleActivityRegion.node(source, target); } or 
 { StructuredActivityNode.node(source, target); }
+
+@Surrogate(feature = "inGroup")
+@QueryExplorer(checked = false)
+pattern activityNodeInGroup(source: ActivityNode, target: ActivityGroup)
+{
+    // opposite of ActivityGroup.containedNode
+    find activityGroupContainedNode(target, source);
+}
 
 @Surrogate(feature = "subgroup")
 @QueryExplorer(checked = false)
@@ -102,14 +126,10 @@ pattern activityGroupSubgroup(source: ActivityGroup, target: ActivityGroup)
 @Surrogate(feature = "superGroup")
 @QueryExplorer(checked = false)
 pattern activityGroupSuperGroup(source: ActivityGroup, target: ActivityGroup)
-{ ActivityPartition.superPartition(source, target); }
-
-@Surrogate(feature = "inGroup")
-@QueryExplorer(checked = false)
-pattern activityNodeInGroup(source: ActivityNode, target: ActivityGroup)
-{ ActivityNode.inInterruptibleRegion(source, target); } or 
-{ ActivityNode.inPartition(source, target); } or 
-{ ActivityNode.inStructuredNode(source, target); }
+{ 
+    // opposite of ActivityGroup.subGroup
+    find activityGroupSubgroup(target, source);
+}
 
 @Surrogate(feature = "attribute")
 @QueryExplorer(checked = false)
@@ -132,6 +152,14 @@ pattern classifierFeature(source: Classifier, target: Feature)
 { Interface.ownedOperation(source, target); } or 
 { Interface.ownedReception(source, target); } or 
 { StructuredClassifier.ownedConnector(source, target); }
+
+@Surrogate(feature = "featuringClassifier")
+@QueryExplorer(checked = false)
+pattern featureFeaturingClassifier(source: Feature, target: Classifier)
+{
+    // opposite of Classifier.feature
+    find classifierFeature(target, source);
+}
 
 @Surrogate(feature = "source")
 @QueryExplorer(checked = false)
@@ -255,52 +283,21 @@ pattern elementOwnedElement(source: Element, target: Element)
 
 @Surrogate(feature = "owner")
 @QueryExplorer(checked = false)
-pattern elementOwner(source: Element, target: Element)
-{ ActivityEdge.activity(source, target); } or 
-{ ActivityEdge.inStructuredNode(source, target); } or 
-//{ find activityGroupInActivity(source, target); } or 
-{ find activityGroupSuperGroup(source, target); } or 
-//{ find activityNodeActivity(source, target); } or 
-{ ActivityNode.inStructuredNode(source, target); } or 
-{ ComponentRealization.abstraction(source, target); } or 
-{ Deployment.location(source, target); } or 
-{ DeploymentSpecification.deployment(source, target); } or 
-{ ElementImport.importingNamespace(source, target); } or 
-{ ExceptionHandler.protectedNode(source, target); } or 
-{ Generalization.specific(source, target); } or 
-{ InterfaceRealization.implementingClassifier(source, target); } or 
-{ find namedElementNamespace(source, target); } or 
-{ PackageImport.importingNamespace(source, target); } or 
-{ PackageMerge.receivingPackage(source, target); } or 
-{ ParameterableElement.owningTemplateParameter(source, target); } or 
-{ ProfileApplication.applyingPackage(source, target); } or 
-{ Property.associationEnd(source, target); } or 
-{ ProtocolConformance.specificMachine(source, target); } or 
-{ Slot.owningInstance(source, target); } or 
-{ StringExpression.owningExpression(source, target); } or 
-{ Substitution.substitutingClassifier(source, target); } or 
-{ TemplateBinding.boundElement(source, target); } or 
-{ TemplateParameter.signature(source, target); } or 
-{ TemplateParameterSubstitution.templateBinding(source, target); } or 
-{ TemplateSignature.template(source, target); }
+pattern elementOwner(source: Element, target: Element){
+    // opposite of Element.ownedElement
+    find elementOwnedElement(target, source);
+}
 
-@Surrogate(feature = "featuringClassifier")
-@QueryExplorer(checked = false)
-pattern featureFeaturingClassifier(source: Feature, target: Classifier)
-{ Operation.class(source, target); } or 
-{ Operation.datatype(source, target); } or 
-{ Operation.interface(source, target); } or 
-//{ find propertyClass(source, target); } or 
-{ Property.datatype(source, target); } or 
-{ Property.interface(source, target); } or 
-{ Property.owningAssociation(source, target); }
+private pattern propertyClass(property : Property, cls : Class) {
+    find elementOwnedElement(cls, property);
+}
 
 @Surrogate(feature = "member")
 @QueryExplorer(checked = false)
 pattern namespaceMember(source: Namespace, target: NamedElement)
 { Association.memberEnd(source, target); } or 
 { find classifierFeature(source, target); } or 
-//{ find classifierInheritedMember(source, target); } or 
+// TODO { find classifierInheritedMember(source, target); } or 
 { find namespaceImportedMember(source, target); } or 
 { find namespaceOwnedMember(source, target); } or 
 { find structuredClassifierRole(source, target); }
@@ -371,15 +368,63 @@ pattern redefinableElementRedefinedElement(source: RedefinableElement, target: R
 @Surrogate(feature = "redefinitionContext")
 @QueryExplorer(checked = false)
 pattern redefinableElementRedefinitionContext(source: RedefinableElement, target: Classifier)
-//{ find behaviorContext(source, target); } or 
+{ find behaviorContext(source, target); } or 
 { Operation.class(source, target); } or 
 { Operation.datatype(source, target); } or 
 { Operation.interface(source, target); } or 
-//{ find propertyClass(source, target); } or 
+{ find propertyClass(source, target); } or 
 { Property.datatype(source, target); } or 
 { Property.interface(source, target); } or 
-{ Property.owningAssociation(source, target); } //or 
-//{ find redefinableTemplateSignatureClassifier(source, target); }
+{ Property.owningAssociation(source, target); } or 
+{
+    // undocumented subset: Classifier.namespace
+    find namedElementNamespace(source, target);
+    Classifier(source);
+} or {
+    // undocumented subset: Classifier.namespace
+    find namedElementNamespace(source, target);
+    BehavioralFeature(source);
+} or {
+    // RedefinableTemplateSignature.classifier
+    RedefinableTemplateSignature(source);
+    find elementOwner(source, target);
+} or {
+    // Region.redefinitionContext
+    find regionRedefinitionContext(source, target);
+} or {
+    // State.redefinitionContext
+    find stateRedefinitionContext(source, target);
+} or {
+    // Transition.redefinitionContext
+    find transitionRedefinitionContext(source, target);
+}
+
+private pattern regionRedefinitionContext (source: Region, target: Classifier){
+    find regionContainingStateMachine(source, sm);
+    find behaviorContext(sm, target);
+} or {
+    find regionContainingStateMachine(source, target);
+    neg find behaviorContext(target, _);
+    find classifierGeneral(target, _);
+}
+
+private pattern stateRedefinitionContext (source: State, target: Classifier){
+    find vertexContainingStateMachine(source, sm);
+    find behaviorContext(sm, target);
+} or {
+    find vertexContainingStateMachine(source, target);
+    neg find behaviorContext(target, _);
+    find classifierGeneral(target, _);
+}
+
+private pattern transitionRedefinitionContext (source: Transition, target: Classifier){
+    find transitionContainingStateMachine(source, sm);
+    find behaviorContext(sm, target);
+} or {
+    find transitionContainingStateMachine(source, target);
+    neg find behaviorContext(target, _);
+    find classifierGeneral(target, _);
+}
 
 @Surrogate(feature = "relatedElement")
 @QueryExplorer(checked = false)
@@ -405,8 +450,14 @@ endif
 endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingBehavior
-//@Surrogate(feature = "context")
-//pattern actionContext(source: Action, target: Classifier) {}
+@Surrogate(feature = "context")
+pattern actionContext(source: Action, target: Classifier) {
+    find actionContainingBehavior(source, behavior);
+    find behaviorContext(behavior, target);
+} or {
+    find actionContainingBehavior(source, target);
+    neg find behaviorContext(target, _);
+}
 
 /*
 (memberEnd->collect(type)->asSet())
@@ -423,6 +474,14 @@ pattern associationEndType(
 }
 
 /*
+ * 
+ * A Behavior that is directly owned as a nestedClassifier does not have a context.
+ * Otherwise, to determine the context of a Behavior, find the first
+ * BehavioredClassifier reached by following the chain of owner relationships 
+ * from the Behavior, if any. If there is such a BehavioredClassifier, then it
+ * is the context, unless it is itself a Behavior with a non-empty context, in 
+ * which case that is also the context for the original Behavior.
+ * 
 (if nestingClass <> null then
     null
 else
@@ -436,31 +495,39 @@ endif
         )
 */
 // Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (nestingClass)
-//@Surrogate(feature = "context")
-//pattern behaviorContext(source: Behavior, target: BehavioredClassifier) {}
+@Surrogate(feature = "context")
+pattern behaviorContext(source: Behavior, target: BehavioredClassifier) {
+    find internalBehaviorContext+(source, target);
+    neg find internalBehaviorContext(target, _);
+}
 
 /*
-(Extension.allInstances()->select(ext | 
-  let endTypes : Sequence(Classifier) = ext.memberEnd->collect(type.oclAsType(Classifier)) in
-  endTypes->includes(self) or endTypes.allParents()->includes(self) ))
-*/
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allParents
-//@Surrogate(feature = "extension")
-//pattern classExtension(source: Class, target: Extension) {}
+ * Otherwise, to determine the context of a Behavior, find the first
+ * BehavioredClassifier reached by following the chain of owner relationships 
+ * from the Behavior, if any.
+ */
+private pattern internalBehaviorContext(source: Behavior, target: BehavioredClassifier) {
+    neg find nestedClassifier(_, source);
+    find elementOwner+(source, target);
+    neg find intermediateBehaviorClassifier(source, _, target);
+}
 
 /*
-(self.general()->select(oclIsKindOf(Class))->collect(oclAsType(Class))->asSet())
-*/
-// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Cannot find operation (general()) for the type (Class)
-//@Surrogate(feature = "superClass")
-//pattern classSuperClass(source: Class, target: Class) {}
+ * There is an intermediate BehavioredClassifier in the ownership hierarchy
+ */
+private pattern intermediateBehaviorClassifier(source : Behavior, intermediate : BehavioredClassifier, target : BehavioredClassifier) {
+    find elementOwner+(source, intermediate);
+    find elementOwner+(intermediate, target);
+}
 
 /*
-(parents())
-*/
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: parents
-//@Surrogate(feature = "general")
-//pattern classifierGeneral(source: Classifier, target: Classifier) {}
+ * A Behavior that is directly owned as a nestedClassifier does not have a context.
+ */
+private pattern nestedClassifier(parent : Classifier, child : Classifier) {
+    Class.nestedClassifier(parent, child);
+} or {
+    Interface.nestedClassifier(parent, child);
+}
 
 /*
 (inherit(parents()->collect(inheritableMembers(self))->asSet()))
@@ -594,25 +661,6 @@ pattern namedElementClientDependency(
     Dependency(dependency);
     d == dependency;
 }
-
-/*
-(if self.name <> null and self.allNamespaces()->select( ns | ns.name=null )->isEmpty()
-then 
-    self.allNamespaces()->iterate( ns : Namespace; agg: String = self.name | ns.name.concat(self.separator()).concat(agg))
-else
-   null
-endif)
-*/
-// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [self.allNamespaces()->iterate(ns : Namespace; agg : String = self.name | ns.name.concat(self.separator()).concat(agg))]
-//@Surrogate(feature = "qualifiedName")
-//pattern namedElementQualifiedName(source: NamedElement, target: String) {}
-
-/*
-(self.importMembers(elementImport.importedElement->asSet()->union(packageImport.importedPackage->collect(p | p.visibleMembers()))->asSet()))
-*/
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: visibleMembers
-//@Surrogate(feature = "importedMember")
-//pattern namespaceImportedMember(source: Namespace, target: PackageableElement) {}
 
 /*
 (if behavior = null then
@@ -937,7 +985,8 @@ NamedElementOperations.getNamespace
 @Surrogate(feature = "namespace")
 @QueryExplorer(checked = false)
 pattern namedElementNamespace(source: NamedElement, target: Namespace) {
-	find namespaceMember(target, source);
+    // opposite of Namespace.ownedMember
+    find namespaceOwnedMember(target, source);
 }
 
 // * Handwritten
@@ -947,7 +996,7 @@ Specifies the owning Package of this Type, if any.
 */
 @Surrogate(feature = "package")
 pattern typePackage(source: Type, target: Package) { 
-	Package.packagedElement(target,source);
+    Package.packagedElement(target,source);
 }
 
 /*
@@ -962,12 +1011,13 @@ pattern classExtension(source: Class, target: Extension) {
     Property.type(memberEnd, endType);
     Classifier(endType);
     find typeOrAllParents(endType, source);
+    // XXX Class.isMetaclass is called in implementation!
 }
 
 private pattern typeOrAllParents(endType: Classifier, source: Class) {
     endType == source;
 } or {
-    find classifierAllParents(endType, source);
+    find classifierAllParents(source, endType);
 }
 
 /*
@@ -993,8 +1043,19 @@ pattern classifierAllParents(source: Classifier, target: Classifier) {
 @Surrogate(feature = "general")
 @QueryExplorer(checked = false)
 pattern classifierGeneral(source: Classifier, target: Classifier) {
+    neg find isClass(source);
     find classifierParents(source, target);
+} or {
+    // Class.superClass redefines general
+    find isClass(source);
+    find classifierParents(source, target);
+    find isClass(target);
 }
+
+private pattern isClass(cls : Class) {
+    Class(cls);
+}
+
 
 // connectorEndDefiningEnd: ordered
 
@@ -1042,13 +1103,25 @@ endif)
 @Surrogate(feature = "qualifiedName")
 @QueryExplorer(checked = false)
 pattern namedElementQualifiedName(namedElement: NamedElement, qualifiedName) {
-    neg find namedElementNamespace(namedElement, _);
+    neg find internalNamedElementNamespace(namedElement, _);
     NamedElement.name(namedElement, qualifiedName);
+    // qualifiedName is null if any of the names are empty!
+    qualifiedName != "";
 } or {
-    find namedElementNamespace(namedElement, namespace);
+    find internalNamedElementNamespace(namedElement, namespace);
     NamedElement.name(namedElement, name);
+    // qualifiedName is null if any of the names are empty!
+    name != "";
     find namedElementQualifiedName(namespace, namespaceQualifiedName);
     qualifiedName == eval(namespaceQualifiedName + "::" + name); // XXX is separator always this?
+}
+
+// NamedElement owned by TemplateParameter is handled separately when computing namespace
+private pattern internalNamedElementNamespace(namedElement: NamedElement, namespace : Namespace) {
+    find namedElementNamespace(namedElement, namespace);
+} or {
+    find elementOwner(namedElement, parameter);
+    TemplateableElement.ownedTemplateSignature.ownedParameter(namespace, parameter);
 }
 
 /*
@@ -1154,7 +1227,14 @@ endif
 )
 */
 // Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (interaction)
-//pattern actionContainingBehavior(source: Action, target: Behavior) {}
+private pattern actionContainingBehavior(source: Action, target: Behavior) {
+    find activityNodeActivity(source, target);
+} or {
+    Action.inStructuredNode(source, node);
+    find actionContainingBehavior(node, target);
+} or {
+    Interaction.action(target, source);
+}
 
 /*
 (directlyRealizedInterfaces()->union(self.allParents()->collect(directlyRealizedInterfaces()))->asSet())
@@ -1260,7 +1340,9 @@ else
 endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingStateMachine
-//pattern regionContainingStateMachine(source: Region, target: StateMachine) {}
+private pattern regionContainingStateMachine(source: Region, target: StateMachine) {
+    find stateMachineContainment+(source, target);
+}
 
 /*
 (submachine <> null)
@@ -1278,7 +1360,9 @@ endif)
 (container.containingStateMachine())
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingStateMachine
-//pattern transitionContainingStateMachine(source: Transition, target: StateMachine) {}
+private pattern transitionContainingStateMachine(source: Transition, target: StateMachine) {
+    find stateMachineContainment+(source, target);
+}
 
 /*
 (null)
@@ -1305,4 +1389,14 @@ endif
 )
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingStateMachine
-//pattern vertexContainingStateMachine(source: Vertex, target: StateMachine) {}
+private pattern vertexContainingStateMachine(source: Vertex, target: StateMachine) {
+    find stateMachineContainment+(source, target);
+}
+
+private pattern stateMachineContainment(child, container)
+{ Vertex.container(child, container); } or 
+{ Pseudostate.stateMachine(child, container); } or
+{ ConnectionPointReference.state(child, container); } or
+{ Transition.container(child, container); } or
+{ Region.state(child, container); } or 
+{ Region.stateMachine(child, container); }

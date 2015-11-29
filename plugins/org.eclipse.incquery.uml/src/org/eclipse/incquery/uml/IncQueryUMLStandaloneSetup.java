@@ -19,17 +19,21 @@ import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.incquery.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.incquery.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.incquery.uml.derivedfeatures.DerivedFeatures;
+import org.eclipse.incquery.uml.derivedfeatures.util.ActionContextQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActionInputQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActionOutputQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActivityEdgeInGroupQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActivityGroupContainedEdgeQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActivityGroupContainedNodeQuerySpecification;
+import org.eclipse.incquery.uml.derivedfeatures.util.ActivityGroupInActivityQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActivityGroupQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActivityGroupSubgroupQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActivityGroupSuperGroupQuerySpecification;
+import org.eclipse.incquery.uml.derivedfeatures.util.ActivityNodeActivityQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActivityNodeInGroupQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ActivityNodeQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.AssociationEndTypeQuerySpecification;
+import org.eclipse.incquery.uml.derivedfeatures.util.BehaviorContextQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ClassExtensionQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ClassSuperClassQuerySpecification;
 import org.eclipse.incquery.uml.derivedfeatures.util.ClassifierAttributeQuerySpecification;
@@ -105,7 +109,7 @@ public class IncQueryUMLStandaloneSetup {
 
 	private static Map<EStructuralFeature, IQuerySpecification<?>> getSurrogateQueries() throws IncQueryException {
 		return ImmutableMap.<EStructuralFeature, IQuerySpecification<?>> builder()
-//			.put(UMLPackage.Literals.ACTION__CONTEXT, ActionContextQuerySpecification.instance())
+			.put(UMLPackage.Literals.ACTION__CONTEXT, ActionContextQuerySpecification.instance())
 			.put(UMLPackage.Literals.ACTION__INPUT, ActionInputQuerySpecification.instance())
 			.put(UMLPackage.Literals.ACTION__OUTPUT, ActionOutputQuerySpecification.instance())
 			.put(UMLPackage.Literals.ACTIVITY__GROUP, ActivityGroupQuerySpecification.instance())
@@ -113,13 +117,13 @@ public class IncQueryUMLStandaloneSetup {
 			.put(UMLPackage.Literals.ACTIVITY_EDGE__IN_GROUP, ActivityEdgeInGroupQuerySpecification.instance())
 			.put(UMLPackage.Literals.ACTIVITY_GROUP__CONTAINED_EDGE, ActivityGroupContainedEdgeQuerySpecification.instance())
 			.put(UMLPackage.Literals.ACTIVITY_GROUP__CONTAINED_NODE, ActivityGroupContainedNodeQuerySpecification.instance())
-//			.put(UMLPackage.Literals.ACTIVITY_GROUP__IN_ACTIVITY, ActivityGroupInActivityQuerySpecification.instance())
+			.put(UMLPackage.Literals.ACTIVITY_GROUP__IN_ACTIVITY, ActivityGroupInActivityQuerySpecification.instance())
 			.put(UMLPackage.Literals.ACTIVITY_GROUP__SUBGROUP, ActivityGroupSubgroupQuerySpecification.instance())
 			.put(UMLPackage.Literals.ACTIVITY_GROUP__SUPER_GROUP, ActivityGroupSuperGroupQuerySpecification.instance())
-//			.put(UMLPackage.Literals.ACTIVITY_NODE__ACTIVITY, ActivityNodeActivityQuerySpecification.instance())
+			.put(UMLPackage.Literals.ACTIVITY_NODE__ACTIVITY, ActivityNodeActivityQuerySpecification.instance())
 			.put(UMLPackage.Literals.ACTIVITY_NODE__IN_GROUP, ActivityNodeInGroupQuerySpecification.instance())
 			.put(UMLPackage.Literals.ASSOCIATION__END_TYPE, AssociationEndTypeQuerySpecification.instance())
-//			.put(UMLPackage.Literals.BEHAVIOR__CONTEXT, BehaviorContextQuerySpecification.instance())
+			.put(UMLPackage.Literals.BEHAVIOR__CONTEXT, BehaviorContextQuerySpecification.instance())
 			.put(UMLPackage.Literals.CLASS__EXTENSION, ClassExtensionQuerySpecification.instance())
 			.put(UMLPackage.Literals.CLASS__SUPER_CLASS, ClassSuperClassQuerySpecification.instance())
 			.put(UMLPackage.Literals.CLASSIFIER__ATTRIBUTE, ClassifierAttributeQuerySpecification.instance())
