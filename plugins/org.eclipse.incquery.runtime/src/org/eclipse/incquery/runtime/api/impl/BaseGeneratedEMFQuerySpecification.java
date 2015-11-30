@@ -34,7 +34,6 @@ public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQuer
 	 */
     public BaseGeneratedEMFQuerySpecification(PQuery wrappedPQuery) {
         super(wrappedPQuery);
-        ensureInitializedInternalSneaky();
     }
     
     protected static IncQueryException processInitializerError(ExceptionInInitializerError err) {

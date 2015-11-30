@@ -569,11 +569,9 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
             		return input.getInternalQueryRepresentation();
             	}
             });
-            Collection<String> uninitializedPatterns = Collections2.transform(
-                    Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.UNINITIALIZED)),
-                    PQueries.queryNameFunction());
-            Preconditions.checkState(uninitializedPatterns.isEmpty(), "Uninitialized query(s) found: %s", Joiner.on(", ")
-                    .join(uninitializedPatterns));
+            for (PQuery pQuery : patterns) {
+                pQuery.ensureInitialized();
+            }
             Collection<String> erroneousPatterns = Collections2.transform(
                     Collections2.filter(patterns, PQueries.queryStatusPredicate(PQueryStatus.ERROR)),
                     PQueries.queryNameFunction());
