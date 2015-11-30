@@ -231,16 +231,37 @@ class PatternQuerySpecificationClassInferrer {
    		querySpecificationClass.members += pattern.toClass(pattern.querySpecificationHolderClassName) [
 			visibility = JvmVisibility::PRIVATE
 			static = true
+			documentation = '''
+				Inner class allowing the singleton instance of {@link «pattern.querySpecificationClassName»} to be created 
+					<b>not</b> at the class load time of the outer class, 
+					but rather at the first call to {@link «pattern.querySpecificationClassName»#instance()}.
+				
+				<p> This workaround is required e.g. to support recursion.
+			'''
+			
 			members += pattern.toField("INSTANCE", typeRef(querySpecificationClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
 				final = true
 				static = true
-				initializer = '''make()''';
+				initializer = '''new «pattern.querySpecificationClassName»()''';
 			]
-			it.members += pattern.toMethod("make", typeRef(querySpecificationClass)) [
+			members += pattern.toField("STATIC_INITIALIZER", typeRef(Object)) [
+				final = true
+				static = true
+				initializer = '''ensureInitialized()''';
+				documentation = '''
+					Statically initializes the query specification <b>after</b> the field {@link #INSTANCE} is assigned.
+					This initialization order is required to support indirect recursion.
+					
+					<p> The static initializer is defined using a helper field to work around limitations of the code generator.
+				'''
+				
+			]
+			it.members += pattern.toMethod("ensureInitialized", typeRef(Object)) [
 				visibility = JvmVisibility::PUBLIC
 				static = true
 				body = '''
-					return new «pattern.querySpecificationClassName»();					
+					INSTANCE.ensureInitializedInternalSneaky();
+					return null;					
 				'''
 			]
 		]
