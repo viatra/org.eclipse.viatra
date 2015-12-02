@@ -32,7 +32,7 @@ import com.google.common.collect.Sets;
 /**
  * This conflict set resolves conflicts between activations based on
  * Integer valued priorities assigned to rules.
- * The activations of rules with the lowest priority value will the next activations.
+ * The activations of rules with the lowest priority value will be the next activations.
  * 
  * See {@link FixedPriorityConflictResolver} for more details.
  * 

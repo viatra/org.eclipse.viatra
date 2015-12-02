@@ -23,7 +23,7 @@ import com.google.common.collect.Maps;
 /**
  * This conflict resolver uses Integer value priorities assigned to rules.
  * You can set priorities with the {@link #setPriority(RuleSpecification, int)} method.
- * The activations of rules with the lowest priority value will the next activations.   
+ * The activations of rules with the lowest priority value will be the next activations.   
  * 
  * @author Abel Hegedus
  *
