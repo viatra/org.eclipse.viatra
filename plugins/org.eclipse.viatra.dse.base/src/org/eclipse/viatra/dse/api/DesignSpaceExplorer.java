@@ -120,7 +120,6 @@ public class DesignSpaceExplorer {
      * 
      */
     public DesignSpaceExplorer() {
-        setStateCoderFactory(new GraphHasherFactory());
         setDesignspace(new ConcurrentDesignSpace());
     }
 
