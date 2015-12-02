@@ -30,6 +30,12 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
 /**
+ * This conflict set resolves conflicts between activations based on
+ * Integer valued priorities assigned to rules.
+ * The activations of rules with the lowest priority value will the next activations.
+ * 
+ * See {@link FixedPriorityConflictResolver} for more details.
+ * 
  * @author Abel Hegedus
  *
  */
@@ -53,6 +59,9 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
         this.priorityBuckets = multimap;
     }
     
+    /**
+     * Returns one of the activations of one of the rules with the lowest priority.
+     */
     @Override
     public Activation<?> getNextActivation() {
         Collection<Activation<?>> firstBucket = getFirstBucket();
@@ -105,11 +114,17 @@ public class FixedPriorityConflictSet implements ChangeableConflictSet {
         return resolver;
     }
 
+    /**
+     * Returns the set of activations of rules with the lowest priority.
+     */
     @Override
     public Set<Activation<?>> getNextActivations() {
         return Collections.unmodifiableSet(Sets.newHashSet(getFirstBucket()));
     }
 
+    /**
+     * Returns all conflicting activations.
+     */
     @Override
     public Set<Activation<?>> getConflictingActivations() {
         return Collections.unmodifiableSet(Sets.newHashSet(priorityBuckets.values()));

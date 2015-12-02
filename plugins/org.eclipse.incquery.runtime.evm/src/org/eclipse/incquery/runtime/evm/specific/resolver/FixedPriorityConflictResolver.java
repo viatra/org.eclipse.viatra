@@ -21,6 +21,10 @@ import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
 import com.google.common.collect.Maps;
 
 /**
+ * This conflict resolver uses Integer value priorities assigned to rules.
+ * You can set priorities with the {@link #setPriority(RuleSpecification, int)} method.
+ * The activations of rules with the lowest priority value will the next activations.   
+ * 
  * @author Abel Hegedus
  *
  */
@@ -32,6 +36,15 @@ public class FixedPriorityConflictResolver extends ReconfigurableConflictResolve
         priorities = Maps.newHashMap();
     }
 
+    /**
+     * Sets the priority for the given specification.
+     * The activations of rules with the lowest priority value will be the next activations
+     * while rules with higher priority values will only be included in the conflicting activations set.
+     * The default priority is 0 for all rules.
+     * 
+     * @param specification
+     * @param priority
+     */
     public void setPriority(RuleSpecification<?> specification, int priority) {
         checkArgument(specification != null, "Specification cannot be null!");
         Integer oldPriority = priorities.get(specification);
