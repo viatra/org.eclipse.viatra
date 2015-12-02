@@ -25,11 +25,8 @@ import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import com.google.common.base.Preconditions;
 
 /**
- * This global constraint collects a list of IncQuery pattern and checks if any of them has a match on a solution
- * (trajectoy). It is unsatisfied if any of them has no match.
- * 
- * This hard objective collects a list of IncQuery pattern and checks if none of them has a match on a solution
- * (trajectoy). It is unsatisfied if any of them has a match.
+ * This global constraint collects a list of IncQuery pattern and checks if any of them has a match on along a trajectory.
+ * If any of the patterns has a match then it is unsatisfied and the exploration should backtrack.
  * 
  * @author Andras Szabolcs Nagy
  *
