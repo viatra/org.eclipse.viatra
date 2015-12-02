@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpaceChangeHandler;
 import org.eclipse.viatra.dse.designspace.api.IState;
@@ -70,25 +68,6 @@ public class ConcurrentDesignSpace implements IDesignSpace {
                 sourceTransition.setResultsIn(state);
                 state.addInTransition((Transition) sourceTransition);
                 fireTransitionFiredEvent(sourceTransition);
-            }
-            if (sourceTransition != null && sourceTransition.getResultsIn() == null) {
-                Iterator<? extends ITransition> it = state.getIncomingTransitions().iterator();
-                ITransition theProblemtaicTransition = null;
-                while (it.hasNext()) {
-                    ITransition type = (ITransition) it.next();
-                    if (sourceTransition.getId().equals(type.getId())) {
-                        theProblemtaicTransition = type;
-                        break;
-                    }
-                }
-                if (theProblemtaicTransition == null) {
-                    throw new DSEException("Shouldn't happen.");
-                }
-                throw new DSEException("Bad activation coder, a state can't have two incoming transitions with the same id." + 
-                        "\nFired Transition: " + sourceTransition.getId() + 
-                        "\nCurrent State:" + sourceTransition.getFiredFrom().getId() + 
-                        "\nPreveious State:" + state.getId() + 
-                        "\nOther State:" + theProblemtaicTransition.getFiredFrom().getId());
             }
             return false;
         }
