@@ -60,6 +60,7 @@ pattern param2containment(source, target, trace, containment : Containment) {
 	Trace.targets(trace, containment);
 }
 
+@QueryExplorer(checked = false)
 pattern children(parent:Item, child:Item) {
 	Containment.source(c, parent);
 	Containment.target(c, child);

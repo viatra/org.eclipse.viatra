@@ -451,6 +451,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingBehavior
 @Surrogate(feature = "context")
+@QueryExplorer(checked = false)
 pattern actionContext(source: Action, target: Classifier) {
     find actionContainingBehavior(source, behavior);
     find behaviorContext(behavior, target);
@@ -496,6 +497,7 @@ endif
 */
 // Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (nestingClass)
 @Surrogate(feature = "context")
+@QueryExplorer(checked = false)
 pattern behaviorContext(source: Behavior, target: BehavioredClassifier) {
     find internalBehaviorContext+(source, target);
     neg find internalBehaviorContext(target, _);
@@ -534,6 +536,7 @@ private pattern nestedClassifier(parent : Classifier, child : Classifier) {
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: parents
 //@Surrogate(feature = "inheritedMember")
+//@QueryExplorer(checked = false)
 //pattern classifierInheritedMember(source: Classifier, target: NamedElement) {}
 
 /*
@@ -547,6 +550,7 @@ in     ris->union(realizingClassifierInterfaces) ->union(providedByPorts)->asSet
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allRealizedInterfaces
 //@Surrogate(feature = "provided")
+//@QueryExplorer(checked = false)
 //pattern componentProvided(source: Component, target: Interface) {}
 
 /*
@@ -561,6 +565,7 @@ in      uis->union(realizingClassifierInterfaces)->union(usedByPorts)->asSet()
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allUsedInterfaces
 //@Surrogate(feature = "required")
+//@QueryExplorer(checked = false)
 //pattern componentRequired(source: Component, target: Interface) {}
 
 /*
@@ -589,6 +594,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (connector)
 //@Surrogate(feature = "definingEnd")
+//@QueryExplorer(checked = false)
 //pattern connectorEndDefiningEnd(source: ConnectorEnd, target: Property) {}
 
 /*
@@ -617,6 +623,7 @@ pattern deploymentTargetDeployedElement(
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: asOrderedSet
 //@Surrogate(feature = "ownedPort")
+//@QueryExplorer(checked = false)
 //pattern encapsulatedClassifierOwnedPort(source: EncapsulatedClassifier, target: Port) {}
 
 /*
@@ -624,6 +631,7 @@ pattern deploymentTargetDeployedElement(
 */
 // Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Cannot find operation (=(Integer)) for the type (Sequence(Integer))
 //@Surrogate(feature = "isRequired")
+//@QueryExplorer(checked = false)
 //pattern extensionIsRequired(source: Extension, target: Boolean) {}
 
 /*
@@ -631,6 +639,7 @@ pattern deploymentTargetDeployedElement(
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: metaclassEnd
 //@Surrogate(feature = "metaclass")
+//@QueryExplorer(checked = false)
 //pattern extensionMetaclass(source: Extension, target: Class) {}
 
 /*
@@ -638,6 +647,7 @@ pattern deploymentTargetDeployedElement(
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: lowerBound
 //@Surrogate(feature = "lower")
+//@QueryExplorer(checked = false)
 //pattern multiplicityElementLower(source: MultiplicityElement, target: Integer) {}
 
 /*
@@ -645,6 +655,7 @@ pattern deploymentTargetDeployedElement(
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: upperBound
 //@Surrogate(feature = "upper")
+//@QueryExplorer(checked = false)
 //pattern multiplicityElementUpper(source: MultiplicityElement, target: UnlimitedNatural) {}
 
 /*
@@ -671,6 +682,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
 //@Surrogate(feature = "result")
+//@QueryExplorer(checked = false)
 //pattern opaqueExpressionResult(source: OpaqueExpression, target: Parameter) {}
 
 /*
@@ -678,6 +690,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "isOrdered")
+//@QueryExplorer(checked = false)
 //pattern operationIsOrdered(source: Operation, target: Boolean) {}
 
 /*
@@ -685,6 +698,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "isUnique")
+//@QueryExplorer(checked = false)
 //pattern operationIsUnique(source: Operation, target: Boolean) {}
 
 /*
@@ -692,6 +706,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "lower")
+//@QueryExplorer(checked = false)
 //pattern operationLower(source: Operation, target: Integer) {}
 
 /*
@@ -699,6 +714,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "type")
+//@QueryExplorer(checked = false)
 //pattern operationType(source: Operation, target: Type) {}
 
 /*
@@ -706,6 +722,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "upper")
+//@QueryExplorer(checked = false)
 //pattern operationUpper(source: Operation, target: UnlimitedNatural) {}
 
 /*
@@ -713,6 +730,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: stringValue
 //@Surrogate(feature = "default")
+//@QueryExplorer(checked = false)
 //pattern parameterDefault(source: Parameter, target: String) {}
 
 /*
@@ -720,6 +738,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: basicRequired
 //@Surrogate(feature = "provided")
+//@QueryExplorer(checked = false)
 //pattern portProvided(source: Port, target: Interface) {}
 
 /*
@@ -727,6 +746,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: basicProvided
 //@Surrogate(feature = "required")
+//@QueryExplorer(checked = false)
 //pattern portRequired(source: Port, target: Interface) {}
 
 /*
@@ -739,6 +759,7 @@ endif)
 */
 // Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Iterator expression kind must be collect, select or reject instead of any in self.association.memberEnd->any(e : Property | e.<>(self))
 //@Surrogate(feature = "opposite")
+//@QueryExplorer(checked = false)
 //pattern propertyOpposite(source: Property, target: Property) {}
 
 /*
@@ -765,6 +786,7 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to IncQuery because of java.lang.NullPointerException
 //@Surrogate(feature = "inheritedParameter")
+//@QueryExplorer(checked = false)
 //pattern redefinableTemplateSignatureInheritedParameter(source: RedefinableTemplateSignature, target: TemplateParameter) {}
 
 /*
@@ -772,6 +794,7 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: size
 //@Surrogate(feature = "isOrthogonal")
+//@QueryExplorer(checked = false)
 //pattern stateIsOrthogonal(source: State, target: Boolean) {}
 
 /*
@@ -779,6 +802,7 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: isSubmachineState
 //@Surrogate(feature = "isSimple")
+//@QueryExplorer(checked = false)
 //pattern stateIsSimple(source: State, target: Boolean) {}
 
 /*
@@ -786,6 +810,7 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
 //@Surrogate(feature = "isSubmachineState")
+//@QueryExplorer(checked = false)
 //pattern stateIsSubmachineState(source: State, target: Boolean) {}
 
 /*
@@ -793,6 +818,7 @@ pattern protocolTransitionReferred(
 */
 // Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingProfile
 //@Surrogate(feature = "profile")
+//@QueryExplorer(checked = false)
 //pattern stereotypeProfile(source: Stereotype, target: Profile) {}
 
 /*
@@ -971,7 +997,6 @@ pattern stateIsComposite(
     isComposite == false;
 }
 
-@QueryExplorer(checked = false)
 private pattern stateIsComposite_0(
     self : State,
     region : Region
@@ -995,6 +1020,7 @@ pattern namedElementNamespace(source: NamedElement, target: Namespace) {
 Specifies the owning Package of this Type, if any.
 */
 @Surrogate(feature = "package")
+@QueryExplorer(checked = false)
 pattern typePackage(source: Type, target: Package) { 
     Package.packagedElement(target,source);
 }
@@ -1032,8 +1058,7 @@ pattern classSuperClass(source: Class, target: Class) {
 /*
 (parents()->union(parents()->collect(allParents())->asSet()))
 */
-@QueryExplorer(checked = false)
-pattern classifierAllParents(source: Classifier, target: Classifier) {
+private pattern classifierAllParents(source: Classifier, target: Classifier) {
     find classifierParents+(source, target);
 }
 
@@ -1082,8 +1107,7 @@ pattern extensionMetaclass(source: Extension, target: Class) {
 /*
 (memberEnd->reject(p | ownedEnd->includes(p.oclAsType(ExtensionEnd)))->any(true))
 */
-@QueryExplorer(checked = false)
-pattern extensionMetaclassEnd(source: Extension, target: Property) {
+private pattern extensionMetaclassEnd(source: Extension, target: Property) {
     Extension.memberEnd(source, target);
     neg find extensionOwnedEnd(source, target);
 }
@@ -1155,7 +1179,7 @@ pattern opaqueExpressionResult(source: OpaqueExpression, target: Parameter) {
 (member->select( m | m.oclIsKindOf(PackageableElement) and self.makesVisible(m))->collect(oclAsType(PackageableElement))->asSet())
 */
 @QueryExplorer(checked = false)
-pattern packageVisibleMember(package_: Package, visibleMember: PackageableElement) {
+private pattern packageVisibleMember(package_: Package, visibleMember: PackageableElement) {
     find packageDirectlyVisibleMember(package_, visibleMember);
 } or {
     find packageAllImportedPackages(package_, importedPackage);
@@ -1267,8 +1291,7 @@ private pattern actionContainingBehavior(source: Action, target: Behavior) {
 /*
 (generalization.general->asSet())
 */
-@QueryExplorer(checked = false)
-pattern classifierParents(
+private pattern classifierParents(
     self : Classifier,
     classifier : Classifier
 ) {
@@ -1298,8 +1321,7 @@ pattern classifierParents(
 /*
 (ownedParameter->select (direction = ParameterDirectionKind::return)->asSet())
 */
-@QueryExplorer(checked = false)
-pattern operationReturnResult(
+private pattern operationReturnResult(
     self : Operation,
     temp1 : Parameter
 ) {
