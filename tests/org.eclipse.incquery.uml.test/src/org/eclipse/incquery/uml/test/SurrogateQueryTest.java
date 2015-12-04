@@ -1,8 +1,7 @@
 package org.eclipse.incquery.uml.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.Map;
@@ -38,8 +37,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @RunWith(Parameterized.class)
@@ -71,7 +73,6 @@ public class SurrogateQueryTest {
     public String querySpecificationFQN;
     
     protected static Map<PQuery, EStructuralFeature> surrogateQueryToFeature = getSurrogateToQueryMap();
-//    protected static Map<PQuery, IQuerySpecification<?>> queryToSpec = getQueryToSpecMap();
 
     private AdvancedIncQueryEngine engine;
 
@@ -110,10 +111,13 @@ public class SurrogateQueryTest {
         structuralFeature = surrogateQueryToFeature.get(query);
         assertNotNull("Could not find feature", structuralFeature);
         
-        checkQuerySpecification(querySpecification, structuralFeature, engine);
+        boolean incorrectValuesFound = false;
         
-        checkStructuralFeatures(umlModel, engine, structuralFeature);
+        incorrectValuesFound = incorrectValuesFound || checkQuerySpecification(querySpecification, structuralFeature, engine);
+        
+        incorrectValuesFound = incorrectValuesFound || checkStructuralFeatures(umlModel, engine, structuralFeature);
     
+        assertFalse("Some values of " + querySpecificationFQN + " were incorrect, check the system output for details", incorrectValuesFound);
     }
 
     @After
@@ -131,11 +135,13 @@ public class SurrogateQueryTest {
      * @param structuralFeature
      * @throws IncQueryException
      */
-    private void checkStructuralFeatures(Model umlModel, AdvancedIncQueryEngine engine,
+    private boolean checkStructuralFeatures(Model umlModel, AdvancedIncQueryEngine engine,
             EStructuralFeature structuralFeature) throws IncQueryException {
         @SuppressWarnings("unchecked")
         IncQueryMatcher<IPatternMatch> matcher = (IncQueryMatcher<IPatternMatch>) querySpecification.getMatcher(engine);
         IPatternMatch match = matcher.newEmptyMatch();
+
+        boolean incorrectValuesFound = false;
         
         TreeIterator<EObject> eAllContents = umlModel.eAllContents();
         // iterate on eAllContents
@@ -150,42 +156,61 @@ public class SurrogateQueryTest {
                 Object target = sourceEObject.eGet(structuralFeature);
                 if(structuralFeature.isMany()){
                     // check source.eGet(feature) contains the same elements as surrogate.getAllValuesOfTarget(source)
-                    EList<?> targetValues = (EList<?>) target;
-                    assertTrue("Incorrect number of matches (should be " + targetValues.size() + "): " + numberOfMatches, numberOfMatches == targetValues.size());
+                    final EList<?> targetValues = (EList<?>) target;
+                    if(targetValues.size() != numberOfMatches){
+                        incorrectValuesFound = true;
+                        final Set<Object> allValues = matcher.getAllValues(match.parameterNames().get(1), match);
+                        Iterable<Object> notInTargetList = Lists.newArrayList(Iterables.filter(allValues, new Predicate<Object>() {
+                            @Override
+                            public boolean apply(Object input) {
+                                return !targetValues.contains(input);
+                            }
+                        }));
+                        Iterable<?> notInMatches = Lists.newArrayList(Iterables.filter(targetValues, new Predicate<Object>() {
+                            @Override
+                            public boolean apply(Object input) {
+                                return !allValues.contains(input);
+                            }
+                        }));
+                        System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
+                        System.out.println("-> Not in eGet():\n  " + notInTargetList);
+                        System.out.println("-> Not in matches:\n  " + notInMatches);
+                    }
+                    // assertTrue("Incorrect number of matches (should be " + targetValues.size() + "): " + numberOfMatches, numberOfMatches == targetValues.size());
                 } else {
                     if(target != null){
                         // check that surrogate.countMatches(source) == 1
-                        assertTrue("Incorrect number of matches (should be 1): " + numberOfMatches, numberOfMatches == 1);
+                        if(numberOfMatches != 1){
+                            incorrectValuesFound = true;
+                            System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
+                            System.out.println("-> eGet: " + target + "\n-> match: null");
+                        }
+                        // assertTrue("Incorrect number of matches (should be 1): " + numberOfMatches, numberOfMatches == 1);
                         
                         // check source.eGet(feature) equals surrogate.getAllValuesOfTarget(source).iterator.next
                         Object matchTarget = matcher.getAllValues(matcher.getParameterNames().get(1), match).iterator().next();
-                        assertEquals("Incorrect target", target, matchTarget);
+                        if(!matchTarget.equals(target)){
+                            incorrectValuesFound = true;
+                            System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
+                            System.out.println("-> eGet: " + target + "\n-> match: " + matchTarget);
+                        }
+                        // assertEquals("Incorrect target", target, matchTarget);
                     } else {
-                        assertTrue("Incorrect number of matches (should be 0): " + numberOfMatches, numberOfMatches == 0);
-                        
+                        if(numberOfMatches != 0){
+                            incorrectValuesFound = true;
+                            Object matchTarget = matcher.getAllValues(matcher.getParameterNames().get(1), match).iterator().next();
+                            System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
+                            System.out.println("-> eGet: null" + target + "\n-> match: " + matchTarget);
+                        }
+                        // assertTrue("Incorrect number of matches (should be 0): " + numberOfMatches, numberOfMatches == 0);
                     }
                     
                 }
             }
         }
+        
+        return incorrectValuesFound;
     }
-
-//    /**
-//     * @return
-//     * @throws IncQueryException
-//     */
-//    private static Map<PQuery, IQuerySpecification<?>> getQueryToSpecMap() {
-//        Map<PQuery, IQuerySpecification<?>> map = Maps.newHashMap();
-//        try {
-//            DerivedFeatures features = DerivedFeatures.instance();
-//            for (IQuerySpecification<?> spec : features.getSpecifications()) {
-//                map.put(spec.getInternalQueryRepresentation(), spec);
-//            }
-//        } catch (IncQueryException e) {
-//            fail("Could not load queries");
-//        }
-//        return map;
-//    }
 
     /**
      * @return
@@ -211,14 +236,16 @@ public class SurrogateQueryTest {
      * @return
      * @throws IncQueryException 
      */
-    private void checkQuerySpecification(IQuerySpecification<?> querySpecification, EStructuralFeature structuralFeature, IncQueryEngine engine) throws IncQueryException {
-        
+    private boolean checkQuerySpecification(IQuerySpecification<?> querySpecification, EStructuralFeature structuralFeature, IncQueryEngine engine) throws IncQueryException {
     
         // iterate on getAllValuesOfSource
         @SuppressWarnings("unchecked")
         IncQueryMatcher<IPatternMatch> matcher = (IncQueryMatcher<IPatternMatch>) querySpecification.getMatcher(engine);
         IPatternMatch match = matcher.newEmptyMatch();
         Set<Object> allValuesOfSource = matcher.getAllValues(matcher.getParameterNames().get(0));
+        
+        boolean incorrectValuesFound = false;
+        
         for (Object source : allValuesOfSource) {
             match.set(0, source);
             int numberOfMatches = matcher.countMatches(match);
@@ -226,22 +253,57 @@ public class SurrogateQueryTest {
             Object target = sourceEObject.eGet(structuralFeature);
             if(structuralFeature.isMany()){
                 // check source.eGet(feature) contains the same elements as surrogate.getAllValuesOfTarget(source)
-                EList<?> targetValues = (EList<?>) target;
-                assertTrue("Incorrect number of matches (should be " + targetValues.size() + "): " + numberOfMatches, numberOfMatches == targetValues.size());
+                final EList<?> targetValues = (EList<?>) target;
+                if(targetValues.size() != numberOfMatches){
+                    incorrectValuesFound = true;
+                    final Set<Object> allValues = matcher.getAllValues(match.parameterNames().get(1), match);
+                    Iterable<Object> notInTargetList = Lists.newArrayList(Iterables.filter(allValues, new Predicate<Object>() {
+                        @Override
+                        public boolean apply(Object input) {
+                            return !targetValues.contains(input);
+                        }
+                    }));
+                    Iterable<?> notInMatches = Lists.newArrayList(Iterables.filter(targetValues, new Predicate<Object>() {
+                        @Override
+                        public boolean apply(Object input) {
+                            return !allValues.contains(input);
+                        }
+                    }));
+                    System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
+                    System.out.println("-> Not in eGet():\n  " + notInTargetList);
+                    System.out.println("-> Not in matches:\n  " + notInMatches);
+                }
+                // assertTrue("Incorrect number of matches (should be " + targetValues.size() + "): " + numberOfMatches, numberOfMatches == targetValues.size());
             } else {
                 if(target != null){
                     // check that surrogate.countMatches(source) == 1
-                    assertTrue("Incorrect number of matches (should be 1): " + numberOfMatches, numberOfMatches == 1);
+                    if(numberOfMatches != 1){
+                        incorrectValuesFound = true;
+                        System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
+                        System.out.println("-> eGet: " + target + "\n-> match: null");
+                    }
+                    // assertTrue("Incorrect number of matches (should be 1): " + numberOfMatches, numberOfMatches == 1);
                     
                     // check source.eGet(feature) equals surrogate.getAllValuesOfTarget(source).iterator.next
                     Object matchTarget = matcher.getAllValues(matcher.getParameterNames().get(1), match).iterator().next();
-                    assertEquals("Incorrect target", target, matchTarget);
+                    if(!matchTarget.equals(target)){
+                        incorrectValuesFound = true;
+                        System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
+                        System.out.println("-> eGet: " + target + "\n-> match: " + matchTarget);
+                    }
+                    // assertEquals("Incorrect target", target, matchTarget);
                 } else {
-                    assertTrue("Incorrect number of matches (should be 0): " + numberOfMatches, numberOfMatches == 0);
-                    
+                    if(numberOfMatches != 0){
+                        incorrectValuesFound = true;
+                        Object matchTarget = matcher.getAllValues(matcher.getParameterNames().get(1), match).iterator().next();
+                        System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
+                        System.out.println("-> eGet: null" + target + "\n-> match: " + matchTarget);
+                    }
+                    // assertTrue("Incorrect number of matches (should be 0): " + numberOfMatches, numberOfMatches == 0);
                 }
-                
             }
         }
+        
+        return incorrectValuesFound;
     }
 }
