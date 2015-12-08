@@ -14,6 +14,10 @@ import org.eclipse.incquery.testing.core.TestExecutor
 
 import static org.junit.Assert.*
 
+/**
+ * @deprecated use EIQTest api instead
+ */
+@Deprecated
 abstract class CommonStaticQueryTester {
 	@Inject extension ModelLoadHelper
 	@Inject extension TestExecutor

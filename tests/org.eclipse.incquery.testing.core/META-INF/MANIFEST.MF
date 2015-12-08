@@ -18,8 +18,10 @@ Require-Bundle: org.eclipse.xtend.lib,
  org.eclipse.incquery.patternlanguage.emf;bundle-version="0.8.0",
  com.google.inject,
  org.eclipse.xtext.common.types;bundle-version="[2.9.0,2.10.0)"
-Export-Package: org.eclipse.incquery.testing.core,org.eclipse.incquery
- .testing.core.base,org.eclipse.incquery.testing.core.injector
+Export-Package: org.eclipse.incquery.testing.core,
+ org.eclipse.incquery.testing.core.api,
+ org.eclipse.incquery.testing.core.base,
+ org.eclipse.incquery.testing.core.injector
 Bundle-Vendor: The Eclipse EMF-IncQuery Project
 Import-Package: org.apache.log4j;version="1.2.15",
  org.apache.log4j.spi;version="1.2.15",

@@ -26,66 +26,65 @@ import org.apache.log4j.varia.LevelRangeFilter;
  *
  */
 public class TestingLogAppender extends AppenderSkeleton implements Appender {
-	
-	private static final String FORMAT_LAYOUT = "%m%n";
-	private static final Level LEVEL_MIN = Level.WARN;
 
-	private final Map<String,StringBuilder> messages = new HashMap<String, StringBuilder>();
-	private final StringBuilder output = new StringBuilder();
-	
-	public TestingLogAppender() {
-		layout = new PatternLayout(FORMAT_LAYOUT);
-		
-		LevelRangeFilter newFilter = new LevelRangeFilter();
-		newFilter.setAcceptOnMatch(true);
-		newFilter.setLevelMin(LEVEL_MIN);
-		addFilter(newFilter);
-	}
+    private static final String FORMAT_LAYOUT = "%m%n";
+    private static final Level LEVEL_MIN = Level.WARN;
 
-	/**
-	 * @return the messages
-	 */
-	public Map<String, StringBuilder> getMessages() {
-		return messages;
-	}
-	
-	/**
-	 * @return the output
-	 */
-	public StringBuilder getOutput() {
-		return output;
-	}
+    private final Map<String, StringBuilder> messages = new HashMap<String, StringBuilder>();
+    private final StringBuilder output = new StringBuilder();
 
-	@Override
-	public void close() {
-	}
+    public TestingLogAppender() {
+        layout = new PatternLayout(FORMAT_LAYOUT);
 
-	@Override
-	public boolean requiresLayout() {
-		return true;
-	}
+        LevelRangeFilter newFilter = new LevelRangeFilter();
+        newFilter.setAcceptOnMatch(true);
+        newFilter.setLevelMin(LEVEL_MIN);
+        addFilter(newFilter);
+    }
 
-	@Override
-	protected void append(LoggingEvent event) {
-		String formatted = layout.format(event);
-		String levelName = event.getLevel().toString();
-		
-		StringBuilder sb = messages.get(levelName);
-		if (sb == null) {
-			sb = new StringBuilder();
-			messages.put(levelName, sb);
-		}
-		sb.append(formatted);
-		output.append(formatted);
+    /**
+     * @return the messages
+     */
+    public Map<String, StringBuilder> getMessages() {
+        return messages;
+    }
 
-		ThrowableInformation throwInfo = event.getThrowableInformation();
-		if (throwInfo != null) {
-			String[] lines = throwInfo.getThrowableStrRep();
-			for (String line : lines) {
-				output.append(line).append("%n");
-			}
-		}
-	}
-	
-	
+    /**
+     * @return the output
+     */
+    public StringBuilder getOutput() {
+        return output;
+    }
+
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public boolean requiresLayout() {
+        return true;
+    }
+
+    @Override
+    protected void append(LoggingEvent event) {
+        String formatted = layout.format(event);
+        String levelName = event.getLevel().toString();
+
+        StringBuilder sb = messages.get(levelName);
+        if (sb == null) {
+            sb = new StringBuilder();
+            messages.put(levelName, sb);
+        }
+        sb.append(formatted);
+        output.append(formatted);
+
+        ThrowableInformation throwInfo = event.getThrowableInformation();
+        if (throwInfo != null) {
+            String[] lines = throwInfo.getThrowableStrRep();
+            for (String line : lines) {
+                output.append(line).append("%n");
+            }
+        }
+    }
+
 }
