@@ -74,6 +74,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -407,13 +408,15 @@ public class QueryExplorer extends ViewPart {
             QueryExplorerPatternRegistry.getInstance().addGeneratedPattern(pattern);
 
             // check for QE annotation https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700
-            boolean checkedFalse = QueryExplorerPatternRegistry.isQueryExplorerCheckedFalse(pattern);
-            if (!checkedFalse) {
+            Optional<Boolean> checkedValue = QueryExplorerPatternRegistry.getQueryExplorerCheckedValue(pattern);
+            Boolean computedCheckedValue = checkedValue.or(false);
+            // add to active patterns only if explicitly 
+            if (computedCheckedValue) {
                 QueryExplorerPatternRegistry.getInstance().addActivePattern(pattern);
             }
 
             PatternComponent component = patternsViewerInput.getGeneratedPatternsRoot().addComponent(patternFqn);
-            component.setCheckedState(!checkedFalse);
+            component.setCheckedState(computedCheckedValue);
         }
 
         patternsTreeViewer.refresh();

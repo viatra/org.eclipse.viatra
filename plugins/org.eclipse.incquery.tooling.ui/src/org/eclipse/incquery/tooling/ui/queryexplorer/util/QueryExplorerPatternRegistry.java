@@ -42,6 +42,7 @@ import org.eclipse.incquery.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.PlatformUI;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
@@ -142,12 +143,8 @@ public class QueryExplorerPatternRegistry {
                         .getOrCreateSpecification(pattern, allCreatedSpecifications, false);
                 String patternFqn = spec.getFullyQualifiedName();
                 if (!patternNameMap.containsKey(patternFqn)) {
-                    // disable checks as per https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700
-                    // Boolean annotationCheckedValue = getValueOfQueryExplorerCheckedAnnotation(spec);
                     patternNameMap.put(patternFqn, spec);
-                    // if (annotationCheckedValue) {
                     activePatterns.add(spec);
-                    // }
                     activeSpecifications.add(spec);
                 } else {
                     String message = "A pattern with the fully qualified name '" + patternFqn
@@ -374,6 +371,7 @@ public class QueryExplorerPatternRegistry {
      * 
      * @param query
      * @return
+     * @deprecated Use {@link #getQueryExplorerCheckedValue(IQuerySpecification)} instead
      */
     public static boolean isQueryExplorerCheckedFalse(IQuerySpecification<?> query) {
         PAnnotation annotation = query.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
@@ -386,6 +384,25 @@ public class QueryExplorerPatternRegistry {
         }
         return false;
     }
+    
+    /**
+     * Returns an Optional that has <i>value</i> if the user
+     * declared "@QueryExplorer(checked=<i>value</i>)" on the pattern.
+     * If the attribute is not set, returns absent.
+     * 
+     * @param query
+     * @return
+     */
+    public static Optional<Boolean> getQueryExplorerCheckedValue(IQuerySpecification<?> query) {
+        PAnnotation annotation = query.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
+        if (annotation != null) {
+            Object checkedValue = annotation.getFirstValue(QueryExplorer.QUERY_EXPLORER_CHECKED_PARAMETER);
+            if (checkedValue != null) {
+                 return Optional.fromNullable((Boolean) checkedValue);
+            }
+        }
+        return Optional.absent();
+    }
 
     /**
      * access the list of "generated" query specifications
@@ -397,20 +414,10 @@ public class QueryExplorerPatternRegistry {
                 .<IQuerySpecification<?>> builder()
                 .addAll(Iterables.filter(QuerySpecificationRegistry.getContributedQuerySpecifications(),
                         new Predicate<IQuerySpecification<?>>() {
-                            /*
-                             * @Override public boolean apply(IQuerySpecification<?> query) { Boolean annotationValue =
-                             * getValueOfQueryExplorerAnnotation(query); return annotationValue != null &&
-                             * annotationValue; }
-                             */
-                            /*
-                             * (non-Javadoc)
-                             * 
-                             * @see com.google.common.base.Predicate#apply(java.lang.Object)
-                             */
                             @Override
                             public boolean apply(IQuerySpecification<?> input) {
-                                return true; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700: make sure that all
-                                             // query specs appear
+                                // https://bugs.eclipse.org/bugs/show_bug.cgi?id=412700: make sure that all query specs appear
+                                return true; 
                             }
                         })).build();
     }
