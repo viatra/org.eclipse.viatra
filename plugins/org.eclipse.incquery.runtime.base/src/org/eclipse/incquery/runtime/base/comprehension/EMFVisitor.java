@@ -27,16 +27,15 @@ import org.eclipse.emf.ecore.resource.Resource;
 // - handle boundary of active emfRoot subtree
 // - more efficient traversal
 public class EMFVisitor {
-	
-	boolean preOrder;
-	
 
-	public EMFVisitor(boolean preOrder) {
-		super();
-		this.preOrder = preOrder;
-	}
+    boolean preOrder;
 
-	/**
+    public EMFVisitor(boolean preOrder) {
+        super();
+        this.preOrder = preOrder;
+    }
+
+    /**
      * @param resource
      * @param element
      */
@@ -100,18 +99,37 @@ public class EMFVisitor {
         return false;
     }
 
-	/**
-	 * @return if objects should be visited before their outgoing edges
-	 */
-	public boolean preOrder() {
-		return preOrder;
-	}
+    /**
+     * An opportunity for the visitor to indicate that the containment link is considered in a transient state, and the
+     * model comprehension should avoid following it.
+     * 
+     * A containment is in a transient state from the point of view of the visitor if it connects a subtree that is
+     * being inserted <em>during</em> a full-model traversal, and a separate notification handler will deal with it
+     * later.
+     * 
+     * @param source
+     * @param reference
+     * @param targetObject
+     * @return
+     */
+    public boolean avoidTransientContainmentLink(EObject source, EReference reference, EObject targetObject) {
+        return false;
+    }
 
-	/**
-	 * Called after visiting the reference, if the target is a proxy. 
-     * @param position optional: known position in multivalued collection (for more efficient proxy resolution)
-	 */
-	public void visitProxyReference(EObject source, EReference reference, EObject targetObject, Integer position) {
-	}
+    /**
+     * @return if objects should be visited before their outgoing edges
+     */
+    public boolean preOrder() {
+        return preOrder;
+    }
+
+    /**
+     * Called after visiting the reference, if the target is a proxy.
+     * 
+     * @param position
+     *            optional: known position in multivalued collection (for more efficient proxy resolution)
+     */
+    public void visitProxyReference(EObject source, EReference reference, EObject targetObject, Integer position) {
+    }
 
 }

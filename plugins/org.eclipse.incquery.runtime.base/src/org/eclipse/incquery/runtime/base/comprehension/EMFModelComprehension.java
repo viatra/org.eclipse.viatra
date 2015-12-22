@@ -255,15 +255,17 @@ public class EMFModelComprehension {
             EReference reference = (EReference) feature;
             EObject targetObject = (EObject) target;
             if (reference.isContainment()) {
-                if (!visitorPrunes)
-                    visitor.visitInternalContainment(source, reference, targetObject);
-                if (!visitor.pruneSubtrees(source))
-                    traverseObjectIfUnfiltered(visitor, targetObject);
-
-                final EReference opposite = reference.getEOpposite();
-                if (opposite != null) { // emulated derived edge based on container opposite
-                    emulateUntraversableFeature(visitor, targetObject, opposite, source);
-                }
+            	if (!visitor.avoidTransientContainmentLink(source, reference, targetObject)) {
+            		if (!visitorPrunes)
+            			visitor.visitInternalContainment(source, reference, targetObject);
+            		if (!visitor.pruneSubtrees(source))
+            			traverseObjectIfUnfiltered(visitor, targetObject);
+            		
+            		final EReference opposite = reference.getEOpposite();
+            		if (opposite != null) { // emulated derived edge based on container opposite
+            			emulateUntraversableFeature(visitor, targetObject, opposite, source);
+            		}            		
+            	}
             } else {
                 // if (containedElements.contains(target))
                 if (!visitorPrunes)

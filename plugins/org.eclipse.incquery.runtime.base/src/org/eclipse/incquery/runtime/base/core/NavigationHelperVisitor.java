@@ -44,10 +44,10 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         public ChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
             super(navigationHelper, isInsertion, false);
             wildcardMode = navigationHelper.isInWildcardMode();
-            allObservedClasses = navigationHelper.getAllObservedClassesInternal(); //new HashSet<EClass>();
-            observedDataTypes = navigationHelper.getObservedDataTypesInternal(); //new HashSet<EDataType>();
-            observedFeatures = navigationHelper.getObservedFeaturesInternal(); //new HashSet<EStructuralFeature>();
-            sampledClasses = new HashMap<Object,Boolean>();
+            allObservedClasses = navigationHelper.getAllObservedClassesInternal(); // new HashSet<EClass>();
+            observedDataTypes = navigationHelper.getObservedDataTypesInternal(); // new HashSet<EDataType>();
+            observedFeatures = navigationHelper.getObservedFeaturesInternal(); // new HashSet<EStructuralFeature>();
+            sampledClasses = new HashMap<Object, Boolean>();
         }
 
         @Override
@@ -57,11 +57,11 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
         private boolean isSampledClassInternal(Object eClass) {
             Boolean classAlreadyChecked = sampledClasses.get(eClass);
-            if(classAlreadyChecked != null) {
+            if (classAlreadyChecked != null) {
                 return classAlreadyChecked;
             }
             boolean isSampledClass = isSampledClass(eClass);
-            sampledClasses.put(eClass,isSampledClass);
+            sampledClasses.put(eClass, isSampledClass);
             return isSampledClass;
         }
 
@@ -87,8 +87,8 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         Map<Object, Boolean> classObservationMap; // true for a class even if only a supertype is included in classes;
         Set<Object> dataTypes;
 
-        public TraversingVisitor(NavigationHelperImpl navigationHelper, Set<Object> features,
-                Set<Object> newClasses, Set<Object> oldClasses, Set<Object> dataTypes) {
+        public TraversingVisitor(NavigationHelperImpl navigationHelper, Set<Object> features, Set<Object> newClasses,
+                Set<Object> oldClasses, Set<Object> dataTypes) {
             super(navigationHelper, true, true);
             wildcardMode = navigationHelper.isInWildcardMode();
             this.features = features;
@@ -106,14 +106,14 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             Boolean observed = classObservationMap.get(eClass);
             if (observed == null) {
                 final Set<Object> superTypes = super.store.getSuperTypeMap().get(eClass);
-				final Set<Object> theSuperTypes = superTypes == null ? Collections.emptySet() : superTypes;
+                final Set<Object> theSuperTypes = superTypes == null ? Collections.emptySet() : superTypes;
                 final boolean overApprox = newClasses.contains(eClass)
                         || newClasses.contains(super.store.getEObjectClassKey())
                         || !Collections.disjoint(theSuperTypes, newClasses);
                 observed = overApprox && !oldClasses.contains(eClass)
                         && !oldClasses.contains(super.store.getEObjectClassKey())
                         && Collections.disjoint(theSuperTypes, oldClasses);
-                if(!observed) {
+                if (!observed) {
                     observed = isSampledClass(eClass);
                 }
                 classObservationMap.put(eClass, observed);
@@ -131,6 +131,10 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             return wildcardMode || features.contains(feature);
         }
 
+        @Override
+        public boolean avoidTransientContainmentLink(EObject source, EReference reference, EObject targetObject) {
+            return !targetObject.eAdapters().contains(navigationHelper.contentAdapter);
+        }
     }
 
     protected NavigationHelperImpl navigationHelper;
@@ -145,7 +149,8 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         this.store = navigationHelper.getContentAdapter();
         this.isInsertion = isInsertion;
         this.descendHierarchy = descendHierarchy;
-        this.traverseOnlyWellBehavingDerivedFeatures = navigationHelper.getBaseIndexOptions().isTraverseOnlyWellBehavingDerivedFeatures();
+        this.traverseOnlyWellBehavingDerivedFeatures = navigationHelper.getBaseIndexOptions()
+                .isTraverseOnlyWellBehavingDerivedFeatures();
     }
 
     @Override
@@ -173,19 +178,21 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         return true;
     }
 
-
     /**
-     * @param feature key of feature (EStructuralFeature or String id)
+     * @param feature
+     *            key of feature (EStructuralFeature or String id)
      */
     protected abstract boolean observesFeature(Object feature);
 
     /**
-     * @param feature key of data type (EDatatype or String id)
+     * @param feature
+     *            key of data type (EDatatype or String id)
      */
     protected abstract boolean observesDataType(Object type);
 
     /**
-     * @param feature key of class (EClass or String id)
+     * @param feature
+     *            key of class (EClass or String id)
      */
     protected abstract boolean observesClass(Object eClass);
 
@@ -197,7 +204,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         }
 
         final Object classKey = toKey(eClass);
-		if (observesClass(classKey)) {
+        if (observesClass(classKey)) {
             if (isInsertion) {
                 store.insertIntoInstanceSet(classKey, source);
             } else {
@@ -206,16 +213,15 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         }
     }
 
-
     @Override
     public void visitAttribute(EObject source, EAttribute feature, Object target) {
-    	Object featureKey = toKey(feature);
+        Object featureKey = toKey(feature);
         final Object eAttributeType = toKey(feature.getEAttributeType());
         Object internalValueRepresentation = null;
         if (observesFeature(featureKey)) {
-        	// if (internalValueRepresentation == null) // always true
-        		internalValueRepresentation = store.toInternalValueRepresentation(target);
-         	boolean unique = feature.isUnique();
+            // if (internalValueRepresentation == null) // always true
+            internalValueRepresentation = store.toInternalValueRepresentation(target);
+            boolean unique = feature.isUnique();
             if (isInsertion) {
                 store.insertFeatureTuple(featureKey, unique, internalValueRepresentation, source);
             } else {
@@ -223,8 +229,8 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             }
         }
         if (observesDataType(eAttributeType)) {
-        	if (internalValueRepresentation == null)
-            	internalValueRepresentation = store.toInternalValueRepresentation(target);
+            if (internalValueRepresentation == null)
+                internalValueRepresentation = store.toInternalValueRepresentation(target);
             if (isInsertion) {
                 store.insertIntoDataTypeMap(eAttributeType, internalValueRepresentation);
             } else {
@@ -247,10 +253,10 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     };
 
     private void visitReference(EObject source, EReference feature, EObject target) {
-       Object featureKey = toKey(feature);
-       if (observesFeature(featureKey)) {
-    	   boolean unique = feature.isUnique();
-    	   if (isInsertion) {
+        Object featureKey = toKey(feature);
+        if (observesFeature(featureKey)) {
+            boolean unique = feature.isUnique();
+            if (isInsertion) {
                 store.insertFeatureTuple(featureKey, unique, target, source);
             } else {
                 store.removeFeatureTuple(featureKey, unique, target, source);
@@ -260,60 +266,61 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
     @Override
     public void visitProxyReference(EObject source, EReference reference, EObject targetObject, Integer position) {
-    	if (isInsertion) { // only attempt to resolve proxies if they are inserted
-//    		final Object result = source.eGet(reference, true);
-//    		if (reference.isMany()) {
-//    			// no idea which element to get, have to iterate through
-//    			for (EObject touch : (Iterable<EObject>) result);         			
-//    		}
-    		if (navigationHelper.isFeatureResolveIgnored(reference)) 
-    			return; // skip resolution; would be ignored anyways 
-    		if (position != null && reference.isMany()) {
-    			// there is added value in doing the resolution now, when we know the position
-    			// this may save an iteration through the EList if successful
-    			EObject touch = 
-    					((java.util.List<EObject>) source.eGet(reference, true)).get(position);
-    			// if resolution successful, no further action needed
-    			if (!touch.eIsProxy()) return;
-    		}
-    		// otherwise, attempt resolution later, at the end of the coalesced traversal block
-    		navigationHelper.delayedProxyResolutions.put(source, reference);
-    	}
+        if (isInsertion) { // only attempt to resolve proxies if they are inserted
+            // final Object result = source.eGet(reference, true);
+            // if (reference.isMany()) {
+            // // no idea which element to get, have to iterate through
+            // for (EObject touch : (Iterable<EObject>) result);
+            // }
+            if (navigationHelper.isFeatureResolveIgnored(reference))
+                return; // skip resolution; would be ignored anyways
+            if (position != null && reference.isMany()) {
+                // there is added value in doing the resolution now, when we know the position
+                // this may save an iteration through the EList if successful
+                EObject touch = ((java.util.List<EObject>) source.eGet(reference, true)).get(position);
+                // if resolution successful, no further action needed
+                if (!touch.eIsProxy())
+                    return;
+            }
+            // otherwise, attempt resolution later, at the end of the coalesced traversal block
+            navigationHelper.delayedProxyResolutions.put(source, reference);
+        }
     }
-    
-	protected Object toKey(EStructuralFeature feature) {
-		return store.toKey(feature);
-	}
-	protected Object toKey(EClassifier eClassifier) {
-		return store.toKey(eClassifier);
-	}
-	
+
+    protected Object toKey(EStructuralFeature feature) {
+        return store.toKey(feature);
+    }
+
+    protected Object toKey(EClassifier eClassifier) {
+        return store.toKey(eClassifier);
+    }
+
     /**
      * Decides whether the type must be observed in order to allow re-sampling of any of its features. If not
      * well-behaving features are traversed and there is such a feature for this class, the class will be registered
      * into the navigation helper, which may cause a re-traversal.
      * 
      */
-	protected boolean isSampledClass(Object eClass) {
-	    if (!traverseOnlyWellBehavingDerivedFeatures) {
-	        // TODO we could save this reverse lookup if the calling method would have the EClass, not just the key
-	        EClass knownClass = (EClass) store.getKnownClassifierForKey(eClass);
+    protected boolean isSampledClass(Object eClass) {
+        if (!traverseOnlyWellBehavingDerivedFeatures) {
+            // TODO we could save this reverse lookup if the calling method would have the EClass, not just the key
+            EClass knownClass = (EClass) store.getKnownClassifierForKey(eClass);
             // check features that are traversed, and whether there is any that must be sampled
-	        for (EStructuralFeature feature : knownClass.getEAllStructuralFeatures()) {
-	            EMFModelComprehension comprehension = navigationHelper.getComprehension();
+            for (EStructuralFeature feature : knownClass.getEAllStructuralFeatures()) {
+                EMFModelComprehension comprehension = navigationHelper.getComprehension();
                 if (comprehension.untraversableDirectly(feature))
-	                continue;
-	            final boolean visitorPrunes = pruneFeature(feature);
-	            if (visitorPrunes)
-	                continue;
-	            // we found a feature to be visited
-	            if (comprehension.onlySamplingFeature(feature)) {
-	                // we found a feature that must be sampled
-	                navigationHelper.registerEClasses(ImmutableSet.of(feature.getEContainingClass()));	                
-	                return true;
-	            }
-	        }
+                    continue;
+                final boolean visitorPrunes = pruneFeature(feature);
+                if (visitorPrunes)
+                    continue;
+                // we found a feature to be visited
+                if (comprehension.onlySamplingFeature(feature)) {
+                    // we found a feature that must be sampled
+                    navigationHelper.registerEClasses(ImmutableSet.of(feature.getEContainingClass()));
+                    return true;
+                }
+            }
         }
-	    return false;
+        return false;
     }
 }
