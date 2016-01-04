@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.incquery.runtime.api.GenericPatternMatch;
 import org.eclipse.incquery.viewmodel.core.ViewModelManager;
 import org.eclipse.incquery.viewmodel.traceability.Trace;
+import org.eclipse.incquery.viewmodel.traceability.Traceability;
 import org.eclipse.incquery.viewmodel.traceability.TraceabilityUtil;
 import org.eclipse.incquery.viewmodel.traceablilty.generic.GenericTracedPQuery;
 
@@ -68,7 +69,11 @@ public final class ViewModelUtil {
     public static Collection<EObject> delete(GenericPatternMatch match) {
         Trace trace = (Trace) match.get(GenericTracedPQuery.TRACE_PARAMETER);
         ArrayList<EObject> ret = Lists.newArrayList(trace.getTargets());
-        EcoreUtil.delete(trace);        
+        if (trace.eContainer() instanceof Traceability) {
+            ((Traceability)trace.eContainer()).getTraces().remove(trace);
+        } else {
+            EcoreUtil.delete(trace);
+        }
         return ret;
     }
 
