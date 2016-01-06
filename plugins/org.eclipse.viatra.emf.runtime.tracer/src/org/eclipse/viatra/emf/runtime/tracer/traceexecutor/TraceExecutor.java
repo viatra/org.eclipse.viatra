@@ -12,7 +12,6 @@ package org.eclipse.viatra.emf.runtime.tracer.traceexecutor;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -64,12 +63,15 @@ public class TraceExecutor extends AbstractTransformationAdapter{
     
     @Override
     public Activation<?> beforeFiring(Activation<?> activation) {
-        Set<Activation<?>> activations = conflictSet.getConflictingActivations();
         ActivationTrace activationCode = getNextActivationCode();
+        
         Activation<?> temp = null;
-        for(Activation<?> act : activations){
-            if(compareActivationCodes(activationCoder.createActivationCode(act,rules), activationCode)){
-                temp = act;
+        for(Activation<?> act : conflictSet.getConflictingActivations()){
+            EventDrivenTransformationRule<?,?> transformationRule = rules.get(act.getInstance().getSpecification());
+            if(transformationRule.getName().equals(activationCode.getRuleName())){
+                if(compareActivationCodes(activationCoder.createActivationCode(act,rules), activationCode)){
+                    temp = act;
+                }
             }
         }
         if(temp!=null){
@@ -94,23 +96,21 @@ public class TraceExecutor extends AbstractTransformationAdapter{
     
     private boolean compareActivationCodes(ActivationTrace a1, ActivationTrace a2){
         boolean retVal = false;
-        if(a1.getRuleName().equals(a2.getRuleName())){
-            EList<RuleParameterTrace> a1RuleParameterTraces = a1.getRuleParameterTraces();
-            EList<RuleParameterTrace> a2ruleParameterTraces = a2.getRuleParameterTraces();
-            if(a1RuleParameterTraces.size()==a2ruleParameterTraces.size()){
-                boolean temp = true;
-                for(int i = 0; i < a1RuleParameterTraces.size(); i++){
-                    RuleParameterTrace a1Trace = a1RuleParameterTraces.get(i);
-                    RuleParameterTrace a2Trace = a2ruleParameterTraces.get(i);
-                 
-                    if(!a1Trace.getParameterName().equals(a2Trace.getParameterName())
-                            || !a1Trace.getObjectId().equals(a2Trace.getObjectId())){
-                        temp = false;
-                    }
-                }
-                retVal = temp;
+        EList<RuleParameterTrace> a1RuleParameterTraces = a1.getRuleParameterTraces();
+        EList<RuleParameterTrace> a2ruleParameterTraces = a2.getRuleParameterTraces();
+        
+        boolean temp = true;
+        for(int i = 0; i < a1RuleParameterTraces.size(); i++){
+            RuleParameterTrace a1Trace = a1RuleParameterTraces.get(i);
+            RuleParameterTrace a2Trace = a2ruleParameterTraces.get(i);
+         
+            if(!a1Trace.getParameterName().equals(a2Trace.getParameterName())
+                    || !a1Trace.getObjectId().equals(a2Trace.getObjectId())){
+                temp = false;
             }
         }
+        
+        retVal = temp;
         return retVal;
     }
     
