@@ -176,10 +176,6 @@
 				</property>
 			</activation>
 			<modules>
-				<module>../../plugins/org.eclipse.viatra.emf.runtime.debug</module>
-				<module>../../plugins/org.eclipse.viatra.emf.runtime.debug.ui</module>
-				<module>../../plugins/org.eclipse.viatra.emf.mwe2integration.debug</module>
-				<module>../../plugins/org.eclipse.viatra.emf.runtime.tracer</module>
 				<module>../../plugins/org.eclipse.viatra.cep.core</module>
 				<module>../../plugins/org.eclipse.viatra.cep.core.metamodels</module>
 				<module>../../plugins/org.eclipse.viatra.cep.emf.notification</module>
@@ -194,11 +190,16 @@
 				<module>../../plugins/org.eclipse.viatra.dse.designspace.pathfinding</module>
 				<module>../../plugins/org.eclipse.viatra.dse.genetic</module>
 				<module>../../plugins/org.eclipse.viatra.dse.monitor</module>
+				<module>../../plugins/org.eclipse.viatra.emf.mwe2integration.debug</module>
+				<module>../../plugins/org.eclipse.viatra.emf.runtime.debug</module>
+				<module>../../plugins/org.eclipse.viatra.emf.runtime.debug.ui</module>
+				<module>../../plugins/org.eclipse.viatra.emf.runtime.tracer</module>
 				<module>../../tests/org.eclipse.viatra.cep.core.tests.compiler</module>
 				<module>../../tests/org.eclipse.viatra.cep.core.tests.compiler.testdata</module>
 				<module>../../tests/org.eclipse.viatra.cep.vepl.tests</module>
 				<module>../../tests/org.eclipse.viatra.cep.tests.integration</module>
 				<module>../../tests/org.eclipse.viatra.emf.mwe2integration.test</module>
+				<module>../../features/org.eclipse.viatra.emf.runtime.debug.feature</module>
 				<module>../../features/org.eclipse.viatra.emf.runtime.feature</module>
 				<module>../../features/org.eclipse.viatra.emf.mwe2integration.feature</module>
 				<module>../../features/org.eclipse.viatra.cep.feature</module>
