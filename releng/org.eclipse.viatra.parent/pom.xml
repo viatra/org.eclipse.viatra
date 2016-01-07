@@ -25,7 +25,7 @@
 		<jacoco.version>0.6.3.201306030806</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.9.0</xtend.compiler.version>
-		<incquery.repository.url>http://download.eclipse.org/incquery/updates/integration</incquery.repository.url>
+		<incquery.repository.url>http://download.eclipse.org/incquery/updates-extra/integration</incquery.repository.url>
 		<incquery.compiler.version>1.2.0-SNAPSHOT</incquery.compiler.version>
 		<!-- Sonar -->
 		<sonar.version>3.6</sonar.version>
