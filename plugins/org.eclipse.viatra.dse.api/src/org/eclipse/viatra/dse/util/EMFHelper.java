@@ -24,6 +24,8 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -35,12 +37,15 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
+
+import com.google.common.base.Preconditions;
 
 /**
  * This class contains static helper methods.
@@ -54,17 +59,75 @@ public final class EMFHelper {
     }
 
     /**
-     * Creates an {@link EditingDomain} over the given {@link EObject}.
-     * @param root
-     * @return
+     * Gets the {@link EditingDomain} of either an {@link EObject}, {@link Resource} or {@link ResourceSet}.
+     * @param notifier The {@link Notifier}.
+     * @return The EditingDomain.
      */
-    public static EditingDomain createEditingDomain(EObject root) {
-        // TODO maybe there is already a ted on the eobject
-        EditingDomain domain = new AdapterFactoryEditingDomain(null,new BasicCommandStack());
-        registerExtensionForXmiSerializer("xmi");
-        Resource createResource = domain.getResourceSet().createResource(URI.createFileURI("dummy.xmi"));
-        domain.getCommandStack().execute(new AddCommand(domain, createResource.getContents(), root));
-        return domain;
+    public static EditingDomain getEditingDomain(Notifier notifier) {
+        Preconditions.checkNotNull(notifier);
+        if (notifier instanceof EObject) {
+            EObject eObject = (EObject) notifier;
+            return AdapterFactoryEditingDomain.getEditingDomainFor(eObject);
+        } else if (notifier instanceof Resource) {
+            Resource resource = (Resource) notifier;
+            EList<EObject> contents = resource.getContents();
+            if (contents.isEmpty()) {
+                return null;
+            }
+            return AdapterFactoryEditingDomain.getEditingDomainFor(contents.get(0));
+        } else if (notifier instanceof ResourceSet) {
+            ResourceSet resourceSet = (ResourceSet) notifier;
+            if (resourceSet.getResources().isEmpty()) {
+                return null;
+            }
+            return getEditingDomain(resourceSet.getResources().get(0));
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Creates (or gets if already exists) an {@link EditingDomain} over the given {@link Notifier},
+     * either an {@link EObject}, {@link Resource} or {@link ResourceSet}.
+     * @param notifier The {@link Notifier}.
+     * @return The EditingDomain.
+     */
+    public static EditingDomain createEditingDomain(Notifier notifier) {
+        
+        EditingDomain domain = getEditingDomain(notifier);
+        if (domain != null) {
+            return domain;
+        }
+        
+        registerExtensionForXmiSerializer("dummyext");
+        
+        if (notifier instanceof EObject) {
+            EObject eObject = (EObject) notifier;
+
+            domain = new AdapterFactoryEditingDomain(null, new BasicCommandStack());
+            Resource resource = domain.getResourceSet().createResource(URI.createFileURI("dummy.dummyext"));
+            domain.getCommandStack().execute(new AddCommand(domain, resource.getContents(), eObject));
+            
+            return domain;
+            
+        } else if (notifier instanceof Resource) {
+            Resource resource = (Resource) notifier;
+            
+            ResourceSet resourceSet = resource.getResourceSet();
+            if (resourceSet != null) {
+                return new AdapterFactoryEditingDomain(null, new BasicCommandStack(), resourceSet);
+            } else {
+                domain = new AdapterFactoryEditingDomain(null, new BasicCommandStack(), resourceSet);
+                resourceSet = domain.getResourceSet();
+                domain.getCommandStack().execute(new AddCommand(domain, resourceSet.getResources(), resource));
+                return domain;
+            }
+            
+        } else if (notifier instanceof ResourceSet) {
+            return new AdapterFactoryEditingDomain(null, new BasicCommandStack(), (ResourceSet) notifier);
+        } else {
+            throw new RuntimeException("Not supported argument type.");
+        }
     }
 
     /**
@@ -103,17 +166,46 @@ public final class EMFHelper {
     }
 
     /**
-     * Clones the given model.
-     * @param root The root container object of the model.
+     * Clones the given model. Either an {@link EObject}, {@link Resource} or {@link ResourceSet}.
+     * @param notifier The root container of the model.
      * @return The cloned model.
      */
-    public static EObject clone(EObject root) {
+    public static Notifier clone(Notifier notifier) {
         Copier copier = new Copier();
-        EObject result = copier.copy(root);
-
+        Notifier clonedModel = clone(notifier, copier);
         copier.copyReferences();
-        return result;
+        return clonedModel;
+    }
 
+    private static Notifier clone(Notifier notifier, Copier copier) {
+        Preconditions.checkNotNull(copier);
+        
+        if (notifier instanceof EObject) {
+            EObject eObject = (EObject) notifier;
+            return copier.copy(eObject);
+        } else if (notifier instanceof Resource) {
+            Resource resource = (Resource) notifier;
+            ResourceImpl clonedResource = new ResourceImpl();
+            
+            for (EObject eObject : resource.getContents()) {
+                EObject clonedEObject = copier.copy(eObject);
+                clonedResource.getContents().add(clonedEObject);
+            }
+            
+            return clonedResource;
+        } else if (notifier instanceof ResourceSet) {
+            ResourceSet resourceSet = (ResourceSet) notifier;
+            ResourceSetImpl clonedResourceSet = new ResourceSetImpl();
+            
+            for (Resource resource : resourceSet.getResources()) {
+                Resource clonedResource = (Resource) clone(resource, copier);
+                clonedResourceSet.getResources().add(clonedResource);
+            }
+            
+            return clonedResourceSet;
+        } else {
+            throw new RuntimeException("Not supported argument type.");
+        }
     }
 
     /**

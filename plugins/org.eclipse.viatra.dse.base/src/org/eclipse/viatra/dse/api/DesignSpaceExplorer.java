@@ -24,6 +24,7 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -86,7 +87,7 @@ import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
  */
 public class DesignSpaceExplorer {
 
-    private EObject modelRoot;
+    private Notifier model;
 
     private GlobalContext globalContext = new GlobalContext();
 
@@ -137,30 +138,30 @@ public class DesignSpaceExplorer {
      * it should be cloned. Please note that in multithreaded mode any subsequent threads will be working on cloned
      * models.
      * 
-     * @param rootEObject
+     * @param model
      *            The root object of the EMF model.
      * @param deepCopyModel
      *            If it is set to true, the algorithm will run in cloned model.
      */
-    public void setInitialModel(EObject rootEObject, boolean deepCopyModel) {
+    public void setInitialModel(Notifier model, boolean deepCopyModel) {
 
-        EObject copiedEObject = rootEObject;
+        Notifier copiedEObject = model;
 
         if (deepCopyModel) {
-            copiedEObject = EMFHelper.clone(rootEObject);
+            copiedEObject = EMFHelper.clone(model);
         }
 
-        this.modelRoot = copiedEObject;
+        this.model = copiedEObject;
     }
 
     /**
      * Defines the starting model of the algorithm.
      * 
-     * @param rootEObject
+     * @param model
      *            The root object of the EMF model. It will be cloned on default.
      */
-    public void setInitialModel(EObject rootEObject) {
-        setInitialModel(rootEObject, true);
+    public void setInitialModel(Notifier model) {
+        setInitialModel(model, true);
     }
 
     /**
@@ -385,7 +386,7 @@ public class DesignSpaceExplorer {
     }
 
     private void initExploration(IStrategy strategy) {
-        checkArgument(modelRoot != null, MODEL_NOT_YET_GIVEN);
+        checkArgument(model != null, MODEL_NOT_YET_GIVEN);
         checkArgument(strategy != null, "A strategy must be given. Use the Strategies helper class.");
         checkState(!globalContext.getTransformations().isEmpty(),
                 "At least one transformation rule must be added to start the exploration.");
@@ -412,7 +413,7 @@ public class DesignSpaceExplorer {
                 List<EModelElement> classesAndReferences = new ArrayList<EModelElement>(metaModelElements.attributes);
                 classesAndReferences.addAll(metaModelElements.references);
                 Map<EModelElement, Integer> initialMarking = Guidance
-                        .getInitialMarking(modelRoot, classesAndReferences);
+                        .getInitialMarking(model, classesAndReferences);
                 guidance.resolveOccurrenceVector(classesAndReferences, initialMarking, predicates);
             }
         }
@@ -421,7 +422,7 @@ public class DesignSpaceExplorer {
 
         // Create main thread with given model, without cloning.
         ThreadContext threadContext = new ThreadContext(globalContext, strategy,
-                EMFHelper.createEditingDomain(modelRoot), null, null);
+                EMFHelper.createEditingDomain(model), null, null);
         threadContext.setGuidance(guidance);
 
         globalContext.tryStartNewThread(threadContext, false);

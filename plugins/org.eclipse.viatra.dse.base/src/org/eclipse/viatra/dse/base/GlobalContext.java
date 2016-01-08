@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
@@ -83,16 +84,13 @@ public class GlobalContext {
     /**
      * Starts a new thread to explore the design space.
      * 
-     * @param strategy
-     *            The {@link Strategy}.
-     * @param tedToClone
-     *            The model to clone. Hint: context.getTed()
-     * @param cloneModel
-     *            It should be true in most cases.
-     * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their
-     *         maximum.
+     * @param originalThreadContext The context of the thread which starts the new thread.
+     * @param model The model to start from.
+     * @param cloneModel It should be true in most cases.
+     * @param strategy The strategy, the thread will use.
+     * @return The {@link ExplorerThread}
      */
-    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root,
+    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, Notifier model,
             boolean cloneModel, IStrategy strategy) {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
@@ -100,26 +98,25 @@ public class GlobalContext {
             // clone the parent's thread model. it should be done in the
             // parent's thread so the model won't be changed during cloning
             EditingDomain domain = originalThreadContext.getEditingDomain();
-            EObject rootToClone = domain.getResourceSet().getResources().get(0).getContents().get(0);
-
-            if (root != null) {
+            
+            if (model == null) {
                 if (cloneModel) {
-                    rootToClone = root;
-                } else {
                     throw new DSEException(
                             "If the newly started thread's root EObject is different then the original, it must be cloned. Change parameters.");
+                } else {
+                    model = originalThreadContext.getModelRoot();
                 }
             }
 
             if (cloneModel) {
-                EObject clonedModel = EMFHelper.clone(rootToClone);
+                Notifier clonedModel = EMFHelper.clone(model);
                 domain = EMFHelper.createEditingDomain(clonedModel);
             }
 
             ThreadContext newThreadContext;
             if (cloneModel) {
                 TrajectoryInfo trajectoryInfo = originalThreadContext.getDesignSpaceManager().getTrajectoryInfo();
-                newThreadContext = new ThreadContext(this, strategy, domain, root != null ? null : trajectoryInfo,
+                newThreadContext = new ThreadContext(this, strategy, domain, model != null ? null : trajectoryInfo,
                         originalThreadContext.getGuidance());
             } else {
                 // TODO This is only appropriate if this is the first thread

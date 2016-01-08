@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
@@ -54,7 +55,7 @@ public class GeneticSharedObject {
     public GeneticStrategyBuilder geneticStrategyBuilder;
 
     // Basic information
-    public EObject initialModel;
+    public Notifier initialModel;
 
     // Thread managing
     public volatile ConcurrentLinkedQueue<InstanceData> childPopulation = new ConcurrentLinkedQueue<InstanceData>();

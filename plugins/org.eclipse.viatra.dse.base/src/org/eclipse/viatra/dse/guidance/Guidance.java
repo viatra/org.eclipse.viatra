@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
@@ -314,9 +315,10 @@ public class Guidance implements Cloneable {
         }
     }
 
-    public static Map<EModelElement, Integer> getInitialMarking(EObject rootEObject,
+    public static Map<EModelElement, Integer> getInitialMarking(Notifier model,
             List<? extends EModelElement> classesAndReferences) {
 
+        EObject rootEObject = (EObject) model; // TODO
         // init initialMarking (result map)
         HashMap<EModelElement, Integer> initialMarking = new HashMap<EModelElement, Integer>();
         for (EModelElement element : classesAndReferences) {
