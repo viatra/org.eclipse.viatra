@@ -24,9 +24,6 @@ public enum IncQueryActivationStateEnum implements org.eclipse.incquery.runtime.
     
     @Override
     public boolean isInactive() {
-        if(this == INACTIVE) {
-            return true;
-        }
-        return false;
+        return (this == INACTIVE);
     }
 }

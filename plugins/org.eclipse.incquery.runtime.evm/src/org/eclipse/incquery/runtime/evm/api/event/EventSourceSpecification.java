@@ -18,6 +18,15 @@ package org.eclipse.incquery.runtime.evm.api.event;
  */
 public interface EventSourceSpecification<EventAtom> {
     
+    /**
+     * Returns a filter that does not filter out any incoming events.
+     * </p>
+     * 
+     * <strong>Warning</strong>: either return a single instance, or make sure all returned instances are equal (
+     * {@linkplain Object#equals(Object)} and {@linkplain Object#hashCode()}.
+     * 
+     * @return
+     */
     EventFilter<EventAtom> createEmptyFilter();
     
 // NOTE we don't want to restrict filtering by atoms  

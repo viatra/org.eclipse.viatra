@@ -18,7 +18,14 @@ package org.eclipse.incquery.runtime.evm.api.event;
  */
 public interface EventType {
     
-    public enum RuleEngineEventType implements EventType{
+    public enum RuleEngineEventType implements EventType {
         FIRE;
+    }
+    
+    /**
+     * Event type to use in case CRUD (Create/Read/Update/Dispose) events. 
+     */
+    public enum DynamicEventType implements EventType {
+        APPEARED, UPDATED, DISAPPEARED;
     }
 }

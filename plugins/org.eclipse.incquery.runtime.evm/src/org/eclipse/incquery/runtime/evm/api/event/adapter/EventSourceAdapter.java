@@ -32,9 +32,6 @@ public abstract class EventSourceAdapter<EventAtom> implements EventSource<Event
     private final EventRealm realm;
     private final Set<EventHandler<EventAtom>> handlers;
 
-    /**
-     * 
-     */
     public EventSourceAdapter(EventSourceSpecification<EventAtom> specification, EventRealm realm) {
         checkArgument(realm != null, "Cannot create event source for null realm!");
         checkArgument(specification != null, "Cannot create event source for null source specification!");

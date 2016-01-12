@@ -31,9 +31,6 @@ public abstract class EventProcessorAdapter<EventAtom> {
 
     private final RuleInstance<EventAtom> instance;
 
-    /**
-     * 
-     */
     protected EventProcessorAdapter(RuleInstance<EventAtom> instance) {
         this.instance = instance;
     }
@@ -42,7 +39,7 @@ public abstract class EventProcessorAdapter<EventAtom> {
      * This method is called with the atom corresponding to the
      * activation that is affected by the event.
      * 
-     * If the Activation exists, {@link #activationExists(Event, Activation) 8)} is called 
+     * If the Activation exists, {@link #activationExists(Event, Activation)} is called 
      * with the Activation object, otherwise {@link #activationMissing(Event)} 
      * with the atom object.
      * 
@@ -77,9 +74,6 @@ public abstract class EventProcessorAdapter<EventAtom> {
      */
     protected abstract void activationMissing(Event<EventAtom> event);
 
-    /**
-     * @return the instance
-     */
     protected RuleInstance<EventAtom> getInstance() {
         return instance;
     }

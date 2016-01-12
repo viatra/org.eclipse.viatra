@@ -19,12 +19,7 @@ import org.eclipse.incquery.runtime.api.IncQueryMatcher;
 import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
 import org.eclipse.incquery.runtime.evm.api.event.EventSourceSpecification;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
-import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
-/**
- * @author Abel Hegedus
- *
- */
 public class IncQueryEventRealm implements EventRealm {
 
     private IncQueryEngine engine;
@@ -34,27 +29,17 @@ public class IncQueryEventRealm implements EventRealm {
         this.engine = engine;
     }
     
-    /**
-     * @return the engine
-     */
     public IncQueryEngine getEngine() {
         return engine;
     }
 
     protected <Match extends IPatternMatch> IncQueryEventSource<Match> createSource(
-            EventSourceSpecification<Match> sourceSpecification) {
+            EventSourceSpecification<Match> sourceSpecification) throws IncQueryException {
         checkArgument(sourceSpecification instanceof IncQueryEventSourceSpecification,
                 "Source definition must be IncQueryEventSourceSpecification!");
-        IncQueryEventSource<Match> eventSource = null;
-        try {
-            eventSource = new IncQueryEventSource<Match>(this,
-                    (IncQueryEventSourceSpecification<Match>) sourceSpecification);
-            eventSource.prepareSource();
-        } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getLogger(getClass())
-                    .error("Could not create matcher for event source definition " + sourceSpecification + " in realm "
-                            + this, e);
-        }
+        IncQueryEventSource<Match> eventSource = new IncQueryEventSource<Match>(this,
+                (IncQueryEventSourceSpecification<Match>) sourceSpecification);
+        eventSource.prepareSource();
         return eventSource;
     };
     

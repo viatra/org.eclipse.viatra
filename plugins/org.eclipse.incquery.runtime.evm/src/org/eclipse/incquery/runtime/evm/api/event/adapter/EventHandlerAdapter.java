@@ -48,6 +48,9 @@ public abstract class EventHandlerAdapter<EventAtom> implements EventHandler<Eve
     }
     
     /**
+     * Returns a map of event processor adapters related to the different event types. The method will be only called
+     * once, so there is no need to cache the results internally.
+     * 
      * @return
      */
     protected abstract Map<EventType, EventProcessorAdapter<EventAtom>> prepareEventProcessors();

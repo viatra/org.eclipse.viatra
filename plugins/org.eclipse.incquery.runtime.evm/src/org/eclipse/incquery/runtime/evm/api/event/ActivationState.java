@@ -20,4 +20,17 @@ public interface ActivationState {
 
     boolean isInactive();
     
+    /**
+     * An enum of activation states where the state should follow CRUD (Create/Read/Update/Dispose) events.
+     */
+    public enum DynamicActivationState implements ActivationState {
+        
+        INACTIVE, APPEARED, FIRED, UPDATED, DISAPPEARED;
+        
+        @Override
+        public boolean isInactive() {
+            return (this == INACTIVE);
+        }
+        
+    }
 }

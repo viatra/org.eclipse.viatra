@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.incquery.runtime.evm.specific.event;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.eclipse.incquery.runtime.api.AdvancedIncQueryEngine;
@@ -25,19 +24,12 @@ import org.eclipse.incquery.runtime.evm.api.event.adapter.EventSourceAdapter;
 import org.eclipse.incquery.runtime.evm.notification.IAttributeMonitorListener;
 import org.eclipse.incquery.runtime.exception.IncQueryException;
 
-/**
- * @author Abel Hegedus
- *
- */
 public class IncQueryEventSource<Match extends IPatternMatch> extends EventSourceAdapter<Match> {
     
     private final IncQueryMatcher<Match> matcher;
     private IAttributeMonitorListener<Match> attributeMonitorListener;
     private IMatchUpdateListener<Match> matchUpdateListener;
     
-    /**
-     * 
-     */
     protected IncQueryEventSource(IncQueryEventRealm realm, IncQueryEventSourceSpecification<Match> sourceDefinition) throws IncQueryException {
         super(sourceDefinition, realm);
         IQuerySpecification<? extends IncQueryMatcher<Match>> factory = sourceDefinition.getQuerySpecification();
@@ -45,9 +37,6 @@ public class IncQueryEventSource<Match extends IPatternMatch> extends EventSourc
         this.matcher = _matcher;
     }
 
-    /**
-     * @return the matcher
-     */
     public IncQueryMatcher<Match> getMatcher() {
         return matcher;
     }
@@ -69,13 +58,13 @@ public class IncQueryEventSource<Match extends IPatternMatch> extends EventSourc
    
     @Override
     protected void prepareSource() {
-        this.attributeMonitorListener = checkNotNull(prepareAttributeMonitorListener(),
-                "Prepared attribute monitor listener is null!");
-        this.matchUpdateListener = checkNotNull(prepareMatchUpdateListener(), "Prepared match update listener is null!");
+        this.attributeMonitorListener = prepareAttributeMonitorListener();
+        this.matchUpdateListener = prepareMatchUpdateListener();
     }
 
     /**
-     * @return a new attribute monitor listener
+     * Initializes an attribute monitor listener
+     * @return the prepared attribute monitor listener; must not be null
      */
     protected IAttributeMonitorListener<Match> prepareAttributeMonitorListener() {
         return new IAttributeMonitorListener<Match>(){
@@ -86,6 +75,10 @@ public class IncQueryEventSource<Match extends IPatternMatch> extends EventSourc
         };
     }
     
+    /**
+     * Initializes the corresponding match update listener
+     * @return the prepared update listener; must not be null
+     */
     protected IMatchUpdateListener<Match> prepareMatchUpdateListener(){
         IMatchProcessor<Match> matchAppearProcessor = new IMatchProcessor<Match>() {
             @Override

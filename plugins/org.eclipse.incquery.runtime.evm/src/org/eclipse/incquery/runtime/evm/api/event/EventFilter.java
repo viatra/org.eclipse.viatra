@@ -11,12 +11,14 @@
 package org.eclipse.incquery.runtime.evm.api.event;
 
 /**
- * Interface for filters
+ * Interface for filters. Decides whether an event atom should be processed by EVM. The filters are also used as keys
+ * for rule instances, so it is important to make sure to make filters comparable using
+ * {@linkplain Object#equals(Object)}} and {@linkplain Object#hashCode()}.
  * 
  * @author Abel Hegedus
  *
  */
 public interface EventFilter<EventAtom> {
 
-   boolean isProcessable(EventAtom eventAtom);
+    boolean isProcessable(EventAtom eventAtom);
 }

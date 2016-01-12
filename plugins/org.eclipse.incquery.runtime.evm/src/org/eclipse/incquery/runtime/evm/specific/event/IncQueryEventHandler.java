@@ -31,10 +31,6 @@ import org.eclipse.incquery.runtime.util.IncQueryLoggingUtil;
 
 import com.google.common.collect.Maps;
 
-/**
- * @author Abel Hegedus
- *
- */
 public class IncQueryEventHandler<Match extends IPatternMatch> extends EventHandlerAdapter<Match> {
 
     private AttributeMonitor<Match> attributeMonitor;
@@ -44,9 +40,6 @@ public class IncQueryEventHandler<Match extends IPatternMatch> extends EventHand
         super(source, filter, instance);
     }
 
-    /**
-     * @return a new attribute monitor
-     */
     protected AttributeMonitor<Match> prepareAttributeMonitor(){
         //return new DefaultAttributeMonitor<Match>();
         LightweightAttributeMonitor<Match> monitor = null;
@@ -103,7 +96,7 @@ public class IncQueryEventHandler<Match extends IPatternMatch> extends EventHand
 
             @Override
             protected void activationMissing(Event<Match> event) {
-                checkState(false, String.format("Atom %s updated without existing activation in rule instance %s!", event.getEventAtom(), this));
+                checkState(false, "Atom %s updated without existing activation in rule instance %s!", event.getEventAtom(), this);
             }
         });
         processors.put(IncQueryEventTypeEnum.MATCH_DISAPPEARS, new EventProcessorAdapter<Match>(getInstance()) {
@@ -114,7 +107,7 @@ public class IncQueryEventHandler<Match extends IPatternMatch> extends EventHand
 
             @Override
             protected void activationMissing(Event<Match> event) {
-                checkState(false, String.format("Match %s disappeared without existing activation in rule instance %s!",event.getEventAtom(),this));
+                checkState(false, "Match %s disappeared without existing activation in rule instance %s!", event.getEventAtom(), this);
             }
         });
         return processors;
@@ -122,10 +115,6 @@ public class IncQueryEventHandler<Match extends IPatternMatch> extends EventHand
     
 
     
-    /**
-     * @author Abel Hegedus
-     *
-     */
     private final class UnregisterMonitorActivationNotificationListener implements IActivationNotificationListener {
         @SuppressWarnings("unchecked")
         @Override
