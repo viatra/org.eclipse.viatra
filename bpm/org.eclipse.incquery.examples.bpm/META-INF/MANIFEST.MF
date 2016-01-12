@@ -12,6 +12,6 @@ Require-Bundle: org.eclipse.incquery.runtime,
  org.eclipse.incquery.querybasedfeatures.runtime,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true

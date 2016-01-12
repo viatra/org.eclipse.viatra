@@ -11,4 +11,4 @@ Require-Bundle: org.eclipse.incquery.examples.bpm.incquery,
  org.eclipse.emf.ecore,
  org.eclipse.incquery.examples.bpm,
  org.eclipse.incquery.validation.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
