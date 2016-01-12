@@ -25,7 +25,7 @@ Require-Bundle: org.eclipse.viatra.cep.vepl;visibility:=reexport,
  org.eclipse.pde.core
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.viatra.cep.vepl.ui,
  org.eclipse.viatra.cep.vepl.ui.contentassist,
  org.eclipse.viatra.cep.vepl.ui.contentassist.antlr,

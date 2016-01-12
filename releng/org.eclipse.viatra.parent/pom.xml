@@ -27,6 +27,7 @@
 		<xtend.compiler.version>2.9.0</xtend.compiler.version>
 		<incquery.repository.url>http://download.eclipse.org/incquery/updates-extra/integration</incquery.repository.url>
 		<incquery.compiler.version>1.2.0-SNAPSHOT</incquery.compiler.version>
+		<java.version>1.7</java.version>
 		<!-- Sonar -->
 		<sonar.version>3.6</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -124,8 +125,8 @@
 					<artifactId>tycho-compiler-plugin</artifactId>
 					<version>${tycho.version}</version>
 					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
 					</configuration>
 				</plugin>
 				<plugin>

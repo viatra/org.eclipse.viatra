@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA EMF MWE2 Integration
 Bundle-SymbolicName: org.eclipse.viatra.emf.mwe2integration
 Bundle-Version: 0.9.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.emf.mwe2.runtime,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
