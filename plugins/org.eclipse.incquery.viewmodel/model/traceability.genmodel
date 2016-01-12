@@ -4,7 +4,7 @@
     modelName="Traceability" editPluginClass="org.eclipse.incquery.viewmodel.traceability.provider.TraceabilityEditPlugin"
     editorPluginClass="org.eclipse.incquery.viewmodel.traceability.presentation.TraceabilityEditorPlugin"
     rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" testSuiteClass="org.eclipse.incquery.viewmodel.traceability.tests.TraceabilityAllTests"
-    importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0" copyrightFields="false"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
     operationReflection="true">
   <foreignModel>traceability.ecore</foreignModel>
   <genPackages prefix="Traceability" basePackage="org.eclipse.incquery.viewmodel"

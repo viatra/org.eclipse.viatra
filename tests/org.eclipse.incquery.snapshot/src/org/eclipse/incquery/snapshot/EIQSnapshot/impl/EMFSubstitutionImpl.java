@@ -19,10 +19,10 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.EMFSubstitution;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.EMFSubstitutionImpl#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

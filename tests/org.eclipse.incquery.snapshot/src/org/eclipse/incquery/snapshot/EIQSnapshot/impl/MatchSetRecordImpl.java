@@ -28,12 +28,12 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.MatchSetRecordImpl#getPatternQualifiedName <em>Pattern Qualified Name</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.MatchSetRecordImpl#getMatches <em>Matches</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.MatchSetRecordImpl#getFilter <em>Filter</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -32,7 +32,7 @@ Require-Bundle: org.eclipse.incquery.patternlanguage.emf;bundle-version="0.8.0";
 Import-Package: org.apache.commons.logging,
  org.apache.log4j;version="1.2.15",
  org.apache.log4j.spi;version="1.2.15"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.incquery.patternlanguage.emf.ui,org.eclips
  e.incquery.patternlanguage.emf.ui.builder,org.eclipse.incquery.patter
  nlanguage.emf.ui.contentassist,org.eclipse.incquery.patternlanguage.e

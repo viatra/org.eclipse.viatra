@@ -17,12 +17,6 @@
     name="incquery"
     label="EMF-IncQuery">
   <setupTask
-      xsi:type="jdt:JRETask"
-      version="JavaSE-1.6"
-      location="${jre.location-1.6}">
-    <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
-  </setupTask>
-  <setupTask
       xsi:type="setup:EclipseIniTask"
       option="-Doomph.redirection.incquery.setup"
       value="=http://git.eclipse.org/c/incquery/org.eclipse.incquery.git/plain/releng/org.eclipse.incquery.setup/incquery.setup->${git.clone.incquery.location|uri}/releng/org.eclipse.incquery.setup/incquery.setup"
@@ -275,6 +269,13 @@
       </predicate>
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
+  </setupTask>
+  <setupTask
+      xsi:type="jdt:JRETask"
+      id=""
+      version="JavaSE-1.7"
+      location="${jre.location-1.7}">
+    <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
   </setupTask>
   <project name="mylyn"
       label="Mylyn">
@@ -600,6 +601,12 @@
         </repositoryList>
       </targlet>
     </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.6"
+        location="${jre.location-1.6}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
+    </setupTask>
   </stream>
   <stream name="0.9-maintenance">
     <setupTask
@@ -669,6 +676,12 @@
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
         </repositoryList>
       </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.6"
+        location="${jre.location-1.6}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
   </stream>
   <stream name="1.0-maintenance">
@@ -793,6 +806,161 @@
               url="http://download.eclipse.org/modeling/emf/emf/updates/2.11/"/>
         </repositoryList>
       </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.6"
+        location="${jre.location-1.6}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
+    </setupTask>
+  </stream>
+  <stream name="1.1-maintenance">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="bugzilla.version"
+        value="1.0.0"/>
+    <setupTask
+        xsi:type="mylyn:MylynQueriesTask"
+        repositoryURL="https://bugs.eclipse.org/bugs"
+        userID="${bugzilla.id}"
+        password="${eclipse.user.password}">
+      <query
+          summary="Bugs in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;version=${bugzilla.version}&amp;bug_severity=blocker&amp;bug_severity=critical&amp;bug_severity=major&amp;bug_severity=normal&amp;bug_severity=minor&amp;bug_severity=trivial"/>
+      <query
+          summary="Features in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;version=${bugzilla.version}&amp;bug_severity=enhancement"/>
+      <query
+          summary="Resolved in ${bugzilla.version}"
+          url="https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery&amp;bug_status=RESOLVED&amp;resolution=FIXED&amp;version=${bugzilla.version}"/>
+    </setupTask>
+    <setupTask
+        xsi:type="mylyn:MylynBuildsTask"
+        serverURL="https://hudson.eclipse.org/incquery"
+        userID="${bugzilla.id}"
+        password="${eclipse.user.password}">
+      <buildPlan
+          name="incquery-maintenance-1.0"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="Generate Language Architecture">
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          id="launch.incquery.generator.model"
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateGeneratorModel.launch"/>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          id="launch.incqeury.generator.patternlanguage"
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GeneratePatternLanguage.launch"/>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          id="launch.incqeury.generator.patternlanguage.emf"
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateEMFPatternLanguage.launch"/>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          id="launch.incqeury.generator.xcore"
+          excludedTriggers="STARTUP"
+          launcher="org.eclipse.incquery.setup/EMF-IncQuery_GenerateIncQueryXcore.launch"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask">
+      <targlet
+          name="GEF4 Zest">
+        <requirement
+            name="org.eclipse.gef4.geometry.feature.group"/>
+        <requirement
+            name="org.eclipse.gef4.zest.sdk.feature.group"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="https://hudson.eclipse.org/incquery/job/incquery-master/lastSuccessfulBuild/artifact/update-site-extra/"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Guice">
+        <requirement
+            name="com.google.inject"
+            versionRange="[3.0.0,4.0.0)"/>
+        <requirement
+            name="com.google.inject.multibindings"
+            versionRange="[3.0.0,4.0.0)"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="UML">
+        <requirement
+            name="org.eclipse.uml2.sdk.feature.group"
+            versionRange="[5.0.0,6.0.0)"/>
+      </targlet>
+      <targlet
+          name="EMF Facet">
+        <requirement
+            name="org.eclipse.modisco.infrastructure.feature.feature.group"
+            versionRange="[0.13.0,0.14.0)"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+          <repository
+              url="http://download.eclipse.org/facet/updates/release"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Xcore">
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/modeling/emf/emf/updates/2.11/"/>
+        </repositoryList>
+      </targlet>
+      <targlet
+          name="Xtext"
+          activeRepositoryList="">
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.9.0,2.10.0)"/>
+        <repositoryList
+            name="Dependencies">
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.p2:P2Task"
+        label="Xtext">
+      <requirement
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.9.0,2.10.0)"/>
+      <requirement
+          name="com.google.inject.multibindings.source"
+          versionRange="[3.0.0,4.0.0)"/>
+      <requirement
+          name="com.google.inject.source"
+          versionRange="[3.0.0,4.0.0)"/>
+      <requirement
+          name="org.eclipse.uml2.sdk.feature.group"
+          versionRange="[5.0.0,6.0.0)"/>
+      <repository
+          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones"/>
+      <repository
+          url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+    </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.6"
+        location="${jre.location-1.6}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
   </stream>
   <logicalProjectContainer

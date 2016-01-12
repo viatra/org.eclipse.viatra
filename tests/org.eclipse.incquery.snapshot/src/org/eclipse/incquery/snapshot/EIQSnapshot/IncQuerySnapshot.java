@@ -13,12 +13,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot#getMatchSetRecords <em>Match Set Records</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot#getModelRoots <em>Model Roots</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot#getInputSpecification <em>Input Specification</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getIncQuerySnapshot()
  * @model

@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.incquery.snapshot.EIQSnapshot.provider.EiqsnapshotEditPlugin$Implementation
 Bundle-Vendor: The Eclipse EMF-IncQuery Project
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.incquery.snapshot.EIQSnapshot.provider
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.incquery.snapshot;bundle-version="0.8.0";visibility:=reexport,

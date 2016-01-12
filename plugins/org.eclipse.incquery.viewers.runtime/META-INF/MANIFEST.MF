@@ -34,4 +34,4 @@ Import-Package: org.apache.log4j;version="1.2.15",
  org.eclipse.incquery.viewmodel.core,
  org.eclipse.incquery.viewmodel.traceablilty.generic
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

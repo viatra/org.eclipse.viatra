@@ -13,12 +13,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord#getPatternQualifiedName <em>Pattern Qualified Name</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord#getMatches <em>Matches</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord#getFilter <em>Filter</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchSetRecord()
  * @model

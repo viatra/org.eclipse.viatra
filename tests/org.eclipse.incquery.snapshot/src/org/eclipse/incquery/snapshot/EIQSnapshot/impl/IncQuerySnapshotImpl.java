@@ -31,12 +31,12 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.IncQuerySnapshotImpl#getMatchSetRecords <em>Match Set Records</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.IncQuerySnapshotImpl#getModelRoots <em>Model Roots</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.IncQuerySnapshotImpl#getInputSpecification <em>Input Specification</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

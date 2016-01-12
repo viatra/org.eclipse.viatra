@@ -4,7 +4,7 @@ Bundle-Name: IncQuery Rete Engine
 Bundle-SymbolicName: org.eclipse.incquery.runtime.matchers;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.incquery.runtime.matchers.backend,
  org.eclipse.incquery.runtime.matchers.context,

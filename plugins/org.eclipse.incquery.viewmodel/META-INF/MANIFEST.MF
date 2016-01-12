@@ -24,7 +24,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.incquery.runtime.matchers,
  org.eclipse.emf.common
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.collect,
  org.apache.log4j;bundle-version="1.2.15"

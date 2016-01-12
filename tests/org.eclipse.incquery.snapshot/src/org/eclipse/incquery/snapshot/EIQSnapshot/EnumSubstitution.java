@@ -11,11 +11,11 @@ import org.eclipse.emf.ecore.EEnum;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.EnumSubstitution#getValueLiteral <em>Value Literal</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.EnumSubstitution#getEnumType <em>Enum Type</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getEnumSubstitution()
  * @model

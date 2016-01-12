@@ -16,11 +16,11 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSubstitutionRecord;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.MatchSubstitutionRecordImpl#getParameterName <em>Parameter Name</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.MatchSubstitutionRecordImpl#getDerivedValue <em>Derived Value</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

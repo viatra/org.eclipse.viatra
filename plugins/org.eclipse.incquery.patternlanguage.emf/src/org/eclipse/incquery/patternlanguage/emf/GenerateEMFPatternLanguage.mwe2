@@ -58,6 +58,7 @@ Workflow {
             // generates Java API for the generated EPackages
             fragment = ecore.EMFGeneratorFragment {
                 emfRuntimeVersion = "2.10"
+                jdkLevel = "JDK70"
             }
 
             // Serializer 2.0

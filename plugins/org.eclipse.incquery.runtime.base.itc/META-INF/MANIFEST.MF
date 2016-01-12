@@ -4,7 +4,7 @@ Bundle-Name: IncQuery Base Indexer - Transitive Closure Support
 Bundle-SymbolicName: org.eclipse.incquery.runtime.base.itc;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.osgi.framework;version="1.5.0"
 Export-Package: org.eclipse.incquery.runtime.base.itc.alg.counting,org
  .eclipse.incquery.runtime.base.itc.alg.dred,org.eclipse.incquery.runt

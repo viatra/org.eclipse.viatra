@@ -6,12 +6,12 @@ Bundle-Version: 1.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: The Eclipse EMF-IncQuery Project
 Bundle-Localization: plugin
-Export-Package: org.eclipse.incquery.snapshot.EIQSnapshot,org.eclipse.
- incquery.snapshot.EIQSnapshot.impl,org.eclipse.incquery.snapshot.EIQS
- napshot.util
+Export-Package: org.eclipse.incquery.snapshot.EIQSnapshot,
+ org.eclipse.incquery.snapshot.EIQSnapshot.impl,
+ org.eclipse.incquery.snapshot.EIQSnapshot.util
 Require-Bundle: org.eclipse.incquery.runtime,
  org.eclipse.incquery.querybasedfeatures.runtime,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: IncQueryXcore Metamodel Editor
 Bundle-SymbolicName: org.eclipse.incquery.xcore.ui;singleton:=true
 Bundle-Version: 1.2.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.xtext.ui,
  org.eclipse.xtext.ui.shared,
  org.eclipse.xtext.xbase.ui,

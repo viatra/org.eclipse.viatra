@@ -6,7 +6,7 @@ Bundle-Version: 1.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.incquery.runtime.rete.recipes,org.eclipse.
  incquery.runtime.rete.recipes.helper,org.eclipse.incquery.runtime.ret
  e.recipes.impl,org.eclipse.incquery.runtime.rete.recipes.util

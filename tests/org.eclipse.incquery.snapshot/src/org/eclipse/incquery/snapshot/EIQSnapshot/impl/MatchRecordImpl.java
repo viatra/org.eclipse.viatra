@@ -23,11 +23,11 @@ import org.eclipse.incquery.snapshot.EIQSnapshot.RecordRole;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.MatchRecordImpl#getSubstitutions <em>Substitutions</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.impl.MatchRecordImpl#getRole <em>Role</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

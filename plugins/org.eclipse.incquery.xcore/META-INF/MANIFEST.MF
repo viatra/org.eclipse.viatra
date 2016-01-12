@@ -6,8 +6,7 @@ Bundle-Version: 1.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.incquery.xcore.IncQueryXcorePlugin$Implementation
 Bundle-Vendor: The Eclipse EMF-IncQuery Project
-Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.incquery.xcore,org.eclipse.incquery.xcore.
  parser.antlr,org.eclipse.incquery.xcore.parser.antlr.internal,org.ecl
  ipse.incquery.xcore.services,org.eclipse.incquery.xcore.util,org.ecli

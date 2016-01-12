@@ -11,10 +11,10 @@ import java.util.Date;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.DateSubstitution#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getDateSubstitution()
  * @model

@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.xtext;bundle-version="[2.9.0,2.10.0)",
  com.google.inject;bundle-version="3.0.0",
  org.eclipse.incquery.runtime.matchers;bundle-version="[1.2.0,1.3.0)"
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.incquery.patternlanguage.emf,org.eclipse.i
  ncquery.patternlanguage.emf.annotations,org.eclipse.incquery.patternl
  anguage.emf.eMFPatternLanguage,org.eclipse.incquery.patternlanguage.e

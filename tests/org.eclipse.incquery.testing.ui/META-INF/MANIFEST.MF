@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.incquery.runtime;bundle-version="0.8.0",
  org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.incquery.testing.ui.handlers
 Bundle-Vendor: The Eclipse EMF-IncQuery Project
 Import-Package: org.apache.log4j;version="1.2.15"

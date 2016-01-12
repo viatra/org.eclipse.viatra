@@ -13,11 +13,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord#getSubstitutions <em>Substitutions</em>}</li>
  *   <li>{@link org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord#getRole <em>Role</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage#getMatchRecord()
  * @model

@@ -52,10 +52,6 @@
     	    <version>3.0</version>
         </dependency>        
 	</dependencies>
-	<properties>
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
-	</properties>
 	<parent>
 		<groupId>org.eclipse.incquery</groupId>
 		<artifactId>org.eclipse.incquery.parent</artifactId>

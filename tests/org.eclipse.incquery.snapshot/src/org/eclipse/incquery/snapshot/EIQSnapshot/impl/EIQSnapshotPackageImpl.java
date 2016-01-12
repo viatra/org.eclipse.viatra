@@ -748,13 +748,13 @@ public class EIQSnapshotPackageImpl extends EPackageImpl implements EIQSnapshotP
      * @generated
      */
     protected void createEcoreAnnotations() {
-        String source = "http://www.eclipse.org/emf/2002/Ecore";		
+        String source = "http://www.eclipse.org/emf/2002/Ecore";	
         addAnnotation
           (this, 
            source, 
            new String[] {
              "settingDelegates", "org.eclipse.incquery.querybasedfeature"
-           });		
+           });
     }
 
     /**
@@ -764,13 +764,13 @@ public class EIQSnapshotPackageImpl extends EPackageImpl implements EIQSnapshotP
      * @generated
      */
 	protected void createOrgAnnotations() {
-        String source = "org.eclipse.incquery.querybasedfeature";			
+        String source = "org.eclipse.incquery.querybasedfeature";	
         addAnnotation
           (getMatchRecord_Role(), 
            source, 
            new String[] {
              "patternFQN", "org.eclipse.incquery.testing.queries.RecordRoleValue"
-           });		
+           });	
         addAnnotation
           (getMatchSubstitutionRecord_DerivedValue(), 
            source, 

@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.incquery.tooling.core;bundle-version="0.8.0",
  org.eclipse.xtext.util;bundle-version="[2.9.0,2.10.0)",
  org.eclipse.xtext;bundle-version="[2.9.0,2.10.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.incquery.validation.tooling
 Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
 
