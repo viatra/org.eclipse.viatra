@@ -172,4 +172,8 @@ public class EventDrivenTransformation {
     public void setRules(Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rules) {
         this.rules = rules;
     }
+    
+    public void dispose() {
+        executionSchema.dispose();
+    }
 }
