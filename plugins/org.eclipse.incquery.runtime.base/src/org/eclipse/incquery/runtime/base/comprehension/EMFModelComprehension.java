@@ -12,7 +12,7 @@
 package org.eclipse.incquery.runtime.base.comprehension;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.Notifier;
@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.incquery.runtime.base.api.BaseIndexOptions;
 import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.incquery.runtime.base.api.filters.IBaseIndexResourceFilter;
@@ -190,21 +191,28 @@ public class EMFModelComprehension {
             if (visitorPrunes && !unprunableFeature(visitor, source, feature))
                 continue;
 
-            if (feature.isMany()) {
-                Collection<?> targets = (Collection<?>) source.eGet(feature);
-                int position = 0;
-                for (Object target : targets) {
-                    traverseFeatureInternal(visitor, source, feature, target, visitorPrunes, position++);
-                }
-            } else {
-                Object target = source.eGet(feature);
-                if (target != null)
-                    traverseFeatureInternal(visitor, source, feature, target, visitorPrunes, null);
-            }
+            traverseFeatureTargets(visitor, source, feature, visitorPrunes);
         }
         if (!visitor.preOrder()) visitor.visitElement(source);
     }
-
+	
+    protected void traverseFeatureTargets(EMFVisitor visitor, EObject source, EStructuralFeature feature,
+            final boolean visitorPrunes) {
+        boolean attemptResolve = (feature instanceof EAttribute) || visitor.attemptProxyResolutions(source, (EReference)feature);
+        if (feature.isMany()) {
+            EList<?> targets = (EList<?>) source.eGet(feature);
+            int position = 0;
+            Iterator<?> iterator = attemptResolve ? targets.iterator() : ((InternalEList<?>)targets).basicIterator(); 
+            while (iterator.hasNext()) {
+                Object target = iterator.next();
+                traverseFeatureInternal(visitor, source, feature, target, visitorPrunes, position++);                   
+            }
+        } else {
+            Object target = source.eGet(feature, attemptResolve);
+            if (target != null)
+                traverseFeatureInternal(visitor, source, feature, target, visitorPrunes, null);
+        }
+    }
     private boolean unprunableFeature(EMFVisitor visitor, EObject source, EStructuralFeature feature) {
         return (feature instanceof EAttribute && EcorePackage.eINSTANCE.getEFeatureMapEntry().equals(
                 ((EAttribute) feature).getEAttributeType()))

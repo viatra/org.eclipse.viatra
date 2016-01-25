@@ -263,6 +263,16 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             }
         }
     }
+    
+    @Override
+    // do not attempt to resolve proxies referenced from resources that are still being loaded
+    public boolean attemptProxyResolutions(EObject source, EReference feature) {
+        // emptyness is checked first to avoid costly resource lookup in most cases
+        if (navigationHelper.resolutionDelayingResources.isEmpty())
+            return true;
+        else 
+            return ! navigationHelper.resolutionDelayingResources.contains(source.eResource());
+    }
 
     @Override
     public void visitProxyReference(EObject source, EReference reference, EObject targetObject, Integer position) {
@@ -274,7 +284,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             // }
             if (navigationHelper.isFeatureResolveIgnored(reference))
                 return; // skip resolution; would be ignored anyways
-            if (position != null && reference.isMany()) {
+            if (position != null && reference.isMany() && attemptProxyResolutions(source, reference)) {
                 // there is added value in doing the resolution now, when we know the position
                 // this may save an iteration through the EList if successful
                 EObject touch = ((java.util.List<EObject>) source.eGet(reference, true)).get(position);

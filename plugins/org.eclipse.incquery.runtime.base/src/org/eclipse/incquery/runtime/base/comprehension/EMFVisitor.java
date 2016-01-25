@@ -132,4 +132,11 @@ public class EMFVisitor {
     public void visitProxyReference(EObject source, EReference reference, EObject targetObject, Integer position) {
     }
 
+    /**
+     * Whether the given reference of the given object should be resolved when it is a proxy 
+     */
+    public boolean attemptProxyResolutions(EObject source, EReference feature) {
+        return true;
+    }
+
 }
