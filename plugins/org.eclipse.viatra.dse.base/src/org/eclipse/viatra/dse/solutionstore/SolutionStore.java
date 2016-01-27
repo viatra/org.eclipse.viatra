@@ -102,16 +102,7 @@ public class SolutionStore {
             solution.addTrajectory(solutionTrajectory);
         } else {
             Solution newSolution = new Solution(id, solutionTrajectory);
-
-            Solution elderSolution = solutions.putIfAbsent(id, newSolution);
-
-            // If the race condition is lost, put only the trajectory into it
-            if (elderSolution != null) {
-                elderSolution.addTrajectory(solutionTrajectory);
-                solution = elderSolution;
-            } else {
-                solution = newSolution;
-            }
+            solutions.put(id, newSolution);
         }
 
         enoughSolutions.solutionFound(context, solutionTrajectory);
