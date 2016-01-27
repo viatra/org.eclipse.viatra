@@ -39,9 +39,9 @@ import org.eclipse.viatra.dse.guidance.Predicate;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
+import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
-import org.eclipse.viatra.dse.statecode.graph.GraphHasherFactory;
 import org.eclipse.viatra.dse.statecode.graph.impl.GraphHash;
 import org.eclipse.viatra.dse.statecoding.simple.SimpleStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
@@ -176,9 +176,9 @@ public class DesignSpaceExplorer {
             if (rule.getPrecondition().equals(rule2.getPrecondition())) {
                 throw new DSEException(
                         "Two transformation rule ("
-                                + rule.getRuleName()
+                                + rule.getName()
                                 + "; "
-                                + rule2.getRuleName()
+                                + rule2.getName()
                                 + ") uses the same LHS IncQuery pattern ("
                                 + rule.getPrecondition().getFullyQualifiedName()
                                 + "), which may lead to hash collision."
@@ -281,6 +281,16 @@ public class DesignSpaceExplorer {
      */
     public void setSolutionStore(ISolutionStore solutionStore) {
         globalContext.setSolutionStore(solutionStore);
+    }
+
+    /**
+     * Sets the solution store for strategies using the new strategy API. Please see the {@link SolutionStore} for details.
+     * 
+     * @param solutionStore
+     *            The parameterized {@link SolutionStore} implementation.
+     */
+    public void setSolutionStore(SolutionStore solutionStore) {
+        globalContext.setSolutionStore2(solutionStore);
     }
 
     /**
@@ -437,7 +447,12 @@ public class DesignSpaceExplorer {
      * @return The found solutions.
      */
     public Collection<Solution> getSolutions() {
-        return globalContext.getSolutionStore().getSolutions();
+        Collection<Solution> result = globalContext.getSolutionStore().getSolutions();
+        if (result.isEmpty()) {
+            return globalContext.getSolutionStore2().getSolutions();
+        } else {
+            return result;
+        }
     }
 
     /**

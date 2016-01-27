@@ -1,0 +1,141 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Andras Szabolcs Nagy, Zoltan Ujhelyi and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * Contributors:
+ *   Andras Szabolcs Nagy - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.dse.solutionstore;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.eclipse.viatra.dse.api.Solution;
+import org.eclipse.viatra.dse.api.SolutionTrajectory;
+import org.eclipse.viatra.dse.base.DesignSpaceManager;
+import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
+
+/**
+ * 
+ * @author Andras Szabolcs Nagy
+ *
+ */
+public class SolutionStore {
+
+    public interface IEnoughSolutions extends ISolutionFoundHandler {
+        boolean enoughSolutions();
+    }
+
+    public interface ISolutionFoundHandler {
+        void solutionFound(ThreadContext context, SolutionTrajectory trajectory);
+    }
+
+    public static class ANumberOfEnoughSolutions implements IEnoughSolutions {
+
+        private final AtomicInteger foundSolutions;
+        private final AtomicBoolean enoughSolutions;
+
+        public ANumberOfEnoughSolutions(int number) {
+            foundSolutions = new AtomicInteger(number);
+            enoughSolutions = new AtomicBoolean(false);
+        }
+
+        @Override
+        public boolean enoughSolutions() {
+            return enoughSolutions.get();
+        }
+
+        @Override
+        public void solutionFound(ThreadContext context, SolutionTrajectory trajectory) {
+            int solutionsToFind = foundSolutions.decrementAndGet();
+            if (solutionsToFind == 0) {
+                enoughSolutions.set(true);
+            }
+        }
+    }
+
+    private final Map<Object, Solution> solutions = new HashMap<Object, Solution>();
+    private List<ISolutionFoundHandler> solutionFoundHandlers;
+
+    private final IEnoughSolutions enoughSolutions;
+
+    public SolutionStore() {
+        this(new IEnoughSolutions() {
+            @Override
+            public void solutionFound(ThreadContext context, SolutionTrajectory trajectory) {
+            }
+
+            @Override
+            public boolean enoughSolutions() {
+                return false;
+            }
+        });
+    }
+
+    public SolutionStore(int numOfSolutionsToFind) {
+        this(new ANumberOfEnoughSolutions(numOfSolutionsToFind));
+    }
+
+    public SolutionStore(IEnoughSolutions enoughSolutionsImpl) {
+        enoughSolutions = enoughSolutionsImpl;
+    }
+
+    public synchronized void newSolution(ThreadContext context) {
+
+        DesignSpaceManager dsm = context.getDesignSpaceManager();
+        Object id = dsm.getCurrentState().getId();
+        IStateCoderFactory stateCoderFactory = context.getGlobalContext().getStateCoderFactory();
+        SolutionTrajectory solutionTrajectory = dsm.getTrajectoryInfo().createSolutionTrajectory(stateCoderFactory);
+        solutionTrajectory.setFitness(context.getLastFitness());
+
+        Solution solution = solutions.get(id);
+
+        if (solution != null) {
+            solution.addTrajectory(solutionTrajectory);
+        } else {
+            Solution newSolution = new Solution(id, solutionTrajectory);
+
+            Solution elderSolution = solutions.putIfAbsent(id, newSolution);
+
+            // If the race condition is lost, put only the trajectory into it
+            if (elderSolution != null) {
+                elderSolution.addTrajectory(solutionTrajectory);
+                solution = elderSolution;
+            } else {
+                solution = newSolution;
+            }
+        }
+
+        enoughSolutions.solutionFound(context, solutionTrajectory);
+
+        if (solutionFoundHandlers != null) {
+            for (ISolutionFoundHandler handler : solutionFoundHandlers) {
+                handler.solutionFound(context, solutionTrajectory);
+            }
+        }
+
+        if (enoughSolutions.enoughSolutions()) {
+            context.getGlobalContext().stopAllThreads();
+        }
+    }
+
+    public synchronized Collection<Solution> getSolutions() {
+        return solutions.values();
+    }
+
+    public synchronized void registerSolutionFoundHandler(ISolutionFoundHandler handler) {
+        if (solutionFoundHandlers == null) {
+            solutionFoundHandlers = new ArrayList<ISolutionFoundHandler>(1);
+        }
+        solutionFoundHandlers.add(handler);
+    }
+
+}

@@ -35,6 +35,7 @@ import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.solutionstore.SimpleSolutionStore;
+import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
@@ -222,6 +223,7 @@ public class GlobalContext {
     private Set<DSETransformationRule<?, ?>> transformations = new HashSet<DSETransformationRule<?, ?>>();
     private IStateCoderFactory stateCoderFactory;
     private ISolutionStore solutionStore = new SimpleSolutionStore();
+    private SolutionStore solutionStore2 = new SolutionStore();
     private Object SharedObject;
     private List<IDesignSpaceVisualizer> visualizers;
 
@@ -436,6 +438,14 @@ public class GlobalContext {
 
     public IObjective[][] getLeveledObjectives() {
         return leveledObjectives;
+    }
+
+    public void setSolutionStore2(SolutionStore solutionStore2) {
+        this.solutionStore2 = solutionStore2;
+    }
+
+    public SolutionStore getSolutionStore2() {
+        return solutionStore2;
     }
 
 }

@@ -50,12 +50,13 @@ public class ExplorerThread implements Runnable {
     public void run() {
         try {
 
+            strategy = threadContext.getStrategy();
+            
             threadContext.init();
 
             globalContext = threadContext.getGlobalContext();
             DesignSpaceManager dsm = threadContext.getDesignSpaceManager();
 
-            strategy = threadContext.getStrategy();
             strategy.initStrategy(threadContext);
 
             logger.debug("Strategy started with state: " + dsm.getCurrentState().getId());

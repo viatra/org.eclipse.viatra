@@ -10,6 +10,7 @@
 package org.eclipse.viatra.dse.api.strategy.interfaces;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
 /**
  * This high level interface is responsible for defining basic operations of an exploration strategy.
@@ -37,6 +38,8 @@ public interface IStrategy {
     /**
      * The implementation of this interface should be ready to be interrupted. If this method is called, the
      * {@link IStrategy#explore()} method should return ASAP.
+     * 
+     * This method is also called by the {@link SolutionStore} class if enough solutions are found. 
      */
     void interruptStrategy();
 }
