@@ -11,6 +11,7 @@
 package org.eclipse.viatra.dse.api;
 
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy;
+import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy2;
 import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.HillClimbingStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSStrategy;
@@ -29,6 +30,10 @@ public final class Strategies {
 
     public static DepthFirstStrategy createDFSStrategy(int depthLimit) {
         return new DepthFirstStrategy(depthLimit);
+    }
+
+    public static DepthFirstStrategy2 createDFSStrategy2(int depthLimit) {
+        return new DepthFirstStrategy2(depthLimit);
     }
 
     public static FixedPriorityStrategy createFixedPriorityStrategy() {

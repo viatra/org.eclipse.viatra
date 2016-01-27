@@ -220,7 +220,16 @@ public class ThreadContext {
 
         return result;
     }
-    
+
+    public boolean checkGlobalConstraints() {
+        for (IGlobalConstraint globalConstraint : globalContext.getGlobalConstraints()) {
+            if (!globalConstraint.checkGlobalConstraint(this)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public RuleEngine getRuleEngine() {
         return ruleEngine;
     }

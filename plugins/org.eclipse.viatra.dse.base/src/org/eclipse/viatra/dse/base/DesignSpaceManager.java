@@ -417,4 +417,14 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         activationFitnessProcessorNames.put(rule, name);
     }
 
+    public boolean isCurentStateInTrajectory() {
+        Object currentStateId = trajectory.getCurrentState().getId();
+        for (ITransition transition : trajectory.getFullTransitionTrajectory()) {
+            if (transition.getFiredFrom().getId().equals(currentStateId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
