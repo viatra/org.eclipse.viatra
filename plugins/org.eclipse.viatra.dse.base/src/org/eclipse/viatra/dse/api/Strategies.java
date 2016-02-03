@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
+import org.eclipse.viatra.dse.api.strategy.impl.BreadthFirstStrategy2;
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy2;
 import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.HillClimbingStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSStrategy;
-import org.eclipse.viatra.dse.base.ExplorerThread;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 
 /**
- * Helper class for instantiating Strategies. To implement a new strategy use the {@link ExplorerThread} class.
+ * Helper class for instantiating Strategies. To implement a new strategy use the {@link IStrategy} interface.
  * 
  * @author Andras Szabolcs Nagy
  * 
@@ -50,6 +51,10 @@ public final class Strategies {
 
     public static ParallelBFSStrategy createBFSStrategy(int depthLimit) {
         return new ParallelBFSStrategy(depthLimit);
+    }
+
+    public static BreadthFirstStrategy2 createBfsStrategy2(int depthLimit) {
+        return new BreadthFirstStrategy2(depthLimit);
     }
     
     public static HillClimbingStrategy creatHillClimbingStrategy() {
