@@ -111,11 +111,10 @@ public class SurrogateQueryTest {
         structuralFeature = surrogateQueryToFeature.get(query);
         assertNotNull("Could not find feature", structuralFeature);
         
-        boolean incorrectValuesFound = false;
+        boolean incorrectValuesFound = 
+                checkQuerySpecification(querySpecification, structuralFeature, engine) ||
+                checkStructuralFeatures(umlModel, engine, structuralFeature);
         
-        incorrectValuesFound = incorrectValuesFound || checkQuerySpecification(querySpecification, structuralFeature, engine);
-        
-        incorrectValuesFound = incorrectValuesFound || checkStructuralFeatures(umlModel, engine, structuralFeature);
     
         assertFalse("Some values of " + querySpecificationFQN + " were incorrect, check the system output for details", incorrectValuesFound);
     }

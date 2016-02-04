@@ -53,7 +53,7 @@ public class MarkerManagerViolationListener implements ConstraintListener, Viola
             Object keyObject = keyObjects.get(keyName);
             if (keyObject instanceof EObject) {
                 EObject location = (EObject) keyObject;
-                if (location != null && location.eResource() != null) {
+                if (location.eResource() != null) {
                     IResource markerLoc = adapter.getResourceForEditor();
                     if (markerLoc == null) {
                         URI uri = location.eResource().getURI();
