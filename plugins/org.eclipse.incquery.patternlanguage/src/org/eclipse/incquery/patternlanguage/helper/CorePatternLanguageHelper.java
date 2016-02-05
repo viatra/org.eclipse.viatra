@@ -43,6 +43,7 @@ import org.eclipse.incquery.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCall;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguageFactory;
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.incquery.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.incquery.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.incquery.patternlanguage.patternLanguage.ValueReference;
@@ -258,7 +259,9 @@ public final class CorePatternLanguageHelper {
                         variables.add(var);
                         parameterMap.put(varName, var);
                     }
-                    varRef.setVariable(var);
+                    if (!varRef.eIsSet(PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE) || !varRef.getVariable().equals(var)) {
+                        varRef.setVariable(var);
+                    }
                 }
             }
         }
