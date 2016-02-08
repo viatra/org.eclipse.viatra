@@ -18,14 +18,15 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.incquery.runtime.api.IPatternMatch
+import org.eclipse.incquery.runtime.api.IQuerySpecification
+import org.eclipse.incquery.runtime.api.IncQueryEngine
 import org.eclipse.incquery.runtime.api.IncQueryMatcher
+import org.eclipse.incquery.runtime.emf.EMFScope
 import org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotFactory
 import org.eclipse.incquery.snapshot.EIQSnapshot.IncQuerySnapshot
 import org.eclipse.incquery.snapshot.EIQSnapshot.InputSpecification
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchRecord
 import org.eclipse.incquery.snapshot.EIQSnapshot.MatchSetRecord
-import org.eclipse.incquery.runtime.emf.EMFScope
-import org.eclipse.incquery.runtime.api.IncQueryEngine
 
 /**
  * Helper methods for dealing with snapshots and match set records.
@@ -121,11 +122,25 @@ class SnapshotHelper {
 		]
 		return matchRecord
 	}
+	
+	/**
+	 * Creates a match set record which holds the snapshot of a single matcher instance. It is also possible to enter
+	 * a filter for the matcher.
+	 */
+	def <Match extends IPatternMatch> createMatchSetRecordForMatcher(IncQueryMatcher<Match> matcher, Match filter){
+		val matchSetRecord = EIQSnapshotFactory::eINSTANCE.createMatchSetRecord
+		matcher.forEachMatch(filter,[ match |
+			matchSetRecord.matches.add(createMatchRecordForMatch(match))
+		] );
+		return matchSetRecord
+	}
 
 	/**
 	 * Creates a partial match that corresponds to the given match record.
 	 *  Each substitution is used as a value for the parameter with the same name.
+	 * @deprecated use createMatchForMatchRecord(IQuerySpecification, MatchRecord) instead
 	 */
+	@Deprecated
 	def createMatchForMachRecord(IncQueryMatcher matcher, MatchRecord matchRecord){
 		val match = matcher.newEmptyMatch
 		matchRecord.substitutions.forEach()[
@@ -136,6 +151,19 @@ class SnapshotHelper {
 					target = EcoreUtil::resolve(etarget, matchRecord)
 				}
 			}*/
+			match.set(parameterName,target)
+		]
+		return match
+	}
+
+	/**
+	 * Creates a partial match that corresponds to the given match record.
+	 *  Each substitution is used as a value for the parameter with the same name.
+	 */
+	def <Match extends IPatternMatch> Match createMatchForMatchRecord(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, MatchRecord matchRecord){
+		val match = querySpecification.newEmptyMatch as Match
+		matchRecord.substitutions.forEach()[
+			var target = derivedValue
 			match.set(parameterName,target)
 		]
 		return match
@@ -168,8 +196,6 @@ class SnapshotHelper {
 		matchSetRecords.addAll(snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)])
 		return matchSetRecords
 	}
-
-
 
 	/**
 	 * Creates a substitution for the given parameter name using the given value.

@@ -39,22 +39,22 @@ import org.junit.Test
  * finding problematic queries.
  */
 abstract class QueryPerformanceTest {
-	
+
 	protected static extension Logger logger = IncQueryLoggingUtil.getLogger(QueryPerformanceTest)
-	
+
 	AdvancedIncQueryEngine incQueryEngine
 	Map<String, Long> results = Maps.newTreeMap()
-	
+
 	/**
 	 * This method shall return a scope that identifies the input artifact used for performance testing the queries.
 	 */
 	def IncQueryScope getScope() throws IncQueryException
-	
+
 	/**
 	 * This method shall return the query group that contains the set of queries to evaluate.
 	 */
 	def IQueryGroup getQueryGroup() throws IncQueryException
-	
+
 	/**
 	 * This method shall return the query backend class that will be used for evaluation.
 	 * The backend must be already registered in the {@link QueryBackendRegistry}.
@@ -62,15 +62,15 @@ abstract class QueryPerformanceTest {
 	 * Default implementation returns the registered default backend class.
 	 */
 	def Class<? extends IQueryBackend> getQueryBackend() {
-	    QueryBackendRegistry.getInstance.defaultBackendClass
+		QueryBackendRegistry.getInstance.defaultBackendClass
 	}
-	
+
 	protected def prepare() {
 		info("Preparing query performance test")
-		
+
 		val preparedScope = scope
 		logMemoryProperties("Scope prepared")
-		
+
 		incQueryEngine = AdvancedIncQueryEngine.createUnmanagedEngine(preparedScope)
 		queryGroup.prepare(incQueryEngine)
 		logMemoryProperties("Base index created")
@@ -78,56 +78,58 @@ abstract class QueryPerformanceTest {
 		logMemoryProperties("IncQuery engine wiped")
 		info("Prepared query performance test")
 	}
-	
+
 	/**
 	 * This test case executes the performance evaluation on the given scope and with the provided query group.
 	 */
 	@Test
 	public def queryPerformance() {
-	    logger.level = Level.DEBUG
+		logger.level = Level.DEBUG
 		prepare()
-		
+
 		info("Starting query performance test")
-		
-		for (IQuerySpecification<?> _specification : queryGroup.getSpecifications) {
-			
+
+		for (IQuerySpecification<?> _specification : queryGroup.
+			getSpecifications) {
+
 			val specification = _specification as IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>
 			debug("Measuring query " + specification.getFullyQualifiedName)
 			incQueryEngine.wipe
 			val usedHeapBefore = logMemoryProperties("Wiped engine before building")
-			
+
 			debug("Building Rete")
 			val watch = Stopwatch.createStarted
 			val matcher = incQueryEngine.getMatcher(specification, new QueryEvaluationHint(queryBackend, newHashMap))
 			watch.stop()
 			val countMatches = matcher.countMatches
 			val usedHeapAfter = logMemoryProperties("Matcher created")
-			
+
 			val usedHeap = usedHeapAfter - usedHeapBefore
 			results.put(specification.getFullyQualifiedName, usedHeap)
-			info("Query " + specification.fullyQualifiedName + "( " + countMatches + " matches, used " + usedHeap +
+			info(
+				"Query " + specification.fullyQualifiedName + "( " + countMatches + " matches, used " + usedHeap +
 					" kByte heap, took " + watch.elapsed(TimeUnit.MILLISECONDS) + " ms)")
-			
+
 			incQueryEngine.wipe
 			logMemoryProperties("Wiped engine after building")
 			debug("\n-------------------------------------------\n")
 		}
-		
+
 		info("Finished query performance test")
-		
+
 		printResults()
 	}
-	
+
 	protected def printResults() {
-		
+
 		val resultSB = new StringBuilder("\n\nPerformance test results:\n")
-		results.entrySet.forEach[entry |
+		results.entrySet.forEach [ entry |
 			resultSB.append("  " + entry.key + "," + entry.value + "\n")
 		]
 		info(resultSB)
-		
+
 	}
-	
+
 	/**
 	 * Calls garbage collector 5 times, sleeps 1 second and logs the used, total and free heap sizes in MByte.
 	 * 
@@ -135,19 +137,21 @@ abstract class QueryPerformanceTest {
 	 * @return The amount of used heap memory in kBytes
 	 */
 	protected def static logMemoryProperties(String status) {
-		(0..4).forEach[Runtime.getRuntime().gc()]
-		
+		(0 .. 4).forEach[Runtime.getRuntime().gc()]
+
 		try {
 			Thread.sleep(1000)
 		} catch (InterruptedException e) {
 			trace("Sleep after GC interrupted")
 		}
-		
+
 		val totalHeapKB = Runtime.getRuntime().totalMemory() / 1024;
 		val freeHeapKB = Runtime.getRuntime().freeMemory() / 1024;
 		val usedHeapKB = totalHeapKB - freeHeapKB;
-		debug(status + ": Used Heap size: " + usedHeapKB / 1024 + " MByte (Total: " + totalHeapKB / 1024 + " MByte, Free: " + freeHeapKB / 1024 + " MByte)")
-		
+		debug(
+			status + ": Used Heap size: " + usedHeapKB / 1024 + " MByte (Total: " + totalHeapKB / 1024 +
+				" MByte, Free: " + freeHeapKB / 1024 + " MByte)")
+
 		usedHeapKB
 	}
 }
