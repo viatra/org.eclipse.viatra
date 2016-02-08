@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.incquery.viewers.runtime/emf-gen"
+    modelPluginID="org.eclipse.incquery.viewers.runtime" modelName="Notation" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
+    operationReflection="true">
+  <foreignModel>notation.ecore</foreignModel>
+  <genPackages prefix="Notation" basePackage="org.eclipse.incquery.viewers.runtime"
+      disposableProviderFactory="true" ecorePackage="notation.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="notation.ecore#//HierarchyPolicy">
+      <genEnumLiterals ecoreEnumLiteral="notation.ecore#//HierarchyPolicy/Port"/>
+      <genEnumLiterals ecoreEnumLiteral="notation.ecore#//HierarchyPolicy/Always"/>
+      <genEnumLiterals ecoreEnumLiteral="notation.ecore#//HierarchyPolicy/Child"/>
+      <genEnumLiterals ecoreEnumLiteral="notation.ecore#//HierarchyPolicy/Root"/>
+    </genEnums>
+    <genClasses ecoreClass="notation.ecore#//FormattableElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute notation.ecore#//FormattableElement/label"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference notation.ecore#//FormattableElement/format"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute notation.ecore#//FormattableElement/id"/>
+    </genClasses>
+    <genClasses ecoreClass="notation.ecore#//FormatSpecification">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference notation.ecore#//FormatSpecification/properties"/>
+    </genClasses>
+    <genClasses ecoreClass="notation.ecore#//Item">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference notation.ecore#//Item/parent"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference notation.ecore#//Item/children"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute notation.ecore#//Item/policy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute notation.ecore#//Item/paramObject"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference notation.ecore#//Item/paramEObject"/>
+    </genClasses>
+    <genClasses ecoreClass="notation.ecore#//Edge">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference notation.ecore#//Edge/source"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference notation.ecore#//Edge/target"/>
+    </genClasses>
+    <genClasses ecoreClass="notation.ecore#//Containment"/>
+    <genClasses ecoreClass="notation.ecore#//NotationModel">
+      <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference notation.ecore#//NotationModel/items"/>
+      <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference notation.ecore#//NotationModel/edges"/>
+      <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference notation.ecore#//NotationModel/containments"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute notation.ecore#//NotationModel/id"/>
+    </genClasses>
+    <genClasses ecoreClass="notation.ecore#//Attribute">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference notation.ecore#//Attribute/container"/>
+    </genClasses>
+    <genClasses ecoreClass="notation.ecore#//StringToStringMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute notation.ecore#//StringToStringMap/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute notation.ecore#//StringToStringMap/key"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

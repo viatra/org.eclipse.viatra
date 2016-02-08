@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.incquery.tooling.ui.localsearch.feature"
+      label="EMF-IncQuery Local Search Debugger (Incubation)"
+      version="0.12.0.qualifier"
+      provider-name="The Eclipse EMF-IncQuery Project"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
+
+   <description>
+      EMF-IncQuery Local Search Debugger. Requires the GEF4 version of Zest.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <url>
+      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
+      <discovery label="GEF4 Update site" url="http://download.eclipse.org/tools/gef/gef4/updates/integration"/>
+   </url>
+
+   <includes
+         id="org.eclipse.incquery.runtime.localsearch.feature"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.incquery.tooling.localsearch.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

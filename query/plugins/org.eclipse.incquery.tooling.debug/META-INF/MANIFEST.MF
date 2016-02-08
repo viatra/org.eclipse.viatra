@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IncQuery Debug Tooling (Incubation)
+Bundle-SymbolicName: org.eclipse.incquery.tooling.debug;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-Activator: org.eclipse.incquery.tooling.debug.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.debug.ui,
+ org.eclipse.debug.core,
+ org.eclipse.jdt.debug;bundle-version="3.7.100",
+ org.eclipse.incquery.runtime,
+ org.eclipse.ui.workbench.texteditor
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Import-Package: org.apache.log4j;version="1.2.15"

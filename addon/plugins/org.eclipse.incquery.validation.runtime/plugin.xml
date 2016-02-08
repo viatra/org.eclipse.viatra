@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension-point id="constraint" name="constraint" schema="schema/constraint.exsd"/>
+   <extension
+         point="org.eclipse.incquery.patternlanguage.annotation">
+      <annotation
+            additionalValidator="org.eclipse.incquery.validation.runtime.annotation.ConstraintAnnotationValidator"
+            deprecated="false"
+            description="This annotation is used to mark a pattern for use in the IncQuery validation framework."
+            name="Constraint">
+         <annotationparameter
+               deprecated="true"
+               description="Please use &quot;key&quot; parameter with a list containing a single string value with the name of the parameter instead!"
+               mandatory="false"
+               multiple="false"
+               name="location"
+               type="variablereference">
+         </annotationparameter>
+         <annotationparameter
+               description="The key of constraint represents the pattern parameter objects the constraint violation needs to be attached to. Keys are defined as a list of parameter names as strings (e.g. key = {&quot;param1&quot;, &quot;param2&quot;}"
+               mandatory="false"
+               multiple="false"
+               name="key"
+               type="list">
+         </annotationparameter>
+         <annotationparameter
+               description="The message to display when the constraint violation is found. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$."
+               mandatory="true"
+               multiple="false"
+               name="message"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="Possible values: &quot;error&quot;, &quot;warning&quot; and &quot;info&quot;."
+               mandatory="true"
+               multiple="false"
+               name="severity"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="An Eclipse editor ID where the validation framework should register itself to the context menu. Use &quot;*&quot; as a wildcard if the constraint should be used always when validation is started."
+               mandatory="false"
+               multiple="true"
+               name="targetEditorId"
+               type="string">
+         </annotationparameter>
+         <annotationparameter
+               description="Provide parameter a list, where permutations of the same values register as one match violation. Symmetries are defined as a list of parameter names as strings (e.g. symmetric = {&quot;param1&quot;, &quot;param2&quot;}"
+               mandatory="false"
+               multiple="true"
+               name="symmetric"
+               type="list">
+         </annotationparameter>
+      </annotation>
+   </extension>
+</plugin>

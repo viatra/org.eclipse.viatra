@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMF-IncQuery Snapshot Model Editor
+Bundle-SymbolicName: org.eclipse.incquery.snapshot.editor;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-ClassPath: .
+Bundle-Activator: org.eclipse.incquery.snapshot.EIQSnapshot.presentation.EiqsnapshotEditorPlugin$Implementation
+Bundle-Vendor: The Eclipse EMF-IncQuery Project
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.eclipse.incquery.snapshot.EIQSnapshot.presentation
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources;visibility:=reexport,
+ org.eclipse.incquery.snapshot.edit;bundle-version="0.8.0";visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;visibility:=reexport,
+ org.eclipse.emf.edit.ui;visibility:=reexport,
+ org.eclipse.ui.ide;visibility:=reexport,
+ org.eclipse.emf.ecore.edit;visibility:=reexport
+Bundle-ActivationPolicy: lazy

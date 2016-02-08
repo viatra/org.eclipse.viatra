@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IncQuery Validation Tooling
+Bundle-SymbolicName: org.eclipse.incquery.validation.tooling;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Require-Bundle: org.eclipse.incquery.tooling.core;bundle-version="0.8.0",
+ org.eclipse.incquery.patternlanguage;bundle-version="0.8.0",
+ org.eclipse.incquery.patternlanguage.emf;bundle-version="0.8.0",
+ org.eclipse.incquery.runtime;bundle-version="0.8.0",
+ org.eclipse.pde.core;bundle-version="3.7.0",
+ org.eclipse.xtext.xbase.lib;bundle-version="[2.9.0,2.10.0)",
+ com.google.inject,
+ org.eclipse.core.runtime;bundle-version="3.7.0",
+ org.eclipse.emf.codegen.ecore;bundle-version="2.7.0",
+ org.eclipse.core.resources,
+ org.eclipse.incquery.validation.runtime;bundle-version="0.8.0",
+ org.eclipse.incquery.databinding.runtime;bundle-version="0.8.0",
+ org.eclipse.xtext.generator;bundle-version="[2.9.0,2.10.0)",
+ org.eclipse.xtext.util;bundle-version="[2.9.0,2.10.0)",
+ org.eclipse.xtext;bundle-version="[2.9.0,2.10.0)"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.eclipse.incquery.validation.tooling
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+

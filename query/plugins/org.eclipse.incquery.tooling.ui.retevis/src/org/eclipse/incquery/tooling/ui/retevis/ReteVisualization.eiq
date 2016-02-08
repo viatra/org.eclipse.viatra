@@ -1,0 +1,164 @@
+package org.eclipse.incquery.tooling.ui.retevis
+
+import "http://www.eclipse.org/incquery/rete/recipes"
+
+@Item(item = recipe, label = "Input: $recipe.inputKey$")
+@Format(textColor = "#FFFFFF", color = "#7F004D")
+@QueryExplorer(checked = false)
+pattern inputRecipe(recipe) {
+	InputRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Constant: $recipe.constantValues$")
+@Format(textColor = "#FFFFFF", color = "#7F004D")
+@QueryExplorer(checked = false)
+pattern constantRecipe(recipe) {
+	ConstantRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Count")
+@QueryExplorer(checked = false)
+pattern countAggregatorRecipe(recipe) {
+	CountAggregatorRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Anti-join")
+@QueryExplorer(checked = false)
+pattern antiJoinRecipe(recipe) {
+	AntiJoinRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Semi-join")
+@QueryExplorer(checked = false)
+pattern semiJoinRecipe(recipe) {
+	SemiJoinRecipe(recipe);
+}
+
+@Item(item = recipe, 
+	label = "Join left + $rightParentComplementaryMask.sourceIndices$/$rightParentComplementaryMask.sourceArity$"
+)
+@QueryExplorer(checked = false)
+pattern joinRecipe(recipe, rightParentComplementaryMask) {
+	JoinRecipe(recipe);
+	JoinRecipe.rightParentComplementaryMask(recipe, rightParentComplementaryMask);
+}
+
+@Item(item = recipe, label = "Production: $recipe.patternFQN$")
+@Format(textColor = "#FFFFFF", color = "#881A71")
+@QueryExplorer(checked = false)
+pattern productionRecipe(recipe) {
+	ProductionRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Uniqueness Enforcer")
+@QueryExplorer(checked = false)
+pattern uniquenessEnforcerRecipe(recipe) {
+	UniquenessEnforcerRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Check")
+@QueryExplorer(checked = false)
+pattern checkRecipe(recipe) {
+	CheckRecipe(recipe);
+}
+@Item(item = recipe, label = "Eval")
+@QueryExplorer(checked = false)
+pattern evalRecipe(recipe) {
+	EvalRecipe(recipe);
+}
+
+@Item(item = recipe, label = "InequalityFilter: $recipe.subject$ != $recipe.inequals$")
+@QueryExplorer(checked = false)
+pattern inequalityFilterRecipe(recipe) {
+	InequalityFilterRecipe(recipe);
+}
+
+@Item(item = recipe, label = "InputFilter: $recipe.inputKey$ @ $mask.sourceIndices$/$mask.sourceArity$")
+@Format(textColor = "#7F004D", color = "#CCCCCC")
+@QueryExplorer(checked = false)
+pattern inputFilterRecipeWithMask(recipe, mask) {
+	InputFilterRecipe(recipe);
+	find inputFilterMask(recipe, mask);
+}
+@Item(item = recipe, label = "InputFilter: $recipe.inputKey$")
+@Format(textColor = "#7F004D", color = "#CCCCCC")
+@QueryExplorer(checked = false)
+pattern inputFilterRecipeWithoutMask(recipe) {
+	InputFilterRecipe(recipe);
+	neg find inputFilterMask(recipe, _mask);
+}
+@QueryExplorer(checked = false)
+pattern inputFilterMask(recipe, mask) {
+	InputFilterRecipe.mask(recipe, mask);
+}
+
+@Item(item = recipe, label = "EqualityFilter: $recipe.indices$")
+@QueryExplorer(checked = false)
+pattern equalityFilterRecipe(recipe) {
+	EqualityFilterRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Transparent")
+@QueryExplorer(checked = false)
+pattern transparentRecipe(recipe) {
+	TransparentRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Transitive Closure")
+@QueryExplorer(checked = false)
+pattern transitiveClosureRecipe(recipe) {
+	TransitiveClosureRecipe(recipe);
+}
+
+@Item(item = recipe, label = "Trimmer: $mask.sourceIndices$/$mask.sourceArity$")
+@QueryExplorer(checked = false)
+pattern trimmerRecipe(recipe, mask) {
+	TrimmerRecipe(recipe);
+	TrimmerRecipe.mask(recipe, mask);
+}
+
+@Item(item = recipe, label = "Aggregator Indexer: $mask.sourceIndices$/$mask.sourceArity$")
+@Format(textColor = "#000000", color = "#FFFFFF")
+@QueryExplorer(checked = false)
+pattern aggregatorIndexerRecipe(recipe, mask) {
+	AggregatorIndexerRecipe(recipe);
+	AggregatorIndexerRecipe.mask(recipe, mask);
+}
+
+@Item(item = recipe, label = "IX: $mask.sourceIndices$/$mask.sourceArity$")
+@Format(textColor = "#000000", color = "#FFFFFF")
+@QueryExplorer(checked = false)
+pattern projectionIndexerRecipe(recipe, mask) {
+	ProjectionIndexerRecipe(recipe);
+	ProjectionIndexerRecipe.mask(recipe, mask);
+}
+
+@Edge(source = parent, target = recipe)
+@QueryExplorer(checked = false)
+pattern aggregatorRecipeParent(recipe: AggregatorRecipe, parent: ProjectionIndexerRecipe) {
+	AggregatorRecipe.parent(recipe, parent);	
+}
+
+@Edge(source = parent, target = recipe, label = "left")
+@QueryExplorer(checked = false)
+pattern betaRecipeLeftParent(recipe: BetaRecipe, parent: ProjectionIndexerRecipe) {
+	BetaRecipe.leftParent(recipe, parent);	
+}
+
+@Edge(source = parent, target = recipe, label = "right")
+@QueryExplorer(checked = false)
+pattern betaRecipeRightParent(recipe: BetaRecipe, parent: IndexerRecipe) {
+	BetaRecipe.rightParent(recipe, parent);	
+}
+
+@Edge(source = parent, target = recipe)
+@QueryExplorer(checked = false)
+pattern multiParentNodeRecipeParents(recipe: MultiParentNodeRecipe, parent: ReteNodeRecipe) {
+	MultiParentNodeRecipe.parents(recipe, parent);	
+}
+
+@Edge(source = parent, target = recipe)
+@QueryExplorer(checked = false)
+pattern singleParentNodeRecipeParent(recipe: SingleParentNodeRecipe, parent: ReteNodeRecipe) {
+	SingleParentNodeRecipe.parent(recipe, parent);	
+}

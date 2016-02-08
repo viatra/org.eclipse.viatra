@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMF-IncQuery Viewers Runtime
+Bundle-SymbolicName: org.eclipse.incquery.viewers.runtime;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-ClassPath: .
+Bundle-Activator: org.eclipse.incquery.viewers.runtime.ViewersRuntimePlugin
+Bundle-Vendor: Budapest University of Technology and Economics
+Bundle-Localization: plugin
+Export-Package: org.eclipse.incquery.viewers.runtime,
+ org.eclipse.incquery.viewers.runtime.extensions,
+ org.eclipse.incquery.viewers.runtime.extensions.jface,
+ org.eclipse.incquery.viewers.runtime.model,
+ org.eclipse.incquery.viewers.runtime.model.impl,
+ org.eclipse.incquery.viewers.runtime.model.listeners,
+ org.eclipse.incquery.viewers.runtime.model.patterns,
+ org.eclipse.incquery.viewers.runtime.model.patterns.util,
+ org.eclipse.incquery.viewers.runtime.model.util,
+ org.eclipse.incquery.viewers.runtime.sources;x-friends:="org.eclipse.incquery.viewers.runtime.zest",
+ org.eclipse.incquery.viewers.runtime.specifications,
+ org.eclipse.incquery.viewers.runtime.util,
+ org.eclipse.incquery.viewers.runtime.validators
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.incquery.runtime,
+ org.eclipse.incquery.runtime.matchers,
+ org.eclipse.incquery.patternlanguage.emf;resolution:=optional,
+ com.google.guava,
+ com.google.inject,
+ org.eclipse.incquery.runtime.evm,
+ org.eclipse.incquery.viewmodel
+Import-Package: org.apache.log4j;version="1.2.15",
+ org.eclipse.incquery.viewmodel.core,
+ org.eclipse.incquery.viewmodel.traceablilty.generic
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

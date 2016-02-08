@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMF-IncQuery based derived features runtime
+Bundle-SymbolicName: org.eclipse.incquery.querybasedfeatures.runtime;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.incquery.runtime;bundle-version="0.8.0",
+ org.eclipse.incquery.runtime.evm;bundle-version="0.8.0",
+ org.eclipse.incquery.patternlanguage;bundle-version="0.8.0";resolution:=optional,
+ org.eclipse.incquery.patternlanguage.emf;bundle-version="0.8.0";resolution:=optional,
+ org.eclipse.xtext.common.types;bundle-version="[2.9.0,2.10.0)",
+ com.google.guava,
+ com.google.inject
+Export-Package: org.eclipse.incquery.querybasedfeatures.runtime,org.ec
+ lipse.incquery.querybasedfeatures.runtime.handler,org.eclipse.incquer
+ y.querybasedfeatures.runtime.util.validation
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Import-Package: org.apache.log4j;version="1.2.15"

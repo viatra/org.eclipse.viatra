@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
+  <extension id="org.eclipse.incquery.testing.queries.MatchRecordQueries" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.testing.queries.MatchRecordQueries" id="org.eclipse.incquery.testing.queries.MatchRecordQueries"/>
+  </extension>
+</plugin>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet
+      title="Creating an EMF-IncQuery Project">
+   <intro href="http://viatra.inf.mit.bme.hu/incquery/new/examples/school">
+      <description>
+         Creating an EMF-IncQuery project requires the existence of an EMF project which contains the <b>domain model in Ecore format</b>. This cheat sheet relies on the School example from the EMF-IncQuery website, for demonstration purposes (click the ? for more details). After completing this sheet, you will have a fully functional EMF-IncQuery plug-in project with a simple sample query.
+      </description>
+   </intro>
+   <item
+         href="/org.eclipse.emf.doc/tutorials/clibmod/clibmod.html"
+         skip="true"
+         title="Importing the School example EMF project">
+      <description>
+         In this step, we import an example EMF project with a simple domain model. If you are unfamiliar with EMF, you should read the help by pressing the ? icon at the right of the section title. If you already have an EMF project with a domain model, you can skip this section. In that case the query patterns in later steps must be adjusted for your domain model.
+<br/> <br/>
+To create the example EMF metamodel, you may either import the domain project (<b>school</b>) from the git repository on the website, or perform the following steps:<br/><br/>
+(1) Create an <b>Empty EMF Project</b>, setting <b>school</b> as the project name.<br/><br/>
+(2) Create an <b>Ecore Diagram</b> named <b>school.ecore</b> inside the model folder.<br/><br/>
+(3) Draw the domain model according to the metamodel diagram as shown on http://viatra.inf.mit.bme.hu/incquery/new/examples/school. Save the diagram. <br/><br/>
+(4) Create an <b>EMF Generator Model</b> named school.genmodel from the school.ecore file.<br/><br/>
+(5) Open the genmodel, and <b>Generate Model Code</b> since it is a requirement of IncQuery. For demonstrational purposes also <b>Generate Edit Code</b> and <b>Generate Editor Code</b>.
+      </description>
+   </item>
+   <item title="Initializing the EMF-IncQuery project" dialog="true">
+      <description>
+         From this step on, we assume that you already have the school, school.edit and school.editor projects generated and loaded inside your Eclipse instance (either by exporting them to the host, or by running as a new Eclipse Application).<br/>
+         Queries need to be specified inside special plug-in projects called <b>EMF-IncQuery projects</b>.
+      </description>
+      <subitem label="Issue: File | New | Project | EMF-IncQuery | EMF-IncQuery Project">
+         <command
+               required="false"
+               serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.incquery.tooling.ui.newproject)"/>
+      </subitem>
+      <subitem label="Give a name to the project (e.g. school.incquery), then press Finish."></subitem>
+      <!-- <subitem skip="true" label="(Optionally, only if you aren't using a new Eclipse Application:) On the second wizard page, add a reference to the school.genmodel Generator Model by pushing Add and browsing to the school.genmodel file in the school project. Click on Finish to proceed."></subitem> -->
+   </item>
+   
+</cheatsheet>

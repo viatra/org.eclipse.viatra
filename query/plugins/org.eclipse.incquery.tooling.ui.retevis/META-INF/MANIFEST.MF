@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IncQuery Rete Visualization (Incubation)
+Bundle-SymbolicName: org.eclipse.incquery.tooling.ui.retevis;singleton:=true
+Bundle-Version: 0.12.0.qualifier
+Bundle-Activator: org.eclipse.incquery.tooling.ui.retevis.Activator
+Bundle-Vendor: Budapest University of Technology and Economics
+Export-Package: org.eclipse.incquery.tooling.ui.retevis,
+ org.eclipse.incquery.tooling.ui.retevis.util,
+ org.eclipse.incquery.tooling.ui.retevis.views
+Require-Bundle: org.eclipse.incquery.runtime.rete.recipes,
+ org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.draw2d,
+ org.eclipse.incquery.tooling.ui,
+ org.eclipse.incquery.runtime,
+ org.eclipse.gef4.zest.core,
+ org.eclipse.gef4.zest.jface,
+ org.eclipse.gef4.layout,
+ org.eclipse.incquery.patternlanguage,
+ org.eclipse.incquery.patternlanguage.emf,
+ com.google.guava,
+ org.eclipse.incquery.runtime.rete,
+ org.eclipse.incquery.viewers.runtime.zest;bundle-version="0.9.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.apache.log4j
+Bundle-ActivationPolicy: lazy

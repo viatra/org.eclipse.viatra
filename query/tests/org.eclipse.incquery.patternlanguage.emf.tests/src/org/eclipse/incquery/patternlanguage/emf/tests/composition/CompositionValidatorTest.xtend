@@ -1,0 +1,187 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2012, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.incquery.patternlanguage.emf.tests.composition
+
+import com.google.inject.Inject
+import com.google.inject.Injector
+import org.eclipse.incquery.patternlanguage.emf.tests.EMFPatternLanguageInjectorProvider
+import org.eclipse.incquery.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.incquery.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
+import org.eclipse.incquery.patternlanguage.patternLanguage.PatternLanguagePackage
+import org.eclipse.incquery.patternlanguage.validation.IssueCodes
+import org.eclipse.xtext.junit4.InjectWith
+import org.eclipse.xtext.junit4.XtextRunner
+import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.junit4.validation.ValidatorTester
+import org.junit.Before
+import org.junit.Ignore
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(typeof(XtextRunner))
+@InjectWith(typeof(EMFPatternLanguageInjectorProvider))
+class CompositionValidatorTest extends AbstractValidatorTest{
+		
+	@Inject
+	ParseHelper parseHelper
+	@Inject
+	EMFPatternLanguageJavaValidator validator
+	@Inject
+	Injector injector
+	
+	ValidatorTester<EMFPatternLanguageJavaValidator> tester
+	
+	@Before
+	def void initialize() {
+		tester = new ValidatorTester(validator, injector)
+	}
+	@Test
+	def void duplicatePatterns() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			}
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION), getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION));
+	}	
+	@Test
+	def void duplicatePatternsIgnoreCase() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			}
+
+			pattern calledpattern(p : Pattern) = {
+				Pattern(p);
+			}'
+		) 
+		tester.validate(model).assertAll(getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION), getErrorCode(IssueCodes::DUPLICATE_PATTERN_DEFINITION));
+	}	
+	@Test
+	def void duplicateParameters() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern calledPattern(p : Pattern, p) = {
+				Pattern(p);
+			}
+
+			pattern callPattern(p : Pattern) = {
+				Pattern(p);
+			}'
+		)
+		tester.validate(model).assertAll(
+			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
+			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
+			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
+	}	
+	@Test
+	def void testTooFewParameters() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern calledPattern(p : Pattern, p2) = {
+				Pattern(p);
+				Pattern(p2);
+			}
+
+			pattern callPattern(p : Pattern) = {
+				find calledPattern(p);
+			}'
+		)
+		tester.validate(model).assertAll(
+		    getErrorCode(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER),
+		    getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
+		    getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
+	}
+	@Test
+	def void testTooMuchParameters() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			}
+
+			pattern callPattern(p : Pattern) = {
+				find calledPattern(p, p);
+			}'
+		)
+		tester.validate(model).assertError(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER);
+	}
+	@Test
+	def void testSymbolicParameterSafe() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+				neg find calledPattern(p);
+			}'
+		)
+		
+		tester.validate(model).assertError(null, "Recursive pattern call")
+	}
+	@Test
+	def void testQuantifiedLocalVariable() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			}
+
+			pattern callerPattern(c) = {
+				Pattern(c);
+				Pattern(p);
+				neg find calledPattern(p);
+			}'
+		)
+		tester.validate(model).assertAll(
+		    getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
+		    getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
+	}
+	@Test @Ignore(value = "This call is unsafe because of a negative call circle. 
+						   p: Pattern is a positive reference.")
+	def void testNegativeCallCircle() {
+		val model = parseHelper.parse(
+			'package org.eclipse.incquery.patternlanguage.emf.tests
+			import "http://www.eclipse.org/incquery/patternlanguage/PatternLanguage"
+
+			pattern calledPattern(p : Pattern) = {
+				Pattern(p);
+			} or {
+				neg find calledPattern(p);
+			}'
+		)
+		tester.validate(model).assertError("");
+	}
+}
