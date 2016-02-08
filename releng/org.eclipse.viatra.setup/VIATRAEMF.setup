@@ -44,8 +44,6 @@
         name="org.eclipse.xtext.sdk.feature.group"
         versionRange="[2.9.0,2.10.0)"/>
     <requirement
-        name="org.eclipse.incquery.sdk.feature.source.feature.group"/>
-    <requirement
         name="de.itemis.xtext.antlr.feature.feature.group"/>
     <repository
         url="http://download.eclipse.org/releases/mars"/>
@@ -197,7 +195,22 @@
   <setupTask
       xsi:type="setup.workingsets:WorkingSetTask">
     <workingSet
-        name="VIATRA EMF Runtime">
+        name="VIATRA Transformations">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.emf.runtime.feature"/>
+        <operand
+            xsi:type="predicates:OrPredicate">
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern=".*viatra\.transformation.*"/>
+        </operand>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="VIATRA Incremental Queries">
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
@@ -205,7 +218,7 @@
             project="org.eclipse.viatra.emf.runtime.feature"/>
         <operand
             xsi:type="predicates:NamePredicate"
-            pattern=".*viatra\.emf\.runtime"/>
+            pattern=".*viatra\.query.*"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -263,6 +276,30 @@
               xsi:type="predicates:LocationPredicate"
               pattern=".*/setup/.*"/>
         </operand>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="VIATRA Integrations">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.emf.runtime.feature"/>
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern=".*viatra\.integration.*"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="VIATRA Addons">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.emf.runtime.feature"/>
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern=".*viatra\.addon.*"/>
       </predicate>
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
