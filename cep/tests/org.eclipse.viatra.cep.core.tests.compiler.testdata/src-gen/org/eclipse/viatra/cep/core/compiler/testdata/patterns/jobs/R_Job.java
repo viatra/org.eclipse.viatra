@@ -1,10 +1,10 @@
 package org.eclipse.viatra.cep.core.compiler.testdata.patterns.jobs;
 
-import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.Context;
-import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.api.rules.CepJob;
+import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.Context;
+import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 
 @SuppressWarnings("all")
 public class R_Job extends CepJob<IObservableComplexEventPattern> {

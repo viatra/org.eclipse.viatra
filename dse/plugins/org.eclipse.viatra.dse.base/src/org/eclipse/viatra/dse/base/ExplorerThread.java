@@ -11,10 +11,9 @@
 package org.eclipse.viatra.dse.base;
 
 import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.evm.api.RuleEngine;
-import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 
 /**
  * This class implements the {@link Runnable} interface, to able to run an exploration strategy in a separate thread. It

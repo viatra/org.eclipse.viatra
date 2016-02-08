@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
-  <extension point="org.eclipse.ui.views">
-    <view category="org.eclipse.incquery.tooling.ui" class="org.eclipse.incquery.tooling.ui.retevis.views.ReteVisualizationView" icon="platform:/plugin/org.eclipse.incquery.tooling.ui/icons/logo2.png" id="org.eclipse.incquery.tooling.ui.retevis.views.ReteVisualizer" name="Rete Visualizer"/>
-  </extension>
-  <extension id="org.eclipse.incquery.tooling.ui.retevis.ReteVisualization" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.tooling.ui.retevis.ReteVisualization" id="org.eclipse.incquery.tooling.ui.retevis.ReteVisualization"/>
-  </extension>
-</plugin>

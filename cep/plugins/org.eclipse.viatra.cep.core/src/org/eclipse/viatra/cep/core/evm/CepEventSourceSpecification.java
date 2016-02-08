@@ -11,13 +11,13 @@
 
 package org.eclipse.viatra.cep.core.evm;
 
-import org.eclipse.incquery.runtime.evm.api.RuleInstance;
-import org.eclipse.incquery.runtime.evm.api.event.AbstractRuleInstanceBuilder;
-import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
-import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
-import org.eclipse.incquery.runtime.evm.api.event.EventSourceSpecification;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
+import org.eclipse.viatra.transformation.evm.api.RuleInstance;
+import org.eclipse.viatra.transformation.evm.api.event.AbstractRuleInstanceBuilder;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
+import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
 
 /**
  * EVM {@link EventSourceSpecification} implementation.

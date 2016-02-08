@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="org.eclipse.viatra.cep.core.engine.runtime.RuntimePatterns" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.runtime.RuntimePatterns" id="org.eclipse.viatra.cep.core.engine.runtime.RuntimePatterns"/>
+  <extension id="org.eclipse.viatra.cep.core.engine.runtime.RuntimePatterns" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.runtime.RuntimePatterns" id="org.eclipse.viatra.cep.core.engine.runtime.RuntimePatterns"/>
   </extension>
-  <extension id="org.eclipse.viatra.cep.core.engine.compiler.OptimizationPatterns" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.compiler.OptimizationPatterns" id="org.eclipse.viatra.cep.core.engine.compiler.OptimizationPatterns"/>
+  <extension id="org.eclipse.viatra.cep.core.engine.compiler.OptimizationPatterns" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.compiler.OptimizationPatterns" id="org.eclipse.viatra.cep.core.engine.compiler.OptimizationPatterns"/>
   </extension>
-  <extension id="org.eclipse.viatra.cep.core.engine.compiler.MappingPatterns" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.compiler.MappingPatterns" id="org.eclipse.viatra.cep.core.engine.compiler.MappingPatterns"/>
+  <extension id="org.eclipse.viatra.cep.core.engine.compiler.MappingPatterns" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.cep.core.engine.compiler.MappingPatterns" id="org.eclipse.viatra.cep.core.engine.compiler.MappingPatterns"/>
   </extension>
 </plugin>

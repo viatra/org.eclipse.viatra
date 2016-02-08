@@ -29,7 +29,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
@@ -61,6 +60,7 @@ import org.eclipse.viatra.dse.genetic.selectors.NonDominatedAndCrowdingDistanceS
 import org.eclipse.viatra.dse.genetic.selectors.ParetoSelector;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.StrategyDependentSolutionStore;
+import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 /**
  * This abstract class helps to test out genetic algorithms run by the {@link GeneticDesignSpaceExplorer} if inherited.

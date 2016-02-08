@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+     <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
+         <command
+               commandId="org.eclipse.viatra.query.testing.ui.snapshot"
+               label="Save EMF-IncQuery snapshot"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+                  <or>
+                    <reference
+                       definitionId="org.eclipse.viatra.query.tooling.ui.matcher">
+                    </reference>
+                    <reference
+                       definitionId="org.eclipse.viatra.query.tooling.ui.root">
+                    </reference>
+                  </or>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.viatra.query.testing.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.testing.ui.handlers.SaveSnapshotHandler"
+            commandId="org.eclipse.viatra.query.testing.ui.snapshot">
+      </handler>  
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.testing.ui.snapshot"
+            name="Save EMF-IncQuery snapshot">
+      </command>
+    </extension>
+</plugin>

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.solutionstore;
 
+import org.eclipse.viatra.dse.base.ThreadContext;
+
 /**
  * This class is a strategy dependents variant of the {@link SimpleSolutionStore}, implementation of the
  * {@link ISolutionStore} interface, which stores all the found solution trajectory (i.e. trajectories, which satisfy

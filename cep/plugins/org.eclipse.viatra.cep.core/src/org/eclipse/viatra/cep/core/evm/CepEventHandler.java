@@ -11,12 +11,12 @@
 
 package org.eclipse.viatra.cep.core.evm;
 
-import org.eclipse.incquery.runtime.evm.api.RuleInstance;
-import org.eclipse.incquery.runtime.evm.api.event.Event;
-import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
-import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
+import org.eclipse.viatra.transformation.evm.api.RuleInstance;
+import org.eclipse.viatra.transformation.evm.api.event.Event;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.viatra.transformation.evm.api.event.EventHandler;
+import org.eclipse.viatra.transformation.evm.api.event.EventSource;
 
 /**
  * EVM {@link EventHandler} implementation.

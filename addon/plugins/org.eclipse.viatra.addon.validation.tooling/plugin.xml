@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.viatra.query.tooling.core.generatorFragment">
+      <fragment
+            annotation="Constraint"
+            fragment="org.eclipse.viatra.addon.validation.tooling.ValidationGenerator"></fragment>
+   </extension>
+</plugin>

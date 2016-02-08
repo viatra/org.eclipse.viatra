@@ -11,8 +11,8 @@
 
 package org.eclipse.viatra.cep.core.api.evm;
 
-import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
+import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 
 /**
  * EVM {@link ActivationState}s of an {@link EventPattern}. The states capture states when a rule engine should consider

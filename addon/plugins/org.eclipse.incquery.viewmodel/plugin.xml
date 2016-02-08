@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <!-- @generated traceability -->
-    <package class="org.eclipse.incquery.viewmodel.traceability.TraceabilityPackage" genModel="model/traceability.genmodel" uri="http://org.eclipse.incquery/viewmodel/traceability/1.0"/>
-  </extension>
-  <extension id="org.eclipse.incquery.viewmodel.traceability.patterns.Helpers" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.viewmodel.traceability.patterns.Helpers" id="org.eclipse.incquery.viewmodel.traceability.patterns.Helpers"/>
-  </extension>
-</plugin>

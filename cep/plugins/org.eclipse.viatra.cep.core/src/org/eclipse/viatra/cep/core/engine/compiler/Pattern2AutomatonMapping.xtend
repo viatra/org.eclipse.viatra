@@ -12,18 +12,18 @@
 package org.eclipse.viatra.cep.core.engine.compiler
 
 import org.eclipse.emf.ecore.resource.ResourceSet
-import org.eclipse.incquery.runtime.emf.EMFScope
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.cep.core.engine.compiler.rules.AtomicMappingRules
 import org.eclipse.viatra.cep.core.engine.compiler.rules.ComplexMappingRules
 import org.eclipse.viatra.cep.core.engine.compiler.rules.OptimizationRules
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.events.EventModel
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
-import org.eclipse.viatra.emf.runtime.modelmanipulation.IModelManipulations
-import org.eclipse.viatra.emf.runtime.modelmanipulation.SimpleModelManipulations
-import org.eclipse.viatra.emf.runtime.rules.BatchTransformationRuleGroup
-import org.eclipse.viatra.emf.runtime.rules.batch.BatchTransformationStatements
-import org.eclipse.viatra.emf.runtime.transformation.batch.BatchTransformation
+import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations
+import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.SimpleModelManipulations
+import org.eclipse.viatra.transformation.runtime.emf.rules.BatchTransformationRuleGroup
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationStatements
+import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
 
 class Pattern2AutomatonMapping {
 

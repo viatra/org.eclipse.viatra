@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IncQuery Rete Engine
+Bundle-SymbolicName: org.eclipse.viatra.query.runtime.matchers;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.viatra.query.runtime.matchers.backend,
+ org.eclipse.viatra.query.runtime.matchers.context,
+ org.eclipse.viatra.query.runtime.matchers.context.common,
+ org.eclipse.viatra.query.runtime.matchers.context.surrogate,
+ org.eclipse.viatra.query.runtime.matchers.planning,
+ org.eclipse.viatra.query.runtime.matchers.planning.helpers,
+ org.eclipse.viatra.query.runtime.matchers.planning.operations,
+ org.eclipse.viatra.query.runtime.matchers.psystem,
+ org.eclipse.viatra.query.runtime.matchers.psystem.annotations,
+ org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred,
+ org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables,
+ org.eclipse.viatra.query.runtime.matchers.psystem.queries,
+ org.eclipse.viatra.query.runtime.matchers.psystem.rewriters,
+ org.eclipse.viatra.query.runtime.matchers.tuple,
+ org.eclipse.viatra.query.runtime.matchers.util
+Bundle-ClassPath: .
+Require-Bundle: com.google.guava;bundle-version="10.0.1"
+Import-Package: org.apache.log4j;version="1.2.15"

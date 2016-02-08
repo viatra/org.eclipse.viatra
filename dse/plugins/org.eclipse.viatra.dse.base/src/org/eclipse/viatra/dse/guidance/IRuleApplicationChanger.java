@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.guidance;
 
-import org.eclipse.viatra.dse.guidance.IRuleApplicationNumberChanged;
-
 public interface IRuleApplicationChanger {
 
     /**

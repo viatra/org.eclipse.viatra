@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.viatra.query.runtime.base" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.viatra.query.runtime.base" id="wellbehaving.derived.feature" name="EMF-IncQuery Well-behaving derived feature registration"/>
+      </appinfo>
+      <documentation>
+         [Enter description of this extension point.]
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="wellbehaving-derived-feature"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="wellbehaving-derived-feature">
+      <annotation>
+         <documentation>
+            A derived feature can be considered well-behaving if and only if  &lt;ol&gt;
+ &lt;li&gt; getter is side effect-free, at least as visible externally&lt;/li&gt;
+ &lt;li&gt; if getter is invoked at time A, and then later at time B, the delta between the two results is equivalent to the aggregate of all notifications issued inbetween&lt;/li&gt;
+ &lt;li&gt; (a consequence of point 2, but deserves special mention) remove notifications are only issued for settings that were valid before the notification, and add notifications are only issued if the setting was not valid before. Same for set/unset.  &lt;/li&gt;
+ &lt;li&gt; change notification are not allowed to happen as a consequence of read-only model access&lt;/li&gt;
+ &lt;li&gt; in case of query-based derived features, notifications are permitted as a consequence of changing match sets of EMF-Incquery matchers, but they may only be issued when the matcher engine is in a consistent state; so e.g. no notification from within a IMatchUpdateListener.&lt;/li&gt;
+  &lt;/ol&gt;
+ 
+ Query-based derived features are guaranteed to fulfill these constraints.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="package-nsUri" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The namespace URI of the EPackage that contains well-behaving derived features.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="classifier-name" type="string">
+            <annotation>
+               <documentation>
+                  The name of the EClass that contains well-behaving derived features. If not set, all derived features of all EClasses of the package are considered well-behaving.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="feature-name" type="string">
+            <annotation>
+               <documentation>
+                  The name of the EStructuralFeature that is a well-behaving derived feature. If not set, all derived features of the EClassifier are considered well-behaving.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

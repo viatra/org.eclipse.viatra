@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.designspace.api;
 
-import org.eclipse.incquery.runtime.api.IPatternMatch;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
+import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 
 /**
  * <p>

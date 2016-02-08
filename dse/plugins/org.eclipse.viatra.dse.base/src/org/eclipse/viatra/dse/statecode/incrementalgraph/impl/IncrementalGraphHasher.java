@@ -28,18 +28,18 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
-import org.eclipse.incquery.runtime.api.IncQueryEngine;
-import org.eclipse.incquery.runtime.base.api.InstanceListener;
-import org.eclipse.incquery.runtime.base.api.LightweightEObjectObserver;
-import org.eclipse.incquery.runtime.emf.EMFScope;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.graph.impl.EGraphBuilderContext;
 import org.eclipse.viatra.dse.statecode.graph.impl.IModelObject;
 import org.eclipse.viatra.dse.statecode.graph.impl.IModelReference;
 import org.eclipse.viatra.dse.util.Hasher;
+import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
+import org.eclipse.viatra.query.runtime.base.api.LightweightEObjectObserver;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
+import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 /**
  * The IncrementalGraphHasher is an incremental version of the GraphHash general graph based hasher. It listens to the

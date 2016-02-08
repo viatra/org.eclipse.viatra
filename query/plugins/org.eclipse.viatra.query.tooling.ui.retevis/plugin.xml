@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
+  <extension point="org.eclipse.ui.views">
+    <view category="org.eclipse.viatra.query.tooling.ui" class="org.eclipse.viatra.query.tooling.ui.retevis.views.ReteVisualizationView" icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png" id="org.eclipse.viatra.query.tooling.ui.retevis.views.ReteVisualizer" name="Rete Visualizer"/>
+  </extension>
+  <extension id="org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization" id="org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization"/>
+  </extension>
+</plugin>

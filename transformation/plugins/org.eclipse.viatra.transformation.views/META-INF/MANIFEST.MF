@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ViewModel Implementation
+Bundle-SymbolicName: org.eclipse.viatra.transformation.views;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: The Eclipse EMF-IncQuery Project
+Bundle-Localization: plugin
+Export-Package: org.eclipse.viatra.transformation.views.core,
+ org.eclipse.viatra.transformation.views.core.util,
+ org.eclipse.viatra.transformation.views.traceability,
+ org.eclipse.viatra.transformation.views.traceability.impl,
+ org.eclipse.viatra.transformation.views.traceability.patterns,
+ org.eclipse.viatra.transformation.views.traceability.patterns.util,
+ org.eclipse.viatra.transformation.views.traceability.util,
+ org.eclipse.viatra.transformation.views.traceablilty.generic
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.transaction,
+ org.eclipse.emf.ecore.xmi;bundle-version="2.9.1",
+ org.eclipse.viatra.query.runtime,
+ org.eclipse.viatra.addon.querybasedfeatures.runtime,
+ org.eclipse.viatra.transformation.evm,
+ org.eclipse.viatra.query.patternlanguage,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.viatra.query.runtime.matchers,
+ org.eclipse.emf.common
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package: com.google.common.collect,
+ org.apache.log4j;bundle-version="1.2.15"

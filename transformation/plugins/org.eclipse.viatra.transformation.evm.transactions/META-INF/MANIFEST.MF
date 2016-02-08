@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IncQuery EVM EMF Transactions Support
+Bundle-SymbolicName: org.eclipse.viatra.transformation.evm.transactions;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: com.google.guava,
+ org.eclipse.viatra.query.runtime,
+ org.eclipse.emf.transaction;bundle-version="1.4.0",
+ org.eclipse.viatra.transformation.evm
+Export-Package: org.eclipse.viatra.transformation.evm.transactions.specific,
+ org.eclipse.viatra.transformation.evm.transactions.specific.job,
+ org.eclipse.viatra.transformation.evm.transactions.update
+Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Import-Package: org.apache.log4j;version="1.2.15"

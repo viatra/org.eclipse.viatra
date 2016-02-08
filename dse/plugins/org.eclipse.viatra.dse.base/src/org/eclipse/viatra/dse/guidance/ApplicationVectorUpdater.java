@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.guidance;
 
-import org.eclipse.incquery.runtime.evm.api.RuleEngine;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
+import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 
 public class ApplicationVectorUpdater implements IRuleApplicationNumberChanged {
 

@@ -11,9 +11,9 @@
 
 package org.eclipse.viatra.cep.core.evm;
 
-import org.eclipse.incquery.runtime.evm.api.event.Event;
-import org.eclipse.incquery.runtime.evm.api.event.EventType;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
+import org.eclipse.viatra.transformation.evm.api.event.Event;
+import org.eclipse.viatra.transformation.evm.api.event.EventType;
 
 /**
  * EVM {@link Event} implementation.

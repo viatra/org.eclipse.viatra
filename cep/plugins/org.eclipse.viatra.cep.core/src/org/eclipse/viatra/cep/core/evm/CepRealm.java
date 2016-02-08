@@ -13,9 +13,9 @@ package org.eclipse.viatra.cep.core.evm;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
 import org.eclipse.viatra.cep.core.api.patterns.InTrapComplexEventPattern;
 import org.eclipse.viatra.cep.core.api.patterns.ObservedComplexEventPattern;
+import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 
 import com.google.common.collect.Sets;
 

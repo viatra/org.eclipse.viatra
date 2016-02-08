@@ -14,12 +14,12 @@ package org.eclipse.viatra.cep.core.api.rules;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.Context;
 import org.eclipse.viatra.cep.core.api.evm.CepActivationStates;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.logging.LoggerUtils;
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern;
+import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.Context;
 
 import com.google.common.collect.Lists;
 

@@ -13,8 +13,8 @@ package org.eclipse.viatra.cep.core.engine.compiler.rules
 
 import java.util.List
 import org.apache.log4j.Logger
-import org.eclipse.incquery.runtime.api.impl.BaseMatcher
-import org.eclipse.incquery.runtime.api.impl.BasePatternMatch
+import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
+import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch
 import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler
 import org.eclipse.viatra.cep.core.logging.LoggerUtils
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
@@ -23,8 +23,8 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceFactory
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
-import org.eclipse.viatra.emf.runtime.rules.batch.BatchTransformationRule
-import org.eclipse.viatra.emf.runtime.rules.batch.BatchTransformationRuleFactory
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRuleFactory
 
 /**
  * Superclass for specific mapping rules of the {@link TransformationBasedCompiler}.

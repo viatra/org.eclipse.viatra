@@ -12,7 +12,7 @@ package org.eclipse.viatra.dse.guidance;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.Activation;
 
 public class RuleInfo implements Cloneable {
 

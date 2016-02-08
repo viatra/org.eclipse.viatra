@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IncQuery Snapshot Model
+Bundle-SymbolicName: org.eclipse.viatra.query.testing.snapshot;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: The Eclipse EMF-IncQuery Project
+Bundle-Localization: plugin
+Export-Package: org.eclipse.viatra.query.testing.snapshot,
+ org.eclipse.viatra.query.testing.snapshot.impl,
+ org.eclipse.viatra.query.testing.snapshot.util
+Require-Bundle: org.eclipse.viatra.query.runtime,
+ org.eclipse.viatra.addon.querybasedfeatures.runtime,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy

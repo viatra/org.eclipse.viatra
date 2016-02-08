@@ -1,0 +1,69 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2014, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.patternlanguage.typing;
+
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
+
+/**
+ * @author Zoltan Ujhelyi
+ *
+ */
+public abstract class AbstractTypeSystem implements ITypeSystem {
+
+    final IQueryMetaContext context;
+
+    public AbstractTypeSystem(IQueryMetaContext context) {
+        this.context = context;
+    }
+
+//    @Override
+//    public boolean isConformToRelationColumn(IInputKey relationType,
+//    		int columnIndex, IInputKey columnType) {
+//    	// TODO Auto-generated method stub
+//    	return false;
+//    }
+//    
+//    @Override
+//    public boolean isConformToRelationSource(Object relationType, Object sourceType) {
+//        Object expectedType = null;
+//        switch (context.edgeInterpretation()) {
+//        case BINARY:
+//            expectedType = context.binaryEdgeSourceType(relationType);
+//            break;
+//        case TERNARY:
+//            expectedType = context.ternaryEdgeSourceType(relationType);
+//            break;
+//        }
+//        return isConformant(expectedType, sourceType);
+//    }
+//
+//    @Override
+//    public boolean isConformToRelationTarget(Object relationType, Object targetType) {
+//        Object expectedType = null;
+//        switch (context.edgeInterpretation()) {
+//        case BINARY:
+//            expectedType = context.binaryEdgeTargetType(relationType);
+//            break;
+//        case TERNARY:
+//            expectedType = context.ternaryEdgeTargetType(relationType);
+//            break;
+//        }
+//        return isConformant(expectedType, targetType);
+//    }
+
+    @Override
+    public String typeString(IInputKey type) {
+        return type.getPrettyPrintableName();
+    }
+
+    
+}

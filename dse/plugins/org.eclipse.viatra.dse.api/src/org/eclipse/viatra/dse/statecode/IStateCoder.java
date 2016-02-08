@@ -11,7 +11,7 @@
 package org.eclipse.viatra.dse.statecode;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.incquery.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 
 /**
  * <p>

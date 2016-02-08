@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.viatra.query.tooling.core.generatorFragment">
+      <fragment
+            annotation="QueryBasedFeature"
+            fragment="org.eclipse.viatra.addon.querybasedfeatures.tooling.QueryBasedFeatureGenerator">
+      </fragment>
+      <fragment
+            annotation="Surrogate"
+            fragment="org.eclipse.viatra.addon.querybasedfeatures.tooling.SurrogateGeneratorFragment">
+      </fragment>
+   </extension>
+</plugin>

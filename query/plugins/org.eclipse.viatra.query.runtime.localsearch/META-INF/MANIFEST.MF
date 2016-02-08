@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Local Search Engine for EMF-IncQuery
+Bundle-SymbolicName: org.eclipse.viatra.query.runtime.localsearch;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-Vendor: Eclipse EMF-IncQuery Project
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.viatra.query.runtime.base;bundle-version="0.8.0",
+ org.eclipse.emf.ecore;bundle-version="2.8.3",
+ org.eclipse.viatra.query.runtime;bundle-version="0.8.0",
+ org.eclipse.viatra.query.runtime.matchers,
+ org.eclipse.xtext.xbase.lib;bundle-version="2.9.0"
+Export-Package: org.eclipse.viatra.query.runtime.localsearch,
+ org.eclipse.viatra.query.runtime.localsearch.exceptions,
+ org.eclipse.viatra.query.runtime.localsearch.matcher,
+ org.eclipse.viatra.query.runtime.localsearch.matcher.integration,
+ org.eclipse.viatra.query.runtime.localsearch.operations,
+ org.eclipse.viatra.query.runtime.localsearch.operations.check,
+ org.eclipse.viatra.query.runtime.localsearch.operations.extend,
+ org.eclipse.viatra.query.runtime.localsearch.plan,
+ org.eclipse.viatra.query.runtime.localsearch.planner,
+ org.eclipse.viatra.query.runtime.localsearch.planner.cost
+Import-Package: org.apache.log4j;version="1.2.15"

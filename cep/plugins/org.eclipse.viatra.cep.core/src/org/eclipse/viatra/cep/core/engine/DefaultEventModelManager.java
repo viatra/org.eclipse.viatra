@@ -20,12 +20,6 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
-import org.eclipse.incquery.runtime.evm.api.ExecutionSchema;
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedScheduler;
-import org.eclipse.incquery.runtime.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
-import org.eclipse.incquery.runtime.evm.update.UpdateCompleteProvider;
 import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
 import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler;
@@ -43,6 +37,12 @@ import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
 import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
 import org.eclipse.viatra.cep.core.metamodels.events.Event;
 import org.eclipse.viatra.cep.core.streams.EventStream;
+import org.eclipse.viatra.transformation.evm.api.EventDrivenVM;
+import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
+import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
+import org.eclipse.viatra.transformation.evm.specific.scheduler.UpdateCompleteBasedScheduler;
+import org.eclipse.viatra.transformation.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
+import org.eclipse.viatra.transformation.evm.update.UpdateCompleteProvider;
 
 /**
  * 

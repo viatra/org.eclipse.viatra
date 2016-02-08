@@ -1,0 +1,63 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2015, Csaba Debreceni, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Csaba Debreceni - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.viatra.transformation.views.traceability.patterns
+
+import "http://www.eclipse.org/viatra/transformation/views/traceability/1.0"
+
+@QueryExplorer(checked = false)
+pattern emptyTrace(trace) {
+	Trace(trace);
+	neg find traceTargets(trace,_);
+}
+
+@QueryExplorer(checked = false)
+private pattern traceTargets(trace, target) {
+	Trace.targets(trace, target);
+}
+
+@QueryExplorer(checked = false)
+pattern trace2target(target, trace : Trace) {
+	Trace.targets(trace, target);
+}
+
+@QueryExplorer(checked = false)
+pattern trace2param(param, trace, id) {
+	Trace.params(trace, param);
+	Trace.id(trace, id);
+}
+
+@QueryExplorer(checked = false)
+pattern trace2object(param, trace, id) {
+	Trace.objects(trace, param);
+	Trace.id(trace, id);
+}
+
+@QueryExplorer(checked = false)
+pattern param2target(param, target) {
+	Trace.params(trace, param);
+	Trace.targets(trace, target);
+}
+
+@QueryExplorer(checked = false)
+pattern trace(source, id, target, trace, traceabilityId) {
+	Trace.params(trace, source);
+	Trace.targets(trace, target);
+	Trace.id(trace,id);
+	Traceability.id(traceability,traceabilityId);
+	Traceability.traces(traceability,trace);
+} or {
+	Trace.objects(trace, source);
+	Trace.targets(trace, target);
+	Trace.id(trace,id);
+	Traceability.id(traceability,traceabilityId);
+	Traceability.traces(traceability,trace);
+}

@@ -11,8 +11,8 @@
 
 package org.eclipse.viatra.cep.core.api.events;
 
-import org.eclipse.incquery.runtime.api.impl.BasePatternMatch;
 import org.eclipse.viatra.cep.core.metamodels.events.EventSource;
+import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
 
 /**
  * Base class to be extended by <b>parameterizable</b> event instances originating from an <b>EMF-IncQuery</b> engine.

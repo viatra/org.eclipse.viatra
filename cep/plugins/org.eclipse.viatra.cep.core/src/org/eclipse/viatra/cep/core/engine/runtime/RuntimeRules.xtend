@@ -13,18 +13,18 @@ package org.eclipse.viatra.cep.core.engine.runtime
 import com.google.common.base.Preconditions
 import java.util.Map
 import org.apache.log4j.Logger
-import org.eclipse.incquery.runtime.emf.EMFScope
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification
-import org.eclipse.incquery.runtime.evm.specific.ConflictResolvers
 import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance
 import org.eclipse.viatra.cep.core.api.patterns.ObservedComplexEventPattern
 import org.eclipse.viatra.cep.core.engine.IEventModelManager
 import org.eclipse.viatra.cep.core.engine.timing.TimingTable
 import org.eclipse.viatra.cep.core.logging.LoggerUtils
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
-import org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup
-import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
-import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformation
+import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.viatra.transformation.evm.api.RuleSpecification
+import org.eclipse.viatra.transformation.evm.specific.ConflictResolvers
+import org.eclipse.viatra.transformation.runtime.emf.rules.EventDrivenTransformationRuleGroup
+import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory
+import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.EventDrivenTransformation
 import org.eclipse.xtend.lib.annotations.Accessors
 
 class RuntimeRules {

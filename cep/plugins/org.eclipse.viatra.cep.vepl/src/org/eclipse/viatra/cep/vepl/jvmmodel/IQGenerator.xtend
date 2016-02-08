@@ -16,23 +16,23 @@ import com.google.inject.Inject
 import java.util.List
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
-import org.eclipse.incquery.patternlanguage.patternLanguage.Pattern
-import org.eclipse.incquery.runtime.api.IMatchProcessor
-import org.eclipse.incquery.runtime.emf.EMFScope
-import org.eclipse.incquery.runtime.evm.specific.Lifecycles
-import org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum
-import org.eclipse.incquery.runtime.exception.IncQueryException
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
+import org.eclipse.viatra.query.runtime.api.IMatchProcessor
+import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.viatra.transformation.evm.specific.Lifecycles
+import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum
+import org.eclipse.viatra.query.runtime.exception.IncQueryException
 import org.eclipse.viatra.cep.core.streams.EventStream
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.QueryImport
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeType
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameter
-import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRule
-import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory
-import org.eclipse.viatra.emf.runtime.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationBuilder
-import org.eclipse.viatra.emf.runtime.transformation.eventdriven.EventDrivenTransformation
-import org.eclipse.viatra.emf.runtime.transformation.eventdriven.InconsistentEventSemanticsException
+import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRule
+import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory
+import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationBuilder
+import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.EventDrivenTransformation
+import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
@@ -90,7 +90,7 @@ class IQGenerator {
 			registerMappingMethod.setStatic(true)
 			members += registerMappingMethod
 			members += model.toMethod("getRules",
-				typeRefBuilder.typeRef("org.eclipse.viatra.emf.runtime.rules.EventDrivenTransformationRuleGroup")) [
+				typeRefBuilder.typeRef("org.eclipse.viatra.transformation.runtime.emf.rules.EventDrivenTransformationRuleGroup")) [
 				body = [
 					append(
 						'''

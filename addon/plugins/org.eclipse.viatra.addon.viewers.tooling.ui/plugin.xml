@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="viewersandboxtab" name="Viewer Sandbox Tab" schema="schema/viewersandboxtab.exsd"/>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
+         <command
+               commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers.resourceset"
+               label="Reinitialize IncQuery Viewers"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers.resource"
+               label="Reinitialize IncQuery Viewers (resource scope)"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.incquery.viewers.tooling.ui.category"
+            id="org.eclipse.incquery.viewers.tooling.ui.initViewers.resourceset"
+            name="Reinitialize IncQuery Viewers (resourceset)">
+      </command>
+      <command
+            categoryId="org.eclipse.incquery.viewers.tooling.ui.category"
+            id="org.eclipse.incquery.viewers.tooling.ui.initViewers.resource"
+            name="Reinitialize IncQuery Viewers (resource)">
+      </command>
+      <category
+            id="org.eclipse.incquery.viewers.tooling.ui.category"
+            name="IncQuery Viewers">
+      </category>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.views">
+      <!--
+      <view
+            category="org.eclipse.viatra.query.tooling.ui"
+            class="org.eclipse.incquery.viewers.tooling.ui.views.ViewersSandboxView"
+            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
+            id="org.eclipse.incquery.viewers.tooling.ui.sandbox"
+            name="IncQuery Viewers Sandbox"
+            restorable="true">
+      </view>
+      -->
+      
+      <view
+            category="org.eclipse.viatra.query.tooling.ui"
+            class="org.eclipse.viatra.addon.viewers.tooling.ui.views.ViewersMultiSandboxView"
+            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
+            id="org.eclipse.viatra.addon.viewers.tooling.ui.sandbox"
+            name="IncQuery Viewers Sandbox"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.viatra.addon.viewers.tooling.ui.handlers.InitializeViewersHandlerResource"
+            commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers.resource">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <or>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra.addon.viewers.tooling.ui.handlers.InitializeViewersHandlerResourceSet"
+            commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers.resourceset">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <or>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      
+   </extension>
+   <extension
+         point="org.eclipse.viatra.addon.viewers.tooling.ui.viewersandboxtab">
+      <tab
+            implementation="org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.ListViewerSandboxTab">
+      </tab>
+      <tab
+      		implementation="org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.TreeViewerSandboxTab">
+      </tab>
+   </extension>
+
+</plugin>

@@ -11,9 +11,9 @@
 package org.eclipse.viatra.cep.core.api.rules;
 
 import org.apache.log4j.Logger;
-import org.eclipse.incquery.runtime.evm.api.Job;
-import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
 import org.eclipse.viatra.cep.core.logging.LoggerUtils;
+import org.eclipse.viatra.transformation.evm.api.Job;
+import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 
 /**
  * CEP-specific EVM {@link Job}.

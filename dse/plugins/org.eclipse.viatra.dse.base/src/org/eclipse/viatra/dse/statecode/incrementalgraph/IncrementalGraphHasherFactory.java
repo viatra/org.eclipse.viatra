@@ -17,13 +17,13 @@ import java.util.HashSet;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.incquery.runtime.exception.IncQueryException;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecode.incrementalgraph.impl.IncrementalGraphHasher;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.util.EMFHelper.MetaModelElements;
+import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 public class IncrementalGraphHasherFactory implements IStateCoderFactory {
 

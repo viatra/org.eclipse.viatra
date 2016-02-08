@@ -11,8 +11,8 @@
 
 package org.eclipse.viatra.cep.core.api.rules;
 
-import org.eclipse.incquery.runtime.evm.api.Activation;
 import org.eclipse.viatra.cep.core.api.patterns.IObservableComplexEventPattern;
+import org.eclipse.viatra.transformation.evm.api.Activation;
 
 /**
  * Interface to implement by handlers of actions (defined in rules associated with event patterns).

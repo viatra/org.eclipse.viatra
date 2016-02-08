@@ -13,8 +13,8 @@ package org.eclipse.viatra.dse.guidance.dependencygraph.simpleimpl;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
+import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.IEdge;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.INode;
 import org.eclipse.viatra.dse.guidance.dependencygraph.interfaces.NodeType;

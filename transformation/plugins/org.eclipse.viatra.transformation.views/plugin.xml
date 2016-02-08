@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <!-- @generated traceability -->
+    <package class="org.eclipse.viatra.transformation.views.traceability.TraceabilityPackage" genModel="model/traceability.genmodel" uri="http://www.eclipse.org/viatra/transformation/views/traceability/1.0"/>
+  </extension>
+  <extension id="org.eclipse.viatra.transformation.views.traceability.patterns.Helpers" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.transformation.views.traceability.patterns.Helpers" id="org.eclipse.viatra.transformation.views.traceability.patterns.Helpers"/>
+  </extension>
+</plugin>

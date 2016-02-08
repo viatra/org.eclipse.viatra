@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EModelElement;
-import org.eclipse.viatra.dse.api.PatternWithCardinality;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
+import org.eclipse.viatra.dse.api.PatternWithCardinality;
 
 public interface IDependencyGraph {
 

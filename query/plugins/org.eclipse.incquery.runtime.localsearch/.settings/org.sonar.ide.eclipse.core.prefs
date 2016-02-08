@@ -1,7 +1,0 @@
-analyseLocally=false
-eclipse.preferences.version=1
-extraProperties=
-lastAnalysisDate=1375716600000
-projectKey=org.eclipse.incquery\:org.eclipse.incquery.runtime.localsearch
-serverUrl=https\://build.inf.mit.bme.hu/sonar
-version=2

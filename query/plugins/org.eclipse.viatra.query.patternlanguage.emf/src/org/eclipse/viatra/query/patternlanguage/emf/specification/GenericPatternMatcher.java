@@ -1,0 +1,109 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2014, Bergmann Gabor, Istvan Rath and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Bergmann Gabor - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.patternlanguage.emf.specification;
+
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.runtime.api.GenericMatchProcessor;
+import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
+import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
+
+/**
+ * This is a generic pattern matcher for any EMF-IncQuery pattern, with
+ * "interpretative" query execution. Use the pattern matcher on a given model
+ * via {@link #on(IncQueryEngine, Pattern)}, e.g. in conjunction with
+ * {@link IncQueryEngine#on(Notifier)}.
+ * <p>
+ * Whenever available, consider using the pattern-specific generated matcher API
+ * instead.
+ * 
+ * <p>
+ * Matches of the pattern will be represented as {@link GenericPatternMatch}.
+ * 
+ * @author Bergmann Gábor
+ * @see GenericPatternMatch
+ * @see GenericMatchProcessor
+ * @see GenericQuerySpecification
+ * 
+ * @deprecated direct reference not recommended. As of 0.9, clients should use
+ *             {@link SpecificationBuilder} to convert EMF patterns to
+ *             {@link IQuerySpecification}s, or
+ *             {@link org.eclipse.viatra.query.runtime.api.GenericPatternMatcher}
+ *             for other purposes. Note that the class
+ *             {@link GenericPatternMatch} has also been moved.
+ */
+@Deprecated
+public class GenericPatternMatcher extends
+		org.eclipse.viatra.query.runtime.api.GenericPatternMatcher {
+
+	protected GenericPatternMatcher(IncQueryEngine engine,
+			GenericQuerySpecification specification) throws IncQueryException {
+		super(engine, specification);
+	}
+
+	/**
+	 * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+	 * If the pattern matcher is already constructed in the engine, only a
+	 * light-weight reference is returned. The match set will be incrementally
+	 * refreshed upon updates.
+	 * 
+	 * @param engine
+	 *            the existing EMF-IncQuery engine in which this matcher will be
+	 *            created.
+	 * @param pattern
+	 *            the EMF-IncQuery pattern for which the matcher is to be
+	 *            constructed.
+	 * @throws IncQueryException
+	 *             if an error occurs during pattern matcher creation
+	 */
+	public static GenericPatternMatcher on(IncQueryEngine engine,
+			Pattern pattern) throws IncQueryException {
+		try {
+			return on(engine, new GenericQuerySpecification(
+					new GenericEMFPatternPQuery(pattern)));
+		} catch (QueryInitializationException e) {
+			throw new IncQueryException(e);
+		}
+	}
+
+	/**
+	 * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+	 * If the pattern matcher is already constructed in the engine, only a
+	 * light-weight reference is returned. The match set will be incrementally
+	 * refreshed upon updates.
+	 * 
+	 * @param engine
+	 *            the existing EMF-IncQuery engine in which this matcher will be
+	 *            created.
+	 * @param querySpecification
+	 *            the query specification for which the matcher is to be
+	 *            constructed.
+	 * @throws IncQueryException
+	 *             if an error occurs during pattern matcher creation
+	 */
+	public static GenericPatternMatcher on(IncQueryEngine engine,
+			GenericQuerySpecification querySpecification)
+			throws IncQueryException {
+		// check if matcher already exists
+		GenericPatternMatcher matcher = engine
+				.getExistingMatcher(querySpecification);
+		if (matcher == null) {
+			matcher = new GenericPatternMatcher(engine, querySpecification);
+			// do not have to "put" it into engine.matchers,
+			// reportMatcherInitialized() will take care of it
+		}
+		return matcher;
+	}
+
+}
