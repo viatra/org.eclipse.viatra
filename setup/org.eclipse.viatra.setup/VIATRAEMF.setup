@@ -29,6 +29,11 @@
     <description>Set the heap space needed to work with the projects of ${scope.project.label}</description>
   </setupTask>
   <setupTask
+      xsi:type="setup:EclipseIniTask"
+      option="-Doomph.redirection.viatra.setup"
+      value="=http://download.eclipse.org/viatra/setup/VIATRAEMF.setup->${git.clone.viatra.location|uri}/releng/org.eclipse.viatra.setup/VIATRAEMF.setup"
+      vm="true"/>
+  <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
       defaultValue="Mars"
@@ -119,6 +124,8 @@
             url="http://download.itemis.com/updates/milestones"/>
         <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
+        <repository
+            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
       </repositoryList>
       <repositoryList
           name="Luna">
