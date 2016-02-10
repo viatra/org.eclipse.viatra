@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.eclipse.incquery</groupId>
-	<artifactId>org.eclipse.incquery.parent</artifactId>
+	<groupId>org.eclipse.viatra</groupId>
+	<artifactId>org.eclipse.viatra.parent</artifactId>
 	<name>EMF-IncQuery</name>
 	<url>http://eclipse.org/incquery</url>
 	<version>1.2.0-SNAPSHOT</version>
@@ -66,7 +66,7 @@
 					<resolver>p2</resolver>
 					<target>
 						<artifact>
-							<groupId>org.eclipse.incquery</groupId>
+							<groupId>org.eclipse.viatra</groupId>
 							<artifactId>org.eclipse.incquery.target</artifactId>
 							<version>${incquery.project.version}</version>
 							<classifier>default</classifier>

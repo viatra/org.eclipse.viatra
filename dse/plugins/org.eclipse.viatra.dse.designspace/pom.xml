@@ -17,4 +17,5 @@
       </resource>
      </resources>
   </build>
+  <version>0.12.0-SNAPSHOT</version>
 </project>

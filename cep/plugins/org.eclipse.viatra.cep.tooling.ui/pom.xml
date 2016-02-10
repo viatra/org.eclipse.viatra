@@ -10,4 +10,5 @@
   </parent>
   <artifactId>org.eclipse.viatra.cep.tooling.ui</artifactId>
   <packaging>eclipse-plugin</packaging>
+  <version>0.12.0-SNAPSHOT</version>
 </project>

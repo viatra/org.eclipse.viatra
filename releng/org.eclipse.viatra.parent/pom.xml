@@ -5,18 +5,32 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eclipse.viatra</groupId>
 	<artifactId>org.eclipse.viatra.parent</artifactId>
-	<name>VIATRA EMF Support</name>
-	<url>http://eclipse.org/viatra2</url>
+	<name>VIATRA</name>
+	<url>http://eclipse.org/viatra</url>
 	<version>1.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<modules>
-		<module>../../plugins/org.eclipse.viatra.emf.runtime</module>
-        <module>../../plugins/org.eclipse.viatra.emf.mwe2integration</module>
+	    <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.generator</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.emf</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.runtime</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.runtime.matchers</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.runtime.base</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.runtime.base.itc</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.runtime.localsearch</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.runtime.rete</module>
+        <module>../../query/plugins/org.eclipse.viatra.query.runtime.rete.recipes</module>
+        <module>../../transformation/plugins/org.eclipse.viatra.transformation.evm</module>
+		<module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.emf</module>
+        <module>../../addon/plugins/org.eclipse.viatra.addon.validation.core</module>
+        <module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.runtime</module>
+        <module>../../integration/plugins/org.eclipse.viatra.integration.uml</module>
+        <!--<module>../../plugins/org.eclipse.viatra.emf.mwe2integration</module>-->
 		<module>../../releng/org.eclipse.viatra.target</module>
 	</modules>
 	<properties>
 		<tycho.version>0.22.0</tycho.version>
-		<tycho.extras.version>0.22.0</tycho.extras.version>
+		<tycho.extras.version>${tycho.version}</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra/org.eclipse.viatra.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=viatra</eclipse.bugzillaUrl>
@@ -28,6 +42,9 @@
 		<incquery.repository.url>http://download.eclipse.org/incquery/updates-extra/integration</incquery.repository.url>
 		<incquery.compiler.version>1.2.0-SNAPSHOT</incquery.compiler.version>
 		<java.version>1.7</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+		<target.platform.version>${project.version}</target.platform.version>
 		<!-- Sonar -->
 		<sonar.version>3.6</sonar.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -52,7 +69,7 @@
 						<artifact>
 							<groupId>org.eclipse.viatra</groupId>
 							<artifactId>org.eclipse.viatra.target</artifactId>
-							<version>${project.version}</version>
+							<version>${target.platform.version}</version>
 						</artifact>
 					</target>
 					<ignoreTychoRepositories>true</ignoreTychoRepositories>
@@ -168,7 +185,7 @@
 			<url>https://repo.eclipse.org/content/repositories/viatra2-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-	<profiles>
+	<!-- <profiles>
 		<profile>
 			<id>eclipse_tooling</id>
 			<activation>
@@ -219,45 +236,7 @@
 				<module>../../maven/viatra-emf-runtime</module>
 			</modules>
 		</profile>
-	</profiles>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>central</id>
-			<name>Maven Central</name>
-			<url>http://repo.maven.apache.org/maven2</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>incquery-snapshots</id>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
-		</pluginRepository>
-	</pluginRepositories>
-	<repositories>
-		<repository>
-			<id>central</id>
-			<name>Maven Central</name>
-			<url>http://repo.maven.apache.org/maven2</url>
-		</repository>
-		<repository>
-			<id>incquery.update</id>
-			<layout>p2</layout>
-			<url>${incquery.repository.url}</url>
-		</repository>
-		<repository>
-			<id>incquery-snapshots</id>
-			<url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>incquery-releases</id>
-			<url>https://repo.eclipse.org/content/repositories/emf-incquery-releases/</url>
-		</repository>
-	</repositories>
+	</profiles> -->
 	<scm>
 		<connection>${tycho.scmUrl}</connection>
 		<url>http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/</url>
