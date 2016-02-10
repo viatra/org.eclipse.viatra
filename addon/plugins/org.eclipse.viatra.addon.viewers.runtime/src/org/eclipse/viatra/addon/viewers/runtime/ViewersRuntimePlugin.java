@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class ViewersRuntimePlugin extends AbstractUIPlugin {
+public class ViewersRuntimePlugin extends Plugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.viatra.addon.viewers.runtime"; //$NON-NLS-1$

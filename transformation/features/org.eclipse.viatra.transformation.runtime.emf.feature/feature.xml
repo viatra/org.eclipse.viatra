@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.viatra.integration.mwe2.feature"
-      label="VIATRA EMF MWE2 Integration"
+      id="org.eclipse.viatra.transformation.runtime.emf.feature"
+      label="VIATRA EMF Engine"
       version="0.9.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
    <description url="http://www.example.com/description">
-      VIATRA EMF MWE2 Integration
+      VIATRA EMF Support
    </description>
 
    <requires>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="0.9.0.qualifier"/>
+      <import feature="org.eclipse.viatra.query.runtime.feature" version="0.0.0"/>
    </requires>
 
    <plugin
-         id="org.eclipse.viatra.integration.mwe2"
+         id="org.eclipse.viatra.transformation.runtime.emf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.transformation.evm"
          download-size="0"
          install-size="0"
          version="0.0.0"

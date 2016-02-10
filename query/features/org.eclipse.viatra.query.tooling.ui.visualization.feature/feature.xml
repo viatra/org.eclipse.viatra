@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.viatra.query.tooling.ui.visualization.feature"
+      label="EMF-IncQuery Rete Visualization (Incubation)"
+      version="0.12.0.qualifier"
+      provider-name="The Eclipse EMF-IncQuery Project"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
+
+   <description>
+      EMF-IncQuery Visualization Features. Requires the GEF4 version of Zest.
+   </description>
+
+   <url>
+      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
+      <discovery label="GEF4 Update site" url="http://download.eclipse.org/tools/gef/gef4/updates/integration"/>
+   </url>
+
+   <requires>
+      <import feature="org.eclipse.gef4.zest.sdk" version="0.1.0.201406280202" match="perfect"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.viatra.query.tooling.ui.retevis"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.query.tooling.localsearch.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

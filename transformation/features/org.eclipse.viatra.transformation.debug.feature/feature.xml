@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.viatra.integration.mwe2.feature"
-      label="VIATRA EMF MWE2 Integration"
+      id="org.eclipse.viatra.transformation.debug.feature"
+      label="VIATRA EMF Debugger"
       version="0.9.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
    <description url="http://www.example.com/description">
-      VIATRA EMF MWE2 Integration
+      VIATRA EMF Debugger Support
    </description>
 
    <requires>
@@ -16,7 +16,21 @@
    </requires>
 
    <plugin
-         id="org.eclipse.viatra.integration.mwe2"
+         id="org.eclipse.viatra.query.tooling.debug"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.transformation.debug"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.transformation.debug.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

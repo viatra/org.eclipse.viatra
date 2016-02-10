@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.viatra.query.sdk.feature"
+      label="%label"
+      version="1.2.0.qualifier"
+      provider-name="The Eclipse EMF-IncQuery Project"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
+
+   <description>
+      EMF-IncQuery tooling support: editor, code generation, etc.
+   </description>
+
+   <url>
+      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
+   </url>
+
+   <includes
+         id="org.eclipse.viatra.addon.databinding.runtime.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.viatra.transformation.evm.transactions.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.viatra.transformation.runtime.emf.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.viatra.query.runtime.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.viatra.query.runtime.generic.feature"
+         version="0.0.0"/>
+
+   <requires>
+      <import feature="org.eclipse.jdt"/>
+      <import feature="org.eclipse.pde"/>
+      <import feature="org.eclipse.xtext.ui" version="2.9.0" match="compatible"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.viatra.addon.querybasedfeatures.tooling"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.addon.validation.tooling"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.addon.viewers.tooling.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.query.tooling.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.query.tooling.debug"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.query.tooling.generator.model"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.query.tooling.generator.model.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.query.tooling.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.query.patternlanguage.emf.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.query.patternlanguage.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

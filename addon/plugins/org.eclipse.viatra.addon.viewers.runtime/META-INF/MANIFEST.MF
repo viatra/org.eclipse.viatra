@@ -21,8 +21,7 @@ Export-Package: org.eclipse.viatra.addon.viewers.runtime,
  org.eclipse.viatra.addon.viewers.runtime.specifications,
  org.eclipse.viatra.addon.viewers.runtime.util,
  org.eclipse.viatra.addon.viewers.runtime.validators
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.viatra.query.runtime,
  org.eclipse.viatra.query.runtime.matchers,
@@ -30,7 +29,8 @@ Require-Bundle: org.eclipse.ui,
  com.google.guava,
  com.google.inject,
  org.eclipse.viatra.transformation.evm,
- org.eclipse.viatra.transformation.views
+ org.eclipse.viatra.transformation.views,
+ org.eclipse.ui;resolution:=optional
 Import-Package: org.apache.log4j;version="1.2.15",
  org.eclipse.viatra.transformation.views.core,
  org.eclipse.viatra.transformation.views.traceablilty.generic

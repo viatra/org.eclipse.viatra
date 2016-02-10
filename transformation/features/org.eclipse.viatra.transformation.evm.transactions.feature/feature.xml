@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.eclipse.viatra.transformation.evm.transactions.feature"
+      label="EMF-IncQuery EVM Support for EMF Transactions"
+      version="1.2.0.qualifier"
+      provider-name="The Eclipse EMF-IncQuery Project"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
+
+   <description>
+      EMF-IncQuery EVM addon with EMF Transactions support.
+   </description>
+
+   <url>
+      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/release"/>
+   </url>
+
+   <requires>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="0.9.0.qualifier"/>
+      <import feature="org.eclipse.emf.transaction" version="1.4.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="org.eclipse.viatra.transformation.evm.transactions"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
