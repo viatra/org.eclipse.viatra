@@ -12,7 +12,7 @@ package org.eclipse.viatra.transformation.debug;
 
 import java.util.List;
 
-import org.eclipse.viatra.emf.runtime.adapter.impl.AbstractTransformationAdapter;
+import org.eclipse.viatra.transformation.debug.adapter.impl.AbstractTransformationAdapter;
 import org.eclipse.viatra.transformation.debug.breakpoints.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.breakpoints.impl.TransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.controller.IDebugController;

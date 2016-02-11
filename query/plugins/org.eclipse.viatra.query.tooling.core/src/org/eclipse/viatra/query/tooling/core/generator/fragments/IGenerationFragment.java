@@ -13,7 +13,7 @@ package org.eclipse.viatra.query.tooling.core.generator.fragments;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.incquery.tooling.core.generator.ExtensionGenerator;
+import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.xtext.generator.IFileSystemAccess;

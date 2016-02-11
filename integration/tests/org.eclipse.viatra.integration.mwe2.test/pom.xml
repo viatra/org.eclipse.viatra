@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>org.eclipse.viatra.parent</artifactId>
-		<groupId>org.eclipse.viatra</groupId>
-		<version>1.2.0-SNAPSHOT</version>
-		<relativePath>../../releng/org.eclipse.viatra.parent/pom.xml</relativePath>
-	</parent>
+<parent>
+        <artifactId>org.eclipse.viatra.parent.all</artifactId>
+        <groupId>org.eclipse.viatra</groupId>
+        <version>1.2.0-SNAPSHOT</version>
+        <relativePath>../../../releng/org.eclipse.viatra.parent.all/pom.xml</relativePath>
+    </parent>
 	<artifactId>org.eclipse.viatra.integration.mwe2.test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
@@ -23,10 +23,6 @@
 					<filesets>
 						<fileset>
 							<directory>xtend-gen</directory>
-							<excludes>
-								<exclude>keep.txt</exclude>
-								<exclude>.keep.txt</exclude>
-							</excludes>
 						</fileset>
 					</filesets>
 				</configuration>
@@ -58,4 +54,5 @@
 			</plugin>
 		</plugins>
 	</build>
+	<version>0.12.0-SNAPSHOT</version>
 </project>

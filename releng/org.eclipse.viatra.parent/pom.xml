@@ -9,28 +9,8 @@
 	<url>http://eclipse.org/viatra</url>
 	<version>1.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<modules>
-	    <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.generator</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.emf</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.runtime</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.runtime.matchers</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.runtime.base</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.runtime.base.itc</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.runtime.localsearch</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.runtime.rete</module>
-        <module>../../query/plugins/org.eclipse.viatra.query.runtime.rete.recipes</module>
-        <module>../../transformation/plugins/org.eclipse.viatra.transformation.evm</module>
-		<module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.emf</module>
-        <module>../../addon/plugins/org.eclipse.viatra.addon.validation.core</module>
-        <module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.runtime</module>
-        <module>../../integration/plugins/org.eclipse.viatra.integration.uml</module>
-        <!--<module>../../plugins/org.eclipse.viatra.emf.mwe2integration</module>-->
-		<module>../../releng/org.eclipse.viatra.target</module>
-	</modules>
 	<properties>
 		<tycho.version>0.22.0</tycho.version>
-		<tycho.extras.version>${tycho.version}</tycho.extras.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
 		<tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/viatra/org.eclipse.viatra.git</tycho.scmUrl>
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=viatra</eclipse.bugzillaUrl>
@@ -39,17 +19,11 @@
 		<jacoco.version>0.6.3.201306030806</jacoco.version>
 		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
 		<xtend.compiler.version>2.9.0</xtend.compiler.version>
-		<incquery.repository.url>http://download.eclipse.org/incquery/updates-extra/integration</incquery.repository.url>
-		<incquery.compiler.version>1.2.0-SNAPSHOT</incquery.compiler.version>
 		<java.version>1.7</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-		<target.platform.version>${project.version}</target.platform.version>
-		<!-- Sonar -->
-		<sonar.version>3.6</sonar.version>
-		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
+		<viatra.main.version>1.2.0-SNAPSHOT</viatra.main.version>
+		<viatra.incubation.version>0.12.0-SNAPSHOT</viatra.incubation.version>
 	</properties>
 	<build>
 		<plugins>
@@ -58,22 +32,6 @@
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-					<resolver>p2</resolver>
-					<target>
-						<artifact>
-							<groupId>org.eclipse.viatra</groupId>
-							<artifactId>org.eclipse.viatra.target</artifactId>
-							<version>${target.platform.version}</version>
-						</artifact>
-					</target>
-					<ignoreTychoRepositories>true</ignoreTychoRepositories>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -101,7 +59,7 @@
 					<dependency>
 						<groupId>org.eclipse.tycho.extras</groupId>
 						<artifactId>tycho-sourceref-jgit</artifactId>
-						<version>${tycho.extras.version}</version>
+						<version>${tycho.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -177,72 +135,20 @@
 		<repository>
 			<id>repo.eclipse.org</id>
 			<name>VIATRA Project Repository - Releases</name>
-			<url>https://repo.eclipse.org/content/repositories/viatra2-releases/</url>
+			<url>https://repo.eclipse.org/content/repositories/viatra-releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>repo.eclipse.org</id>
 			<name>VIATRA Project Repository - Snapshots</name>
-			<url>https://repo.eclipse.org/content/repositories/viatra2-snapshots/</url>
+			<url>https://repo.eclipse.org/content/repositories/viatra-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-	<!-- <profiles>
-		<profile>
-			<id>eclipse_tooling</id>
-			<activation>
-				<property>
-					<name>!maven.runtime</name>
-				</property>
-			</activation>
-			<modules>
-				<module>../../plugins/org.eclipse.viatra.cep.core</module>
-				<module>../../plugins/org.eclipse.viatra.cep.core.metamodels</module>
-				<module>../../plugins/org.eclipse.viatra.cep.emf.notification</module>
-				<module>../../plugins/org.eclipse.viatra.cep.tooling.core</module>
-				<module>../../plugins/org.eclipse.viatra.cep.tooling.ui</module>
-				<module>../../plugins/org.eclipse.viatra.cep.vepl</module>
-				<module>../../plugins/org.eclipse.viatra.cep.vepl.ui</module>
-				<module>../../plugins/org.eclipse.viatra.dse.base</module>
-				<module>../../plugins/org.eclipse.viatra.dse.api</module>
-				<module>../../plugins/org.eclipse.viatra.dse.dependencygraph</module>
-				<module>../../plugins/org.eclipse.viatra.dse.designspace</module>
-				<module>../../plugins/org.eclipse.viatra.dse.designspace.pathfinding</module>
-				<module>../../plugins/org.eclipse.viatra.dse.genetic</module>
-				<module>../../plugins/org.eclipse.viatra.dse.monitor</module>
-				<module>../../plugins/org.eclipse.viatra.emf.mwe2integration.debug</module>
-				<module>../../plugins/org.eclipse.viatra.emf.runtime.debug</module>
-				<module>../../plugins/org.eclipse.viatra.emf.runtime.debug.ui</module>
-				<module>../../plugins/org.eclipse.viatra.emf.runtime.tracer</module>
-				<module>../../tests/org.eclipse.viatra.cep.core.tests.compiler</module>
-				<module>../../tests/org.eclipse.viatra.cep.core.tests.compiler.testdata</module>
-				<module>../../tests/org.eclipse.viatra.cep.vepl.tests</module>
-				<module>../../tests/org.eclipse.viatra.cep.tests.integration</module>
-				<module>../../tests/org.eclipse.viatra.emf.mwe2integration.test</module>
-				<module>../../features/org.eclipse.viatra.emf.runtime.debug.feature</module>
-				<module>../../features/org.eclipse.viatra.emf.runtime.feature</module>
-				<module>../../features/org.eclipse.viatra.emf.mwe2integration.feature</module>
-				<module>../../features/org.eclipse.viatra.cep.feature</module>
-				<module>../../features/org.eclipse.viatra.dse.feature</module>
-				<module>../../releng/org.eclipse.viatra.update</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>maven_runtime</id>
-			<activation>
-				<property>
-					<name>maven.runtime</name>
-				</property>
-			</activation>
-			<modules>
-				<module>../../maven/viatra-emf-runtime</module>
-			</modules>
-		</profile>
-	</profiles> -->
 	<scm>
 		<connection>${tycho.scmUrl}</connection>
 		<url>http://git.eclipse.org/c/viatra/org.eclipse.viatra.git/</url>
 	</scm>
 	<ciManagement>
-		<url>https://hudson.eclipse.org/hudson/</url>
+		<url>https://hudson.eclipse.org/viatra/</url>
 		<system>Hudson</system>
 	</ciManagement>
 	<issueManagement>

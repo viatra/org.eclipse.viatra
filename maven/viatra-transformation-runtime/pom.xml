@@ -2,11 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.eclipse.viatra</groupId>
-		<artifactId>org.eclipse.viatra.parent</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
-		<relativePath>../../releng/org.eclipse.viatra.parent</relativePath>
-	</parent>
+        <artifactId>org.eclipse.viatra.parent.core</artifactId>
+        <groupId>org.eclipse.viatra</groupId>
+        <version>1.2.0-SNAPSHOT</version>
+        <relativePath>../../releng/org.eclipse.viatra.parent.core/pom.xml</relativePath>
+    </parent>
 	<artifactId>viatra-transformation-runtime</artifactId>
 	<name>VIATRA Transformation Runtime</name>
 	<dependencies>
@@ -23,7 +23,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.viatra</groupId>
-			<artifactId>org.eclipse.transformation.evm</artifactId>
+			<artifactId>org.eclipse.viatra.transformation.evm</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>

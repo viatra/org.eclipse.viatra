@@ -4,12 +4,12 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>org.eclipse.viatra.parent</artifactId>
-		<groupId>org.eclipse.viatra</groupId>
-		<version>1.2.0-SNAPSHOT</version>
-		<relativePath>../../../releng/org.eclipse.viatra.parent/pom.xml</relativePath>
-	</parent>
-	<artifactId>org.eclipse.incquery.testing.queries</artifactId>
+        <artifactId>org.eclipse.viatra.parent.all</artifactId>
+        <groupId>org.eclipse.viatra</groupId>
+        <version>1.2.0-SNAPSHOT</version>
+        <relativePath>../../../releng/org.eclipse.viatra.parent.all/pom.xml</relativePath>
+    </parent>
+	<artifactId>org.eclipse.viatra.query.testing.queries</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<build>
 		<plugins>
@@ -27,9 +27,9 @@
 							<filesets>
 								<fileset>
 									<directory>src-gen</directory>
-                                                        		<excludes>
-                                                                		<exclude>.gitignore</exclude>
-                                                        		</excludes>
+									<excludes>
+										<exclude>.gitignore</exclude>
+									</excludes>
 								</fileset>
 							</filesets>
 						</configuration>
@@ -38,7 +38,7 @@
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.viatra</groupId>
-				<artifactId>incquery-maven-plugin</artifactId>
+				<artifactId>viatra-maven-plugin</artifactId>
 				<version>${project.version}</version>
 				<executions>
 					<execution>
@@ -51,14 +51,14 @@
 					<outputDirectory>src-gen</outputDirectory>
 					<metamodels>
 						<metamodel>
-							<packageClass>org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage</packageClass>
+							<packageClass>org.eclipse.viatra.query.testing.snapshot.SnapshotPackage</packageClass>
 						</metamodel>
 					</metamodels>
 				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.eclipse.viatra</groupId>
-						<artifactId>org.eclipse.incquery.snapshot</artifactId>
+						<artifactId>org.eclipse.viatra.query.testing.snapshot</artifactId>
 						<version>${project.version}</version>
 					</dependency>
 				</dependencies>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>org.eclipse.viatra.parent.all</artifactId>
+	<name>VIATRA</name>
+	<url>http://eclipse.org/viatra</url>
+	<packaging>pom</packaging>
+	<modules>
+		<module>../../releng/org.eclipse.viatra.update</module>
+
+		<!-- Query -->
+		<module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.ui</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.emf.ui</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.generator.model</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.generator.model.ui</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.core</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.localsearch.ui</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.retevis</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.debug</module>
+		<module>../../query/tests/org.eclipse.viatra.query.patternlanguage.tests</module>
+		<module>../../query/tests/org.eclipse.viatra.query.patternlanguage.emf.tests</module>
+		<module>../../query/tests/org.eclipse.viatra.query.runtime.tests</module>
+		<module>../../query/tests/org.eclipse.viatra.query.runtime.base.itc.tests</module>
+		<module>../../query/tests/org.eclipse.viatra.query.testing.snapshot</module>
+		<module>../../query/tests/org.eclipse.viatra.query.testing.snapshot.edit</module>
+		<module>../../query/tests/org.eclipse.viatra.query.testing.snapshot.editor</module>
+		<module>../../query/tests/org.eclipse.viatra.query.testing.core</module>
+		<module>../../query/tests/org.eclipse.viatra.query.testing.queries</module>
+		<module>../../query/tests/org.eclipse.viatra.query.testing.ui</module>
+		<module>../../query/features/org.eclipse.viatra.query.testing.sdk.feature</module>
+		<module>../../query/features/org.eclipse.viatra.query.tooling.ui.visualization.feature</module>
+		<module>../../query/features/org.eclipse.viatra.query.sdk.feature</module>
+
+		<!-- Transformations -->
+		<module>../../transformation/plugins/org.eclipse.viatra.transformation.evm.transactions</module>
+		<module>../../transformation/plugins/org.eclipse.viatra.transformation.views</module>
+		<module>../../transformation/plugins/org.eclipse.viatra.transformation.debug</module>
+		<module>../../transformation/plugins/org.eclipse.viatra.transformation.debug.ui</module>
+		<module>../../transformation/plugins/org.eclipse.viatra.transformation.tracer</module>
+		<module>../../transformation/features/org.eclipse.viatra.transformation.evm.transactions.feature</module>
+		<module>../../transformation/features/org.eclipse.viatra.transformation.debug.feature</module>
+
+		<!-- CEP -->
+		<module>../../cep/plugins/org.eclipse.viatra.cep.core</module>
+		<module>../../cep/plugins/org.eclipse.viatra.cep.core.metamodels</module>
+		<module>../../cep/plugins/org.eclipse.viatra.cep.emf.notification</module>
+		<module>../../cep/plugins/org.eclipse.viatra.cep.tooling.core</module>
+		<module>../../cep/plugins/org.eclipse.viatra.cep.tooling.ui</module>
+		<module>../../cep/plugins/org.eclipse.viatra.cep.vepl</module>
+		<module>../../cep/plugins/org.eclipse.viatra.cep.vepl.ui</module>
+		<module>../../cep/tests/org.eclipse.viatra.cep.core.tests.compiler</module>
+		<module>../../cep/tests/org.eclipse.viatra.cep.core.tests.compiler.testdata</module>
+		<module>../../cep/tests/org.eclipse.viatra.cep.vepl.tests</module>
+		<module>../../cep/tests/org.eclipse.viatra.cep.tests.integration</module>
+		<module>../../cep/features/org.eclipse.viatra.cep.feature</module>
+
+		<!-- DSE -->
+		<module>../../dse/plugins/org.eclipse.viatra.dse.base</module>
+		<module>../../dse/plugins/org.eclipse.viatra.dse.api</module>
+		<module>../../dse/plugins/org.eclipse.viatra.dse.dependencygraph</module>
+		<module>../../dse/plugins/org.eclipse.viatra.dse.designspace</module>
+		<module>../../dse/plugins/org.eclipse.viatra.dse.designspace.pathfinding</module>
+		<module>../../dse/plugins/org.eclipse.viatra.dse.genetic</module>
+		<module>../../dse/plugins/org.eclipse.viatra.dse.monitor</module>
+		<module>../../dse/features/org.eclipse.viatra.dse.feature</module>
+
+		<!-- Addons -->
+		<module>../../addon/plugins/org.eclipse.viatra.addon.databinding.runtime</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.runtime</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.querybasedfeatures.tooling</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.core</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.runtime</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.runtime.ui</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.validation.tooling</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.viewers.runtime</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.viewers.runtime.zest</module>
+		<module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui.zest</module>
+		<module>../../addon/features/org.eclipse.viatra.addon.querybasedfeatures.runtime.feature</module>
+		<module>../../addon/features/org.eclipse.viatra.addon.databinding.runtime.feature</module>
+		<module>../../addon/features/org.eclipse.viatra.addon.validation.runtime.feature</module>
+		<module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.feature</module>
+		<module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.zest.feature</module>
+		<module>../../addon/features/org.eclipse.viatra.addon.viewers.tooling.zest.feature</module>
+
+		<!-- Integration -->
+		<module>../../integration/plugins/org.eclipse.viatra.integration.graphiti</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.gmf</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.modisco</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.mwe2</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.mwe2.debug</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.uml</module>
+		<module>../../integration/features/org.eclipse.viatra.integration.modisco.feature</module>
+		<module>../../integration/tests/org.eclipse.viatra.integration.mwe2.test</module>
+		<module>../../integration/tests/org.eclipse.viatra.integration.uml.test</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.xcore.model</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.xcore</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.xcore.modeleditor</module>
+		<module>../../integration/plugins/org.eclipse.viatra.integration.xcore.ui</module>
+		<module>../../integration/features/org.eclipse.viatra.integration.gmf.feature</module>
+		<module>../../integration/features/org.eclipse.viatra.integration.graphiti.feature</module>
+		<module>../../integration/features/org.eclipse.viatra.integration.mwe2.feature</module>
+		<module>../../integration/features/org.eclipse.viatra.integration.uml.feature</module>
+		<module>../../integration/features/org.eclipse.viatra.integration.xcore.feature</module>
+
+	</modules>
+	<parent>
+		<groupId>org.eclipse.viatra</groupId>
+		<artifactId>org.eclipse.viatra.parent</artifactId>
+		<version>1.2.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
+	</parent>
+	<properties>
+		<core.repository.url>file:/${basedir}/../../../releng/org.eclipse.viatra.update.core/target/repository</core.repository.url>
+	</properties>
+	<repositories>
+		<repository>
+			<id>viatra.core</id>
+			<url>${core.repository.url}</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<resolver>p2</resolver>
+					<target>
+						<artifact>
+							<groupId>org.eclipse.viatra</groupId>
+							<artifactId>org.eclipse.viatra.target</artifactId>
+							<version>${viatra.main.version}</version>
+						</artifact>
+					</target>
+					<ignoreTychoRepositories>true</ignoreTychoRepositories>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

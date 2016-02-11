@@ -170,9 +170,9 @@ public class ViewersMultiSandoxViewComponentSettings {
 		private Image contIcon;
 		
 		{
-			itemIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersToolingPlugin.PLUGIN_ID, "icons/item.gif").createImage();
-			edgeIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersToolingPlugin.PLUGIN_ID, "icons/edge.gif").createImage();
-			contIcon = ViewersRuntimePlugin.imageDescriptorFromPlugin(ViewersToolingPlugin.PLUGIN_ID, "icons/containment.gif").createImage();
+			itemIcon = ViewersToolingPlugin.imageDescriptorFromPlugin(ViewersToolingPlugin.PLUGIN_ID, "icons/item.gif").createImage();
+			edgeIcon = ViewersToolingPlugin.imageDescriptorFromPlugin(ViewersToolingPlugin.PLUGIN_ID, "icons/edge.gif").createImage();
+			contIcon = ViewersToolingPlugin.imageDescriptorFromPlugin(ViewersToolingPlugin.PLUGIN_ID, "icons/containment.gif").createImage();
 		}
 		
 		@Override

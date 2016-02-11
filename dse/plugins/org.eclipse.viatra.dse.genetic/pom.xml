@@ -3,11 +3,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>org.eclipse.viatra.parent</artifactId>
-    <groupId>org.eclipse.viatra</groupId>
-    <version>1.2.0-SNAPSHOT</version>
-    <relativePath>../../releng/org.eclipse.viatra.parent/pom.xml</relativePath>
-  </parent>
+        <artifactId>org.eclipse.viatra.parent.all</artifactId>
+        <groupId>org.eclipse.viatra</groupId>
+        <version>1.2.0-SNAPSHOT</version>
+        <relativePath>../../../releng/org.eclipse.viatra.parent.all/pom.xml</relativePath>
+    </parent>
   <artifactId>org.eclipse.viatra.dse.genetic</artifactId>
   <packaging>eclipse-plugin</packaging>
   <build>

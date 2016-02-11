@@ -12,12 +12,12 @@ package org.eclipse.viatra.transformation.debug.configuration
 
 import com.google.common.collect.Lists
 import java.util.List
+import org.eclipse.viatra.transformation.debug.TransformationDebugger
 import org.eclipse.viatra.transformation.debug.adapter.IAdapterConfiguration
 import org.eclipse.viatra.transformation.debug.adapter.ITransformationAdapter
-import org.eclipse.viatra.transformation.debug.TransformationDebugger
 import org.eclipse.viatra.transformation.debug.breakpoints.ITransformationBreakpoint
-import org.eclipse.viatra.transformation.debug.controller.impl.ConsoleDebugger
 import org.eclipse.viatra.transformation.debug.controller.IDebugController
+import org.eclipse.viatra.transformation.debug.controller.impl.ConsoleDebugger
 
 /**
  * Configuration class that defines the debugger.

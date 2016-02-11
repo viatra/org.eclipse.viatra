@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.viatra.emf.runtime.adapter.impl.AbstractTransformationAdapter;
+import org.eclipse.viatra.transformation.debug.adapter.impl.AbstractTransformationAdapter;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSet;

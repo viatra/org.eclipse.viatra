@@ -2,12 +2,6 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension point="org.eclipse.emf.ecore.generated_package">
-      <package
-            uri="http://www.eclipse.org/incquery/snapshot"
-            class="org.eclipse.incquery.snapshot.EIQSnapshot.EIQSnapshotPackage"
-            genModel="model/eiqsnapshot.genmodel"/>
-   </extension>
-   <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated snapshot -->
       <package
             uri="http://www.eclipse.org/viatra/query/snapshot"

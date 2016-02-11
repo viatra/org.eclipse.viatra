@@ -4,11 +4,11 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>org.eclipse.viatra.parent</artifactId>
-		<groupId>org.eclipse.viatra</groupId>
-		<version>1.2.0-SNAPSHOT</version>
-		<relativePath>../../releng/org.eclipse.viatra.parent/pom.xml</relativePath>
-	</parent>
+        <artifactId>org.eclipse.viatra.parent.all</artifactId>
+        <groupId>org.eclipse.viatra</groupId>
+        <version>1.2.0-SNAPSHOT</version>
+        <relativePath>../../../releng/org.eclipse.viatra.parent.all/pom.xml</relativePath>
+    </parent>
 	<artifactId>org.eclipse.viatra.transformation.tracer</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<build>
@@ -56,6 +56,7 @@
 						<dependency>
 							<artifactId>org.eclipse.emf.codegen.ecore</artifactId>
 							<type>eclipse-plugin</type>
+							<version>2.11.0</version>
 						</dependency>
 					</dependencies>
 					<repositories>
@@ -64,6 +65,11 @@
 							<url>http://download.eclipse.org/releases/indigo</url>
 							<layout>p2</layout>
 						</repository>
+						<repository>
+                              <id>emf</id>
+                              <layout>p2</layout>
+                              <url>http://download.eclipse.org/modeling/emf/emf/updates/2.11/</url>
+                        </repository>
 					</repositories>
 				</configuration>
 				<executions>
