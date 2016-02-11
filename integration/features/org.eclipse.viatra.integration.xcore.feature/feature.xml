@@ -17,7 +17,7 @@
 
    <requires>
       <import feature="org.eclipse.emf.ecore.xcore.sdk"/>
-      <import feature="org.eclipse.viatra.query.runtime.generic.feature"/>
+      <import feature="org.eclipse.viatra.query.language.feature"/>
    </requires>
 
    <plugin
