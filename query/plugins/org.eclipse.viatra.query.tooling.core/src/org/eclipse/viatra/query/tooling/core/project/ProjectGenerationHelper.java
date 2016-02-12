@@ -16,8 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -30,6 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleClasspathEntry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
@@ -91,7 +95,26 @@ public abstract class ProjectGenerationHelper {
             return service.newRequiredBundle(input, null, false, false);
         }
     }
-
+    
+    /**
+     * Return true if the given project exists, is open and has PDE plug-in nature configured
+     * @param project
+     * @return
+     */
+    public static boolean isOpenPDEProject(IProject project){
+    	return project.exists() && project.isOpen() && (PDE.hasPluginNature(project));
+    }
+    
+    /**
+     * Checks whether the given project exists, is open and has PDE plug-in nature configured. Throws
+     * an {@link IllegalArgumentException} otherwise.
+     * @param project
+     */
+    public static void checkOpenPDEProject(IProject project){
+    	Preconditions.checkArgument(isOpenPDEProject(project),
+        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+    }
+ 
     /**
      * Two source folders: src to be manually written and src-gen to contain generated code
      */
@@ -245,8 +268,7 @@ public abstract class ProjectGenerationHelper {
      * @throws CoreException
      */
     public static boolean checkBundleDependency(IProject project, String dependency) throws CoreException {
-        Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-                String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+        checkOpenPDEProject(project);
         BundleContext context = null;
         ServiceReference<IBundleProjectService> ref = null;
         try {
@@ -290,6 +312,7 @@ public abstract class ProjectGenerationHelper {
     public static void ensurePackageImports(IProject project, final List<String> packageImports) throws CoreException {
         ensureBundleDependenciesAndPackageImports(project, Collections.<String>emptyList(), packageImports, new NullProgressMonitor());
     }
+    
     /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
@@ -302,8 +325,7 @@ public abstract class ProjectGenerationHelper {
      */
     public static void ensureBundleDependenciesAndPackageImports(IProject project, final List<String> dependencies, final List<String> importPackages,
             IProgressMonitor monitor) throws CoreException {
-        Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
-        		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
+    	checkOpenPDEProject(project);
         if (dependencies.isEmpty() && importPackages.isEmpty()) {
             return;
         }
@@ -329,6 +351,82 @@ public abstract class ProjectGenerationHelper {
     }
 
     /**
+     * Updates the plugin dependency settings of the given project by replacing entries according to the given map. This
+     * method preserves optional and re-export flags, and updates version settings (if was originally set)
+     * 
+     * @param project the project to apply changes on
+     * @param replacedDependencies bundle IDs to replace dependencies
+     * @param versions version ranges to set for the new entries
+     * @param monitor
+     * @throws CoreException
+     */
+    public static void replaceBundledependencies(IProject project, 
+    		final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions, IProgressMonitor monitor) throws CoreException{
+    	checkOpenPDEProject(project);
+    	BundleContext context = null;
+        ServiceReference<IBundleProjectService> ref = null;
+        try {
+            context = ViatraQueryGeneratorPlugin.getContext();
+            ref = context.getServiceReference(IBundleProjectService.class);
+            final IBundleProjectService service = context.getService(ref);
+            IBundleProjectDescription bundleDesc = service.getDescription(project);
+            if (!replacedDependencies.isEmpty()) {
+                replaceBundleDependencies(service, bundleDesc, replacedDependencies, versions);
+            }
+
+            bundleDesc.apply(monitor);
+        } finally {
+            if (context != null && ref != null) {
+                context.ungetService(ref);
+            }
+        }
+    }
+    
+    /**
+     * Updates plugin Manifest file to replace plug-in dependencies according to the given Map
+     * 
+     * @param service
+     * @param bundleDesc
+     * @param replacedDependencies
+     */
+    public static void replaceBundleDependencies(IBundleProjectService service, IBundleProjectDescription bundleDesc, 
+    		final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions){
+    	
+    	IRequiredBundleDescription[] existingDependencies = bundleDesc.getRequiredBundles();
+    	
+    	Set<String> toRemove = new HashSet<String>();
+    	Set<IRequiredBundleDescription> toAdd = new LinkedHashSet<IRequiredBundleDescription>();
+    	
+    	for(IRequiredBundleDescription r : existingDependencies){
+    		String id = r.getName();
+    		String replacedId = replacedDependencies.get(id); 
+    		if (replacedId != null){
+    			VersionRange v = r.getVersionRange();
+    			toRemove.add(id);
+    			if (v != null){
+    				v = versions.get(replacedId);
+    			}
+    			toAdd.add(service.newRequiredBundle(replacedId, v, r.isOptional(), r.isExported()));
+    		}
+    	}
+    	
+    	if (isBeforeKepler()){
+    		// We can't remove existing entries with this API. Just add new entries.
+    		bundleDesc.setRequiredBundles(toAdd.toArray(new IRequiredBundleDescription[toAdd.size()]));
+    	}else{
+    		List<IRequiredBundleDescription> dependencies = new LinkedList<IRequiredBundleDescription>();
+    		for(IRequiredBundleDescription r : existingDependencies){
+    			if (!toRemove.contains(r.getName())){
+    				dependencies.add(r);
+    			}
+    		}
+    		dependencies.addAll(toAdd);
+    		bundleDesc.setRequiredBundles(dependencies.toArray(new IRequiredBundleDescription[dependencies.size()]));
+    	}
+    }
+    
+    
+    /**
      * Updates project manifest to ensure the selected bundle dependencies are set. Does not change existing
      * dependencies.
      *
@@ -352,15 +450,29 @@ public abstract class ProjectGenerationHelper {
         List<IRequiredBundleDescription> missingDependencies = Lists.transform(missingDependencyNames, new IDToRequireBundleTransformer(service));
 
         // XXX for compatibility two different versions are needed
-        final Version pdeVersion = Platform.getBundle("org.eclipse.pde.core").getVersion();
         Iterable<IRequiredBundleDescription> dependenciesToSet =
-            pdeVersion.compareTo(new Version(3, 9, 0)) < 0 ?
+            isBeforeKepler() ?
             // Before Kepler setRequiredBundles only adds dependencies, does not remove
             missingDependencies :
             // Since Kepler setRequiredBundles overwrites existing dependencies
             Iterables.concat(missingDependencies, Arrays.asList(existingDependencies));
 
         bundleDesc.setRequiredBundles(Iterables.toArray(dependenciesToSet, IRequiredBundleDescription.class));
+    }
+    
+    private static Boolean isBeforeKeplerValue = null;
+    
+    /**
+     * Detect whether the running eclipse is older than Kepler. This is required for some cases
+     * as there were incompatible functional changes in the PDE API.
+     * @return True if the actual runtime context is older than eclipse Kepler release
+     */
+    private static boolean isBeforeKepler(){
+    	if (isBeforeKeplerValue == null){
+    		final Version pdeVersion = Platform.getBundle("org.eclipse.pde.core").getVersion();
+    		isBeforeKeplerValue = pdeVersion.compareTo(new Version(3, 9, 0)) < 0;
+    	}
+    	return isBeforeKeplerValue;
     }
     
     /**
