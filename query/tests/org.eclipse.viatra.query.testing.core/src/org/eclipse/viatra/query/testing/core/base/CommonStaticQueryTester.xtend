@@ -13,9 +13,10 @@ import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
 import static org.junit.Assert.*
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.testing.core.api.ViatraQueryTest
 
 /**
- * @deprecated use EIQTest api instead
+ * @deprecated use {@link ViatraQueryTest} API instead
  */
 @Deprecated
 abstract class CommonStaticQueryTester {

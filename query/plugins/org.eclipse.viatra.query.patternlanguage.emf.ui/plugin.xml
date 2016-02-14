@@ -9,7 +9,7 @@
               class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
               contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
               default="true"
-              extensions="eiq"
+              extensions="vql"
               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
               id="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage"
               matchingStrategy="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.editor.JavaEditorInputMatcher"
@@ -215,13 +215,13 @@
 		point="org.eclipse.emf.ecore.extension_parser">
 		<parser
 			class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
-			type="eiq">
+			type="vql">
 		</parser>
 	</extension>
 	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
         <resourceServiceProvider
             class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
-            uriExtension="eiq">
+            uriExtension="vql">
         </resourceServiceProvider>
     </extension>
 
@@ -512,7 +512,7 @@
          point="org.eclipse.xtext.builder.participant">
       <participant
             class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
-            fileExtensions="eiq"
+            fileExtensions="vql"
             >
       </participant>
    </extension>
@@ -565,24 +565,24 @@
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.compare.contentViewers"
             class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="eiq">
+            extensions="vql">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
     <viewer id="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.compare.contentMergeViewers"
             class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="eiq" label="VIATRA Query Compare">
+            extensions="vql" label="VIATRA Query Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
     <provider id="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage.editors.documentProviders"
             class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-            extensions="eiq">
+            extensions="vql">
     </provider>
   </extension>
   <extension point="org.eclipse.team.core.fileTypes">
     <fileTypes
-            extension="eiq"
+            extension="vql"
             type="text">
     </fileTypes>
   </extension>

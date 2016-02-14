@@ -18,35 +18,35 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
-import org.eclipse.viatra.query.testing.core.EIQTestCase
 import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.SnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.testing.core.ViatraQueryTestCase
 
 /**
  * This class defines an API to easily construct test cases. The base conception is to provide
  * a set of match set sources (from a snapshot or from the execution of a pattern) and make assertions
  * on them being equal.
  */
-class EIQTest {
+class ViatraQueryTest {
 
-	val EIQTestCase testCase;
+	val ViatraQueryTestCase testCase;
 
 	/**
 	 * Test the specified query
 	 */
 	static def <Match extends IPatternMatch> test(IQuerySpecification<? extends ViatraQueryMatcher<Match>> pattern) {
-		new EIQTest().and(pattern)
+		new ViatraQueryTest().and(pattern)
 	}
 
 	static def test(IQueryGroup patterns) {
-		new EIQTest().and(patterns)
+		new ViatraQueryTest().and(patterns)
 	}
 
 	static def test() {
-		new EIQTest
+		new ViatraQueryTest
 	}
 
 	/**
@@ -77,7 +77,7 @@ class EIQTest {
 	private val List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList;
 
 	private new() {
-		testCase = new EIQTestCase
+		testCase = new ViatraQueryTestCase
 	}
 
 	private new(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {

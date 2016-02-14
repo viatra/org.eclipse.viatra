@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -21,6 +22,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.common.util.URI;
@@ -45,137 +47,161 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
- * Helper class for updating EMF-IncQuery project to current versions. Currently supported migration paths:
+ * Helper class for updating EMF-IncQuery project to current versions. Currently
+ * supported migration paths:
  *
  * <ul>
- *   <li>0.6.x -> 0.8</li>
- *   <li>0.7.x -> 0.8</li>
+ * <li>0.6.x -> 0.8</li>
+ * <li>0.7.x -> 0.8</li>
  * </ul>
+ * 
  * @author Zoltan Ujhelyi
  *
  */
 class NatureUpdaterJob extends Job {
 
-    private IProject project;
-    @Inject
-    private IResourceDescriptions index;
+	private IProject project;
+	@Inject
+	private IResourceDescriptions index;
 
-    public NatureUpdaterJob(IProject project) {
-        super(String.format("Updating project %s", project.getName()));
-        this.project = project;
+	public NatureUpdaterJob(IProject project) {
+		super(String.format("Updating project %s", project.getName()));
+		this.project = project;
+	}
+
+	/**
+	 * This method checks for an earlier IncQuery builder entry, and updates it
+	 * to the current version. See bug
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=404952 for details.
+	 */
+	private void repairErroneousBuilderEntry(IProject project) throws CoreException {
+		IProjectDescription desc = project.getDescription();
+		ICommand[] commands = desc.getBuildSpec();
+		for (int i = 0; i < commands.length; i++) {
+
+			if (ProjectNatureUpdater.isIncorrectBuilderID(commands[i].getBuilderName())) {
+				commands[i].setBuilderName(ViatraQueryNature.BUILDER_ID);
+			}
+		}
+		desc.setBuildSpec(commands);
+		project.setDescription(desc, null);
+	}
+
+	private void reorderBuilderEntries(IProject project) throws CoreException {
+		IProjectDescription desc = project.getDescription();
+		ICommand[] commands = desc.getBuildSpec();
+
+		// Lookup the IncQuery-related command indixii
+		int xtextIndex = -1;
+		ICommand xtextCommand = null;
+		int iqIndex = -1;
+		ICommand iqCommand = null;
+		int commandListSize = commands.length;
+		for (int i = 0; i < commandListSize; i++) {
+			String id = commands[i].getBuilderName();
+			if (ViatraQueryNature.BUILDER_ID.equals(id)) {
+				iqIndex = i;
+				iqCommand = commands[i];
+			} else if (XtextProjectHelper.BUILDER_ID.equals(id)) {
+				xtextIndex = i;
+				xtextCommand = commands[i];
+			}
+		}
+
+		// Preparing reordered array
+		if (iqIndex < 0) {
+			commandListSize++;
+			iqCommand = desc.newCommand();
+			iqCommand.setBuilderName(ViatraQueryNature.BUILDER_ID);
+		}
+		if (xtextIndex < 0) {
+			commandListSize++;
+			xtextCommand = desc.newCommand();
+			xtextCommand.setBuilderName(XtextProjectHelper.BUILDER_ID);
+		}
+		ICommand[] newCommands = new ICommand[commandListSize];
+		newCommands[0] = iqCommand;
+		newCommands[1] = xtextCommand;
+
+		int commandIndex = 2;
+		for (int i = 0; i < commands.length; i++) {
+			if (i != xtextIndex && i != iqIndex) {
+				newCommands[commandIndex] = commands[i];
+				commandIndex++;
+			}
+		}
+		desc.setBuildSpec(newCommands);
+		project.setDescription(desc, null);
+	}
+
+	private void renamePatternDefinitionFiles(IProject project) throws CoreException {
+    	final IProgressMonitor monitor = new NullProgressMonitor();
+    	project.accept(new IResourceVisitor() {
+			
+			@Override
+			public boolean visit(IResource resource) throws CoreException {
+				if (resource instanceof IFile && "eiq".equals(resource.getFileExtension())) {
+					((IFile)resource).move(resource.getFullPath().removeFileExtension().addFileExtension("vql"), false, monitor);
+				}
+				return true;
+			}
+		});
     }
 
-    /**
-     * This method checks for an earlier IncQuery builder entry, and updates it to the current version. See bug
-     * https://bugs.eclipse.org/bugs/show_bug.cgi?id=404952 for details.
-     */
-    private void repairErroneousBuilderEntry(IProject project) throws CoreException {
-        IProjectDescription desc = project.getDescription();
-        ICommand[] commands = desc.getBuildSpec();
-        for (int i = 0; i < commands.length; i++) {
-        	
-            if (ProjectNatureUpdater.isIncorrectBuilderID(commands[i].getBuilderName())) {
-                commands[i].setBuilderName(ViatraQueryNature.BUILDER_ID);
-            }
-        }
-        desc.setBuildSpec(commands);
-        project.setDescription(desc, null);
-    }
+	private void removeGlobalEiq(IProject project) throws CoreException {
+		final IResource globalEiqFile = project.findMember(ProjectNatureUpdater.GLOBAL_EIQ_PATH);
+		if (globalEiqFile != null) {
+			final IProgressMonitor monitor = new NullProgressMonitor();
+			final IContainer parent = globalEiqFile.getParent();
+			globalEiqFile.delete(true, monitor);
+			if (parent.members().length == 0) {
+				parent.delete(true, monitor);
+			}
+		}
+	}
 
-    private void reorderBuilderEntries(IProject project) throws CoreException {
-        IProjectDescription desc = project.getDescription();
-        ICommand[] commands = desc.getBuildSpec();
+	public void removeExpressionExtensions(IProject project) throws CoreException {
+		final IJavaProject javaProject = JavaCore.create(project);
+		final List<Pair<String, String>> removableExtensions = Lists.newArrayList();
+		project.accept(new IResourceVisitor() {
 
-        //Lookup the IncQuery-related command indixii
-        int xtextIndex = -1;
-        ICommand xtextCommand = null; 
-        int iqIndex = -1;
-        ICommand iqCommand = null;
-        int commandListSize = commands.length;
-        for (int i = 0; i < commandListSize; i++) {
-            String id = commands[i].getBuilderName();
-            if (ViatraQueryNature.BUILDER_ID.equals(id)) {
-                iqIndex = i;
-                iqCommand = commands[i];
-            } else if (XtextProjectHelper.BUILDER_ID.equals(id)) {
-                xtextIndex = i;
-                xtextCommand = commands[i];
-            }
-        }
+			@Override
+			public boolean visit(IResource resource) throws CoreException {
+				if (resource instanceof IContainer) {
+					final IJavaElement element = JavaCore.create(resource, javaProject);
+					return element != null;
+				} else if ("eiq".equals(resource.getFileExtension())) {
+					final IResourceDescription desc = index.getResourceDescription(
+							URI.createPlatformResourceURI(resource.getFullPath().toString(), true));
+					if (desc != null) {
+						final Iterable<Pair<String, String>> extensionHeaders = Iterables.transform(
+								desc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN),
+								new Function<IEObjectDescription, Pair<String, String>>() {
 
-        //Preparing reordered array
-        if (iqIndex < 0) {
-            commandListSize++;
-            iqCommand = desc.newCommand();
-            iqCommand.setBuilderName(ViatraQueryNature.BUILDER_ID);
-        }
-        if (xtextIndex < 0) {
-            commandListSize++;
-            xtextCommand = desc.newCommand();
-            xtextCommand.setBuilderName(XtextProjectHelper.BUILDER_ID);
-        }
-        ICommand[] newCommands = new ICommand[commandListSize];
-        newCommands[0] = iqCommand;
-        newCommands[1] = xtextCommand;
+							@Override
+							public Pair<String, String> apply(IEObjectDescription desc) {
+								return new Pair<String, String>(desc.getQualifiedName().toString(),
+										ProjectNatureUpdater.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID);
+							}
+						});
+						removableExtensions.addAll(Lists.newArrayList(extensionHeaders));
+					}
+				}
+				return false;
+			}
+		});
+		ProjectGenerationHelper.removeAllExtension(project, removableExtensions);
+	}
 
-        int commandIndex = 2;
-        for (int i = 0; i < commands.length; i++) {
-            if (i != xtextIndex && i != iqIndex) {
-                newCommands[commandIndex] = commands[i];
-                commandIndex++;
-            }
-        }
-        desc.setBuildSpec(newCommands);
-        project.setDescription(desc, null);
-    }
+	@Override
+	protected IStatus run(IProgressMonitor monitor) {
+		try {
+			repairErroneousBuilderEntry(project);
+			reorderBuilderEntries(project);
 
-    private void removeGlobalEiq(IProject project) throws CoreException {
-        final IResource globalEiqFile = project.findMember(ProjectNatureUpdater.GLOBAL_EIQ_PATH);
-        if (globalEiqFile != null) {
-            final IContainer parent = globalEiqFile.getParent();
-            globalEiqFile.delete(true, null);
-            if (parent.members().length == 0) {
-                parent.delete(true, null);
-            }
-        }
-    }
-
-    public void removeExpressionExtensions(IProject project) throws CoreException {
-        final IJavaProject javaProject = JavaCore.create(project);
-        final List<Pair<String, String>> removableExtensions = Lists.newArrayList();
-        project.accept(new IResourceVisitor() {
-
-            @Override
-            public boolean visit(IResource resource) throws CoreException {
-                if (resource instanceof IContainer) {
-                    final IJavaElement element = JavaCore.create(resource, javaProject);
-                    return element != null;
-                } else if ("eiq".equals(resource.getFileExtension())) {
-                    final IResourceDescription desc = index.getResourceDescription(URI.createPlatformResourceURI(resource.getFullPath().toString(), true));
-                    final Iterable<Pair<String, String>> extensionHeaders = Iterables.transform(desc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN), new Function<IEObjectDescription, Pair<String, String>>() {
-
-                        @Override
-                        public Pair<String, String> apply(IEObjectDescription desc) {
-                            return new Pair<String, String>(desc.getQualifiedName().toString(), ProjectNatureUpdater.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID);
-                        }
-                    });
-                    removableExtensions.addAll(Lists.newArrayList(extensionHeaders));
-                }
-                return false;
-            }
-        });
-        ProjectGenerationHelper.removeAllExtension(project, removableExtensions);
-    }
-
-    @Override
-    protected IStatus run(IProgressMonitor monitor) {
-        try {
-            repairErroneousBuilderEntry(project);
-            reorderBuilderEntries(project);
-
-            final ImmutableList<String> newIDs = project.hasNature(ViatraQueryNature.NATURE_ID) ? ImmutableList
-                    .<String> of() : ImmutableList.of(ViatraQueryNature.NATURE_ID);
-            Builder<String> builder = ImmutableList.<String>builder(); 
+			final ImmutableList<String> newIDs = project.hasNature(ViatraQueryNature.NATURE_ID)
+					? ImmutableList.<String> of() : ImmutableList.of(ViatraQueryNature.NATURE_ID);
+			Builder<String> builder = ImmutableList.<String> builder();
 			for (String ID : ProjectNatureUpdater.INCORRECT_NATURE_IDS) {
 				if (project.hasNature(ID)) {
 					builder.add(ID);
@@ -183,18 +209,18 @@ class NatureUpdaterJob extends Job {
 			}
 
 			final ImmutableList<String> oldIDs = builder.build();
-            
-            if (newIDs.size() + oldIDs.size() > 0) {
-                ProjectGenerationHelper.updateNatures(project, newIDs, oldIDs, monitor);
-            }
 
-            removeGlobalEiq(project);
-            removeExpressionExtensions(project);
-            ProjectGenerationHelper.ensurePackageImports(project, ImmutableList.<String>of("org.apache.log4j"));
-        } catch (CoreException e) {
-            return new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, "Error updating project natures", e);
-        }
-        return Status.OK_STATUS;
-    }
+			if (newIDs.size() + oldIDs.size() > 0) {
+				ProjectGenerationHelper.updateNatures(project, newIDs, oldIDs, monitor);
+			}
+			removeGlobalEiq(project);
+			removeExpressionExtensions(project);
+			renamePatternDefinitionFiles(project);
+			ProjectGenerationHelper.ensurePackageImports(project, ImmutableList.<String> of("org.apache.log4j"));
+		} catch (CoreException e) {
+			return new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, "Error updating project natures", e);
+		}
+		return Status.OK_STATUS;
+	}
 
 }

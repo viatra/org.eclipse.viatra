@@ -27,7 +27,7 @@ import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.util.IAcceptor;
 
 /**
- * Custom strategy for computing ResourceDescription for eiq resources. Adds user data for Pattern EObjectDescription
+ * Custom strategy for computing ResourceDescription for patttern language resources. Adds user data for Pattern EObjectDescription
  * about private modifier.
  *
  * @author Mark Czotter

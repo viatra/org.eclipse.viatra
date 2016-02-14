@@ -51,7 +51,7 @@ class EMFEngineContext implements IEngineContext {
     private NavigationHelper getNavHelper(boolean ensureInitialized) throws IncQueryException {
         if (navHelper == null) {
             try {
-                // sync to avoid crazy compiler reordering which would matter if derived features use eIQ and call this
+                // sync to avoid crazy compiler reordering which would matter if derived features use VIATRA and call this
                 // reentrantly
                 synchronized (this) {
                     navHelper = IncQueryBaseFactory.getInstance().createNavigationHelper(null, this.emfScope.getOptions(),

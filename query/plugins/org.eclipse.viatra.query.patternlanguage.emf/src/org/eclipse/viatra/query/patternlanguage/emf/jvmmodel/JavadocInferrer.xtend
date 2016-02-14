@@ -211,10 +211,10 @@ class JavadocInferrer {
 	'''
 
 	def javadocGroupClass(PatternModel model) '''
-		A pattern group formed of all patterns defined in «model.modelFileName».eiq.
+		A pattern group formed of all patterns defined in «model.modelFileName».vql.
 
 		<p>Use the static instance as any {@link org.eclipse.viatra.query.runtime.api.IPatternGroup}, to conveniently prepare
-		an EMF-IncQuery engine for matching all patterns originally defined in file «model.modelFileName».eiq,
+		an EMF-IncQuery engine for matching all patterns originally defined in file «model.modelFileName».vql,
 		in order to achieve better performance than one-by-one on-demand matcher initialization.
 
 		<p> From package «model.packageName», the group contains the definition of the following patterns: <ul>

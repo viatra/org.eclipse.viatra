@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 /** 
  * @author Grill Balázs
  */
-class EIQTestCase {
+class ViatraQueryTestCase {
 
 	public static val String UNEXPECTED_MATCH = "Unexpected match"
 	public static val String EXPECTED_NOT_FOUND = "Expected match not found"

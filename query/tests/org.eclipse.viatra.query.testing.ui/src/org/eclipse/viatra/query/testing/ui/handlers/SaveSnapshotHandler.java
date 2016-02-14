@@ -116,18 +116,18 @@ public class SaveSnapshotHandler extends AbstractHandler {
 		IncQuerySnapshot snapshot = null;
 			
 		if(files.length == 0) {
-			snapshotFile = WorkspaceResourceDialog.openNewFile(HandlerUtil.getActiveShell(event), "New snapshot", "Select EMF-IncQuery snapshot target file (.eiqsnapshot extension)", null, null);
+			snapshotFile = WorkspaceResourceDialog.openNewFile(HandlerUtil.getActiveShell(event), "New snapshot", "Select EMF-IncQuery snapshot target file (.snapshot extension)", null, null);
 			if(snapshotFile != null && !snapshotFile.exists()) {
 				snapshot = SnapshotFactory.eINSTANCE.createIncQuerySnapshot();
 				Resource res = resourceSet.createResource(URI.createPlatformResourceURI(snapshotFile.getFullPath().toString(),true));
 				res.getContents().add(snapshot);
 			} else {
-				logger.error("Selected file name must use .eiqsnapshot extension!");
+				logger.error("Selected file name must use .snapshot extension!");
 				return;
 			}
 		} else {
 			snapshotFile = files[0];
-			if(snapshotFile != null && snapshotFile.getFileExtension().equals("eiqsnapshot")) {
+			if(snapshotFile != null && snapshotFile.getFileExtension().equals("snapshot")) {
 			
 				snapshot = loader.loadExpectedResultsFromFile(resourceSet,snapshotFile);
 				
@@ -140,7 +140,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 					return;
 				}
 			} else {
-				logger.error("Selected file not .eiqsnapshot!");
+				logger.error("Selected file not .snapshot!");
 				return;
 			}
 		} 
