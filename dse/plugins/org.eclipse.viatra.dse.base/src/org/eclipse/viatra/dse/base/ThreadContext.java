@@ -29,7 +29,7 @@ import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
@@ -48,7 +48,7 @@ public class ThreadContext {
     private final IStrategy strategy;
     private ExplorerThread explorerThread;
     private RuleEngine ruleEngine;
-    private IncQueryEngine incqueryEngine;
+    private ViatraQueryEngine queryEngine;
     private EditingDomain domain;
     private EObject modelRoot;
     private DesignSpaceManager designSpaceManager;
@@ -93,7 +93,7 @@ public class ThreadContext {
     }
 
     /**
-     * Initializes the {@link ThreadContext} by initializing the underlying {@link IncQueryEngine} and
+     * Initializes the {@link ThreadContext} by initializing the underlying {@link ViatraQueryEngine} and
      * {@link RuleEngine}. {@link Guidance} initialization is also happening within this method.
      * 
      * @throws IncQueryException
@@ -121,15 +121,15 @@ public class ThreadContext {
         checkArgument(modelRoot != null, "Cannot initialize ThreadContext on a null model.");
 
         try {
-            // initialize IQEngine
+            // initialize query engine
             final EMFScope scope = new EMFScope(modelRoot);
-            incqueryEngine = IncQueryEngine.on(scope);
+            queryEngine = ViatraQueryEngine.on(scope);
         } catch (IncQueryException e) {
-            throw new DSEException("Failed to create unmanaged IncQueryEngine on the model.", e);
+            throw new DSEException("Failed to create unmanaged ViatraQueryEngine on the model.", e);
         }
 
         // initialize RuleEngine
-        ruleEngine = RuleEngines.createIncQueryRuleEngine(incqueryEngine);
+        ruleEngine = RuleEngines.createIncQueryRuleEngine(queryEngine);
 
         ChangeCommand addRuleCommand = new ChangeCommand(modelRoot) {
             @Override
@@ -169,7 +169,7 @@ public class ThreadContext {
         }
         // create the thread specific DesignSpaceManager
         designSpaceManager = new DesignSpaceManager(this, modelRoot, domain, globalContext.getStateCoderFactory(),
-                globalContext.getDesignSpace(), trajectoryInfo, ruleEngine, incqueryEngine);
+                globalContext.getDesignSpace(), trajectoryInfo, ruleEngine, queryEngine);
 
         // if there is a guidance registered, hook this thread's
         // ApplicationVectorUpdater
@@ -250,8 +250,8 @@ public class ThreadContext {
         return modelRoot;
     }
 
-    public IncQueryEngine getIncqueryEngine() {
-        return incqueryEngine;
+    public ViatraQueryEngine getQueryEngine() {
+        return queryEngine;
     }
 
     public Guidance getGuidance() {

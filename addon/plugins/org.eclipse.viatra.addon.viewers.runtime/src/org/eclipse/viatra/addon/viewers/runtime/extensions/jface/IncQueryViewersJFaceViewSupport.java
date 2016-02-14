@@ -29,7 +29,7 @@ import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfi
 import org.eclipse.viatra.addon.viewers.runtime.model.IncQueryViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -69,7 +69,7 @@ public class IncQueryViewersJFaceViewSupport extends IncQueryViewersViewSupport 
 		if (state!=null && !state.isDisposed()) {
     		state.dispose();
     	}
-		IncQueryEngine engine = getEngine();
+		ViatraQueryEngine engine = getEngine();
 		if (engine!=null) {
 			this.configuration.setModel(engine.getEMFRoot());
 			state = IncQueryViewerDataModel.newViewerState(

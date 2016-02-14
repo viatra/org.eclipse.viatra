@@ -16,7 +16,7 @@ import java.util.Collection;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.views.traceability.patterns.util.Trace2targetQuerySpecification;
 
@@ -70,7 +70,7 @@ public class TraceabilityUtil {
 
     /**
      * Detaches the {@link Trace} with the given id and the corresponding target instances from the base notifier of the
-     * {@link IncQueryEngine} and returns the target instances.
+     * {@link ViatraQueryEngine} and returns the target instances.
      * 
      * @param engine
      *            for trace pattern matching
@@ -81,7 +81,7 @@ public class TraceabilityUtil {
      * @return
      * @throws IncQueryException 
      */
-    public static void deleteTraceAndTarget(IncQueryEngine engine, EObject toDelete) throws IncQueryException {
+    public static void deleteTraceAndTarget(ViatraQueryEngine engine, EObject toDelete) throws IncQueryException {
     
     	Trace trace = (Trace) engine.getMatcher(Trace2targetQuerySpecification.instance()).getAllMatches().iterator().next().getTrace();
     	EcoreUtil.delete(trace);

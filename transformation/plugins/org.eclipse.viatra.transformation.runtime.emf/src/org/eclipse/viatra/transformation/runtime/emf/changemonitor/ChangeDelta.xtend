@@ -13,8 +13,8 @@ package org.eclipse.viatra.transformation.runtime.emf.changemonitor
 import com.google.common.collect.Multimap
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.xtend.lib.annotations.Data
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
  * Class representing the changes in a given instance model since the last checkpoint. 
@@ -24,7 +24,7 @@ import org.eclipse.xtend.lib.annotations.Data
  * @author Lunk Péter
  */
 @Data class ChangeDelta {
-	public Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> appeared
-	public Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> updated
-	public Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> disappeared
+	public Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> appeared
+	public Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> updated
+	public Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> disappeared
 }

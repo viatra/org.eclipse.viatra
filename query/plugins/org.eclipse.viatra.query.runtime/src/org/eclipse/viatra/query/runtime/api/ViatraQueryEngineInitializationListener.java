@@ -16,13 +16,13 @@ package org.eclipse.viatra.query.runtime.api;
  * @author Abel Hegedus
  *
  */
-public interface IncQueryEngineInitializationListener {
+public interface ViatraQueryEngineInitializationListener {
 
     /**
      * Called when a managed engine is initialized in the EngineManager.
      * 
      * @param engine the initialized engine
      */
-    void engineInitialized(AdvancedIncQueryEngine engine);
+    void engineInitialized(AdvancedViatraQueryEngine engine);
     
 }

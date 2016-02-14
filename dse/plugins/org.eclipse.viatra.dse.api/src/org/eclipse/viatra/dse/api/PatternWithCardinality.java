@@ -14,13 +14,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 public class PatternWithCardinality {
 
-    private final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification;
+    private final IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification;
     private final int cardinality;
     private final CardinalityType cardinalityType;
 
@@ -29,7 +29,7 @@ public class PatternWithCardinality {
     private String name;
 
     public PatternWithCardinality(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification,
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification,
             int cardinality, CardinalityType cardinalityType, RuleMetaData metaData) {
         checkArgument(querySpecification != null);
 
@@ -41,28 +41,28 @@ public class PatternWithCardinality {
     }
 
     public PatternWithCardinality(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification) {
         this(querySpecification, 1, CardinalityType.AT_LEAST, null);
     }
 
     public PatternWithCardinality(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification, int cardinality) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification, int cardinality) {
         this(querySpecification, cardinality, CardinalityType.AT_LEAST, null);
     }
 
     public PatternWithCardinality(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification,
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification,
             int cardinality, CardinalityType cardinalityType) {
         this(querySpecification, cardinality, cardinalityType, null);
     }
 
     public PatternWithCardinality(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification,
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification,
             RuleMetaData metaData) {
         this(querySpecification, 1, CardinalityType.AT_LEAST, metaData);
     }
 
-    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification() {
+    public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getQuerySpecification() {
         return querySpecification;
     }
 
@@ -80,7 +80,7 @@ public class PatternWithCardinality {
      * @return True if the pattern is satisfied.
      * @throws IncQueryException
      */
-    public boolean isPatternSatisfied(IncQueryEngine engine) {
+    public boolean isPatternSatisfied(ViatraQueryEngine engine) {
         // TODO optimization: cache matcher; catch exception elsewhere
         int numOfMatches = 0;
         try {

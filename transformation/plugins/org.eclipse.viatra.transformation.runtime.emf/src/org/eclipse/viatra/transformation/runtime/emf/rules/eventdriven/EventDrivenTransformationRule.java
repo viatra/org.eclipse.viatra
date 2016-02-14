@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -29,7 +29,7 @@ import org.eclipse.viatra.transformation.runtime.emf.rules.ITransformationRule;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>>
+public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>>
 		implements ITransformationRule<Match, Matcher> {
 	private String name;
 	private IQuerySpecification<Matcher> precondition;

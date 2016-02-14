@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.junit.Assert;
 
@@ -36,12 +36,12 @@ public class CompareQueryTester {
      * Compares the results of two queries. It is assumed that the query specifications are equivalent and use the same
      * match classes
      */
-    public static void assertQueriesEquivalent(IncQueryEngine engine, IQuerySpecification<?> querySpecification1,
+    public static void assertQueriesEquivalent(ViatraQueryEngine engine, IQuerySpecification<?> querySpecification1,
             IQuerySpecification<?> querySpecification2) throws IncQueryException {
         // Create a matcher for the original query specification
-        IncQueryMatcher<? extends IPatternMatch> matcher = querySpecification1.getMatcher(engine);
+        ViatraQueryMatcher<? extends IPatternMatch> matcher = querySpecification1.getMatcher(engine);
         // Create a matcher for the flattened query specification
-        IncQueryMatcher<? extends IPatternMatch> flattenedMatcher = querySpecification2.getMatcher(engine);
+        ViatraQueryMatcher<? extends IPatternMatch> flattenedMatcher = querySpecification2.getMatcher(engine);
 
         Collection<? extends IPatternMatch> allMatches = matcher.getAllMatches();
         Collection<? extends IPatternMatch> allFlattenedMatches = flattenedMatcher.getAllMatches();

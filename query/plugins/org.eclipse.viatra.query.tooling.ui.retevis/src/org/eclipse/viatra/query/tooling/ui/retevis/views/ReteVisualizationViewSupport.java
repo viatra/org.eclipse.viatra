@@ -30,11 +30,11 @@ import org.eclipse.viatra.addon.viewers.runtime.model.IncQueryViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.addon.viewers.runtime.zest.extensions.IncQueryViewersZestViewSupport;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestContentWithIsolatedNodesProvider;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
@@ -79,9 +79,9 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
             if (object instanceof PatternMatcherContent) {
                 PatternMatcherContent patternMatcherContent = (PatternMatcherContent) object;
                 try {
-                    IncQueryMatcher<IPatternMatch> matcher = patternMatcherContent.getMatcher();
+                    ViatraQueryMatcher<IPatternMatch> matcher = patternMatcherContent.getMatcher();
                     if (matcher == null) continue;
-					final IQueryBackend reteEngine = ((AdvancedIncQueryEngine) matcher
+					final IQueryBackend reteEngine = ((AdvancedViatraQueryEngine) matcher
                             .getEngine()).getQueryBackend(new ReteBackendFactory());
                     final Collection<Node> allNodes = ((ReteEngine) reteEngine).getReteNet().getHeadContainer()
                             .getAllNodes();
@@ -139,7 +139,7 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
         if (state != null && !state.isDisposed()) {
             state.dispose();
         }
-        IncQueryEngine engine = getEngine();
+        ViatraQueryEngine engine = getEngine();
         if (engine != null) {
             state = IncQueryViewerDataModel.newViewerState(engine, this.configuration.getPatterns(),
                     this.configuration.getFilter(),

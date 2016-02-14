@@ -12,7 +12,7 @@ package org.eclipse.viatra.dse.base;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 
 /**
@@ -76,12 +76,12 @@ public class ExplorerThread implements Runnable {
 
     /**
      * Disposes of this strategy. Recursively callse dispose on the underlying {@link RuleEngine} and
-     * {@link IncQueryEngine}. Calling this is only required if the design space exploration was launched in thread, as
+     * {@link ViatraQueryEngine}. Calling this is only required if the design space exploration was launched in thread, as
      * the underlying engines get collected on the stop of the running {@link Thread}.
      */
     public void dispose() {
         threadContext.getRuleEngine().dispose();
-        // threadContext.getIncqueryEngine().dispose();
+        // threadContext.getQueryEngine().dispose();
     }
 
     /**

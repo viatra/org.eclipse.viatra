@@ -19,7 +19,7 @@ import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
 
 import com.sun.jdi.StackFrame;
@@ -46,7 +46,7 @@ public class StackFrameWrapper extends JDIStackFrame {
     /**
      * Transforms the {@link JDIStackFrame} to an "IncQuery-specific" one. 
      * This means that all variables are ignored from the original stack frame and 
-     * {@link IncQueryEngine} instances are added instead. 
+     * {@link ViatraQueryEngine} instances are added instead. 
      * 
      * @param frame the original stack frame
      * @return the transformed IncQuery specific stack frame

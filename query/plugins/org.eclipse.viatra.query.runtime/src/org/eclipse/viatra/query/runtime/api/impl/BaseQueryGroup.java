@@ -11,9 +11,9 @@
 package org.eclipse.viatra.query.runtime.api.impl;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 /**
@@ -22,19 +22,19 @@ import org.eclipse.viatra.query.runtime.exception.IncQueryException;
  * @author Mark Czotter
  *
  */
-public abstract class BasePatternGroup implements IQueryGroup {
+public abstract class BaseQueryGroup implements IQueryGroup {
 
     @Override
     public void prepare(Notifier emfRoot) throws IncQueryException {
-        prepare(AdvancedIncQueryEngine.on(emfRoot));
+        prepare(AdvancedViatraQueryEngine.on(emfRoot));
     }
 
     @Override
-    public void prepare(IncQueryEngine engine) throws IncQueryException {
-    	prepare(AdvancedIncQueryEngine.from(engine));
+    public void prepare(ViatraQueryEngine engine) throws IncQueryException {
+    	prepare(AdvancedViatraQueryEngine.from(engine));
     }
     
-    protected void prepare(AdvancedIncQueryEngine engine) throws IncQueryException {
+    protected void prepare(AdvancedViatraQueryEngine engine) throws IncQueryException {
         engine.prepareGroup(this, null /* default options */);
     }
     

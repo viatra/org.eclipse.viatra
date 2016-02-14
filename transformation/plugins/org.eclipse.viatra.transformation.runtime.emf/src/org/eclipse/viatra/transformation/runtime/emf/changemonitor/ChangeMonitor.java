@@ -19,8 +19,8 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Job;
@@ -56,12 +56,12 @@ import com.google.common.collect.Sets;
  */
 @SuppressWarnings("unchecked")
 public class ChangeMonitor extends IChangeMonitor {
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> appearBetweenCheckpoints;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> updateBetweenCheckpoints;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> disappearBetweenCheckpoints;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> appearAccumulator;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> updateAccumulator;
-    private Multimap<IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>, IPatternMatch> disappearAccumulator;
+    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> appearBetweenCheckpoints;
+    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> updateBetweenCheckpoints;
+    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> disappearBetweenCheckpoints;
+    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> appearAccumulator;
+    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> updateAccumulator;
+    private Multimap<IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, IPatternMatch> disappearAccumulator;
     private Set<RuleSpecification<IPatternMatch>> rules;
     private Map<IQuerySpecification<?>, RuleSpecification<IPatternMatch>> specs;
     private Set<Job<?>> allJobs;
@@ -74,9 +74,9 @@ public class ChangeMonitor extends IChangeMonitor {
      * monitor changes of a specific model instance, an IncQuery should be initialized on said model instance.
      * 
      * @param engine
-     *            The IncQueryEngine the monitor is based on.
+     *            The ViatraQueryEngine the monitor is based on.
      */
-    public ChangeMonitor(IncQueryEngine engine) {
+    public ChangeMonitor(ViatraQueryEngine engine) {
         super(engine);
         this.appearBetweenCheckpoints = ArrayListMultimap.create();
         this.updateBetweenCheckpoints = ArrayListMultimap.create();
@@ -90,7 +90,7 @@ public class ChangeMonitor extends IChangeMonitor {
         specs = new HashMap<IQuerySpecification<?>, RuleSpecification<IPatternMatch>>();
         started = false;
 
-        UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(engine);
+        UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(engine);
         executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine, schedulerFactory);
 
     }
@@ -129,7 +129,7 @@ public class ChangeMonitor extends IChangeMonitor {
      */
     public void addRule(IQuerySpecification<?> spec) {
         RuleSpecification<IPatternMatch> rule = Rules.newMatcherRuleSpecification(
-                (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) spec,
+                (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) spec,
                 Lifecycles.getDefault(true, true), createDefaultProcessorJobs());
         specs.put(spec, rule);
         addRule(rule);
@@ -269,9 +269,9 @@ public class ChangeMonitor extends IChangeMonitor {
      * @param match
      */
     protected void registerUpdate(IPatternMatch match) {
-        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = match.specification();
+        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification = match.specification();
         Collection<IPatternMatch> updateMatches = updateAccumulator
-                .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);        	
+                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);        	
         updateMatches.add(match);
         
     }
@@ -282,9 +282,9 @@ public class ChangeMonitor extends IChangeMonitor {
      * @param match
      */
     protected void registerAppear(IPatternMatch match) {
-        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = match.specification();
+        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification = match.specification();
         Collection<IPatternMatch> appearMatches = appearAccumulator
-                .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
+                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);
         appearMatches.add(match);
     }
 
@@ -294,14 +294,14 @@ public class ChangeMonitor extends IChangeMonitor {
      * @param match
      */
     protected void registerDisappear(IPatternMatch match) {
-        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification = match.specification();
+        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification = match.specification();
         
         Collection<IPatternMatch> appearMatches = appearAccumulator
-                .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
+                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);
         Collection<IPatternMatch> updateMatches = updateAccumulator
-                .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
+                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);
         Collection<IPatternMatch> disappearMatches = disappearAccumulator
-                .get((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
+                .get((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);
         
         if (updateMatches.contains(match))
             updateMatches.remove(match);

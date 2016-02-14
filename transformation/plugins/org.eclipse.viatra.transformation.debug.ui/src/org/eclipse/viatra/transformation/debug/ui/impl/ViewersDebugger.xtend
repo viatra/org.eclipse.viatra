@@ -16,7 +16,6 @@ import org.eclipse.gef4.layout.algorithms.GridLayoutAlgorithm
 import org.eclipse.gef4.zest.core.viewers.GraphViewer
 import org.eclipse.gef4.zest.core.widgets.ZestStyles
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
 import org.eclipse.viatra.transformation.evm.api.Activation
 import org.eclipse.viatra.addon.viewers.runtime.model.IncQueryViewerDataModel
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter
@@ -34,6 +33,7 @@ import org.eclipse.swt.widgets.Text
 import org.eclipse.viatra.transformation.debug.TransformationDebugger.DebuggerActions
 import org.eclipse.viatra.transformation.debug.controller.IDebugController;
 import org.eclipse.viatra.addon.viewers.runtime.zest.IncQueryGraphViewers
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 
 /**
  * Debugger UI implementation that utilizes the EMF IncQuery viewers framework
@@ -41,13 +41,13 @@ import org.eclipse.viatra.addon.viewers.runtime.zest.IncQueryGraphViewers
  * @author Peter Lunk
  */
 class ViewersDebugger implements IDebugController{
-	IncQueryEngine engine
+	ViatraQueryEngine engine
 	Set<IQuerySpecification<?>> queries
 	DebuggerUI uiRunnable
 	boolean actionSet = false
 	DebuggerActions action
 
-	new(IncQueryEngine engine, Set<IQuerySpecification<?>> queries) {
+	new(ViatraQueryEngine engine, Set<IQuerySpecification<?>> queries) {
 		this.engine = engine
 		this.queries = queries
 
@@ -93,7 +93,7 @@ class ViewersDebugger implements IDebugController{
 	override getSelectedActivation() {}
 	
 	static class DebuggerUI implements Runnable{
-		IncQueryEngine engine
+		ViatraQueryEngine engine
 		Set<IQuerySpecification<?>> queries
 		Display d
 		Shell shell
@@ -103,7 +103,7 @@ class ViewersDebugger implements IDebugController{
 		ViewersDebugger parent
 		public boolean initialized = false
 		
-		new(IncQueryEngine engine, Set<IQuerySpecification<?>> queries, ViewersDebugger parent){
+		new(ViatraQueryEngine engine, Set<IQuerySpecification<?>> queries, ViewersDebugger parent){
 			this.engine = engine
 			this.queries = queries
 			this.parent = parent

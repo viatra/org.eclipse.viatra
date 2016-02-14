@@ -21,13 +21,13 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
  * <p>Infers a JVM model from the source model.</p>
@@ -131,7 +131,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		val utilPackageName = pattern.utilPackageName
 
 
-		val matcherClass = typeRef(typeof(IncQueryMatcher), typeRef(typeof(IPatternMatch))).type 
+		val matcherClass = typeRef(typeof(ViatraQueryMatcher), typeRef(typeof(IPatternMatch))).type 
 		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
 			matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
 		associator.associatePrimary(pattern, querySpecificationClass)

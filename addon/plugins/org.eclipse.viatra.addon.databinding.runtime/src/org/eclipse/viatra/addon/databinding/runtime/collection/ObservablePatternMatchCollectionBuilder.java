@@ -15,8 +15,8 @@ import java.util.Comparator;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
@@ -52,13 +52,13 @@ import com.google.common.base.Preconditions;
  */
 public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
 
-    private IQuerySpecification<? extends IncQueryMatcher<M>> specification = null;
+    private IQuerySpecification<? extends ViatraQueryMatcher<M>> specification = null;
     private EventFilter<M> filter = null;
-    private IncQueryEngine incQueryEngine = null;
+    private ViatraQueryEngine queryEngine = null;
     private RuleEngine ruleEngine = null;
     private Comparator<M> comparator = null;
     private Function<M, ?> converter = null;
-    private IncQueryMatcher<M> matcher = null;
+    private ViatraQueryMatcher<M> matcher = null;
 
     /**
      * Creates a builder for configuring an observable collection
@@ -68,31 +68,31 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
      *            the {@link IQuerySpecification} used to create a matcher
      */
     public static <M extends IPatternMatch> ObservablePatternMatchCollectionBuilder<M> create(
-            IQuerySpecification<? extends IncQueryMatcher<M>> specification) {
+            IQuerySpecification<? extends ViatraQueryMatcher<M>> specification) {
         ObservablePatternMatchCollectionBuilder<M> builder = new ObservablePatternMatchCollectionBuilder<M>(specification);
         return builder;
     }
 
     /**
      * Creates a builder for configuring an observable collection
-     * observing the match set of the given {@link IncQueryMatcher}.
+     * observing the match set of the given {@link ViatraQueryMatcher}.
      * 
      * @param matcher
-     *            the {@link IncQueryMatcher} to use as the source of the observable collection
+     *            the {@link ViatraQueryMatcher} to use as the source of the observable collection
      */
     public static <M extends IPatternMatch> ObservablePatternMatchCollectionBuilder<M> create(
-            IncQueryMatcher<M> matcher) {
+            ViatraQueryMatcher<M> matcher) {
         ObservablePatternMatchCollectionBuilder<M> builder = new ObservablePatternMatchCollectionBuilder<M>(matcher);
         return builder;
     }
 
-    protected ObservablePatternMatchCollectionBuilder(IQuerySpecification<? extends IncQueryMatcher<M>> specification) {
+    protected ObservablePatternMatchCollectionBuilder(IQuerySpecification<? extends ViatraQueryMatcher<M>> specification) {
         this.specification = specification;
     }
 
-    protected ObservablePatternMatchCollectionBuilder(IncQueryMatcher<M> matcher) {
+    protected ObservablePatternMatchCollectionBuilder(ViatraQueryMatcher<M> matcher) {
         this.matcher = matcher;
-        this.incQueryEngine = matcher.getEngine();
+        this.queryEngine = matcher.getEngine();
     }
     
     /**
@@ -121,10 +121,10 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
     }
     
     /**
-     *  Sets the given {@link IncQueryEngine} to be used as the engine of the built observable.
+     *  Sets the given {@link ViatraQueryEngine} to be used as the engine of the built observable.
      */
-    public ObservablePatternMatchCollectionBuilder<M> setEngine(IncQueryEngine engine) {
-        this.incQueryEngine = engine;
+    public ObservablePatternMatchCollectionBuilder<M> setEngine(ViatraQueryEngine engine) {
+        this.queryEngine = engine;
         this.ruleEngine = null;
         return this;
     }
@@ -134,7 +134,7 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
      */
     public ObservablePatternMatchCollectionBuilder<M> setEngine(RuleEngine engine) {
         this.ruleEngine = engine;
-        this.incQueryEngine = null;
+        this.queryEngine = null;
         return this;
     }
     
@@ -179,7 +179,7 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
     }
 
     private void checkBuilderConfiguration() {
-        Preconditions.checkState(!(ruleEngine == null && incQueryEngine == null), "(IncQuery or Rule) Engine not set!");
+        Preconditions.checkState(!(ruleEngine == null && queryEngine == null), "(IncQuery or Rule) Engine not set!");
         Preconditions.checkState(specification != null || matcher != null, "Matcher or QuerySpecification not set!");
     }
 
@@ -197,7 +197,7 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
         if(ruleEngine != null) {
             collection.initialize(ruleEngine);
         } else {
-            collection.initialize(incQueryEngine);
+            collection.initialize(queryEngine);
         }
     }
     

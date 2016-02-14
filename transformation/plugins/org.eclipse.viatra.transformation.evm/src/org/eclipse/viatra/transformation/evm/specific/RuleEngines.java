@@ -14,7 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.EventDrivenVM;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -28,25 +28,25 @@ public class RuleEngines {
 
     /**
      * Creates a new rule engine that is initialized over the given
-     * IncQueryEngine and an agenda without rules.
+     * ViatraQueryEngine and an agenda without rules.
     
      * @param engine
      * @return the prepared rule engine
      */
-    public static RuleEngine createIncQueryRuleEngine(final IncQueryEngine engine) {
+    public static RuleEngine createIncQueryRuleEngine(final ViatraQueryEngine engine) {
         //return EventDrivenVM.createRuleEngine(IncQueryEventRealm.create(engine));
         return EventDrivenVM.createRuleEngine(IncQueryEventRealm.create(engine));
     }
 
     /**
      * Creates a new rule engine that is initialized over the given
-     * IncQueryEngine and an agenda with the given (unfiltered) rule specifications.
+     * ViatraQueryEngine and an agenda with the given (unfiltered) rule specifications.
     
      * @param engine
      * @param specifications
      * @return the prepared rule engine
      */
-    public static RuleEngine createIncQueryRuleEngine(final IncQueryEngine engine,
+    public static RuleEngine createIncQueryRuleEngine(final ViatraQueryEngine engine,
             final Set<RuleSpecification<?>> specifications) {
         checkNotNull(specifications, "Cannot create rule engine with null rule specification set");
         RuleEngine ruleEngine = createIncQueryRuleEngine(engine);

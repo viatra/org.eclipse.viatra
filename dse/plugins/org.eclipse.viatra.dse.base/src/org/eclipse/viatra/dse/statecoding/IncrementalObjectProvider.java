@@ -18,14 +18,14 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 public class IncrementalObjectProvider implements IObjectsProvider {
 
-    private IncQueryEngine incqueryEngine;
+    private ViatraQueryEngine queryEngine;
     private Logger logger = Logger.getLogger(getClass());
     private NavigationHelper baseIndex;
 
@@ -34,7 +34,7 @@ public class IncrementalObjectProvider implements IObjectsProvider {
 
         try {
             EMFScope scope = new EMFScope(notifier);
-            incqueryEngine = IncQueryEngine.on(scope);
+            queryEngine = ViatraQueryEngine.on(scope);
 
             Set<EClass> classes = new HashSet<EClass>();
 //          Set<EReference> references = new HashSet<EReference>();
@@ -45,7 +45,7 @@ public class IncrementalObjectProvider implements IObjectsProvider {
 //                  references.add(dependency.eReference);
 //              }
             }
-            baseIndex = EMFScope.extractUnderlyingEMFIndex(incqueryEngine);
+            baseIndex = EMFScope.extractUnderlyingEMFIndex(queryEngine);
             baseIndex.registerEClasses(classes);
         } catch (IncQueryException e) {
             logger.error("Failed to initialize IncQuery engine on the given notifier", e);

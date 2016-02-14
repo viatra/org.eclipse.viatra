@@ -18,7 +18,7 @@ import java.util.Iterator;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
@@ -84,7 +84,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	 * @param feature
 	 * @throws IncQueryBaseException 
 	 */
-	public EStructuralFeatureBinaryInputNode(IncQueryEngine engine, ReteContainer reteContainer, EStructuralFeature feature) throws IncQueryBaseException {
+	public EStructuralFeatureBinaryInputNode(ViatraQueryEngine engine, ReteContainer reteContainer, EStructuralFeature feature) throws IncQueryBaseException {
 		super(reteContainer);
 		this.feature = feature;
 		setTag(feature.getName());

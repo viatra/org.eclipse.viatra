@@ -28,7 +28,7 @@ import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.util.EMFHelper.MetaModelElements;
 import org.eclipse.viatra.dse.util.ValueComparableEObjectStringMap;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
@@ -45,7 +45,7 @@ public class SimpleStateCoder implements IStateCoder {
 
     private Set<EClass> classes;
     private Set<EStructuralFeature> features;
-    private IncQueryEngine iqEngine;
+    private ViatraQueryEngine queryEngine;
     private NavigationHelper navigationHelper;
     private MetaModelElements metaModelElements;
 
@@ -68,8 +68,8 @@ public class SimpleStateCoder implements IStateCoder {
     public void init(Notifier notifier) {
         try {
             EMFScope scope = new EMFScope(notifier);
-            iqEngine = IncQueryEngine.on(scope);
-            EMFBaseIndexWrapper baseIndex = (EMFBaseIndexWrapper) iqEngine.getBaseIndex();
+            queryEngine = ViatraQueryEngine.on(scope);
+            EMFBaseIndexWrapper baseIndex = (EMFBaseIndexWrapper) queryEngine.getBaseIndex();
             navigationHelper = baseIndex.getNavigationHelper();
             navigationHelper.registerObservedTypes(classes, null, features);
         } catch (IncQueryException e) {

@@ -18,10 +18,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.testing.queries.UnexpectedMatchRecordMatcher
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /** 
  * @author Grill Balázs
@@ -50,7 +50,7 @@ class EIQTestCase {
 	}
 
 	def <Match extends IPatternMatch> assertMatchSetsEqual(
-		IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification) {
+		IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) {
 		if (modelProviders.size < 2) {
 			throw new IllegalArgumentException("At least two model providers shall be set")
 		}
@@ -67,14 +67,14 @@ class EIQTestCase {
 
 	def assertMatchSetsEqual(IQueryGroup queryGroup) {
 		queryGroup.specifications.forEach [
-			assertMatchSetsEqual(it as IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>)
+			assertMatchSetsEqual(it as IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>)
 		]
 	}
 
 	private def <Match extends IPatternMatch> compareMatchSets(
-		IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification,
+		IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
 		IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider) {
-		val engine = IncQueryEngine::on(new EMFScope(resourceSet))
+		val engine = ViatraQueryEngine::on(new EMFScope(resourceSet))
 		val unexpectedMatcher = UnexpectedMatchRecordMatcher::querySpecification().getMatcher(engine)
 
 		val diff = newHashSet

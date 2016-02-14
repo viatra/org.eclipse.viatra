@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.addon.validation.core.ValidationEngine;
 import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
@@ -39,7 +39,7 @@ public final class ValidationInitializerUtil {
      */
     public static IValidationEngine initializeValidationWithRegisteredConstraintsOnScope(IncQueryScope scope,
             String editorId) throws IncQueryException {
-        IncQueryEngine engine = IncQueryEngine.on(scope);
+        ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
         Logger logger = IncQueryLoggingUtil.getLogger(ValidationEngine.class);
         IValidationEngine validationEngine = ValidationEngine.builder().setEngine(engine).setLogger(logger).build();
     

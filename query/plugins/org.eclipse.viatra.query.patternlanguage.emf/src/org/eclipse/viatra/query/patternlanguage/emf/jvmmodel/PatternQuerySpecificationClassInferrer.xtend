@@ -26,7 +26,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.exception.IncQueryException
@@ -44,6 +43,7 @@ import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -122,7 +122,7 @@ class PatternQuerySpecificationClassInferrer {
   		querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
 			visibility = JvmVisibility::PROTECTED
 			annotations += annotationRef(typeof (Override))
-			parameters += pattern.toParameter("engine", typeRef(typeof (IncQueryEngine)))
+			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
 			exceptions += typeRef(typeof (IncQueryException))
 			body = if (isPublic) { 
 				'''return «pattern.matcherClassName».on(engine);'''

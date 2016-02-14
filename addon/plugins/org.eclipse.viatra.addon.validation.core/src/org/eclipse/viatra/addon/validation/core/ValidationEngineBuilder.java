@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 
 /**
  * 
@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
  */
 public class ValidationEngineBuilder {
 
-    private IncQueryEngine incQueryEngine = null;
+    private ViatraQueryEngine queryEngine = null;
     private Logger logger = null;
 
     protected ValidationEngineBuilder() {
@@ -46,21 +46,21 @@ public class ValidationEngineBuilder {
      * Prepares a new {@link ValidationEngine} using the configured parameters.
      * 
      * @return an uninitialized validation engine
-     * @throws IllegalStateException if the {@link IncQueryEngine} for the
+     * @throws IllegalStateException if the {@link ViatraQueryEngine} for the
      *   new validation engine cannot be determined
      */
     public IValidationEngine build() {
-        checkState(incQueryEngine != null, "Must initialize engine before building!");
+        checkState(queryEngine != null, "Must initialize engine before building!");
         if(logger == null){
             logger = Logger.getLogger(ValidationEngine.class);
         }
         checkState(logger != null, "Must initialize logger before building!");
-        return new ValidationEngine(incQueryEngine, logger);
+        return new ValidationEngine(queryEngine, logger);
     }
     
-    public ValidationEngineBuilder setEngine(IncQueryEngine engine) {
+    public ValidationEngineBuilder setEngine(ViatraQueryEngine engine) {
         checkArgument(engine != null, "Engine cannot be null!");
-        this.incQueryEngine = engine;
+        this.queryEngine = engine;
         return this;
     }
     

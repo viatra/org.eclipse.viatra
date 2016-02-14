@@ -33,8 +33,8 @@ import org.eclipse.viatra.addon.databinding.runtime.collection.ObservablePattern
 import org.eclipse.viatra.addon.databinding.runtime.observables.ObservableLabelFeature;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 
@@ -59,7 +59,7 @@ public final class IncQueryObservables {
     }
 
     /**
-     * Create an observable list of the match set of the given {@link IncQueryMatcher}.
+     * Create an observable list of the match set of the given {@link ViatraQueryMatcher}.
      *
      * <p>
      * The matches are ordered by appearance, so a new match is always put on the end of the list.
@@ -68,13 +68,13 @@ public final class IncQueryObservables {
      *            the matcher to observe
      * @return an observable list of matches
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
+    public static <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> IObservableList observeMatchesAsList(
             Matcher matcher) {
         return ObservablePatternMatchCollectionBuilder.create(matcher).buildList();
     }
 
     /**
-     * Create an observable list of the match set of the given query using a selected {@link IncQueryEngine}.
+     * Create an observable list of the match set of the given query using a selected {@link ViatraQueryEngine}.
      *
      * <p>
      * The matches are ordered by appearance, so a new match is always put on the end of the list.
@@ -89,13 +89,13 @@ public final class IncQueryObservables {
      *            the engine used with the matcher
      * @return an observable list of matches
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
-            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine) {
+    public static <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> IObservableList observeMatchesAsList(
+            IQuerySpecification<Matcher> querySpecification, ViatraQueryEngine engine) {
         return ObservablePatternMatchCollectionBuilder.create(querySpecification).setEngine(engine).buildList();
     }
 
     /**
-     * Create an observable list of the match set of the given query using a selected {@link IncQueryEngine}.
+     * Create an observable list of the match set of the given query using a selected {@link ViatraQueryEngine}.
      *
      * <p>
      * The matches are ordered by appearance, so a new match is always put on the end of the list.
@@ -111,26 +111,26 @@ public final class IncQueryObservables {
      * @param filter the partial match to be used as filter
      * @return an observable list of matches
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableList observeMatchesAsList(
-            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Match filter) {
+    public static <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> IObservableList observeMatchesAsList(
+            IQuerySpecification<Matcher> querySpecification, ViatraQueryEngine engine, Match filter) {
         return ObservablePatternMatchCollectionBuilder.create(querySpecification).setFilter(filter).setEngine(engine)
                 .buildList();
     }
 
     /**
-     * Create an observable set of the match set of the given {@link IncQueryMatcher}.
+     * Create an observable set of the match set of the given {@link ViatraQueryMatcher}.
      *
      * @param matcher
      *            the matcher to observe
      * @return an observable list of matches
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
+    public static <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
             Matcher matcher) {
         return ObservablePatternMatchCollectionBuilder.create(matcher).buildSet();
     }
 
     /**
-     * Create an observable set of the match set of the given query using a selected {@link IncQueryEngine}.
+     * Create an observable set of the match set of the given query using a selected {@link ViatraQueryEngine}.
      *
      * <p>
      * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
@@ -142,13 +142,13 @@ public final class IncQueryObservables {
      *            the engine used with the matcher
      * @return an observable set of matches
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
-            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine) {
+    public static <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
+            IQuerySpecification<Matcher> querySpecification, ViatraQueryEngine engine) {
         return ObservablePatternMatchCollectionBuilder.create(querySpecification).setEngine(engine).buildSet();
     }
 
     /**
-     * Create an observable set of the match set of the given query using a selected {@link IncQueryEngine}.
+     * Create an observable set of the match set of the given query using a selected {@link ViatraQueryEngine}.
      *
      * <p>
      * Use the generated query specifications for initialization, in the generic case, you may have to accept an unchecked
@@ -161,8 +161,8 @@ public final class IncQueryObservables {
      * @param filter the partial match to be used as filter
      * @return an observable set of matches
      */
-    public static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
-            IQuerySpecification<Matcher> querySpecification, IncQueryEngine engine, Match filter) {
+    public static <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> IObservableSet observeMatchesAsSet(
+            IQuerySpecification<Matcher> querySpecification, ViatraQueryEngine engine, Match filter) {
         return ObservablePatternMatchCollectionBuilder.create(querySpecification).setFilter(filter).setEngine(engine).buildSet();
     }
 

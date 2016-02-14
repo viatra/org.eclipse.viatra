@@ -24,8 +24,8 @@ import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -35,15 +35,15 @@ import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 
 /**
- * Observable view of a match set for a given {@link IncQueryMatcher} on a model (match sets of an
- * {@link IncQueryMatcher} are not ordered by default).
+ * Observable view of a match set for a given {@link ViatraQueryMatcher} on a model (match sets of an
+ * {@link ViatraQueryMatcher} are not ordered by default).
  * 
  * <p>
  * For creating complex observable lists, use {@link ObservablePatternMatchCollectionBuilder}.
  * 
  * <p>
  * This implementation uses the {@link ExecutionSchema} to get notifications for match set changes, and can be instantiated
- * using either an existing {@link IncQueryMatcher}, or an {@link IQuerySpecification} and {@link IncQueryEngine} or {@link RuleEngine}.
+ * using either an existing {@link ViatraQueryMatcher}, or an {@link IQuerySpecification} and {@link ViatraQueryEngine} or {@link RuleEngine}.
  * 
  * @author Abel Hegedus
  * 
@@ -70,12 +70,12 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
                 }
 
                 @Override
-                public void createRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification) {
+                public void createRuleSpecification(IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) {
                     specification = ObservableCollectionHelper.createRuleSpecification(updater, querySpecification);
                 }
 
                 @Override
-                public void createRuleSpecification(IncQueryMatcher<Match> matcher) {
+                public void createRuleSpecification(ViatraQueryMatcher<Match> matcher) {
                     specification = ObservableCollectionHelper.createRuleSpecification(updater, matcher);
                 }
 
@@ -89,7 +89,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
                 }
 
                 @Override
-                public void initialize(IncQueryEngine engine) {
+                public void initialize(ViatraQueryEngine engine) {
                     ruleEngine = ObservableCollectionHelper.prepareRuleEngine(engine, specification, matchFilter);
                 }
 

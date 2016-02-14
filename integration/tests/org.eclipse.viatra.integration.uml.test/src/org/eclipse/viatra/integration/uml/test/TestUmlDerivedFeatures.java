@@ -27,7 +27,7 @@ import org.eclipse.viatra.integration.uml.derivedfeatures.AssociationEndTypeMatc
 import org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementNamespaceMatcher;
 import org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedNameMatcher;
 import org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonalMatcher;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.junit.Test;
@@ -43,8 +43,8 @@ public class TestUmlDerivedFeatures {
 
 	private static final UMLFactory FACTORY = UMLFactory.eINSTANCE;
 
-	private static IncQueryEngine getEngine(Resource resource) throws IncQueryException {
-		return IncQueryEngine.on(new EMFScope(resource));
+	private static ViatraQueryEngine getEngine(Resource resource) throws IncQueryException {
+		return ViatraQueryEngine.on(new EMFScope(resource));
 	}
 	
 	private static Resource createResource() {

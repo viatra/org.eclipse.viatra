@@ -15,7 +15,7 @@ import java.util.Collection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
 /**
  * @author Mark Czotter
@@ -23,10 +23,10 @@ import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
  */
 public class PatternMatchDialogContentProvider implements ITreeContentProvider {
 
-    private IncQueryMatcher<? extends IPatternMatch> matcher;
+    private ViatraQueryMatcher<? extends IPatternMatch> matcher;
     private Collection<? extends IPatternMatch> matches;
 
-    public PatternMatchDialogContentProvider(IncQueryMatcher<? extends IPatternMatch> matcher,
+    public PatternMatchDialogContentProvider(ViatraQueryMatcher<? extends IPatternMatch> matcher,
             Collection<? extends IPatternMatch> matches) {
         this.matcher = matcher;
         this.matches = matches;
@@ -51,8 +51,8 @@ public class PatternMatchDialogContentProvider implements ITreeContentProvider {
      */
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        if (newInput instanceof IncQueryMatcher<?> && newInput != oldInput) {
-            this.matcher = (IncQueryMatcher<?>) newInput;
+        if (newInput instanceof ViatraQueryMatcher<?> && newInput != oldInput) {
+            this.matcher = (ViatraQueryMatcher<?>) newInput;
             this.matches = matcher.getAllMatches();
         }
     }
@@ -64,7 +64,7 @@ public class PatternMatchDialogContentProvider implements ITreeContentProvider {
      */
     @Override
     public Object[] getElements(Object inputElement) {
-        if (inputElement instanceof IncQueryMatcher<?>) {
+        if (inputElement instanceof ViatraQueryMatcher<?>) {
             return matches.toArray();
         }
         return null;
@@ -77,7 +77,7 @@ public class PatternMatchDialogContentProvider implements ITreeContentProvider {
      */
     @Override
     public Object[] getChildren(Object parentElement) {
-        if (parentElement instanceof IncQueryMatcher<?>) {
+        if (parentElement instanceof ViatraQueryMatcher<?>) {
             return matches.toArray();
         }
         return null;
@@ -103,7 +103,7 @@ public class PatternMatchDialogContentProvider implements ITreeContentProvider {
      */
     @Override
     public boolean hasChildren(Object element) {
-        if (element instanceof IncQueryMatcher<?>) {
+        if (element instanceof ViatraQueryMatcher<?>) {
             return !matches.isEmpty();
         }
         return false;

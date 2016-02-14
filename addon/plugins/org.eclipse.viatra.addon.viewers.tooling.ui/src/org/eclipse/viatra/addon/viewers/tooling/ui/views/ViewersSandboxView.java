@@ -49,7 +49,7 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViewersAnnotatedPatternTes
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.addon.viewers.tooling.ui.ViewersToolingPlugin;
 import org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
@@ -70,7 +70,7 @@ public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
     
     private List<IViewerSandboxTab> tabList;
     private CTabFolder folder;
-    private AdvancedIncQueryEngine engine;
+    private AdvancedViatraQueryEngine engine;
 	private ViewerState state;
 
     public static ViewersSandboxView getInstance() {
@@ -236,12 +236,12 @@ public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
         }
     }
 
-    private AdvancedIncQueryEngine getEngine(Notifier model) throws IncQueryException {
+    private AdvancedViatraQueryEngine getEngine(Notifier model) throws IncQueryException {
         if (engine != null) {
             engine.dispose();
         }
         // make sure that the engine is initialized in non-wildcard and dynamic EMF mode
-        engine = AdvancedIncQueryEngine.createUnmanagedEngine(model, false, true);
+        engine = AdvancedViatraQueryEngine.createUnmanagedEngine(model, false, true);
         return engine;
     }
 

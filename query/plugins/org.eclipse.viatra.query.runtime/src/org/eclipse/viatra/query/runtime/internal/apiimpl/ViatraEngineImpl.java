@@ -24,16 +24,16 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngineLifecycleListener;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngineManager;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra.query.runtime.api.IncQueryModelUpdateListener;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineManager;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.query.runtime.api.scope.IEngineContext;
@@ -73,12 +73,12 @@ import com.google.common.collect.Maps;
  * @author Bergmann Gábor
  * 
  */
-public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQueryBackendHintProvider, IQueryCacheContext {
+public class ViatraEngineImpl extends AdvancedViatraQueryEngine implements IQueryBackendHintProvider, IQueryCacheContext {
 	
     /**
      * The engine manager responsible for this engine. Null if this engine is unmanaged.
      */
-    private final IncQueryEngineManager manager;
+    private final ViatraQueryEngineManager manager;
     /**
      * The model to which the engine is attached.
      */
@@ -98,7 +98,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     /**
      * Initialized matchers for each query
      */
-    private final Map<IQuerySpecification<? extends IncQueryMatcher<?>>, IncQueryMatcher<?>> matchers
+    private final Map<IQuerySpecification<? extends ViatraQueryMatcher<?>>, ViatraQueryMatcher<?>> matchers
     		= Maps.newHashMap();
     
 	/**
@@ -129,7 +129,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
      * @throws IncQueryException
      *             if the emf root is invalid
      */
-    public IncQueryEngineImpl(IncQueryEngineManager manager, IncQueryScope scope) throws IncQueryException {
+    public ViatraEngineImpl(ViatraQueryEngineManager manager, IncQueryScope scope) throws IncQueryException {
         super();
         this.manager = manager;
         this.scope = scope;
@@ -144,17 +144,17 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     }
     
     @Override
-	public Set<? extends IncQueryMatcher<? extends IPatternMatch>> getCurrentMatchers(){
+	public Set<? extends ViatraQueryMatcher<? extends IPatternMatch>> getCurrentMatchers(){
         return ImmutableSet.copyOf(matchers.values());
     }
     
     @Override
-	public <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException {
+	public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException {
         return querySpecification.getMatcher(this);
     }
     
     @Override
-    public <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
+    public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
     		IQuerySpecification<Matcher> querySpecification,
     		QueryEvaluationHint optionalEvaluationHints) 
     	throws IncQueryException 
@@ -165,13 +165,13 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification) {
+	public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification) {
 		return (Matcher) matchers.get(querySpecification);
 	}
     
     @Override
-    public IncQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws IncQueryException {
-        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification = QuerySpecificationRegistry
+    public ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws IncQueryException {
+        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification = QuerySpecificationRegistry
                 .getQuerySpecification(patternFQN);
         if (querySpecification != null) {
             return getMatcher(querySpecification);
@@ -191,7 +191,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 	public final Logger getLogger() {
         if (logger == null) {
             final int hash = System.identityHashCode(this);
-            logger = Logger.getLogger(IncQueryLoggingUtil.getLogger(IncQueryEngine.class).getName() + "." + hash);
+            logger = Logger.getLogger(IncQueryLoggingUtil.getLogger(ViatraQueryEngine.class).getName() + "." + hash);
             if (logger == null)
                 throw new AssertionError(
                         "Configuration error: unable to create IncQuery runtime logger for engine " + hash);
@@ -204,16 +204,16 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     /**
      * Report when a pattern matcher has been completely initialized, so that it can be registered into the engine.
      * @param querySpecification the {@link IQuerySpecification} that corresponds to the matcher
-     * @param matcher the {@link IncQueryMatcher} that has finished its initialization process
+     * @param matcher the {@link ViatraQueryMatcher} that has finished its initialization process
      * 
      * TODO make it package-only visible when implementation class is moved to impl package
      */
-    public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, IncQueryMatcher<?> matcher) {
+    public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, ViatraQueryMatcher<?> matcher) {
         if(matchers.containsKey(querySpecification)) {
             // TODO simply dropping the matcher can cause problems
             logger.debug("Query " + 
                     querySpecification.getFullyQualifiedName() + 
-                    " already initialized in IncQueryEngine!");
+                    " already initialized in ViatraQueryEngine!");
         } else {
             matchers.put(querySpecification, matcher);
             lifecycleProvider.matcherInstantiated(matcher);
@@ -236,7 +236,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
             if (iQueryBackend == null) {
             	
             	// need to instantiate the backend
-            	iQueryBackend = iQueryBackendFactory.create(logger, queryRuntimeContext, IncQueryEngineImpl.this, IncQueryEngineImpl.this);
+            	iQueryBackend = iQueryBackendFactory.create(logger, queryRuntimeContext, ViatraEngineImpl.this, ViatraEngineImpl.this);
             	queryBackends.put(iQueryBackendFactory, iQueryBackend);            	
             }        	
         }
@@ -293,17 +293,17 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     private IIndexingErrorListener taintListener = new SelfTaintListener(this);
 
     private static class SelfTaintListener implements IIndexingErrorListener {
-        WeakReference<IncQueryEngineImpl> iqEngRef;
+        WeakReference<ViatraEngineImpl> queryEngineRef;
 
-        public SelfTaintListener(IncQueryEngineImpl iqEngine) {
-            this.iqEngRef = new WeakReference<IncQueryEngineImpl>(iqEngine);
+        public SelfTaintListener(ViatraEngineImpl queryEngine) {
+            this.queryEngineRef = new WeakReference<ViatraEngineImpl>(queryEngine);
         }
 
         public void engineBecameTainted(String description, Throwable t) {
-            final IncQueryEngineImpl iqEngine = iqEngRef.get();
-            if (iqEngine != null) {
-                iqEngine.tainted = true;
-                iqEngine.lifecycleProvider.engineBecameTainted(description, t);
+            final ViatraEngineImpl queryEngine = queryEngineRef.get();
+            if (queryEngine != null) {
+                queryEngine.tainted = true;
+                queryEngine.lifecycleProvider.engineBecameTainted(description, t);
             }
         }
         
@@ -345,7 +345,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 	}
 
     @Override
-	public <Match extends IPatternMatch> void addMatchUpdateListener(final IncQueryMatcher<Match> matcher,
+	public <Match extends IPatternMatch> void addMatchUpdateListener(final ViatraQueryMatcher<Match> matcher,
             final IMatchUpdateListener<? super Match> listener, boolean fireNow) {
     	
         checkArgument(listener != null, "Cannot add null listener!");
@@ -385,7 +385,7 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
 
     
     @Override
-	public <Match extends IPatternMatch> void removeMatchUpdateListener(IncQueryMatcher<Match> matcher,
+	public <Match extends IPatternMatch> void removeMatchUpdateListener(ViatraQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener) {
         checkArgument(listener != null, "Cannot remove null listener!");
         checkArgument(matcher.getEngine() == this, "Cannot remove listener from matcher of different engine!");
@@ -402,22 +402,22 @@ public class IncQueryEngineImpl extends AdvancedIncQueryEngine implements IQuery
     }
     
     @Override
-	public void addModelUpdateListener(IncQueryModelUpdateListener listener) {
+	public void addModelUpdateListener(ViatraQueryModelUpdateListener listener) {
         modelUpdateProvider.addListener(listener);
     }
     
     @Override
-	public void removeModelUpdateListener(IncQueryModelUpdateListener listener) {
+	public void removeModelUpdateListener(ViatraQueryModelUpdateListener listener) {
         modelUpdateProvider.removeListener(listener);
     }
     
     @Override
-	public void addLifecycleListener(IncQueryEngineLifecycleListener listener) {
+	public void addLifecycleListener(ViatraQueryEngineLifecycleListener listener) {
         lifecycleProvider.addListener(listener);
     }
     
     @Override
-	public void removeLifecycleListener(IncQueryEngineLifecycleListener listener) {
+	public void removeLifecycleListener(ViatraQueryEngineLifecycleListener listener) {
         lifecycleProvider.removeListener(listener);
     }
 	

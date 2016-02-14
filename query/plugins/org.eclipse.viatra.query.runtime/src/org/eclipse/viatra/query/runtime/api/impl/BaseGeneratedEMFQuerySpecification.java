@@ -12,7 +12,7 @@
 package org.eclipse.viatra.query.runtime.api.impl;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
@@ -25,7 +25,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
  * @author Bergmann Gábor
  * @author Mark Czotter
  */
-public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends
+public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> extends
         BaseQuerySpecification<Matcher> {
 	
 	

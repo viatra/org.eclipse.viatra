@@ -14,7 +14,7 @@ package org.eclipse.viatra.query.runtime.api;
  * An interface for low-level notifications about match appearance and disappearance.
  * 
  * <p>
- * See {@link IncQueryMatcher#addCallbackOnMatchUpdate(IMatchUpdateListener, boolean)} for usage. Clients should
+ * See {@link ViatraQueryMatcher#addCallbackOnMatchUpdate(IMatchUpdateListener, boolean)} for usage. Clients should
  * consider using {@link MatchUpdateAdapter} or deriving their implementation from it.
  * 
  * @author Bergmann Gabor

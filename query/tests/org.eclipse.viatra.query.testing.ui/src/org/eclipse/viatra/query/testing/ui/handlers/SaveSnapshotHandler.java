@@ -33,8 +33,8 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.testing.core.ModelLoadHelper;
@@ -77,12 +77,12 @@ public class SaveSnapshotHandler extends AbstractHandler {
 		
 		IEditorPart editor = null;
 		List<PatternMatcherContent> matchers = new ArrayList<PatternMatcherContent>();
-		IncQueryEngine engine = null;
+		ViatraQueryEngine engine = null;
 		if(obj instanceof PatternMatcherContent) {
 		    PatternMatcherContent observablePatternMatcher = (PatternMatcherContent) obj;
 			editor = observablePatternMatcher.getParent().getEditorPart();
 			matchers.add(observablePatternMatcher);
-			IncQueryMatcher<?> matcher = observablePatternMatcher.getMatcher();
+			ViatraQueryMatcher<?> matcher = observablePatternMatcher.getMatcher();
 			if(matcher != null) {
 			    engine = matcher.getEngine();
 			}
@@ -96,14 +96,14 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			    PatternMatcherContent patternMatcherContent = iterator.next();
 			    matchers.add(patternMatcherContent);
 			    
-                IncQueryMatcher<?> matcher = patternMatcherContent.getMatcher();
+                ViatraQueryMatcher<?> matcher = patternMatcherContent.getMatcher();
                 if(matcher != null && matcher.getEngine() != null) {
                     engine = matcher.getEngine();
                 }
 			}
 		}
 		if(engine == null) {
-			logger.error("Cannot save snapshot without IncQueryEngine!");
+			logger.error("Cannot save snapshot without ViatraQueryEngine!");
 			return;
 		}
 		ResourceSet resourceSet = getResourceSetForScope(engine.getScope());
@@ -167,7 +167,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 	 * @param engine
 	 * @param snapshot
 	 */
-	private boolean validateInputSpecification(IncQueryEngine engine, IncQuerySnapshot snapshot) {
+	private boolean validateInputSpecification(ViatraQueryEngine engine, IncQuerySnapshot snapshot) {
 		if(snapshot.getInputSpecification() != null) {
 			Notifier root = helper.getEMFRootForSnapshot(snapshot);
             Notifier matcherRoot = getScopeRoot(engine.getScope());

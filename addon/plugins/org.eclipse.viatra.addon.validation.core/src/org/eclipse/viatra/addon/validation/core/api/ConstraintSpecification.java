@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 
 import com.google.common.collect.ImmutableList;
@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public class ConstraintSpecification implements IConstraintSpecification {
 
-    private final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification;
+    private final IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification;
     private final String messageFormat;
     private final Severity severity;
     private final List<String> keyNames;
@@ -122,7 +122,7 @@ public class ConstraintSpecification implements IConstraintSpecification {
     }
 
     @Override
-    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification() {
+    public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getQuerySpecification() {
         return querySpecification;
     }
 
@@ -133,7 +133,7 @@ public class ConstraintSpecification implements IConstraintSpecification {
      *
      */
     public static class ConstraintSpecificationBuilder {
-        private final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification;
+        private final IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification;
         private final String messageFormat;
         private final Severity severity;
         private List<String> keyNames;
@@ -146,7 +146,7 @@ public class ConstraintSpecification implements IConstraintSpecification {
          * @param severity
          */
         public ConstraintSpecificationBuilder(
-                IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification,
+                IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification,
                 String messageFormat, Severity severity) {
             this.querySpecification = querySpecification;
             this.messageFormat = messageFormat;

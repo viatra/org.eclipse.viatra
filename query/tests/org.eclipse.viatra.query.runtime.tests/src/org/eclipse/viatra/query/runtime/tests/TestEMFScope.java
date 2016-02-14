@@ -31,8 +31,8 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageF
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.rete.recipes.RecipesFactory;
@@ -109,7 +109,7 @@ public class TestEMFScope {
     }
 
     private Collection<? extends IPatternMatch> getMatches(Pattern pattern, EMFScope scope) throws IncQueryException {
-        IncQueryMatcher<? extends IPatternMatch> matcher = IncQueryEngine.on(scope).getMatcher(new SpecificationBuilder().getOrCreateSpecification(pattern));
+        ViatraQueryMatcher<? extends IPatternMatch> matcher = ViatraQueryEngine.on(scope).getMatcher(new SpecificationBuilder().getOrCreateSpecification(pattern));
         return matcher.getAllMatches();
     }
 

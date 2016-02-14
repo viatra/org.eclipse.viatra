@@ -16,14 +16,14 @@ import com.google.inject.Injector
 import java.util.Set
 import org.apache.log4j.Logger
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.viatra.query.testing.queries.UnexpectedMatchRecordMatcher
 import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 
 import static org.junit.Assert.*
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
  * Primitive methods for executing a functional test for EMF-IncQuery.
@@ -50,7 +50,7 @@ class TestExecutor {
 	 *
 	 * Returns true if further comparison is allowed, false otherwise.
 	 */
-	def validateMatcherBeforeCompare(IncQueryMatcher matcher, MatchSetRecord expected, Set diff){
+	def validateMatcherBeforeCompare(ViatraQueryMatcher matcher, MatchSetRecord expected, Set diff){
 
 		// 1. Check match set record pattern name against matcher pattern name
 		if(!matcher.patternName.equals(expected.patternQualifiedName)){
@@ -80,7 +80,7 @@ class TestExecutor {
 	 * Therefore the comparison depends on correct EMF-IncQuery query evaluation
 	 *  (for a given limited pattern language feature set).
 	 */
-	def compareResultSetsAsRecords(IncQueryMatcher matcher, MatchSetRecord expected){
+	def compareResultSetsAsRecords(ViatraQueryMatcher matcher, MatchSetRecord expected){
 		val diff = newHashSet
 
 		// 1. Validate match set record against matcher
@@ -96,7 +96,7 @@ class TestExecutor {
 		val snapshot = expected.eContainer as IncQuerySnapshot
 
 		// 2. Initialize matcher for comparison
-		val engine = IncQueryEngine::on(snapshot.EMFRootForSnapshot)
+		val engine = ViatraQueryEngine::on(snapshot.EMFRootForSnapshot)
 		val unexpectedMatcher = UnexpectedMatchRecordMatcher::querySpecification().getMatcher(engine)
 
 		// 3. Save match results into snapshot
@@ -120,7 +120,7 @@ class TestExecutor {
 	 *  records as partial matches on the matcher.
 	 * Therefore the comparison does not depend on correct EMF-IncQuery query evaluation.
 	 */
-	def compareResultSets(IncQueryMatcher matcher, MatchSetRecord expected){
+	def compareResultSets(ViatraQueryMatcher matcher, MatchSetRecord expected){
 		val diff = newHashSet
 
 		// 1. Validate match set record against matcher
@@ -180,7 +180,7 @@ class TestExecutor {
 	def assertMatchResults(PatternModel patternModel, IncQuerySnapshot snapshot){
 		val diff = newHashSet
 		val input = snapshot.EMFRootForSnapshot
-		val engine = IncQueryEngine::on(input);
+		val engine = ViatraQueryEngine::on(input);
 		engine.registerLogger
 		snapshot.matchSetRecords.forEach() [matchSet |
 			val matcher = patternModel.initializeMatcherFromModel(engine,matchSet.patternQualifiedName)
@@ -220,11 +220,11 @@ class TestExecutor {
 		patternModel.assertMatchResults(snapshotUri)
 	}
 
-	def registerLogger(IncQueryEngine engine){
+	def registerLogger(ViatraQueryEngine engine){
 		logger.addAppender(new TestingLogAppender)
 	}
 
-	def retrieveLoggerOutput(IncQueryEngine engine){
+	def retrieveLoggerOutput(ViatraQueryEngine engine){
 		val logger = logger
 
 		val appers = logger.allAppenders
@@ -243,7 +243,7 @@ class TestExecutor {
 		stringBuilder.toString
 	}
 
-	def logDifference(Set<Object> diff, IncQueryEngine engine){
+	def logDifference(Set<Object> diff, ViatraQueryEngine engine){
 		val stringBuilder = new StringBuilder()
 		diff.logDifference(stringBuilder)
 		stringBuilder.append(engine.retrieveLoggerOutput)

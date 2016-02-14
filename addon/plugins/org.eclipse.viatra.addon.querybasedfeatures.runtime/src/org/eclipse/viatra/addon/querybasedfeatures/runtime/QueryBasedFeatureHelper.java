@@ -23,8 +23,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
@@ -37,7 +37,7 @@ import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
 public final class QueryBasedFeatureHelper {
     
     // QueryResultMultiMap based implementation:
-    // - one Execution Schema for one IncQueryEngine
+    // - one Execution Schema for one ViatraQueryEngine
     // - one QueryResultMultiMap for one feature and model pair
     // - handler can be stateless? simply processes updates from multimap
     
@@ -53,7 +53,7 @@ public final class QueryBasedFeatureHelper {
     }
 
     /**
-     * Decide what {@link Notifier} to use as the scope of the {@link IncQueryMatcher} underlying the created
+     * Decide what {@link Notifier} to use as the scope of the {@link ViatraQueryMatcher} underlying the created
      * {@link IQueryBasedFeatureHandler}.
      * 
      * <p>
@@ -145,10 +145,10 @@ public final class QueryBasedFeatureHelper {
         features.put(feature, new WeakReference<IQueryBasedFeatureHandler>(queryBasedFeatureHandler));
 
         @SuppressWarnings("unchecked")
-        IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+        IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getQuerySpecification(patternFQN);
         if (querySpecification != null) {
             try {
-                IncQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(IncQueryEngine.on(notifier));
+                ViatraQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(ViatraQueryEngine.on(notifier));
                 newFeature.initialize(matcher, sourceParamName, targetParamName);
                 newFeature.startMonitoring();
             } catch (IncQueryException e) {

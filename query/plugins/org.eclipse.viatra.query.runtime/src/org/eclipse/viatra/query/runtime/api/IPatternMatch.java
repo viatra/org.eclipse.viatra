@@ -24,7 +24,7 @@ import java.util.List;
  */
 public interface IPatternMatch extends Cloneable /* , Map<String, Object> */{
     /** @return the pattern for which this is a match. */
-    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification();
+    public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification();
 
     /** Identifies the name of the pattern for which this is a match. */
     public String patternName();
@@ -64,7 +64,7 @@ public interface IPatternMatch extends Cloneable /* , Map<String, Object> */{
      * Returns whether the match object can be further modified after its creation. Setters work only if the match is mutable. 
      * 
      * <p>Matches computed by the pattern matchers are not mutable, so that the match set cannot be modified externally. 
-     * Partial matches used as matcher input, however, can be mutable; such match objects can be created using {@link IncQueryMatcher#newEmptyMatch()}. 
+     * Partial matches used as matcher input, however, can be mutable; such match objects can be created using {@link ViatraQueryMatcher#newEmptyMatch()}. 
      * 
      * @return whether the match can be modified
      */

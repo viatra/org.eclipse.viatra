@@ -40,7 +40,7 @@ public class TheStateCoder implements IStateCoder {
         // this.notifier = notifier;
         // try {
         // EMFScope scope = new EMFScope(notifier);
-        // incqueryEngine = IncQueryEngine.on(scope);
+        // queryEngine = ViatraQueryEngine.on(scope);
         // } catch (IncQueryException e1) {
         // logger.error("Failed to initialize IncQuery engine on the given notifier", e1);
         // throw new DSEException("Failed to initialize IncQuery engine on the given notifier");

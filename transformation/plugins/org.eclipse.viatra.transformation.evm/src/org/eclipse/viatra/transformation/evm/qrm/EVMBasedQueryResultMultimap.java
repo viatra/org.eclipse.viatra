@@ -17,8 +17,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.base.api.QueryResultMultimap;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Job;
@@ -77,9 +77,9 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      * is scheduled with IQBase update callbacks.
      * 
      */
-    protected EVMBasedQueryResultMultimap(final IncQueryEngine engine) {
+    protected EVMBasedQueryResultMultimap(final ViatraQueryEngine engine) {
         this(ExecutionSchemas.createIncQueryExecutionSchema(engine,
-                Schedulers.getIQEngineSchedulerFactory(engine)));
+                Schedulers.getQueryEngineSchedulerFactory(engine)));
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      * 
      * @param querySpecification
      */
-    public <Matcher extends IncQueryMatcher<Match>> void addMatcherToMultimapResults(
+    public <Matcher extends ViatraQueryMatcher<Match>> void addMatcherToMultimapResults(
             final IQuerySpecification<Matcher> querySpecification) {
         schema.addRule(Rules.newMatcherRuleSpecification(querySpecification,
                 Lifecycles.getDefault(false, true), jobs));

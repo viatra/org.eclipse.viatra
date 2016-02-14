@@ -13,11 +13,11 @@ package org.eclipse.viatra.transformation.runtime.emf.rules.batch;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
 public class BatchTransformationRuleFactory {
 
-	public class BatchTransformationRuleBuilder<Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> {
+	public class BatchTransformationRuleBuilder<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> {
 		
 		private IQuerySpecification<Matcher> fPrecondition;
 		private IMatchProcessor<Match> fAction;
@@ -57,30 +57,30 @@ public class BatchTransformationRuleFactory {
 		}
 	}
 	
-	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> BatchTransformationRuleBuilder<Match, Matcher> createRule() {
+	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRuleBuilder<Match, Matcher> createRule() {
 		return new BatchTransformationRuleBuilder<Match, Matcher>();
 	}
 	
-	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createRule(
+	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createRule(
 			IQuerySpecification<Matcher> precondition,
 			IMatchProcessor<Match> action) {
 		return createRule("", precondition, action);
 	}
 
-	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createRule(
+	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createRule(
 			String name, IQuerySpecification<Matcher> precondition,
 			IMatchProcessor<Match> action) {
 		return new BatchTransformationRule<Match, Matcher>(name, precondition,
 				BatchTransformationRule.STATELESS_RULE_LIFECYCLE, action);
 	}
 
-	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createStatefulRule(
+	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createStatefulRule(
 			IQuerySpecification<Matcher> precondition,
 			IMatchProcessor<Match> action) {
 		return createStatefulRule("", precondition, action);
 	}
 
-	public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createStatefulRule(
+	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createStatefulRule(
 			String name, IQuerySpecification<Matcher> precondition,
 			IMatchProcessor<Match> action) {
 		return new BatchTransformationRule<Match, Matcher>(name, precondition,

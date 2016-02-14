@@ -214,7 +214,7 @@ implements IGenerationFragment {
         import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
         import org.eclipse.viatra.query.runtime.api.IPatternMatch;
         import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-        import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+        import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
         import org.eclipse.viatra.query.runtime.exception.IncQueryException;
         
         import «pattern.utilPackageName + "." + pattern.querySpecificationClassName»;

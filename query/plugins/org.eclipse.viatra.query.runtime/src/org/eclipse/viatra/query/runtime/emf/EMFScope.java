@@ -18,8 +18,8 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.IEngineContext;
 import org.eclipse.viatra.query.runtime.api.scope.IIndexingErrorListener;
 import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
@@ -169,7 +169,7 @@ public class EMFScope extends IncQueryScope {
     }
 
     @Override
-    protected IEngineContext createEngineContext(IncQueryEngine engine, IIndexingErrorListener errorListener, Logger logger) {
+    protected IEngineContext createEngineContext(ViatraQueryEngine engine, IIndexingErrorListener errorListener, Logger logger) {
         return new EMFEngineContext(this, engine, errorListener, logger);
     }
 
@@ -180,10 +180,10 @@ public class EMFScope extends IncQueryScope {
      * @return the underlying EMF base index that indexes the contents of the EMF model
      * @throws IncQueryException if base index initialization fails
      */
-    public static NavigationHelper extractUnderlyingEMFIndex(IncQueryEngine engine) throws IncQueryException {
+    public static NavigationHelper extractUnderlyingEMFIndex(ViatraQueryEngine engine) throws IncQueryException {
         final IncQueryScope scope = engine.getScope();
          if (scope instanceof EMFScope)
-             return ((EMFBaseIndexWrapper)AdvancedIncQueryEngine.from(engine).getBaseIndex()).getNavigationHelper();
+             return ((EMFBaseIndexWrapper)AdvancedViatraQueryEngine.from(engine).getBaseIndex()).getNavigationHelper();
          else throw new IllegalArgumentException("Cannot extract EMF base index from IncQuery engine instantiated on non-EMF scope " + scope);
     }
     

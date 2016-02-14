@@ -18,8 +18,8 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 import com.google.common.base.Preconditions;
@@ -35,12 +35,12 @@ import com.google.common.base.Preconditions;
 public class ModelQueriesHardObjective extends BaseObjective {
 
     protected static final String DEFAULT_NAME = "ModelQueriesHardObjective";
-    protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints;
-    protected List<IncQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>();
+    protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints;
+    protected List<ViatraQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>();
     protected ModelQueryType type = ModelQueryType.ALL_MUST_HAVE_MATCH;
 
     public ModelQueriesHardObjective(String name,
-            List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints) {
+            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints) {
         super(name);
         Preconditions.checkNotNull(constraints, "The list of constraints cannot be null.");
 
@@ -48,16 +48,16 @@ public class ModelQueriesHardObjective extends BaseObjective {
     }
 
     public ModelQueriesHardObjective(
-            List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints) {
+            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints) {
         this(DEFAULT_NAME, constraints);
     }
 
     public ModelQueriesHardObjective(String name) {
-        this(name, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
+        this(name, new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
     }
 
     public ModelQueriesHardObjective() {
-        this(DEFAULT_NAME, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
+        this(DEFAULT_NAME, new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
     }
 
     /**
@@ -68,14 +68,14 @@ public class ModelQueriesHardObjective extends BaseObjective {
      * @return The actual instance to enable builder pattern like usage.
      */
     public ModelQueriesHardObjective withConstraint(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> constraint) {
         constraints.add(constraint);
         return this;
     }
 
     @Override
     public Double getFitness(ThreadContext context) {
-        for (IncQueryMatcher<? extends IPatternMatch> matcher : matchers) {
+        for (ViatraQueryMatcher<? extends IPatternMatch> matcher : matchers) {
             if ((type.equals(ModelQueryType.ALL_MUST_HAVE_MATCH) && matcher.countMatches() == 0)
                     || (type.equals(ModelQueryType.NO_MATCH) && matcher.countMatches() > 0)) {
                 return 0d;
@@ -87,10 +87,10 @@ public class ModelQueriesHardObjective extends BaseObjective {
     @Override
     public void init(ThreadContext context) {
         try {
-            IncQueryEngine incQueryEngine = context.getIncqueryEngine();
+            ViatraQueryEngine queryEngine = context.getQueryEngine();
 
-            for (IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification : constraints) {
-                IncQueryMatcher<? extends IPatternMatch> matcher = querySpecification.getMatcher(incQueryEngine);
+            for (IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification : constraints) {
+                ViatraQueryMatcher<? extends IPatternMatch> matcher = querySpecification.getMatcher(queryEngine);
                 matchers.add(matcher);
             }
 

@@ -12,7 +12,6 @@ package org.eclipse.viatra.transformation.debug.adapter.impl
 
 import com.google.common.collect.Lists
 import java.util.List
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
 import org.eclipse.viatra.transformation.evm.api.Context
 import org.eclipse.viatra.transformation.evm.api.Executor
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm
@@ -21,6 +20,7 @@ import org.eclipse.viatra.transformation.debug.adapter.IAdapterConfiguration
 import org.eclipse.viatra.transformation.debug.adapter.ITransformationAdapter
 
 import static com.google.common.base.Preconditions.*
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 
 /**
  * Builder class that is responsible for creating an adapter supporting executor.
@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.*
  * @author Peter Lunk
  */
 class AdaptableExecutorBuilder {
-	protected IncQueryEngine engine
+	protected ViatraQueryEngine engine
 	protected EventRealm eventRealm
 	protected List<ITransformationAdapter> adapters
 	protected Context context
@@ -37,7 +37,7 @@ class AdaptableExecutorBuilder {
 		adapters = Lists.newArrayList
 	}
 	
-	def setIncQueryEngine(IncQueryEngine engine){
+	def setQueryEngine(ViatraQueryEngine engine){
 		this.engine = engine
 		this	
 	}

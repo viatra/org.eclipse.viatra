@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueryHeader;
  * @author Bergmann Gábor
  *
  */
-public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> extends PQueryHeader {
+public interface IQuerySpecification<Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> extends PQueryHeader {
 
     /**
      * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). If a pattern
@@ -40,10 +40,10 @@ public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends I
      * The match set will be incrementally refreshed upon updates from this scope.
      *
      * <p>
-     * The matcher will be created within the managed {@link IncQueryEngine} belonging to the EMF model root, so
+     * The matcher will be created within the managed {@link ViatraQueryEngine} belonging to the EMF model root, so
      * multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
      *
-     * @deprecated use {@link #getMatcher(IncQueryEngine)} instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}.
+     * @deprecated use {@link #getMatcher(ViatraQueryEngine)} instead, e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}.
      *
      * @param emfRoot
      *            the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
@@ -54,7 +54,7 @@ public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends I
     public Matcher getMatcher(Notifier emfRoot) throws IncQueryException;
 
     /**
-     * Initializes the pattern matcher within an existing {@link IncQueryEngine}. If the pattern matcher is already
+     * Initializes the pattern matcher within an existing {@link ViatraQueryEngine}. If the pattern matcher is already
      * constructed in the engine, only a lightweight reference is created.
      * <p>
      * The match set will be incrementally refreshed upon updates.
@@ -64,7 +64,7 @@ public interface IQuerySpecification<Matcher extends IncQueryMatcher<? extends I
      * @throws IncQueryException
      *             if an error occurs during pattern matcher creation
      */
-    public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException;
+    public Matcher getMatcher(ViatraQueryEngine engine) throws IncQueryException;
 
     
     /**

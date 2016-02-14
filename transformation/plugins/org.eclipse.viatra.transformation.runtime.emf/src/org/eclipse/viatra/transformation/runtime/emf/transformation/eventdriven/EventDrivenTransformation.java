@@ -15,9 +15,9 @@ import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra.query.runtime.api.GenericPatternGroup;
+import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
@@ -35,7 +35,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class EventDrivenTransformation {
-    private IncQueryEngine incQueryEngine;
+    private ViatraQueryEngine queryEngine;
     private ExecutionSchema executionSchema;
     private Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rules;
     
@@ -44,7 +44,7 @@ public class EventDrivenTransformation {
         private final String SCHEMA_ERROR = "Cannot set both Conflict Resolver and Execution Schema properties.";
 
         private ConflictResolver resolver;
-        private IncQueryEngine engine;
+        private ViatraQueryEngine engine;
         private ExecutionSchema schema;
         private List<EventDrivenTransformationRule<?, ?>> rules = Lists.newArrayList();
 
@@ -55,11 +55,11 @@ public class EventDrivenTransformation {
         }
 
         public EventDrivenTransformationBuilder setScope(EMFScope scope) throws IncQueryException {
-            this.engine = IncQueryEngine.on(scope);
+            this.engine = ViatraQueryEngine.on(scope);
             return this;
         }
 
-        public EventDrivenTransformationBuilder setEngine(IncQueryEngine engine) {
+        public EventDrivenTransformationBuilder setEngine(ViatraQueryEngine engine) {
             this.engine = engine;
             return this;
         }
@@ -91,7 +91,7 @@ public class EventDrivenTransformation {
         }
 
         public EventDrivenTransformation build() throws IncQueryException {
-            Preconditions.checkState(engine != null, "IncQueryEngine must be set.");
+            Preconditions.checkState(engine != null, "ViatraQueryEngine must be set.");
             Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rulesToAdd = Maps.newHashMap();
             
             if (schema == null) {
@@ -102,7 +102,7 @@ public class EventDrivenTransformation {
                 schema = builder.build();
             }
             Iterable<IQuerySpecification<?>> preconditions = collectPreconditions();
-            GenericPatternGroup.of(Sets.newHashSet(preconditions)).prepare(engine);
+            GenericQueryGroup.of(Sets.newHashSet(preconditions)).prepare(engine);
             for (EventDrivenTransformationRule<?, ?> rule : rules) {
                 schema.addRule(rule.getRuleSpecification());
                 rulesToAdd.put(rule.getRuleSpecification(), rule);
@@ -126,24 +126,24 @@ public class EventDrivenTransformation {
     }
 
     public static EventDrivenTransformationBuilder forScope(EMFScope scope) throws IncQueryException {
-        return forEngine(IncQueryEngine.on(scope));
+        return forEngine(ViatraQueryEngine.on(scope));
     }
     
-    public static EventDrivenTransformationBuilder forEngine(IncQueryEngine engine) throws IncQueryException {
+    public static EventDrivenTransformationBuilder forEngine(ViatraQueryEngine engine) throws IncQueryException {
         return new EventDrivenTransformationBuilder().setEngine(engine);
     }
     
     /**
-     * @deprecated Use {@link #forScope(EMFScope)} or {@link #forEngine(IncQueryEngine)} instead!
+     * @deprecated Use {@link #forScope(EMFScope)} or {@link #forEngine(ViatraQueryEngine)} instead!
      */
     @Deprecated
     public static EventDrivenTransformationBuilder forSource(Notifier notifier) throws IncQueryException {
         return EventDrivenTransformation.forScope(new EMFScope(notifier));
     }
 
-    private EventDrivenTransformation(ExecutionSchema executionSchema, IncQueryEngine incQueryEngine) {
+    private EventDrivenTransformation(ExecutionSchema executionSchema, ViatraQueryEngine queryEngine) {
         this.executionSchema = executionSchema;
-        this.incQueryEngine = incQueryEngine;
+        this.queryEngine = queryEngine;
     }
 
     public EventDrivenTransformation setDebugLevel(Level level) {
@@ -151,8 +151,8 @@ public class EventDrivenTransformation {
         return this;
     }
 
-    public IncQueryEngine getIqEngine() {
-        return incQueryEngine;
+    public ViatraQueryEngine getQueryEngine() {
+        return queryEngine;
     }
 
     public ExecutionSchema getExecutionSchema() {

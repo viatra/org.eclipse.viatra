@@ -17,7 +17,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
  * 
  */
 public class IncQueryViewerDataModel extends ViewerDataModel {
-    private IncQueryEngine engine;
+    private ViatraQueryEngine engine;
     private Logger logger;
     private Set<IQuerySpecification<?>> patterns;
     
@@ -49,7 +49,7 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
      * @throws IncQueryException
      * @throws IncQueryBaseException
      */
-    public IncQueryViewerDataModel(Collection<IQuerySpecification<?>> patterns, IncQueryEngine engine) throws IncQueryException, IncQueryBaseException {
+    public IncQueryViewerDataModel(Collection<IQuerySpecification<?>> patterns, ViatraQueryEngine engine) throws IncQueryException, IncQueryBaseException {
     	super(engine);
         this.patterns = Sets.newHashSet(patterns);
         this.engine = engine;
@@ -57,7 +57,7 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
     }
 
     @Override
-    public IncQueryEngine getEngine() {
+    public ViatraQueryEngine getEngine() {
         return engine;
     }
 
@@ -99,7 +99,7 @@ public class IncQueryViewerDataModel extends ViewerDataModel {
  	 * @param features
  	 * @return
  	 */
- 	public static ViewerState newViewerState(IncQueryEngine engine,
+ 	public static ViewerState newViewerState(ViatraQueryEngine engine,
  			Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter,
  			Collection<ViewerStateFeature> features) {
  		IncQueryViewerDataModel m;

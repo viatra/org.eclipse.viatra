@@ -15,10 +15,10 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.GenericPatternGroup;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.Context;
@@ -40,47 +40,47 @@ import com.google.common.collect.Iterables;
 public class BatchTransformation {
 
 	protected final RuleEngine ruleEngine;
-	protected final AdvancedIncQueryEngine iqEngine;
+	protected final AdvancedViatraQueryEngine queryEngine;
 	protected final boolean selfManagedEngines;
 	protected final Context context;
 	protected Set<BatchTransformationRule<?, ?>> rules = new HashSet<BatchTransformationRule<?,?>>();
 
 	public static BatchTransformation forScope(EMFScope scope) throws IncQueryException {
-		AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(scope);
+		AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
 		return new BatchTransformation(engine);
 	}
 	
-	public static BatchTransformation forEngine(IncQueryEngine engine) {
+	public static BatchTransformation forEngine(ViatraQueryEngine engine) {
 		return forRuleEngine(RuleEngines.createIncQueryRuleEngine(engine), engine);
 	}
 	
-	public static BatchTransformation forRuleEngine(RuleEngine ruleEngine, IncQueryEngine engine) {
-		return new BatchTransformation(ruleEngine, AdvancedIncQueryEngine.from(engine), false);
+	public static BatchTransformation forRuleEngine(RuleEngine ruleEngine, ViatraQueryEngine engine) {
+		return new BatchTransformation(ruleEngine, AdvancedViatraQueryEngine.from(engine), false);
 	}
 	
 	@Deprecated
 	public BatchTransformation(Resource resource) throws IncQueryException {
-		this(AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(resource)));
+		this(AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resource)));
 	}
 
 	@Deprecated
 	public BatchTransformation(ResourceSet set) throws IncQueryException {
-		this(AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(set)));
+		this(AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(set)));
 	}
 
 	@Deprecated
-	public BatchTransformation(RuleEngine ruleEngine, AdvancedIncQueryEngine iqEngine) {
-		this(ruleEngine, iqEngine, false);
+	public BatchTransformation(RuleEngine ruleEngine, AdvancedViatraQueryEngine queryEngine) {
+		this(ruleEngine, queryEngine, false);
 	}
 	
-	private BatchTransformation(AdvancedIncQueryEngine iqEngine) {
-		this(RuleEngines.createIncQueryRuleEngine(iqEngine), iqEngine, true);
+	private BatchTransformation(AdvancedViatraQueryEngine queryEngine) {
+		this(RuleEngines.createIncQueryRuleEngine(queryEngine), queryEngine, true);
 	}
 	
 	private BatchTransformation(RuleEngine ruleEngine,
-			AdvancedIncQueryEngine iqEngine, boolean selfManagedEngine) {
+			AdvancedViatraQueryEngine queryEngine, boolean selfManagedEngine) {
 		this.ruleEngine = ruleEngine;
-		this.iqEngine = iqEngine;
+		this.queryEngine = queryEngine;
 		this.selfManagedEngines = selfManagedEngine;
 		
 		context = Context.create();
@@ -105,21 +105,21 @@ public class BatchTransformation {
 	
 	
 	public void initializeIndexes() throws IncQueryException {
-		GenericPatternGroup.of(Iterables.toArray(Iterables.transform(rules, new Function<BatchTransformationRule<?, ?>, IQuerySpecification<?>>() {
+		GenericQueryGroup.of(Iterables.toArray(Iterables.transform(rules, new Function<BatchTransformationRule<?, ?>, IQuerySpecification<?>>() {
 			
 			@Override
 			public IQuerySpecification<?> apply(BatchTransformationRule<?,?> rule){
 				return rule.getPrecondition();
 			}
-		}), IQuerySpecification.class)).prepare(iqEngine);
+		}), IQuerySpecification.class)).prepare(queryEngine);
 	}
 	
 	public RuleEngine getRuleEngine() {
 		return ruleEngine;
 	}
 	
-	public IncQueryEngine getIqEngine() {
-		return iqEngine;
+	public ViatraQueryEngine getQueryEngine() {
+		return queryEngine;
 	}
 	
 	public Context getContext() {
@@ -129,7 +129,7 @@ public class BatchTransformation {
 	public void dispose() {
 		if (selfManagedEngines) {
 			ruleEngine.dispose();
-			iqEngine.dispose();
+			queryEngine.dispose();
 		}
 	}
 

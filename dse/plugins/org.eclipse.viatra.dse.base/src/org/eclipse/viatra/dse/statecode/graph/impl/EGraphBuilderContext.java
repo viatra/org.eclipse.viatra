@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
@@ -41,7 +41,7 @@ public class EGraphBuilderContext {
     private Map<EObject, Map<EReference, Map<EObject, EEdge>>> sourceReferenceTargetMap = new HashMap<EObject, Map<EReference, Map<EObject, EEdge>>>();
     private EObject root;
     private NavigationHelper helperInstance;
-    private IncQueryEngine engine;
+    private ViatraQueryEngine engine;
 
     private final Logger logger = Logger.getLogger(getClass());
 
@@ -66,7 +66,7 @@ public class EGraphBuilderContext {
     public EGraphBuilderContext(Notifier modelRoot) throws IncQueryException {
         this.root = (EObject) modelRoot;
         EMFScope scope = new EMFScope(modelRoot);
-        this.engine = IncQueryEngine.on(scope);
+        this.engine = ViatraQueryEngine.on(scope);
     }
 
     public EVertex getEVertex(EObject obj) {

@@ -47,7 +47,7 @@ import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
@@ -189,7 +189,7 @@ public class DisplayUtil {
      * @param patternFqn
      * @return
      */
-    public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn) {
+    public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn) {
         return getMessage(matcher, matchesSize, patternFqn, false, false, null, null);
     }
     
@@ -202,7 +202,7 @@ public class DisplayUtil {
      * @param backend
      * @return
      */
-    public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, Class<? extends IQueryBackend> backend) {
+    public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, Class<? extends IQueryBackend> backend) {
         return getMessage(matcher, matchesSize, patternFqn, false, false, null, backend);
     }
     
@@ -210,7 +210,7 @@ public class DisplayUtil {
      * Returns a text message about the matches size for the given matcher.
      *
      * @param matcher
-     *            the {@link IncQueryMatcher} instance
+     *            the {@link ViatraQueryMatcher} instance
      * @param matchesSize
      *            the size of the matchset
      * @param patternFqn
@@ -221,7 +221,7 @@ public class DisplayUtil {
      *            true, if the matcher is filtered, false otherwise
      * @return the label associated to the matcher
      */
-    public static String getMessage(IncQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
+    public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
             String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage, Class<? extends IQueryBackend> backend) {
         if (matcher == null) {
         	if (exceptionMessage != null)

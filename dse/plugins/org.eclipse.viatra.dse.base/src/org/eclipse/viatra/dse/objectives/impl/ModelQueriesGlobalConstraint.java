@@ -18,8 +18,8 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 import com.google.common.base.Preconditions;
@@ -35,12 +35,12 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
 
     public static final String GLOBAL_CONSTRAINT = "GlobalConstraint";
     protected String name;
-    protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints;
-    protected List<IncQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>();
+    protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints;
+    protected List<ViatraQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>();
     protected ModelQueryType type = ModelQueryType.NO_MATCH;
 
     public ModelQueriesGlobalConstraint(String name,
-            List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints) {
+            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints) {
         Preconditions.checkNotNull(name, "Name of the global constraint cannot be null.");
         Preconditions.checkNotNull(constraints, "The list of constraints cannot be null.");
 
@@ -49,17 +49,17 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
     }
 
     public ModelQueriesGlobalConstraint(
-            List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints) {
+            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints) {
         this(GLOBAL_CONSTRAINT, constraints);
     }
 
     public ModelQueriesGlobalConstraint(String name) {
-        this(name, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
+        this(name, new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
     }
 
     public ModelQueriesGlobalConstraint() {
         this(GLOBAL_CONSTRAINT,
-                new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>());
+                new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
     }
 
     /**
@@ -70,7 +70,7 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
      * @return The actual instance to enable builder pattern like usage.
      */
     public ModelQueriesGlobalConstraint withConstraint(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> constraint) {
         constraints.add(constraint);
         return this;
     }
@@ -87,7 +87,7 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
 
     @Override
     public boolean checkGlobalConstraint(ThreadContext context) {
-        for (IncQueryMatcher<? extends IPatternMatch> matcher : matchers) {
+        for (ViatraQueryMatcher<? extends IPatternMatch> matcher : matchers) {
             if ((type.equals(ModelQueryType.NO_MATCH) && matcher.countMatches() > 0)
                     || (type.equals(ModelQueryType.ALL_MUST_HAVE_MATCH) && matcher.countMatches() == 0)) {
                 return false;
@@ -99,10 +99,10 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
     @Override
     public void init(ThreadContext context) {
         try {
-            IncQueryEngine incQueryEngine = context.getIncqueryEngine();
+            ViatraQueryEngine queryEngine = context.getQueryEngine();
 
-            for (IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification : constraints) {
-                IncQueryMatcher<? extends IPatternMatch> matcher = querySpecification.getMatcher(incQueryEngine);
+            for (IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification : constraints) {
+                ViatraQueryMatcher<? extends IPatternMatch> matcher = querySpecification.getMatcher(queryEngine);
                 matchers.add(matcher);
             }
 

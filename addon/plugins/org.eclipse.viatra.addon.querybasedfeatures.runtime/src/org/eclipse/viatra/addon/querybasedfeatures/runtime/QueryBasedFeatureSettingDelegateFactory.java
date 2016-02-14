@@ -23,11 +23,11 @@ import org.eclipse.emf.ecore.EStructuralFeature.Internal.SettingDelegate.Factory
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.BasicSettingDelegate;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
@@ -42,37 +42,37 @@ import com.google.common.collect.Maps;
 public class QueryBasedFeatureSettingDelegateFactory implements Factory {
 
 
-    private final Map<Notifier, WeakReference<AdvancedIncQueryEngine>> engineMap;
+    private final Map<Notifier, WeakReference<AdvancedViatraQueryEngine>> engineMap;
     
-    private final Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specificationMap;
+    private final Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specificationMap;
     
     /**
      * 
      */
     public QueryBasedFeatureSettingDelegateFactory() {
-        engineMap = new WeakHashMap<Notifier, WeakReference<AdvancedIncQueryEngine>>();
+        engineMap = new WeakHashMap<Notifier, WeakReference<AdvancedViatraQueryEngine>>();
         specificationMap = Maps.newHashMap();
     }
     
     /**
      * @return the specificationMap
      */
-    public Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getSpecificationMap() {
+    public Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getSpecificationMap() {
         return specificationMap;
     }
     
-    protected AdvancedIncQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) throws IncQueryException {
+    protected AdvancedViatraQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) throws IncQueryException {
         if(dynamicEMFMode) {
-            WeakReference<AdvancedIncQueryEngine> reference = engineMap.get(notifier);
+            WeakReference<AdvancedViatraQueryEngine> reference = engineMap.get(notifier);
             if(reference != null && reference.get() != null) {
                 return reference.get();
             } else {
-                AdvancedIncQueryEngine unmanagedEngine = AdvancedIncQueryEngine.createUnmanagedEngine(notifier, false, dynamicEMFMode);
-                engineMap.put(notifier, new WeakReference<AdvancedIncQueryEngine>(unmanagedEngine));
+                AdvancedViatraQueryEngine unmanagedEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(notifier, false, dynamicEMFMode);
+                engineMap.put(notifier, new WeakReference<AdvancedViatraQueryEngine>(unmanagedEngine));
                 return unmanagedEngine;
             }
         } else {
-            return AdvancedIncQueryEngine.from(IncQueryEngine.on(notifier));
+            return AdvancedViatraQueryEngine.from(ViatraQueryEngine.on(notifier));
         }
     }
     
@@ -80,7 +80,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
     public SettingDelegate createSettingDelegate(EStructuralFeature eStructuralFeature) {
         SettingDelegate result = null;
         
-        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpec = findQuerySpecification(eStructuralFeature);
+        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpec = findQuerySpecification(eStructuralFeature);
         if(querySpec != null) {
             if (querySpec instanceof BaseGeneratedEMFQuerySpecification) {
                 result = createSettingDelegate(eStructuralFeature, querySpec, false, false);
@@ -109,9 +109,9 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
         return result;
     }
 
-    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> findQuerySpecification(
+    public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> findQuerySpecification(
             EStructuralFeature eStructuralFeature) {
-        IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpec = null;
+        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpec = null;
         EAnnotation annotation = eStructuralFeature.getEAnnotation(QueryBasedFeatures.ANNOTATION_SOURCE);
         if(annotation != null) {
             String patternFQN = annotation.getDetails().get(QueryBasedFeatures.PATTERN_FQN_KEY);
@@ -133,7 +133,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
     }
     
     public SettingDelegate createSettingDelegate(EStructuralFeature eStructuralFeature,
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification, boolean isResourceScope, boolean dynamicEMFMode) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification, boolean isResourceScope, boolean dynamicEMFMode) {
         Preconditions.checkArgument(querySpecification != null, "Query specification cannot be null!");
         return new QueryBasedFeatureSettingDelegate(eStructuralFeature, this, querySpecification, isResourceScope, dynamicEMFMode);
     }

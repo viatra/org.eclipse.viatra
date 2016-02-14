@@ -35,7 +35,7 @@ import org.eclipse.viatra.dse.statecode.graph.impl.IModelObject;
 import org.eclipse.viatra.dse.statecode.graph.impl.IModelReference;
 import org.eclipse.viatra.dse.util.Hasher;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
@@ -53,7 +53,7 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
 
     private final Map<IModelObject, ModelObjectCoderBucket> buckets = new HashMap<IModelObject, ModelObjectCoderBucket>();
 
-    private IncQueryEngine iqEngine;
+    private ViatraQueryEngine queryEngine;
 
     private EGraphBuilderContext context;
 
@@ -102,10 +102,10 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
         try {
             
             EMFScope scope = new EMFScope(notifier);
-            iqEngine = IncQueryEngine.on(scope);
+            queryEngine = ViatraQueryEngine.on(scope);
 
             // add listeners
-            EMFScope.extractUnderlyingEMFIndex(iqEngine).addInstanceListener(classes, this);
+            EMFScope.extractUnderlyingEMFIndex(queryEngine).addInstanceListener(classes, this);
             
             // create mapping context
             context = new EGraphBuilderContext(notifier);
@@ -313,7 +313,7 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
 
         addNewModelObject(context.getEVertex(instance));
         try {
-        	EMFScope.extractUnderlyingEMFIndex(iqEngine).addLightweightEObjectObserver(observer, instance);
+        	EMFScope.extractUnderlyingEMFIndex(queryEngine).addLightweightEObjectObserver(observer, instance);
         } catch (IncQueryException e) {
             throw new DSEException("Failed to create EObjectObserver.", e);
         }
@@ -331,7 +331,7 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
         }
         context.forgetEVertex(instance);
         try {
-            EMFScope.extractUnderlyingEMFIndex(iqEngine).removeLightweightEObjectObserver(observer, instance);
+            EMFScope.extractUnderlyingEMFIndex(queryEngine).removeLightweightEObjectObserver(observer, instance);
         } catch (IncQueryException e) {
             throw new DSEException("Failed to remove EObjectObserver.", e);
         }
@@ -355,7 +355,7 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
 
     private List<EObject> getAllObjects() {
         Collection<Notifier> root = new ArrayList<Notifier>();
-        root.add(((EMFScope)iqEngine.getScope()).getScopeRoot());
+        root.add(((EMFScope)queryEngine.getScope()).getScopeRoot());
 
         List<EObject> objects = new ArrayList<EObject>();
 

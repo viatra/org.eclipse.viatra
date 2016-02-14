@@ -26,7 +26,7 @@ import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 public class ModelManipulationWithEditingDomain extends AbstractModelManipulations {
@@ -65,7 +65,7 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 		
 	}
 	
-	public ModelManipulationWithEditingDomain(IncQueryEngine engine, EditingDomain domain) {
+	public ModelManipulationWithEditingDomain(ViatraQueryEngine engine, EditingDomain domain) {
 		super(engine);
 		this.domain = domain;
 	}

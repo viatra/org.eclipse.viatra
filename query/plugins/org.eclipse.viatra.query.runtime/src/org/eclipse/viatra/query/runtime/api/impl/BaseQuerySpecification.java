@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -30,13 +30,13 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
  * @author Gabor Bergmann
  *
  */
-public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? extends IPatternMatch>> implements
+public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> implements
         IQuerySpecification<Matcher> {
 
     
 	protected final PQuery wrappedPQuery;
 	
-    protected abstract Matcher instantiate(IncQueryEngine engine) throws IncQueryException;
+    protected abstract Matcher instantiate(ViatraQueryEngine engine) throws IncQueryException;
 
     
     
@@ -58,13 +58,13 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     
     @Override
     public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
-        IncQueryEngine engine = IncQueryEngine.on(emfRoot);
+        ViatraQueryEngine engine = ViatraQueryEngine.on(emfRoot);
         ensureInitializedInternal();
         return getMatcher(engine);
     }
 
     @Override
-    public Matcher getMatcher(IncQueryEngine engine) throws IncQueryException {
+    public Matcher getMatcher(ViatraQueryEngine engine) throws IncQueryException {
     	ensureInitializedInternal();
     	if (engine.getScope().isCompatibleWithQueryScope(this.getPreferredScopeClass()))
     		return instantiate(engine);
@@ -104,7 +104,7 @@ public abstract class BaseQuerySpecification<Matcher extends IncQueryMatcher<? e
     // @Override
     // public Matcher getMatcher(TransactionalEditingDomain trDomain, int numThreads) throws IncQueryRuntimeException {
     // try {
-    // IncQueryEngine engine = EngineManager.getInstance().getReteEngine(trDomain, numThreads);
+    // ViatraQueryEngine engine = EngineManager.getInstance().getReteEngine(trDomain, numThreads);
     // return instantiate(engine);
     // } catch (RetePatternBuildException e) {
     // throw new IncQueryRuntimeException(e);

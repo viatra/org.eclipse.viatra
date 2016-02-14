@@ -17,13 +17,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngineLifecycleListener;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra.query.runtime.api.IncQueryModelUpdateListener;
-import org.eclipse.viatra.query.runtime.api.IncQueryModelUpdateListener.ChangeLevel;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener.ChangeLevel;
 import org.eclipse.viatra.query.runtime.api.scope.IncQueryBaseIndexChangeListener;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
@@ -33,37 +33,37 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 
-public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUpdateListener> {
+public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryModelUpdateListener> {
 
-    private final AdvancedIncQueryEngine incQueryEngine;
+    private final AdvancedViatraQueryEngine queryEngine;
     private ChangeLevel currentChange = ChangeLevel.NO_CHANGE;
     private ChangeLevel maxLevel = ChangeLevel.NO_CHANGE;
-    private final Multimap<ChangeLevel, IncQueryModelUpdateListener> listenerMap;
+    private final Multimap<ChangeLevel, ViatraQueryModelUpdateListener> listenerMap;
     private final Logger logger;
     
-    public ModelUpdateProvider(AdvancedIncQueryEngine incQueryEngine, Logger logger) {
+    public ModelUpdateProvider(AdvancedViatraQueryEngine queryEngine, Logger logger) {
         super();
-        this.incQueryEngine = incQueryEngine;
+        this.queryEngine = queryEngine;
         this.logger = logger;
-        Map<ChangeLevel, Collection<IncQueryModelUpdateListener>> map = Maps.newEnumMap(ChangeLevel.class);
+        Map<ChangeLevel, Collection<ViatraQueryModelUpdateListener>> map = Maps.newEnumMap(ChangeLevel.class);
         listenerMap = Multimaps.newSetMultimap(map,
-                new com.google.common.base.Supplier<Set<IncQueryModelUpdateListener>>() {
+                new com.google.common.base.Supplier<Set<ViatraQueryModelUpdateListener>>() {
                     @Override
-                    public Set<IncQueryModelUpdateListener> get() {
+                    public Set<ViatraQueryModelUpdateListener> get() {
                         return Sets.newHashSet();
                     }
         });
     }
     
     @Override
-    protected void listenerAdded(IncQueryModelUpdateListener listener) {
+    protected void listenerAdded(ViatraQueryModelUpdateListener listener) {
         // check ChangeLevel
         // create callback for given level if required
         if(listenerMap.isEmpty()) {
             try {
-                this.incQueryEngine.getBaseIndex().addBaseIndexChangeListener(indexListener);
+                this.queryEngine.getBaseIndex().addBaseIndexChangeListener(indexListener);
                 // add listener to new matchers (use lifecycle listener)
-                this.incQueryEngine.addLifecycleListener(selfListener);
+                this.queryEngine.addLifecycleListener(selfListener);
             } catch (IncQueryException e) {
                 throw new IllegalStateException("Model update listener used on engine without base index", e);
             }
@@ -76,14 +76,14 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         maxLevel = maxLevel.changeOccured(changeLevel); 
         if(!maxLevel.equals(oldMaxLevel) && ChangeLevel.MATCHSET.compareTo(oldMaxLevel) > 0 && ChangeLevel.MATCHSET.compareTo(maxLevel) <= 0) {
             // add matchUpdateListener to all matchers
-            for (IncQueryMatcher<?> matcher : this.incQueryEngine.getCurrentMatchers()) {
-                this.incQueryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
+            for (ViatraQueryMatcher<?> matcher : this.queryEngine.getCurrentMatchers()) {
+                this.queryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
             }
         }
     }
 
     @Override
-    protected void listenerRemoved(IncQueryModelUpdateListener listener) {
+    protected void listenerRemoved(ViatraQueryModelUpdateListener listener) {
         ChangeLevel changeLevel = listener.getLevel();
         boolean removed = listenerMap.remove(changeLevel, listener);
         if(!removed) {
@@ -93,14 +93,14 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         updateMaxLevel();
         
         if(listenerMap.isEmpty()) {
-            this.incQueryEngine.removeLifecycleListener(selfListener);
+            this.queryEngine.removeLifecycleListener(selfListener);
             removeBaseIndexChangeListener();
         }
     }
 
     private void removeBaseIndexChangeListener() {
         try {
-            this.incQueryEngine.getBaseIndex().removeBaseIndexChangeListener(indexListener);
+            this.queryEngine.getBaseIndex().removeBaseIndexChangeListener(indexListener);
         } catch (IncQueryException e) {
             throw new IllegalStateException("Model update listener used on engine without base index", e);
         }
@@ -116,14 +116,14 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         }
         if(maxLevel.compareTo(ChangeLevel.MATCHSET) < 0) {
             // remove listener from matchers
-            for (IncQueryMatcher<?> matcher : this.incQueryEngine.getCurrentMatchers()) {
-                this.incQueryEngine.removeMatchUpdateListener(matcher, matchSetListener);
+            for (ViatraQueryMatcher<?> matcher : this.queryEngine.getCurrentMatchers()) {
+                this.queryEngine.removeMatchUpdateListener(matcher, matchSetListener);
             }
         }
     }
 
-    private void handleUnsuccesfulRemove(IncQueryModelUpdateListener listener) {
-        for (Entry<ChangeLevel, IncQueryModelUpdateListener> entry : listenerMap.entries()) {
+    private void handleUnsuccesfulRemove(ViatraQueryModelUpdateListener listener) {
+        for (Entry<ChangeLevel, ViatraQueryModelUpdateListener> entry : listenerMap.entries()) {
             if(entry.getValue().equals(listener)) {
                 logger.error("Listener "+listener+" change level changed since initialization!");
                 listenerMap.remove(entry.getKey(), entry.getValue());
@@ -144,7 +144,7 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         if(!listenerMap.isEmpty()) {
             for (ChangeLevel level : ImmutableSet.copyOf(listenerMap.keySet())) {
                 if(tempLevel.compareTo(level) >= 0) {
-                    for (IncQueryModelUpdateListener listener : new ArrayList<IncQueryModelUpdateListener>(listenerMap.get(level))) {
+                    for (ViatraQueryModelUpdateListener listener : new ArrayList<ViatraQueryModelUpdateListener>(listenerMap.get(level))) {
                         try {
                             listener.notifyChanged(tempLevel);
                         } catch (Exception ex) {
@@ -194,12 +194,12 @@ public final class ModelUpdateProvider extends ListenerContainer<IncQueryModelUp
         }
     };
     
-    private final IncQueryEngineLifecycleListener selfListener = new IncQueryEngineLifecycleListener() {
+    private final ViatraQueryEngineLifecycleListener selfListener = new ViatraQueryEngineLifecycleListener() {
         
         @Override
-        public void matcherInstantiated(IncQueryMatcher<? extends IPatternMatch> matcher) {
+        public void matcherInstantiated(ViatraQueryMatcher<? extends IPatternMatch> matcher) {
             if (maxLevel.compareTo(ChangeLevel.MATCHSET) >= 0) {
-                ModelUpdateProvider.this.incQueryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
+                ModelUpdateProvider.this.queryEngine.addMatchUpdateListener(matcher, matchSetListener, false);
             }
         }
         

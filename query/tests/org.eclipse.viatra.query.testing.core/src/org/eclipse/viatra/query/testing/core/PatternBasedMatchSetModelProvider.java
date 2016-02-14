@@ -10,10 +10,10 @@
 package org.eclipse.viatra.query.testing.core;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
@@ -27,14 +27,14 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
         this.hint = hint;
     }
 
-    private AdvancedIncQueryEngine engine;
+    private AdvancedViatraQueryEngine engine;
 
     @Override
     public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet resourceSet,
-            IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, Match filter)
+            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
                     throws IncQueryException {
-        engine = AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(resourceSet));
-        IncQueryMatcher<Match> matcher = (IncQueryMatcher<Match>) ((AdvancedIncQueryEngine) engine)
+        engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resourceSet));
+        ViatraQueryMatcher<Match> matcher = (ViatraQueryMatcher<Match>) ((AdvancedViatraQueryEngine) engine)
                 .getMatcher(querySpecification, hint);
         return new SnapshotHelper().createMatchSetRecordForMatcher(matcher,
                 filter == null ? matcher.newEmptyMatch() : filter);

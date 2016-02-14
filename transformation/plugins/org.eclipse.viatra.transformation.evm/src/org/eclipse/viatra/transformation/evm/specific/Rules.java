@@ -15,8 +15,8 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.Job;
@@ -47,7 +47,7 @@ public final class Rules {
      * @param lifecycle
      * @param jobs
      */
-    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
         return new RuleSpecification<Match>(IncQueryEventRealm.createSourceSpecification(querySpecification), lifecycle, jobs);
     }
     
@@ -58,27 +58,27 @@ public final class Rules {
      * @param querySpecification
      * @param jobs
      */
-    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, Set<Job<Match>> jobs){
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Set<Job<Match>> jobs){
         return newMatcherRuleSpecification(querySpecification, Lifecycles.getDefault(true, true), jobs);
     }
     
-    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IncQueryMatcher<Match> matcher, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(ViatraQueryMatcher<Match> matcher, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
         FavouredMatcherSourceSpecification<Match> sourceSpecification = new FavouredMatcherSourceSpecification<Match>(matcher);
         return new RuleSpecification<Match>(sourceSpecification, lifecycle, jobs);
     }
 
     private static final class FavouredMatcherSourceSpecification<Match extends IPatternMatch> extends IncQueryEventSourceSpecification<Match>{
         
-        private final IncQueryMatcher<Match> matcher;
+        private final ViatraQueryMatcher<Match> matcher;
         
-        public FavouredMatcherSourceSpecification(IncQueryMatcher<Match> matcher) {
+        public FavouredMatcherSourceSpecification(ViatraQueryMatcher<Match> matcher) {
             super(matcher.getSpecification());
             this.matcher = matcher;
         }
 
         
         @Override
-        protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
+        protected ViatraQueryMatcher<Match> getMatcher(ViatraQueryEngine engine) throws IncQueryException {
             if(matcher.getEngine().equals(engine)) {
                 return matcher;
             }

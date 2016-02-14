@@ -14,25 +14,25 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.api.impl.BasePatternGroup;
+import org.eclipse.viatra.query.runtime.api.impl.BaseQueryGroup;
 
 /**
  * Generic implementation of {@link IQueryGroup}, covering an arbitrarily chosen set of patterns. Use the public
- * constructor or static GenericPatternGroup.of(...) methods to instantiate.
+ * constructor or static GenericQueryGroup.of(...) methods to instantiate.
  * 
  * @author Mark Czotter
  * 
  */
-public class GenericPatternGroup extends BasePatternGroup {
+public class GenericQueryGroup extends BaseQueryGroup {
 
     private final Set<IQuerySpecification<?>> patterns;
 
     /**
-     * Creates a GenericPatternGroup object with a set of patterns.
+     * Creates a GenericQueryGroup object with a set of patterns.
      * 
      * @param patterns
      */
-    public GenericPatternGroup(Set<IQuerySpecification<?>> patterns) {
+    public GenericQueryGroup(Set<IQuerySpecification<?>> patterns) {
         this.patterns = patterns;
     }
 
@@ -47,7 +47,7 @@ public class GenericPatternGroup extends BasePatternGroup {
      * @param querySpecifications
      */
     public static IQueryGroup of(Set<IQuerySpecification<?>> querySpecifications) {
-        return new GenericPatternGroup(querySpecifications);
+        return new GenericQueryGroup(querySpecifications);
     }
 
     /**
@@ -68,6 +68,6 @@ public class GenericPatternGroup extends BasePatternGroup {
         for (IQueryGroup group : subGroups) {
             patterns.addAll(group.getSpecifications());
         }
-        return new GenericPatternGroup(patterns);
+        return new GenericQueryGroup(patterns);
     }
 }

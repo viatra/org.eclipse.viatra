@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific;
 
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.transformation.evm.specific.scheduler.TimedScheduler.TimedSchedulerFactory;
 import org.eclipse.viatra.transformation.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
 import org.eclipse.viatra.transformation.evm.update.IQBaseCallbackUpdateCompleteProvider;
-import org.eclipse.viatra.transformation.evm.update.IQEngineUpdateCompleteProvider;
+import org.eclipse.viatra.transformation.evm.update.QueryEngineUpdateCompleteProvider;
 
 /**
  * @author Abel Hegedus
@@ -47,9 +47,9 @@ public final class Schedulers {
      *    
      * @param engine
      */
-    public static UpdateCompleteBasedSchedulerFactory getIQEngineSchedulerFactory(final IncQueryEngine engine) {
-        IQEngineUpdateCompleteProvider provider;
-        provider = new IQEngineUpdateCompleteProvider(engine);
+    public static UpdateCompleteBasedSchedulerFactory getQueryEngineSchedulerFactory(final ViatraQueryEngine engine) {
+        QueryEngineUpdateCompleteProvider provider;
+        provider = new QueryEngineUpdateCompleteProvider(engine);
         return new UpdateCompleteBasedSchedulerFactory(provider);
     }
 

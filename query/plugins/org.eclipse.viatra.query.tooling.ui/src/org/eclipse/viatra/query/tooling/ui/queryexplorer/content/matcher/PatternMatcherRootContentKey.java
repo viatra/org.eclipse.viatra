@@ -15,7 +15,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 
@@ -30,7 +30,7 @@ public class PatternMatcherRootContentKey {
 
     private IEditorPart editorPart;
     private Notifier notifier;
-    private AdvancedIncQueryEngine engine = null;
+    private AdvancedViatraQueryEngine engine = null;
     private RuleEngine ruleEngine = null;
 
     public PatternMatcherRootContentKey(IEditorPart editor, Notifier notifier) {
@@ -104,11 +104,11 @@ public class PatternMatcherRootContentKey {
         return sb.toString();
     }
 
-    public AdvancedIncQueryEngine getEngine() {
+    public AdvancedViatraQueryEngine getEngine() {
         return engine;
     }
 
-    public void setEngine(AdvancedIncQueryEngine engine) {
+    public void setEngine(AdvancedViatraQueryEngine engine) {
         this.engine = engine;
     }
     

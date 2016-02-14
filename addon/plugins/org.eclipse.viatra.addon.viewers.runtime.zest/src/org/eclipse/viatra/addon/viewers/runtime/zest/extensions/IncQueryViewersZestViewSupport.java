@@ -36,7 +36,7 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFea
 import org.eclipse.viatra.addon.viewers.runtime.zest.ViewersZestPlugin;
 import org.eclipse.viatra.addon.viewers.runtime.zest.IncQueryGraphViewers;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -78,7 +78,7 @@ public class IncQueryViewersZestViewSupport extends
 		if (state!=null && !state.isDisposed()) {
     		state.dispose();
     	}
-		IncQueryEngine engine = getEngine();
+		ViatraQueryEngine engine = getEngine();
 		if (engine!=null) {
 			state = IncQueryViewerDataModel.newViewerState(
 					engine, 

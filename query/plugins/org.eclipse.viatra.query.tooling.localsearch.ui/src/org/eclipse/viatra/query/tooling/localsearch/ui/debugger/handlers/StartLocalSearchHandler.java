@@ -15,7 +15,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
@@ -46,7 +46,7 @@ public class StartLocalSearchHandler extends AbstractHandler {
 				final Object obj = ((IStructuredSelection) selection).iterator().next();
 				PatternMatcherContent content = (PatternMatcherContent) obj;
 				final IQuerySpecification<?> specification = content.getSpecification();
-				final AdvancedIncQueryEngine engine = content.getParent().getKey().getEngine();
+				final AdvancedViatraQueryEngine engine = content.getParent().getKey().getEngine();
 				final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE);
 				final Object[] adornment = content.getFilter();
 

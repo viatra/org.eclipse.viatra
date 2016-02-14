@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
@@ -45,7 +45,7 @@ public class ViewModelManager {
 
     private static final String TRACEBILITY_RESOURCE = "org.eclipse.viatra.transformation.views.traceability.TraceabilityResource";
 
-    private IncQueryEngine engine;
+    private ViatraQueryEngine engine;
     private ExecutionSchema executionSchema;
     private Collection<ViewModelRule> rules;
 
@@ -65,7 +65,7 @@ public class ViewModelManager {
         traceability.setId(traceabilityId);
 
         executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine,
-                Schedulers.getIQEngineSchedulerFactory(engine));
+                Schedulers.getQueryEngineSchedulerFactory(engine));
         
         for (ViewModelRule rule : rules) {
             rule.initialize(traceabilityId);
@@ -122,7 +122,7 @@ public class ViewModelManager {
     	return false;
     }
     
-    public IncQueryEngine getEngine() {
+    public ViatraQueryEngine getEngine() {
         return engine;
     }
 
@@ -135,10 +135,10 @@ public class ViewModelManager {
     	return resource;
     }
     
-    public void setEngine(IncQueryEngine engine) {
+    public void setEngine(ViatraQueryEngine engine) {
         if (!(engine.getScope() instanceof EMFScope)) {
             IncQueryLoggingUtil.getLogger(ViewModelManager.class).error(
-                    "Only EMFScope is supported currently for IncQueryEngine");
+                    "Only EMFScope is supported currently for ViatraQueryEngine");
             return;
         }
         this.engine = engine;

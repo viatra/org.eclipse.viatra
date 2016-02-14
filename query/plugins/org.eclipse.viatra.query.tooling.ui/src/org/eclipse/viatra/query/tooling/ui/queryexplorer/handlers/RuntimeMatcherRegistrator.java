@@ -20,7 +20,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
@@ -147,7 +147,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
                 root.updateHasChildren();
             }
             // wipe the engine after unregistration
-            final AdvancedIncQueryEngine engine = root.getKey().getEngine();
+            final AdvancedViatraQueryEngine engine = root.getKey().getEngine();
             if (engine != null) {
                 engine.wipe();
             }

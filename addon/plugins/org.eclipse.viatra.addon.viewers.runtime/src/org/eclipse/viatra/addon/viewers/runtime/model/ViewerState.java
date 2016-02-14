@@ -29,7 +29,7 @@ import org.eclipse.viatra.addon.viewers.runtime.specifications.EdgeQuerySpecific
 import org.eclipse.viatra.addon.viewers.runtime.specifications.ItemQuerySpecificationDescriptor;
 import org.eclipse.viatra.addon.viewers.runtime.util.ViewerTraceabilityUtil;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -242,7 +242,7 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
         return manager.getTraceability();
     }
 
-    public IncQueryEngine getEngine() {
+    public ViatraQueryEngine getEngine() {
         return model.getEngine();
     }
 

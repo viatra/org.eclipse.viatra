@@ -34,7 +34,7 @@ public class Executor {
     
     
     /**
-     * Creates an executor for the given IncQueryEngine.
+     * Creates an executor for the given ViatraQueryEngine.
      * Executors are usually created as part of an ExecutionSchema 
      * through the EventDrivenVM.createExecutionSchema methods.
      * 
@@ -45,7 +45,7 @@ public class Executor {
     }
 
     /**
-     * Creates an executor for the given IncQueryEngine and Context.
+     * Creates an executor for the given ViatraQueryEngine and Context.
      * Executors are usually created as part of an ExecutionSchema 
      * through the EventDrivenVM.createExecutionSchema methods.
      * 

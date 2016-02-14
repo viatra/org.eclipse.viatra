@@ -25,7 +25,7 @@ import org.eclipse.viatra.query.runtime.IExtensions;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
 
 /**
@@ -36,7 +36,7 @@ import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
  * 
  */
 public final class QuerySpecificationRegistry {
-    private static final Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> QUERY_SPECIFICATIONS = createQuerySpecificationRegistry();
+    private static final Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> QUERY_SPECIFICATIONS = createQuerySpecificationRegistry();
 
     /**
      * Utility class constructor hidden
@@ -44,15 +44,15 @@ public final class QuerySpecificationRegistry {
     private QuerySpecificationRegistry() {
     }
 
-    private static Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> createQuerySpecificationRegistry() {
-        final Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications = new HashMap<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>();
+    private static Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> createQuerySpecificationRegistry() {
+        final Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specifications = new HashMap<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>();
         initRegistry(specifications);
         return specifications;
     }
 
     // Does not use the field QUERY_SPECIFICATIONS as it may still be uninitialized
     private static void initRegistry(
-            Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications) {
+            Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specifications) {
         specifications.clear();
 
         IExtensionRegistry reg = Platform.getExtensionRegistry();
@@ -92,7 +92,7 @@ public final class QuerySpecificationRegistry {
     }
 
     private static void prepareQueryGroup(
-            Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications,
+            Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specifications,
             Set<String> duplicates, IConfigurationElement el) {
         String id = null;
         try {
@@ -114,9 +114,9 @@ public final class QuerySpecificationRegistry {
     }
 
     private static void loadQuerySpecification(
-            Map<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications,
+            Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specifications,
             Set<String> duplicates, IConfigurationElement el,
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification) {
     	
         String fullyQualifiedName = querySpecification.getFullyQualifiedName();
         if (specifications.containsKey(fullyQualifiedName)) {
@@ -132,7 +132,7 @@ public final class QuerySpecificationRegistry {
      * @param specification
      */
     public static void registerQuerySpecification(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification) {
         String qualifiedName = specification.getFullyQualifiedName();
         if (!QUERY_SPECIFICATIONS.containsKey(qualifiedName)) {
             QUERY_SPECIFICATIONS.put(qualifiedName, specification);
@@ -158,8 +158,8 @@ public final class QuerySpecificationRegistry {
     /**
      * @return a copy of the set of contributed query specifications
      */
-    public static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getContributedQuerySpecifications() {
-        return new HashSet<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(
+    public static Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getContributedQuerySpecifications() {
+        return new HashSet<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>(
                 QUERY_SPECIFICATIONS.values());
     }
 
@@ -169,7 +169,7 @@ public final class QuerySpecificationRegistry {
      * @return the generated query specification of the pattern with the given fully qualified name, if it is
      *         registered, or null if there is no such generated pattern
      */
-    public static IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification(
+    public static IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getQuerySpecification(
             String patternFQN) {
         if (QUERY_SPECIFICATIONS.containsKey(patternFQN)) {
             return QUERY_SPECIFICATIONS.get(patternFQN);
@@ -185,7 +185,7 @@ public final class QuerySpecificationRegistry {
      *            the fully qualified name of the package
      * @return the set of query specifications inside the given package, empty set otherwise.
      */
-    public static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternGroup(
+    public static Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getPatternGroup(
             String packageFQN) {
         return getPatternGroupOrSubTree(packageFQN, false);
     }
@@ -198,7 +198,7 @@ public final class QuerySpecificationRegistry {
      *            the fully qualified name of the package
      * @return the set of query specifications in the given package subtree, empty set otherwise.
      */
-    public static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternSubTree(
+    public static Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getPatternSubTree(
             String packageFQN) {
         return getPatternGroupOrSubTree(packageFQN, true);
     }
@@ -213,14 +213,14 @@ public final class QuerySpecificationRegistry {
      *            if it is in the given package
      * @return the query specifications in the group
      */
-    private static Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> getPatternGroupOrSubTree(
+    private static Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getPatternGroupOrSubTree(
             String packageFQN, boolean includeSubPackages) {
-        Map<String, Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>> map = new HashMap<String, Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>>();
+        Map<String, Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>> map = new HashMap<String, Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>>();
         if (map.containsKey(packageFQN)) {
             return map.get(packageFQN);
         } else {
-            Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> group = new HashSet<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>();
-            for (Entry<String, IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> entry : QUERY_SPECIFICATIONS
+            Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> group = new HashSet<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>();
+            for (Entry<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> entry : QUERY_SPECIFICATIONS
                     .entrySet()) {
                 addPatternToGroup(packageFQN, group, entry.getKey(), entry.getValue(), includeSubPackages);
             }
@@ -248,8 +248,8 @@ public final class QuerySpecificationRegistry {
      *            if it is in the given package
      */
     private static void addPatternToGroup(String packageFQN,
-            Set<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> group, String patternFQN,
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> specification,
+            Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> group, String patternFQN,
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification,
             boolean includeSubPackages) {
         if (packageFQN.length() + 1 < patternFQN.length()) {
             if (includeSubPackages) {

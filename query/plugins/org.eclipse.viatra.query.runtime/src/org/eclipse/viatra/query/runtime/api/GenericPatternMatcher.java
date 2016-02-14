@@ -18,8 +18,8 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 /**
  * This is a generic pattern matcher for any IncQuery pattern, with "interpretative" query execution.
  * To use the pattern matcher on a given model, obtain a {@link GenericQuerySpecification} first, then 
- * invoke e.g. {@link GenericQuerySpecification#getMatcher(IncQueryEngine)}.
- * in conjunction with {@link IncQueryEngine#on(org.eclipse.viatra.query.runtime.api.scope.IncQueryScope)}.
+ * invoke e.g. {@link GenericQuerySpecification#getMatcher(ViatraQueryEngine)}.
+ * in conjunction with {@link ViatraQueryEngine#on(org.eclipse.viatra.query.runtime.api.scope.IncQueryScope)}.
  * <p>
  * Whenever available, consider using the pattern-specific generated matcher API instead.
  * 
@@ -36,7 +36,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
 	
 
     protected GenericPatternMatcher(
-    		IncQueryEngine engine, 
+    		ViatraQueryEngine engine, 
     		GenericQuerySpecification<? extends GenericPatternMatcher> specification) 
     		throws IncQueryException 
     {
@@ -68,7 +68,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
      * Internal method for {@link GenericQuerySpecification}
      * @noreference
      */
-	static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(IncQueryEngine engine, GenericQuerySpecification<Matcher> querySpecification) throws IncQueryException {
+	static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(ViatraQueryEngine engine, GenericQuerySpecification<Matcher> querySpecification) throws IncQueryException {
 		// check if matcher already exists
 		GenericPatternMatcher matcher = engine.getExistingMatcher(querySpecification);
         if (matcher == null) {

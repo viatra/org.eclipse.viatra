@@ -16,7 +16,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
@@ -28,6 +27,7 @@ import org.eclipse.xtext.common.types.JvmOperation
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
@@ -131,7 +131,7 @@ class PatternGroupClassInferrer {
 		model.toMethod("get" + model.name.toFirstUpper, classRef) [
 			visibility = JvmVisibility::PUBLIC
 			exceptions += incQueryException
-			parameters += model.toParameter("engine", typeRef(typeof (IncQueryEngine)))
+			parameters += model.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
 			body = '''return «classRef».on(engine);'''
 		]
 	}

@@ -52,7 +52,7 @@ public interface ISearchContext{
     /**
      * Returns a matcher for a selected query specification.
      * 
-     * TODO should return a generic concept, based on the current IncQueryEngine
+     * TODO should return a generic concept, based on the current ViatraQueryEngine
      * @param reference
      */
     LocalSearchMatcher getMatcher(MatcherReference reference);

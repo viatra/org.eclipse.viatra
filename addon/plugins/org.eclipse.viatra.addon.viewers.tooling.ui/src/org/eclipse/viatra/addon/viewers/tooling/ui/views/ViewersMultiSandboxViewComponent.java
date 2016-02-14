@@ -46,7 +46,7 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewersAnnotatedPatternTester;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
@@ -76,7 +76,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 
 	private List<IViewerSandboxTab> tabList;
 	CTabFolder folder;
-	private AdvancedIncQueryEngine engine;
+	private AdvancedViatraQueryEngine engine;
 	private ViewerState state;
 	private ViewersMultiSandboxView host;
 	private ViewersMultiSandoxViewComponentSettings settings;
@@ -295,7 +295,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 	}
 	
 	
-    private AdvancedIncQueryEngine getEngine(Notifier model) throws IncQueryException {
+    private AdvancedViatraQueryEngine getEngine(Notifier model) throws IncQueryException {
         if (engine != null) {
             engine.dispose();
         }
@@ -305,7 +305,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         boolean dynamicEMFMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
                 .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
         
-        engine = AdvancedIncQueryEngine.createUnmanagedEngine(model, wildcardMode, dynamicEMFMode);
+        engine = AdvancedViatraQueryEngine.createUnmanagedEngine(model, wildcardMode, dynamicEMFMode);
         ViewersMultiSandboxView.log("Viewers initialized a new IncQuery engine with wildcardMode: "+wildcardMode+", dynamicMode: "+dynamicEMFMode);
         return engine;
     }

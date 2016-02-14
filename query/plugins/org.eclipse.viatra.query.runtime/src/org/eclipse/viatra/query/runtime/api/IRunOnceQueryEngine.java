@@ -34,7 +34,7 @@ public interface IRunOnceQueryEngine {
      * @return matches represented as a Match object.
      */
     <Match extends IPatternMatch> Collection<Match> getAllMatches(
-            final IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification) throws IncQueryException;
+            final IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) throws IncQueryException;
 
     /**
      * @return the scope of pattern matching, i.e. the root of the EMF model tree that this engine is attached to.

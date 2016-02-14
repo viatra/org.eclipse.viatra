@@ -12,11 +12,11 @@ package org.eclipse.viatra.query.tooling.debug.variables;
 
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.tooling.debug.common.StackFrameWrapper;
 
 /**
- * A Debug Variables View that displays the {@link IncQueryEngine}s in the JVM.
+ * A Debug Variables View that displays the {@link ViatraQueryEngine}s in the JVM.
  * 
  * @author Tamas Szabo (itemis AG)
  *

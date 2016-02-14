@@ -14,8 +14,8 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.Direction;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
@@ -57,7 +57,7 @@ public final class ObservableCollectionHelper {
      * @param querySpecification
      *            the {@link IQuerySpecification} used to create the rule
      */
-    protected static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
+    protected static <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, IQuerySpecification<Matcher> querySpecification) {
 
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
@@ -72,7 +72,7 @@ public final class ObservableCollectionHelper {
      * @param querySpecification
      *            the {@link IQuerySpecification} used to create the rule
      */
-    protected static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createUpdatingRuleSpecification(
+    protected static <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> RuleSpecification<Match> createUpdatingRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate,
             IQuerySpecification<Matcher> querySpecification) {
 
@@ -92,9 +92,9 @@ public final class ObservableCollectionHelper {
      * @param observableCollectionUpdate
      *            the observable collection to handle
      * @param matcher
-     *            the {@link IncQueryMatcher} used to create the rule
+     *            the {@link ViatraQueryMatcher} used to create the rule
      */
-    protected static <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
+    protected static <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> RuleSpecification<Match> createRuleSpecification(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate, Matcher matcher) {
         
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
@@ -110,9 +110,9 @@ public final class ObservableCollectionHelper {
         return ImmutableSet.of(insertJob, deleteJob);
     }
 
-    protected static <Match extends IPatternMatch> RuleEngine prepareRuleEngine(IncQueryEngine engine, RuleSpecification<Match> specification, EventFilter<Match> filter) {
+    protected static <Match extends IPatternMatch> RuleEngine prepareRuleEngine(ViatraQueryEngine engine, RuleSpecification<Match> specification, EventFilter<Match> filter) {
         RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
-                Schedulers.getIQEngineSchedulerFactory(engine));
+                Schedulers.getQueryEngineSchedulerFactory(engine));
 		ruleEngine.addRule(specification, filter);
         fireActivations(ruleEngine, specification, filter);
         return ruleEngine;

@@ -12,12 +12,12 @@ package org.eclipse.viatra.transformation.evm.specific.event;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.MatchUpdateAdapter;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.event.EventHandler;
@@ -26,18 +26,18 @@ import org.eclipse.viatra.transformation.evm.notification.IAttributeMonitorListe
 
 public class IncQueryEventSource<Match extends IPatternMatch> extends EventSourceAdapter<Match> {
     
-    private final IncQueryMatcher<Match> matcher;
+    private final ViatraQueryMatcher<Match> matcher;
     private IAttributeMonitorListener<Match> attributeMonitorListener;
     private IMatchUpdateListener<Match> matchUpdateListener;
     
     protected IncQueryEventSource(IncQueryEventRealm realm, IncQueryEventSourceSpecification<Match> sourceDefinition) throws IncQueryException {
         super(sourceDefinition, realm);
-        IQuerySpecification<? extends IncQueryMatcher<Match>> factory = sourceDefinition.getQuerySpecification();
-        IncQueryMatcher<Match> _matcher = factory.getMatcher(realm.getEngine());
+        IQuerySpecification<? extends ViatraQueryMatcher<Match>> factory = sourceDefinition.getQuerySpecification();
+        ViatraQueryMatcher<Match> _matcher = factory.getMatcher(realm.getEngine());
         this.matcher = _matcher;
     }
 
-    public IncQueryMatcher<Match> getMatcher() {
+    public ViatraQueryMatcher<Match> getMatcher() {
         return matcher;
     }
 
@@ -45,14 +45,14 @@ public class IncQueryEventSource<Match extends IPatternMatch> extends EventSourc
     protected void beforeHandlerAdded(EventHandler<Match> handler, boolean handlersEmpty) {
         resendEventsForExistingMatches(handler);
         if(handlersEmpty) {
-            ((AdvancedIncQueryEngine)this.matcher.getEngine()).addMatchUpdateListener(this.matcher, matchUpdateListener, false);
+            ((AdvancedViatraQueryEngine)this.matcher.getEngine()).addMatchUpdateListener(this.matcher, matchUpdateListener, false);
         }
     }
     
     @Override
     protected void afterHandlerRemoved(EventHandler<Match> handler, boolean handlersEmpty) {
         if(handlersEmpty) {
-            ((AdvancedIncQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
+            ((AdvancedViatraQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
         }
     }
    
@@ -106,7 +106,7 @@ public class IncQueryEventSource<Match extends IPatternMatch> extends EventSourc
 
     @Override
     public void dispose() {
-        ((AdvancedIncQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
+        ((AdvancedViatraQueryEngine)this.matcher.getEngine()).removeMatchUpdateListener(this.matcher, matchUpdateListener);
         super.dispose();
     }
 

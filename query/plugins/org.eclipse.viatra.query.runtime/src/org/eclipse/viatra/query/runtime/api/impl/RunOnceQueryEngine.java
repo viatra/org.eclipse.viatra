@@ -13,13 +13,13 @@ package org.eclipse.viatra.query.runtime.api.impl;
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.IRunOnceQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra.query.runtime.api.IncQueryModelUpdateListener;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
@@ -39,7 +39,7 @@ public class RunOnceQueryEngine implements IRunOnceQueryEngine {
      * @author Abel Hegedus
      *
      */
-    private final class RunOnceSamplingModelUpdateListener implements IncQueryModelUpdateListener {
+    private final class RunOnceSamplingModelUpdateListener implements ViatraQueryModelUpdateListener {
         @Override
         public void notifyChanged(ChangeLevel changeLevel) {
             // any model change may require re-sampling
@@ -68,14 +68,14 @@ public class RunOnceQueryEngine implements IRunOnceQueryEngine {
     }
 
     /**
-     * The scope of the engine that is used when creating one-time {@link IncQueryEngine}s.
+     * The scope of the engine that is used when creating one-time {@link ViatraQueryEngine}s.
      */
     private Notifier notifier;
     /**
-     * The options that are used for initializing the {@link IncQueryEngine}.
+     * The options that are used for initializing the {@link ViatraQueryEngine}.
      */
     private RunOnceBaseIndexOptions baseIndexOptions;
-    private AdvancedIncQueryEngine engine;
+    private AdvancedViatraQueryEngine engine;
     private boolean reSamplingNeeded = false;
     protected boolean samplingMode = false;
     private RunOnceSamplingModelUpdateListener modelUpdateListener;
@@ -90,16 +90,16 @@ public class RunOnceQueryEngine implements IRunOnceQueryEngine {
     
     @Override
     public <Match extends IPatternMatch> Collection<Match> getAllMatches(
-            IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification) throws IncQueryException {
+            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) throws IncQueryException {
         
         if(samplingMode && reSamplingNeeded && engine != null) {
             // engine exists from earlier, but may need resampling if model changed
             engine.getBaseIndex().resampleDerivedFeatures();
         } else {
             // create new engine if it doesn't exists
-            engine = AdvancedIncQueryEngine.createUnmanagedEngine(notifier, baseIndexOptions);
+            engine = AdvancedViatraQueryEngine.createUnmanagedEngine(notifier, baseIndexOptions);
         }
-        IncQueryMatcher<Match> matcher = engine.getMatcher(querySpecification);
+        ViatraQueryMatcher<Match> matcher = engine.getMatcher(querySpecification);
         Collection<Match> allMatches = matcher.getAllMatches();
         if(samplingMode) {
             engine.addModelUpdateListener(modelUpdateListener);

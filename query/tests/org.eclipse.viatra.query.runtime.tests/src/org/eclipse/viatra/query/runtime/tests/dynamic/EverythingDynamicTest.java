@@ -28,8 +28,8 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageF
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -122,7 +122,7 @@ public class EverythingDynamicTest {
         Collection<? extends IPatternMatch> matches = null;
 
         SpecificationBuilder builder = new SpecificationBuilder();
-        IncQueryMatcher<? extends IPatternMatch> matcher = IncQueryEngine.on(bookStoreObject).getMatcher(builder.getOrCreateSpecification(pattern));
+        ViatraQueryMatcher<? extends IPatternMatch> matcher = ViatraQueryEngine.on(bookStoreObject).getMatcher(builder.getOrCreateSpecification(pattern));
         matches = matcher.getAllMatches();
 
         Assert.assertNotNull(matches);

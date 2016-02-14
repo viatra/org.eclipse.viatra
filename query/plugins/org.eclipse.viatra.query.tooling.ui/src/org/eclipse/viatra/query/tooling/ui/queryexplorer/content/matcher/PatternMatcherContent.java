@@ -22,10 +22,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.viatra.addon.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
 import org.eclipse.viatra.addon.databinding.runtime.collection.ObservablePatternMatchList;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
@@ -55,7 +55,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     private String exceptionMessage;
     private Exception exception;
     private IQuerySpecification<?> specification;
-    private IncQueryMatcher<IPatternMatch> matcher;
+    private ViatraQueryMatcher<IPatternMatch> matcher;
     /**
      * XXX Note that the generic type is not the same as the type of the items in the list
      */
@@ -66,7 +66,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
 
     private Class<? extends IQueryBackend> usedBackend = null;
     
-    public PatternMatcherContent(PatternMatcherRootContent parent, AdvancedIncQueryEngine engine, RuleEngine ruleEngine, 
+    public PatternMatcherContent(PatternMatcherRootContent parent, AdvancedViatraQueryEngine engine, RuleEngine ruleEngine, 
             final IQuerySpecification<?> specification, boolean generated, QueryEvaluationHint hint) {
         super(parent);
         this.specification = specification;
@@ -76,7 +76,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
         if (specification.getInternalQueryRepresentation().getStatus() != PQueryStatus.ERROR) {
 	        try {
 	            usedBackend = hint.getQueryBackendClass();
-	            matcher = (IncQueryMatcher<IPatternMatch>) engine.getMatcher(specification, hint);
+	            matcher = (ViatraQueryMatcher<IPatternMatch>) engine.getMatcher(specification, hint);
 	        } catch (IncQueryException e) {
 	            this.exceptionMessage = e.getShortMessage();
 	            this.exception = e;
@@ -97,7 +97,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
             initOrdering();
             initFilter();
             
-            ObservablePatternMatchCollectionBuilder<IPatternMatch> builder = ObservablePatternMatchCollectionBuilder.create((IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) specification);
+            ObservablePatternMatchCollectionBuilder<IPatternMatch> builder = ObservablePatternMatchCollectionBuilder.create((IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) specification);
             builder.setComparator(matchComparator).setConverter(transformerFunction).setFilter(filter);
             children = builder.setEngine(ruleEngine).buildList();
             children.addListChangeListener(listChangeListener);
@@ -197,7 +197,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
         return specification;
     }
 
-    public IncQueryMatcher<IPatternMatch> getMatcher() {
+    public ViatraQueryMatcher<IPatternMatch> getMatcher() {
         return matcher;
     }
 

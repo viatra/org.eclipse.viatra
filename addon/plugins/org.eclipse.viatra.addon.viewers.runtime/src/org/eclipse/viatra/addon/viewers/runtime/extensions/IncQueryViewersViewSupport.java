@@ -27,7 +27,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 import com.google.common.collect.ImmutableList;
@@ -43,7 +43,7 @@ import com.google.common.collect.Iterables;
 public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupport {
 
     /**
-     * Defines the matching scope for the underlying {@link IncQueryEngine}.
+     * Defines the matching scope for the underlying {@link ViatraQueryEngine}.
      * TODO is {@link IModelConnectorTypeEnum} the proper choice for this?
      */
 	protected IModelConnectorTypeEnum connectorType = IModelConnectorTypeEnum.RESOURCESET;
@@ -135,10 +135,10 @@ public abstract class IncQueryViewersViewSupport extends IncQueryViewersPartSupp
     	this.modelSource = null;
     }
     
-    protected IncQueryEngine getEngine() {
+    protected ViatraQueryEngine getEngine() {
     	Assert.isNotNull(this.modelSource);
     	try {
-			return IncQueryEngine.on( this.modelSource );
+			return ViatraQueryEngine.on( this.modelSource );
 		} catch (IncQueryException e) {
 			ViewersRuntimePlugin.getDefault().getLog().log(new Status(Status.ERROR, ViewersRuntimePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));;
 		}

@@ -28,8 +28,8 @@ import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
 import org.eclipse.viatra.addon.validation.core.listeners.ValidationEngineListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
@@ -46,7 +46,7 @@ import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationSt
 import com.google.common.collect.ImmutableSet;
 
 /**
- * This class uses an {@link IncQueryEngine} for tracking violations of {@link ConstraintSpecification}s.
+ * This class uses an {@link ViatraQueryEngine} for tracking violations of {@link ConstraintSpecification}s.
  * 
  * Use the {@link #builder()} method for setting up a new instance through the {@link ValidationEngineBuilder}. 
  * 
@@ -57,10 +57,10 @@ public class ValidationEngine implements IValidationEngine {
 
     private Logger logger;
 
-    private IncQueryEngine incQueryEngine;
+    private ViatraQueryEngine queryEngine;
 
-    protected IncQueryEngine getIncQueryEngine() {
-        return incQueryEngine;
+    protected ViatraQueryEngine getQueryEngine() {
+        return queryEngine;
     }
 
     private ExecutionSchema executionSchema;
@@ -73,20 +73,20 @@ public class ValidationEngine implements IValidationEngine {
         return ValidationEngineBuilder.create();
     }
     
-    protected ValidationEngine(IncQueryEngine engine, Logger logger) {
+    protected ValidationEngine(ViatraQueryEngine engine, Logger logger) {
         checkArgument(engine != null, "Engine cannot be null");
         checkArgument(logger != null, "Logger cannot be null");
-        this.incQueryEngine = engine;
+        this.queryEngine = engine;
         this.logger = logger;
         
         this.constraintMap = new HashMap<IConstraintSpecification, Constraint>();
         this.listeners = new HashSet<ValidationEngineListener>();
-        ISchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
-        this.executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory);
+        ISchedulerFactory schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(queryEngine);
+        this.executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(queryEngine, schedulerFactory);
     }
     
     /**
-     * Creates a new validation engine initialized on a managed {@link IncQueryEngine}
+     * Creates a new validation engine initialized on a managed {@link ViatraQueryEngine}
      * with the given Notifier as scope and with the given Logger.
      * 
      * @param notifier
@@ -104,9 +104,9 @@ public class ValidationEngine implements IValidationEngine {
         this.listeners = new HashSet<ValidationEngineListener>();
 
         try {
-            this.incQueryEngine = IncQueryEngine.on(new EMFScope(notifier));
-            ISchedulerFactory schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
-            this.executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(incQueryEngine, schedulerFactory);
+            this.queryEngine = ViatraQueryEngine.on(new EMFScope(notifier));
+            ISchedulerFactory schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(queryEngine);
+            this.executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(queryEngine, schedulerFactory);
         } catch (IncQueryException e) {
             logger.error(String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
         }
@@ -158,7 +158,7 @@ public class ValidationEngine implements IValidationEngine {
                 .newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED,
                         new MatchDisappearanceJob(constraint, logger))), Jobs.newErrorLoggingJob(Jobs.newStatelessJob(
                 IncQueryActivationStateEnum.UPDATED, new MatchUpdateJob(constraint, logger))));
-        IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends IncQueryMatcher<IPatternMatch>>) constraint
+        IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) constraint
                 .getSpecification().getQuerySpecification();
         RuleSpecification<IPatternMatch> rule = Rules.newMatcherRuleSpecification(querySpecification,
                 Lifecycles.getDefault(true, true), jobs);

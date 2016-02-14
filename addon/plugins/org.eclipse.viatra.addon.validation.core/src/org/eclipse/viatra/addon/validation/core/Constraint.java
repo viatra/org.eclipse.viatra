@@ -30,7 +30,7 @@ import org.eclipse.viatra.addon.validation.core.violationkey.CompositeViolationK
 import org.eclipse.viatra.addon.validation.core.violationkey.SimpleViolationKey;
 import org.eclipse.viatra.addon.validation.core.violationkey.ViolationKey;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 
@@ -94,10 +94,10 @@ public class Constraint implements IConstraint {
     @SuppressWarnings("unchecked")
     @Override
     public Collection<IViolation> listViolations() {
-        IncQueryMatcher<? extends IPatternMatch> matcher = null;
+        ViatraQueryMatcher<? extends IPatternMatch> matcher = null;
 
         try {
-            matcher = validationEngine.getIncQueryEngine().getMatcher(specification.getQuerySpecification());
+            matcher = validationEngine.getQueryEngine().getMatcher(specification.getQuerySpecification());
         } catch (IncQueryException e) {
             e.printStackTrace();
             return null;
@@ -113,10 +113,10 @@ public class Constraint implements IConstraint {
 
     @Override
     public Collection<IViolation> listViolations(IViolationFilter filter) {
-        IncQueryMatcher<? extends IPatternMatch> matcher = null;
+        ViatraQueryMatcher<? extends IPatternMatch> matcher = null;
 
         try {
-            matcher = validationEngine.getIncQueryEngine().getMatcher(specification.getQuerySpecification());
+            matcher = validationEngine.getQueryEngine().getMatcher(specification.getQuerySpecification());
         } catch (IncQueryException e) {
             e.printStackTrace();
             return null;

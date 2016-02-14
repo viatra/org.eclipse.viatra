@@ -17,8 +17,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.viatra.query.runtime.exception.IncQueryException
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmGenericType
@@ -36,6 +34,8 @@ import java.util.Collection
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtend2.lib.StringConcatenationClient
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
  * {@link IncQueryMatcher} implementation inferrer.
@@ -102,7 +102,7 @@ class PatternMatcherClassInferrer {
    			static = true
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherStaticOnEngine.toString
-			parameters += pattern.toParameter("engine", typeRef(typeof (IncQueryEngine)))
+			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
 			exceptions += typeRef(typeof (IncQueryException))
 			body = '''
 				// check if matcher already exists
@@ -129,7 +129,7 @@ class PatternMatcherClassInferrer {
 			documentation = pattern.javadocMatcherConstructorNotifier.toString
 			parameters += pattern.toParameter("emfRoot", typeRef(typeof (Notifier)))
 			exceptions += typeRef(typeof (IncQueryException))
-			body = '''this(«IncQueryEngine».on(emfRoot));'''
+			body = '''this(«ViatraQueryEngine».on(emfRoot));'''
 		]
 
 		matcherClass.members += pattern.toConstructor [
@@ -137,7 +137,7 @@ class PatternMatcherClassInferrer {
 			annotations += annotationRef(typeof (Deprecated))
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherConstructorEngine.toString
-			parameters += pattern.toParameter("engine", typeRef(typeof (IncQueryEngine)))
+			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
 			exceptions += typeRef(typeof (IncQueryException))
 			body = '''super(engine, querySpecification());'''
 		]

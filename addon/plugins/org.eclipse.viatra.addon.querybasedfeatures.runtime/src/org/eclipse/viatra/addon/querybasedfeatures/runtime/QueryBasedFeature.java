@@ -19,13 +19,13 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngineLifecycleListener;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
-import org.eclipse.viatra.query.runtime.api.IncQueryModelUpdateListener;
-import org.eclipse.viatra.query.runtime.api.IncQueryModelUpdateListener.ChangeLevel;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener.ChangeLevel;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
@@ -63,7 +63,7 @@ public abstract class QueryBasedFeature {
      * @author Abel Hegedus
      * 
      */
-    private final class ModelUpdateListener implements IncQueryModelUpdateListener {
+    private final class ModelUpdateListener implements ViatraQueryModelUpdateListener {
         @Override
         public void notifyChanged(ChangeLevel changeLevel) {
             beforeUpdate();
@@ -85,9 +85,9 @@ public abstract class QueryBasedFeature {
      * @author Abel Hegedus
      * 
      */
-    private final class EngineLifecycleListener implements IncQueryEngineLifecycleListener {
+    private final class EngineLifecycleListener implements ViatraQueryEngineLifecycleListener {
         @Override
-        public void matcherInstantiated(IncQueryMatcher<? extends IPatternMatch> matcher) {
+        public void matcherInstantiated(ViatraQueryMatcher<? extends IPatternMatch> matcher) {
         }
 
         @SuppressWarnings("unchecked")
@@ -95,7 +95,7 @@ public abstract class QueryBasedFeature {
         public void engineWiped() {
             String patternName = matcher.getPatternName();
             try {
-                matcher = (IncQueryMatcher<IPatternMatch>) QuerySpecificationRegistry
+                matcher = (ViatraQueryMatcher<IPatternMatch>) QuerySpecificationRegistry
                         .getQuerySpecification(patternName).getMatcher(engineForMatcher());
             } catch (IncQueryException e) {
                 IncQueryLoggingUtil.getLogger(getClass()).error(
@@ -115,7 +115,7 @@ public abstract class QueryBasedFeature {
         }
     }
 
-    private IncQueryMatcher<IPatternMatch> matcher;
+    private ViatraQueryMatcher<IPatternMatch> matcher;
     private Set<IPatternMatch> matchFoundEvents;
     private Set<IPatternMatch> matchLostEvents;
     private final EStructuralFeature feature;
@@ -131,7 +131,7 @@ public abstract class QueryBasedFeature {
     private EngineLifecycleListener engineLifecycleListener;
 	private MatchUpdateListener matchUpdateListener;
 
-    protected void initialize(final IncQueryMatcher<IPatternMatch> matcher, String sourceParamName,
+    protected void initialize(final ViatraQueryMatcher<IPatternMatch> matcher, String sourceParamName,
             String targetParamName) {
         if (initialized) {
             IncQueryLoggingUtil.getLogger(getClass()).error("[QueryBasedFeature] Feature already initialized!");
@@ -175,7 +175,7 @@ public abstract class QueryBasedFeature {
     /**
      * @return the matcher
      */
-    protected IncQueryMatcher<IPatternMatch> getMatcher() {
+    protected ViatraQueryMatcher<IPatternMatch> getMatcher() {
         return matcher;
     }
 
@@ -227,15 +227,15 @@ public abstract class QueryBasedFeature {
      * Call this once to start handling callbacks.
      */
     protected void startMonitoring() {
-        AdvancedIncQueryEngine engine = engineForMatcher();
+        AdvancedViatraQueryEngine engine = engineForMatcher();
         engine.addMatchUpdateListener(matcher, matchUpdateListener, true);
         engine.addLifecycleListener(engineLifecycleListener);
         engine.addModelUpdateListener(listener);
         listener.notifyChanged(ChangeLevel.MATCHSET);
     }
 
-    protected AdvancedIncQueryEngine engineForMatcher() {
-        return (AdvancedIncQueryEngine) matcher.getEngine();
+    protected AdvancedViatraQueryEngine engineForMatcher() {
+        return (AdvancedViatraQueryEngine) matcher.getEngine();
     }
 
     public abstract Object getValue(Object source);

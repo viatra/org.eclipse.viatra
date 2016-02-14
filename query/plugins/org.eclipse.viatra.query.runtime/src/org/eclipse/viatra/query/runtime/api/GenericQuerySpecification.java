@@ -27,8 +27,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  * 
  * <p>
  * Note for overriding (if you have your own query language or ): 
- * Derived classes should use {@link #defaultInstantiate(IncQueryEngine)} for implementing 
- * {@link #instantiate(IncQueryEngine)} if they use {@link GenericPatternMatcher} proper.
+ * Derived classes should use {@link #defaultInstantiate(ViatraQueryEngine)} for implementing 
+ * {@link #instantiate(ViatraQueryEngine)} if they use {@link GenericPatternMatcher} proper.
  *
  * @see GenericPatternMatcher
  * @see GenericPatternMatch
@@ -58,10 +58,10 @@ public abstract class GenericQuerySpecification<Matcher extends GenericPatternMa
 	}
 
 	/**
-	 * Derived classes should use this implementation of {@link #instantiate(IncQueryEngine)} 
+	 * Derived classes should use this implementation of {@link #instantiate(ViatraQueryEngine)} 
 	 * if they use {@link GenericPatternMatcher} proper.
 	 */
-	protected GenericPatternMatcher defaultInstantiate(IncQueryEngine engine) throws IncQueryException {
+	protected GenericPatternMatcher defaultInstantiate(ViatraQueryEngine engine) throws IncQueryException {
 		return GenericPatternMatcher.instantiate(engine, this);
 	}
 

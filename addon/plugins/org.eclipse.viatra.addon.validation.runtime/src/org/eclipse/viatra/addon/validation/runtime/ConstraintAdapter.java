@@ -29,7 +29,7 @@ import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
 import org.eclipse.viatra.addon.validation.core.api.IViolation;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
@@ -55,8 +55,8 @@ public class ConstraintAdapter {
         this.violationMarkerMap = new HashMap<IViolation, IMarker>();
 
         try {
-            IncQueryEngine iqengine = IncQueryEngine.on(new EMFScope(notifier));
-            engine = ValidationEngine.builder().setEngine(iqengine).setLogger(logger).build();
+            ViatraQueryEngine queryEngine = ViatraQueryEngine.on(new EMFScope(notifier));
+            engine = ValidationEngine.builder().setEngine(queryEngine).setLogger(logger).build();
             engine.initialize();
             
             MarkerManagerViolationListener markerManagerViolationListener = new MarkerManagerViolationListener(logger, this);

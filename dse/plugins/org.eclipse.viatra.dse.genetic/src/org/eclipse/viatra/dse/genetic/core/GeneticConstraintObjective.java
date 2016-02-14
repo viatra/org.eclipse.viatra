@@ -20,29 +20,29 @@ import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.impl.BaseObjective;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 public class GeneticConstraintObjective extends BaseObjective {
 
     public static final String DEFAULT_NAME = "SoftConstraints";
 
-    protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints;
+    protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints;
     protected List<Double> weights;
     protected List<String> names;
 
-    protected List<IncQueryMatcher<? extends IPatternMatch>> matchers;
+    protected List<ViatraQueryMatcher<? extends IPatternMatch>> matchers;
     protected List<Integer> matches;
 
-    protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> hardConstraints;
-    protected List<IncQueryMatcher<? extends IPatternMatch>> hardMatchers;
+    protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> hardConstraints;
+    protected List<ViatraQueryMatcher<? extends IPatternMatch>> hardMatchers;
 
     public GeneticConstraintObjective() {
         super(DEFAULT_NAME);
 
-        this.constraints = new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>();
-        this.hardConstraints = new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>();
+        this.constraints = new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>();
+        this.hardConstraints = new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>();
         this.weights = new ArrayList<Double>();
         this.names = new ArrayList<String>();
 
@@ -51,7 +51,7 @@ public class GeneticConstraintObjective extends BaseObjective {
     }
 
     public GeneticConstraintObjective withSoftConstraint(String name,
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint, double weight) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> constraint, double weight) {
         constraints.add(constraint);
         weights.add(new Double(weight));
         names.add(name);
@@ -59,7 +59,7 @@ public class GeneticConstraintObjective extends BaseObjective {
     }
     
     public GeneticConstraintObjective withHardConstraint(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> constraint) {
         hardConstraints.add(constraint);
         return this;
     }
@@ -81,20 +81,20 @@ public class GeneticConstraintObjective extends BaseObjective {
     @Override
     public void init(ThreadContext context) {
         matches = new ArrayList<Integer>(constraints.size());
-        matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>(constraints.size());
-        hardMatchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>(hardConstraints.size());
+        matchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>(constraints.size());
+        hardMatchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>(hardConstraints.size());
         for (IQuerySpecification<?> qs : constraints) {
             matches.add(0);
         }
         try {
-            IncQueryEngine incQueryEngine = context.getIncqueryEngine();
+            ViatraQueryEngine queryEngine = context.getQueryEngine();
 
-            for (IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> qs : constraints) {
-                matchers.add(qs.getMatcher(incQueryEngine));
+            for (IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> qs : constraints) {
+                matchers.add(qs.getMatcher(queryEngine));
             }
             
-            for (IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> qs : hardConstraints) {
-                hardMatchers.add(qs.getMatcher(incQueryEngine));
+            for (IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> qs : hardConstraints) {
+                hardMatchers.add(qs.getMatcher(queryEngine));
             }
 
         } catch (IncQueryException e) {
@@ -120,7 +120,7 @@ public class GeneticConstraintObjective extends BaseObjective {
     @Override
     public boolean satisifiesHardObjective(Double fitness) {
         
-        for (IncQueryMatcher<? extends IPatternMatch> matcher : hardMatchers) {
+        for (ViatraQueryMatcher<? extends IPatternMatch> matcher : hardMatchers) {
             if (matcher.countMatches() <= 0) {
                 return false;
             }

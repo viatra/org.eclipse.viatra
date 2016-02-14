@@ -18,8 +18,8 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 import com.google.common.base.Preconditions;
@@ -37,12 +37,12 @@ import com.google.common.base.Preconditions;
 public class WeightedQueriesSoftObjective extends BaseObjective {
 
     public static final String DEFAULT_NAME = "WeightedQueriesSoftObjective";
-    protected List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints;
+    protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints;
     protected List<Double> weights;
-    protected List<IncQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<IncQueryMatcher<? extends IPatternMatch>>();
+    protected List<ViatraQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>();
 
     public WeightedQueriesSoftObjective(String name,
-            List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints,
+            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints,
             List<Double> weights) {
         super(name);
         Preconditions.checkNotNull(constraints, "The list of constraints cannot be null.");
@@ -54,18 +54,18 @@ public class WeightedQueriesSoftObjective extends BaseObjective {
     }
 
     public WeightedQueriesSoftObjective(
-            List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> constraints,
+            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints,
             List<Double> weights) {
         this(DEFAULT_NAME, constraints, weights);
     }
 
     public WeightedQueriesSoftObjective(String name) {
-        this(name, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(),
+        this(name, new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>(),
                 new ArrayList<Double>());
     }
 
     public WeightedQueriesSoftObjective() {
-        this(DEFAULT_NAME, new ArrayList<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>>(),
+        this(DEFAULT_NAME, new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>(),
                 new ArrayList<Double>());
     }
 
@@ -79,7 +79,7 @@ public class WeightedQueriesSoftObjective extends BaseObjective {
      * @return The actual instance to enable builder pattern like usage.
      */
     public WeightedQueriesSoftObjective withConstraint(
-            IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> constraint, double weight) {
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> constraint, double weight) {
         constraints.add(constraint);
         weights.add(new Double(weight));
         return this;
@@ -100,10 +100,10 @@ public class WeightedQueriesSoftObjective extends BaseObjective {
     @Override
     public void init(ThreadContext context) {
         try {
-            IncQueryEngine incQueryEngine = context.getIncqueryEngine();
+            ViatraQueryEngine queryEngine = context.getQueryEngine();
 
-            for (IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification : constraints) {
-                IncQueryMatcher<? extends IPatternMatch> matcher = querySpecification.getMatcher(incQueryEngine);
+            for (IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification : constraints) {
+                ViatraQueryMatcher<? extends IPatternMatch> matcher = querySpecification.getMatcher(queryEngine);
                 matchers.add(matcher);
             }
 

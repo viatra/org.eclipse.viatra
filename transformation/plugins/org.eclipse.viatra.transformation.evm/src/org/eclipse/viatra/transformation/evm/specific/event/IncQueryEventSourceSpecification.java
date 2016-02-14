@@ -14,8 +14,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.event.AbstractRuleInstanceBuilder;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
@@ -28,10 +28,10 @@ import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
  */
 public class IncQueryEventSourceSpecification<Match extends IPatternMatch> implements EventSourceSpecification<Match> {
 
-    private IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification;
+    private IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification;
     private final EventFilter<Match> EMPTY_FILTER = new IncQuerySinglePatternMatchEventFilter<Match>();
     
-    protected IncQueryEventSourceSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> factory) {
+    protected IncQueryEventSourceSpecification(IQuerySpecification<? extends ViatraQueryMatcher<Match>> factory) {
         checkArgument(factory != null, "Cannot create source definition for null querySpecification!");
         this.querySpecification = factory;
     }
@@ -44,12 +44,12 @@ public class IncQueryEventSourceSpecification<Match extends IPatternMatch> imple
     /**
      * @return the querySpecification
      */
-    public IQuerySpecification<? extends IncQueryMatcher<Match>> getQuerySpecification() {
+    public IQuerySpecification<? extends ViatraQueryMatcher<Match>> getQuerySpecification() {
         return querySpecification;
     }
     
-    protected IncQueryMatcher<Match> getMatcher(IncQueryEngine engine) throws IncQueryException {
-        IncQueryMatcher<Match> matcher = querySpecification.getMatcher(engine);
+    protected ViatraQueryMatcher<Match> getMatcher(ViatraQueryEngine engine) throws IncQueryException {
+        ViatraQueryMatcher<Match> matcher = querySpecification.getMatcher(engine);
         return matcher;
     }
     

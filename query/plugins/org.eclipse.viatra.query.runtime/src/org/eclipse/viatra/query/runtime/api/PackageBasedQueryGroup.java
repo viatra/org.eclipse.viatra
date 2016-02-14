@@ -13,26 +13,26 @@ package org.eclipse.viatra.query.runtime.api;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.api.impl.BasePatternGroup;
+import org.eclipse.viatra.query.runtime.api.impl.BaseQueryGroup;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 
 /**
- * Package based {@link BasePatternGroup} implementation. It handles patterns as a group within the same package.
+ * Package based {@link BaseQueryGroup} implementation. It handles patterns as a group within the same package.
  * 
  * @author Abel Hegedus, Mark Czotter
  * 
  */
-public class PackageBasedPatternGroup extends BasePatternGroup {
+public class PackageBasedQueryGroup extends BaseQueryGroup {
 
     private final Set<IQuerySpecification<?>> querySpecifications = new HashSet<IQuerySpecification<?>>();
     private final String packageName;
     private final boolean includeSubPackages;
 
-    public PackageBasedPatternGroup(String packageName) {
+    public PackageBasedQueryGroup(String packageName) {
         this(packageName, false);
     }
 
-    public PackageBasedPatternGroup(String packageName, boolean includeSubPackages) {
+    public PackageBasedQueryGroup(String packageName, boolean includeSubPackages) {
         super();
         this.packageName = packageName;
         this.includeSubPackages = includeSubPackages;

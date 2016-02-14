@@ -20,12 +20,12 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 public class SimpleModelManipulations extends AbstractModelManipulations{
 
-	public SimpleModelManipulations(IncQueryEngine engine) {
+	public SimpleModelManipulations(ViatraQueryEngine engine) {
 		super(engine);
 	}
 

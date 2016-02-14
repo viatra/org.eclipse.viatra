@@ -6,11 +6,9 @@ import java.util.Map
 import java.util.concurrent.TimeUnit
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope
 import org.eclipse.viatra.query.runtime.exception.IncQueryException
 import org.eclipse.viatra.query.runtime.extensibility.QueryBackendRegistry
@@ -18,13 +16,15 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil
 import org.junit.Test
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements of the base index and
  * Rete networks of individual queries on a given IncQueryScope and with a given query group.
  * 
  * <p/>
- * This test case prepares an IncQueryEngine on the given scope and with the provided query group.
+ * This test case prepares a ViatraQueryEngine on the given scope and with the provided query group.
  * After the initial preparation is done, the engine is wiped (deletes the Rete network but keeps the base index).
  * Next, the following is performed for each query in the group:
  * <p/>
@@ -42,7 +42,7 @@ abstract class QueryPerformanceTest {
 
 	protected static extension Logger logger = IncQueryLoggingUtil.getLogger(QueryPerformanceTest)
 
-	AdvancedIncQueryEngine incQueryEngine
+	AdvancedViatraQueryEngine queryEngine
 	Map<String, Long> results = Maps.newTreeMap()
 
 	/**
@@ -71,10 +71,10 @@ abstract class QueryPerformanceTest {
 		val preparedScope = scope
 		logMemoryProperties("Scope prepared")
 
-		incQueryEngine = AdvancedIncQueryEngine.createUnmanagedEngine(preparedScope)
-		queryGroup.prepare(incQueryEngine)
+		queryEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(preparedScope)
+		queryGroup.prepare(queryEngine)
 		logMemoryProperties("Base index created")
-		incQueryEngine.wipe()
+		queryEngine.wipe()
 		logMemoryProperties("IncQuery engine wiped")
 		info("Prepared query performance test")
 	}
@@ -92,14 +92,14 @@ abstract class QueryPerformanceTest {
 		for (IQuerySpecification<?> _specification : queryGroup.
 			getSpecifications) {
 
-			val specification = _specification as IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>
+			val specification = _specification as IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>
 			debug("Measuring query " + specification.getFullyQualifiedName)
-			incQueryEngine.wipe
+			queryEngine.wipe
 			val usedHeapBefore = logMemoryProperties("Wiped engine before building")
 
 			debug("Building Rete")
 			val watch = Stopwatch.createStarted
-			val matcher = incQueryEngine.getMatcher(specification, new QueryEvaluationHint(queryBackend, newHashMap))
+			val matcher = queryEngine.getMatcher(specification, new QueryEvaluationHint(queryBackend, newHashMap))
 			watch.stop()
 			val countMatches = matcher.countMatches
 			val usedHeapAfter = logMemoryProperties("Matcher created")
@@ -110,7 +110,7 @@ abstract class QueryPerformanceTest {
 				"Query " + specification.fullyQualifiedName + "( " + countMatches + " matches, used " + usedHeap +
 					" kByte heap, took " + watch.elapsed(TimeUnit.MILLISECONDS) + " ms)")
 
-			incQueryEngine.wipe
+			queryEngine.wipe
 			logMemoryProperties("Wiped engine after building")
 			debug("\n-------------------------------------------\n")
 		}

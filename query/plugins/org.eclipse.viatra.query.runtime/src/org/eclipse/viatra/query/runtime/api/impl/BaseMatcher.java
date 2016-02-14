@@ -20,10 +20,10 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
-import org.eclipse.viatra.query.runtime.internal.apiimpl.IncQueryEngineImpl;
+import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraEngineImpl;
 import org.eclipse.viatra.query.runtime.internal.apiimpl.QueryResultWrapper;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -34,25 +34,25 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import com.google.common.base.Preconditions;
 
 /**
- * Base implementation of IncQueryMatcher.
+ * Base implementation of ViatraQueryMatcher.
  *
  * @author Bergmann Gábor
  *
  * @param <Match>
  */
-public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResultWrapper implements IncQueryMatcher<Match> {
+public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResultWrapper implements ViatraQueryMatcher<Match> {
 
     // FIELDS AND CONSTRUCTOR
 
-    protected IncQueryEngine engine;
+    protected ViatraQueryEngine engine;
     protected IQuerySpecification<? extends BaseMatcher<Match>> querySpecification;
 
-    public BaseMatcher(IncQueryEngine engine,
+    public BaseMatcher(ViatraQueryEngine engine,
     		IQuerySpecification<? extends BaseMatcher<Match>> querySpecification)
             throws IncQueryException {
         super();
         this.engine = engine;
-        IncQueryEngineImpl engineImpl = (IncQueryEngineImpl) engine;
+        ViatraEngineImpl engineImpl = (ViatraEngineImpl) engine;
         this.querySpecification = querySpecification;
         try {
 			this.querySpecification.getInternalQueryRepresentation().ensureInitialized();
@@ -65,7 +65,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
 
     // HELPERS
 
-    private IQueryResultProvider accessMatcher(IncQueryEngineImpl engine, IQuerySpecification<? extends BaseMatcher<Match>> specification) throws IncQueryException {
+    private IQueryResultProvider accessMatcher(ViatraEngineImpl engine, IQuerySpecification<? extends BaseMatcher<Match>> specification) throws IncQueryException {
         Preconditions.checkArgument(!specification.getInternalQueryRepresentation().getStatus().equals(PQueryStatus.ERROR), "Cannot load erroneous query specification " + specification.getFullyQualifiedName());
         Preconditions.checkArgument(!specification.getInternalQueryRepresentation().getStatus().equals(PQueryStatus.UNINITIALIZED), "Cannot load uninitialized query specification " + specification.getFullyQualifiedName());
         try {
@@ -345,7 +345,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     }
 
     @Override
-    public IncQueryEngine getEngine() {
+    public ViatraQueryEngine getEngine() {
         return engine;
     }
 

@@ -20,10 +20,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
 import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -102,7 +102,7 @@ class ModelLoadHelper {
 	/**
 	 * Initialize a matcher for the pattern with the given name from the pattern model on the selected EMF root.
 	 */
-	def initializeMatcherFromModel(PatternModel model, IncQueryEngine engine, String patternName) {
+	def initializeMatcherFromModel(PatternModel model, ViatraQueryEngine engine, String patternName) {
 		val patterns = model.patterns.filter [
 			patternName == CorePatternLanguageHelper.getFullyQualifiedName(it)
 		]
@@ -112,7 +112,7 @@ class ModelLoadHelper {
 	}
 
 	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName) {
-		val engine = IncQueryEngine::on(emfRoot);
+		val engine = ViatraQueryEngine::on(emfRoot);
 		model.initializeMatcherFromModel(engine, patternName)
 	}
 
@@ -121,7 +121,7 @@ class ModelLoadHelper {
 	 */
 	def initializeMatcherFromRegistry(Notifier emfRoot, String patternFQN) {
 		val querySpecification = QuerySpecificationRegistry::getQuerySpecification(patternFQN)
-		querySpecification.getMatcher(IncQueryEngine::on(emfRoot))
+		querySpecification.getMatcher(ViatraQueryEngine::on(emfRoot))
 	}
 
 	/**

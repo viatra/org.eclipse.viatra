@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
 /**
  * Interface for a constraint specification.
@@ -103,6 +103,6 @@ public interface IConstraintSpecification {
      * 
      * @return The query specification.
      */
-    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification();
+    public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getQuerySpecification();
 
 }

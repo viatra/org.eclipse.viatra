@@ -13,7 +13,6 @@ package org.eclipse.viatra.transformation.runtime.emf.rules.batch
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle
 import org.eclipse.viatra.transformation.evm.api.Job
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification
@@ -27,6 +26,7 @@ import org.eclipse.viatra.transformation.evm.specific.event.IncQuerySinglePatter
 import org.eclipse.viatra.transformation.evm.specific.lifecycle.DefaultActivationLifeCycle
 import org.eclipse.viatra.transformation.evm.specific.lifecycle.UnmodifiableActivationLifeCycle
 import org.eclipse.viatra.transformation.runtime.emf.rules.ITransformationRule
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
  * Wrapper class for transformation rule definition to hide EVM specific internals.
@@ -36,7 +36,7 @@ import org.eclipse.viatra.transformation.runtime.emf.rules.ITransformationRule
  * @author Abel Hegedus, Zoltan Ujhelyi
  *
  */
-class BatchTransformationRule<Match extends IPatternMatch,Matcher extends IncQueryMatcher<Match>> implements ITransformationRule<Match,Matcher> {
+class BatchTransformationRule<Match extends IPatternMatch,Matcher extends ViatraQueryMatcher<Match>> implements ITransformationRule<Match,Matcher> {
 	
 	/**
 	 * Lifecycle for a rule that does not store the list of fired activations; thus allows re-firing the same activation again. 

@@ -11,7 +11,7 @@
 package org.eclipse.viatra.transformation.debug.breakpoints.impl;
 
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.debug.breakpoints.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
@@ -24,11 +24,11 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
  *
  */
 public class ConditionalTransformationBreakpoint implements ITransformationBreakpoint{
-    IncQueryEngine engine;
+    ViatraQueryEngine engine;
     IQuerySpecification<?> spec;
     int numberOfMatches;
     
-    public ConditionalTransformationBreakpoint(IncQueryEngine engine, IQuerySpecification<?> spec, int numberOfMatches){
+    public ConditionalTransformationBreakpoint(ViatraQueryEngine engine, IQuerySpecification<?> spec, int numberOfMatches){
         this.engine = engine;
         this.spec = spec;
         this.numberOfMatches = numberOfMatches;

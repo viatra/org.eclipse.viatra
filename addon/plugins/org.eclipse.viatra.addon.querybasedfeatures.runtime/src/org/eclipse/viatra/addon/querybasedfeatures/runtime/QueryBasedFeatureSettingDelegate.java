@@ -20,10 +20,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.BasicSettingDelegate;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
@@ -39,9 +39,9 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
     /**
      * Weak hash map for keeping the created objects for each notifier
      */
-    private final Map<AdvancedIncQueryEngine,WeakReference<QueryBasedFeature>> queryBasedFeatures = new WeakHashMap<AdvancedIncQueryEngine, WeakReference<QueryBasedFeature>>();
+    private final Map<AdvancedViatraQueryEngine,WeakReference<QueryBasedFeature>> queryBasedFeatures = new WeakHashMap<AdvancedViatraQueryEngine, WeakReference<QueryBasedFeature>>();
 
-    private final IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification;
+    private final IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification;
 
     private final QueryBasedFeatureSettingDelegateFactory delegateFactory;
 
@@ -60,7 +60,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
      * @param querySpecification the query specification used for the evaluation of the setting delegate
      * @param dynamicEMFMode indicates whether the engine should be created in dynamic EMF mode
      */
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
+    public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
             QueryBasedFeatureSettingDelegateFactory factory,
             IQuerySpecification<Matcher> querySpecification, boolean dynamicEMFMode) {
         this(eStructuralFeature, factory, querySpecification, false, dynamicEMFMode);
@@ -75,7 +75,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
      * @param isResourceScope indicates whether the {@link Resource} of the {@link InternalEObject} is enough as a scope during the evaluation of the setting delegate 
      * @param dynamicEMFMode indicates whether the engine should be created in dynamic EMF mode
      */
-    public <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
+    public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> QueryBasedFeatureSettingDelegate(EStructuralFeature eStructuralFeature,
             QueryBasedFeatureSettingDelegateFactory factory,
             IQuerySpecification<Matcher> querySpecification, 
             boolean isResourceScope, boolean dynamicEMFMode) {
@@ -137,7 +137,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
             notifierForSource = QueryBasedFeatureHelper.prepareNotifierForSource(owner);    
         }
                 
-        AdvancedIncQueryEngine engine = null;
+        AdvancedViatraQueryEngine engine = null;
         try {
             engine = delegateFactory.getEngineForNotifier(notifierForSource, dynamicEMFMode);
         } catch (IncQueryException e) {
@@ -158,7 +158,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
 
             try {
                 @SuppressWarnings("unchecked")
-                IncQueryMatcher<IPatternMatch> matcher = (IncQueryMatcher<IPatternMatch>) this.querySpecification
+                ViatraQueryMatcher<IPatternMatch> matcher = (ViatraQueryMatcher<IPatternMatch>) this.querySpecification
                         .getMatcher(engine);
                 if (!queryBasedFeature.isInitialized()) {
                     queryBasedFeature.initialize(matcher, parameters.sourceVar, parameters.targetVar);
@@ -188,7 +188,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         /**
          * @param querySpecification
          */
-        public QueryBasedFeatureParameters(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> querySpecification) {
+        public QueryBasedFeatureParameters(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification) {
             List<String> parameterNames = querySpecification.getParameterNames();
             sourceVar = parameterNames.get(0);
             targetVar = parameterNames.get(1);

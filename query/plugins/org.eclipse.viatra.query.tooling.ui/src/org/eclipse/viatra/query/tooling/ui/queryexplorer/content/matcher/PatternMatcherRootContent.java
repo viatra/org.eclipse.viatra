@@ -22,12 +22,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngineLifecycleListener;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
@@ -56,7 +56,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     private final Map<String, PatternMatcherContent> mapping;
     private ContentChildren<PatternMatcherContent> children;
     private final PatternMatcherRootContentKey key;
-    private IncQueryEngineLifecycleListener taintListener;
+    private ViatraQueryEngineLifecycleListener taintListener;
     private final ILog logger = ViatraQueryGUIPlugin.getDefault().getLog();
     private IStatus contentStatus;
 
@@ -67,18 +67,18 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         this.mapping = Maps.newHashMap();
         this.key = key;
 
-        AdvancedIncQueryEngine engine = key.getEngine();
+        AdvancedViatraQueryEngine engine = key.getEngine();
         if (engine == null) {
             engine = createEngine();
             key.setEngine(engine);
             RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
-                    Schedulers.getIQEngineSchedulerFactory(engine));
+                    Schedulers.getQueryEngineSchedulerFactory(engine));
             key.setRuleEngine(ruleEngine);
             engine.addLifecycleListener(taintListener);
         }
     }
 
-    private AdvancedIncQueryEngine createEngine() {
+    private AdvancedViatraQueryEngine createEngine() {
         boolean wildcardMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
                 .getBoolean(PreferenceConstants.WILDCARD_MODE);
         boolean dynamicEMFMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
@@ -87,17 +87,17 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         try {
             BaseIndexOptions options = new BaseIndexOptions(dynamicEMFMode, wildcardMode);
             IncQueryScope scope = new EMFScope(key.getNotifier(), options);
-            AdvancedIncQueryEngine engine = AdvancedIncQueryEngine.createUnmanagedEngine(scope);
+            AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
             return engine;
         } catch (IncQueryException e) {
-            logger.log(new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, "Could not retrieve IncQueryEngine for "
+            logger.log(new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, "Could not retrieve ViatraQueryEngine for "
                     + key.getNotifier(), e));
             return null;
         }
     }
 
     public void registerPattern(final QueryEvaluationHint hint, final IQuerySpecification<?>... patterns) {
-        IncQueryEngine engine = null;
+        ViatraQueryEngine engine = null;
         try {
             engine = key.getEngine();
     
@@ -123,7 +123,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         }
     }
 
-    public void addMatcher(AdvancedIncQueryEngine engine, RuleEngine ruleEngine, IQuerySpecification<?> specification, boolean generated,  QueryEvaluationHint hint) {
+    public void addMatcher(AdvancedViatraQueryEngine engine, RuleEngine ruleEngine, IQuerySpecification<?> specification, boolean generated,  QueryEvaluationHint hint) {
         String fqn = specification.getFullyQualifiedName();
 
         PatternMatcherContent pm = new PatternMatcherContent(this, engine, ruleEngine, specification,
@@ -162,7 +162,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         if(ruleEngine != null) {
             ruleEngine.dispose();
         }
-        AdvancedIncQueryEngine engine = key.getEngine();
+        AdvancedViatraQueryEngine engine = key.getEngine();
         if (engine != null) {
             engine.removeLifecycleListener(taintListener);
             engine.dispose();
@@ -170,7 +170,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     }
 
     public boolean isTainted() {
-        AdvancedIncQueryEngine engine = key.getEngine();
+        AdvancedViatraQueryEngine engine = key.getEngine();
         return (engine == null) ? true : engine.isTainted();
     }
 
@@ -204,7 +204,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         });
     }
     
-    private class ContentEngineTaintListener implements IncQueryEngineLifecycleListener {
+    private class ContentEngineTaintListener implements ViatraQueryEngineLifecycleListener {
 
         @Override
         public void engineBecameTainted(String description, Throwable t) {
@@ -212,7 +212,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         }
 
         @Override
-        public void matcherInstantiated(IncQueryMatcher<? extends IPatternMatch> matcher) {
+        public void matcherInstantiated(ViatraQueryMatcher<? extends IPatternMatch> matcher) {
         }
 
         @Override

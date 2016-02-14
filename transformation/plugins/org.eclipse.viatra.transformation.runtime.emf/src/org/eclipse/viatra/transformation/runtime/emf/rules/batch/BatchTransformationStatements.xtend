@@ -12,9 +12,7 @@ package org.eclipse.viatra.transformation.runtime.emf.rules.batch
 
 import com.google.common.base.Predicate
 import com.google.common.collect.ImmutableSet
-import org.eclipse.viatra.query.runtime.api.GenericPatternGroup
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
 import org.eclipse.viatra.transformation.evm.api.Activation
 import org.eclipse.viatra.transformation.evm.api.Context
 import org.eclipse.viatra.transformation.evm.api.RuleEngine
@@ -24,8 +22,9 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ScopedConflictSet
 import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter
 import org.eclipse.viatra.transformation.runtime.emf.rules.BatchTransformationRuleGroup
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
-import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import com.google.common.collect.Sets
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
+import org.eclipse.viatra.query.runtime.api.GenericQueryGroup
 
 /**
  * Utility class for simple rule usage
@@ -35,20 +34,20 @@ import com.google.common.collect.Sets
  */
 class BatchTransformationStatements {
 	
-	val IncQueryEngine iqEngine
+	val ViatraQueryEngine queryEngine
 	val RuleEngine ruleEngine
 	val Context context
 	
 	new(BatchTransformation transformation) {
 		ruleEngine = transformation.ruleEngine
 		context = transformation.context
-		iqEngine = transformation.iqEngine
+		queryEngine = transformation.queryEngine
 	}
 	
-	new(RuleEngine ruleEngine, IncQueryEngine iqEngine, Context context) {
+	new(RuleEngine ruleEngine, ViatraQueryEngine queryEngine, Context context) {
 		this.ruleEngine = ruleEngine
 		this.context = context
-		this.iqEngine = iqEngine
+		this.queryEngine = queryEngine
 	}
 	
 	/**
@@ -206,7 +205,7 @@ class BatchTransformationStatements {
 
 	def registerRules(BatchTransformationRuleGroup rules) {
 		val notNullPreconditions = rules.filterNull.map[precondition]
-		GenericPatternGroup.of(Sets.newHashSet(notNullPreconditions)).prepare(iqEngine)
+		GenericQueryGroup.of(Sets.newHashSet(notNullPreconditions)).prepare(queryEngine)
 		rules.filterNull.forEach[
 				ruleEngine.addRule(ruleSpecification, filter as EventFilter<IPatternMatch>)
 		]

@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
 import com.google.common.base.Predicate;
@@ -58,16 +58,16 @@ public class NameToSpecificationMap implements Map<String, IQuerySpecification<?
     }
 
     /**
-     * Initializes a pattern-specification mapping with the contents of an existing {@link IncQueryEngine}. </p>
+     * Initializes a pattern-specification mapping with the contents of an existing {@link ViatraQueryEngine}. </p>
      * <p>
      * <strong>Warning</strong> It is assumed that each query specification in the engine has a unique fqn - if the
      * assumption fails, the resulting map is unspecified.
      * 
      * @param engine
      */
-    public NameToSpecificationMap(IncQueryEngine engine) {
+    public NameToSpecificationMap(ViatraQueryEngine engine) {
         this();
-        for (IncQueryMatcher<?> matcher : engine.getCurrentMatchers()) {
+        for (ViatraQueryMatcher<?> matcher : engine.getCurrentMatchers()) {
             IQuerySpecification<?> specification = matcher.getSpecification();
             map.put(specification.getFullyQualifiedName(), specification);
         }

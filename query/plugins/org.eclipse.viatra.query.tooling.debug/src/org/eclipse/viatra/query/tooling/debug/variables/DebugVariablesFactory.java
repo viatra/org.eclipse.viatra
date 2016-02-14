@@ -17,7 +17,7 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugVariable;
 import org.eclipse.viatra.query.tooling.debug.common.VariablesFactory;
@@ -29,7 +29,7 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.VirtualMachine;
 
 /**
- * This factory is responsible for the creation of {@link IJavaVariable}s for all the available {@link IncQueryEngine}s
+ * This factory is responsible for the creation of {@link IJavaVariable}s for all the available {@link ViatraQueryEngine}s
  * in the current JVM.
  * 
  * @author Tamas Szabo (itemis AG)

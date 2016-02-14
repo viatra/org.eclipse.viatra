@@ -26,7 +26,7 @@ import org.eclipse.viatra.addon.viewers.runtime.model.patterns.Param2itemMatcher
 import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
 
@@ -41,7 +41,7 @@ public final class ViewerTraceabilityUtil {
 
     }
 
-    public static Collection<Item> traceToItem(IncQueryEngine engine, Object source) {
+    public static Collection<Item> traceToItem(ViatraQueryEngine engine, Object source) {
 
         ArrayList<Item> list = Lists.newArrayList();
         Collection<Param2itemMatch> allMatches = executeParam2itemMatcher(engine, source);
@@ -52,7 +52,7 @@ public final class ViewerTraceabilityUtil {
         return list;
     }
 
-	private static Collection<Param2itemMatch> executeParam2itemMatcher(IncQueryEngine engine, Object source) {
+	private static Collection<Param2itemMatch> executeParam2itemMatcher(ViatraQueryEngine engine, Object source) {
 		try {
 
             Param2itemMatcher matcher = Param2itemMatcher.on(engine);
@@ -65,7 +65,7 @@ public final class ViewerTraceabilityUtil {
 		return Collections.emptySet(); 
 	}
 
-    public static Collection<Edge> traceToEdge(IncQueryEngine engine, Object source, Object target) {
+    public static Collection<Edge> traceToEdge(ViatraQueryEngine engine, Object source, Object target) {
 
         ArrayList<Edge> list = Lists.newArrayList();
         Collection<Param2edgeMatch> allMatches = executeParam2edgeMatcher(engine, source, target);
@@ -76,7 +76,7 @@ public final class ViewerTraceabilityUtil {
         return list;
     }
 
-	private static Collection<Param2edgeMatch> executeParam2edgeMatcher(IncQueryEngine engine, Object source, Object target) {
+	private static Collection<Param2edgeMatch> executeParam2edgeMatcher(ViatraQueryEngine engine, Object source, Object target) {
 		try {
 
             Param2edgeMatcher matcher = Param2edgeMatcher.on(engine);
@@ -89,7 +89,7 @@ public final class ViewerTraceabilityUtil {
 		return Collections.emptySet(); 
 	}
 
-    public static Collection<Containment> traceTocontainment(IncQueryEngine engine, Object source, Object target) {
+    public static Collection<Containment> traceTocontainment(ViatraQueryEngine engine, Object source, Object target) {
 
         ArrayList<Containment> list = Lists.newArrayList();
         Collection<Param2containmentMatch> allMatches = executeParam2containmentMatcher(engine, source, target);
@@ -100,7 +100,7 @@ public final class ViewerTraceabilityUtil {
         return list;
     }
 
-	private static Collection<Param2containmentMatch> executeParam2containmentMatcher(IncQueryEngine engine, Object source, Object target) {
+	private static Collection<Param2containmentMatch> executeParam2containmentMatcher(ViatraQueryEngine engine, Object source, Object target) {
 		try {
 
             Param2containmentMatcher matcher = Param2containmentMatcher.on(engine);
@@ -113,7 +113,7 @@ public final class ViewerTraceabilityUtil {
 		return Collections.emptySet(); 
 	}
 	
-	public static Collection<Item> deleteTracesAndItems(IncQueryEngine engine, Object source) {
+	public static Collection<Item> deleteTracesAndItems(ViatraQueryEngine engine, Object source) {
     	ArrayList<Item> list = Lists.newArrayList();
         Collection<Param2itemMatch> allMatches = executeParam2itemMatcher(engine, source);
         
@@ -126,7 +126,7 @@ public final class ViewerTraceabilityUtil {
         return list;
     }
     
-    public static Collection<Edge> deleteTracesAndEdges(IncQueryEngine engine, Object source, Object target) {
+    public static Collection<Edge> deleteTracesAndEdges(ViatraQueryEngine engine, Object source, Object target) {
     	ArrayList<Edge> list = Lists.newArrayList();
         Collection<Param2edgeMatch> allMatches = executeParam2edgeMatcher(engine, source, target);
         
@@ -139,7 +139,7 @@ public final class ViewerTraceabilityUtil {
         return list;
     }
     
-    public static Collection<Containment> deleteTracesAndContainments(IncQueryEngine engine, Object source, Object target) {
+    public static Collection<Containment> deleteTracesAndContainments(ViatraQueryEngine engine, Object source, Object target) {
     	ArrayList<Containment> list = Lists.newArrayList();
         Collection<Param2containmentMatch> allMatches = executeParam2containmentMatcher(engine, source, target);
         

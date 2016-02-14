@@ -15,7 +15,7 @@ import java.util.Comparator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
 
@@ -28,10 +28,10 @@ public class MatchComparator implements Comparator<IPatternMatch> {
     private static final String KEY_ATTRIBUTE_COMPARABLE_INTERFACE = "The key attribute does not implement the Comparable interface!";
     private String clazz;
     private String attribute;
-    private IncQueryMatcher<IPatternMatch> matcher;
+    private ViatraQueryMatcher<IPatternMatch> matcher;
     private boolean ascending;
 
-    public MatchComparator(IncQueryMatcher<IPatternMatch> matcher, String clazz, String attribute, boolean ascending) {
+    public MatchComparator(ViatraQueryMatcher<IPatternMatch> matcher, String clazz, String attribute, boolean ascending) {
         this.clazz = clazz;
         this.attribute = attribute;
         this.matcher = matcher;

@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.changemonitor;
 
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
 public abstract class IChangeMonitor {
 
-    public IChangeMonitor(IncQueryEngine engine) {
+    public IChangeMonitor(ViatraQueryEngine engine) {
 
     }
 

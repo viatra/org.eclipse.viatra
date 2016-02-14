@@ -13,7 +13,7 @@ package org.eclipse.viatra.transformation.runtime.emf.filters
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import java.util.Map
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
  * A EVM filter that uses a parameter-value map that can be used for 
@@ -46,7 +46,7 @@ import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
     // maybe this is not the best performance-wise :)
   }
   
-  def <Match extends IPatternMatch, Matcher extends IncQueryMatcher<Match>> toMatch(Matcher matcher) {
+  def <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> toMatch(Matcher matcher) {
   	val match = matcher.newEmptyMatch
   	matcher.parameterNames.forEach[
   		if (filterMap.containsKey(it)) {

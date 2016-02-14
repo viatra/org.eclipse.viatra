@@ -15,7 +15,7 @@ import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
-import org.eclipse.viatra.query.runtime.internal.apiimpl.IncQueryEngineImpl;
+import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraEngineImpl;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
@@ -24,31 +24,31 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
  * Advanced interface to an IncQuery incremental evaluation engine.
  * 
  * <p>
- * You can create a new, private, unmanaged {@link AdvancedIncQueryEngine} instance using
+ * You can create a new, private, unmanaged {@link AdvancedViatraQueryEngine} instance using
  * {@link #createUnmanagedEngine(IncQueryScope)}. Additionally, you can access the advanced interface on any
- * {@link IncQueryEngine} by {@link AdvancedIncQueryEngine#from(IncQueryEngine)}.
+ * {@link ViatraQueryEngine} by {@link AdvancedViatraQueryEngine#from(ViatraQueryEngine)}.
  * 
  * <p>
- * While the default interface {@link IncQueryEngine}, is suitable for most users, this advanced interface provides more
+ * While the default interface {@link ViatraQueryEngine}, is suitable for most users, this advanced interface provides more
  * control over the engine. The most important added functionality is the following:
  * <ul>
  * <li>You can have tighter control over the lifecycle of the engine, if you create a private, unmanaged engine
  * instance. For instance, a (non-managed) engine can be disposed in order to detach from the EMF model and stop
  * listening on update notifications. The indexes built previously in the engine can then be garbage collected, even if
  * the model itself is retained. Total lifecycle control is only available for private, unmanaged engines (created using
- * {@link #createUnmanagedEngine(IncQueryScope)}); a managed engine (obtained via {@link IncQueryEngine#on(IncQueryScope)}) is
+ * {@link #createUnmanagedEngine(IncQueryScope)}); a managed engine (obtained via {@link ViatraQueryEngine#on(IncQueryScope)}) is
  * shared among clients and can not be disposed or wiped.
  * <li>You can add and remove listeners to receive notification when the model or the match sets change.
  * <li>You can add and remove listeners to receive notification on engine lifecycle events, such as creation of new
  * matchers. For instance, if you explicitly share a private, unmanaged engine between multiple sites, you should
- * register a callback using {@link #addLifecycleListener(IncQueryEngineLifecycleListener)} to learn when another client
+ * register a callback using {@link #addLifecycleListener(ViatraQueryEngineLifecycleListener)} to learn when another client
  * has called the destructive methods {@link #dispose()} or {@link #wipe()}.
  * </ul>
  * 
  * @author Bergmann Gabor
  * 
  */
-public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
+public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
 
     /**
      * Creates a new unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
@@ -59,7 +59,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * 
      * <p>
      * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface
-     * {@link AdvancedIncQueryEngine}.
+     * {@link AdvancedViatraQueryEngine}.
      * 
      * <p>
      * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
@@ -75,7 +75,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
     @Deprecated
-    public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot) throws IncQueryException {
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(Notifier emfScopeRoot) throws IncQueryException {
         return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions());
     }
 
@@ -88,7 +88,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * 
      * <p>
      * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface
-     * {@link AdvancedIncQueryEngine}.
+     * {@link AdvancedViatraQueryEngine}.
      * 
      * <p>
      * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
@@ -105,7 +105,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
     @Deprecated
-    public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode)
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode)
             throws IncQueryException {
         return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions().withWildcardMode(wildcardMode));
     }
@@ -119,7 +119,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * 
      * <p>
      * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface
-     * {@link AdvancedIncQueryEngine}.
+     * {@link AdvancedViatraQueryEngine}.
      * 
      * <p>
      * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
@@ -139,7 +139,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
     @Deprecated
-    public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode,
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode,
             boolean dynamicEMFMode) throws IncQueryException {
         return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions(dynamicEMFMode, wildcardMode));
     }
@@ -153,7 +153,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * 
      * <p>
      * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface
-     * {@link AdvancedIncQueryEngine}.
+     * {@link AdvancedViatraQueryEngine}.
      * 
      * <p>
      * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
@@ -170,9 +170,9 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
     @Deprecated
-    public static AdvancedIncQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, BaseIndexOptions options)
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, BaseIndexOptions options)
             throws IncQueryException {
-        return new IncQueryEngineImpl(null, new EMFScope(emfScopeRoot, options));
+        return new ViatraEngineImpl(null, new EMFScope(emfScopeRoot, options));
     }
     
     /**
@@ -185,7 +185,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * 
      * <p>
      * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface
-     * {@link AdvancedIncQueryEngine}.
+     * {@link AdvancedViatraQueryEngine}.
      * 
      * <p>
      * The match set of any patterns will be incrementally refreshed upon updates from this scope.
@@ -196,60 +196,60 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * @return the advanced interface to a newly created unmanaged engine
      * @since 0.9
      */
-    public static AdvancedIncQueryEngine createUnmanagedEngine(IncQueryScope scope)
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(IncQueryScope scope)
             throws IncQueryException {
-        return new IncQueryEngineImpl(null, scope);
+        return new ViatraEngineImpl(null, scope);
     }
 
     /**
      * Provides access to a given existing engine through the advanced interface.
      * 
      * <p>
-     * Caveat: if the referenced engine is managed (i.e. created via {@link IncQueryEngine#on(IncQueryScope)}), the advanced
+     * Caveat: if the referenced engine is managed (i.e. created via {@link ViatraQueryEngine#on(IncQueryScope)}), the advanced
      * methods {@link #dispose()} and {@link #wipe()} will not be allowed.
      * 
      * @param engine
      *            the engine to access using the advanced interface
      * @return a reference to the same engine conforming to the advanced interface
      */
-    public static AdvancedIncQueryEngine from(IncQueryEngine engine) {
-        return (AdvancedIncQueryEngine) engine;
+    public static AdvancedViatraQueryEngine from(ViatraQueryEngine engine) {
+        return (AdvancedViatraQueryEngine) engine;
     }
 
     /**
      * Add an engine lifecycle listener to this engine instance.
      * 
      * @param listener
-     *            the {@link IncQueryEngineLifecycleListener} that should listen to lifecycle events from this engine
+     *            the {@link ViatraQueryEngineLifecycleListener} that should listen to lifecycle events from this engine
      */
-    public abstract void addLifecycleListener(IncQueryEngineLifecycleListener listener);
+    public abstract void addLifecycleListener(ViatraQueryEngineLifecycleListener listener);
 
     /**
      * Remove an existing lifecycle listener from this engine instance.
      * 
      * @param listener
-     *            the {@link IncQueryEngineLifecycleListener} that should not listen to lifecycle events from this
+     *            the {@link ViatraQueryEngineLifecycleListener} that should not listen to lifecycle events from this
      *            engine anymore
      */
-    public abstract void removeLifecycleListener(IncQueryEngineLifecycleListener listener);
+    public abstract void removeLifecycleListener(ViatraQueryEngineLifecycleListener listener);
 
     /**
      * Add an model update event listener to this engine instance (that fires its callbacks according to its
      * notification level).
      * 
      * @param listener
-     *            the {@link IncQueryModelUpdateListener} that should listen to model update events from this engine.
+     *            the {@link ViatraQueryModelUpdateListener} that should listen to model update events from this engine.
      */
-    public abstract void addModelUpdateListener(IncQueryModelUpdateListener listener);
+    public abstract void addModelUpdateListener(ViatraQueryModelUpdateListener listener);
 
     /**
      * Remove an existing model update event listener to this engine instance.
      * 
      * @param listener
-     *            the {@link IncQueryModelUpdateListener} that should not listen to model update events from this engine
+     *            the {@link ViatraQueryModelUpdateListener} that should not listen to model update events from this engine
      *            anymore
      */
-    public abstract void removeModelUpdateListener(IncQueryModelUpdateListener listener);
+    public abstract void removeModelUpdateListener(ViatraQueryModelUpdateListener listener);
 
     /**
      * Registers low-level callbacks for match appearance and disappearance on this pattern matcher.
@@ -269,24 +269,24 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * 
      * @param fireNow
      *            if true, appearCallback will be immediately invoked on all current matches as a one-time effect. See
-     *            also {@link IncQueryMatcher#forEachMatch(IMatchProcessor)}.
+     *            also {@link ViatraQueryMatcher#forEachMatch(IMatchProcessor)}.
      * @param listener
      *            the listener that will be notified of each new match that appears or disappears, starting from now.
      * @param matcher
-     *            the {@link IncQueryMatcher} for which this listener should be active
+     *            the {@link ViatraQueryMatcher} for which this listener should be active
      */
-    public abstract <Match extends IPatternMatch> void addMatchUpdateListener(IncQueryMatcher<Match> matcher,
+    public abstract <Match extends IPatternMatch> void addMatchUpdateListener(ViatraQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener, boolean fireNow);
 
     /**
      * Remove an existing match update event listener to this engine instance.
      * 
      * @param matcher
-     *            the {@link IncQueryMatcher} for which this listener should not be active anymore
+     *            the {@link ViatraQueryMatcher} for which this listener should not be active anymore
      * @param listener
      *            the {@link IMatchUpdateListener} that should not receive the callbacks anymore
      */
-    public abstract <Match extends IPatternMatch> void removeMatchUpdateListener(IncQueryMatcher<Match> matcher,
+    public abstract <Match extends IPatternMatch> void removeMatchUpdateListener(ViatraQueryMatcher<Match> matcher,
             IMatchUpdateListener<? super Match> listener);
 
     
@@ -300,7 +300,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
 	 * @throws IncQueryException if the matcher could not be initialized
 	 * @since 0.9
 	 */
-    public abstract <Matcher extends IncQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
+    public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
     		IQuerySpecification<Matcher> querySpecification, 
     		QueryEvaluationHint optionalEvaluationHints)
     	throws IncQueryException;
@@ -329,18 +329,18 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
  
     /**
      * Indicates whether the engine is managed, i.e. the default engine assigned to the given scope root by
-     * {@link IncQueryEngine#on(IncQueryScope)}.
+     * {@link ViatraQueryEngine#on(IncQueryScope)}.
      * 
      * <p>
      * If the engine is managed, there may be other clients using it, as all calls to
-     * {@link IncQueryEngine#on(IncQueryScope)} return the same managed engine instance for a given scope root. Therefore the
+     * {@link ViatraQueryEngine#on(IncQueryScope)} return the same managed engine instance for a given scope root. Therefore the
      * destructive methods {@link #wipe()} and {@link #dispose()} are not allowed.
      * 
      * <p>
      * On the other hand, if the engine is unmanaged (i.e. a private instance created using
      * {@link #createUnmanagedEngine(IncQueryScope)}), then {@link #wipe()} and {@link #dispose()} can be called. If you
      * explicitly share a private, unmanaged engine between multiple sites, register a callback using
-     * {@link #addLifecycleListener(IncQueryEngineLifecycleListener)} to learn when another client has called these
+     * {@link #addLifecycleListener(ViatraQueryEngineLifecycleListener)} to learn when another client has called these
      * destructive methods.
      * 
      * @return true if the engine is managed, and therefore potentially shared with other clients querying the same EMF
@@ -354,7 +354,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * 
      * <p>
      * The engine is in a tainted state if any of its internal processes report back a fatal error. The
-     * {@link IncQueryEngineLifecycleListener} interface provides a callback method for entering the tainted state.
+     * {@link ViatraQueryEngineLifecycleListener} interface provides a callback method for entering the tainted state.
      * 
      * @return the tainted state
      */
@@ -372,7 +372,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * Disallowed if the engine is managed (see {@link #isManaged()}), as there may be other clients using it.
      * <p>
      * If you explicitly share a private, unmanaged engine between multiple sites, register a callback using
-     * {@link #addLifecycleListener(IncQueryEngineLifecycleListener)} to learn when another client has called this
+     * {@link #addLifecycleListener(ViatraQueryEngineLifecycleListener)} to learn when another client has called this
      * destructive method.
      * 
      * @throws UnsupportedOperationException
@@ -392,7 +392,7 @@ public abstract class AdvancedIncQueryEngine extends IncQueryEngine {
      * Disallowed if the engine is managed (see {@link #isManaged()}), as there may be other clients using it.
      * <p>
      * If you explicitly share a private, unmanaged engine between multiple sites, register a callback using
-     * {@link #addLifecycleListener(IncQueryEngineLifecycleListener)} to learn when another client has called this
+     * {@link #addLifecycleListener(ViatraQueryEngineLifecycleListener)} to learn when another client has called this
      * destructive method.
      * 
      * @throws UnsupportedOperationException

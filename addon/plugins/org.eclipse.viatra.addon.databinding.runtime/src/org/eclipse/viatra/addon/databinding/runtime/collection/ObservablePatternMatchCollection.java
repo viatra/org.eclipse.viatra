@@ -14,8 +14,8 @@ import java.util.Comparator;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
@@ -45,14 +45,14 @@ public interface ObservablePatternMatchCollection<M extends IPatternMatch> {
      * 
      * @param querySpecification
      */
-    void createRuleSpecification(IQuerySpecification<? extends IncQueryMatcher<M>> querySpecification);
+    void createRuleSpecification(IQuerySpecification<? extends ViatraQueryMatcher<M>> querySpecification);
 
     /**
      * Creates the rule specification of the observable collection using an existing matcher.
      * 
      * @param matcher
      */
-    void createRuleSpecification(IncQueryMatcher<M> matcher);
+    void createRuleSpecification(ViatraQueryMatcher<M> matcher);
     
     /**
      * Sets the filter used by the observable collection.
@@ -66,7 +66,7 @@ public interface ObservablePatternMatchCollection<M extends IPatternMatch> {
      * 
      * @param engine
      */
-    void initialize(IncQueryEngine engine);
+    void initialize(ViatraQueryEngine engine);
 
     /**
      * Initializes the configured observable collection using an rule engine.

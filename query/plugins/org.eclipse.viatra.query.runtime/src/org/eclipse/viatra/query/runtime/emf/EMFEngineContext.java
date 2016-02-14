@@ -13,7 +13,7 @@ package org.eclipse.viatra.query.runtime.emf;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.query.runtime.api.scope.IEngineContext;
 import org.eclipse.viatra.query.runtime.api.scope.IIndexingErrorListener;
@@ -31,14 +31,14 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 class EMFEngineContext implements IEngineContext {
 
     private final EMFScope emfScope;
-    IncQueryEngine engine;
+    ViatraQueryEngine engine;
     Logger logger;
     NavigationHelper navHelper;
     IBaseIndex baseIndex;
     IIndexingErrorListener taintListener;
     private EMFQueryRuntimeContext runtimeContext;
     
-    public EMFEngineContext(EMFScope emfScope, IncQueryEngine engine, IIndexingErrorListener taintListener, Logger logger) {
+    public EMFEngineContext(EMFScope emfScope, ViatraQueryEngine engine, IIndexingErrorListener taintListener, Logger logger) {
         this.emfScope = emfScope;
         this.engine = engine;
         this.logger = logger;

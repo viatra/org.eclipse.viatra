@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.specific.event.IncQueryFilterSemantics;
 
 import com.google.common.base.Preconditions;
@@ -36,7 +36,7 @@ public class ViewerDataFilter {
 
     public static ViewerDataFilter UNFILTERED = new ViewerDataFilter();
 
-    private Map<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>, ViewerFilterDefinition> filterDefinitions;
+    private Map<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>, ViewerFilterDefinition> filterDefinitions;
     
     /**
      * Initializes an empty data filter.
@@ -50,7 +50,7 @@ public class ViewerDataFilter {
      * 
      * @param filters
      */
-    private ViewerDataFilter(Map<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>, ViewerFilterDefinition> filters) {
+    private ViewerDataFilter(Map<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>, ViewerFilterDefinition> filters) {
         filterDefinitions = Maps.newHashMap(filters);
     }
 
@@ -70,7 +70,7 @@ public class ViewerDataFilter {
      * @param pattern
      * @param match
      */
-    public void addSingleFilter(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> pattern, IPatternMatch match) {
+    public void addSingleFilter(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern, IPatternMatch match) {
         Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), "Filter already defined for pattern "
                 + pattern.getFullyQualifiedName());
         filterDefinitions.put(pattern, new ViewerFilterDefinition(pattern, 
@@ -79,7 +79,7 @@ public class ViewerDataFilter {
                 null));
     }
     
-    public void addMultiFilter(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> pattern, Collection<IPatternMatch> matches, IncQueryFilterSemantics semantics) {
+    public void addMultiFilter(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern, Collection<IPatternMatch> matches, IncQueryFilterSemantics semantics) {
         Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), "Filter already defined for pattern "
                 + pattern.getFullyQualifiedName());
         filterDefinitions.put(pattern, new ViewerFilterDefinition(pattern, 
@@ -93,7 +93,7 @@ public class ViewerDataFilter {
      * 
      * @param pattern
      */
-    public void removeFilter(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> pattern) {
+    public void removeFilter(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
         Preconditions.checkArgument(filterDefinitions.containsKey(pattern),
                 "Filter undefined for pattern " + pattern.getFullyQualifiedName());
         filterDefinitions.remove(pattern);

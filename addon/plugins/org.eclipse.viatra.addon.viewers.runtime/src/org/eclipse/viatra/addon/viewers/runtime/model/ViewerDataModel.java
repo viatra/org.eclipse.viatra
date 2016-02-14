@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.addon.viewers.runtime.notation.NotationFactory;
 import org.eclipse.viatra.addon.viewers.runtime.notation.NotationModel;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
@@ -45,16 +45,16 @@ public abstract class ViewerDataModel {
     private final String NOTATION_RESOURCE = "org.eclipse.incquery.viewers.notation.NotationResource";
     
     protected NotationModel model;
-    protected IncQueryEngine engine;
+    protected ViatraQueryEngine engine;
 
     public ViewerDataModel(ResourceSet notifier) throws IncQueryException, IncQueryBaseException {
-        this(IncQueryEngine.on(new EMFScope(notifier)));
+        this(ViatraQueryEngine.on(new EMFScope(notifier)));
     }
 
-    public ViewerDataModel(IncQueryEngine engine) throws IncQueryException, IncQueryBaseException {
+    public ViewerDataModel(ViatraQueryEngine engine) throws IncQueryException, IncQueryBaseException {
         if (!(engine.getScope() instanceof EMFScope)) {
             IncQueryLoggingUtil.getLogger(ViewModelManager.class).error(
-                    "Only EMFScope is supported currently for IncQueryEngine");
+                    "Only EMFScope is supported currently for ViatraQueryEngine");
             return;
         }
         
@@ -103,7 +103,7 @@ public abstract class ViewerDataModel {
         return model;
     }
 
-    public IncQueryEngine getEngine() {
+    public ViatraQueryEngine getEngine() {
         return engine;
     }
     

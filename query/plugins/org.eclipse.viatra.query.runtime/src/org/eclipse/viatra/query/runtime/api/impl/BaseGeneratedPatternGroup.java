@@ -19,7 +19,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
  * @author Mark Czotter
  * 
  */
-public abstract class BaseGeneratedPatternGroup extends BasePatternGroup {
+public abstract class BaseGeneratedPatternGroup extends BaseQueryGroup {
 
     @Override
     public Set<IQuerySpecification<?>> getSpecifications() {

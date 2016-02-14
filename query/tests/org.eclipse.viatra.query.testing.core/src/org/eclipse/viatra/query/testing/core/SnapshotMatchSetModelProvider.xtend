@@ -13,10 +13,10 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.viatra.query.runtime.exception.IncQueryException
 import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /** 
  */
@@ -27,7 +27,7 @@ class SnapshotMatchSetModelProvider implements IMatchSetModelProvider {
 		this.snapshotModel = snapshotModel
 	}
 
-	override <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet resourceSet, IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, Match filter) throws IncQueryException {
+	override <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet resourceSet, IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter) throws IncQueryException {
 		val FQN = querySpecification.getFullyQualifiedName()
 		val snapshot = resourceSet.getResource(snapshotModel, true).contents.filter(IncQuerySnapshot)
 		if (snapshot.empty) throw new IllegalArgumentException(snapshotModel+" is not a Snapshot model")

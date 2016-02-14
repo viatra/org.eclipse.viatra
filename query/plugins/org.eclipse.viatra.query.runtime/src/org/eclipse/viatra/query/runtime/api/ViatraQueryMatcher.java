@@ -22,10 +22,10 @@ import java.util.Set;
  *            the IPatternMatch type representing a single match of this pattern.
  * @author Bergmann Gábor
  */
-public interface IncQueryMatcher<Match extends IPatternMatch> {
+public interface ViatraQueryMatcher<Match extends IPatternMatch> {
     // REFLECTION
     /** The pattern that will be matched. */
-    public abstract IQuerySpecification<? extends IncQueryMatcher<Match>> getSpecification();
+    public abstract IQuerySpecification<? extends ViatraQueryMatcher<Match>> getSpecification();
 
     /** Fully qualified name of the pattern. */
     public abstract String getPatternName();
@@ -240,5 +240,5 @@ public interface IncQueryMatcher<Match extends IPatternMatch> {
      * 
      * @return the engine
      */
-    public abstract IncQueryEngine getEngine();
+    public abstract ViatraQueryEngine getEngine();
 }

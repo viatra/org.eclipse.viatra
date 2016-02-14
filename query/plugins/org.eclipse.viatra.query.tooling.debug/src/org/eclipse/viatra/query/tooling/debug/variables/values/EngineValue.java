@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugValue;
 import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugVariable;
@@ -31,7 +31,7 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.Value;
 
 /**
- * The value of an IncQuery Debug Variable which represents an {@link IncQueryEngine} instance. This is the root element of the 
+ * The value of an IncQuery Debug Variable which represents an {@link ViatraQueryEngine} instance. This is the root element of the 
  * 'engine - matcher - match - match parameters' content hierarchy. <br>
  * <br>
  * It is crucial, which class name is used for capturing the engine instances, because no subtyping relationship can be
@@ -92,7 +92,7 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
                 if (!((BooleanValue) isManaged.getValue()).booleanValue()) {
                     sb.append("Advanced");
                 }
-                sb.append("IncQueryEngine on ");
+                sb.append("ViatraQueryEngine on ");
 
                 if (scope.getValue().type().name().matches(NameConstants.EMF_SCOPE_NAME)) {
                     // emf scope

@@ -15,15 +15,15 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.runtime.api.GenericMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
  * This is a generic pattern matcher for any EMF-IncQuery pattern, with
  * "interpretative" query execution. Use the pattern matcher on a given model
- * via {@link #on(IncQueryEngine, Pattern)}, e.g. in conjunction with
- * {@link IncQueryEngine#on(Notifier)}.
+ * via {@link #on(ViatraQueryEngine, Pattern)}, e.g. in conjunction with
+ * {@link ViatraQueryEngine#on(Notifier)}.
  * <p>
  * Whenever available, consider using the pattern-specific generated matcher API
  * instead.
@@ -47,7 +47,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 public class GenericPatternMatcher extends
 		org.eclipse.viatra.query.runtime.api.GenericPatternMatcher {
 
-	protected GenericPatternMatcher(IncQueryEngine engine,
+	protected GenericPatternMatcher(ViatraQueryEngine engine,
 			GenericQuerySpecification specification) throws IncQueryException {
 		super(engine, specification);
 	}
@@ -67,7 +67,7 @@ public class GenericPatternMatcher extends
 	 * @throws IncQueryException
 	 *             if an error occurs during pattern matcher creation
 	 */
-	public static GenericPatternMatcher on(IncQueryEngine engine,
+	public static GenericPatternMatcher on(ViatraQueryEngine engine,
 			Pattern pattern) throws IncQueryException {
 		try {
 			return on(engine, new GenericQuerySpecification(
@@ -92,7 +92,7 @@ public class GenericPatternMatcher extends
 	 * @throws IncQueryException
 	 *             if an error occurs during pattern matcher creation
 	 */
-	public static GenericPatternMatcher on(IncQueryEngine engine,
+	public static GenericPatternMatcher on(ViatraQueryEngine engine,
 			GenericQuerySpecification querySpecification)
 			throws IncQueryException {
 		// check if matcher already exists

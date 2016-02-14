@@ -14,22 +14,22 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
 
 public class IncQueryEventRealm implements EventRealm {
 
-    private IncQueryEngine engine;
+    private ViatraQueryEngine engine;
     
-    protected IncQueryEventRealm(IncQueryEngine engine) {
+    protected IncQueryEventRealm(ViatraQueryEngine engine) {
         checkArgument(engine != null, "Cannot create event realm for null engine!");
         this.engine = engine;
     }
     
-    public IncQueryEngine getEngine() {
+    public ViatraQueryEngine getEngine() {
         return engine;
     }
 
@@ -44,11 +44,11 @@ public class IncQueryEventRealm implements EventRealm {
     };
     
     
-    public static IncQueryEventRealm create(IncQueryEngine engine) {
+    public static IncQueryEventRealm create(ViatraQueryEngine engine) {
         return new IncQueryEventRealm(engine);
     }
 
-    public static <Match extends IPatternMatch> IncQueryEventSourceSpecification<Match> createSourceSpecification(IQuerySpecification<? extends IncQueryMatcher<Match>> factory){
+    public static <Match extends IPatternMatch> IncQueryEventSourceSpecification<Match> createSourceSpecification(IQuerySpecification<? extends ViatraQueryMatcher<Match>> factory){
         return new IncQueryEventSourceSpecification<Match>(factory);
     }
     

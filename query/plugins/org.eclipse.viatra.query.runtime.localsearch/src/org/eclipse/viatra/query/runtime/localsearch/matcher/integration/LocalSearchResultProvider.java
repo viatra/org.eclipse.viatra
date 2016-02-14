@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
@@ -207,7 +207,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) throws IncQueryException,
             QueryProcessingException {
         // XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
-        IncQueryEngine engine = (IncQueryEngine) hintProvider;
+        ViatraQueryEngine engine = (ViatraQueryEngine) hintProvider;
 
         final ISearchContext searchContext = new ISearchContext.SearchContext(engine.getBaseIndex());
         

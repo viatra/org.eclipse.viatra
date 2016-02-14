@@ -15,7 +15,6 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
@@ -24,6 +23,7 @@ import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.SnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
  * This class defines an API to easily construct test cases. The base conception is to provide
@@ -37,7 +37,7 @@ class EIQTest {
 	/**
 	 * Test the specified query
 	 */
-	static def <Match extends IPatternMatch> test(IQuerySpecification<? extends IncQueryMatcher<Match>> pattern) {
+	static def <Match extends IPatternMatch> test(IQuerySpecification<? extends ViatraQueryMatcher<Match>> pattern) {
 		new EIQTest().and(pattern)
 	}
 
@@ -58,12 +58,12 @@ class EIQTest {
 
 	def and(IQueryGroup patterns) {
 		patterns.specifications.forEach [
-			this.patterns += it as IQuerySpecification<IncQueryMatcher<IPatternMatch>>
+			this.patterns += it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>
 		]
 		this
 	}
 
-	def and(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> pattern) {
+	def and(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
 		patterns.add(pattern)
 		this
 	}
@@ -71,16 +71,16 @@ class EIQTest {
 	def and(String pattern) {
 		and(
 			QuerySpecificationRegistry.
-				getQuerySpecification(pattern) as IQuerySpecification<IncQueryMatcher<IPatternMatch>>)
+				getQuerySpecification(pattern) as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
 	}
 
-	private val List<IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList;
+	private val List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList;
 
 	private new() {
 		testCase = new EIQTestCase
 	}
 
-	private new(IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> pattern) {
+	private new(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
 		this()
 		this.patterns.add(pattern);
 	}
@@ -130,7 +130,7 @@ class EIQTest {
 	 */
 	def assertEquals() {
 		patterns.forEach [
-			testCase.assertMatchSetsEqual(it as IQuerySpecification<IncQueryMatcher<IPatternMatch>>)
+			testCase.assertMatchSetsEqual(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
 		]
 	}
 

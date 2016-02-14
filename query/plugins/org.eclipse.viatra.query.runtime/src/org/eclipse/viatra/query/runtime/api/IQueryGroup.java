@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 public interface IQueryGroup {
 
     /**
-     * Initializes matchers for the group of patterns within an {@link IncQueryEngine}. If some of the pattern matchers are already
+     * Initializes matchers for the group of patterns within an {@link ViatraQueryEngine}. If some of the pattern matchers are already
      * constructed in the engine, no task is performed for them.
      * 
      * <p>
@@ -41,7 +41,7 @@ public interface IQueryGroup {
      * @throws IncQueryException
      *             if there was an error in preparing the engine
      */
-    public void prepare(IncQueryEngine engine) throws IncQueryException;
+    public void prepare(ViatraQueryEngine engine) throws IncQueryException;
 
     /**
      * Initializes the contained patterns over a given EMF model root (recommended: Resource or ResourceSet). If a
@@ -55,7 +55,7 @@ public interface IQueryGroup {
      *            ResourceSet.
      * @throws IncQueryException
      *             if an error occurs during pattern matcher creation
-     * @deprecated use {@link #prepare(IncQueryEngine)} instead, e.g. in conjunction with {@link IncQueryEngine#on(Notifier)}            
+     * @deprecated use {@link #prepare(ViatraQueryEngine)} instead, e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}            
      */
 	@Deprecated
     public void prepare(Notifier emfRoot) throws IncQueryException;

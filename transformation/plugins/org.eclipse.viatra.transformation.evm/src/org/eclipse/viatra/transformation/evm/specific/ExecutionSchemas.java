@@ -14,7 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.EventDrivenVM;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Executor;
@@ -31,7 +31,7 @@ public class ExecutionSchemas {
 
     /**
      * Creates a new execution schema that is initialized over the given
-     * IncQueryEngine, creates an executor and agenda with the given
+     * ViatraQueryEngine, creates an executor and agenda with the given
      *  rule specifications and prepares a scheduler using the provided factory.
      * 
      * @param engine
@@ -39,21 +39,21 @@ public class ExecutionSchemas {
      * @param specifications
      * @return the prepared execution schema
      */
-    public static ExecutionSchema createIncQueryExecutionSchema(final IncQueryEngine engine,
+    public static ExecutionSchema createIncQueryExecutionSchema(final ViatraQueryEngine engine,
             final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<?>> specifications) {
         return EventDrivenVM.createExecutionSchema(IncQueryEventRealm.create(engine), schedulerFactory, specifications);
     }
 
     /**
      * Creates a new execution schema that is initialized over the given
-     * IncQueryEngine, creates an executor and agenda without rules and
+     * ViatraQueryEngine, creates an executor and agenda without rules and
      *  prepares a scheduler using the provided factory.
      * 
      * @param engine
      * @param schedulerFactory
      * @return the prepared execution schema
      */
-    public static ExecutionSchema createIncQueryExecutionSchema(final IncQueryEngine engine,
+    public static ExecutionSchema createIncQueryExecutionSchema(final ViatraQueryEngine engine,
             final ISchedulerFactory schedulerFactory) {
         checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
         Executor executor = new Executor(IncQueryEventRealm.create(engine));

@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -94,7 +94,7 @@ public class SpecificationBuilder {
      * Sets up a query builder with a predefined collection of specifications
      */
     public SpecificationBuilder(
-            Collection<? extends IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>>> specifications) {
+            Collection<? extends IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specifications) {
         patternMap = new NameToSpecificationMap(specifications);
         processPatternSpecifications();
     }
@@ -121,7 +121,7 @@ public class SpecificationBuilder {
      * @param pattern
      * @throws IncQueryException
      */
-    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
+    public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
             Pattern pattern) throws IncQueryException {
         return getOrCreateSpecification(pattern, false);
     }
@@ -136,12 +136,12 @@ public class SpecificationBuilder {
      *            generic API
      * @throws IncQueryException
      */
-    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
+    public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
             Pattern pattern, boolean skipPatternValidation) throws IncQueryException {
         return getOrCreateSpecification(pattern, Lists.<IQuerySpecification<?>>newArrayList(), skipPatternValidation);
     }
 
-    public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
+    public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
             Pattern pattern, List<IQuerySpecification<?>> createdPatternList, boolean skipPatternValidation) throws IncQueryException {
         Preconditions.checkArgument(pattern != null && !pattern.eIsProxy(), "Cannot create specification from a null pattern");
         String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);

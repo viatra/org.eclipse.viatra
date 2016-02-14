@@ -10,31 +10,31 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.update;
 
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryModelUpdateListener;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 
 import com.google.common.base.Preconditions;
 
 /**
- * This provider implementation uses the IncQueryEngine model update listener as
+ * This provider implementation uses the ViatraQueryEngine model update listener as
  * an event source for update complete events.
  * 
  * @author Abel Hegedus
  *
  */
-public class IQEngineUpdateCompleteProvider extends UpdateCompleteProvider {
+public class QueryEngineUpdateCompleteProvider extends UpdateCompleteProvider {
 
-    private final IncQueryModelUpdateListener modelUpdateListener;
-    private final AdvancedIncQueryEngine engine;
+    private final ViatraQueryModelUpdateListener modelUpdateListener;
+    private final AdvancedViatraQueryEngine engine;
     
     /**
-     * Creates a new provider for the given {@link IncQueryEngine}
+     * Creates a new provider for the given {@link ViatraQueryEngine}
      */
-    public IQEngineUpdateCompleteProvider(IncQueryEngine engine) {
+    public QueryEngineUpdateCompleteProvider(ViatraQueryEngine engine) {
         super();
         Preconditions.checkArgument(engine != null, "Cannot create provider with null engine!");
-        this.engine = AdvancedIncQueryEngine.from(engine);
+        this.engine = AdvancedViatraQueryEngine.from(engine);
         this.modelUpdateListener = new ModelUpdateListener();
     }
     
@@ -51,12 +51,12 @@ public class IQEngineUpdateCompleteProvider extends UpdateCompleteProvider {
     }
     
     /**
-     * Callback class invoked by the {@link IncQueryEngine}
+     * Callback class invoked by the {@link ViatraQueryEngine}
      * 
      * @author Abel Hegedus
      *
      */
-    private final class ModelUpdateListener implements IncQueryModelUpdateListener {
+    private final class ModelUpdateListener implements ViatraQueryModelUpdateListener {
         @Override
         public void notifyChanged(ChangeLevel changeLevel) {
             updateCompleted();

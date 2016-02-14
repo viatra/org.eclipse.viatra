@@ -56,7 +56,7 @@ class Pattern2AutomatonMapping {
 
 		transformation = BatchTransformation.forScope(new EMFScope(resourceSet))
 		statements = new BatchTransformationStatements(transformation)
-		manipulation = new SimpleModelManipulations(transformation.iqEngine)
+		manipulation = new SimpleModelManipulations(transformation.queryEngine)
 	}
 
 	def mapPatterns() {

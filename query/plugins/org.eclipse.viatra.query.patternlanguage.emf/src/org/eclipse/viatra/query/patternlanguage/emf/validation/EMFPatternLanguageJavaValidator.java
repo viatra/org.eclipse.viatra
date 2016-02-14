@@ -58,7 +58,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageP
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.UnionFind;
@@ -851,7 +851,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         if (listType == null || listType.getTypeParameters().isEmpty()) {
             error("Couldn't find a JDK 1.5 or higher on the project's classpath.", modelFile, PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
                 EMFIssueCodes.JDK_NOT_ON_CLASSPATH);
-        } else if (typeReferences.findDeclaredType(IncQueryEngine.class, modelFile) == null) {
+        } else if (typeReferences.findDeclaredType(ViatraQueryEngine.class, modelFile) == null) {
             error("Couldn't find the mandatory library 'org.eclipse.viatra.query.runtime' on the project's classpath.",
                 modelFile, PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, EMFIssueCodes.IQR_NOT_ON_CLASSPATH);
         }

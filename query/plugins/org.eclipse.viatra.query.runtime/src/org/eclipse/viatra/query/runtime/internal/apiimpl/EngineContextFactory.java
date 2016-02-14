@@ -11,7 +11,7 @@
 package org.eclipse.viatra.query.runtime.internal.apiimpl;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.IEngineContext;
 import org.eclipse.viatra.query.runtime.api.scope.IIndexingErrorListener;
 
@@ -22,5 +22,5 @@ import org.eclipse.viatra.query.runtime.api.scope.IIndexingErrorListener;
  *
  */
 public abstract class EngineContextFactory {
-	protected abstract IEngineContext createEngineContext(IncQueryEngine engine, IIndexingErrorListener errorListener, Logger logger);
+	protected abstract IEngineContext createEngineContext(ViatraQueryEngine engine, IIndexingErrorListener errorListener, Logger logger);
 }

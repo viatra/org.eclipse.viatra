@@ -25,8 +25,8 @@ import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 
@@ -52,7 +52,7 @@ public class SolutionTrajectory {
     private final IStateCoderFactory stateCoderFactory;
     private Map<String, Double> fitness;
 
-    private IncQueryEngine engine;
+    private ViatraQueryEngine engine;
     private EObject model;
     private EditingDomain editingDomain;
     private IStateCoder stateCoder;
@@ -83,7 +83,7 @@ public class SolutionTrajectory {
      */
     public void setModel(Notifier modelRoot) throws IncQueryException {
         EMFScope scope = new EMFScope(modelRoot);
-        this.engine = IncQueryEngine.on(scope);
+        this.engine = ViatraQueryEngine.on(scope);
         this.model = (EObject) modelRoot;
         stateCoder = stateCoderFactory.createStateCoder();
         stateCoder.init(modelRoot);
@@ -168,7 +168,7 @@ public class SolutionTrajectory {
         // cast for the ".process(match)" method.
         DSETransformationRule<?, ?> tr = transformationRules.get(index);
 
-        IncQueryMatcher<?> matcher = tr.getPrecondition().getMatcher(engine);
+        ViatraQueryMatcher<?> matcher = tr.getPrecondition().getMatcher(engine);
 
         boolean isActivationFound = false;
         for (final IPatternMatch match : matcher.getAllMatches()) {
@@ -234,7 +234,7 @@ public class SolutionTrajectory {
         return stateCoderFactory;
     }
 
-    public IncQueryEngine getEngine() {
+    public ViatraQueryEngine getEngine() {
         return engine;
     }
 

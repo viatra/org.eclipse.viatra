@@ -42,7 +42,7 @@ import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.visualizer.IExploreEventHandler;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
@@ -85,7 +85,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
     private static final long SLEEP_INTERVAL = 1;
 
     public DesignSpaceManager(ThreadContext context, EObject modelRoot, EditingDomain domain, IStateCoderFactory factory,
-            IDesignSpace designSpace, TrajectoryInfo trajectory, RuleEngine ruleEngine, IncQueryEngine engine) {
+            IDesignSpace designSpace, TrajectoryInfo trajectory, RuleEngine ruleEngine, ViatraQueryEngine engine) {
         checkNotNull(designSpace, "Cannot initialize crawler on a null design space!");
         checkNotNull(domain, "Cannot initialize crawler on a null editing domain!");
         checkNotNull(factory, "Cannot initialize crawler without a serializer factory!");

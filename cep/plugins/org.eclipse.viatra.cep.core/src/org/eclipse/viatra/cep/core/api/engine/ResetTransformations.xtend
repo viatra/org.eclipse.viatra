@@ -29,7 +29,7 @@ class ResetTransformations {
 	new(InternalModel internalModel) {
 		transformation = BatchTransformation.forScope(new EMFScope(internalModel))
 		statements = new BatchTransformationStatements(transformation)
-		manipulation = new SimpleModelManipulations(transformation.iqEngine)
+		manipulation = new SimpleModelManipulations(transformation.queryEngine)
 	}
 
 	def resetAll() {

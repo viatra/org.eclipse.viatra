@@ -19,14 +19,14 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
 import org.eclipse.viatra.query.testing.snapshot.InputSpecification
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
  * Helper methods for dealing with snapshots and match set records.
@@ -51,9 +51,9 @@ class SnapshotHelper {
 	}
 
 	/**
-	 * Returns the model roots that were used by the given IncQueryEngine.
+	 * Returns the model roots that were used by the given ViatraQueryEngine.
 	 */
-	def getModelRootsForEngine(IncQueryEngine engine){
+	def getModelRootsForEngine(ViatraQueryEngine engine){
         switch scope : engine.scope {
             EMFScope: {
         		scope.scopeRoots.map[
@@ -71,7 +71,7 @@ class SnapshotHelper {
 	/**
 	 * Returns the input specification for the given matcher.
 	 */
-	def getInputSpecificationForMatcher(IncQueryMatcher matcher){
+	def getInputSpecificationForMatcher(ViatraQueryMatcher matcher){
 		switch scope : matcher.engine.scope {
 		    EMFScope: {
 		        switch scope.scopeRoots.head {
@@ -88,7 +88,7 @@ class SnapshotHelper {
 	 * Saves the matches of the given matcher (using the partial match) into the given snapshot.
 	 * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
 	 */
-	def saveMatchesToSnapshot(IncQueryMatcher matcher, IPatternMatch partialMatch, IncQuerySnapshot snapshot){
+	def saveMatchesToSnapshot(ViatraQueryMatcher matcher, IPatternMatch partialMatch, IncQuerySnapshot snapshot){
 		val patternFQN = matcher.patternName
 		val actualRecord = SnapshotFactory::eINSTANCE.createMatchSetRecord
 		actualRecord.patternQualifiedName = patternFQN
@@ -127,7 +127,7 @@ class SnapshotHelper {
 	 * Creates a match set record which holds the snapshot of a single matcher instance. It is also possible to enter
 	 * a filter for the matcher.
 	 */
-	def <Match extends IPatternMatch> MatchSetRecord createMatchSetRecordForMatcher(IncQueryMatcher<Match> matcher, Match filter){
+	def <Match extends IPatternMatch> MatchSetRecord createMatchSetRecordForMatcher(ViatraQueryMatcher<Match> matcher, Match filter){
 		val matchSetRecord = SnapshotFactory::eINSTANCE.createMatchSetRecord
 		matcher.forEachMatch(filter,[ match |
 			matchSetRecord.matches.add(createMatchRecordForMatch(match))
@@ -141,7 +141,7 @@ class SnapshotHelper {
 	 * @deprecated use createMatchForMatchRecord(IQuerySpecification, MatchRecord) instead
 	 */
 	@Deprecated
-	def createMatchForMachRecord(IncQueryMatcher matcher, MatchRecord matchRecord){
+	def createMatchForMachRecord(ViatraQueryMatcher matcher, MatchRecord matchRecord){
 		val match = matcher.newEmptyMatch
 		matchRecord.substitutions.forEach()[
 			var target = derivedValue
@@ -160,7 +160,7 @@ class SnapshotHelper {
 	 * Creates a partial match that corresponds to the given match record.
 	 *  Each substitution is used as a value for the parameter with the same name.
 	 */
-	def <Match extends IPatternMatch> Match createMatchForMatchRecord(IQuerySpecification<? extends IncQueryMatcher<Match>> querySpecification, MatchRecord matchRecord){
+	def <Match extends IPatternMatch> Match createMatchForMatchRecord(IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, MatchRecord matchRecord){
 		val match = querySpecification.newEmptyMatch as Match
 		matchRecord.substitutions.forEach()[
 			var target = derivedValue
@@ -173,7 +173,7 @@ class SnapshotHelper {
 	 * Saves all matches of the given matcher into the given snapshot.
 	 * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
 	 */
-	def saveMatchesToSnapshot(IncQueryMatcher matcher, IncQuerySnapshot snapshot){
+	def saveMatchesToSnapshot(ViatraQueryMatcher matcher, IncQuerySnapshot snapshot){
 		matcher.saveMatchesToSnapshot(matcher.newEmptyMatch, snapshot)
 	}
 

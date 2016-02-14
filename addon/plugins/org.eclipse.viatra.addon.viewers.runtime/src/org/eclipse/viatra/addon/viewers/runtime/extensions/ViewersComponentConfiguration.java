@@ -18,7 +18,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 
 import com.google.common.collect.Lists;
@@ -63,10 +63,10 @@ public class ViewersComponentConfiguration
 	 * @param specs
 	 * @return
 	 */
-	public static ViewersComponentConfiguration fromQuerySpecs(Collection<IQuerySpecification<IncQueryMatcher<? extends IPatternMatch>>> specs)
+	public static ViewersComponentConfiguration fromQuerySpecs(Collection<IQuerySpecification<ViatraQueryMatcher<? extends IPatternMatch>>> specs)
 	{
 		ViewersComponentConfiguration c = new ViewersComponentConfiguration();
-		for (IQuerySpecification<IncQueryMatcher<? extends IPatternMatch>> spec : specs) {
+		for (IQuerySpecification<ViatraQueryMatcher<? extends IPatternMatch>> spec : specs) {
 			c.patterns.add(spec);
 		}
 		return c;

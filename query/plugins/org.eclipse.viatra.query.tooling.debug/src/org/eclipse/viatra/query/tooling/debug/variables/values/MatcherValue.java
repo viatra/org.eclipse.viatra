@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
 import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugValue;
 import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugVariable;
@@ -27,7 +27,7 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.Value;
 
 /**
- * The value of an IncQuery Debug Variable which represents an {@link IncQueryMatcher} instance. Children variables are 
+ * The value of an IncQuery Debug Variable which represents an {@link ViatraQueryMatcher} instance. Children variables are 
  * the pattern matches.
  * 
  * @author Tamas Szabo (itemis AG)

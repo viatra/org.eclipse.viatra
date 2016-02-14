@@ -16,11 +16,11 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures;
-import org.eclipse.viatra.query.runtime.api.AdvancedIncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
-import org.eclipse.viatra.query.runtime.api.IncQueryMatcher;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
@@ -74,7 +74,7 @@ public class SurrogateQueryTest {
     
     protected static Map<PQuery, EStructuralFeature> surrogateQueryToFeature = getSurrogateToQueryMap();
 
-    private AdvancedIncQueryEngine engine;
+    private AdvancedViatraQueryEngine engine;
 
     private Resource umlResource;
     
@@ -97,7 +97,7 @@ public class SurrogateQueryTest {
         
         DerivedFeatures features = DerivedFeatures.instance();
         
-        engine = AdvancedIncQueryEngine.createUnmanagedEngine(new EMFScope(umlResource.getResourceSet()));
+        engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(umlResource.getResourceSet()));
         features.prepare(engine);
         
         // find surrogate EStructuralFeature
@@ -134,10 +134,10 @@ public class SurrogateQueryTest {
      * @param structuralFeature
      * @throws IncQueryException
      */
-    private boolean checkStructuralFeatures(Model umlModel, AdvancedIncQueryEngine engine,
+    private boolean checkStructuralFeatures(Model umlModel, AdvancedViatraQueryEngine engine,
             EStructuralFeature structuralFeature) throws IncQueryException {
         @SuppressWarnings("unchecked")
-        IncQueryMatcher<IPatternMatch> matcher = (IncQueryMatcher<IPatternMatch>) querySpecification.getMatcher(engine);
+        ViatraQueryMatcher<IPatternMatch> matcher = (ViatraQueryMatcher<IPatternMatch>) querySpecification.getMatcher(engine);
         IPatternMatch match = matcher.newEmptyMatch();
 
         boolean incorrectValuesFound = false;
@@ -235,11 +235,11 @@ public class SurrogateQueryTest {
      * @return
      * @throws IncQueryException 
      */
-    private boolean checkQuerySpecification(IQuerySpecification<?> querySpecification, EStructuralFeature structuralFeature, IncQueryEngine engine) throws IncQueryException {
+    private boolean checkQuerySpecification(IQuerySpecification<?> querySpecification, EStructuralFeature structuralFeature, ViatraQueryEngine engine) throws IncQueryException {
     
         // iterate on getAllValuesOfSource
         @SuppressWarnings("unchecked")
-        IncQueryMatcher<IPatternMatch> matcher = (IncQueryMatcher<IPatternMatch>) querySpecification.getMatcher(engine);
+        ViatraQueryMatcher<IPatternMatch> matcher = (ViatraQueryMatcher<IPatternMatch>) querySpecification.getMatcher(engine);
         IPatternMatch match = matcher.newEmptyMatch();
         Set<Object> allValuesOfSource = matcher.getAllValues(matcher.getParameterNames().get(0));
         

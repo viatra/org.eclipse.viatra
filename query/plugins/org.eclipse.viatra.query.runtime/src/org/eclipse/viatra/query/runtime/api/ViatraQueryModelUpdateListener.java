@@ -18,7 +18,7 @@ package org.eclipse.viatra.query.runtime.api;
  * @author Abel Hegedus
  *
  */
-public interface IncQueryModelUpdateListener {
+public interface ViatraQueryModelUpdateListener {
 
     /** 
      * Possible notification levels for changes

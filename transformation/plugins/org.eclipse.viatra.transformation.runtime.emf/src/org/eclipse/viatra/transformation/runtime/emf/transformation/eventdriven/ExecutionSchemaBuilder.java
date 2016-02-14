@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven;
 
-import org.eclipse.viatra.query.runtime.api.IncQueryEngine;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Executor;
@@ -30,7 +30,7 @@ import org.eclipse.viatra.transformation.evm.specific.resolver.ArbitraryOrderCon
 public class ExecutionSchemaBuilder {
 
     private ISchedulerFactory schedulerFactory;
-    private IncQueryEngine incQueryEngine;
+    private ViatraQueryEngine queryEngine;
     private ConflictResolver conflictResolver = new ArbitraryOrderConflictResolver();
     private Executor executor;
 
@@ -39,8 +39,8 @@ public class ExecutionSchemaBuilder {
         return this;
     }
 
-    public ExecutionSchemaBuilder setEngine(IncQueryEngine engine) {
-        this.incQueryEngine = engine;
+    public ExecutionSchemaBuilder setEngine(ViatraQueryEngine engine) {
+        this.queryEngine = engine;
         return this;
     }
 
@@ -56,10 +56,10 @@ public class ExecutionSchemaBuilder {
 
     public ExecutionSchema build() throws IncQueryException {
         if (schedulerFactory == null) {
-            schedulerFactory = Schedulers.getIQEngineSchedulerFactory(incQueryEngine);
+            schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(queryEngine);
         }
         if (executor == null) {
-            executor = new Executor(IncQueryEventRealm.create(incQueryEngine));
+            executor = new Executor(IncQueryEventRealm.create(queryEngine));
         }
 
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);

@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.runtime.api;
 
 
 /**
- * Listener interface for getting notification on changes in an {@link IncQueryEngine}.
+ * Listener interface for getting notification on changes in an {@link ViatraQueryEngine}.
  * 
  * You can use it to remove any other listeners that you attached to matchers or the engine,
  * or to handle matchers that are initialized after you started using the engine.
@@ -20,7 +20,7 @@ package org.eclipse.viatra.query.runtime.api;
  * @author Abel Hegedus
  *
  */
-public interface IncQueryEngineLifecycleListener {
+public interface ViatraQueryEngineLifecycleListener {
 
     // -------------------------------------------------------------------------------
     // MATCHERS (methods notifying on changes in the matchers available in the engine)
@@ -31,7 +31,7 @@ public interface IncQueryEngineLifecycleListener {
      *  
      * @param matcher the new matcher
      */
-    void matcherInstantiated(IncQueryMatcher<? extends IPatternMatch> matcher);
+    void matcherInstantiated(ViatraQueryMatcher<? extends IPatternMatch> matcher);
     
     // -------------------------------------------------------------------------
     // HEALTH (methods notifying on changes that affect the health of the engine

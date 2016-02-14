@@ -13,7 +13,7 @@ package org.eclipse.viatra.integration.uml.test;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures;
-import org.eclipse.viatra.query.runtime.api.GenericPatternGroup;
+import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
@@ -41,7 +41,7 @@ public class UMLSurrogateQueryPerformanceTest extends QueryPerformanceTest {
 
     @Override
     public IQueryGroup getQueryGroup() throws IncQueryException {
-        return GenericPatternGroup.of(
+        return GenericQueryGroup.of(
                 DerivedFeatures.instance()
                 );
     }
