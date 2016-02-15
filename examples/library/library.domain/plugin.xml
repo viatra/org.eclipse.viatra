@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension point="org.eclipse.emf.ecore.generated_package">
+    <!-- @generated Library -->
+    <package class="library.LibraryPackage" genModel="src/library/Library.xcoreiq" uri="library"/>
+  </extension>
+  <extension id="library.validation.ValidationQueries" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:library.validation.ValidationQueries" id="library.validation.ValidationQueries"/>
+  </extension>
+  <extension id="library.viewers.ViewersQueries" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:library.viewers.ViewersQueries" id="library.viewers.ViewersQueries"/>
+  </extension>
+  <extension id="library.LibraryQueries" point="org.eclipse.incquery.runtime.queryspecification">
+    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:library.LibraryQueries" id="library.LibraryQueries"/>
+  </extension>
+  <extension id="extension.derived.numberOfCitations" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Book" feature-name="numberOfCitations" package-nsUri="library"/>
+  </extension>
+  <extension id="extension.derived.ownBooks" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Writer" feature-name="ownBooks" package-nsUri="library"/>
+  </extension>
+  <extension id="extension.derived.numberOfWriters" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Book" feature-name="numberOfWriters" package-nsUri="library"/>
+  </extension>
+  <extension id="extension.derived.coAuthors" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Writer" feature-name="coAuthors" package-nsUri="library"/>
+  </extension>
+  <extension id="extension.derived.name" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Writer" feature-name="name" package-nsUri="library"/>
+  </extension>
+  <extension id="extension.derived.mostPopularBookCategory" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Library" feature-name="mostPopularBookCategory" package-nsUri="library"/>
+  </extension>
+  <extension id="extension.derived.allCitations" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Book" feature-name="allCitations" package-nsUri="library"/>
+  </extension>
+  <extension id="extension.derived.suspiciousBooks" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Library" feature-name="suspiciousBooks" package-nsUri="library"/>
+  </extension>
+  <extension id="extension.derived.averageNumberOfCoauthorsPerBook" point="org.eclipse.incquery.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Writer" feature-name="averageNumberOfCoauthorsPerBook" package-nsUri="library"/>
+  </extension>
+</plugin>

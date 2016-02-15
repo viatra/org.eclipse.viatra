@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="validation.constraint.org.eclipse.incquery.examples.uml.queries.emptyClass"
+         point="org.eclipse.incquery.validation.runtime.constraint">
+      <constraint
+            name="org.eclipse.incquery.examples.uml.queries.emptyClass"
+            class="org.eclipse.incquery.examples.uml.queries.emptyclass.EmptyClassConstraint3">
+         <enabledForEditor
+               editorId="org.eclipse.papyrus.infra.core.papyrusEditor">
+         </enabledForEditor>
+      </constraint>
+   </extension>
+
+</plugin>

@@ -1,0 +1,141 @@
+package library.gen
+
+pattern firstName(str) {
+	str == "George";
+} or {
+	str == "John";
+} or {
+	str == "Jack";
+} or {
+	str == "Mary";
+} or {
+	str == "Isaac";
+} or {
+	str == "Stephen";
+} or {
+	str == "Agatha";
+} or {
+	str == "Martha";
+} or {
+	str == "Aldous";
+} or {
+	str == "Leo";
+}
+
+pattern middleName(str) {
+	str == "";
+} or {
+	str == " R.R.";
+} or {
+	str == " F.";
+} or {
+	str == " K.";
+} or {
+	str == " Y.";
+} or {
+	str == " Marie";
+} or {
+	str == " Nikolayevich";
+} or {
+	str == " Loius";
+} or {
+	str == " Leonard";
+} or {
+	str == " Maynard";
+}
+
+pattern lastName(str) {
+	str == "Martin";
+} or {
+	str == "Smith";
+} or {
+	str == "Tolkien";
+} or {
+	str == "Huxley";
+} or {
+	str == "Christie";
+} or {
+	str == "Shelley";
+} or {
+	str == "Tolstoy";
+} or {
+	str == "Doe";
+} or {
+	str == "King";
+} or {
+	str == "Asimov";
+}
+
+pattern firstTitlePart(str) {
+	str == "Game";
+} or {
+	str == "Lord";
+} or {
+	str == "Doors";
+} or {
+	str == "Of Mice";
+} or {
+	str == "Dance";
+} or {
+	str == "North";
+} or {
+	str == "Flowers";
+} or {
+	str == "One";
+} or {
+	str == "Children";
+} or {
+	str == "Clash";
+}
+
+
+pattern secondTitlePart(str) {
+	str == " of ";
+} or {
+	str == " with ";
+} or {
+	str == " and ";
+} or {
+	str == " or ";
+} or {
+	str == " by ";
+} or {
+	str == " for ";
+} or {
+	str == " in ";
+}
+
+pattern thirdTitlePart(str) {
+	str == "";
+} or {
+	str == "the ";
+} or {
+	str == "my ";
+} or {
+	str == "Sweet ";
+} or {
+	str == "all ";
+}
+
+
+pattern fourthTitlePart(str) {
+	str == "Thrones";
+} or {
+	str == "Rings";
+} or {
+	str == "Money";
+} or {
+	str == "Mind";
+} or {
+	str == "Stone";
+} or {
+	str == "Men";
+} or {
+	str == "Dragons";
+} or {
+	str == "Kings";
+} or {
+	str == "Titans";
+} or {
+	str == "Northwest";
+}

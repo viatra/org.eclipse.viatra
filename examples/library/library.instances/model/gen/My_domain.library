@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library:Library xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:library="library">
+  <writers firstName="John" lastName="Doe" books="//@books.0"/>
+  <writers firstName="Mad" lastName="Max" books="//@books.1"/>
+  <books title="Book One" citations="//@books.0" writers="//@writers.0"/>
+  <books title="Book Two" writers="//@writers.1"/>
+</library:Library>

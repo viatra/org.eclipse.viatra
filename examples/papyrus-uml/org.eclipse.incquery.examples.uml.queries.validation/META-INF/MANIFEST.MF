@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.incquery.examples.uml.queries.validation
+Bundle-SymbolicName: org.eclipse.incquery.examples.uml.queries.validation;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Require-Bundle: org.eclipse.incquery.examples.uml.queries,
+ org.eclipse.uml2.uml,
+ org.eclipse.incquery.runtime,
+ org.eclipse.incquery.validation.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

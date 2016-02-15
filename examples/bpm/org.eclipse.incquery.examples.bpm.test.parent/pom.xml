@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>org.eclipse.incquery.examples.bpm.test.parent</artifactId>
+	<name>EMF-IncQuery BPM Example</name>
+	<version>1.1.0-SNAPSHOT</version>
+	<url>http://eclipse.org/incquery</url>
+	<parent>
+		<artifactId>org.eclipse.incquery.parent</artifactId>
+		<version>1.1.0-SNAPSHOT</version>
+		<groupId>org.eclipse.incquery</groupId>
+	</parent>
+	<packaging>pom</packaging>
+	<properties>
+		<jacoco.targetdir>${project.basedir}/../target</jacoco.targetdir>
+		<sonar.surefire.reportsPath>../target/surefire-reports/</sonar.surefire.reportsPath>
+	</properties>
+	<modules>
+		<module>../org.eclipse.incquery.examples.bpm</module>
+		<module>../org.eclipse.incquery.examples.bpm.incquery</module>
+		<module>../org.eclipse.incquery.examples.bpm.tests</module>
+	</modules>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<resolver>p2</resolver>
+					<target>
+						<artifact>
+							<groupId>org.eclipse.incquery</groupId>
+							<artifactId>org.eclipse.incquery.examples.bpm.test.parent</artifactId>
+							<version>${project.version}</version>
+							<classifier>bpmtest</classifier>
+						</artifact>
+					</target>
+					<ignoreTychoRepositories>true</ignoreTychoRepositories>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<scm>
+		<connection>scm:git:git://git.eclipse.org/gitroot/incquery/org.eclipse.incquery.examples.git</connection>
+    <url>http://git.eclipse.org/c/incquery/org.eclipse.incquery.examples.git/</url>
+	</scm>
+	<ciManagement>
+		<url>https://build.inf.mit.bme.hu/jenkins</url>
+		<system>Jenkins</system>
+	</ciManagement>
+	<issueManagement>
+		<url>https://bugs.eclipse.org/bugs/buglist.cgi?product=Incquery</url>
+    <system>Bugzilla</system>
+	</issueManagement>
+</project>

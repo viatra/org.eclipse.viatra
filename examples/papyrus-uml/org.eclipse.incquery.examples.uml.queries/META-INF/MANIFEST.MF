@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.incquery.examples.uml.queries
+Bundle-SymbolicName: org.eclipse.incquery.examples.uml.queries;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Export-Package: org.eclipse.incquery.examples.uml.queries,
+ org.eclipse.incquery.examples.uml.queries.util
+Require-Bundle: org.eclipse.emf.ecore,
+ org.eclipse.emf.transaction,
+ org.eclipse.incquery.runtime,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.uml2.uml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.log4j
