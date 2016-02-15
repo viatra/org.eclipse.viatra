@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="org.eclipse.viatra.query.application.queries.HeadlessQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.application.queries.HeadlessQueries" id="org.eclipse.viatra.query.application.queries.HeadlessQueries"/>
+  </extension>
+</plugin>

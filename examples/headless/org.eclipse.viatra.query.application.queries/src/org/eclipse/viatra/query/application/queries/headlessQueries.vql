@@ -1,0 +1,41 @@
+package org.eclipse.viatra.query.application.queries;
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+pattern eClassNames(c: EClass, n : EString)= {
+	EClass.name(c,n);
+}
+
+pattern eClassNamesKeyword(c: EClass, n: EString)
+{
+	EClass.name(c,n);
+	check("A" == n);
+}
+
+pattern eObject(o) {
+	EObject(o);
+}
+
+@Edge(source = p, target = ec, label = "classIn")
+pattern classesInPackage(p : EPackage, ec: EClass) { EPackage.eClassifiers(p,ec); }
+
+@Edge(source = p, target = sp, label = "sub")
+pattern subPackage(p: EPackage, sp: EPackage){ EPackage.eSubpackages(p,sp); }
+
+@Edge(source = rootP, target = containedClass, label = "classIn+")
+@Format(color = "#0033ff")
+pattern classesInPackageHierarchy(rootP: EPackage, containedClass: EClass)
+{
+	find classesInPackage(rootP,containedClass);
+} or {
+	find subPackage+(rootP,somePackage);
+	find classesInPackage(somePackage,containedClass);
+}
+
+@Item(item = p, label = "P: $p.name$")
+@Format(color = "#791662", textColor = "#ffffff")
+pattern ePackage(p : EPackage) { EPackage(p); }
+
+@Item(item = ec, label = "EC: $ec.name$")
+@Format(color = "#e8da2c")
+pattern eClass(ec : EClass) { EClass(ec); }
