@@ -272,15 +272,6 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getMatchRecord_Role() {
-		return (EAttribute)matchRecordEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getMatchSubstitutionRecord() {
 		return matchSubstitutionRecordEClass;
 	}
@@ -292,15 +283,6 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 	 */
 	public EAttribute getMatchSubstitutionRecord_ParameterName() {
 		return (EAttribute)matchSubstitutionRecordEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMatchSubstitutionRecord_DerivedValue() {
-		return (EAttribute)matchSubstitutionRecordEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -581,11 +563,9 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 
 		matchRecordEClass = createEClass(MATCH_RECORD);
 		createEReference(matchRecordEClass, MATCH_RECORD__SUBSTITUTIONS);
-		createEAttribute(matchRecordEClass, MATCH_RECORD__ROLE);
 
 		matchSubstitutionRecordEClass = createEClass(MATCH_SUBSTITUTION_RECORD);
 		createEAttribute(matchSubstitutionRecordEClass, MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME);
-		createEAttribute(matchSubstitutionRecordEClass, MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE);
 
 		emfSubstitutionEClass = createEClass(EMF_SUBSTITUTION);
 		createEReference(emfSubstitutionEClass, EMF_SUBSTITUTION__VALUE);
@@ -678,11 +658,9 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 
 		initEClass(matchRecordEClass, MatchRecord.class, "MatchRecord", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getMatchRecord_Substitutions(), this.getMatchSubstitutionRecord(), null, "substitutions", null, 0, -1, MatchRecord.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMatchRecord_Role(), this.getRecordRole(), "role", null, 0, 1, MatchRecord.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(matchSubstitutionRecordEClass, MatchSubstitutionRecord.class, "MatchSubstitutionRecord", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getMatchSubstitutionRecord_ParameterName(), ecorePackage.getEString(), "parameterName", null, 0, 1, MatchSubstitutionRecord.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMatchSubstitutionRecord_DerivedValue(), ecorePackage.getEJavaObject(), "derivedValue", null, 0, 1, MatchSubstitutionRecord.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(emfSubstitutionEClass, EMFSubstitution.class, "EMFSubstitution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getEMFSubstitution_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, EMFSubstitution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -737,8 +715,6 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 		// Create annotations
 		// http://www.eclipse.org/emf/2002/Ecore
 		createEcoreAnnotations();
-		// org.eclipse.viatra.query.querybasedfeature
-		createOrgAnnotations();
 	}
 
 	/**
@@ -754,28 +730,6 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 		   source, 
 		   new String[] {
 			 "settingDelegates", "org.eclipse.viatra.query.querybasedfeature"
-		   });
-	}
-
-	/**
-	 * Initializes the annotations for <b>org.eclipse.viatra.query.querybasedfeature</b>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void createOrgAnnotations() {
-		String source = "org.eclipse.viatra.query.querybasedfeature";	
-		addAnnotation
-		  (getMatchRecord_Role(), 
-		   source, 
-		   new String[] {
-			 "patternFQN", "org.eclipse.viatra.query.testing.queries.RecordRoleValue"
-		   });	
-		addAnnotation
-		  (getMatchSubstitutionRecord_DerivedValue(), 
-		   source, 
-		   new String[] {
-			 "patternFQN", "org.eclipse.viatra.query.testing.queries.SubstitutionValue"
 		   });
 	}
 

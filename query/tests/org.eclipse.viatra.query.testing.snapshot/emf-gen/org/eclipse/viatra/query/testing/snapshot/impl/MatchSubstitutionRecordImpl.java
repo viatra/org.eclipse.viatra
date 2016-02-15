@@ -5,8 +5,6 @@ package org.eclipse.viatra.query.testing.snapshot.impl;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
-
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
@@ -22,7 +20,6 @@ import org.eclipse.viatra.query.testing.snapshot.SnapshotPackage;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.viatra.query.testing.snapshot.impl.MatchSubstitutionRecordImpl#getParameterName <em>Parameter Name</em>}</li>
- *   <li>{@link org.eclipse.viatra.query.testing.snapshot.impl.MatchSubstitutionRecordImpl#getDerivedValue <em>Derived Value</em>}</li>
  * </ul>
  *
  * @generated
@@ -47,16 +44,6 @@ public abstract class MatchSubstitutionRecordImpl extends MinimalEObjectImpl.Con
 	 * @ordered
 	 */
 	protected String parameterName = PARAMETER_NAME_EDEFAULT;
-
-	/**
-	 * The cached setting delegate for the '{@link #getDerivedValue() <em>Derived Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDerivedValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected EStructuralFeature.Internal.SettingDelegate DERIVED_VALUE__ESETTING_DELEGATE = ((EStructuralFeature.Internal)SnapshotPackage.Literals.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE).getSettingDelegate();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -103,22 +90,11 @@ public abstract class MatchSubstitutionRecordImpl extends MinimalEObjectImpl.Con
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object getDerivedValue() {
-		return (Object)DERIVED_VALUE__ESETTING_DELEGATE.dynamicGet(this, null, 0, true, false);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case SnapshotPackage.MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME:
 				return getParameterName();
-			case SnapshotPackage.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE:
-				return getDerivedValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -163,8 +139,6 @@ public abstract class MatchSubstitutionRecordImpl extends MinimalEObjectImpl.Con
 		switch (featureID) {
 			case SnapshotPackage.MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME:
 				return PARAMETER_NAME_EDEFAULT == null ? parameterName != null : !PARAMETER_NAME_EDEFAULT.equals(parameterName);
-			case SnapshotPackage.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE:
-				return DERIVED_VALUE__ESETTING_DELEGATE.dynamicIsSet(this, null, 0);
 		}
 		return super.eIsSet(featureID);
 	}

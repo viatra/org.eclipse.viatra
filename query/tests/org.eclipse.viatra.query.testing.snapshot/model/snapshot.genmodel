@@ -27,11 +27,9 @@
     </genClasses>
     <genClasses ecoreClass="snapshot.ecore#//MatchRecord">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference snapshot.ecore#//MatchRecord/substitutions"/>
-      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute snapshot.ecore#//MatchRecord/role"/>
     </genClasses>
     <genClasses image="false" ecoreClass="snapshot.ecore#//MatchSubstitutionRecord">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute snapshot.ecore#//MatchSubstitutionRecord/parameterName"/>
-      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute snapshot.ecore#//MatchSubstitutionRecord/derivedValue"/>
     </genClasses>
     <genClasses ecoreClass="snapshot.ecore#//EMFSubstitution">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference snapshot.ecore#//EMFSubstitution/value"/>

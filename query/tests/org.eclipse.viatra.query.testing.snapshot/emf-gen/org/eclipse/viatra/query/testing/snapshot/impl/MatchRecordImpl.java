@@ -9,7 +9,6 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
@@ -19,7 +18,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord;
 import org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord;
-import org.eclipse.viatra.query.testing.snapshot.RecordRole;
 import org.eclipse.viatra.query.testing.snapshot.SnapshotPackage;
 
 /**
@@ -31,7 +29,6 @@ import org.eclipse.viatra.query.testing.snapshot.SnapshotPackage;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.viatra.query.testing.snapshot.impl.MatchRecordImpl#getSubstitutions <em>Substitutions</em>}</li>
- *   <li>{@link org.eclipse.viatra.query.testing.snapshot.impl.MatchRecordImpl#getRole <em>Role</em>}</li>
  * </ul>
  *
  * @generated
@@ -46,16 +43,6 @@ public class MatchRecordImpl extends MinimalEObjectImpl.Container implements Mat
 	 * @ordered
 	 */
 	protected EList<MatchSubstitutionRecord> substitutions;
-
-	/**
-	 * The cached setting delegate for the '{@link #getRole() <em>Role</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRole()
-	 * @generated
-	 * @ordered
-	 */
-	protected EStructuralFeature.Internal.SettingDelegate ROLE__ESETTING_DELEGATE = ((EStructuralFeature.Internal)SnapshotPackage.Literals.MATCH_RECORD__ROLE).getSettingDelegate();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -93,15 +80,6 @@ public class MatchRecordImpl extends MinimalEObjectImpl.Container implements Mat
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RecordRole getRole() {
-		return (RecordRole)ROLE__ESETTING_DELEGATE.dynamicGet(this, null, 0, true, false);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -121,8 +99,6 @@ public class MatchRecordImpl extends MinimalEObjectImpl.Container implements Mat
 		switch (featureID) {
 			case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
 				return getSubstitutions();
-			case SnapshotPackage.MATCH_RECORD__ROLE:
-				return getRole();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -169,8 +145,6 @@ public class MatchRecordImpl extends MinimalEObjectImpl.Container implements Mat
 		switch (featureID) {
 			case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
 				return substitutions != null && !substitutions.isEmpty();
-			case SnapshotPackage.MATCH_RECORD__ROLE:
-				return ROLE__ESETTING_DELEGATE.dynamicIsSet(this, null, 0);
 		}
 		return super.eIsSet(featureID);
 	}

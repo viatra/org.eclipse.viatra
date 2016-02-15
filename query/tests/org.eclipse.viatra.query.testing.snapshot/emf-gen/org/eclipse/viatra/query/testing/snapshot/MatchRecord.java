@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.viatra.query.testing.snapshot.MatchRecord#getSubstitutions <em>Substitutions</em>}</li>
- *   <li>{@link org.eclipse.viatra.query.testing.snapshot.MatchRecord#getRole <em>Role</em>}</li>
  * </ul>
  *
  * @see org.eclipse.viatra.query.testing.snapshot.SnapshotPackage#getMatchRecord()
@@ -39,23 +38,5 @@ public interface MatchRecord extends EObject {
 	 * @generated
 	 */
 	EList<MatchSubstitutionRecord> getSubstitutions();
-
-	/**
-	 * Returns the value of the '<em><b>Role</b></em>' attribute.
-	 * The literals are from the enumeration {@link org.eclipse.viatra.query.testing.snapshot.RecordRole}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Role</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Role</em>' attribute.
-	 * @see org.eclipse.viatra.query.testing.snapshot.RecordRole
-	 * @see org.eclipse.viatra.query.testing.snapshot.SnapshotPackage#getMatchRecord_Role()
-	 * @model transient="true" changeable="false" volatile="true" derived="true"
-	 *        annotation="org.eclipse.viatra.query.querybasedfeature patternFQN='org.eclipse.viatra.query.testing.queries.RecordRoleValue'"
-	 * @generated
-	 */
-	RecordRole getRole();
 
 } // MatchRecord

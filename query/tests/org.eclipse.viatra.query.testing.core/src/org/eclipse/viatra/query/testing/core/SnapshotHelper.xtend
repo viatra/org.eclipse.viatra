@@ -19,19 +19,49 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.emf.EMFScope
-import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
-import org.eclipse.viatra.query.testing.snapshot.InputSpecification
-import org.eclipse.viatra.query.testing.snapshot.MatchRecord
-import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
-import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.viatra.query.testing.snapshot.BooleanSubstitution
+import org.eclipse.viatra.query.testing.snapshot.DateSubstitution
+import org.eclipse.viatra.query.testing.snapshot.DoubleSubstitution
+import org.eclipse.viatra.query.testing.snapshot.EMFSubstitution
+import org.eclipse.viatra.query.testing.snapshot.EnumSubstitution
+import org.eclipse.viatra.query.testing.snapshot.FloatSubstitution
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
+import org.eclipse.viatra.query.testing.snapshot.InputSpecification
+import org.eclipse.viatra.query.testing.snapshot.IntSubstitution
+import org.eclipse.viatra.query.testing.snapshot.LongSubstitution
+import org.eclipse.viatra.query.testing.snapshot.MatchRecord
+import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
+import org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord
+import org.eclipse.viatra.query.testing.snapshot.MiscellaneousSubstitution
+import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory
+import org.eclipse.viatra.query.testing.snapshot.StringSubstitution
 
 /**
  * Helper methods for dealing with snapshots and match set records.
  */
 class SnapshotHelper {
+	
+	/**
+	 * Returns the actual value of the substitution based on its type
+	 */
+	def derivedValue(MatchSubstitutionRecord substitution){
+		switch substitution{
+			BooleanSubstitution: substitution.value
+			DateSubstitution: substitution.value
+			DoubleSubstitution: substitution.value
+			EMFSubstitution: substitution.value
+			EnumSubstitution: substitution.valueLiteral
+			FloatSubstitution: substitution.value
+			IntSubstitution: substitution.value
+			LongSubstitution: substitution.value
+			MiscellaneousSubstitution: substitution.value
+			StringSubstitution: substitution.value
+		}
+	}
+	
 	/**
 	 * Returns the EMF root that was used by the matchers recorded into the given snapshot,
 	 *  based on the input specification and the model roots.
@@ -265,6 +295,25 @@ class SnapshotHelper {
 				sub	
 			}
 		}
+	}
+	
+	/**
+	 * Retrieve a human-readable string denoting the given record
+	 */
+	def String prettyPrint(MatchRecord record){
+		val sb = new StringBuilder()
+		val first = #[true]
+		record.substitutions.forEach[
+			if (first.get(0)){
+				first.set(0, false);
+			}else{
+				sb.append(", ");
+			}
+			sb.append(it.parameterName)
+			sb.append(" = ");
+			sb.append(it.derivedValue)
+		]
+		return sb.toString
 	}
 
 }

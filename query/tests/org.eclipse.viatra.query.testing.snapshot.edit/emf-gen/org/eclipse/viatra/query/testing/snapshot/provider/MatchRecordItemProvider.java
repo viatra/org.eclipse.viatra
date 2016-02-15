@@ -12,20 +12,16 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
-import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord;
-import org.eclipse.viatra.query.testing.snapshot.RecordRole;
 import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory;
 import org.eclipse.viatra.query.testing.snapshot.SnapshotPackage;
 
@@ -64,31 +60,8 @@ public class MatchRecordItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addRolePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
-	}
-
-	/**
-	 * This adds a property descriptor for the Role feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addRolePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_MatchRecord_role_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_MatchRecord_role_feature", "_UI_MatchRecord_type"),
-				 SnapshotPackage.Literals.MATCH_RECORD__ROLE,
-				 false,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
 	}
 
 	/**
@@ -140,11 +113,7 @@ public class MatchRecordItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		RecordRole labelValue = ((MatchRecord)object).getRole();
-		String label = labelValue == null ? null : labelValue.toString();
-		return label == null || label.length() == 0 ?
-			getString("_UI_MatchRecord_type") :
-			getString("_UI_MatchRecord_type") + " " + label;
+		return getString("_UI_MatchRecord_type");
 	}
 	
 
@@ -160,9 +129,6 @@ public class MatchRecordItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MatchRecord.class)) {
-			case SnapshotPackage.MATCH_RECORD__ROLE:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
 			case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;

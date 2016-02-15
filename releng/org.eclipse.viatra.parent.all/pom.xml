@@ -30,7 +30,6 @@
 		<module>../../query/tests/org.eclipse.viatra.query.testing.snapshot.edit</module>
 		<module>../../query/tests/org.eclipse.viatra.query.testing.snapshot.editor</module>
 		<module>../../query/tests/org.eclipse.viatra.query.testing.core</module>
-		<module>../../query/tests/org.eclipse.viatra.query.testing.queries</module>
 		<module>../../query/tests/org.eclipse.viatra.query.testing.ui</module>
 		<module>../../query/features/org.eclipse.viatra.query.testing.sdk.feature</module>
 		<module>../../query/features/org.eclipse.viatra.query.tooling.ui.visualization.feature</module>

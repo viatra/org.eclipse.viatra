@@ -13,15 +13,14 @@ import java.util.LinkedList
 import java.util.List
 import junit.framework.AssertionFailedError
 import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.emf.EMFScope
-import org.eclipse.viatra.query.testing.queries.UnexpectedMatchRecordMatcher
-import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.testing.core.internal.MatchSetRecordDiff
 
 /** 
  * @author Grill Balázs
@@ -43,6 +42,10 @@ class ViatraQueryTestCase {
 
 	def loadModel(URI uri) {
 		resourceSet.getResource(uri, true)
+	}
+
+	def modifyModel(URI uri, (Resource)=>void operation){
+		operation.apply(resourceSet.getResource(uri, false))
 	}
 
 	def addMatchSetModelProvider(IMatchSetModelProvider matchSetModelProvider) {
@@ -71,13 +74,9 @@ class ViatraQueryTestCase {
 		]
 	}
 
-	private def <Match extends IPatternMatch> compareMatchSets(
+	def <Match extends IPatternMatch> getMatchSetDiff(
 		IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
-		IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider) {
-		val engine = ViatraQueryEngine::on(new EMFScope(resourceSet))
-		val unexpectedMatcher = UnexpectedMatchRecordMatcher::querySpecification().getMatcher(engine)
-
-		val diff = newHashSet
+		IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider){
 
 		var Match filter = null;
 
@@ -98,12 +97,19 @@ class ViatraQueryTestCase {
 			}
 		}
 
-		unexpectedMatcher.forEachMatch(actual, expected, null) [
-			diff.add(UNEXPECTED_MATCH + " (" + it.prettyPrint + ")")
-		]
-		unexpectedMatcher.forEachMatch(expected, actual, null) [
-			diff.add(EXPECTED_NOT_FOUND + " (" + it.prettyPrint + ")")
-		]
+		MatchSetRecordDiff::compute(expected, actual)	
+	}
+
+	private def <Match extends IPatternMatch> compareMatchSets(
+		IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
+		IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider) {
+		
+		val matchdiff = getMatchSetDiff(querySpecification, expectedProvider, actualProvider)
+		val diff = newHashSet
+		diff.addAll(matchdiff.additions.map[UNEXPECTED_MATCH + " (" + it.prettyPrint + ")"])
+		diff.addAll(matchdiff.removals.map[EXPECTED_NOT_FOUND + " (" + it.prettyPrint + ")"])
+
 		return diff
 	}
+	
 }

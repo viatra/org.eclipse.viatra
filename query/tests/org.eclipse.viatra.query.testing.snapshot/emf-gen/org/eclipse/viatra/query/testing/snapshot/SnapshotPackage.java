@@ -133,22 +133,13 @@ public interface SnapshotPackage extends EPackage {
 	int MATCH_RECORD__SUBSTITUTIONS = 0;
 
 	/**
-	 * The feature id for the '<em><b>Role</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MATCH_RECORD__ROLE = 1;
-
-	/**
 	 * The number of structural features of the '<em>Match Record</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MATCH_RECORD_FEATURE_COUNT = 2;
+	int MATCH_RECORD_FEATURE_COUNT = 1;
 
 	/**
 	 * The number of operations of the '<em>Match Record</em>' class.
@@ -179,22 +170,13 @@ public interface SnapshotPackage extends EPackage {
 	int MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME = 0;
 
 	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE = 1;
-
-	/**
 	 * The number of structural features of the '<em>Match Substitution Record</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MATCH_SUBSTITUTION_RECORD_FEATURE_COUNT = 2;
+	int MATCH_SUBSTITUTION_RECORD_FEATURE_COUNT = 1;
 
 	/**
 	 * The number of operations of the '<em>Match Substitution Record</em>' class.
@@ -223,15 +205,6 @@ public interface SnapshotPackage extends EPackage {
 	 * @ordered
 	 */
 	int EMF_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EMF_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' reference.
@@ -280,15 +253,6 @@ public interface SnapshotPackage extends EPackage {
 	int INT_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
 
 	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INT_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
-
-	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -333,15 +297,6 @@ public interface SnapshotPackage extends EPackage {
 	 * @ordered
 	 */
 	int LONG_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LONG_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -390,15 +345,6 @@ public interface SnapshotPackage extends EPackage {
 	int DOUBLE_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
 
 	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOUBLE_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
-
-	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -443,15 +389,6 @@ public interface SnapshotPackage extends EPackage {
 	 * @ordered
 	 */
 	int FLOAT_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int FLOAT_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -500,15 +437,6 @@ public interface SnapshotPackage extends EPackage {
 	int BOOLEAN_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
 
 	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int BOOLEAN_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
-
-	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -553,15 +481,6 @@ public interface SnapshotPackage extends EPackage {
 	 * @ordered
 	 */
 	int STRING_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int STRING_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -610,15 +529,6 @@ public interface SnapshotPackage extends EPackage {
 	int DATE_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
 
 	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DATE_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
-
-	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -663,15 +573,6 @@ public interface SnapshotPackage extends EPackage {
 	 * @ordered
 	 */
 	int ENUM_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ENUM_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
 
 	/**
 	 * The feature id for the '<em><b>Value Literal</b></em>' attribute.
@@ -727,15 +628,6 @@ public interface SnapshotPackage extends EPackage {
 	 * @ordered
 	 */
 	int MISCELLANEOUS_SUBSTITUTION__PARAMETER_NAME = MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MISCELLANEOUS_SUBSTITUTION__DERIVED_VALUE = MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -905,17 +797,6 @@ public interface SnapshotPackage extends EPackage {
 	EReference getMatchRecord_Substitutions();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.viatra.query.testing.snapshot.MatchRecord#getRole <em>Role</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Role</em>'.
-	 * @see org.eclipse.viatra.query.testing.snapshot.MatchRecord#getRole()
-	 * @see #getMatchRecord()
-	 * @generated
-	 */
-	EAttribute getMatchRecord_Role();
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord <em>Match Substitution Record</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -935,17 +816,6 @@ public interface SnapshotPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getMatchSubstitutionRecord_ParameterName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord#getDerivedValue <em>Derived Value</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Derived Value</em>'.
-	 * @see org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord#getDerivedValue()
-	 * @see #getMatchSubstitutionRecord()
-	 * @generated
-	 */
-	EAttribute getMatchSubstitutionRecord_DerivedValue();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.viatra.query.testing.snapshot.EMFSubstitution <em>EMF Substitution</em>}'.
@@ -1307,14 +1177,6 @@ public interface SnapshotPackage extends EPackage {
 		EReference MATCH_RECORD__SUBSTITUTIONS = eINSTANCE.getMatchRecord_Substitutions();
 
 		/**
-		 * The meta object literal for the '<em><b>Role</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute MATCH_RECORD__ROLE = eINSTANCE.getMatchRecord_Role();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.viatra.query.testing.snapshot.impl.MatchSubstitutionRecordImpl <em>Match Substitution Record</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1331,14 +1193,6 @@ public interface SnapshotPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME = eINSTANCE.getMatchSubstitutionRecord_ParameterName();
-
-		/**
-		 * The meta object literal for the '<em><b>Derived Value</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE = eINSTANCE.getMatchSubstitutionRecord_DerivedValue();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.viatra.query.testing.snapshot.impl.EMFSubstitutionImpl <em>EMF Substitution</em>}' class.

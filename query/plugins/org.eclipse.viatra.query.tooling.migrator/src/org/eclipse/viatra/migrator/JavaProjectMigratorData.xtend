@@ -50,7 +50,6 @@ abstract class JavaProjectMigratorData {
 		"org.eclipse.incquery.snapshot.edit" -> "org.eclipse.viatra.query.testing.snapshot.edit",
 		"org.eclipse.incquery.snapshot.editor" -> "org.eclipse.viatra.query.testing.snapshot.editor",
 		"org.eclipse.incquery.testing.core" -> "org.eclipse.viatra.query.testing.core",
-		"org.eclipse.incquery.testing.queries" -> "org.eclipse.viatra.query.testing.queries",
 		"org.eclipse.incquery.testing.ui" -> "org.eclipse.viatra.query.testing.ui",
 		"org.eclipse.incquery.tooling.core" -> "org.eclipse.viatra.query.tooling.core",
 		"org.eclipse.incquery.tooling.debug" -> "org.eclipse.viatra.query.tooling.debug",

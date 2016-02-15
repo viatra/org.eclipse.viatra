@@ -61,7 +61,6 @@ public class MatchSubstitutionRecordItemProvider
 			super.getPropertyDescriptors(object);
 
 			addParameterNamePropertyDescriptor(object);
-			addDerivedValuePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -81,28 +80,6 @@ public class MatchSubstitutionRecordItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_MatchSubstitutionRecord_parameterName_feature", "_UI_MatchSubstitutionRecord_type"),
 				 SnapshotPackage.Literals.MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME,
 				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Derived Value feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addDerivedValuePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_MatchSubstitutionRecord_derivedValue_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_MatchSubstitutionRecord_derivedValue_feature", "_UI_MatchSubstitutionRecord_type"),
-				 SnapshotPackage.Literals.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE,
-				 false,
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
@@ -138,7 +115,6 @@ public class MatchSubstitutionRecordItemProvider
 
 		switch (notification.getFeatureID(MatchSubstitutionRecord.class)) {
 			case SnapshotPackage.MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME:
-			case SnapshotPackage.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

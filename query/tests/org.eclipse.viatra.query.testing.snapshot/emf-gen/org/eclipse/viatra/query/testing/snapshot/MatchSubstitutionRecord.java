@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord#getParameterName <em>Parameter Name</em>}</li>
- *   <li>{@link org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord#getDerivedValue <em>Derived Value</em>}</li>
  * </ul>
  *
  * @see org.eclipse.viatra.query.testing.snapshot.SnapshotPackage#getMatchSubstitutionRecord()
@@ -47,21 +46,5 @@ public interface MatchSubstitutionRecord extends EObject {
 	 * @generated
 	 */
 	void setParameterName(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Derived Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Derived Value</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Derived Value</em>' attribute.
-	 * @see org.eclipse.viatra.query.testing.snapshot.SnapshotPackage#getMatchSubstitutionRecord_DerivedValue()
-	 * @model transient="true" changeable="false" volatile="true" derived="true"
-	 *        annotation="org.eclipse.viatra.query.querybasedfeature patternFQN='org.eclipse.viatra.query.testing.queries.SubstitutionValue'"
-	 * @generated
-	 */
-	Object getDerivedValue();
 
 } // MatchSubstitutionRecord

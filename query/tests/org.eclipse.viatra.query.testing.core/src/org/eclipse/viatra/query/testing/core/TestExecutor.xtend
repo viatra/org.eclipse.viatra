@@ -16,14 +16,14 @@ import com.google.inject.Injector
 import java.util.Set
 import org.apache.log4j.Logger
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
-import org.eclipse.viatra.query.testing.queries.UnexpectedMatchRecordMatcher
-import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
-import org.eclipse.viatra.query.testing.snapshot.MatchRecord
-import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
-
-import static org.junit.Assert.*
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.testing.core.internal.MatchSetRecordDiff
+import org.eclipse.viatra.query.testing.snapshot.MatchRecord
+import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
+
+import static org.junit.Assert.*
 
 /**
  * Primitive methods for executing a functional test for VIATRA Queries.
@@ -95,21 +95,17 @@ class TestExecutor {
 		}
 		val snapshot = expected.eContainer as QuerySnapshot
 
-		// 2. Initialize matcher for comparison
-		val engine = ViatraQueryEngine::on(snapshot.EMFRootForSnapshot)
-		val unexpectedMatcher = UnexpectedMatchRecordMatcher::querySpecification().getMatcher(engine)
-
-		// 3. Save match results into snapshot
+		// 2. Save match results into snapshot
 		val partialMatch = matcher.createMatchForMachRecord(expected.filter)
 		val actual = matcher.saveMatchesToSnapshot(partialMatch,snapshot)
 
-		// 4. run matchers
-		unexpectedMatcher.forEachMatch(actual, expected, null) [
-			diff.add(UNEXPECTED_MATCH + " ("+it.prettyPrint+")")
-		]
-		unexpectedMatcher.forEachMatch(expected, actual, null) [
-			diff.add(EXPECTED_NOT_FOUND + " ("+it.prettyPrint+")")
-		]
+		// 3. Compute diff
+		val matchdiff = MatchSetRecordDiff::compute(expected, actual)
+
+		// 4. Print results
+		diff.addAll(matchdiff.additions.map[UNEXPECTED_MATCH + " (" + it.prettyPrint + ")"])
+		diff.addAll(matchdiff.removals.map[EXPECTED_NOT_FOUND + " (" + it.prettyPrint + ")"])
+
 		return diff
 	}
 

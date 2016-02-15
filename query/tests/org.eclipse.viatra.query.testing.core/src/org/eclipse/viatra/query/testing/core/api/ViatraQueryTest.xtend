@@ -53,7 +53,7 @@ class ViatraQueryTest {
 	 * Test the specified query
 	 */
 	static def <Match extends IPatternMatch> test(String pattern) {
-		test()
+		test().and(pattern)
 	}
 
 	def and(IQueryGroup patterns) {
