@@ -148,6 +148,15 @@
 							<artifactId>org.eclipse.viatra.target.all</artifactId>
 							<version>${viatra.main.version}</version>
 						</artifact>
+						<dependency-resolution>
+                        <extraRequirements>
+                            <requirement>
+                                <type>eclipse-plugin</type>
+                                <id>com.google.inject.multibindings</id>
+                                <versionRange>[3.0.0,4.0.0)</versionRange>
+                            </requirement>
+                        </extraRequirements>
+                    </dependency-resolution>
 					</target>
 				</configuration>
 			</plugin>

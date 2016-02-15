@@ -51,6 +51,15 @@
                             <artifactId>org.eclipse.viatra.target.core</artifactId>
                             <version>${viatra.main.version}</version>
                         </artifact>
+                        <dependency-resolution>
+                        <extraRequirements>
+                            <requirement>
+                                <type>eclipse-plugin</type>
+                                <id>com.google.inject.multibindings</id>
+                                <versionRange>[3.0.0,4.0.0)</versionRange>
+                            </requirement>
+                        </extraRequirements>
+                    </dependency-resolution>
                     </target>
                     <ignoreTychoRepositories>true</ignoreTychoRepositories>
                 </configuration>
