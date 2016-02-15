@@ -8,21 +8,36 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.proto;
+package org.eclipse.viatra.transformation.evm.proto;
 
-import org.eclipse.incquery.runtime.evm.api.event.ActivationState;
+import org.eclipse.viatra.transformation.evm.api.event.Event;
+import org.eclipse.viatra.transformation.evm.api.event.EventType;
 
 /**
  * @author Abel Hegedus
  *
  */
-public enum ProtoActivationStates implements ActivationState {
+public class ProtoEvent implements Event<String> {
 
-    IS_NOT, IS;
+    private ProtoEventType type;
+    private String atom;
     
     @Override
-    public boolean isInactive() {
-        return this.equals(IS_NOT);
+    public EventType getEventType() {
+        return type;
+    }
+
+    @Override
+    public String getEventAtom() {
+        return atom;
+    }
+
+    /**
+     * 
+     */
+    public ProtoEvent(ProtoEventType type, String atom) {
+        this.type = type;
+        this.atom = atom;
     }
     
 }

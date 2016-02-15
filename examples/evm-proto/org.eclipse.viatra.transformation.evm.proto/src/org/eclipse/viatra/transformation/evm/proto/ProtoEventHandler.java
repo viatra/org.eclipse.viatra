@@ -8,14 +8,14 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.proto;
+package org.eclipse.viatra.transformation.evm.proto;
 
-import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.RuleInstance;
-import org.eclipse.incquery.runtime.evm.api.event.Event;
-import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
-import org.eclipse.incquery.runtime.evm.api.event.EventHandler;
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
+import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.RuleInstance;
+import org.eclipse.viatra.transformation.evm.api.event.Event;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.viatra.transformation.evm.api.event.EventHandler;
+import org.eclipse.viatra.transformation.evm.api.event.EventSource;
 
 /**
  * @author Abel Hegedus

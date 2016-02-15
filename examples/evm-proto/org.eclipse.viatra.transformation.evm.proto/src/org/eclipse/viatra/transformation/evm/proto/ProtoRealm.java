@@ -8,25 +8,35 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.proto;
+package org.eclipse.viatra.transformation.evm.proto;
 
-import org.eclipse.incquery.runtime.evm.api.event.EventFilter;
+import java.util.Set;
+
+import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
  *
  */
-public class ProtoEventFilter implements EventFilter<String> {
+public class ProtoRealm implements EventRealm {
 
-    private String regexp;
+    private Set<ProtoEventSource> sources = Sets.newHashSet();
     
-    @Override
-    public boolean isProcessable(String eventAtom) {
-        return eventAtom.matches(regexp);
-    }
-
-    public ProtoEventFilter(String regexp) {
-        this.regexp = regexp;
+    /**
+     * 
+     */
+    public ProtoRealm() {
     }
     
+    public void pushString(String push) {
+        for (ProtoEventSource source : sources) {
+            source.pushString(push);
+        }
+    }
+
+    protected void addSource(ProtoEventSource source) {
+        sources.add(source);
+    }
 }

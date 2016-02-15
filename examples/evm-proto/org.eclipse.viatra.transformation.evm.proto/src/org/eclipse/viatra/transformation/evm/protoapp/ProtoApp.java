@@ -8,22 +8,22 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.protoapp;
+package org.eclipse.viatra.transformation.evm.protoapp;
 
 import org.apache.log4j.Level;
-import org.eclipse.incquery.runtime.evm.api.Activation;
-import org.eclipse.incquery.runtime.evm.api.ActivationLifeCycle;
-import org.eclipse.incquery.runtime.evm.api.Context;
-import org.eclipse.incquery.runtime.evm.api.EventDrivenVM;
-import org.eclipse.incquery.runtime.evm.api.Job;
-import org.eclipse.incquery.runtime.evm.api.RuleEngine;
-import org.eclipse.incquery.runtime.evm.api.RuleSpecification;
-import org.eclipse.incquery.runtime.evm.api.event.EventType.RuleEngineEventType;
-import org.eclipse.incquery.runtime.evm.proto.ProtoActivationStates;
-import org.eclipse.incquery.runtime.evm.proto.ProtoEventFilter;
-import org.eclipse.incquery.runtime.evm.proto.ProtoEventSourceSpecification;
-import org.eclipse.incquery.runtime.evm.proto.ProtoEventType;
-import org.eclipse.incquery.runtime.evm.proto.ProtoRealm;
+import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
+import org.eclipse.viatra.transformation.evm.api.Context;
+import org.eclipse.viatra.transformation.evm.api.EventDrivenVM;
+import org.eclipse.viatra.transformation.evm.api.Job;
+import org.eclipse.viatra.transformation.evm.api.RuleEngine;
+import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
+import org.eclipse.viatra.transformation.evm.api.event.EventType.RuleEngineEventType;
+import org.eclipse.viatra.transformation.evm.proto.ProtoActivationStates;
+import org.eclipse.viatra.transformation.evm.proto.ProtoEventFilter;
+import org.eclipse.viatra.transformation.evm.proto.ProtoEventSourceSpecification;
+import org.eclipse.viatra.transformation.evm.proto.ProtoEventType;
+import org.eclipse.viatra.transformation.evm.proto.ProtoRealm;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;

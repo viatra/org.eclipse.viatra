@@ -8,36 +8,15 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.proto;
+package org.eclipse.viatra.transformation.evm.proto;
 
-import org.eclipse.incquery.runtime.evm.api.event.Event;
-import org.eclipse.incquery.runtime.evm.api.event.EventType;
+import org.eclipse.viatra.transformation.evm.api.event.EventType;
 
 /**
  * @author Abel Hegedus
  *
  */
-public class ProtoEvent implements Event<String> {
+public enum ProtoEventType implements EventType {
 
-    private ProtoEventType type;
-    private String atom;
-    
-    @Override
-    public EventType getEventType() {
-        return type;
-    }
-
-    @Override
-    public String getEventAtom() {
-        return atom;
-    }
-
-    /**
-     * 
-     */
-    public ProtoEvent(ProtoEventType type, String atom) {
-        this.type = type;
-        this.atom = atom;
-    }
-    
+    PUSH
 }

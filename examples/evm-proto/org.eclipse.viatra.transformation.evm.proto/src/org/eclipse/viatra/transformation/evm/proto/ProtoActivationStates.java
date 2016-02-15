@@ -8,35 +8,21 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.proto;
+package org.eclipse.viatra.transformation.evm.proto;
 
-import java.util.Set;
-
-import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
-
-import com.google.common.collect.Sets;
+import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 
 /**
  * @author Abel Hegedus
  *
  */
-public class ProtoRealm implements EventRealm {
+public enum ProtoActivationStates implements ActivationState {
 
-    private Set<ProtoEventSource> sources = Sets.newHashSet();
+    IS_NOT, IS;
     
-    /**
-     * 
-     */
-    public ProtoRealm() {
+    @Override
+    public boolean isInactive() {
+        return this.equals(IS_NOT);
     }
     
-    public void pushString(String push) {
-        for (ProtoEventSource source : sources) {
-            source.pushString(push);
-        }
-    }
-
-    protected void addSource(ProtoEventSource source) {
-        sources.add(source);
-    }
 }

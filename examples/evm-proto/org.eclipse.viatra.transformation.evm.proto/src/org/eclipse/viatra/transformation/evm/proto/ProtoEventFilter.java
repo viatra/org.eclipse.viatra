@@ -8,15 +8,25 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.proto;
+package org.eclipse.viatra.transformation.evm.proto;
 
-import org.eclipse.incquery.runtime.evm.api.event.EventType;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
 /**
  * @author Abel Hegedus
  *
  */
-public enum ProtoEventType implements EventType {
+public class ProtoEventFilter implements EventFilter<String> {
 
-    PUSH
+    private String regexp;
+    
+    @Override
+    public boolean isProcessable(String eventAtom) {
+        return eventAtom.matches(regexp);
+    }
+
+    public ProtoEventFilter(String regexp) {
+        this.regexp = regexp;
+    }
+    
 }

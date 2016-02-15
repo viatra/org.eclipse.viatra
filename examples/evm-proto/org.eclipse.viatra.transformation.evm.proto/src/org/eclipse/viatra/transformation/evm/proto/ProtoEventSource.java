@@ -8,13 +8,13 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.incquery.runtime.evm.proto;
+package org.eclipse.viatra.transformation.evm.proto;
 
 import java.util.Set;
 
-import org.eclipse.incquery.runtime.evm.api.event.EventRealm;
-import org.eclipse.incquery.runtime.evm.api.event.EventSource;
-import org.eclipse.incquery.runtime.evm.api.event.EventSourceSpecification;
+import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
+import org.eclipse.viatra.transformation.evm.api.event.EventSource;
+import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification;
 
 import com.google.common.collect.Sets;
 
