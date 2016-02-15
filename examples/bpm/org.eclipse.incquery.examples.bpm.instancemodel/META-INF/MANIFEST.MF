@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: BPM Example Instancemodels
-Bundle-SymbolicName: org.eclipse.incquery.examples.bpm.instancemodel
-Bundle-Version: 1.1.0.qualifier
-Bundle-Vendor: Budapest University of Technology and Economics

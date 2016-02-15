@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="org.eclipse.incquery.examples.bpm.queries.BpmTestQueries" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.examples.bpm.queries.BpmTestQueries" id="org.eclipse.incquery.examples.bpm.queries.BpmTestQueries"/>
-  </extension>
-</plugin>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension point="org.eclipse.jdt.core.classpathVariableInitializer">
+    <classpathVariableInitializer class="org.eclipse.pde.internal.core.EclipseHomeInitializer" readOnly="true" variable="ECLIPSE_HOME"/>
+  </extension>
+  <extension id="extension.derived.org.eclipse.viatra.examples.bpm.queries.operation.ChecklistProcessCorrespondence" point="org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Checklist" feature-name="process" package-nsUri="http://operation/1.0"/>
+  </extension>
+  <extension id="extension.derived.org.eclipse.viatra.examples.bpm.queries.operation.ChecklistEntryJobCorrespondence" point="org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="ChecklistEntry" feature-name="jobs" package-nsUri="http://operation/1.0"/>
+  </extension>
+  <extension id="extension.derived.org.eclipse.viatra.examples.bpm.queries.operation.ChecklistEntryTaskCorrespondence" point="org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="ChecklistEntry" feature-name="task" package-nsUri="http://operation/1.0"/>
+  </extension>
+  <extension id="org.eclipse.viatra.examples.bpm.queries.system.DerivedFeatures" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.examples.bpm.queries.system.DerivedFeatures" id="org.eclipse.viatra.examples.bpm.queries.system.DerivedFeatures"/>
+  </extension>
+  <extension id="org.eclipse.viatra.examples.bpm.queries.operation.DerivedFeatures" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.examples.bpm.queries.operation.DerivedFeatures" id="org.eclipse.viatra.examples.bpm.queries.operation.DerivedFeatures"/>
+  </extension>
+  <extension id="extension.derived.org.eclipse.viatra.examples.bpm.queries.system.DataTaskReadCorrespondence" point="org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Data" feature-name="readingTask" package-nsUri="http://system/1.0"/>
+  </extension>
+  <extension id="extension.derived.org.eclipse.viatra.examples.bpm.queries.system.DataTaskWriteCorrespondence" point="org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Data" feature-name="writingTask" package-nsUri="http://system/1.0"/>
+  </extension>
+  <extension id="extension.derived.org.eclipse.viatra.examples.bpm.queries.system.JobInfoCorrespondence" point="org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Job" feature-name="info" package-nsUri="http://system/1.0"/>
+  </extension>
+  <extension id="extension.derived.org.eclipse.viatra.examples.bpm.queries.system.JobTaskCorrespondence" point="org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features">
+    <wellbehaving-derived-feature classifier-name="Job" feature-name="tasks" package-nsUri="http://system/1.0"/>
+  </extension>
+</plugin>

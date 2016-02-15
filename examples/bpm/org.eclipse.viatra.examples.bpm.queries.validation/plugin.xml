@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="validation.constraint.org.eclipse.viatra.examples.bpm.queries.operation.TaskChecklistEntryJobCorrespondence" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.examples.bpm.queries.operation.TaskChecklistEntryJobCorrespondenceConstraint0" name="org.eclipse.viatra.examples.bpm.queries.operation.TaskChecklistEntryJobCorrespondence"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.examples.bpm.queries.operation.DataReadByChecklistEntry" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.examples.bpm.queries.operation.DataReadByChecklistEntryConstraint0" name="org.eclipse.viatra.examples.bpm.queries.operation.DataReadByChecklistEntry"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.examples.bpm.queries.operation.IncorrectEntryInChecklist" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.examples.bpm.queries.operation.IncorrectEntryInChecklistConstraint0" name="org.eclipse.viatra.examples.bpm.queries.operation.IncorrectEntryInChecklist"/>
+  </extension>
+  <extension id="validation.constraint.org.eclipse.viatra.examples.bpm.queries.system.UndefinedServiceTasks" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.examples.bpm.queries.system.UndefinedServiceTasksConstraint0" name="org.eclipse.viatra.examples.bpm.queries.system.UndefinedServiceTasks"/>
+  </extension>
+</plugin>

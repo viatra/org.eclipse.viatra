@@ -1,0 +1,21 @@
+package org.eclipse.viatra.examples.bpm.tests.queries
+
+import "http://operation/1.0"
+import "http://process/1.0"
+import "http://system/1.0"
+
+pattern processTasks(Proc : Process , Task : Activity){ 
+	Process.contents(Proc, Task);
+}
+
+pattern nextActivity(Act : Activity,Next : Activity){
+	Activity.next(Act,Next);
+}
+
+pattern jobTasks(Job : Job,Task : Task) {
+	Job.tasks(Job, Task);
+}
+
+pattern entryTask(Entry : ChecklistEntry, Task : Task) {
+	ChecklistEntry.task(Entry, Task);
+}

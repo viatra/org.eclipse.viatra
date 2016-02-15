@@ -1,0 +1,64 @@
+package org.eclipse.viatra.examples.bpm.queries.operation
+
+import "http://process/1.0"
+import "http://system/1.0"
+import "http://operation/1.0"
+import "http://www.eclipse.org/emf/2002/Ecore"
+
+/* ChecklistEntry.jobs relation */
+@QueryBasedFeature(feature = "jobs")
+pattern ChecklistEntryJobCorrespondence(CLE : ChecklistEntry, Job : Job) = {
+  Job.name(Job,JobName);
+  System.name(System,SysName);
+  Job.runsOn(Job,System);
+  ChecklistEntry.jobPaths(CLE,JobPath);
+  check(JobPath.equals(SysName.concat('/').concat(JobName)));
+}
+
+/* ChecklistEntry.task relation */
+@QueryBasedFeature(feature = "task")
+pattern ChecklistEntryTaskCorrespondence(CLE : ChecklistEntry, Task : Task) = {
+	Task.id(Task, TaskId);
+	ChecklistEntry.taskId(CLE,TaskId);
+}
+
+/* Checklist.process relation */
+@QueryBasedFeature(feature = "process")
+pattern ChecklistProcessCorrespondence(Checklist : Checklist, Process : Process) = {
+	Process.id(Process,ProcessId);
+	Checklist.processId(Checklist,ProcessId);
+}
+
+private pattern TaskInProcess(Task : Task, Process : Process) = {
+	Process(Process);
+	Task(Task);
+	Process.contents(Process,Task);
+}
+
+// validation query (checklist entries are connected to tasks in the process of the checklist)
+@Constraint(location = ChecklistEntry,
+	message = "Entry $ChecklistEntry.name$ corresponds to Task $Task.name$ outside of process $Process.name$ defined for the checklist!",
+	severity = "error")
+pattern IncorrectEntryInChecklist(ChecklistEntry : ChecklistEntry,Task : Task,Process : Process) = {
+	Checklist.entries(Checklist,ChecklistEntry);
+	find ChecklistProcessCorrespondence(Checklist,Process);
+	find ChecklistEntryTaskCorrespondence(ChecklistEntry,Task);
+	neg find TaskInProcess(Task,Process);
+}
+
+// hyper-edge (Task <-- CheckListEntry --> Job
+@Constraint(location = CLE,
+	message = "Task $Task.name$ connected to Job $Job.name$ through entry $CLE.name$",
+	severity = "warning")
+pattern TaskChecklistEntryJobCorrespondence(Task : Task, CLE : ChecklistEntry, Job : Job) = {
+	find ChecklistEntryTaskCorrespondence(CLE,Task);
+	find ChecklistEntryJobCorrespondence(CLE,Job);	
+}
+
+@Constraint(location = CLE,
+	message = "Entry $CLE.name$ connected to $Data.name$ through $Task.name$",
+	severity = "warning")
+pattern DataReadByChecklistEntry(CLE : ChecklistEntry, Task : Task, Data : Data) = {
+	find ChecklistEntryTaskCorrespondence(CLE,Task);
+	find org.eclipse.viatra.examples.bpm.queries.system.DataTaskReadCorrespondence(Data, Task);
+}
