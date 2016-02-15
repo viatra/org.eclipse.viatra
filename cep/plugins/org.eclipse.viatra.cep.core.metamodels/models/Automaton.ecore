@@ -2,7 +2,7 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="automaton" nsURI="automaton.meta" nsPrefix="org.eclipse.viatra.cep.core.metamodels">
   <eAnnotations source="http://www.eclipse.org/emf/2002/Ecore">
-    <details key="settingDelegates" value="org.eclipse.incquery.querybasedfeature"/>
+    <details key="settingDelegates" value="org.eclipse.viatra.query.querybasedfeature"/>
   </eAnnotations>
   <eClassifiers xsi:type="ecore:EClass" name="InternalModel">
     <eStructuralFeatures xsi:type="ecore:EReference" name="automata" upperBound="-1"
@@ -14,7 +14,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="eventTokensInModel" upperBound="-1"
         eType="#//EventToken" changeable="false" volatile="true" transient="true"
         derived="true">
-      <eAnnotations source="org.eclipse.incquery.querybasedfeature">
+      <eAnnotations source="org.eclipse.viatra.query.querybasedfeature">
         <details key="patternFQN" value="org.eclipse.viatra.cep.core.metamodels.derived.eventTokensInModel"/>
       </eAnnotations>
     </eStructuralFeatures>
@@ -30,20 +30,20 @@
         eType="#//TimedZone" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="initialState" lowerBound="1"
         eType="#//InitState" changeable="false" volatile="true" transient="true" derived="true">
-      <eAnnotations source="org.eclipse.incquery.querybasedfeature">
+      <eAnnotations source="org.eclipse.viatra.query.querybasedfeature">
         <details key="patternFQN" value="org.eclipse.viatra.cep.core.metamodels.derived.initialState"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="finalStates" lowerBound="1"
         upperBound="-1" eType="#//FinalState" changeable="false" volatile="true" transient="true"
         derived="true">
-      <eAnnotations source="org.eclipse.incquery.querybasedfeature">
+      <eAnnotations source="org.eclipse.viatra.query.querybasedfeature">
         <details key="patternFQN" value="org.eclipse.viatra.cep.core.metamodels.derived.finalStates"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="trapState" lowerBound="1"
         eType="#//TrapState" changeable="false" volatile="true" transient="true" derived="true">
-      <eAnnotations source="org.eclipse.incquery.querybasedfeature">
+      <eAnnotations source="org.eclipse.viatra.query.querybasedfeature">
         <details key="patternFQN" value="org.eclipse.viatra.cep.core.metamodels.derived.trapState"/>
       </eAnnotations>
     </eStructuralFeatures>

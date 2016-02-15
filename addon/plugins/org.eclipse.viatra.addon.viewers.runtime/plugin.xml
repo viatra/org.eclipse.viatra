@@ -1,34 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
-  <extension point="org.eclipse.viatra.query.patternlanguage.annotation">
-    <annotation additionalValidator="org.eclipse.viatra.addon.viewers.runtime.validators.ItemValidator" description="An element to display in a JFace viewer" name="Item">
-      <annotationparameter description="The pattern parameter the Item will represent in the viewer." mandatory="true" multiple="false" name="item" type="variablereference"/>
-      <annotationparameter description="The label to describe the item. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$." mandatory="false" multiple="false" name="label" type="string"/>
-      <annotationparameter description="Describes whether an item should display only as 'root' (top-level) element, only as 'child' (not root but as a child) or only  as 'port' (hierarchic graph viewers) or 'always'." mandatory="false" multiple="false" name="hierarchy" type="string"/>
-    </annotation>
-    <annotation description="An annotation describing a containment relation between two items." name="ContainsItem">
-      <annotationparameter description="The pattern parameter representing the container. Must refer an EObject." mandatory="true" multiple="false" name="container" type="variablereference"/>
-      <annotationparameter description="The pattern parameter referring to a contained element. Must refer to an EObject." mandatory="true" multiple="false" name="item" type="variablereference"/>
-    </annotation>
-    <annotation additionalValidator="org.eclipse.viatra.addon.viewers.runtime.validators.EdgeValidator" description="Represents a custom, directed edge between GuiItems. Not supported by all viewers." name="Edge">
-      <annotationparameter description="A label for the edge." mandatory="false" multiple="false" name="label" type="string"/>
-      <annotationparameter description="The pattern parameter representing the source item of the edge. Must refer to an EObject." mandatory="true" multiple="false" name="source" type="variablereference"/>
-      <annotationparameter description="The pattern parameter representing the target item of the edge. Must refer to an EObject." mandatory="true" multiple="false" name="target" type="variablereference"/>
-    </annotation>
-    <annotation description="Formatting specification for Items and Edges" name="Format">
-      <annotationparameter description="The main color definition in CSS format (#RRGGBB)" mandatory="false" multiple="false" name="color" type="string"/>
-      <annotationparameter description="The line color setting in CSS format (#RRGGBB)." mandatory="false" multiple="false" name="lineColor" type="string"/>
-      <annotationparameter description="The text color setting in CSS format (#RRGGBB)." mandatory="false" multiple="false" name="textColor" type="string"/>
-      <annotationparameter description="The width of the line in pixels. Only available for Edges." mandatory="false" multiple="false" name="lineWidth" type="int"/>
-      <annotationparameter description="The style of the line (solid, dashed, dotted, dashdot)." mandatory="false" multiple="false" name="lineStyle" type="string"/>
-      <annotationparameter description="The style of the line's arrow at the source end (none, standard, diamond, triangle). Only available for Edges." mandatory="false" multiple="false" name="arrowSourceEnd" type="string"/>
-      <annotationparameter description="The style of the line's arrow at the target end (none, standard, diamond, triangle). Only available for Edges." mandatory="false" multiple="false" name="arrowTargetEnd" type="string"/>
-    </annotation>
-  </extension>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <!-- @generated notation -->
-    <package class="org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage" genModel="model/notation.genmodel" uri="http://www.eclipse.org/viatra/addon/viewers/notation/1.0"/>
-  </extension>
   <extension id="org.eclipse.viatra.addon.viewers.runtime.model.patterns.ViewersTraceabilityQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.addon.viewers.runtime.model.patterns.ViewersTraceabilityQueries" id="org.eclipse.viatra.addon.viewers.runtime.model.patterns.ViewersTraceabilityQueries"/>
   </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated notation -->
+      <package
+            uri="http://www.eclipse.org/viatra/addon/viewers/notation/1.0"
+            class="org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage"
+            genModel="model/notation.genmodel"/>
+   </extension>
+
 </plugin>

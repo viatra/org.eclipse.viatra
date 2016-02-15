@@ -303,7 +303,7 @@ implements IGenerationFragment {
             }
         
             @Override
-            public IQuerySpecification<? extends IncQueryMatcher<? extends IPatternMatch>> getQuerySpecification() {
+            public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getQuerySpecification() {
                 return querySpecification;
             }
         

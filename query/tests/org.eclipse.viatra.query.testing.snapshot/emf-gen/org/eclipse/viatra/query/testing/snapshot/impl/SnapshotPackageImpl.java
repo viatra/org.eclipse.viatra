@@ -737,6 +737,8 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 		// Create annotations
 		// http://www.eclipse.org/emf/2002/Ecore
 		createEcoreAnnotations();
+		// org.eclipse.viatra.query.querybasedfeature
+		createOrgAnnotations();
 	}
 
 	/**
@@ -751,7 +753,29 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 		  (this, 
 		   source, 
 		   new String[] {
-			 "settingDelegates", "org.eclipse.incquery.querybasedfeature"
+			 "settingDelegates", "org.eclipse.viatra.query.querybasedfeature"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>org.eclipse.viatra.query.querybasedfeature</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createOrgAnnotations() {
+		String source = "org.eclipse.viatra.query.querybasedfeature";	
+		addAnnotation
+		  (getMatchRecord_Role(), 
+		   source, 
+		   new String[] {
+			 "patternFQN", "org.eclipse.viatra.query.testing.queries.RecordRoleValue"
+		   });	
+		addAnnotation
+		  (getMatchSubstitutionRecord_DerivedValue(), 
+		   source, 
+		   new String[] {
+			 "patternFQN", "org.eclipse.viatra.query.testing.queries.SubstitutionValue"
 		   });
 	}
 

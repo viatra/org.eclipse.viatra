@@ -17,7 +17,8 @@ Export-Package: org.eclipse.viatra.addon.viewers.runtime,
  org.eclipse.viatra.addon.viewers.runtime.notation,
  org.eclipse.viatra.addon.viewers.runtime.notation.impl,
  org.eclipse.viatra.addon.viewers.runtime.notation.util,
- org.eclipse.viatra.addon.viewers.runtime.sources;x-friends:="org.eclipse.viatra.addon.viewers.runtime.zest",
+ org.eclipse.viatra.addon.viewers.runtime.sources;
+  x-friends:="org.eclipse.viatra.addon.viewers.runtime.zest",
  org.eclipse.viatra.addon.viewers.runtime.specifications,
  org.eclipse.viatra.addon.viewers.runtime.util,
  org.eclipse.viatra.addon.viewers.runtime.validators

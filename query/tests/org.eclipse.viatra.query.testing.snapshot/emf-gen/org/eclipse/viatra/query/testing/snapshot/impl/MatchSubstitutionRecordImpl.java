@@ -6,6 +6,7 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
@@ -48,14 +49,14 @@ public abstract class MatchSubstitutionRecordImpl extends MinimalEObjectImpl.Con
 	protected String parameterName = PARAMETER_NAME_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getDerivedValue() <em>Derived Value</em>}' attribute.
+	 * The cached setting delegate for the '{@link #getDerivedValue() <em>Derived Value</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getDerivedValue()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Object DERIVED_VALUE_EDEFAULT = null;
+	protected EStructuralFeature.Internal.SettingDelegate DERIVED_VALUE__ESETTING_DELEGATE = ((EStructuralFeature.Internal)SnapshotPackage.Literals.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE).getSettingDelegate();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -103,9 +104,7 @@ public abstract class MatchSubstitutionRecordImpl extends MinimalEObjectImpl.Con
 	 * @generated
 	 */
 	public Object getDerivedValue() {
-		// TODO: implement this method to return the 'Derived Value' attribute
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		return (Object)DERIVED_VALUE__ESETTING_DELEGATE.dynamicGet(this, null, 0, true, false);
 	}
 
 	/**
@@ -165,7 +164,7 @@ public abstract class MatchSubstitutionRecordImpl extends MinimalEObjectImpl.Con
 			case SnapshotPackage.MATCH_SUBSTITUTION_RECORD__PARAMETER_NAME:
 				return PARAMETER_NAME_EDEFAULT == null ? parameterName != null : !PARAMETER_NAME_EDEFAULT.equals(parameterName);
 			case SnapshotPackage.MATCH_SUBSTITUTION_RECORD__DERIVED_VALUE:
-				return DERIVED_VALUE_EDEFAULT == null ? getDerivedValue() != null : !DERIVED_VALUE_EDEFAULT.equals(getDerivedValue());
+				return DERIVED_VALUE__ESETTING_DELEGATE.dynamicIsSet(this, null, 0);
 		}
 		return super.eIsSet(featureID);
 	}

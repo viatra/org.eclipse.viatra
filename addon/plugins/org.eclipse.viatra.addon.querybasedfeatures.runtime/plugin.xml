@@ -60,7 +60,7 @@
          point="org.eclipse.emf.ecore.setting_delegate">
       <factory
             class="org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureSettingDelegateFactory"
-            uri="org.eclipse.incquery.querybasedfeature">
+            uri="org.eclipse.viatra.query.querybasedfeature">
       </factory>
    </extension>
 </plugin>

@@ -53,6 +53,7 @@ public interface MatchRecord extends EObject {
 	 * @see org.eclipse.viatra.query.testing.snapshot.RecordRole
 	 * @see org.eclipse.viatra.query.testing.snapshot.SnapshotPackage#getMatchRecord_Role()
 	 * @model transient="true" changeable="false" volatile="true" derived="true"
+	 *        annotation="org.eclipse.viatra.query.querybasedfeature patternFQN='org.eclipse.viatra.query.testing.queries.RecordRoleValue'"
 	 * @generated
 	 */
 	RecordRole getRole();

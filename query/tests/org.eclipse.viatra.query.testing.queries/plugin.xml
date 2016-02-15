@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
-  <extension id="org.eclipse.incquery.testing.queries.MatchRecordQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
-    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.testing.queries.MatchRecordQueries" id="org.eclipse.incquery.testing.queries.MatchRecordQueries"/>
-  </extension>
   <extension id="extension.derived.org.eclipse.viatra.query.testing.queries.RecordRoleValue" point="org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features">
     <wellbehaving-derived-feature classifier-name="MatchRecord" feature-name="role" package-nsUri="http://www.eclipse.org/viatra/query/snapshot"/>
   </extension>

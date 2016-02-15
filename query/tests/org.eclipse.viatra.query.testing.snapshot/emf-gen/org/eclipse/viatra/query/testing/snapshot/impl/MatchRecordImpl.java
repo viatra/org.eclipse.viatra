@@ -9,6 +9,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
@@ -47,14 +48,14 @@ public class MatchRecordImpl extends MinimalEObjectImpl.Container implements Mat
 	protected EList<MatchSubstitutionRecord> substitutions;
 
 	/**
-	 * The default value of the '{@link #getRole() <em>Role</em>}' attribute.
+	 * The cached setting delegate for the '{@link #getRole() <em>Role</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getRole()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final RecordRole ROLE_EDEFAULT = RecordRole.MATCH;
+	protected EStructuralFeature.Internal.SettingDelegate ROLE__ESETTING_DELEGATE = ((EStructuralFeature.Internal)SnapshotPackage.Literals.MATCH_RECORD__ROLE).getSettingDelegate();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -93,9 +94,7 @@ public class MatchRecordImpl extends MinimalEObjectImpl.Container implements Mat
 	 * @generated
 	 */
 	public RecordRole getRole() {
-		// TODO: implement this method to return the 'Role' attribute
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		return (RecordRole)ROLE__ESETTING_DELEGATE.dynamicGet(this, null, 0, true, false);
 	}
 
 	/**
@@ -171,7 +170,7 @@ public class MatchRecordImpl extends MinimalEObjectImpl.Container implements Mat
 			case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
 				return substitutions != null && !substitutions.isEmpty();
 			case SnapshotPackage.MATCH_RECORD__ROLE:
-				return getRole() != ROLE_EDEFAULT;
+				return ROLE__ESETTING_DELEGATE.dynamicIsSet(this, null, 0);
 		}
 		return super.eIsSet(featureID);
 	}

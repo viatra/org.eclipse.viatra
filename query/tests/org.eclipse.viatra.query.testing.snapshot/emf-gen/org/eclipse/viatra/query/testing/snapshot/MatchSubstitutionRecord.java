@@ -59,6 +59,7 @@ public interface MatchSubstitutionRecord extends EObject {
 	 * @return the value of the '<em>Derived Value</em>' attribute.
 	 * @see org.eclipse.viatra.query.testing.snapshot.SnapshotPackage#getMatchSubstitutionRecord_DerivedValue()
 	 * @model transient="true" changeable="false" volatile="true" derived="true"
+	 *        annotation="org.eclipse.viatra.query.querybasedfeature patternFQN='org.eclipse.viatra.query.testing.queries.SubstitutionValue'"
 	 * @generated
 	 */
 	Object getDerivedValue();

@@ -31,11 +31,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="Containment" eSuperTypes="#//Edge"/>
   <eClassifiers xsi:type="ecore:EClass" name="NotationModel">
     <eStructuralFeatures xsi:type="ecore:EReference" name="items" upperBound="-1"
-        eType="#//Item" containment="true">
-      <eAnnotations source="org.eclipse.incquery.querybasedfeature">
-        <details key="patternFQN" value="org.eclipse.incquery.viewers.runtime.model.patterns.items"/>
-      </eAnnotations>
-    </eStructuralFeatures>
+        eType="#//Item" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="edges" upperBound="-1"
         eType="#//Edge" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="containments" upperBound="-1"
