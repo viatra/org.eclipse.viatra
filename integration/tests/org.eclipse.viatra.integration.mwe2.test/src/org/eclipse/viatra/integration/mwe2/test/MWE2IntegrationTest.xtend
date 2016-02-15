@@ -29,25 +29,25 @@ public class MWE2IntegrationTest {
 	//Serialized with no message
 	
 	@Test def void ConditionalNoMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/ConditionalNoMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/ConditionalNoMessageSerialized.mwe2", 
 			"exec_A")
 	}
 	
 	@Test def void DoWhileNoMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/DoWhileNoMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/DoWhileNoMessageSerialized.mwe2", 
 			"exec_A",
 			"exec_A",
 			"exec_A")
 	}
 	
 	@Test def void ForeachNoMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/ForeachNoMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/ForeachNoMessageSerialized.mwe2", 
 			"exec_A",
 			"exec_A")
 	}
 	
 	@Test def void ForNoMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/ForNoMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/ForNoMessageSerialized.mwe2", 
 			"exec_A",
 			"exec_A",
 			"exec_B",
@@ -55,19 +55,19 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void RootNoMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/RootNoMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/RootNoMessageSerialized.mwe2", 
 			"exec_A",
 			"exec_B")
 	}
 	
 	@Test def void SequenceNoMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/SequenceNoMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/SequenceNoMessageSerialized.mwe2", 
 			"exec_A",
 			"exec_B")
 	}
 	
 	@Test def void WhileNoMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/WhileNoMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/WhileNoMessageSerialized.mwe2", 
 			"exec_A",
 			"exec_A")
 	}
@@ -75,14 +75,14 @@ public class MWE2IntegrationTest {
 	// Serialized with messages
 	
 	@Test def void ConditionalMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/ConditionalMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/ConditionalMessageSerialized.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
 			"exec_A")
 	}
 	
 	@Test def void DoWhileMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/DoWhileMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/DoWhileMessageSerialized.mwe2", 
 			"exec_A",
 			"message_ATestTopicB",
 			"exec_B",
@@ -97,7 +97,7 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void ForeachMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/ForeachMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/ForeachMessageSerialized.mwe2", 
 			"exec_A",
 			"message_ATestTopicB",
 			"exec_B",
@@ -108,7 +108,7 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void ForMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/ForMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/ForMessageSerialized.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
 			"exec_A",
@@ -119,21 +119,21 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void RootMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/RootMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/RootMessageSerialized.mwe2", 
 			"exec_A",
 			"message_ATestTopicB",
 			"exec_B")
 	}
 	
 	@Test def void SequenceMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/SequenceMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/SequenceMessageSerialized.mwe2", 
 			"exec_A",
 			"message_ATestTopicB",
 			"exec_B")
 	}
 	
 	@Test def void WhileMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/WhileMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/WhileMessageSerialized.mwe2", 
 			"exec_A",
 			"message_ATestTopicB",
 			"exec_B",
@@ -146,7 +146,7 @@ public class MWE2IntegrationTest {
 	// Parallel with messages
 	
 	@Test def void ConditionalMessageParallel() {
-		testWithParallel("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/ConditionalMessageParallel.mwe2", 
+		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/ConditionalMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
 			"message_ATestTopicB",
@@ -155,7 +155,7 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void DoWhileMessageParallel() {
-		testWithParallel("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/DoWhileMessageParallel.mwe2", 
+		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/DoWhileMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
 			"message_ATestTopicB",
@@ -168,7 +168,7 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void ForeachMessageParallel() {
-		testWithParallel("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/ForeachMessageParallel.mwe2", 
+		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/ForeachMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicB",
 			"message_ATestTopicA",
@@ -178,7 +178,7 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void ForMessageParallel() {
-		testWithParallel("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/ForMessageParallel.mwe2", 
+		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/ForMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
 			"message_ATestTopicB",
@@ -189,19 +189,19 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void RootMessageParallel() {
-		testWithParallel("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/RootMessageParallel.mwe2", 
+		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/RootMessageParallel.mwe2", 
 			"exec_A",
 			"exec_B")
 	}
 	
 	@Test def void SequenceMessageParallel() {
-		testWithParallel("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/SequenceMessageParallel.mwe2", 
+		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/SequenceMessageParallel.mwe2", 
 			"exec_A",
 			"exec_B")
 	}
 	
 	@Test def void WhileMessageParallel() {
-		testWithParallel("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/WhileMessageParallel.mwe2", 
+		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/WhileMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
 			"message_ATestTopicB",
@@ -213,7 +213,7 @@ public class MWE2IntegrationTest {
 	
 	// Multi message tests
 	@Test def void MultiMessageRemoval() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/MultiMessageRemoval.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/MultiMessageRemoval.mwe2", 
 			"exec_A",
 			"message_ATestTopicB",
 			"exec_A",
@@ -223,7 +223,7 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void MultiMessageSerialized() {
-		testWith("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/MultiMessageSerialized.mwe2", 
+		testWith("src/org/eclipse/viatra/integration/mwe2/test/workflows/MultiMessageSerialized.mwe2", 
 			"exec_B",
 			"exec_A",
 			"message_BTestTopicA",
@@ -239,7 +239,7 @@ public class MWE2IntegrationTest {
 	}
 	
 	@Test def void MultiMessageParallel() {
-		testWithParallel("src/org/eclipse/viatra/emf/mwe2integration/test/workflows/MultiMessageParallel.mwe2", 
+		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/MultiMessageParallel.mwe2", 
 			"exec_B",
 			"exec_A",
 			"message_BTestTopicA",
