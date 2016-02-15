@@ -8,6 +8,7 @@
 	<url>http://eclipse.org/viatra</url>
 	<packaging>pom</packaging>
 	<modules>
+		<module>../../releng/org.eclipse.viatra.target.all</module>
 		<module>../../releng/org.eclipse.viatra.update</module>
 
 		<!-- Query -->
@@ -114,13 +115,23 @@
 		<relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
 	</parent>
 	<properties>
-		<core.repository.url>file:/${basedir}/../../../releng/org.eclipse.viatra.update.core/target/repository</core.repository.url>
+		<core.repository.url>file://${basedir}/../../../releng/org.eclipse.viatra.update.core/target/repository</core.repository.url>
 	</properties>
 	<repositories>
 		<repository>
 			<id>viatra.core</id>
 			<url>${core.repository.url}</url>
 			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>viatra.nexus</id>
+			<url>https://repo.eclipse.org/content/groups/viatra/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 	<build>
@@ -134,11 +145,10 @@
 					<target>
 						<artifact>
 							<groupId>org.eclipse.viatra</groupId>
-							<artifactId>org.eclipse.viatra.target</artifactId>
+							<artifactId>org.eclipse.viatra.target.all</artifactId>
 							<version>${viatra.main.version}</version>
 						</artifact>
 					</target>
-					<ignoreTychoRepositories>true</ignoreTychoRepositories>
 				</configuration>
 			</plugin>
 		</plugins>
