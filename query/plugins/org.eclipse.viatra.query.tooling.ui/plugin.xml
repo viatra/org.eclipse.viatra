@@ -452,7 +452,7 @@
             </visibleWhen>
          </command>
          <command
-               commandId="org.eclipse.viatra.query.tooling.ui.loadvqmodel"
+               commandId="org.eclipse.viatra.query.tooling.ui.loadvqlmodel"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -672,7 +672,7 @@
       </factory>
    </extension>
    <extension
-         id="org.eclipse.viatra.query.tooling.core.projectbuilder"
+         id="org.eclipse.viatra.query.tooling.ui.projectbuilder"
          name="EMF-IncQuery Project Builder"
          point="org.eclipse.core.resources.builders">
       <builder

@@ -11,7 +11,7 @@
          </run>
       </runtime>
       <builder
-            id="org.eclipse.incquery.tooling.core.projectbuilder">
+            id="org.eclipse.viatra.query.tooling.ui.projectbuilder">
       </builder>
    </extension>
    <extension

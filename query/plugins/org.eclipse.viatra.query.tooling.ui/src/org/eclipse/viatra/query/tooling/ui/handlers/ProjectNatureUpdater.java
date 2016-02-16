@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.viatra.query.runtime.IncQueryRuntimePlugin;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
@@ -39,8 +38,7 @@ public class ProjectNatureUpdater extends AbstractHandler {
     			"org.eclipse.incquery.projectnature" //$NON-NLS-1
     		); 
     static final String GLOBAL_EIQ_PATH = "queries/globalEiqModel.xmi"; //$NON-NLS-1
-    static final String XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID
-            + ".xexpressionevaluator";
+    static final String XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID = "org.eclipse.incquery.runtime.xexpressionevaluator"; //$NON_NLS-1
 
     public static boolean isIncorrectBuilderID(String id) {
     	return INCORRECT_BUILDER_IDS.contains(id);
