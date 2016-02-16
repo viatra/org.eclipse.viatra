@@ -161,35 +161,10 @@ class NatureUpdaterJob extends Job {
 	}
 
 	public void removeExpressionExtensions(IProject project) throws CoreException {
-		final IJavaProject javaProject = JavaCore.create(project);
 		final List<Pair<String, String>> removableExtensions = Lists.newArrayList();
-		project.accept(new IResourceVisitor() {
-
-			@Override
-			public boolean visit(IResource resource) throws CoreException {
-				if (resource instanceof IContainer) {
-					final IJavaElement element = JavaCore.create(resource, javaProject);
-					return element != null;
-				} else if ("eiq".equals(resource.getFileExtension())) {
-					final IResourceDescription desc = index.getResourceDescription(
-							URI.createPlatformResourceURI(resource.getFullPath().toString(), true));
-					if (desc != null) {
-						final Iterable<Pair<String, String>> extensionHeaders = Iterables.transform(
-								desc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN),
-								new Function<IEObjectDescription, Pair<String, String>>() {
-
-							@Override
-							public Pair<String, String> apply(IEObjectDescription desc) {
-								return new Pair<String, String>(desc.getQualifiedName().toString(),
-										ProjectNatureUpdater.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID);
-							}
-						});
-						removableExtensions.addAll(Lists.newArrayList(extensionHeaders));
-					}
-				}
-				return false;
-			}
-		});
+	
+		removableExtensions.add(new Pair<String, String>("", "org.eclipse.incquery.runtime.queryspecification"));
+		removableExtensions.add(new Pair<String, String>("", ProjectNatureUpdater.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID));
 		ProjectGenerationHelper.removeAllExtension(project, removableExtensions);
 	}
 
@@ -214,8 +189,8 @@ class NatureUpdaterJob extends Job {
 				ProjectGenerationHelper.updateNatures(project, newIDs, oldIDs, monitor);
 			}
 			removeGlobalEiq(project);
-			removeExpressionExtensions(project);
 			renamePatternDefinitionFiles(project);
+			removeExpressionExtensions(project);
 			ProjectGenerationHelper.ensurePackageImports(project, ImmutableList.<String> of("org.apache.log4j"));
 		} catch (CoreException e) {
 			return new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, "Error updating project natures", e);
