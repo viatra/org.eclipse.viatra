@@ -3,30 +3,47 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>org.eclipse.incquery.examples.bpm.test.parent</artifactId>
-    <groupId>org.eclipse.incquery</groupId>
-    <version>1.1.0-SNAPSHOT</version>
-    <relativePath>../org.eclipse.incquery.examples.bpm.test.parent/pom.xml</relativePath>
+    <artifactId>org.eclipse.viatra.examples.bpm.parent</artifactId>
+    <groupId>org.eclipse.viatra</groupId>
+    <version>1.2.0-SNAPSHOT</version>
+    <relativePath>../org.eclipse.viatra.examples.bpm.parent/pom.xml</relativePath>
   </parent>
-  <properties>
-    <incquery.p2.repository>https://hudson.eclipse.org/incquery/job/incquery-master/lastSuccessfulBuild/artifact/update-site/</incquery.p2.repository>
-  </properties>
-  <artifactId>org.eclipse.incquery.examples.bpm</artifactId>
+  <artifactId>org.eclipse.viatra.examples.bpm</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <repositories>
-    <repository>
-      <id>incquery-repository</id>
-      <layout>p2</layout>
-      <url>${incquery.p2.repository}</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>incquery-snapshots</id>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <url>https://repo.eclipse.org/content/repositories/emf-incquery-snapshots/</url>
-    </pluginRepository>
-  </pluginRepositories>
+  <properties>
+		<emf.workspace.location>${project.basedir}/../../target/workspace</emf.workspace.location>
+	</properties>
+  <build>
+  	<plugins>
+  		<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-eclipserun-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<appArgLine>-data ${emf.workspace.location} -application org.eclipse.emf.codegen.ecore.Generator -projects ${project.basedir} -model ${project.basedir}/model/derivedModel.genmodel ${project.basedir}</appArgLine>
+					<dependencies>
+						<dependency>
+							<artifactId>org.eclipse.emf.codegen.ecore</artifactId>
+							<type>eclipse-plugin</type>
+						</dependency>
+					</dependencies>
+					<repositories>
+						<repository>
+							<id>indigo</id>
+							<layout>p2</layout>
+							<url>http://download.eclipse.org/releases/mars</url>
+						</repository>
+					</repositories>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>eclipse-run</goal>
+						</goals>
+						<phase>generate-sources</phase>
+					</execution>
+				</executions>
+			</plugin>
+  	</plugins>
+  </build>
 </project>

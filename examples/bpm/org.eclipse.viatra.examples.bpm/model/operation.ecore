@@ -21,9 +21,17 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="jobPaths" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="task" lowerBound="1" eType="ecore:EClass process.ecore#//Task"
-        changeable="false" volatile="true" transient="true" derived="true"/>
+        changeable="false" volatile="true" transient="true" derived="true">
+      <eAnnotations source="org.eclipse.viatra.query.querybasedfeature">
+        <details key="patternFQN" value="org.eclipse.viatra.examples.bpm.queries.operation.ChecklistEntryTaskCorrespondence"/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="jobs" upperBound="-1" eType="ecore:EClass system.ecore#//Job"
-        changeable="false" volatile="true" transient="true" derived="true"/>
+        changeable="false" volatile="true" transient="true" derived="true">
+      <eAnnotations source="org.eclipse.viatra.query.querybasedfeature">
+        <details key="patternFQN" value="org.eclipse.viatra.examples.bpm.queries.operation.ChecklistEntryJobCorrespondence"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Checklist" eSuperTypes="#//OperationElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="entries" upperBound="-1"
@@ -32,7 +40,11 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="process" lowerBound="1"
         eType="ecore:EClass process.ecore#//Process" changeable="false" volatile="true"
-        transient="true" derived="true"/>
+        transient="true" derived="true">
+      <eAnnotations source="org.eclipse.viatra.query.querybasedfeature">
+        <details key="patternFQN" value="org.eclipse.viatra.examples.bpm.queries.operation.ChecklistProcessCorrespondence"/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="processId" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>

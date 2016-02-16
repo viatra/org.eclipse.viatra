@@ -3,11 +3,49 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>org.eclipse.incquery.examples.bpm.test.parent</artifactId>
-    <groupId>org.eclipse.incquery</groupId>
-    <version>1.1.0-SNAPSHOT</version>
-    <relativePath>../org.eclipse.incquery.examples.bpm.test.parent/pom.xml</relativePath>
+    <artifactId>org.eclipse.viatra.examples.bpm.parent</artifactId>
+    <groupId>org.eclipse.viatra</groupId>
+    <version>1.2.0-SNAPSHOT</version>
+    <relativePath>../org.eclipse.viatra.examples.bpm.parent/pom.xml</relativePath>
   </parent>
-  <artifactId>org.eclipse.incquery.examples.bpm.incquery</artifactId>
+  <artifactId>org.eclipse.viatra.examples.bpm.queries</artifactId>
   <packaging>eclipse-plugin</packaging>
+<build>
+	<plugins>
+				<plugin>
+				<groupId>org.eclipse.viatra</groupId>
+				<artifactId>viatra-maven-plugin</artifactId>
+				<version>${viatra.main.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputDirectory>src-gen</outputDirectory>
+					<metamodels>
+						<metamodel>
+							<packageClass>org.eclipse.viatra.examples.bpm.operation.OperationPackage</packageClass>
+						</metamodel>
+						<metamodel>
+							<packageClass>org.eclipse.viatra.examples.bpm.process.ProcessPackage</packageClass>
+						</metamodel>
+						<metamodel>
+							<packageClass>org.eclipse.viatra.examples.bpm.system.SystemPackage</packageClass>
+						</metamodel>
+					</metamodels>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.viatra</groupId>
+						<artifactId>org.eclipse.viatra.examples.bpm</artifactId>
+						<version>${viatra.main.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
