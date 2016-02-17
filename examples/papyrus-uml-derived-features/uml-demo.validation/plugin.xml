@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="validation.constraint.org.incquery.uml.demo.multipleSuperclasses" point="org.eclipse.incquery.validation.runtime.constraint">
-    <constraint class="org.incquery.uml.demo.MultipleSuperclassesConstraint0" name="org.incquery.uml.demo.multipleSuperclasses"/>
-  </extension>
-</plugin>

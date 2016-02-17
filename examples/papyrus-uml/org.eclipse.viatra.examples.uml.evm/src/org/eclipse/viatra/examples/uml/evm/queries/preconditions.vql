@@ -1,0 +1,66 @@
+package org.eclipse.viatra.examples.uml.evm.queries
+
+import "http://www.eclipse.org/uml2/4.0.0/UML"
+
+/*
+ * Precondition for add generalization rule
+ */
+pattern possibleSuperClass(cl : Class, sup : Class) {
+	neg find superClass(cl, _otherSup);
+	neg find superClass(_cl2, sup);
+}
+
+/*
+ * Precondition for create owned operation
+ */
+pattern onlyInheritedOperations(cl : Class) {
+	find hasOperation(cl, _op);
+	neg find ownsOperation(cl, _ownOp);
+}
+
+/*
+ * Helper patterns
+ */
+
+pattern superClass(sub : Class, sup : Class) {
+	Generalization.specific(Gen, sub);
+	Generalization(Gen);
+	Generalization.general(Gen, sup);
+}
+
+pattern transitiveSuperClass(sub : Class, sup : Class) {
+	find superClass+(sub, sup);
+}
+
+pattern superOrEqualClass(sub : Class, sup : Class) {
+	sub == sup;
+} or {
+	find superClass+(sub, sup);
+}
+
+pattern ownsOperation(cl : Class, op : Operation) {
+	Class.ownedOperation(cl, op);
+}
+
+pattern ownsProperty(cl : Class, pr : Property) {
+	StructuredClassifier.ownedAttribute(cl, pr);
+}
+
+pattern hasOperation(cl : Class, op : Operation) {
+	find superOrEqualClass(cl, owner);
+	find ownsOperation(owner, op);
+}
+
+pattern hasProperty(cl : Class, pr : Property) {
+	find superOrEqualClass(cl, owner);
+	find ownsProperty(owner, pr);
+}
+
+pattern emptyClass(cl : Class) {
+	neg find hasOperation(cl, _op);
+	neg find hasProperty(cl, _prop);
+}
+
+pattern nonEmptyClass(cl : Class) {
+	neg find emptyClass(cl);
+}

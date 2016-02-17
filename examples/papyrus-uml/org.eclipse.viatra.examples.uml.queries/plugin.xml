@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="org.eclipse.viatra.examples.uml.queries.EmptyClass" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.examples.uml.queries.EmptyClass" id="org.eclipse.viatra.examples.uml.queries.EmptyClass"/>
+  </extension>
+  <extension id="org.eclipse.viatra.examples.uml.queries.ObjectDiagrams" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.examples.uml.queries.ObjectDiagrams" id="org.eclipse.viatra.examples.uml.queries.ObjectDiagrams"/>
+  </extension>
+</plugin>

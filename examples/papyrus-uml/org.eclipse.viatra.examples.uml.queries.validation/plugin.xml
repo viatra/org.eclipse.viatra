@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="validation.constraint.org.eclipse.viatra.examples.uml.queries.emptyClass" point="org.eclipse.viatra.addon.validation.runtime.constraint">
+    <constraint class="org.eclipse.viatra.examples.uml.queries.EmptyClassConstraint3" name="org.eclipse.viatra.examples.uml.queries.emptyClass">
+      <enabledForEditor editorId="org.eclipse.papyrus.infra.core.papyrusEditor"/>
+    </constraint>
+  </extension>
+</plugin>
