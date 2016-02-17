@@ -5,13 +5,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
     xmlns:jdt="http://www.eclipse.org/oomph/setup/jdt/1.0"
+    xmlns:launching="http://www.eclipse.org/oomph/setup/launching/1.0"
     xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
     xmlns:projects="http://www.eclipse.org/oomph/setup/projects/1.0"
     xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
     xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/launching/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Launching.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
     name="viatra"
     label="VIATRA New">
   <setupTask
@@ -39,7 +40,7 @@
       vm="true"/>
   <setupTask
       xsi:type="setup:CompoundTask"
-      name="EMF-IncQuery Eclipse Preferences">
+      name="Eclipse Preferences">
     <setupTask
         xsi:type="setup:CompoundTask"
         name="org.eclipse.core.resources">
@@ -87,6 +88,8 @@
         name="de.itemis.xtext.antlr.feature.feature.group"/>
     <requirement
         name="org.eclipse.egit.feature.group"/>
+    <requirement
+        name="org.eclipse.emf.sdk.feature.group"/>
     <repository
         url="http://download.eclipse.org/releases/${eclipse.target.platform}"/>
     <repository
@@ -119,25 +122,6 @@
     <targlet
         name="${scope.project.label}"
         activeRepositoryList="${eclipse.target.platform}">
-      <annotation
-          source="http:/www.eclipse.org/oomph/targlets/TargetDefinitionGenerator">
-        <detail
-            key="location">
-          <value>${git.clone.viatra.location/releng/org.eclipse.viatra.target/org.eclipse.viatra.emf-oomphgen.target}</value>
-        </detail>
-        <detail
-            key="includeAllPlatforms">
-          <value>false</value>
-        </detail>
-        <detail
-            key="includeSource">
-          <value>true</value>
-        </detail>
-        <detail
-            key="generateVersions">
-          <value>true</value>
-        </detail>
-      </annotation>
       <requirement
           name="org.eclipse.license.feature.group"/>
       <requirement
@@ -161,9 +145,11 @@
       <requirement
           name="org.eclipse.sdk.feature.group"/>
       <requirement
-          name="org.eclipse.gef4.geometry.feature.group"/>
+          name="org.eclipse.gef4.geometry.feature.group"
+          versionRange="[0.1.0.201406280202,0.1.0.201406280202]"/>
       <requirement
-          name="org.eclipse.gef4.zest.sdk.feature.group"/>
+          name="org.eclipse.gef4.zest.sdk.feature.group"
+          versionRange="[0.1.0.201406280202,0.1.0.201406280202]"/>
       <requirement
           name="com.google.inject"
           versionRange="[3.0.0,4.0.0)"/>
@@ -187,6 +173,8 @@
             url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
         <repository
             url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        <repository
+            url="http://download.eclipse.org/incquery/updates-extra/release"/>
       </repositoryList>
       <repositoryList
           name="indigo"/>
@@ -309,6 +297,60 @@
     <sourceLocator
         rootFolder="${git.clone.viatra.location}"
         locateNestedProjects="true"/>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="Bootstrap">
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateReteRecipeMetamodel.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateNotationMetamodel.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateTraceabilityMetamodel.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateTransformationTraceMetamodel.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GeneratePatternLanguage.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateGeneratorModel.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateIncQueryXcore.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateCepMetamodels.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateVepl.mwe2.launch">
+      <description></description>
+    </setupTask>
   </setupTask>
   <stream name="master"/>
   <logicalProjectContainer

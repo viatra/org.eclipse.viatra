@@ -9,28 +9,28 @@
  * Istvan David - initial API and implementation
  *******************************************************************************/
  
-module org.eclipse.viatra.cep.core.metamodels.generator.generator
+module org.eclipse.viatra.cep.core.metamodels.generator
 
 import org.eclipse.emf.mwe.utils.*
-import org.apache.commons.logging.*
+import org.eclipse.emf.mwe2.ecore.*
 
 var projectName = "org.eclipse.viatra.cep.core.metamodels"
+var genModelPath = "platform:/resource/${projectName}/models/InternalModel.genmodel"
+var directory = "${projectName}/emf-gen"
 
 Workflow {
 	bean = StandaloneSetup {
 		scanClassPath = true
 		platformUri = ".."
-		registerGenModelFile = "platform:/resource/${projectName}/models/InternalModel.genmodel"
-		
+		registerGenModelFile = genModelPath
 	}
 
 	component = DirectoryCleaner {
-		exclude = "keep.txt"
-		directory = "${projectName}/emf-gen"
+		directory = directory
 	}
 	
-	component = org.eclipse.emf.mwe2.ecore.EcoreGenerator {
-        genModel = "platform:/resource/${projectName}/models/InternalModel.genmodel"
-        srcPath = "platform:/resource/${projectName}/emf-gen"
+	component = EcoreGenerator {
+        genModel = genModelPath
+        srcPath = "platform:/resource/${directory}"
 	}
 }
