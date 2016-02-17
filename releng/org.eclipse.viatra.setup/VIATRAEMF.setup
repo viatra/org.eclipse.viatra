@@ -5,22 +5,26 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
     xmlns:jdt="http://www.eclipse.org/oomph/setup/jdt/1.0"
-    xmlns:launching="http://www.eclipse.org/oomph/setup/launching/1.0"
     xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
     xmlns:projects="http://www.eclipse.org/oomph/setup/projects/1.0"
     xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
     xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/launching/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Launching.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
-    name="viatra.emf"
-    label="VIATRA">
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
+    name="viatra"
+    label="VIATRA New">
   <setupTask
       xsi:type="jdt:JRETask"
       version="JavaSE-1.7"
       location="${jre.location-1.7}">
     <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
   </setupTask>
+  <setupTask
+      xsi:type="setup:EclipseIniTask"
+      option="-Doomph.redirection.viatra.setup"
+      value="=http://download.eclipse.org/viatra/setup/VIATRAEMF.setup->${git.clone.viatra.location|uri}/releng/org.eclipse.viatra.setup/VIATRAEMF.setup"
+      vm="true"/>
   <setupTask
       xsi:type="setup:EclipseIniTask"
       option="-Xmx"
@@ -30,13 +34,49 @@
   </setupTask>
   <setupTask
       xsi:type="setup:EclipseIniTask"
-      option="-Doomph.redirection.viatra.setup"
-      value="=http://download.eclipse.org/viatra/setup/VIATRAEMF.setup->${git.clone.viatra.location|uri}/releng/org.eclipse.viatra.setup/VIATRAEMF.setup"
+      option="-XX:MaxPermSize="
+      value="256M"
       vm="true"/>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="EMF-IncQuery Eclipse Preferences">
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.core.resources">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.core.resources/encoding"
+          value="UTF-8"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.core.resources/refresh.enabled"
+          value="true"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="org.eclipse.ui.editors">
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.editors/spacesForTabs"
+          value="true"/>
+      <setupTask
+          xsi:type="setup:PreferenceTask"
+          key="/instance/org.eclipse.ui.editors/tabWidth"
+          value="4"/>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:ResourceCreationTask"
+      excludedTriggers="STARTUP MANUAL"
+      content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;&#xA;&lt;section name=&quot;Workbench&quot;>&#xD;&#xA;&#x9;&lt;section name=&quot;org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart&quot;>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;true&quot; key=&quot;group_libraries&quot;/>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;false&quot; key=&quot;linkWithEditor&quot;/>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;2&quot; key=&quot;layout&quot;/>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;2&quot; key=&quot;rootMode&quot;/>&#xD;&#xA;&#x9;&#x9;&lt;item value=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;packageExplorer configured=&amp;quot;true&amp;quot; group_libraries=&amp;quot;1&amp;quot; layout=&amp;quot;2&amp;quot; linkWithEditor=&amp;quot;0&amp;quot; rootMode=&amp;quot;2&amp;quot; sortWorkingSets=&amp;quot;false&amp;quot; workingSetName=&amp;quot;&amp;quot;&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;localWorkingSetManager&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;workingSet editPageId=&amp;quot;org.eclipse.jdt.internal.ui.OthersWorkingSet&amp;quot; factoryID=&amp;quot;org.eclipse.ui.internal.WorkingSetFactory&amp;quot; id=&amp;quot;1382792884467_1&amp;quot; label=&amp;quot;Other Projects&amp;quot; name=&amp;quot;Other Projects&amp;quot;/&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;/localWorkingSetManager&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;activeWorkingSet workingSetName=&amp;quot;Other Projects&amp;quot;/&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;allWorkingSets workingSetName=&amp;quot;Other Projects&amp;quot;/&amp;gt;&amp;#x0D;&amp;#x0A;&amp;lt;/packageExplorer&amp;gt;&quot; key=&quot;memento&quot;/>&#xD;&#xA;&#x9;&lt;/section>&#xD;&#xA;&lt;/section>&#xD;&#xA;"
+      targetURL="${workspace.location|uri}/.metadata/.plugins/org.eclipse.jdt.ui/dialog_settings.xml"
+      encoding="UTF-8">
+    <description>Initialize JDT's package explorer to show working sets as its root objects</description>
+  </setupTask>
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="Mars"
+      defaultValue="mars"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.p2:P2Task">
@@ -45,12 +85,12 @@
         versionRange="[2.9.0,2.10.0)"/>
     <requirement
         name="de.itemis.xtext.antlr.feature.feature.group"/>
+    <requirement
+        name="org.eclipse.egit.feature.group"/>
     <repository
-        url="http://download.eclipse.org/releases/mars"/>
+        url="http://download.eclipse.org/releases/${eclipse.target.platform}"/>
     <repository
-        url="http://download.eclipse.org/incquery/updates-extra/integration/"/>
-    <repository
-        url="http://download.itemis.com/updates/milestones"/>
+        url="http://download.itemis.com/updates/releases"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -91,7 +131,7 @@
         </detail>
         <detail
             key="includeSource">
-          <value>false</value>
+          <value>true</value>
         </detail>
         <detail
             key="generateVersions">
@@ -99,23 +139,44 @@
         </detail>
       </annotation>
       <requirement
-          name="org.eclipse.viatra.emf.runtime.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.viatra.cep.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.viatra.dse.feature.feature.group"/>
-      <requirement
           name="org.eclipse.license.feature.group"/>
       <requirement
           name="de.itemis.xtext.antlr.feature.feature.group"/>
       <requirement
-          name="org.eclipse.xtext.sdk.feature.group"/>
-      <sourceLocator
-          rootFolder="${git.clone.viatra.location}"/>
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.9.0,2.10.0)"/>
+      <requirement
+          name="org.eclipse.emf.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.modisco.infrastructure.feature.feature.group"
+          versionRange="[0.13.0,0.14.0)"/>
+      <requirement
+          name="org.eclipse.gmf.runtime.notation.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.gmf.runtime.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.graphiti.sdk.feature.feature.group"/>
+      <requirement
+          name="org.eclipse.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.gef4.geometry.feature.group"/>
+      <requirement
+          name="org.eclipse.gef4.zest.sdk.feature.group"/>
+      <requirement
+          name="com.google.inject"
+          versionRange="[3.0.0,4.0.0)"/>
+      <requirement
+          name="com.google.inject.multibindings"
+          versionRange="[3.0.0,4.0.0)"/>
+      <requirement
+          name="org.eclipse.uml2.sdk.feature.group"
+          versionRange="[5.0.0,6.0.0)"/>
       <repositoryList
-          name="Mars">
+          name="mars">
         <repository
-            url="http://download.eclipse.org/incquery/updates-extra/integration/"/>
+            url="http://download.eclipse.org/incquery/updates-extra/release/"/>
         <repository
             url="http://download.eclipse.org/releases/mars"/>
         <repository
@@ -124,72 +185,11 @@
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
             url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
+        <repository
+            url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
       </repositoryList>
       <repositoryList
-          name="Luna">
-        <repository
-            url="http://download.eclipse.org/incquery/updates-extra/release/"/>
-        <repository
-            url="http://download.eclipse.org/releases/luna"/>
-        <repository
-            url="http://download.itemis.com/updates/releases"/>
-        <repository
-            url="http://download.eclipse.org/cbi/updates/license"/>
-      </repositoryList>
-      <repositoryList
-          name="Kepler">
-        <repository
-            url="http://download.eclipse.org/releases/kepler"/>
-        <repository
-            url="http://download.eclipse.org/incquery/updates-extra/release/"/>
-        <repository
-            url="http://download.itemis.com/updates/releases"/>
-        <repository
-            url="http://download.eclipse.org/cbi/updates/license"/>
-        <repository
-            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
-        <repository
-            url="http://download.eclipse.org/modeling/emf/emf/updates/releases/"/>
-      </repositoryList>
-      <repositoryList
-          name="Juno">
-        <repository
-            url="http://download.eclipse.org/releases/juno"/>
-        <repository
-            url="http://download.eclipse.org/incquery/updates-extra/release/"/>
-        <repository
-            url="http://download.itemis.com/updates/releases"/>
-        <repository
-            url="http://download.eclipse.org/cbi/updates/license"/>
-        <repository
-            url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
-      </repositoryList>
-    </targlet>
-    <targlet
-        name="VIATRA Target Platform"
-        activeRepositoryList="${eclipse.target.platform}">
-      <requirement
-          name="org.eclipse.sdk.feature.group"/>
-      <repositoryList
-          name="Mars">
-        <repository
-            url="http://download.eclipse.org/releases/mars"/>
-      </repositoryList>
-      <repositoryList
-          name="Luna">
-        <repository
-            url="http://download.eclipse.org/releases/luna"/>
-      </repositoryList>
-      <repositoryList
-          name="Kepler">
-        <repository
-            url="http://download.eclipse.org/releases/kepler"/>
-      </repositoryList>
-      <repositoryList
-          name="Juno">
-        <repository
-            url="http://download.eclipse.org/releases/juno"/>
-      </repositoryList>
+          name="indigo"/>
     </targlet>
   </setupTask>
   <setupTask
@@ -200,7 +200,7 @@
           xsi:type="predicates:AndPredicate">
         <operand
             xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.emf.runtime.feature"/>
+            project="org.eclipse.viatra.setup"/>
         <operand
             xsi:type="predicates:OrPredicate">
           <operand
@@ -215,7 +215,7 @@
           xsi:type="predicates:AndPredicate">
         <operand
             xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.emf.runtime.feature"/>
+            project="org.eclipse.viatra.setup"/>
         <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*viatra\.query.*"/>
@@ -226,11 +226,11 @@
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.emf.runtime.feature"/>
-        <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*viatra\.cep.*"/>
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.setup"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -239,11 +239,11 @@
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.emf.runtime.feature"/>
-        <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*viatra\.dse.*"/>
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.setup"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -252,11 +252,11 @@
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.emf.runtime.feature"/>
-        <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*feature"/>
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.setup"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -264,9 +264,6 @@
         id="">
       <predicate
           xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.emf.runtime.feature"/>
         <operand
             xsi:type="predicates:OrPredicate">
           <operand
@@ -276,6 +273,9 @@
               xsi:type="predicates:LocationPredicate"
               pattern=".*/setup/.*"/>
         </operand>
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.setup"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -283,11 +283,11 @@
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.emf.runtime.feature"/>
-        <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*viatra\.integration.*"/>
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.setup"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -295,11 +295,11 @@
       <predicate
           xsi:type="predicates:AndPredicate">
         <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.emf.runtime.feature"/>
-        <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*viatra\.addon.*"/>
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.viatra.setup"/>
       </predicate>
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
@@ -307,32 +307,10 @@
   <setupTask
       xsi:type="projects:ProjectsImportTask">
     <sourceLocator
-        rootFolder="${git.clone.viatra.location/tests}"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location/releng}"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location/plugins}"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location/features}"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location/setup}"
+        rootFolder="${git.clone.viatra.location}"
         locateNestedProjects="true"/>
   </setupTask>
-  <stream name="master">
-    <setupTask
-        xsi:type="setup:CompoundTask"
-        name="Generate Language Architecture">
-      <setupTask
-          xsi:type="launching:LaunchTask"
-          id="launch.viatra.generator.vepl"
-          excludedTriggers="STARTUP"
-          launcher="org.eclipse.viatra.setup/VIATRA_Generate_VEPL_Language_Infrastructure.launch"/>
-    </setupTask>
-  </stream>
+  <stream name="master"/>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
       href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']"/>
