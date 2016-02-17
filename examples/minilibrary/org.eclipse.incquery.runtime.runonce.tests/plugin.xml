@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plugin>
-  <extension id="org.eclipse.incquery.runtime.runonce.tests.Eiqlibrary" point="org.eclipse.incquery.runtime.queryspecification">
-    <group group="org.eclipse.incquery.runtime.extensibility.SingletonExtensionFactory:org.eclipse.incquery.runtime.runonce.tests.Eiqlibrary" id="org.eclipse.incquery.runtime.runonce.tests.Eiqlibrary"/>
-  </extension>
-</plugin>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vlibrary:Library xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:vlibrary="http://www.eclipse.org/viatra/examples/library/1.0" address="Test street">
+  <writers books="//@books.1 //@books.0" name="First Author"/>
+  <writers books="//@books.1" name="Second Author"/>
+  <writers books="//@books.3" name="Third Author"/>
+  <writers books="//@books.2" name="Twin One"/>
+  <writers books="//@books.2" name="Twin Two"/>
+  <books title="First Book in Library" pages="30" authors="//@writers.0">
+    <category>SciFi</category>
+    <category>Drama</category>
+  </books>
+  <books title="Second book" pages="42" authors="//@writers.0 //@writers.1">
+    <category>Art</category>
+  </books>
+  <books title="Twin life" authors="//@writers.3 //@writers.4"/>
+  <books title="Other SciFi" pages="150" authors="//@writers.2">
+    <category>SciFi</category>
+    <category>History</category>
+  </books>
+</vlibrary:Library>
