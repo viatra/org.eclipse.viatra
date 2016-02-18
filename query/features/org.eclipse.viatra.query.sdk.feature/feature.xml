@@ -3,16 +3,16 @@
       id="org.eclipse.viatra.query.sdk.feature"
       label="%label"
       version="1.2.0.qualifier"
-      provider-name="The Eclipse EMF-IncQuery Project"
+      provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
    <description>
-      EMF-IncQuery tooling support: editor, code generation, etc.
+      VIATRA Query IDE support: editor, code generation, etc.
    </description>
 
    <url>
-      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
+      <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>
 
    <includes

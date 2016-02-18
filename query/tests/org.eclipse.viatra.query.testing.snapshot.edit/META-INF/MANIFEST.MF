@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: VIATRA Query Snapshots Edit
 Bundle-SymbolicName: org.eclipse.viatra.query.testing.snapshot.edit;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.viatra.query.testing.snapshot.provider.SnapshotEditPlugin$Implementation
-Bundle-Vendor: %providerName
+Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.viatra.query.testing.snapshot.provider

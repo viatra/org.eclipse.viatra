@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.integration.graphiti.feature"
-      label="Graphiti Support for EMF-IncQuery (Incubation)"
+      label="Graphiti Support for VIATRA (Incubation)"
       version="0.12.0.qualifier"
-      provider-name="The Eclipse EMF-IncQuery Project"
+      provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
    <description>
-      EMF-IncQuery Graphiti extensions. Validator and query browser support
+      VIATRA Graphiti extensions. Validation framework and query browser support
 for various Graphiti editors.
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
-   </copyright>
-
    <url>
-      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
+      <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>
 
    <requires>

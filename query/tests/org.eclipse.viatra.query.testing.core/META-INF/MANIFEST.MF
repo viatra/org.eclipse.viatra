@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EMF-IncQuery Testing Core
+Bundle-Name: VIATRA Query Testing Core
 Bundle-SymbolicName: org.eclipse.viatra.query.testing.core;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -22,7 +22,7 @@ Export-Package: org.eclipse.viatra.query.testing.core,
  org.eclipse.viatra.query.testing.core.api,
  org.eclipse.viatra.query.testing.core.base,
  org.eclipse.viatra.query.testing.core.injector
-Bundle-Vendor: The Eclipse EMF-IncQuery Project
+Bundle-Vendor: Eclipse VIATRA Project
 Import-Package: org.apache.log4j;version="1.2.15",
  org.apache.log4j.spi;version="1.2.15",
  org.apache.log4j.varia;version="1.2.15"

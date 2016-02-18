@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA EMF Debug Adapter UI
+Bundle-Name: VIATRA Transformation Debug UI (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.transformation.debug.ui
 Bundle-Version: 0.12.0.qualifier
 Bundle-Vendor: Eclipse VIATRA Project

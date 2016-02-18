@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IncQuery Tooling - User Interface
+Bundle-Name: VIATRA Query IDE - User Interface
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.ui;singleton:=true
 Bundle-Version: 1.2.0.qualifier
-Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Bundle-Vendor: Eclipse VIATRA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,

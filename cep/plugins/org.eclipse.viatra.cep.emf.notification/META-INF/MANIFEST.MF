@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA-CEP EMF Integration
+Bundle-Name: VIATRA-CEP EMF Integration (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.cep.emf.notification;singleton:=true
 Bundle-Version: 0.12.0.qualifier
 Bundle-Vendor: Eclipse VIATRA Project

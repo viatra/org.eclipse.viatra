@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.query.testing.sdk.feature"
-      label="EMF-IncQuery Test Framework"
+      label="VIATRA Query Test Framework"
       version="1.2.0.qualifier"
-      provider-name="The Eclipse EMF-IncQuery Project"
+      provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
    <description url="http://www.example.com/description">
-      EMF-IncQuery test framework components
+      VIATRA Query test framework components
    </description>
 
    <url>
-      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
+      <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>
 
    <requires>

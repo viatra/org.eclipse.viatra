@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA EMF Runtime
+Bundle-Name: VIATRA Transformation Runtime
 Bundle-SymbolicName: org.eclipse.viatra.transformation.runtime.emf
 Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: Eclipse VIATRA Project

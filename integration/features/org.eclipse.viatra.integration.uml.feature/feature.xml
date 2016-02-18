@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.integration.uml.feature"
-      label="UML Support for EMF-IncQuery (Incubation)"
+      label="UML Support for VIATRA (Incubation)"
       version="1.2.0.qualifier"
-      provider-name="Budapest University of Technology and Economics, Fault Tolerant Systems Research Group"
+      provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
@@ -12,7 +12,7 @@
    </description>
 
    <url>
-      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/release/"/>
+      <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>
 
    <requires>

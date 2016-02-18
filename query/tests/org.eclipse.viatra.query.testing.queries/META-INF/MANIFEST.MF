@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Testing Queries
+Bundle-Name: VIATRA Query Testing Queries
 Bundle-SymbolicName: org.eclipse.viatra.query.testing.queries;singleton:=true
 Bundle-Version: 1.2.0.qualifier
-Bundle-Vendor: The Eclipse EMF-IncQuery Project
+Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.query.testing.queries,
  org.eclipse.viatra.query.testing.queries.util
 Require-Bundle: org.eclipse.viatra.addon.querybasedfeatures.runtime,

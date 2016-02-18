@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IncQuery Databinding Runtime Components
+Bundle-Name: VIATRA Data Binding
 Bundle-SymbolicName: org.eclipse.viatra.addon.databinding.runtime;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-ActivationPolicy: lazy
@@ -21,5 +21,5 @@ Export-Package: org.eclipse.viatra.addon.databinding.runtime,
  org.eclipse.viatra.addon.databinding.runtime.observables,
  org.eclipse.viatra.addon.databinding.runtime.util,
  org.eclipse.viatra.addon.databinding.runtime.util.validation
-Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Activator: org.eclipse.viatra.addon.databinding.runtime.IncQueryDatabindingRuntimePlugin

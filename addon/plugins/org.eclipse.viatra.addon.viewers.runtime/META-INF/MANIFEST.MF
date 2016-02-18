@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EMF-IncQuery Viewers Runtime
+Bundle-Name: VIATRA Viewers Runtime (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.addon.viewers.runtime;singleton:=true
 Bundle-Version: 0.12.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin
-Bundle-Vendor: Budapest University of Technology and Economics
+Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Localization: plugin
 Export-Package: org.eclipse.viatra.addon.viewers.runtime,
  org.eclipse.viatra.addon.viewers.runtime.extensions,

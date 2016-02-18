@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Local Search User Interface for EMF-IncQuery (Incubation)
+Bundle-Name: VIATRA Local Search IDE (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.query.tooling.localsearch.ui;singleton:=true
 Bundle-Version: 0.12.0.qualifier
 Require-Bundle: org.eclipse.ui,

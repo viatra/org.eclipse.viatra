@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA DSE framework Pathfinding
+Bundle-Name: VIATRA DSE framework Pathfinding (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.dse.designspace.pathfinding
 Bundle-Version: 0.12.0.qualifier
 Export-Package: org.eclipse.viatra.dse.util.dijkstra

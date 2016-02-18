@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Compiler Test Data
+Bundle-Name: VIATRA CEP Compiler Test Data (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.cep.core.tests.compiler.testdata;singleton:=true
 Bundle-Version: 0.12.0.qualifier
 Export-Package: org.eclipse.viatra.cep.core.compiler.testdata.patterns,

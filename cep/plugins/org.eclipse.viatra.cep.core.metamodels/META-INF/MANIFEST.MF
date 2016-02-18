@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA-CEP Metamodels
+Bundle-Name: VIATRA-CEP Metamodels (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.cep.core.metamodels;singleton:=true
 Bundle-Version: 0.12.0.qualifier
 Bundle-ClassPath: .

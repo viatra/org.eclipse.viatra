@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.addon.querybasedfeatures.runtime.feature"
-      label="EMF-IncQuery Query Based Feature Runtime"
+      label="VIATRA Query Based Feature Runtime"
       version="1.2.0.qualifier"
-      provider-name="The Eclipse EMF-IncQuery Project"
+      provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
    <description>
-      EMF-IncQuery backed derived feature handling feature.
+      VIATRA query based derived feature handling feature.
    </description>
 
    <url>
-      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
+      <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>
 
    <requires>

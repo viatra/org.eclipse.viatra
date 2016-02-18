@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IncQueryXcore Metamodel Editor
+Bundle-Name: VIATRA-Xcore Metamodel Editor (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.integration.xcore.ui;singleton:=true
 Bundle-Version: 0.12.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
@@ -28,4 +28,4 @@ Import-Package: org.eclipse.xtext.xbase.lib,
  org.apache.log4j
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreActivator
-Bundle-Vendor: The Eclipse EMF-IncQuery Project
+Bundle-Vendor: Eclipse VIATRA Project

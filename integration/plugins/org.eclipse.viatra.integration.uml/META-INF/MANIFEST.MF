@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EMF-IncQuery UML Support
+Bundle-Name: UML Integration for VIATRA
 Bundle-SymbolicName: org.eclipse.viatra.integration.uml;singleton:=true
 Bundle-Version: 1.2.0.qualifier
-Bundle-Vendor: Budapest University of Technology and Economics
+Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.integration.uml,
  org.eclipse.viatra.integration.uml.derivedfeatures,
  org.eclipse.viatra.integration.uml.derivedfeatures.util

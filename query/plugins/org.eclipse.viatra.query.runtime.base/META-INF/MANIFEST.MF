@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IncQuery Base Indexer
+Bundle-Name: VIATRA Base Indexer
 Bundle-SymbolicName: org.eclipse.viatra.query.runtime.base;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.viatra.query.runtime.base.IncQueryBasePlugin
@@ -16,4 +16,4 @@ Export-Package: org.eclipse.viatra.query.runtime.base.api,
  org.eclipse.viatra.query.runtime.base.api.filters,
  org.eclipse.viatra.query.runtime.base.comprehension,
  org.eclipse.viatra.query.runtime.base.exception
-Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Bundle-Vendor: Eclipse VIATRA Project

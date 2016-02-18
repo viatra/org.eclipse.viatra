@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA EMF Tracing Adapter
+Bundle-Name: VIATRA Transformation Tracer (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.transformation.tracer;singleton:=true
 Bundle-Version: 0.12.0.qualifier
 Bundle-ClassPath: .

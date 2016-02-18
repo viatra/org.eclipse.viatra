@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EMF-IncQuery Runtime
+Bundle-Name: VIATRA Query Runtime
 Bundle-SymbolicName: org.eclipse.viatra.query.runtime;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.viatra.query.runtime.IncQueryRuntimePlugin
@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.viatra.query.runtime.rete;bundle-version="[1.2.0,1.3
  com.google.guava;bundle-version="10.0.0",
  org.eclipse.emf.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Group
+Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.query.runtime,
  org.eclipse.viatra.query.runtime.api,
  org.eclipse.viatra.query.runtime.api.impl,

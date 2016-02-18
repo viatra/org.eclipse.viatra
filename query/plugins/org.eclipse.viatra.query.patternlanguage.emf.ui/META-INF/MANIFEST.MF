@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EMF-IncQuery Pattern Language UI Contributions
-Bundle-Vendor: Budapest University of Technology and Economics, Fault Tolerant Systems Research Groups
+Bundle-Name: VIATRA EMF Query Language UI Contributions
+Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Version: 1.2.0.qualifier
 Bundle-SymbolicName: org.eclipse.viatra.query.patternlanguage.emf.ui;singleton:=true
 Bundle-ActivationPolicy: lazy

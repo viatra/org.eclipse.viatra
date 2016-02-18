@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.addon.databinding.runtime.feature"
-      label="EMF-IncQuery Databinding Runtime"
+      label="VIATRA Data Binding Integration"
       version="1.2.0.qualifier"
-      provider-name="The Eclipse EMF-IncQuery Project"
+      provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
    <description>
-      Generic JFace Databinding support for EMF-IncQuery result sets.
+      Generic JFace Databinding support for VIATRA Query result sets.
    </description>
 
    <url>
-      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
+      <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>
 
    <requires>

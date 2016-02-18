@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: headlessQueries.incquery
+Bundle-Name: VIATRA Headless Example
 Bundle-SymbolicName: org.eclipse.viatra.query.application.queries;singleton:=true
-Bundle-Version: 0.0.3.qualifier
+Bundle-Version: 1.2.0.qualifier
 Export-Package: org.eclipse.viatra.query.application.queries,
  org.eclipse.viatra.query.application.queries.util
 Require-Bundle: org.eclipse.pde.core,

@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Xcore-IncQuery Reflective Model Editor
+Bundle-Name: VIATRA-Xcore Reflective Model Editor (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.integration.xcore.modeleditor;singleton:=true
 Bundle-Version: 0.12.0.qualifier
 Bundle-Activator: org.eclipse.viatra.integration.xcore.modeleditor.Activator
-Bundle-Vendor: The Eclipse EMF-IncQuery Project
+Bundle-Vendor: Eclipse VIATRA Project
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore.editor;bundle-version="2.10.0",

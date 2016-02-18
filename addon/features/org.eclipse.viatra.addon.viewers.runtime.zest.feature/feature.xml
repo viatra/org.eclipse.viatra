@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
-      label="EMF-IncQuery Viewers Runtime - GEF4 Zest Support (Incubation)"
+      label="VIATRA Viewers Runtime - GEF4 Zest Support (Incubation)"
       version="0.12.0.qualifier"
-      provider-name="Eclipse EMF-IncQuery"
+      provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
    <description url="http://www.example.com/description">
-      EMF-IncQuery Validation framework runtime
+      GEF4 Zest support for VIATRA Viewers framework runtime
    </description>
 
    <url>
-      <update label="EMF-IncQuery" url="http://download.eclipse.org/incquery/updates/milestone/"/>
-      <discovery label="GEF4 Update site" url="http://download.eclipse.org/tools/gef/gef4/updates/integration"/>
+      <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>
 
    <requires>
