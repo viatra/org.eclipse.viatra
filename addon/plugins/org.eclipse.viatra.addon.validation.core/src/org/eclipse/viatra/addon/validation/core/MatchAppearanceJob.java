@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.addon.validation.core.violationkey.ViolationKey;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 
 /**
  * The job is used to process new appearing matches upon constraint violation. It is associated to the rule that is
@@ -52,7 +52,7 @@ public class MatchAppearanceJob implements IMatchProcessor<IPatternMatch> {
                 violation = new Violation();
                 violation.setConstraint(constraint);
                 violation.setKeyObjects(constraint.getSpecification().getKeyObjects(match));
-                violation.setMessage(IncQueryRuntimeHelper.getMessage(match, constraint.getSpecification()
+                violation.setMessage(ViatraQueryRuntimeHelper.getMessage(match, constraint.getSpecification()
                         .getMessageFormat()));
                 constraint.addViolation(key, violation);
 

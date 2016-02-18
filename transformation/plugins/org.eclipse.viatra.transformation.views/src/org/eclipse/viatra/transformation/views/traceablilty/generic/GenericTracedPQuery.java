@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -25,7 +25,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Positi
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.views.traceability.patterns.util.TraceQuerySpecification;
 
 /**
@@ -72,8 +72,8 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
                 try {
                     new PositivePatternCall(body, new FlatTuple(parameter.getParameterVariable(), var_id, var_su, var_trace, var_traceability),
                             TraceQuerySpecification.instance().getInternalQueryRepresentation());
-                } catch (IncQueryException e) {
-                    Logger logger = IncQueryLoggingUtil.getLogger(GenericTracedPQuery.class);
+                } catch (ViatraQueryException e) {
+                    Logger logger = ViatraQueryLoggingUtil.getLogger(GenericTracedPQuery.class);
                     logger.error(e.getMessage());
                 }
             }

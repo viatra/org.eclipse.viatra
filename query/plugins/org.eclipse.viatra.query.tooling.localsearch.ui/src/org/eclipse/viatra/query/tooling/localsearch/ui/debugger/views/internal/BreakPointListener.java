@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.handlers.CreateBreakPointHandler;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
@@ -57,7 +57,7 @@ public class BreakPointListener implements IDoubleClickListener {
 		            new ExecutionEvent(null, eventContextParameters, null, null));
 		}
 		catch (Exception e) {
-		    IncQueryLoggingUtil.getLogger(getClass()).error("Error setting up breakpoint", e);
+		    ViatraQueryLoggingUtil.getLogger(getClass()).error("Error setting up breakpoint", e);
 		}
 		
         

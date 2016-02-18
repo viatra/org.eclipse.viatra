@@ -17,7 +17,7 @@ package org.eclipse.viatra.query.testing.core.injector;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguagePlugin;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.xtext.junit4.GlobalRegistries;
 import org.eclipse.xtext.junit4.GlobalRegistries.GlobalStateMemento;
 import org.eclipse.xtext.junit4.IInjectorProvider;
@@ -47,7 +47,7 @@ public class EMFPatternLanguageInjectorProvider implements IInjectorProvider, IR
 
 	protected Injector internalCreateInjector() {
 	    Injector newInjector = new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
-	    IncQueryLoggingUtil.setExternalLogger(newInjector.getInstance(Logger.class));
+	    ViatraQueryLoggingUtil.setExternalLogger(newInjector.getInstance(Logger.class));
 	    EMFPatternLanguagePlugin.getInstance().addCompoundInjector(newInjector, EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
         return newInjector;
 	}

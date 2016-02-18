@@ -62,7 +62,7 @@ public interface ObservablePatternMatchCollection<M extends IPatternMatch> {
     void setFilter(EventFilter<M> filter);
 
     /**
-     * Initializes the configured observable collection using an IncQuery engine.
+     * Initializes the configured observable collection using an VIATRA Query engine.
      * 
      * @param engine
      */

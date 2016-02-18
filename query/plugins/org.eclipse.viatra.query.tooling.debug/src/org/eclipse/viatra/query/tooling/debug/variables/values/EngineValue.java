@@ -19,9 +19,9 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
-import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugValue;
-import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugVariable;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
+import org.eclipse.viatra.query.tooling.debug.common.ViatraQueryDebugValue;
+import org.eclipse.viatra.query.tooling.debug.common.ViatraQueryDebugVariable;
 import org.eclipse.viatra.query.tooling.debug.variables.NameConstants;
 import org.eclipse.viatra.query.tooling.debug.variables.ValueWrapper;
 
@@ -31,7 +31,7 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.Value;
 
 /**
- * The value of an IncQuery Debug Variable which represents an {@link ViatraQueryEngine} instance. This is the root element of the 
+ * The value of an VIATRA Query Debug Variable which represents an {@link ViatraQueryEngine} instance. This is the root element of the 
  * 'engine - matcher - match - match parameters' content hierarchy. <br>
  * <br>
  * It is crucial, which class name is used for capturing the engine instances, because no subtyping relationship can be
@@ -44,7 +44,7 @@ import com.sun.jdi.Value;
  * 
  */
 @SuppressWarnings("restriction")
-public class EngineValue extends IncQueryDebugValue implements Comparable<EngineValue> {
+public class EngineValue extends ViatraQueryDebugValue implements Comparable<EngineValue> {
 
     private String cachedLabel;
 
@@ -66,7 +66,7 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
                         if (val != null) {
                             ValueWrapper wrappedValue = ValueWrapper.wrap(val, fValue.getThreadReference());
                             ValueWrapper valueFieldValue = wrappedValue.get("value");
-                            IncQueryDebugVariable var = new IncQueryDebugVariable(getJavaDebugTarget());
+                            ViatraQueryDebugVariable var = new ViatraQueryDebugVariable(getJavaDebugTarget());
                             MatcherValue value = new MatcherValue(debugTarget, valueFieldValue);
                             var.setValue(value);
                             fVariables.add(var);
@@ -75,7 +75,7 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
                 }
                 return fVariables;
             } catch (Exception e) {
-                IncQueryLoggingUtil.getLogger(EngineValue.class).error("Couldn't retrieve the list of debug variables!", e);
+                ViatraQueryLoggingUtil.getLogger(EngineValue.class).error("Couldn't retrieve the list of debug variables!", e);
                 return Collections.emptyList();
             }
         }
@@ -136,7 +136,7 @@ public class EngineValue extends IncQueryDebugValue implements Comparable<Engine
 
                 cachedLabel = sb.toString();
             } catch (Exception e) {
-                IncQueryLoggingUtil.getLogger(EngineValue.class).error("Label initialization has failed!", e);
+                ViatraQueryLoggingUtil.getLogger(EngineValue.class).error("Label initialization has failed!", e);
             }
         }
         return cachedLabel;

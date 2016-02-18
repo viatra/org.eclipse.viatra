@@ -17,7 +17,7 @@ import java.util.Set
 import org.apache.log4j.Logger
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.viatra.query.testing.queries.UnexpectedMatchRecordMatcher
-import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 
@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 
 /**
- * Primitive methods for executing a functional test for EMF-IncQuery.
+ * Primitive methods for executing a functional test for VIATRA Queries.
  */
 class TestExecutor {
 
@@ -76,8 +76,8 @@ class TestExecutor {
 
 	/**
 	 * Compares the match set of a given matcher with the given match record
-	 *  using EMF-IncQuery as a compare tool.
-	 * Therefore the comparison depends on correct EMF-IncQuery query evaluation
+	 *  using VIATRA Query as a compare tool.
+	 * Therefore the comparison depends on correct VIATRA Query query evaluation
 	 *  (for a given limited pattern language feature set).
 	 */
 	def compareResultSetsAsRecords(ViatraQueryMatcher matcher, MatchSetRecord expected){
@@ -89,11 +89,11 @@ class TestExecutor {
 			return diff
 		}
 
-		if(!(expected.eContainer instanceof IncQuerySnapshot)){
+		if(!(expected.eContainer instanceof QuerySnapshot)){
 			diff.add(MATCHSETRECORD_NOT_IN_SNAPSHOT)
 			return diff
 		}
-		val snapshot = expected.eContainer as IncQuerySnapshot
+		val snapshot = expected.eContainer as QuerySnapshot
 
 		// 2. Initialize matcher for comparison
 		val engine = ViatraQueryEngine::on(snapshot.EMFRootForSnapshot)
@@ -118,7 +118,7 @@ class TestExecutor {
 	/**
 	 * Compares the match set of a given matcher with the given match record using the
 	 *  records as partial matches on the matcher.
-	 * Therefore the comparison does not depend on correct EMF-IncQuery query evaluation.
+	 * Therefore the comparison does not depend on correct VIATRA Query query evaluation.
 	 */
 	def compareResultSets(ViatraQueryMatcher matcher, MatchSetRecord expected){
 		val diff = newHashSet
@@ -177,7 +177,7 @@ class TestExecutor {
 	 *  based on the input specification of the snapshot.
 	 * If any of the matchers return incorrect results, the assert fails.
 	 */
-	def assertMatchResults(PatternModel patternModel, IncQuerySnapshot snapshot){
+	def assertMatchResults(PatternModel patternModel, QuerySnapshot snapshot){
 		val diff = newHashSet
 		val input = snapshot.EMFRootForSnapshot
 		val engine = ViatraQueryEngine::on(input);

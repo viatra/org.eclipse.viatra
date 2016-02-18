@@ -11,7 +11,7 @@
 package org.eclipse.viatra.transformation.runtime.emf.changemonitor;
 
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 public abstract class IChangeMonitor {
 
@@ -26,9 +26,9 @@ public abstract class IChangeMonitor {
      *            the deployment model
      * @param engine
      *            engine associated with the
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      */
-    public abstract void startMonitoring() throws IncQueryException;
+    public abstract void startMonitoring() throws ViatraQueryException;
 
     /**
      * Creates a checkpoint which means: <li>Model changes since the last checkpont are saved</li> <li>The model changes

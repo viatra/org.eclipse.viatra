@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.viatra.query.patternlanguage" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.viatra.query.patternlanguage" id="purewhitelist" name="EMF-IncQuery @Pure Whitelist extension"/>
+         <meta.schema plugin="org.eclipse.viatra.query.patternlanguage" id="purewhitelist" name="VIATRA Query @Pure Whitelist extension"/>
       </appInfo>
       <documentation>
          This expression point is used by the expression validator to check for methods, classes and packages that are whitelisted (indicating that they provide pure functions). It is used in conjunction with the @Pure annotation in the validation of xbase expressions. Every method called in the expression needs to have the @Pure annotation, or alternatively it should be registered via this expression point.

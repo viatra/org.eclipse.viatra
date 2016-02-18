@@ -6,7 +6,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.viatra.addon.viewers.runtime.IncQueryViewerSupport;
+import org.eclipse.viatra.addon.viewers.runtime.ViatraViewerSupport;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 
 public class TreeViewerSandboxTab extends AbstractViewerSandboxTab {
@@ -20,7 +20,7 @@ public class TreeViewerSandboxTab extends AbstractViewerSandboxTab {
 
     @Override
     public void bindState(ViewerState state) {
-        IncQueryViewerSupport.bind(viewer, state);//, filter);
+        ViatraViewerSupport.bind(viewer, state);//, filter);
     }
 
     @Override

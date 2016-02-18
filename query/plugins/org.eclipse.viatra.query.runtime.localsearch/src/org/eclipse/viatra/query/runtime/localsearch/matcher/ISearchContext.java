@@ -19,9 +19,9 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
-import org.eclipse.viatra.query.runtime.base.api.IncQueryBaseFactory;
+import org.eclipse.viatra.query.runtime.base.api.ViatraBaseFactory;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
+import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.emf.EMFBaseIndexWrapper;
 
 import com.google.common.collect.Maps;
@@ -70,8 +70,8 @@ public interface ISearchContext{
             this.navigationHelper = ((EMFBaseIndexWrapper)baseIndex).getNavigationHelper();
         }
         
-        public SearchContext(ResourceSet set, Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) throws IncQueryBaseException {
-            navigationHelper = IncQueryBaseFactory.getInstance().createNavigationHelper(set, false, logger);
+        public SearchContext(ResourceSet set, Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) throws ViatraBaseException {
+            navigationHelper = ViatraBaseFactory.getInstance().createNavigationHelper(set, false, logger);
             navigationHelper.registerObservedTypes(classes, dataTypes, features);
         }
         

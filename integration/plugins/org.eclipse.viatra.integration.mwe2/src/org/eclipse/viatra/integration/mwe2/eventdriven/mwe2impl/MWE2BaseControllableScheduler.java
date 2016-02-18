@@ -19,7 +19,7 @@ import org.eclipse.viatra.transformation.evm.api.Scheduler;
  * An EVM scheduler that enables the workflow to explicitly control the execution of a fine-grained event-driven
  * transformation. As it implements the IController interface, its usage is similar to the MWE2ControllableExecutor.
  * Internally, however, this solution uses a custom Scheduler object instead of an Executor. Using a custom Scheduler
- * means, that the original IncQuery EVM scheduler will be overridden.
+ * means, that the original VIATRA EVM scheduler will be overridden.
  * 
  * @author Peter Lunk
  *

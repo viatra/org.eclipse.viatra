@@ -15,9 +15,9 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.viatra.addon.databinding.runtime.api.IncQueryObservables;
+import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
 
@@ -41,14 +41,14 @@ public class PatternMatchContent extends BaseContent<PatternMatcherContent> {
         this.message = DisplayUtil.getMessage(match);
         this.listener = new ParameterValueChangedListener();
         if (message != null) {
-            setText(IncQueryRuntimeHelper.getMessage(match, message));
+            setText(ViatraQueryRuntimeHelper.getMessage(match, message));
         } else {
             this.text = match.toString();
         }
     }
 
     protected void initialize() {
-        affectedValues = IncQueryObservables.observeFeatures(match, listener, message);
+        affectedValues = ViatraObservables.observeFeatures(match, listener, message);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class PatternMatchContent extends BaseContent<PatternMatcherContent> {
     private class ParameterValueChangedListener implements IValueChangeListener {
         @Override
         public void handleValueChange(ValueChangeEvent event) {
-            setText(IncQueryRuntimeHelper.getMessage(match, message));
+            setText(ViatraQueryRuntimeHelper.getMessage(match, message));
         }
     }
 

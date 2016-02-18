@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.viatra.query.runtime.base" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.viatra.query.runtime.base" id="wellbehaving.derived.feature" name="EMF-IncQuery Well-behaving derived feature registration"/>
+         <meta.schema plugin="org.eclipse.viatra.query.runtime.base" id="wellbehaving.derived.feature" name="VIATRA Well-behaving derived feature registration"/>
       </appinfo>
       <documentation>
          [Enter description of this extension point.]
@@ -55,7 +55,7 @@
  &lt;li&gt; if getter is invoked at time A, and then later at time B, the delta between the two results is equivalent to the aggregate of all notifications issued inbetween&lt;/li&gt;
  &lt;li&gt; (a consequence of point 2, but deserves special mention) remove notifications are only issued for settings that were valid before the notification, and add notifications are only issued if the setting was not valid before. Same for set/unset.  &lt;/li&gt;
  &lt;li&gt; change notification are not allowed to happen as a consequence of read-only model access&lt;/li&gt;
- &lt;li&gt; in case of query-based derived features, notifications are permitted as a consequence of changing match sets of EMF-Incquery matchers, but they may only be issued when the matcher engine is in a consistent state; so e.g. no notification from within a IMatchUpdateListener.&lt;/li&gt;
+ &lt;li&gt; in case of query-based derived features, notifications are permitted as a consequence of changing match sets of VIATRA Query matchers, but they may only be issued when the matcher engine is in a consistent state; so e.g. no notification from within a IMatchUpdateListener.&lt;/li&gt;
   &lt;/ol&gt;
  
  Query-based derived features are guaranteed to fulfill these constraints.

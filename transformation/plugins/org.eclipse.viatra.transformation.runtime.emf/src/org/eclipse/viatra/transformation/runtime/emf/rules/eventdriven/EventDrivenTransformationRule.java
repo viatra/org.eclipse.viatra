@@ -23,7 +23,7 @@ import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Jobs;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.runtime.emf.rules.ITransformationRule;
 
 import com.google.common.collect.Multimap;
@@ -37,13 +37,13 @@ public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher 
 	private EventFilter<? super Match> filter;
 
 	public EventDrivenTransformationRule(String name, IQuerySpecification<Matcher> precondition,
-			Multimap<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
+			Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
 			EventFilter<? super Match> filter) {
 		this.name = name;
 		Set<Job<Match>> jobs = Sets.newHashSet();
 
-		for (Entry<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entries()) {
-			IncQueryActivationStateEnum state = stateAction.getKey();
+		for (Entry<CRUDActivationStateEnum, IMatchProcessor<Match>> stateAction : stateActions.entries()) {
+			CRUDActivationStateEnum state = stateAction.getKey();
 			IMatchProcessor<Match> action = stateAction.getValue();
 
 			jobs.add(Jobs.newStatelessJob(state, action));

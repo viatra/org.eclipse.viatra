@@ -39,11 +39,11 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * The IncrementalGraphHasher is an incremental version of the GraphHash general graph based hasher. It listens to the
- * IncQuery change events via a LightweightFeatureChangeListener
+ * VIATRA Query change events via a LightweightFeatureChangeListener
  * 
  * @author Foldenyi Miklos
  * 
@@ -89,7 +89,7 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
     }
 
     public IncrementalGraphHasher(Collection<EClass> classes,
-            Collection<EStructuralFeature> features) throws IncQueryException {
+            Collection<EStructuralFeature> features) throws ViatraQueryException {
         this.classes = classes;
         logger.debug("Coder created");
 
@@ -120,9 +120,9 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
             for (EObject object : getAllObjects()) {
                 instanceInserted(null, object);
             }
-        } catch (IncQueryException e) {
-            logger.error("Failed to create IncQuery engine", e);
-            throw new DSEException("Failed to create IncQuery engine", e);
+        } catch (ViatraQueryException e) {
+            logger.error("Failed to create ViatraQuery engine", e);
+            throw new DSEException("Failed to create ViatraQuery engine", e);
         }
     }
     
@@ -314,7 +314,7 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
         addNewModelObject(context.getEVertex(instance));
         try {
         	EMFScope.extractUnderlyingEMFIndex(queryEngine).addLightweightEObjectObserver(observer, instance);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             throw new DSEException("Failed to create EObjectObserver.", e);
         }
     }
@@ -332,7 +332,7 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
         context.forgetEVertex(instance);
         try {
             EMFScope.extractUnderlyingEMFIndex(queryEngine).removeLightweightEObjectObserver(observer, instance);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             throw new DSEException("Failed to remove EObjectObserver.", e);
         }
     }

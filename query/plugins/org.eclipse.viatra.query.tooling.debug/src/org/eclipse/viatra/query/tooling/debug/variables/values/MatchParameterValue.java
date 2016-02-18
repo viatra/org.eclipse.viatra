@@ -24,8 +24,8 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.jdt.internal.debug.core.model.JDIFieldVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIValue;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
-import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugValue;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
+import org.eclipse.viatra.query.tooling.debug.common.ViatraQueryDebugValue;
 import org.eclipse.viatra.query.tooling.debug.variables.ValueWrapper;
 
 import com.sun.jdi.ArrayReference;
@@ -35,14 +35,14 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 
 /**
- * The value of an IncQuery Debug Variable which represents a match parameter. The children variables are created by
+ * The value of an VIATRA Query Debug Variable which represents a match parameter. The children variables are created by
  * the original {@link JDIValue#getVariables()} logic.
  * 
  * @author Tamas Szabo (itemis AG)
  *
  */
 @SuppressWarnings("restriction")
-public class MatchParameterValue extends IncQueryDebugValue {
+public class MatchParameterValue extends ViatraQueryDebugValue {
 
     public MatchParameterValue(JDIDebugTarget debugTarget, ValueWrapper value, String... additionalData) {
         super(debugTarget, value, additionalData);
@@ -72,7 +72,7 @@ public class MatchParameterValue extends IncQueryDebugValue {
                     ReferenceType refType = ((ObjectReference) fValue.getValue()).referenceType();
                     fields = refType.allFields();
                 } catch (ObjectCollectedException e) {
-                    IncQueryLoggingUtil.getLogger(MatchParameterValue.class).error("Couldn't retrieve the list of debug variables!", e);
+                    ViatraQueryLoggingUtil.getLogger(MatchParameterValue.class).error("Couldn't retrieve the list of debug variables!", e);
                     return Collections.emptyList();
                 } catch (RuntimeException e) {
                     targetRequestFailed(MessageFormat.format(
@@ -80,7 +80,7 @@ public class MatchParameterValue extends IncQueryDebugValue {
                             e);
                     // execution will not reach this line, as
                     // #targetRequestFailed will thrown an exception
-                    IncQueryLoggingUtil.getLogger(MatchParameterValue.class).error("Couldn't retrieve the list of debug variables!", e);
+                    ViatraQueryLoggingUtil.getLogger(MatchParameterValue.class).error("Couldn't retrieve the list of debug variables!", e);
                     return Collections.emptyList();
                 }
                 Iterator<Field> list = fields.iterator();

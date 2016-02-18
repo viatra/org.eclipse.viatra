@@ -12,7 +12,7 @@ package org.eclipse.viatra.query.patternlanguage.emf;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.inject.Injector;
 
@@ -28,7 +28,7 @@ public class EMFPatternLanguageStandaloneSetup extends EMFPatternLanguageStandal
     @Override
     public void register(Injector injector) {
         super.register(injector);
-        IncQueryLoggingUtil.setExternalLogger(injector.getInstance(Logger.class));
+        ViatraQueryLoggingUtil.setExternalLogger(injector.getInstance(Logger.class));
         XtextInjectorProvider.INSTANCE.setInjector(injector);
     }
     

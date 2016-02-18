@@ -23,11 +23,11 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
+import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.specific.ExecutionSchemas;
 import org.eclipse.viatra.transformation.evm.specific.Schedulers;
@@ -55,16 +55,16 @@ public class ViewModelManager {
     /**
      * Initialize the manager.
      * 
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      * @throws QueryInitializationException 
-     * @throws IncQueryBaseException 
+     * @throws ViatraBaseException 
      */
-    public void initialize() throws IncQueryException, QueryInitializationException, IncQueryBaseException {
+    public void initialize() throws ViatraQueryException, QueryInitializationException, ViatraBaseException {
 
         prepareBaseNotifier();
         traceability.setId(traceabilityId);
 
-        executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine,
+        executionSchema = ExecutionSchemas.createViatraQueryExecutionSchema(engine,
                 Schedulers.getQueryEngineSchedulerFactory(engine));
         
         for (ViewModelRule rule : rules) {
@@ -82,10 +82,10 @@ public class ViewModelManager {
 
     /**
      * Prepare the base notifier. Sets the ResourceSet and adds the traceability Resource.
-     * @throws IncQueryBaseException 
-     * @throws IncQueryException 
+     * @throws ViatraBaseException 
+     * @throws ViatraQueryException 
      */
-    private void prepareBaseNotifier() throws IncQueryException, IncQueryBaseException {
+    private void prepareBaseNotifier() throws ViatraQueryException, ViatraBaseException {
 
         Collection<? extends Notifier> notifiers = getNotifiers();
         Resource resource = null;
@@ -126,7 +126,7 @@ public class ViewModelManager {
         return engine;
     }
 
-    private Resource addTraceabilityResource() throws IncQueryException, IncQueryBaseException {
+    private Resource addTraceabilityResource() throws ViatraQueryException, ViatraBaseException {
     	ResourceSet resourceSet = new ResourceSetImpl();
     	Resource resource = resourceSet.createResource(URI.createURI(getTraceabilityResourceId()));
     	NavigationHelper helper = EMFScope.extractUnderlyingEMFIndex(engine);
@@ -137,7 +137,7 @@ public class ViewModelManager {
     
     public void setEngine(ViatraQueryEngine engine) {
         if (!(engine.getScope() instanceof EMFScope)) {
-            IncQueryLoggingUtil.getLogger(ViewModelManager.class).error(
+            ViatraQueryLoggingUtil.getLogger(ViewModelManager.class).error(
                     "Only EMFScope is supported currently for ViatraQueryEngine");
             return;
         }

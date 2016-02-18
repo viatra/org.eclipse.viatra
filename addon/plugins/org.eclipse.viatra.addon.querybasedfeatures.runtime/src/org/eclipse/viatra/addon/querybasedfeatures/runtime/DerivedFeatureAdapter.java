@@ -32,7 +32,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * Adapter that turns derived features that recalculate their values on each getter call
@@ -53,7 +53,7 @@ public class DerivedFeatureAdapter extends AdapterImpl {
     private Object oldValue;
     private EClassifier type;
     private EMFModelComprehension comprehension;
-    private Logger logger = IncQueryLoggingUtil.getLogger(DerivedFeatureAdapter.class);
+    private Logger logger = ViatraQueryLoggingUtil.getLogger(DerivedFeatureAdapter.class);
 
     private final List<EStructuralFeature> localFeatures = new ArrayList<EStructuralFeature>();
     private final List<DependentFeaturePath> featurePaths = new ArrayList<DerivedFeatureAdapter.DependentFeaturePath>();

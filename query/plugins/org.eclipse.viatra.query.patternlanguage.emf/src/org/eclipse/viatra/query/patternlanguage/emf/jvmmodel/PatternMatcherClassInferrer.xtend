@@ -17,12 +17,10 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
-import org.eclipse.viatra.query.runtime.exception.IncQueryException
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmGenericType
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.apache.log4j.Logger
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import java.util.HashSet
 import java.util.Set
@@ -36,9 +34,11 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 
 /**
- * {@link IncQueryMatcher} implementation inferrer.
+ * {@link ViatraQueryMatcher} implementation inferrer.
  *
  * @author Mark Czotter
  */
@@ -66,7 +66,7 @@ class PatternMatcherClassInferrer {
 			visibility = JvmVisibility::PUBLIC
 			static = true
 			documentation = pattern.javadocQuerySpecificationMethod.toString
-			exceptions += typeRef(typeof(IncQueryException))
+			exceptions += typeRef(typeof(ViatraQueryException))
 			body = '''
 					return «specificationClass.typeRef».instance();
 			'''
@@ -88,7 +88,7 @@ class PatternMatcherClassInferrer {
    			static = true
    			final = true
    			initializer = '''
-   				«IncQueryLoggingUtil».getLogger(«pattern.matcherClassName».class)
+   				«ViatraQueryLoggingUtil».getLogger(«pattern.matcherClassName».class)
    			'''
    		]
    	}
@@ -103,7 +103,7 @@ class PatternMatcherClassInferrer {
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherStaticOnEngine.toString
 			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
-			exceptions += typeRef(typeof (IncQueryException))
+			exceptions += typeRef(typeof (ViatraQueryException))
 			body = '''
 				// check if matcher already exists
 				«matcherClass.simpleName» matcher = engine.getExistingMatcher(querySpecification());
@@ -128,7 +128,7 @@ class PatternMatcherClassInferrer {
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherConstructorNotifier.toString
 			parameters += pattern.toParameter("emfRoot", typeRef(typeof (Notifier)))
-			exceptions += typeRef(typeof (IncQueryException))
+			exceptions += typeRef(typeof (ViatraQueryException))
 			body = '''this(«ViatraQueryEngine».on(emfRoot));'''
 		]
 
@@ -138,7 +138,7 @@ class PatternMatcherClassInferrer {
 			visibility = JvmVisibility::PUBLIC
 			documentation = pattern.javadocMatcherConstructorEngine.toString
 			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
-			exceptions += typeRef(typeof (IncQueryException))
+			exceptions += typeRef(typeof (ViatraQueryException))
 			body = '''super(engine, querySpecification());'''
 		]
    	}

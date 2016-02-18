@@ -30,7 +30,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -46,21 +46,21 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
     private IWorkspaceRoot root;
 
     @Override
-    public ClassLoader getClassLoader(Pattern pattern) throws IncQueryException {
+    public ClassLoader getClassLoader(Pattern pattern) throws ViatraQueryException {
         try {
             IFile file = getIFile(pattern);
             ClassLoader l;
             if (file != null && file.exists()) {
                 l = getClassLoader(file);
                 if (l == null) {
-                    throw new IncQueryException(String.format("No classloader found for pattern %s.", CorePatternLanguageHelper.getFullyQualifiedName(pattern)), "No classloader found.");
+                    throw new ViatraQueryException(String.format("No classloader found for pattern %s.", CorePatternLanguageHelper.getFullyQualifiedName(pattern)), "No classloader found.");
                 }
             } else {
                 l = super.getClassLoader(pattern);
             }
             return l;
         } catch (Exception e) {
-            throw new IncQueryException(String.format("Cannot initialize classloader for pattern %s because %s",
+            throw new ViatraQueryException(String.format("Cannot initialize classloader for pattern %s because %s",
                     CorePatternLanguageHelper.getFullyQualifiedName(pattern), e.getMessage()),
                     "Cannot initialize classloader", e);
         }

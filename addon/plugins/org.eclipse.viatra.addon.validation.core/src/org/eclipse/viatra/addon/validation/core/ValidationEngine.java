@@ -31,7 +31,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -41,7 +41,7 @@ import org.eclipse.viatra.transformation.evm.specific.Jobs;
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.Schedulers;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -82,7 +82,7 @@ public class ValidationEngine implements IValidationEngine {
         this.constraintMap = new HashMap<IConstraintSpecification, Constraint>();
         this.listeners = new HashSet<ValidationEngineListener>();
         ISchedulerFactory schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(queryEngine);
-        this.executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(queryEngine, schedulerFactory);
+        this.executionSchema = ExecutionSchemas.createViatraQueryExecutionSchema(queryEngine, schedulerFactory);
     }
     
     /**
@@ -106,8 +106,8 @@ public class ValidationEngine implements IValidationEngine {
         try {
             this.queryEngine = ViatraQueryEngine.on(new EMFScope(notifier));
             ISchedulerFactory schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(queryEngine);
-            this.executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(queryEngine, schedulerFactory);
-        } catch (IncQueryException e) {
+            this.executionSchema = ExecutionSchemas.createViatraQueryExecutionSchema(queryEngine, schedulerFactory);
+        } catch (ViatraQueryException e) {
             logger.error(String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
         }
     }
@@ -154,10 +154,10 @@ public class ValidationEngine implements IValidationEngine {
     @SuppressWarnings("unchecked")
     protected boolean addRuleSpecificationToExecutionSchema(Constraint constraint) {
         Set<Job<IPatternMatch>> jobs = ImmutableSet.of(Jobs.newErrorLoggingJob(Jobs.newStatelessJob(
-                IncQueryActivationStateEnum.APPEARED, new MatchAppearanceJob(constraint, logger))), Jobs
-                .newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED,
+                CRUDActivationStateEnum.CREATED, new MatchAppearanceJob(constraint, logger))), Jobs
+                .newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED,
                         new MatchDisappearanceJob(constraint, logger))), Jobs.newErrorLoggingJob(Jobs.newStatelessJob(
-                IncQueryActivationStateEnum.UPDATED, new MatchUpdateJob(constraint, logger))));
+                CRUDActivationStateEnum.UPDATED, new MatchUpdateJob(constraint, logger))));
         IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) constraint
                 .getSpecification().getQuerySpecification();
         RuleSpecification<IPatternMatch> rule = Rules.newMatcherRuleSpecification(querySpecification,

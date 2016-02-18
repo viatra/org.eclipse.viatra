@@ -68,7 +68,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
@@ -209,7 +209,7 @@ public class CustomizedEcoreEditor extends EcoreEditor {
                 		IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> spec;
 						try {
 							spec = builder.getOrCreateSpecification(pattern);
-						} catch (IncQueryException e) {
+						} catch (ViatraQueryException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 							return;

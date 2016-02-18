@@ -28,9 +28,9 @@ import com.google.common.base.Preconditions;
  * @author Andras Szabolcs Nagy
  * 
  * @param <Match>
- *            An IncQuery pattern match - left hand side of the rule
+ *            An VIATRA Query pattern match - left hand side of the rule
  * @param <Matcher>
- *            An IncQuery pattern matcher - left hand side of the rule
+ *            An VIATRA Query pattern matcher - left hand side of the rule
  * 
  */
 public class DSETransformationRule<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> extends

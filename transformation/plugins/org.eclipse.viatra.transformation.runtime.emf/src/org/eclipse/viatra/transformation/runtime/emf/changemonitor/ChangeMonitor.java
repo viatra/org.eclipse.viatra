@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -31,7 +31,7 @@ import org.eclipse.viatra.transformation.evm.specific.Jobs;
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.Schedulers;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.evm.specific.job.EnableJob;
 import org.eclipse.viatra.transformation.evm.specific.job.StatelessJob;
 import org.eclipse.viatra.transformation.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
@@ -41,11 +41,11 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 /**
- * Class responsible for monitoring changes in a specified model. It uses IncQuery QuerySpecification objects or EMV
+ * Class responsible for monitoring changes in a specified model. It uses {@link IQuerySpecification} objects or EMV
  * Rules defined by the user to achieve this.
  * 
- * Based on the instance model to be monitored, an IncQuery Engine should be initialized and handed over to this class.
- * An ExecutionSchema is initialized based on the IncQuery Engine, then the rules defined by the user are registered in
+ * Based on the instance model to be monitored, an VIATRA Query Engine should be initialized and handed over to this class.
+ * An ExecutionSchema is initialized based on the VIATRA Query Engine, then the rules defined by the user are registered in
  * it.
  * 
  * By default the monitor accumulates the changes of the defined QuerySpecifications, this behavior, however can be
@@ -70,8 +70,8 @@ public class ChangeMonitor extends IChangeMonitor {
     private ExecutionSchema executionSchema;
 
     /**
-     * Constructor that creates a new ChangeMonitor instance based on the specified IncQuery engine. Note that to
-     * monitor changes of a specific model instance, an IncQuery should be initialized on said model instance.
+     * Constructor that creates a new ChangeMonitor instance based on the specified ViatraQuery engine. Note that to
+     * monitor changes of a specific model instance, an VIATRA Query should be initialized on said model instance.
      * 
      * @param engine
      *            The ViatraQueryEngine the monitor is based on.
@@ -91,7 +91,7 @@ public class ChangeMonitor extends IChangeMonitor {
         started = false;
 
         UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(engine);
-        executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine, schedulerFactory);
+        executionSchema = ExecutionSchemas.createViatraQueryExecutionSchema(engine, schedulerFactory);
 
     }
 
@@ -163,7 +163,7 @@ public class ChangeMonitor extends IChangeMonitor {
 
     /**
      * Creates a new checkpoint and returns the changes in the model so far. The ChangeDelta object returned contains
-     * objects that have APPEARED, DISAPPEARED or have been UPDATED.
+     * objects that have CREATED, DELETED or have been UPDATED.
      * 
      * If this method is used, the history accumulated is erased, as a new checkpoint is created.
      * 
@@ -195,7 +195,7 @@ public class ChangeMonitor extends IChangeMonitor {
      * 
      */
     @Override
-    public void startMonitoring() throws IncQueryException {
+    public void startMonitoring() throws ViatraQueryException {
 
         for (RuleSpecification<IPatternMatch> rule : rules) {
             executionSchema.addRule(rule);
@@ -249,11 +249,11 @@ public class ChangeMonitor extends IChangeMonitor {
 
         // Create Jobs
         Set<Job<IPatternMatch>> jobs = Sets.newHashSet();
-        Job<IPatternMatch> appear = new StatelessJob<IPatternMatch>(IncQueryActivationStateEnum.APPEARED,
+        Job<IPatternMatch> appear = new StatelessJob<IPatternMatch>(CRUDActivationStateEnum.CREATED,
                 appearProcessor);
-        Job<IPatternMatch> disappear = new StatelessJob<IPatternMatch>(IncQueryActivationStateEnum.DISAPPEARED,
+        Job<IPatternMatch> disappear = new StatelessJob<IPatternMatch>(CRUDActivationStateEnum.DELETED,
                 disappearProcessor);
-        Job<IPatternMatch> update = new StatelessJob<IPatternMatch>(IncQueryActivationStateEnum.UPDATED,
+        Job<IPatternMatch> update = new StatelessJob<IPatternMatch>(CRUDActivationStateEnum.UPDATED,
                 updateProcessor);
 
         jobs.add(Jobs.newEnableJob(appear));

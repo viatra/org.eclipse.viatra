@@ -13,7 +13,7 @@ package org.eclipse.viatra.query.runtime.api;
 
 
 /**
- * Listener interface for model changes affecting different levels of the IncQuery architecture.
+ * Listener interface for model changes affecting different levels of the VIATRA Query architecture.
  * 
  * @author Abel Hegedus
  *

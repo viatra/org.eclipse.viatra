@@ -14,7 +14,7 @@ import org.eclipse.emf.common.notify.Notifier;
 
 /**
  * 
- * Stores a collection of {@link Notifier} instances that need not to be indexed by IncQuery Base.
+ * Stores a collection of {@link Notifier} instances that need not to be indexed by VIATRA Base.
  * 
  * @author Zoltan Ujhelyi
  * 

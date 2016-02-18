@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
@@ -198,13 +198,13 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
             return newLocalSearchMatcher(parameters);
         } catch (QueryProcessingException e) {
             throw new RuntimeException(e);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) throws IncQueryException,
+    public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) throws ViatraQueryException,
             QueryProcessingException {
         // XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
         ViatraQueryEngine engine = (ViatraQueryEngine) hintProvider;

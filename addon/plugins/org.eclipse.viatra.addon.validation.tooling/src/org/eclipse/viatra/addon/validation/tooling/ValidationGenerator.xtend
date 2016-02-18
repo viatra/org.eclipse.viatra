@@ -47,7 +47,7 @@ implements IGenerationFragment {
 	@Inject extension ExtensionGenerator exGen
 
 	private static String VALIDATIONEXTENSION_PREFIX = "validation.constraint."
-	private static String UI_VALIDATION_MENUS_PREFIX = "generated.incquery.validation.menu."
+	private static String UI_VALIDATION_MENUS_PREFIX = "generated.viatra.addon.validation.menu."
 	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra.addon.validation.runtime.constraint"
 	private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 	private static String annotationLiteral = "Constraint"
@@ -178,8 +178,8 @@ implements IGenerationFragment {
 	def getElementOfConstraintAnnotation(Annotation annotation, String elementName) {
     	val ap = CorePatternLanguageHelper::getFirstAnnotationParameter(annotation, elementName)
     	return switch(ap) {
-    		StringValue case true: ap.value
-    		VariableValue case true: ap.value.^var
+    		StringValue : ap.value
+    		VariableValue : ap.value.^var
     		default: null
     	}
   	}
@@ -215,7 +215,7 @@ implements IGenerationFragment {
         import org.eclipse.viatra.query.runtime.api.IPatternMatch;
         import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
         import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-        import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+        import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
         
         import «pattern.utilPackageName + "." + pattern.querySpecificationClassName»;
         
@@ -223,7 +223,7 @@ implements IGenerationFragment {
         
             private «pattern.querySpecificationClassName» querySpecification;
         
-            public «className»() throws IncQueryException {
+            public «className»() throws ViatraQueryException {
                 querySpecification = «pattern.querySpecificationClassName».instance();
             }
         

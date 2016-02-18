@@ -11,21 +11,21 @@
 package org.eclipse.viatra.query.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
-import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraEngineImpl;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 
 /**
- * Advanced interface to an IncQuery incremental evaluation engine.
+ * Advanced interface to an VIATRA incremental evaluation engine.
  * 
  * <p>
  * You can create a new, private, unmanaged {@link AdvancedViatraQueryEngine} instance using
- * {@link #createUnmanagedEngine(IncQueryScope)}. Additionally, you can access the advanced interface on any
+ * {@link #createUnmanagedEngine(QueryScope)}. Additionally, you can access the advanced interface on any
  * {@link ViatraQueryEngine} by {@link AdvancedViatraQueryEngine#from(ViatraQueryEngine)}.
  * 
  * <p>
@@ -36,7 +36,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
  * instance. For instance, a (non-managed) engine can be disposed in order to detach from the EMF model and stop
  * listening on update notifications. The indexes built previously in the engine can then be garbage collected, even if
  * the model itself is retained. Total lifecycle control is only available for private, unmanaged engines (created using
- * {@link #createUnmanagedEngine(IncQueryScope)}); a managed engine (obtained via {@link ViatraQueryEngine#on(IncQueryScope)}) is
+ * {@link #createUnmanagedEngine(QueryScope)}); a managed engine (obtained via {@link ViatraQueryEngine#on(QueryScope)}) is
  * shared among clients and can not be disposed or wiped.
  * <li>You can add and remove listeners to receive notification when the model or the match sets change.
  * <li>You can add and remove listeners to receive notification on engine lifecycle events, such as creation of new
@@ -51,7 +51,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
 
     /**
-     * Creates a new unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
+     * Creates a new unmanaged VIATRA Query engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
      * invocations will return different instances, so other clients are unable to independently access and influence
      * the returned engine. Note that unmanaged engines do not benefit from some performance improvements that stem from
      * sharing incrementally maintained indices and caches between multiple clients using the same managed engine
@@ -69,18 +69,18 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      *            the root of the EMF containment hierarchy where this engine should operate. Recommended: Resource or
      *            ResourceSet.
      * @return the advanced interface to a newly created unmanaged engine
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      * 
      * @see #createUnmanagedEngine(Notifier, BaseIndexOptions) for performance tuning and dynamic EMF options.
-     * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
+     * @deprecated use {@link #createUnmanagedEngine(QueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
     @Deprecated
-    public static AdvancedViatraQueryEngine createUnmanagedEngine(Notifier emfScopeRoot) throws IncQueryException {
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(Notifier emfScopeRoot) throws ViatraQueryException {
         return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions());
     }
 
     /**
-     * Creates a new unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
+     * Creates a new unmanaged VIATRA Query engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
      * invocations will return different instances, so other clients are unable to independently access and influence
      * the returned engine. Note that unmanaged engines do not benefit from some performance improvements that stem from
      * sharing incrementally maintained indices and caches between multiple clients using the same managed engine
@@ -101,17 +101,17 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      *            specifies whether the base index should be built in wildcard mode. See {@link BaseIndexOptions} for
      *            the explanation of wildcard mode. Defaults to false.
      * @return the advanced interface to a newly created unmanaged engine
-     * @throws IncQueryException
-     * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
+     * @throws ViatraQueryException
+     * @deprecated use {@link #createUnmanagedEngine(QueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
     @Deprecated
     public static AdvancedViatraQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode)
-            throws IncQueryException {
+            throws ViatraQueryException {
         return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions().withWildcardMode(wildcardMode));
     }
 
     /**
-     * Creates a new unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
+     * Creates a new unmanaged VIATRA Query engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
      * invocations will return different instances, so other clients are unable to independently access and influence
      * the returned engine. Note that unmanaged engines do not benefit from some performance improvements that stem from
      * sharing incrementally maintained indices and caches between multiple clients using the same managed engine
@@ -135,17 +135,17 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      *            specifies whether the base index should be built in dynamic EMF mode. See {@link BaseIndexOptions} for
      *            the explanation of dynamic EMF mode. Defaults to false.
      * @return the advanced interface to a newly created unmanaged engine
-     * @throws IncQueryException
-     * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
+     * @throws ViatraQueryException
+     * @deprecated use {@link #createUnmanagedEngine(QueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
     @Deprecated
     public static AdvancedViatraQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, boolean wildcardMode,
-            boolean dynamicEMFMode) throws IncQueryException {
+            boolean dynamicEMFMode) throws ViatraQueryException {
         return createUnmanagedEngine(emfScopeRoot, new BaseIndexOptions(dynamicEMFMode, wildcardMode));
     }
 
     /**
-     * Creates a new unmanaged EMF-IncQuery engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
+     * Creates a new unmanaged VIATRA Query engine at an EMF model root (recommended: Resource or ResourceSet). Repeated
      * invocations will return different instances, so other clients are unable to independently access and influence
      * the returned engine. Note that unmanaged engines do not benefit from some performance improvements that stem from
      * sharing incrementally maintained indices and caches between multiple clients using the same managed engine
@@ -167,16 +167,16 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      *            mode (defaults to false). See {@link BaseIndexOptions} for the explanation of wildcard mode and
      *            dynamic EMF mode.
      * @return the advanced interface to a newly created unmanaged engine
-     * @deprecated use {@link #createUnmanagedEngine(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
+     * @deprecated use {@link #createUnmanagedEngine(QueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
     @Deprecated
     public static AdvancedViatraQueryEngine createUnmanagedEngine(Notifier emfScopeRoot, BaseIndexOptions options)
-            throws IncQueryException {
-        return new ViatraEngineImpl(null, new EMFScope(emfScopeRoot, options));
+            throws ViatraQueryException {
+        return new ViatraQueryEngineImpl(null, new EMFScope(emfScopeRoot, options));
     }
     
     /**
-     * Creates a new unmanaged IncQuery engine to evaluate queries over a given scope specified by an {@link IncQueryScope}.
+     * Creates a new unmanaged VIATRA Query engine to evaluate queries over a given scope specified by an {@link QueryScope}.
      * 
      * <p> Repeated invocations will return different instances, so other clients are unable to independently access 
      * and influence the returned engine. Note that unmanaged engines do not benefit from some performance improvements 
@@ -196,16 +196,16 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      * @return the advanced interface to a newly created unmanaged engine
      * @since 0.9
      */
-    public static AdvancedViatraQueryEngine createUnmanagedEngine(IncQueryScope scope)
-            throws IncQueryException {
-        return new ViatraEngineImpl(null, scope);
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(QueryScope scope)
+            throws ViatraQueryException {
+        return new ViatraQueryEngineImpl(null, scope);
     }
 
     /**
      * Provides access to a given existing engine through the advanced interface.
      * 
      * <p>
-     * Caveat: if the referenced engine is managed (i.e. created via {@link ViatraQueryEngine#on(IncQueryScope)}), the advanced
+     * Caveat: if the referenced engine is managed (i.e. created via {@link ViatraQueryEngine#on(QueryScope)}), the advanced
      * methods {@link #dispose()} and {@link #wipe()} will not be allowed.
      * 
      * @param engine
@@ -257,8 +257,8 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      * <p>
      * <b>Caution: </b> This is a low-level callback that is invoked when the pattern matcher is not necessarily in a
      * consistent state yet. Importantly, no model modification permitted during the callback. Most users should use the
-     * databinding support (org.eclipse.incquery.databinding.runtime.api.IncQueryObservables) or the event-driven API
-     * (org.eclipse.viatra.evm.api.EventDrivenVM) instead.
+     * databinding support ({@link org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables ViatraObservables}) or the event-driven API
+     * ({@link org.eclipse.viatra.transformation.evm.api.EventDrivenVM EventDrivenVM}) instead.
      * 
      * <p>
      * Performance note: expected to be much more efficient than polling at {@link #addCallbackAfterUpdates(Runnable)},
@@ -294,16 +294,16 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
 	 * Access a pattern matcher based on a {@link IQuerySpecification}, overriding some of the default query evaluation hints. 
 	 * Multiple calls will return the same matcher.
 	 * <p> Hints are only effective the first time a matcher is created.
-	 * @param querySpecification a {@link IQuerySpecification} that describes an IncQuery query
+	 * @param querySpecification a {@link IQuerySpecification} that describes an VIATRA query
 	 * @return a pattern matcher corresponding to the specification
      * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with the query
-	 * @throws IncQueryException if the matcher could not be initialized
+	 * @throws ViatraQueryException if the matcher could not be initialized
 	 * @since 0.9
 	 */
     public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(
     		IQuerySpecification<Matcher> querySpecification, 
     		QueryEvaluationHint optionalEvaluationHints)
-    	throws IncQueryException;
+    	throws ViatraQueryException;
 
     /**
      * Initializes matchers for a group of patterns as one step (optionally overriding some of the default query evaluation hints). 
@@ -316,29 +316,29 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      * This is typically more efficient than traversing the model each time an individual pattern matcher is initialized on demand. 
      * The performance benefit only manifests itself if the engine is not in wildcard mode.
      * 
-	 * @param queryGroup a {@link IQueryGroup} identifying a set of IncQuery queries
+	 * @param queryGroup a {@link IQueryGroup} identifying a set of VIATRA queries
      * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with each query
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      *             if there was an error in preparing the engine
      * @since 0.9
      */
     public abstract void prepareGroup(
     		IQueryGroup queryGroup, 
     		QueryEvaluationHint optionalEvaluationHints)
-    	throws IncQueryException;
+    	throws ViatraQueryException;
  
     /**
      * Indicates whether the engine is managed, i.e. the default engine assigned to the given scope root by
-     * {@link ViatraQueryEngine#on(IncQueryScope)}.
+     * {@link ViatraQueryEngine#on(QueryScope)}.
      * 
      * <p>
      * If the engine is managed, there may be other clients using it, as all calls to
-     * {@link ViatraQueryEngine#on(IncQueryScope)} return the same managed engine instance for a given scope root. Therefore the
+     * {@link ViatraQueryEngine#on(QueryScope)} return the same managed engine instance for a given scope root. Therefore the
      * destructive methods {@link #wipe()} and {@link #dispose()} are not allowed.
      * 
      * <p>
      * On the other hand, if the engine is unmanaged (i.e. a private instance created using
-     * {@link #createUnmanagedEngine(IncQueryScope)}), then {@link #wipe()} and {@link #dispose()} can be called. If you
+     * {@link #createUnmanagedEngine(QueryScope)}), then {@link #wipe()} and {@link #dispose()} can be called. If you
      * explicitly share a private, unmanaged engine between multiple sites, register a callback using
      * {@link #addLifecycleListener(ViatraQueryEngineLifecycleListener)} to learn when another client has called these
      * destructive methods.
@@ -401,11 +401,11 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
     public abstract void dispose();
  
     /**
-     * Provides access to the selected query backend component of the IncQuery engine.
+     * Provides access to the selected query backend component of the VIATRA Query engine.
      * @noreference for internal use only
      */
 	public abstract IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory)
-			throws IncQueryException;
+			throws ViatraQueryException;
 
 
 	

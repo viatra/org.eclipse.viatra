@@ -43,13 +43,13 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.viatra.addon.viewers.tooling.ui.ViewersToolingPlugin;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.collect.Lists;
 
 /**
  * 
- * View to aid developing queries for IncQuery Viewers.
+ * View to aid developing queries for VIATRA Viewers.
  * 
  * It supports displaying models based on the
  * {@value ViewersToolingViewsUtil#SANDBOX_TAB_EXTENSION_ID} extension implementations. Selection related requests are forwarded to the tabs.
@@ -92,7 +92,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
 	SashForm container;
 	
 	public void initializeContents(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter)
-            throws IncQueryException {
+            throws ViatraQueryException {
         if (model != null) {
         	defaultComponent.initializeContents(model, queries, filter);
         	for (ViewersMultiSandboxViewComponent c : additionalComponents) {
@@ -248,7 +248,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     		// set contents from default
     		try {
 				newC.initializeContents(defaultComponent.initialConfiguration);
-			} catch (IncQueryException e) {
+			} catch (ViatraQueryException e) {
 				log("addNewComponentAction.run",e);
 			}
     		//container.pack();

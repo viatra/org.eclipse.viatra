@@ -9,7 +9,7 @@
     </parent>
 	<artifactId>viatra-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<name>EMF-IncQuery Maven Plug-in</name>
+	<name>VIATRA Maven Plug-in</name>
 
 	<dependencies>
 		<dependency>

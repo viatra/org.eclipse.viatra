@@ -71,7 +71,7 @@ import com.google.inject.name.Names;
  */
 @SuppressWarnings("restriction")
 public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModule {
-    private static final String loggerRoot = "org.eclipse.incquery";
+    private static final String loggerRoot = "org.eclipse.viatra.query";
 
     public EMFPatternLanguageUiModule(AbstractUIPlugin plugin) {
         super(plugin);
@@ -149,7 +149,7 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
 
     @Override
     public Class<? extends IJavaProjectProvider> bindIJavaProjectProvider() {
-        return IncQueryJavaProjectProvider.class;
+        return ViatraQueryJavaProjectProvider.class;
     }
 
     public Class<? extends IClassLoaderProvider> bindIClassLoaderProvider() {

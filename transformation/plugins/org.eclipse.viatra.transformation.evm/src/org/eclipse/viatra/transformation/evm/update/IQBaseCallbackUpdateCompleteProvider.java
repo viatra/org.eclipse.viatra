@@ -11,7 +11,7 @@
 package org.eclipse.viatra.transformation.evm.update;
 
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryBaseIndexChangeListener;
+import org.eclipse.viatra.query.runtime.api.scope.ViatraBaseIndexChangeListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 
 import com.google.common.base.Preconditions;
@@ -25,7 +25,7 @@ import com.google.common.base.Preconditions;
  */
 public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider {
 
-    private final IncQueryBaseIndexChangeListener modelUpdateListener;
+    private final ViatraBaseIndexChangeListener modelUpdateListener;
     private final IBaseIndex index;
 
     /**
@@ -56,7 +56,7 @@ public class IQBaseCallbackUpdateCompleteProvider extends UpdateCompleteProvider
      * @author Abel Hegedus
      *
      */
-    private class BaseIndexListener implements IncQueryBaseIndexChangeListener {
+    private class BaseIndexListener implements ViatraBaseIndexChangeListener {
 
         @Override
         public boolean onlyOnIndexChange() {

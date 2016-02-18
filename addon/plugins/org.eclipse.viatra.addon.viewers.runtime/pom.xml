@@ -41,7 +41,7 @@
                                                                 		<exclude>.gitignore</exclude>
                                                         		</excludes>
 								</fileset>
-								<fileset><!--  IncQuery generated code -->
+								<fileset><!--  VIATRA Query generated code -->
 									<directory>src-gen</directory>
                                                         		<excludes>
                                                                 		<exclude>.gitignore</exclude>

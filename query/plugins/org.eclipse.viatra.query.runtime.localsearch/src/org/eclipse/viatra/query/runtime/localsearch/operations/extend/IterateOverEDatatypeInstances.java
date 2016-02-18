@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import com.google.common.collect.Lists;
 
 /**
- * Iterates over all {@link EDataType} instances using an {@link NavigationHelper EMF-IncQuery Base indexer}. It is
+ * Iterates over all {@link EDataType} instances using an {@link NavigationHelper VIATRA Base indexer}. It is
  * assumed that the indexer is initialized for the selected {@link EDataType}.
  * 
  */

@@ -8,7 +8,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.testing.core.ModelLoadHelper
 import org.eclipse.viatra.query.testing.core.SnapshotHelper
 import org.eclipse.viatra.query.testing.core.TestExecutor
-import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 import static org.junit.Assert.*
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
@@ -39,7 +39,7 @@ abstract class CommonStaticQueryTester {
 		testQuery(engine, sns, queryMF)
 	}
 
-	def testQuery(ViatraQueryEngine engine, IncQuerySnapshot sns, IQuerySpecification queryMF){
+	def testQuery(ViatraQueryEngine engine, QuerySnapshot sns, IQuerySpecification queryMF){
 		val ViatraQueryMatcher matcher = engine.getMatcher(queryMF)
 		val results = matcher.compareResultSets(sns.getMatchSetRecordForPattern(queryMF.fullyQualifiedName))
 		assertArrayEquals(results.logDifference,newHashSet,results)
@@ -50,7 +50,7 @@ abstract class CommonStaticQueryTester {
 	}
 
 	def snapshot() { // Creates new resource set
-		return snapshotURI.loadExpectedResultsFromUri as IncQuerySnapshot
+		return snapshotURI.loadExpectedResultsFromUri as QuerySnapshot
 	}
 	def queryInput() { // Creates new resource set
 		return queryInputEIQURI.loadPatternModelFromUri(injector, queryInputDependencyURIs) as PatternModel

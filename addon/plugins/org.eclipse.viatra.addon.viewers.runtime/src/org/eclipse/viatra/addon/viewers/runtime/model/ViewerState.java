@@ -30,11 +30,11 @@ import org.eclipse.viatra.addon.viewers.runtime.specifications.ItemQuerySpecific
 import org.eclipse.viatra.addon.viewers.runtime.util.ViewerTraceabilityUtil;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.views.core.ViewModelManager;
 import org.eclipse.viatra.transformation.views.core.ViewModelRule;
 import org.eclipse.viatra.transformation.views.traceability.Traceability;
@@ -43,13 +43,13 @@ import com.google.common.collect.Lists;
 
 /**
  * <p>
- * A Viewer state represents a stateful data model for an IncQuery Viewer. The state is capable of either returning
+ * A Viewer state represents a stateful data model for a VIATRA Viewer. The state is capable of either returning
  * lists of its content, and is also capable of sending state change notifications based to {@link IViewerStateListener}
  * implementations.
  * </p>
  * 
  * <p>
- * A Viewer can be initialized directly with a set of patterns and model, or a {@link IncQueryViewerDataModel} can be
+ * A Viewer can be initialized directly with a set of patterns and model, or a {@link ViatraViewerDataModel} can be
  * used to prepare and share such data between instances.
  * </p>
  * 
@@ -81,12 +81,12 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
             manager.setEngine(model.getEngine());
             manager.setRules(collectRules(model));
             manager.initialize();
-        } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
+        } catch (ViatraQueryException e) {
+            ViatraQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
         } catch (QueryInitializationException e) {
-            IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
-        } catch (IncQueryBaseException e) {
-            IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
+            ViatraQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
+        } catch (ViatraBaseException e) {
+            ViatraQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
         }
     }
 
@@ -117,8 +117,8 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
 				items.add(match.getChild());
 			}
 			return items;
-		} catch (IncQueryException e) {
-			IncQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
+		} catch (ViatraQueryException e) {
+			ViatraQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
 		}
     	return Collections.emptyList();
     }

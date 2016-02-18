@@ -28,7 +28,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import static extension org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper.*
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.runtime.extensibility.PQueryExtensionFactory
-import org.eclipse.viatra.query.runtime.extensibility.IncQueryRuntimeConstants
+import org.eclipse.viatra.query.runtime.extensibility.ViatraQueryRuntimeConstants
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider
 
 /**
@@ -49,24 +49,20 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
   
     override getRemovableExtensions() {
         newArrayList(
-            Pair::of(SURROGATE_EXTENSION_PREFIX, IncQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID)
-            // FIXME remove when deprecated extension point is removed
-            ,Pair::of(SURROGATE_EXTENSION_PREFIX, IncQueryRuntimeConstants.SURROGATE_QUERY_DEPRECATED_EXTENSIONID)
+            Pair::of(SURROGATE_EXTENSION_PREFIX, ViatraQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID)
         )
     }
     
     override removeExtension(Pattern pattern) {
         newArrayList(
-            Pair::of(pattern.derivedContributionId, IncQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID)
-            // FIXME remove when deprecated extension point is removed
-            ,Pair::of(pattern.derivedContributionId, IncQueryRuntimeConstants.SURROGATE_QUERY_DEPRECATED_EXTENSIONID)
+            Pair::of(pattern.derivedContributionId, ViatraQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID)
         )
     }
     
     override extensionContribution(Pattern pattern) {
         val surrogateExtension = newArrayList(
           // create surrogate query extension using nsUri, classifier name, feature name and query FQN
-          contribExtension(pattern.derivedContributionId, IncQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID) [
+          contribExtension(pattern.derivedContributionId, ViatraQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID) [
             pattern.gatherSurrogateParameters.forEach [ parameters |
               contribElement(it, "surrogate-query-emf") [
                 contribAttribute(it, "package-nsUri", parameters.ePackage.nsURI)

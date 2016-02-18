@@ -34,7 +34,7 @@ import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFBaseIndexWrapper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * 
@@ -72,7 +72,7 @@ public class SimpleStateCoder implements IStateCoder {
             EMFBaseIndexWrapper baseIndex = (EMFBaseIndexWrapper) queryEngine.getBaseIndex();
             navigationHelper = baseIndex.getNavigationHelper();
             navigationHelper.registerObservedTypes(classes, null, features);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             throw new DSEException(e);
         }
 

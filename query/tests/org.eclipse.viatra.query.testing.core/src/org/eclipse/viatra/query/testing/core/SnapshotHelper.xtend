@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.emf.EMFScope
-import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 import org.eclipse.viatra.query.testing.snapshot.InputSpecification
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
@@ -36,7 +36,7 @@ class SnapshotHelper {
 	 * Returns the EMF root that was used by the matchers recorded into the given snapshot,
 	 *  based on the input specification and the model roots.
 	 */
-	def getEMFRootForSnapshot(IncQuerySnapshot snapshot){
+	def getEMFRootForSnapshot(QuerySnapshot snapshot){
 		if(snapshot.inputSpecification == InputSpecification::EOBJECT){
 			if(snapshot.modelRoots.size > 0){
 				snapshot.modelRoots.get(0)
@@ -88,7 +88,7 @@ class SnapshotHelper {
 	 * Saves the matches of the given matcher (using the partial match) into the given snapshot.
 	 * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
 	 */
-	def saveMatchesToSnapshot(ViatraQueryMatcher matcher, IPatternMatch partialMatch, IncQuerySnapshot snapshot){
+	def saveMatchesToSnapshot(ViatraQueryMatcher matcher, IPatternMatch partialMatch, QuerySnapshot snapshot){
 		val patternFQN = matcher.patternName
 		val actualRecord = SnapshotFactory::eINSTANCE.createMatchSetRecord
 		actualRecord.patternQualifiedName = patternFQN
@@ -173,7 +173,7 @@ class SnapshotHelper {
 	 * Saves all matches of the given matcher into the given snapshot.
 	 * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
 	 */
-	def saveMatchesToSnapshot(ViatraQueryMatcher matcher, IncQuerySnapshot snapshot){
+	def saveMatchesToSnapshot(ViatraQueryMatcher matcher, QuerySnapshot snapshot){
 		matcher.saveMatchesToSnapshot(matcher.newEmptyMatch, snapshot)
 	}
 
@@ -181,7 +181,7 @@ class SnapshotHelper {
 	 * Returns the match set record for the given pattern FQN from the snapshot,
 	 *  if there is only one such record.
 	 */
-	def getMatchSetRecordForPattern(IncQuerySnapshot snapshot, String patternFQN){
+	def getMatchSetRecordForPattern(QuerySnapshot snapshot, String patternFQN){
 		val matchsetrecord = snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)]
 		if(matchsetrecord.size == 1){
 			return matchsetrecord.iterator.next
@@ -191,7 +191,7 @@ class SnapshotHelper {
 	/**
 	 * Returns the match set records for the given pattern FQN from the snapshot.
 	 */
-	def getMatchSetRecordsForPattern(IncQuerySnapshot snapshot, String patternFQN){
+	def getMatchSetRecordsForPattern(QuerySnapshot snapshot, String patternFQN){
 		val matchSetRecords = new ArrayList<MatchSetRecord>
 		matchSetRecords.addAll(snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)])
 		return matchSetRecords

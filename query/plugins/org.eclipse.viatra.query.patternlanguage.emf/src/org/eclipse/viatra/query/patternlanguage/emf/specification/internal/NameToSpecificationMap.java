@@ -26,7 +26,7 @@ import com.google.common.collect.Iterables;
 
 /**
  * A helper class for storing a mapping between a set of fully qualified names and {@link IQuerySpecification} instances. The
- * IncQuery builder maintains one of them during building, while for the generic API the user might want to manage it.
+ * VIATRA Query builder maintains one of them during building, while for the generic API the user might want to manage it.
  * 
  * @author Zoltan Ujhelyi
  * 

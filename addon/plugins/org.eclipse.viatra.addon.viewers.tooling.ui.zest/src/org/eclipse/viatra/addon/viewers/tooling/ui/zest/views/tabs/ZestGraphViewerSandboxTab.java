@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.zest.ViewersZestPlugin;
 import org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.AbstractViewerSandboxTab;
-import org.eclipse.viatra.addon.viewers.runtime.zest.IncQueryGraphViewers;
+import org.eclipse.viatra.addon.viewers.runtime.zest.ViatraGraphViewers;
 
 public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implements IZoomableWorkbenchPart {
 
@@ -37,8 +37,8 @@ public class ZestGraphViewerSandboxTab extends AbstractViewerSandboxTab implemen
 
     @Override
     public void bindState(ViewerState state) {
-    	//IncQueryGraphViewers.bind(viewer, state, true);
-        IncQueryGraphViewers.bindWithIsolatedNodes(viewer, state, true);
+    	//ViatraGraphViewers.bind(viewer, state, true);
+        ViatraGraphViewers.bindWithIsolatedNodes(viewer, state, true);
     }
 
     @Override

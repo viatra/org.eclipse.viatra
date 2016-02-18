@@ -5,7 +5,7 @@ import java.util.List;
 import org.eclipse.viatra.examples.library.Library;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.runonce.tests.util.SumOfPagesInLibraryQuerySpecification;
 
 /**
@@ -140,7 +140,7 @@ public abstract class SumOfPagesInLibraryMatch extends BasePatternMatch {
   public SumOfPagesInLibraryQuerySpecification specification() {
     try {
     	return SumOfPagesInLibraryQuerySpecification.instance();
-    } catch (IncQueryException ex) {
+    } catch (ViatraQueryException ex) {
      	// This cannot happen, as the match object can only be instantiated if the query specification exists
      	throw new IllegalStateException (ex);
     }

@@ -179,7 +179,7 @@ public class DesignSpaceExplorer {
                                 + rule.getName()
                                 + "; "
                                 + rule2.getName()
-                                + ") uses the same LHS IncQuery pattern ("
+                                + ") uses the same LHS VIATRA Query pattern ("
                                 + rule.getPrecondition().getFullyQualifiedName()
                                 + "), which may lead to hash collision."
                                 + " Please wrap the pattern with an other pattern with the 'find' keyword (or duplicate the code), and use that for one of the rules LHS.");

@@ -449,7 +449,7 @@ else behavior._'context'
 endif
 endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingBehavior
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: containingBehavior
 @Surrogate(feature = "context")
 @QueryExplorer(checked = false)
 pattern actionContext(source: Action, target: Classifier) {
@@ -495,7 +495,7 @@ else
 endif
         )
 */
-// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (nestingClass)
+// Can't compile OCL to VIATRA Query because of org.eclipse.ocl.SemanticException: Unrecognized variable: (nestingClass)
 @Surrogate(feature = "context")
 @QueryExplorer(checked = false)
 pattern behaviorContext(source: Behavior, target: BehavioredClassifier) {
@@ -534,7 +534,7 @@ private pattern nestedClassifier(parent : Classifier, child : Classifier) {
 /*
 (inherit(parents()->collect(inheritableMembers(self))->asSet()))
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: parents
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: parents
 //@Surrogate(feature = "inheritedMember")
 //@QueryExplorer(checked = false)
 //pattern classifierInheritedMember(source: Classifier, target: NamedElement) {}
@@ -548,7 +548,7 @@ private pattern nestedClassifier(parent : Classifier, child : Classifier) {
         providedByPorts : Set(Interface) = ports.provided->asSet()
 in     ris->union(realizingClassifierInterfaces) ->union(providedByPorts)->asSet())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allRealizedInterfaces
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: allRealizedInterfaces
 //@Surrogate(feature = "provided")
 //@QueryExplorer(checked = false)
 //pattern componentProvided(source: Component, target: Interface) {}
@@ -563,7 +563,7 @@ in     ris->union(realizingClassifierInterfaces) ->union(providedByPorts)->asSet
 in      uis->union(realizingClassifierInterfaces)->union(usedByPorts)->asSet()
 )
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allUsedInterfaces
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: allUsedInterfaces
 //@Surrogate(feature = "required")
 //@QueryExplorer(checked = false)
 //pattern componentRequired(source: Component, target: Interface) {}
@@ -592,7 +592,7 @@ else
     connector.type.memberEnd->at(index)
 endif)
 */
-// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (connector)
+// Can't compile OCL to VIATRA Query because of org.eclipse.ocl.SemanticException: Unrecognized variable: (connector)
 //@Surrogate(feature = "definingEnd")
 //@QueryExplorer(checked = false)
 //pattern connectorEndDefiningEnd(source: ConnectorEnd, target: Property) {}
@@ -621,7 +621,7 @@ pattern deploymentTargetDeployedElement(
 /*
 (ownedAttribute->select(oclIsKindOf(Port))->collect(oclAsType(Port))->asOrderedSet())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: asOrderedSet
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: asOrderedSet
 //@Surrogate(feature = "ownedPort")
 //@QueryExplorer(checked = false)
 //pattern encapsulatedClassifierOwnedPort(source: EncapsulatedClassifier, target: Port) {}
@@ -629,7 +629,7 @@ pattern deploymentTargetDeployedElement(
 /*
 (ownedEnd.lowerBound() = 1)
 */
-// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Cannot find operation (=(Integer)) for the type (Sequence(Integer))
+// Can't compile OCL to VIATRA Query because of org.eclipse.ocl.SemanticException: Cannot find operation (=(Integer)) for the type (Sequence(Integer))
 //@Surrogate(feature = "isRequired")
 //@QueryExplorer(checked = false)
 //pattern extensionIsRequired(source: Extension, target: Boolean) {}
@@ -637,7 +637,7 @@ pattern deploymentTargetDeployedElement(
 /*
 (metaclassEnd().type.oclAsType(Class))
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: metaclassEnd
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: metaclassEnd
 //@Surrogate(feature = "metaclass")
 //@QueryExplorer(checked = false)
 //pattern extensionMetaclass(source: Extension, target: Class) {}
@@ -645,7 +645,7 @@ pattern deploymentTargetDeployedElement(
 /*
 (lowerBound())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: lowerBound
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: lowerBound
 //@Surrogate(feature = "lower")
 //@QueryExplorer(checked = false)
 //pattern multiplicityElementLower(source: MultiplicityElement, target: Integer) {}
@@ -653,7 +653,7 @@ pattern deploymentTargetDeployedElement(
 /*
 (upperBound())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: upperBound
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: upperBound
 //@Surrogate(feature = "upper")
 //@QueryExplorer(checked = false)
 //pattern multiplicityElementUpper(source: MultiplicityElement, target: UnlimitedNatural) {}
@@ -680,7 +680,7 @@ else
     behavior.ownedParameter->first()
 endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
+// Can't compile OCL to VIATRA Query because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
 //@Surrogate(feature = "result")
 //@QueryExplorer(checked = false)
 //pattern opaqueExpressionResult(source: OpaqueExpression, target: Parameter) {}
@@ -688,7 +688,7 @@ endif)
 /*
 (if returnResult()->notEmpty() then returnResult()-> exists(isOrdered) else false endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "isOrdered")
 //@QueryExplorer(checked = false)
 //pattern operationIsOrdered(source: Operation, target: Boolean) {}
@@ -696,7 +696,7 @@ endif)
 /*
 (if returnResult()->notEmpty() then returnResult()->exists(isUnique) else true endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "isUnique")
 //@QueryExplorer(checked = false)
 //pattern operationIsUnique(source: Operation, target: Boolean) {}
@@ -704,7 +704,7 @@ endif)
 /*
 (if returnResult()->notEmpty() then returnResult()->any(true).lower else null endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "lower")
 //@QueryExplorer(checked = false)
 //pattern operationLower(source: Operation, target: Integer) {}
@@ -712,7 +712,7 @@ endif)
 /*
 (if returnResult()->notEmpty() then returnResult()->any(true).type else null endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "type")
 //@QueryExplorer(checked = false)
 //pattern operationType(source: Operation, target: Type) {}
@@ -720,7 +720,7 @@ endif)
 /*
 (if returnResult()->notEmpty() then returnResult()->any(true).upper else null endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: returnResult
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: returnResult
 //@Surrogate(feature = "upper")
 //@QueryExplorer(checked = false)
 //pattern operationUpper(source: Operation, target: UnlimitedNatural) {}
@@ -728,7 +728,7 @@ endif)
 /*
 (if self.type = String then defaultValue.stringValue() else null endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: stringValue
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: stringValue
 //@Surrogate(feature = "default")
 //@QueryExplorer(checked = false)
 //pattern parameterDefault(source: Parameter, target: String) {}
@@ -736,7 +736,7 @@ endif)
 /*
 (if isConjugated then basicRequired() else basicProvided() endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: basicRequired
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: basicRequired
 //@Surrogate(feature = "provided")
 //@QueryExplorer(checked = false)
 //pattern portProvided(source: Port, target: Interface) {}
@@ -744,7 +744,7 @@ endif)
 /*
 (if isConjugated then basicProvided() else basicRequired() endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: basicProvided
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: basicProvided
 //@Surrogate(feature = "required")
 //@QueryExplorer(checked = false)
 //pattern portRequired(source: Port, target: Interface) {}
@@ -757,7 +757,7 @@ else
     null
 endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Iterator expression kind must be collect, select or reject instead of any in self.association.memberEnd->any(e : Property | e.<>(self))
+// Can't compile OCL to VIATRA Query because of java.lang.IllegalArgumentException: Iterator expression kind must be collect, select or reject instead of any in self.association.memberEnd->any(e : Property | e.<>(self))
 //@Surrogate(feature = "opposite")
 //@QueryExplorer(checked = false)
 //pattern propertyOpposite(source: Property, target: Property) {}
@@ -784,7 +784,7 @@ pattern protocolTransitionReferred(
 /*
 (if extendedSignature->isEmpty() then Set{} else extendedSignature.parameter->asSet() endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.NullPointerException
+// Can't compile OCL to VIATRA Query because of java.lang.NullPointerException
 //@Surrogate(feature = "inheritedParameter")
 //@QueryExplorer(checked = false)
 //pattern redefinableTemplateSignatureInheritedParameter(source: RedefinableTemplateSignature, target: TemplateParameter) {}
@@ -792,7 +792,7 @@ pattern protocolTransitionReferred(
 /*
 (region->size () > 1)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: size
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: size
 //@Surrogate(feature = "isOrthogonal")
 //@QueryExplorer(checked = false)
 //pattern stateIsOrthogonal(source: State, target: Boolean) {}
@@ -800,7 +800,7 @@ pattern protocolTransitionReferred(
 /*
 ((region->isEmpty()) and not isSubmachineState())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: isSubmachineState
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: isSubmachineState
 //@Surrogate(feature = "isSimple")
 //@QueryExplorer(checked = false)
 //pattern stateIsSimple(source: State, target: Boolean) {}
@@ -808,7 +808,7 @@ pattern protocolTransitionReferred(
 /*
 (submachine <> null)
 */
-// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
+// Can't compile OCL to VIATRA Query because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
 //@Surrogate(feature = "isSubmachineState")
 //@QueryExplorer(checked = false)
 //pattern stateIsSubmachineState(source: State, target: Boolean) {}
@@ -816,7 +816,7 @@ pattern protocolTransitionReferred(
 /*
 (self.containingProfile())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingProfile
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: containingProfile
 //@Surrogate(feature = "profile")
 //@QueryExplorer(checked = false)
 //pattern stereotypeProfile(source: Stereotype, target: Profile) {}
@@ -1250,7 +1250,7 @@ endif
 endif
 )
 */
-// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (interaction)
+// Can't compile OCL to VIATRA Query because of org.eclipse.ocl.SemanticException: Unrecognized variable: (interaction)
 private pattern actionContainingBehavior(source: Action, target: Behavior) {
     find activityNodeActivity(source, target);
 } or {
@@ -1263,13 +1263,13 @@ private pattern actionContainingBehavior(source: Action, target: Behavior) {
 /*
 (directlyRealizedInterfaces()->union(self.allParents()->collect(directlyRealizedInterfaces()))->asSet())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: directlyRealizedInterfaces
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: directlyRealizedInterfaces
 //pattern classifierAllRealizedInterfaces(source: Classifier, target: Interface) {}
 
 /*
 (directlyUsedInterfaces()->union(self.allParents()->collect(directlyUsedInterfaces()))->asSet())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: directlyUsedInterfaces
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: directlyUsedInterfaces
 //pattern classifierAllUsedInterfaces(source: Classifier, target: Interface) {}
 
 /*
@@ -1279,13 +1279,13 @@ private pattern actionContainingBehavior(source: Action, target: Behavior) {
     select(redefinedElement->includes(inh.oclAsType(RedefinableElement)))
        ->notEmpty()))
 */
-// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (inhs)
+// Can't compile OCL to VIATRA Query because of org.eclipse.ocl.SemanticException: Unrecognized variable: (inhs)
 //pattern classifierInherit(source: Classifier, target: NamedElement) {}
 
 /*
 (member->select(m | c.hasVisibilityOf(m)))
 */
-// Can't compile OCL to IncQuery because of org.eclipse.ocl.SemanticException: Unrecognized variable: (c)
+// Can't compile OCL to VIATRA Query because of org.eclipse.ocl.SemanticException: Unrecognized variable: (c)
 //pattern classifierInheritableMembers(source: Classifier, target: NamedElement) {}
 
 /*
@@ -1303,19 +1303,19 @@ private pattern classifierParents(
 /*
 (memberEnd->reject(p | ownedEnd->includes(p.oclAsType(ExtensionEnd)))->any(true))
 */
-// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Iterator expression kind must be collect, select or reject instead of any in self.memberEnd->reject(p : Property | self.ownedEnd->includes(p.oclAsType(uml::ExtensionEnd)))->any(temp1 : Property | true)
+// Can't compile OCL to VIATRA Query because of java.lang.IllegalArgumentException: Iterator expression kind must be collect, select or reject instead of any in self.memberEnd->reject(p : Property | self.ownedEnd->includes(p.oclAsType(uml::ExtensionEnd)))->any(temp1 : Property | true)
 //pattern extensionMetaclassEnd(source: Extension, target: Property) {}
 
 /*
 (if (lowerValue=null or lowerValue.integerValue()=null) then 1 else lowerValue.integerValue() endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: integerValue
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: integerValue
 //pattern multiplicityElementLowerBound(source: MultiplicityElement, target: Integer) {}
 
 /*
 (if (upperValue=null or upperValue.unlimitedValue()=null) then 1 else upperValue.unlimitedValue() endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: unlimitedValue
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: unlimitedValue
 //pattern multiplicityElementUpperBound(source: MultiplicityElement, target: UnlimitedNatural) {}
 
 /*
@@ -1335,7 +1335,7 @@ private pattern operationReturnResult(
 /*
 (member->select( m | m.oclIsKindOf(PackageableElement) and self.makesVisible(m))->collect(oclAsType(PackageableElement))->asSet())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: makesVisible
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: makesVisible
 //pattern packageVisibleMembers(source: Package, target: PackageableElement) {}
 
 /*
@@ -1344,13 +1344,13 @@ then type.oclAsType(Interface)->asSet()
 else type.oclAsType(Classifier).allRealizedInterfaces() 
 endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allRealizedInterfaces
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: allRealizedInterfaces
 //pattern portBasicProvided(source: Port, target: Interface) {}
 
 /*
 ( type.oclAsType(Classifier).allUsedInterfaces() )
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: allUsedInterfaces
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: allUsedInterfaces
 //pattern portBasicRequired(source: Port, target: Interface) {}
 
 /*
@@ -1361,7 +1361,7 @@ else
   stateMachine
 endif)
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingStateMachine
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: containingStateMachine
 private pattern regionContainingStateMachine(source: Region, target: StateMachine) {
     find stateMachineContainment+(source, target);
 }
@@ -1369,19 +1369,19 @@ private pattern regionContainingStateMachine(source: Region, target: StateMachin
 /*
 (submachine <> null)
 */
-// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
+// Can't compile OCL to VIATRA Query because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
 //pattern stateIsSubmachineState(source: State, target: Boolean) {}
 
 /*
 (self.namespace.oclAsType(Package).containingProfile())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingProfile
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: containingProfile
 //pattern stereotypeContainingProfile(source: Stereotype, target: Profile) {}
 
 /*
 (container.containingStateMachine())
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingStateMachine
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: containingStateMachine
 private pattern transitionContainingStateMachine(source: Transition, target: StateMachine) {
     find stateMachineContainment+(source, target);
 }
@@ -1389,7 +1389,7 @@ private pattern transitionContainingStateMachine(source: Transition, target: Sta
 /*
 (null)
 */
-// Can't compile OCL to IncQuery because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
+// Can't compile OCL to VIATRA Query because of java.lang.IllegalArgumentException: Unhandled parameter types: [null]
 //pattern valueSpecificationStringValue(source: ValueSpecification, target: String) {}
 
 /*
@@ -1410,7 +1410,7 @@ else
 endif
 )
 */
-// Can't compile OCL to IncQuery because of java.lang.UnsupportedOperationException: containingStateMachine
+// Can't compile OCL to VIATRA Query because of java.lang.UnsupportedOperationException: containingStateMachine
 private pattern vertexContainingStateMachine(source: Vertex, target: StateMachine) {
     find stateMachineContainment+(source, target);
 }

@@ -31,7 +31,7 @@ import org.eclipse.viatra.addon.validation.core.api.IViolation;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * The constraint adapter class is used to collect the constraints and deal with their maintenance for a given EMF
@@ -66,7 +66,7 @@ public class ConstraintAdapter {
                 IConstraint coreConstraint = engine.addConstraintSpecification(constraint);
                 coreConstraint.addListener(markerManagerViolationListener);
             }
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             logger.error(String.format("Exception occured during validation initialization: %s", e.getMessage()), e);
         }
 

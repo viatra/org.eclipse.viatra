@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.BasePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
@@ -33,7 +33,7 @@ public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
 	@Deprecated
 	protected static final Object CONTEXT = null;
 		
-    protected QueryInitializationException processDependencyException(IncQueryException ex) {
+    protected QueryInitializationException processDependencyException(ViatraQueryException ex) {
     	if (ex.getCause() instanceof QueryInitializationException) 
     		return (QueryInitializationException) ex.getCause();
     	return new QueryInitializationException(

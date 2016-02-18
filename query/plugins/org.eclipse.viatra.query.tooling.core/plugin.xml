@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="generatorFragment" name="EMF-IncQuery Code Generation Fragment" schema="schema/generatorFragment.exsd"/>
+   <extension-point id="generatorFragment" name="VIATRA Query Code Generation Fragment" schema="schema/generatorFragment.exsd"/>
    <extension
          id="org.eclipse.viatra.query.projectnature"
          point="org.eclipse.core.resources.natures">
@@ -15,8 +15,8 @@
       </builder>
    </extension>
    <extension
-         id="org.eclipse.incquery.tooling.core.generator.marker.inference"
-         name="EMF-IncQuery Generator Marker"
+         id="org.eclipse.viatra.query.tooling.core.generator.marker.inference"
+         name="VIATRA Query Generator Marker"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.core.resources.problemmarker">
@@ -26,8 +26,8 @@
       </persistent>
    </extension>
    <extension
-         id="org.eclipse.incquery.tooling.core.generator.marker.fragment"
-         name="EMF-IncQuery Generator Marker"
+         id="org.eclipse.viatra.query.tooling.core.generator.marker.fragment"
+         name="VIATRA Query Generator Marker"
          point="org.eclipse.core.resources.markers">
       <super
             type="org.eclipse.core.resources.problemmarker">

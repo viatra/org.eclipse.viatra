@@ -27,7 +27,7 @@ import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 public class ModelManipulationWithEditingDomain extends AbstractModelManipulations {
 
@@ -53,14 +53,14 @@ public class ModelManipulationWithEditingDomain extends AbstractModelManipulatio
 				for (Object obj : collection) {
 					getBaseEMFIndex().cheapMoveTo((EObject)obj, owner, (EReference)feature);
 				}
-			} catch (IncQueryException e) {
+			} catch (ViatraQueryException e) {
 				throw new WrappedException(new ModelManipulationException(e));
 			}
 		}
 
 		@Override
 		public void doUndo() {
-			throw new UnsupportedOperationException("Undoing IncQuery move is not supported.");
+			throw new UnsupportedOperationException("Undoing move is not supported in VIATRA.");
 		}
 		
 	}

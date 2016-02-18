@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * Registry for generated query specifications contributed via the plug-in mechanism. Allows accessing query
@@ -73,7 +73,7 @@ public final class QuerySpecificationRegistry {
                     if (el.getName().equals("group")) {
                         prepareQueryGroup(specifications, duplicates, el);
                     } else {
-                        IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
+                        ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
                                 "[QuerySpecificationRegistry] Unknown configuration element " + el.getName()
                                         + " in plugin.xml of " + el.getDeclaringExtension().getUniqueIdentifier());
                     }
@@ -86,7 +86,7 @@ public final class QuerySpecificationRegistry {
                 for (String fqn : duplicates) {
                     duplicateSB.append(String.format("\t%s%n", fqn));
                 }
-                IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).warn(duplicateSB.toString());
+                ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).warn(duplicateSB.toString());
             }
         }
     }
@@ -107,7 +107,7 @@ public final class QuerySpecificationRegistry {
                 id = "undefined in plugin.xml";
             }
             // TODO error logging for the user interface
-            IncQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
+            ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
                     "[QuerySpecificationRegistry] Exception during query specification registry initialization when preparing group: "
                             + id + "! " + e.getMessage(), e);
         }
@@ -137,7 +137,7 @@ public final class QuerySpecificationRegistry {
         if (!QUERY_SPECIFICATIONS.containsKey(qualifiedName)) {
             QUERY_SPECIFICATIONS.put(qualifiedName, specification);
         } else {
-            IncQueryLoggingUtil
+            ViatraQueryLoggingUtil
                     .getLogger(QuerySpecificationRegistry.class)
                     .warn(String
                             .format("[QuerySpecificationRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!",

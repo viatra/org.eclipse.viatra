@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <view
             category="org.eclipse.incquery.tooling.ui"
-            class="org.eclipse.viatra.query.tooling.debug.variables.IncQueryVariablesView"
+            class="org.eclipse.viatra.query.tooling.debug.variables.ViatraQueryVariablesView"
             icon="icons/logo2.png"
             id="org.eclipse.incquery.tooling.debug.variables.IncQueryVariablesView"
             name="EMF-IncQuery Variables"

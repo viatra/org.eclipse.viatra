@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -44,7 +44,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 		this.engine = engine;
 	}
 	
-	protected NavigationHelper getBaseEMFIndex() throws IncQueryException {
+	protected NavigationHelper getBaseEMFIndex() throws ViatraQueryException {
 		if (baseEMFIndex == null) {
 			baseEMFIndex = EMFScope.extractUnderlyingEMFIndex(engine);
 		}

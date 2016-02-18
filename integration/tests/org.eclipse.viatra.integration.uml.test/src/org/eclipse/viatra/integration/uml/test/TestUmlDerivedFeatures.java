@@ -29,7 +29,7 @@ import org.eclipse.viatra.integration.uml.derivedfeatures.NamedElementQualifiedN
 import org.eclipse.viatra.integration.uml.derivedfeatures.StateIsOrthogonalMatcher;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -43,7 +43,7 @@ public class TestUmlDerivedFeatures {
 
 	private static final UMLFactory FACTORY = UMLFactory.eINSTANCE;
 
-	private static ViatraQueryEngine getEngine(Resource resource) throws IncQueryException {
+	private static ViatraQueryEngine getEngine(Resource resource) throws ViatraQueryException {
 		return ViatraQueryEngine.on(new EMFScope(resource));
 	}
 	
@@ -52,7 +52,7 @@ public class TestUmlDerivedFeatures {
 	}
 	
 	@Test
-    public void addAffectsContainment() throws IncQueryException {
+    public void addAffectsContainment() throws ViatraQueryException {
         Resource resource = createResource();
         Package pkg = FACTORY.createPackage();
         pkg.setName("pkg");
@@ -67,7 +67,7 @@ public class TestUmlDerivedFeatures {
     }
 
 	@Test
-	public void associationEndType() throws IncQueryException {
+	public void associationEndType() throws ViatraQueryException {
 		Resource resource = createResource();
 		Association association = FACTORY.createAssociation();
 		resource.getContents().add(association);
@@ -82,7 +82,7 @@ public class TestUmlDerivedFeatures {
 	}
 
 	@Test
-    public void namedElementNamespace() throws IncQueryException {
+    public void namedElementNamespace() throws ViatraQueryException {
 	    Resource resource = createResource();
         Package rootPackage = FACTORY.createPackage();
         resource.getContents().add(rootPackage);
@@ -95,7 +95,7 @@ public class TestUmlDerivedFeatures {
     }
 
 	@Test
-    public void namedElementQualifiedName() throws IncQueryException {
+    public void namedElementQualifiedName() throws ViatraQueryException {
 	    Resource resource = createResource();
 	    Package rootPackage = FACTORY.createPackage();
         resource.getContents().add(rootPackage);
@@ -108,7 +108,7 @@ public class TestUmlDerivedFeatures {
     }
 
 	@Test
-	public void stateIsOrthogonal() throws IncQueryException {
+	public void stateIsOrthogonal() throws ViatraQueryException {
 	    Resource resource = createResource();
         State state = FACTORY.createState();
         resource.getContents().add(state);

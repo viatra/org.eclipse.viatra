@@ -64,10 +64,10 @@
     <genClasses ecoreClass="snapshot.ecore#//MiscellaneousSubstitution">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute snapshot.ecore#//MiscellaneousSubstitution/value"/>
     </genClasses>
-    <genClasses ecoreClass="snapshot.ecore#//IncQuerySnapshot">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference snapshot.ecore#//IncQuerySnapshot/matchSetRecords"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference snapshot.ecore#//IncQuerySnapshot/modelRoots"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute snapshot.ecore#//IncQuerySnapshot/inputSpecification"/>
+    <genClasses ecoreClass="snapshot.ecore#//QuerySnapshot">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference snapshot.ecore#//QuerySnapshot/matchSetRecords"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference snapshot.ecore#//QuerySnapshot/modelRoots"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute snapshot.ecore#//QuerySnapshot/inputSpecification"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

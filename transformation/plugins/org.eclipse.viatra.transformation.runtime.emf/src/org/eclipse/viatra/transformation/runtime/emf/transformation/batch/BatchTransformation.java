@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.specific.RuleEngines;
@@ -45,13 +45,13 @@ public class BatchTransformation {
 	protected final Context context;
 	protected Set<BatchTransformationRule<?, ?>> rules = new HashSet<BatchTransformationRule<?,?>>();
 
-	public static BatchTransformation forScope(EMFScope scope) throws IncQueryException {
+	public static BatchTransformation forScope(EMFScope scope) throws ViatraQueryException {
 		AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
 		return new BatchTransformation(engine);
 	}
 	
 	public static BatchTransformation forEngine(ViatraQueryEngine engine) {
-		return forRuleEngine(RuleEngines.createIncQueryRuleEngine(engine), engine);
+		return forRuleEngine(RuleEngines.createViatraQueryRuleEngine(engine), engine);
 	}
 	
 	public static BatchTransformation forRuleEngine(RuleEngine ruleEngine, ViatraQueryEngine engine) {
@@ -59,12 +59,12 @@ public class BatchTransformation {
 	}
 	
 	@Deprecated
-	public BatchTransformation(Resource resource) throws IncQueryException {
+	public BatchTransformation(Resource resource) throws ViatraQueryException {
 		this(AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resource)));
 	}
 
 	@Deprecated
-	public BatchTransformation(ResourceSet set) throws IncQueryException {
+	public BatchTransformation(ResourceSet set) throws ViatraQueryException {
 		this(AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(set)));
 	}
 
@@ -74,7 +74,7 @@ public class BatchTransformation {
 	}
 	
 	private BatchTransformation(AdvancedViatraQueryEngine queryEngine) {
-		this(RuleEngines.createIncQueryRuleEngine(queryEngine), queryEngine, true);
+		this(RuleEngines.createViatraQueryRuleEngine(queryEngine), queryEngine, true);
 	}
 	
 	private BatchTransformation(RuleEngine ruleEngine,
@@ -104,7 +104,7 @@ public class BatchTransformation {
 	}
 	
 	
-	public void initializeIndexes() throws IncQueryException {
+	public void initializeIndexes() throws ViatraQueryException {
 		GenericQueryGroup.of(Iterables.toArray(Iterables.transform(rules, new Function<BatchTransformationRule<?, ?>, IQuerySpecification<?>>() {
 			
 			@Override

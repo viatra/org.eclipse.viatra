@@ -19,7 +19,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmMo
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
-import org.eclipse.viatra.query.runtime.exception.IncQueryException
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmTypeReference
@@ -29,6 +28,7 @@ import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -238,7 +238,7 @@ class PatternMatchClassInferrer {
 			body = '''
 				try {
 					return «querySpecificationClassRef.type.simpleName».instance();
-				} catch («IncQueryException» ex) {
+				} catch («ViatraQueryException» ex) {
 				 	// This cannot happen, as the match object can only be instantiated if the query specification exists
 				 	throw new «IllegalStateException» (ex);
 				}

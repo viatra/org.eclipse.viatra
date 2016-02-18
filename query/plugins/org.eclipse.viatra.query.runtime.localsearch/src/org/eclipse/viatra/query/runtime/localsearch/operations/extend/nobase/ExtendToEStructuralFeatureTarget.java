@@ -24,7 +24,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 /**
- * Iterates over all sources of {@link EStructuralFeature} without using an {@link NavigationHelper EMF-IncQuery Base indexer}.
+ * Iterates over all sources of {@link EStructuralFeature} without using an {@link NavigationHelper VIATRA Base indexer}.
  * 
  */
 public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {

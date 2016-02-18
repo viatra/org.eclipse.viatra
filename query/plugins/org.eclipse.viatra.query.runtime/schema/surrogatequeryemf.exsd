@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.viatra.query.runtime" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.viatra.query.runtime" id="surrogatequeryemf" name="EMF-IncQuery Surrogate Query"/>
+         <meta.schema plugin="org.eclipse.viatra.query.runtime" id="surrogatequeryemf" name="VIATRA Surrogate Query for EMF Derived Features"/>
       </appInfo>
       <documentation>
          This extension point can be used to register surrogate queries for derived features.

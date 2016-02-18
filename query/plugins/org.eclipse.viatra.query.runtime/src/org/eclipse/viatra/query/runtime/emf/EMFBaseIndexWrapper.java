@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.query.runtime.api.scope.IIndexingErrorListener;
 import org.eclipse.viatra.query.runtime.api.scope.IInstanceObserver;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryBaseIndexChangeListener;
+import org.eclipse.viatra.query.runtime.api.scope.ViatraBaseIndexChangeListener;
 import org.eclipse.viatra.query.runtime.base.api.EMFBaseIndexChangeListener;
 import org.eclipse.viatra.query.runtime.base.api.IEMFIndexingErrorListener;
 import org.eclipse.viatra.query.runtime.base.api.LightweightEObjectObserver;
@@ -85,10 +85,10 @@ public class EMFBaseIndexWrapper implements IBaseIndex {
 	}
 	
 	
-	Map<IncQueryBaseIndexChangeListener, EMFBaseIndexChangeListener> indexChangeListeners = 
-			new HashMap<IncQueryBaseIndexChangeListener, EMFBaseIndexChangeListener>();
+	Map<ViatraBaseIndexChangeListener, EMFBaseIndexChangeListener> indexChangeListeners = 
+			new HashMap<ViatraBaseIndexChangeListener, EMFBaseIndexChangeListener>();
 	@Override
-	public void addBaseIndexChangeListener(final IncQueryBaseIndexChangeListener listener) {
+	public void addBaseIndexChangeListener(final ViatraBaseIndexChangeListener listener) {
 		EMFBaseIndexChangeListener emfListener = new EMFBaseIndexChangeListener() {
 			@Override
 			public boolean onlyOnIndexChange() {
@@ -104,7 +104,7 @@ public class EMFBaseIndexWrapper implements IBaseIndex {
 		navigationHelper.addBaseIndexChangeListener(emfListener);
 	}
 	@Override
-	public void removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener) {
+	public void removeBaseIndexChangeListener(ViatraBaseIndexChangeListener listener) {
 		final EMFBaseIndexChangeListener cListener = indexChangeListeners.remove(listener);
 		if (cListener != null) 
 			navigationHelper.removeBaseIndexChangeListener(cListener);

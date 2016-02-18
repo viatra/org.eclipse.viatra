@@ -15,7 +15,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 
 /**
- * A Query Backend Factory identifies a query evaluator implementation, and can create an evaluator instance (an {@link IQueryBackend}) tied to a specific IncQuery engine upon request. 
+ * A Query Backend Factory identifies a query evaluator implementation, and can create an evaluator instance (an {@link IQueryBackend}) tied to a specific VIATRA Query engine upon request. 
  * 
  * <p> The factory is used as a lookup key for the backend instance, 
  *   therefore implementors should either be singletons, or implement equals() / hashCode() accordingly. 

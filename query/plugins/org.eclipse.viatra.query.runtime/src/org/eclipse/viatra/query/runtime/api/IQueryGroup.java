@@ -13,7 +13,7 @@ package org.eclipse.viatra.query.runtime.api;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Generic interface for group of query specifications.
@@ -37,11 +37,11 @@ public interface IQueryGroup {
      * The performance benefit only manifests itself if the engine is not in wildcard mode.
      * 
      * @param engine
-     *            the existing IncQuery engine in which the matchers will be created.
-     * @throws IncQueryException
+     *            the existing VIATRA Query engine in which the matchers will be created.
+     * @throws ViatraQueryException
      *             if there was an error in preparing the engine
      */
-    public void prepare(ViatraQueryEngine engine) throws IncQueryException;
+    public void prepare(ViatraQueryEngine engine) throws ViatraQueryException;
 
     /**
      * Initializes the contained patterns over a given EMF model root (recommended: Resource or ResourceSet). If a
@@ -53,12 +53,12 @@ public interface IQueryGroup {
      * @param emfRoot
      *            the root of the EMF tree where the pattern matchers will operate. Recommended: Resource or
      *            ResourceSet.
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      *             if an error occurs during pattern matcher creation
      * @deprecated use {@link #prepare(ViatraQueryEngine)} instead, e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}            
      */
 	@Deprecated
-    public void prepare(Notifier emfRoot) throws IncQueryException;
+    public void prepare(Notifier emfRoot) throws ViatraQueryException;
 
     /**
      * Returns the currently assigned {@link IQuerySpecification}s.

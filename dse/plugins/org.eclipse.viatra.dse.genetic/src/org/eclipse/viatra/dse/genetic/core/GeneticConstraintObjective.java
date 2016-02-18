@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 public class GeneticConstraintObjective extends BaseObjective {
 
@@ -97,8 +97,8 @@ public class GeneticConstraintObjective extends BaseObjective {
                 hardMatchers.add(qs.getMatcher(queryEngine));
             }
 
-        } catch (IncQueryException e) {
-            throw new DSEException("Couldn't initialize the incquery matcher, see inner exception", e);
+        } catch (ViatraQueryException e) {
+            throw new DSEException("Couldn't initialize the VIATRA Query Matcher, see inner exception", e);
         }
     }
 

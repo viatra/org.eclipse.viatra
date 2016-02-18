@@ -36,7 +36,7 @@ public final class Lifecycles {
      * See {@link DefaultActivationLifeCycle} documentation for details.
      * 
      * @param useUpdate UPDATED state is used
-     * @param useDisappear DISAPPEARED state is used
+     * @param useDisappear DELETED state is used
      * @return the life cycle
      */
     public static ActivationLifeCycle getDefault(boolean useUpdate, boolean useDisappear) {

@@ -8,7 +8,7 @@
             locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
          <command
                commandId="org.eclipse.viatra.query.testing.ui.snapshot"
-               label="Save EMF-IncQuery snapshot"
+               label="Save VIATRA Query snapshot"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -27,7 +27,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra.query.testing.ui.IncQueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.testing.ui.handlers.SaveSnapshotHandler"
+            class="org.eclipse.viatra.query.testing.ui.ViatraQueryLanguageTestExecutableExtensionFactory:org.eclipse.viatra.query.testing.ui.handlers.SaveSnapshotHandler"
             commandId="org.eclipse.viatra.query.testing.ui.snapshot">
       </handler>  
    </extension>
@@ -36,7 +36,7 @@
       <command
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.testing.ui.snapshot"
-            name="Save EMF-IncQuery snapshot">
+            name="Save VIATRA Query snapshot">
       </command>
     </extension>
 </plugin>

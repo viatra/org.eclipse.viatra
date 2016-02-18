@@ -18,7 +18,7 @@ import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 
 /**
- * An IncQuery EVM Executor, that enables the MWE 2 workflow to control any EVM based fine-grained event-driven
+ * A VIATRA EVM Executor, that enables the MWE 2 workflow to control any EVM based fine-grained event-driven
  * transformation, provided that the transformation's ExecutionSchema is created with this executor.
  * 
  * It also implements the IController interface which enables the workflow to explicitly start the execution of the

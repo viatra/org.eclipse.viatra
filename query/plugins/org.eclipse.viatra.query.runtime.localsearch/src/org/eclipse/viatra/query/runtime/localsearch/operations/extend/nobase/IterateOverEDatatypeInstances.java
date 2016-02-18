@@ -31,7 +31,7 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 
 /**
- * Iterates over all {@link EDataType} instances without using an {@link NavigationHelper EMF-IncQuery Base indexer}.
+ * Iterates over all {@link EDataType} instances without using an {@link NavigationHelper VIATRA Base indexer}.
  * 
  */
 public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {

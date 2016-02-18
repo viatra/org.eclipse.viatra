@@ -43,7 +43,7 @@ import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.viatra.query.runtime.IncQueryRuntimePlugin;
+import org.eclipse.viatra.query.runtime.ViatraQueryRuntimePlugin;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugin;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -61,7 +61,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * A common helper class for generating IncQuery-related projects.
+ * A common helper class for generating VIATRA Query-related projects.
  *
  * @author Zoltan Ujhelyi
  */
@@ -126,13 +126,13 @@ public abstract class ProjectGenerationHelper {
     public static final List<String> SINGLESOURCEFOLDER = ImmutableList.of("src");
 
     /**
-     * Creates a new IncQuery project: a plug-in project with src and src-gen folders and specific dependencies.
+     * Creates a new VIATRA Query project: a plug-in project with src and src-gen folders and specific dependencies.
      *
      */
     public static void createProject(IProjectDescription description, IProject proj,
             List<String> additionalDependencies, IProgressMonitor monitor) throws CoreException {
         List<String> dependencies = Lists.newArrayList("org.eclipse.emf.ecore",
-                IncQueryRuntimePlugin.PLUGIN_ID, "org.eclipse.xtext.xbase.lib");
+                ViatraQueryRuntimePlugin.PLUGIN_ID, "org.eclipse.xtext.xbase.lib");
         List<String> importPackages = Lists.newArrayList("org.apache.log4j");
         if (additionalDependencies != null) {
             dependencies.addAll(additionalDependencies);
@@ -151,7 +151,7 @@ public abstract class ProjectGenerationHelper {
             IPath[] additionalBinIncludes = new IPath[] { new Path("plugin.xml")};
             ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, importPackages, service, bundleDesc, additionalBinIncludes);
             bundleDesc.apply(monitor);
-            // Adding IncQuery-specific natures
+            // Adding VIATRA Query-specific natures
             ProjectGenerationHelper.updateNatures(proj,
                     ImmutableList.of(ViatraQueryNature.XTEXT_NATURE_ID, ViatraQueryNature.NATURE_ID),
                     ImmutableList.<String>of(), monitor);

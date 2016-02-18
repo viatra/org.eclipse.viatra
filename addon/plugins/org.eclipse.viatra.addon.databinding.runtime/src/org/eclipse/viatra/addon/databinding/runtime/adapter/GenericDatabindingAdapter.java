@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.viatra.addon.databinding.runtime.api.IncQueryObservables;
+import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 
@@ -26,7 +26,7 @@ public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
     private final Map<String, ObservableDefinition> parameterMap;
 
     public GenericDatabindingAdapter(IQuerySpecification<?> query) {
-        this.parameterMap = IncQueryObservables.calculateObservableValues(query);
+        this.parameterMap = ViatraObservables.calculateObservableValues(query);
     }
 
     @Override
@@ -41,9 +41,9 @@ public class GenericDatabindingAdapter extends DatabindingAdapter<IPatternMatch>
             String expression = def.getExpression();
             switch (def.getType()) {
                 case OBSERVABLE_FEATURE:
-                    return IncQueryObservables.getObservableValue(match, expression);
+                    return ViatraObservables.getObservableValue(match, expression);
                 case OBSERVABLE_LABEL:
-                    return IncQueryObservables.getObservableLabelFeature(match, expression);
+                    return ViatraObservables.getObservableLabelFeature(match, expression);
                 default:
                     return null;
             }

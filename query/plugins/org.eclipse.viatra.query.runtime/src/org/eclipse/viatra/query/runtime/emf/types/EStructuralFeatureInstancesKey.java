@@ -11,7 +11,7 @@
 package org.eclipse.viatra.query.runtime.emf.types;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 
 /**
  * Instance tuples are of form (x, y), where x is an eObject that has y as the value of the given feature (or one of the values in case of multi-valued).
@@ -26,7 +26,7 @@ public class EStructuralFeatureInstancesKey extends BaseEMFTypeKey<EStructuralFe
 
 	@Override
 	public String getPrettyPrintableName() {
-		return IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
+		return ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override

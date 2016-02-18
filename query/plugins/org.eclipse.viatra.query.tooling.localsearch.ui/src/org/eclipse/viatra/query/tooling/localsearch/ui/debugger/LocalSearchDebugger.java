@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchOperationViewerNode;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewelement.SearchPlanViewModel;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
@@ -95,7 +95,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 						
 						localSearchDebugView.refreshView();
 					} catch (PartInitException e) {
-                        IncQueryLoggingUtil.getDefaultLogger().log(
+                        ViatraQueryLoggingUtil.getDefaultLogger().log(
                                 Level.ERROR,
                                 "A part init exception occured while executing pattern matcher started handler"
                                         + e.getMessage(), e);

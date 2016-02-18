@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * FIXME write AggregateHandler if any EDataType should be allowed TODO notifications could be static final? to ensure
@@ -42,8 +42,8 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
     protected SumQueryBasedFeature(EStructuralFeature feature, QueryBasedFeatureKind kind) {
         super(feature, false);
         if (!(feature instanceof EAttribute)) {
-            IncQueryLoggingUtil.getLogger(getClass()).error(
-                    "[IncqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
+            ViatraQueryLoggingUtil.getLogger(getClass()).error(
+                    "[ViatraqueryFeatureHandler] Invalid configuration (Aggregate can be used only with EAttribute)!");
         }
     }
 
@@ -57,10 +57,10 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
             counterMemory.put(source, tempMemory);
             return new ENotificationImpl(source, Notification.SET, getFeature(), getIntValue(source), tempMemory);
         } else {
-            IncQueryLoggingUtil
+            ViatraQueryLoggingUtil
                     .getLogger(getClass())
                     .error(String
-                            .format("[IncqueryFeatureHandler] Exception during update: The counter of %s for feature %s reached the maximum value of int!",
+                            .format("[ViatraqueryFeatureHandler] Exception during update: The counter of %s for feature %s reached the maximum value of int!",
                                     source, getFeature()));
         }
         return null;
@@ -72,19 +72,19 @@ public class SumQueryBasedFeature extends IterationQueryBasedFeature {
         Integer delta = (Integer) getTargetValue(signature);
         Integer value = counterMemory.get(source);
         if (value == null) {
-            IncQueryLoggingUtil
+            ViatraQueryLoggingUtil
                     .getLogger(getClass())
-                    .error("[IncqueryFeatureHandler] Space-time continuum breached (should never happen): decreasing a counter with no previous value");
+                    .error("[ViatraqueryFeatureHandler] Space-time continuum breached (should never happen): decreasing a counter with no previous value");
         } else if (value >= delta) {
             int tempMemory = value - delta;
             int oldValue = value;
             counterMemory.put(source, tempMemory);
             return new ENotificationImpl(source, Notification.SET, getFeature(), oldValue, tempMemory);
         } else {
-            IncQueryLoggingUtil
+            ViatraQueryLoggingUtil
                     .getLogger(getClass())
                     .error(String
-                            .format("[IncqueryFeatureHandler] Exception during update: The counter of %s for feature %s cannot go below zero!",
+                            .format("[ViatraqueryFeatureHandler] Exception during update: The counter of %s for feature %s cannot go below zero!",
                                     source, getFeature()));
         }
         return null;

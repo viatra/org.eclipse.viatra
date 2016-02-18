@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IValueProvider;
 import org.eclipse.xtext.EcoreUtil2;
@@ -82,7 +82,7 @@ public class XBaseEvaluator implements IExpressionEvaluator{
                     return var.getName();
                 }
             });
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             logger.error("XBase Java evaluator extension point initialization failed.", e);
             throw new SpecificationBuilderException("XBase interpreter initialization failed", new String[0], "Failed Xbase interpreter initialization", pattern, e);
         }
@@ -107,7 +107,7 @@ public class XBaseEvaluator implements IExpressionEvaluator{
         }
         IEvaluationResult result = interpreter.evaluate(xExpression, context, CancelIndicator.NullImpl);
         if (result == null)
-            throw new IncQueryException(String.format(
+            throw new ViatraQueryException(String.format(
                     "XBase expression interpreter returned no result while evaluating expression %s in pattern %s.",
                     xExpression, pattern), "XBase expression interpreter returned no result.");
         Throwable throwable = result.getException();
@@ -116,7 +116,7 @@ public class XBaseEvaluator implements IExpressionEvaluator{
         } else if (throwable instanceof Exception) {
             throw (Exception) throwable;
         } else if (throwable != null) {
-            throw new IncQueryException(String.format("Strange throwable (%s) encountered: %s", throwable.getClass()
+            throw new ViatraQueryException(String.format("Strange throwable (%s) encountered: %s", throwable.getClass()
                     .getCanonicalName(), throwable.getMessage()), "Strange throwable encountered", throwable);
         }
         return result.getResult();

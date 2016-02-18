@@ -14,7 +14,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Base implementation of {@link IQueryGroup}.
@@ -25,16 +25,16 @@ import org.eclipse.viatra.query.runtime.exception.IncQueryException;
 public abstract class BaseQueryGroup implements IQueryGroup {
 
     @Override
-    public void prepare(Notifier emfRoot) throws IncQueryException {
+    public void prepare(Notifier emfRoot) throws ViatraQueryException {
         prepare(AdvancedViatraQueryEngine.on(emfRoot));
     }
 
     @Override
-    public void prepare(ViatraQueryEngine engine) throws IncQueryException {
+    public void prepare(ViatraQueryEngine engine) throws ViatraQueryException {
     	prepare(AdvancedViatraQueryEngine.from(engine));
     }
     
-    protected void prepare(AdvancedViatraQueryEngine engine) throws IncQueryException {
+    protected void prepare(AdvancedViatraQueryEngine engine) throws ViatraQueryException {
         engine.prepareGroup(this, null /* default options */);
     }
     

@@ -14,12 +14,10 @@ Require-Bundle: org.eclipse.core.databinding;visibility:=reexport,
  org.eclipse.viatra.query.patternlanguage.emf;resolution:=optional,
  com.google.guava,
  com.google.inject
-Export-Package: org.eclipse.viatra.addon.databinding.runtime,
- org.eclipse.viatra.addon.databinding.runtime.adapter,
+Export-Package: org.eclipse.viatra.addon.databinding.runtime.adapter,
  org.eclipse.viatra.addon.databinding.runtime.api,
  org.eclipse.viatra.addon.databinding.runtime.collection,
  org.eclipse.viatra.addon.databinding.runtime.observables,
  org.eclipse.viatra.addon.databinding.runtime.util,
  org.eclipse.viatra.addon.databinding.runtime.util.validation
 Bundle-Vendor: Eclipse VIATRA Project
-Bundle-Activator: org.eclipse.viatra.addon.databinding.runtime.IncQueryDatabindingRuntimePlugin

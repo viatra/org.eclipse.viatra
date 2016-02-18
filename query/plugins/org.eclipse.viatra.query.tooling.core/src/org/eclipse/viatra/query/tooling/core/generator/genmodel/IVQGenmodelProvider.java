@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.tooling.generator.model.generatorModel.ViatraQue
 public interface IVQGenmodelProvider {
 
     /**
-     * Gets the generator model for a selected IncQuery-related context object (e.g. a {@link Pattern}). If the project
+     * Gets the generator model for a selected VIATRA query-related context object (e.g. a {@link Pattern}). If the project
      * of the pattern has no generator model specified, this method returns an empty generator model. The genmodel will
      * be placed into the {@link ResourceSet} of the Pattern object.
      * 
@@ -38,7 +38,7 @@ public interface IVQGenmodelProvider {
      * @return the loaded generator model
      * @throws IllegalArgumentException
      *             if the parameter pattern is not serialized into a {@link ResourceSet} that is not linked to an
-     *             IncQuery project
+     *             VIATRA Query project
      */
     ViatraQueryGeneratorModel getGeneratorModel(EObject context);
 

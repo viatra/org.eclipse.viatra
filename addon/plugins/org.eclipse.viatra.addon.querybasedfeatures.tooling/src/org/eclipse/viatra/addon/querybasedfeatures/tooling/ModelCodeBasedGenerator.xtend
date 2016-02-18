@@ -281,7 +281,7 @@ class ModelCodeBasedGenerator {
 			handlerField.modifiers().add(ast.newModifier(Modifier.ModifierKeyword::PRIVATE_KEYWORD))
 			val handlerTag = ast.newTagElement
 			val tagText = ast.newTextElement
-			tagText.text = "EMF-IncQuery handler for query-based feature "+feature.name
+			tagText.text = "VIATRA handler for query-based feature "+feature.name
 			handlerTag.fragments.add(tagText)
 			val javaDoc = ast.newJavadoc
 			javaDoc.tags.add(handlerTag)
@@ -346,7 +346,7 @@ class ModelCodeBasedGenerator {
 					rewrite.set(oldTag,TagElement::TAG_NAME_PROPERTY,"@query-based",null)
 					val tagsRewrite = rewrite.getListRewrite(oldTag,TagElement::FRAGMENTS_PROPERTY)
 					val tagText = ast.newTextElement
-					tagText.text = "getter created by EMF-IncQuery for query-based feature "+genFeature.name
+					tagText.text = "getter created by VIATRA for query-based feature "+genFeature.name
 					tagsRewrite.insertLast(tagText, null)
 					bodyDeclListRewrite.insertLast(method, null)
 					if(getGenMethod == null){
@@ -367,7 +367,7 @@ class ModelCodeBasedGenerator {
 				// generated tag dirty or javadoc null
 				replaceMethodBody(ast, rewrite, getMethod.body, dummyMethod.body,
 					javadoc, document, true, "@query-based",
-					"getter created by EMF-IncQuery for query-based feature "+genFeature.name, null
+					"getter created by VIATRA for query-based feature "+genFeature.name, null
 				)
 			}
 

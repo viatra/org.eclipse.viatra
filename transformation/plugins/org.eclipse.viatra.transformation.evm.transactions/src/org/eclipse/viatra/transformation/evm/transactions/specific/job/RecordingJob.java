@@ -33,9 +33,9 @@ import com.google.common.collect.Table;
  */
 public class RecordingJob<EventAtom> extends CompositeJob<EventAtom> {
 
-    public static final String TRANSACTIONAL_EDITING_DOMAIN = "org.eclipse.incquery.evm.TransactionalEditingDomain";
-    public static final String RECORDING_JOB = "org.eclipse.incquery.evm.specifc.RecordingJobExecution";
-    public static final String RECORDING_JOB_SESSION_DATA_KEY = "org.eclipse.incquery.evm.specific.RecordingJob.SessionData";
+    public static final String TRANSACTIONAL_EDITING_DOMAIN = CommandExecutingJob.EDITING_DOMAIN;
+    public static final String RECORDING_JOB = "org.eclipse.viatra.transformation.evm.specifc.RecordingJobExecution";
+    public static final String RECORDING_JOB_SESSION_DATA_KEY = "org.eclipse.viatra.transformation.evm.specific.RecordingJob.SessionData";
     private final EventAtomEditingDomainProvider<EventAtom> provider;
     /**
      * Data transfer class for storing the commands created by recording jobs.

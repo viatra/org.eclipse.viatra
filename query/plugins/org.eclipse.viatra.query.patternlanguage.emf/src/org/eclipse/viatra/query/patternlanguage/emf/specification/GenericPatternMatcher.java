@@ -16,11 +16,11 @@ import org.eclipse.viatra.query.runtime.api.GenericMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
- * This is a generic pattern matcher for any EMF-IncQuery pattern, with
+ * This is a generic pattern matcher for any VIATRA Query pattern, with
  * "interpretative" query execution. Use the pattern matcher on a given model
  * via {@link #on(ViatraQueryEngine, Pattern)}, e.g. in conjunction with
  * {@link ViatraQueryEngine#on(Notifier)}.
@@ -48,53 +48,53 @@ public class GenericPatternMatcher extends
 		org.eclipse.viatra.query.runtime.api.GenericPatternMatcher {
 
 	protected GenericPatternMatcher(ViatraQueryEngine engine,
-			GenericQuerySpecification specification) throws IncQueryException {
+			GenericQuerySpecification specification) throws ViatraQueryException {
 		super(engine, specification);
 	}
 
 	/**
-	 * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+	 * Initializes the pattern matcher within an existing VIATRA Query engine.
 	 * If the pattern matcher is already constructed in the engine, only a
 	 * light-weight reference is returned. The match set will be incrementally
 	 * refreshed upon updates.
 	 * 
 	 * @param engine
-	 *            the existing EMF-IncQuery engine in which this matcher will be
+	 *            the existing VIATRA Query engine in which this matcher will be
 	 *            created.
 	 * @param pattern
-	 *            the EMF-IncQuery pattern for which the matcher is to be
+	 *            the VIATRA Query pattern for which the matcher is to be
 	 *            constructed.
-	 * @throws IncQueryException
+	 * @throws ViatraQueryException
 	 *             if an error occurs during pattern matcher creation
 	 */
 	public static GenericPatternMatcher on(ViatraQueryEngine engine,
-			Pattern pattern) throws IncQueryException {
+			Pattern pattern) throws ViatraQueryException {
 		try {
 			return on(engine, new GenericQuerySpecification(
 					new GenericEMFPatternPQuery(pattern)));
 		} catch (QueryInitializationException e) {
-			throw new IncQueryException(e);
+			throw new ViatraQueryException(e);
 		}
 	}
 
 	/**
-	 * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+	 * Initializes the pattern matcher within an existing VIATRA Query engine.
 	 * If the pattern matcher is already constructed in the engine, only a
 	 * light-weight reference is returned. The match set will be incrementally
 	 * refreshed upon updates.
 	 * 
 	 * @param engine
-	 *            the existing EMF-IncQuery engine in which this matcher will be
+	 *            the existing VIATRA Query engine in which this matcher will be
 	 *            created.
 	 * @param querySpecification
 	 *            the query specification for which the matcher is to be
 	 *            constructed.
-	 * @throws IncQueryException
+	 * @throws ViatraQueryException
 	 *             if an error occurs during pattern matcher creation
 	 */
 	public static GenericPatternMatcher on(ViatraQueryEngine engine,
 			GenericQuerySpecification querySpecification)
-			throws IncQueryException {
+			throws ViatraQueryException {
 		// check if matcher already exists
 		GenericPatternMatcher matcher = engine
 				.getExistingMatcher(querySpecification);

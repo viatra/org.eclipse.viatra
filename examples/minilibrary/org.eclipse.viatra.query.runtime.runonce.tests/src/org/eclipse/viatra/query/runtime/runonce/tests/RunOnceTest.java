@@ -34,7 +34,7 @@ import org.eclipse.viatra.query.runtime.api.impl.RunOnceQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.comprehension.WellbehavingDerivedFeatureRegistry;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.junit.Test;
 
 /**
@@ -73,7 +73,7 @@ public class RunOnceTest {
 //            Collection<BooksWithMultipleAuthorsMatch> allMatches = engine.getAllMatches(BooksWithMultipleAuthorsMatcher.querySpecification());
             Collection<BooksWithMultipleAuthorsMatch> allMatches = engine.getMatcher(BooksWithMultipleAuthorsMatcher.querySpecification()).getAllMatches();
             assertTrue(allMatches.size() == 2);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }
@@ -90,7 +90,7 @@ public class RunOnceTest {
             SumOfPagesInLibraryMatch match = allMatches.iterator().next();
             assertTrue(match.getLibrary().equals(library));
             assertTrue(match.getSumOfPages() == 222);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }
@@ -107,7 +107,7 @@ public class RunOnceTest {
             SingleAuthoredFirstBooksMatch match = allMatches.iterator().next();
             assertTrue(match.getLibrary().equals(library));
             assertTrue(match.getFirstBook().getTitle().equals("Other SciFi"));
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }
@@ -124,7 +124,7 @@ public class RunOnceTest {
             LongSciFiBooksOfAuthorMatch match = allMatches.iterator().next();
             assertTrue(match.getAuthor().getName().equals("Third Author"));
             assertTrue(match.getBook().getTitle().equals("Other SciFi"));
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }
@@ -145,7 +145,7 @@ public class RunOnceTest {
             RequestCountOfLibraryMatch match = allMatches.iterator().next();
             assertTrue(match.getLibrary().equals(library));
             assertTrue(match.getReqCount() == 2);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }
@@ -169,7 +169,7 @@ public class RunOnceTest {
             allMatches = engine.getAllMatches(SomeBooksWithTwoAuthorsMatcher.querySpecification());
             assertTrue(allMatches.isEmpty());
             
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }
@@ -178,10 +178,10 @@ public class RunOnceTest {
     /**
      * The test shows that using an incremental engine with not well-behaving derived features will return 
      * incorrect values if the model changes.
-     * @throws IncQueryException 
+     * @throws ViatraQueryException 
      */
     @Test
-    public void testModelModification() throws IncQueryException {
+    public void testModelModification() throws ViatraQueryException {
         // the results of incremental engine will not be correct
         Library library = prepareModel();
         
@@ -239,7 +239,7 @@ public class RunOnceTest {
             //engine.getBaseIndex().registerEClasses(Sets.newHashSet(EIQLibraryPackage.eINSTANCE.getBook(), EIQLibraryPackage.eINSTANCE.getWriter()));
             runModelModification(library, roengine, engine);
             
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }
@@ -257,14 +257,14 @@ public class RunOnceTest {
             AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(rs,baseIndexOptions);
             runModelModification(library, roengine, engine);
             
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }
     }
 
     private void runModelModification(Library library, RunOnceQueryEngine roengine, AdvancedViatraQueryEngine engine)
-            throws IncQueryException {
+            throws ViatraQueryException {
         LongSciFiBooksOfAuthorMatcher matcher = engine.getMatcher(LongSciFiBooksOfAuthorMatcher.querySpecification());
         Collection<LongSciFiBooksOfAuthorMatch> allMatches = matcher.getAllMatches();
         
@@ -330,7 +330,7 @@ public class RunOnceTest {
             assertTrue(match.getAuthor().equals(writer));
             assertTrue(match.getBook().equals(book));
             
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }
@@ -366,7 +366,7 @@ public class RunOnceTest {
             allMatches = roengine.getAllMatches(LongSciFiBooksOfAuthorMatcher.querySpecification());
             assertTrue(!allMatches.isEmpty());
             
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             fail(e.getShortMessage());
         }

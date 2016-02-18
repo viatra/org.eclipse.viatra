@@ -28,7 +28,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -119,10 +119,10 @@ public class SpecificationBuilder {
      * not be called with different patterns having the same fqn over its entire lifecycle.
      *
      * @param pattern
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      */
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
-            Pattern pattern) throws IncQueryException {
+            Pattern pattern) throws ViatraQueryException {
         return getOrCreateSpecification(pattern, false);
     }
 
@@ -134,15 +134,15 @@ public class SpecificationBuilder {
      * @param skipPatternValidation
      *            if set to true, detailed pattern validation is skipped - true for model inferrer; not recommended for
      *            generic API
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      */
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
-            Pattern pattern, boolean skipPatternValidation) throws IncQueryException {
+            Pattern pattern, boolean skipPatternValidation) throws ViatraQueryException {
         return getOrCreateSpecification(pattern, Lists.<IQuerySpecification<?>>newArrayList(), skipPatternValidation);
     }
 
     public IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getOrCreateSpecification(
-            Pattern pattern, List<IQuerySpecification<?>> createdPatternList, boolean skipPatternValidation) throws IncQueryException {
+            Pattern pattern, List<IQuerySpecification<?>> createdPatternList, boolean skipPatternValidation) throws ViatraQueryException {
         Preconditions.checkArgument(pattern != null && !pattern.eIsProxy(), "Cannot create specification from a null pattern");
         String fqn = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
         Preconditions.checkArgument(fqn != null && !"".equals(fqn), "Pattern name cannot be empty");
@@ -153,7 +153,7 @@ public class SpecificationBuilder {
             try {
 				specification = buildSpecification(pattern, skipPatternValidation, createdPatternList);
 			} catch (QueryInitializationException e) {
-				throw new IncQueryException(e);
+				throw new ViatraQueryException(e);
 			}
         }
         return specification;
@@ -199,7 +199,7 @@ public class SpecificationBuilder {
                 try {
                 	buildAnnotations(newPattern, pQuery);
                 	buildBodies(newPattern, pQuery);
-            	} catch (IncQueryException e) {
+            	} catch (ViatraQueryException e) {
             		pQuery.addError(new PProblem(e, e.getShortMessage()));
                 } catch (RewriterException e) {
                 	pQuery.addError(new PProblem(e, e.getShortMessage()));
@@ -236,7 +236,7 @@ public class SpecificationBuilder {
     }
 
     protected void buildAnnotations(Pattern pattern, InitializablePQuery query)
-            throws IncQueryException {
+            throws ViatraQueryException {
         for (Annotation annotation : pattern.getAnnotations()) {
             PAnnotation pAnnotation = new PAnnotation(annotation.getName());
             for (Entry<String, Object> attribute : CorePatternLanguageHelper.evaluateAnnotationParameters(annotation).entrySet()) {

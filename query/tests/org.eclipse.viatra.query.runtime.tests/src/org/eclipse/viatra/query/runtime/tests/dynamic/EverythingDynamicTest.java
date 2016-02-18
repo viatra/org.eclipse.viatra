@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReferenc
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,7 +38,7 @@ public class EverythingDynamicTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void everythingDynamic() throws IncQueryException {
+    public void everythingDynamic() throws ViatraQueryException {
         EMFPatternLanguagePlugin.getInstance().addCompoundInjector(new EMFPatternLanguageStandaloneSetup().createInjectorAndDoEMFRegistration(), EMFPatternLanguagePlugin.TEST_INJECTOR_PRIORITY);
 
         // Create the dynamic metamodel
@@ -69,7 +69,7 @@ public class EverythingDynamicTest {
         EPackage bookStoreEPackage = theCoreFactory.createEPackage();
         bookStoreEPackage.setName("BookStorePackage");
         bookStoreEPackage.setNsPrefix("bookStore");
-        bookStoreEPackage.setNsURI("http:///org.example.incquery.bookstore");
+        bookStoreEPackage.setNsURI("http:///org.example.viatra.bookstore");
         bookStoreEPackage.getEClassifiers().add(bookStoreEClass);
         bookStoreEPackage.getEClassifiers().add(bookEClass);
 

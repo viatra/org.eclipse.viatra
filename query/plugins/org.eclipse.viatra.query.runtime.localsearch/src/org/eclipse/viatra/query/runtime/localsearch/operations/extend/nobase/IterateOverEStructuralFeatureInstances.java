@@ -28,7 +28,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Iterates all available {@link EStructuralFeature} elements without using an {@link NavigationHelper EMF-IncQuery Base
+ * Iterates all available {@link EStructuralFeature} elements without using an {@link NavigationHelper VIATRA Base
  * indexer}.
  * 
  */

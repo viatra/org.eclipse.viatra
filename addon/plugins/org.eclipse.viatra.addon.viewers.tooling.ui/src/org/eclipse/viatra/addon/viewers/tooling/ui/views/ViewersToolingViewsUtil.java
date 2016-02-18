@@ -15,7 +15,7 @@ import java.util.Collection;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Utility class for handling Viewers Tooling Views.
@@ -26,7 +26,7 @@ public final class ViewersToolingViewsUtil {
 
 	public static final String SANDBOX_TAB_EXTENSION_ID = "org.eclipse.viatra.addon.viewers.tooling.ui.viewersandboxtab";
 
-	public static void initializeContentsOnView(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter) throws IncQueryException {
+	public static void initializeContentsOnView(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter) throws ViatraQueryException {
 		//ViewersSandboxView.getInstance().setContents(model, patterns, filter);
 		ViewersMultiSandboxView.ensureOpen();
 		ViewersMultiSandboxView.getInstance().initializeContents(model, queries, filter);

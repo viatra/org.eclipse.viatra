@@ -12,14 +12,13 @@ package org.eclipse.viatra.transformation.evm.specific;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.evm.specific.job.EnableJob;
 import org.eclipse.viatra.transformation.evm.specific.job.ErrorLoggingJob;
 import org.eclipse.viatra.transformation.evm.specific.job.StatelessJob;
@@ -42,12 +41,12 @@ public final class Jobs {
      * Creates a {@link StatelessJob} for the given state with the given processor. A stateless job simply processes the
      * match in the activation during execution.
      *
-     * @param incQueryActivationStateEnum
+     * @param cRUDActivationStateEnum
      * @param processor
      */
     public static <Match extends IPatternMatch> Job<Match> newStatelessJob(
-            final IncQueryActivationStateEnum incQueryActivationStateEnum, final IMatchProcessor<Match> processor) {
-        return new StatelessJob<Match>(incQueryActivationStateEnum, processor);
+            final CRUDActivationStateEnum cRUDActivationStateEnum, final IMatchProcessor<Match> processor) {
+        return new StatelessJob<Match>(cRUDActivationStateEnum, processor);
     }
 
     /**

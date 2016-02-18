@@ -19,17 +19,17 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.base.Preconditions;
 
 /**
- * This soft objective collects a list of IncQuery patterns and weights. Then the fitness value of a solution is
+ * This soft objective collects a list of VIATRA Query patterns and weights. Then the fitness value of a solution is
  * calculated in the following way:
  * <p>
  * <code>fitness = sum( pattern[i].countMatches() * weight[i] )</code>
  * <p>
- * Hard constraints can also be registered with this type of objective. If every IncQuery pattern has a match the hard
+ * Hard constraints can also be registered with this type of objective. If every VIATRA Query pattern has a match the hard
  * constraint is considered to be fulfilled.
  * 
  * @author Andras Szabolcs Nagy
@@ -122,7 +122,7 @@ public class ConstraintsObjective extends BaseObjective {
      * @param name
      *            A name for the soft constraint.
      * @param softConstraint
-     *            An IncQuery pattern specification.
+     *            An VIATRA Query pattern specification.
      * @param weight
      *            The weight of the pattern.
      * @return The actual instance to enable builder pattern like usage.
@@ -139,7 +139,7 @@ public class ConstraintsObjective extends BaseObjective {
      * Adds a new soft constraint with the name of the query specification's fully qualified name.
      * 
      * @param softConstraint
-     *            An IncQuery pattern specification.
+     *            An VIATRA Query pattern specification.
      * @param weight
      *            The weight of the pattern.
      * @return The actual instance to enable builder pattern like usage.
@@ -155,7 +155,7 @@ public class ConstraintsObjective extends BaseObjective {
      * @param name
      *            A name for the hard constraint.
      * @param softConstraint
-     *            An IncQuery pattern specification.
+     *            An VIATRA Query pattern specification.
      * @return The actual instance to enable builder pattern like usage.
      */
     public ConstraintsObjective withHardConstraint(String name,
@@ -169,7 +169,7 @@ public class ConstraintsObjective extends BaseObjective {
      * Adds a new hard constraint with the name of the query specification's fully qualified name.
      * 
      * @param softConstraint
-     *            An IncQuery pattern specification.
+     *            An VIATRA Query pattern specification.
      * @return The actual instance to enable builder pattern like usage.
      */
     public ConstraintsObjective withHardConstraint(
@@ -216,8 +216,8 @@ public class ConstraintsObjective extends BaseObjective {
                 hardMatchers.add(qs.getMatcher(queryEngine));
             }
 
-        } catch (IncQueryException e) {
-            throw new DSEException("Couldn't initialize the incquery matcher, see inner exception", e);
+        } catch (ViatraQueryException e) {
+            throw new DSEException("Couldn't initialize the VIATRA Query matcher, see inner exception", e);
         }
     }
 

@@ -7,7 +7,7 @@
       <annotation
             additionalValidator="org.eclipse.viatra.addon.validation.runtime.annotation.ConstraintAnnotationValidator"
             deprecated="false"
-            description="This annotation is used to mark a pattern for use in the IncQuery validation framework."
+            description="This annotation is used to mark a pattern for use in the VIATRA Query validation framework."
             name="Constraint">
          <annotationparameter
                deprecated="true"

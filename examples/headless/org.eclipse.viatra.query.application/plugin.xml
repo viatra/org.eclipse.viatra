@@ -2,50 +2,50 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="org.eclipse.incquery.application.app.generic"
+         id="org.eclipse.viatra.query.application.app.generic"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"
             thread="main"
             visible="true">
          <run
-               class="org.eclipse.viatra.query.application.generic.GenericEclipseIncQueryApplication">
+               class="org.eclipse.viatra.query.application.generic.GenericEclipseViatraQueryApplication">
          </run>
       </application>
    </extension>
    <extension
-         id="org.eclipse.incquery.application.app.patternspecific"
+         id="org.eclipse.viatra.query.application.app.patternspecific"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"
             thread="main"
             visible="true">
          <run
-               class="org.eclipse.viatra.query.application.patternspecific.PatternSpecificEclipseIncQueryApplication">
+               class="org.eclipse.viatra.query.application.patternspecific.PatternSpecificEclipseViatraQueryApplication">
          </run>
       </application>
    </extension>
    <extension
-         id="incquery.generic"
+         id="viatra.query.generic"
          point="org.eclipse.core.runtime.products">
       <product
-            application="org.eclipse.incquery.application.app.generic"
-            name="Generic IncQuery Application">
+            application="org.eclipse.viatra.query.application.app.generic"
+            name="Generic VIATRA Query Application">
          <property
                name="appName"
-               value="Generic IncQuery Application">
+               value="Generic VIATRA Query Application">
          </property>
       </product>
    </extension>
    <extension
-         id="incquery.specific"
+         id="viatra.query.specific"
          point="org.eclipse.core.runtime.products">
    	<product
-            application="org.eclipse.incquery.application.app.patternspecific"
-            name="PatternSpecific IncQuery Application">
+            application="org.eclipse.viatra.query.application.app.patternspecific"
+            name="PatternSpecific VIATRA Query Application">
          <property
                name="appName"
-               value="PatternSpecific IncQuery Application">
+               value="PatternSpecific VIATRA Query Application">
          </property>
       </product>
 	</extension>

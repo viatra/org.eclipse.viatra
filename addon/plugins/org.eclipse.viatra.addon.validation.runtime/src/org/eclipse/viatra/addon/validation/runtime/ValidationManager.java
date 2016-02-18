@@ -18,7 +18,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 
 import com.google.common.base.Function;
@@ -30,7 +30,7 @@ import com.google.common.collect.Multimaps;
  * <p>
  * It provides capabilities for:
  * <ul>
- * <li>accessing the constraint specifications registered through extensions (see EMF-IncQuery @Constraint annotation)
+ * <li>accessing the constraint specifications registered through extensions (see VIATRA Query @Constraint annotation)
  * <li>initializing a new validation engine
  * </ul>
  * 
@@ -97,12 +97,12 @@ public final class ValidationManager {
      *            The Notifier object on which the validation engine should be initialized.
      * @param editorId
      *            An editor Id for which we wish to use the registered constraint specifications at the
-     *            org.eclipse.incquery.livevalidation.runtime.constraintspecification extension point.
+     *            org.eclipse.viatra.addon.livevalidation.runtime.constraintspecification extension point.
      * @return The initialized validation engine.
-     * @throws IncQueryException if there is an error creating the engine on the notifier
+     * @throws ViatraQueryException if there is an error creating the engine on the notifier
      * @deprecated Use {@link ValidationInitializerUtil#initializeValidationWithRegisteredConstraintsOnNotifier} instead.
      */
-    public static IValidationEngine initializeValidationEngine(Notifier notifier, String editorId) throws IncQueryException {
+    public static IValidationEngine initializeValidationEngine(Notifier notifier, String editorId) throws ViatraQueryException {
         EMFScope scope = new EMFScope(notifier);
         return ValidationInitializerUtil.initializeValidationWithRegisteredConstraintsOnScope(scope, editorId);
     }

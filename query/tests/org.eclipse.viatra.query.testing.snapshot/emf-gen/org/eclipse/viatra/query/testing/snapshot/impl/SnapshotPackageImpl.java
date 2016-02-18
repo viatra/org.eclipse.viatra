@@ -17,7 +17,6 @@ import org.eclipse.viatra.query.testing.snapshot.DoubleSubstitution;
 import org.eclipse.viatra.query.testing.snapshot.EMFSubstitution;
 import org.eclipse.viatra.query.testing.snapshot.EnumSubstitution;
 import org.eclipse.viatra.query.testing.snapshot.FloatSubstitution;
-import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot;
 import org.eclipse.viatra.query.testing.snapshot.InputSpecification;
 import org.eclipse.viatra.query.testing.snapshot.IntSubstitution;
 import org.eclipse.viatra.query.testing.snapshot.LongSubstitution;
@@ -25,6 +24,7 @@ import org.eclipse.viatra.query.testing.snapshot.MatchRecord;
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord;
 import org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord;
 import org.eclipse.viatra.query.testing.snapshot.MiscellaneousSubstitution;
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot;
 import org.eclipse.viatra.query.testing.snapshot.RecordRole;
 import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory;
 import org.eclipse.viatra.query.testing.snapshot.SnapshotPackage;
@@ -133,7 +133,7 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass incQuerySnapshotEClass = null;
+	private EClass querySnapshotEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -497,8 +497,8 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getIncQuerySnapshot() {
-		return incQuerySnapshotEClass;
+	public EClass getQuerySnapshot() {
+		return querySnapshotEClass;
 	}
 
 	/**
@@ -506,8 +506,8 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getIncQuerySnapshot_MatchSetRecords() {
-		return (EReference)incQuerySnapshotEClass.getEStructuralFeatures().get(0);
+	public EReference getQuerySnapshot_MatchSetRecords() {
+		return (EReference)querySnapshotEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -515,8 +515,8 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getIncQuerySnapshot_ModelRoots() {
-		return (EReference)incQuerySnapshotEClass.getEStructuralFeatures().get(1);
+	public EReference getQuerySnapshot_ModelRoots() {
+		return (EReference)querySnapshotEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -524,8 +524,8 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getIncQuerySnapshot_InputSpecification() {
-		return (EAttribute)incQuerySnapshotEClass.getEStructuralFeatures().get(2);
+	public EAttribute getQuerySnapshot_InputSpecification() {
+		return (EAttribute)querySnapshotEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -618,10 +618,10 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 		miscellaneousSubstitutionEClass = createEClass(MISCELLANEOUS_SUBSTITUTION);
 		createEAttribute(miscellaneousSubstitutionEClass, MISCELLANEOUS_SUBSTITUTION__VALUE);
 
-		incQuerySnapshotEClass = createEClass(INC_QUERY_SNAPSHOT);
-		createEReference(incQuerySnapshotEClass, INC_QUERY_SNAPSHOT__MATCH_SET_RECORDS);
-		createEReference(incQuerySnapshotEClass, INC_QUERY_SNAPSHOT__MODEL_ROOTS);
-		createEAttribute(incQuerySnapshotEClass, INC_QUERY_SNAPSHOT__INPUT_SPECIFICATION);
+		querySnapshotEClass = createEClass(QUERY_SNAPSHOT);
+		createEReference(querySnapshotEClass, QUERY_SNAPSHOT__MATCH_SET_RECORDS);
+		createEReference(querySnapshotEClass, QUERY_SNAPSHOT__MODEL_ROOTS);
+		createEAttribute(querySnapshotEClass, QUERY_SNAPSHOT__INPUT_SPECIFICATION);
 
 		// Create enums
 		inputSpecificationEEnum = createEEnum(INPUT_SPECIFICATION);
@@ -715,10 +715,10 @@ public class SnapshotPackageImpl extends EPackageImpl implements SnapshotPackage
 		initEClass(miscellaneousSubstitutionEClass, MiscellaneousSubstitution.class, "MiscellaneousSubstitution", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getMiscellaneousSubstitution_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, MiscellaneousSubstitution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(incQuerySnapshotEClass, IncQuerySnapshot.class, "IncQuerySnapshot", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getIncQuerySnapshot_MatchSetRecords(), this.getMatchSetRecord(), null, "matchSetRecords", null, 0, -1, IncQuerySnapshot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getIncQuerySnapshot_ModelRoots(), theEcorePackage.getEObject(), null, "modelRoots", null, 0, -1, IncQuerySnapshot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getIncQuerySnapshot_InputSpecification(), this.getInputSpecification(), "inputSpecification", null, 0, 1, IncQuerySnapshot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(querySnapshotEClass, QuerySnapshot.class, "QuerySnapshot", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getQuerySnapshot_MatchSetRecords(), this.getMatchSetRecord(), null, "matchSetRecords", null, 0, -1, QuerySnapshot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getQuerySnapshot_ModelRoots(), theEcorePackage.getEObject(), null, "modelRoots", null, 0, -1, QuerySnapshot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getQuerySnapshot_InputSpecification(), this.getInputSpecification(), "inputSpecification", null, 0, 1, QuerySnapshot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(inputSpecificationEEnum, InputSpecification.class, "InputSpecification");

@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -37,7 +37,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.views.traceability.patterns.util.TraceQuerySpecification;
 
 import com.google.common.base.Preconditions;
@@ -120,21 +120,21 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
         new PositivePatternCall(body, new FlatTuple(newVariables.toArray()), baseQuery);
         try {
             insertTraceCall(body);
-        } catch (IncQueryException e) {
-            Logger logger = IncQueryLoggingUtil.getLogger(GenericReferencedPQuery.class);
+        } catch (ViatraQueryException e) {
+            Logger logger = ViatraQueryLoggingUtil.getLogger(GenericReferencedPQuery.class);
             logger.error(e.getMessage());
         }
 
         return Collections.<PBody> singleton(body);
     }
 
-    private void insertTraceCall(PBody body) throws IncQueryException {
+    private void insertTraceCall(PBody body) throws ViatraQueryException {
         for (PParameter pParameter : traceSources.keySet()) {
             insertTraceCall(body, pParameter);
         }
     }
 
-    private void insertTraceCall(PBody body, PParameter pTarget) throws IncQueryException {
+    private void insertTraceCall(PBody body, PParameter pTarget) throws ViatraQueryException {
         PVariable var_target = body.getOrCreateVariableByName(pTarget.getName());
         body.getSymbolicParameters().add(new ExportedParameter(body, var_target, var_target.getName()));
 

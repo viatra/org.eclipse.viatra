@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Akos Horvath, Gergely Varro - initial API and implementation from the VIATRA2 project
- *    Zoltan Ujhelyi - adaptation to EMF-IncQuery based engine
+ *    Zoltan Ujhelyi - adaptation to VIATRA Query based engine
  *******************************************************************************/
 
 package org.eclipse.viatra.query.runtime.localsearch;

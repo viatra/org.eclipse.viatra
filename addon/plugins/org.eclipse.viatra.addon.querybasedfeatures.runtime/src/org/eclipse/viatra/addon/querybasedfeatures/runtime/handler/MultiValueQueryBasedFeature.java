@@ -26,7 +26,7 @@ import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeature;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -110,7 +110,7 @@ public class MultiValueQueryBasedFeature extends QueryBasedFeature {
                 StringBuilder sb = new StringBuilder();
                 sb.append("[QueryBasedFeature] Space-time continuum breached (should never happen): removing value from list that doesn't contains it!");
                 sb.append("\n >> Non-existing value: ").append(source).append(" -> ").append(removed);
-                IncQueryLoggingUtil.getLogger(getClass()).error(sb.toString());
+                ViatraQueryLoggingUtil.getLogger(getClass()).error(sb.toString());
             }
             values.remove(removed);
         }

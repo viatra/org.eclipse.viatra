@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Jobs;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.views.core.ViewModelRule;
 import org.eclipse.viatra.transformation.views.core.util.ViewModelUtil;
 
@@ -63,7 +63,7 @@ public class EdgeRule extends ViewModelRule {
 
     @Override
     public Job<GenericPatternMatch> getAppearedJob() {
-        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED,
+        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED,
                 new IMatchProcessor<GenericPatternMatch>() {
 
                     @Override
@@ -100,7 +100,7 @@ public class EdgeRule extends ViewModelRule {
 
     @Override
     public Job<GenericPatternMatch> getDisappearedJob() {
-        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED,
+        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED,
                 new IMatchProcessor<GenericPatternMatch>() {
 
                     @Override
@@ -118,7 +118,7 @@ public class EdgeRule extends ViewModelRule {
 
     @Override
     public Job<GenericPatternMatch> getUpdatedJob() {
-        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.UPDATED,
+        return Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.UPDATED,
                 new IMatchProcessor<GenericPatternMatch>() {
 
                     @Override

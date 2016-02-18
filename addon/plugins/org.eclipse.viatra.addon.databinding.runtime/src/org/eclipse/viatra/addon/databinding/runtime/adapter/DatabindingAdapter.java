@@ -14,7 +14,7 @@ package org.eclipse.viatra.addon.databinding.runtime.adapter;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.ValueProperty;
-import org.eclipse.viatra.addon.databinding.runtime.api.IncQueryObservables;
+import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 
 import com.google.common.base.Preconditions;
@@ -47,7 +47,7 @@ public abstract class DatabindingAdapter<T extends IPatternMatch> {
         @Override
         public IObservableValue observe(Realm realm, Object source) {
             Preconditions.checkArgument((source instanceof IPatternMatch), SOURCE_MUST_BE_A_TYPED_PATTERN_MATCH);
-            return IncQueryObservables.getObservableValue((IPatternMatch) source, expression);
+            return ViatraObservables.getObservableValue((IPatternMatch) source, expression);
         }
 
     }
@@ -67,7 +67,7 @@ public abstract class DatabindingAdapter<T extends IPatternMatch> {
         @Override
         public IObservableValue observe(Realm realm, Object source) {
             Preconditions.checkArgument((source instanceof IPatternMatch), SOURCE_MUST_BE_A_TYPED_PATTERN_MATCH);
-            return IncQueryObservables.getObservableLabelFeature((IPatternMatch) source, expression);
+            return ViatraObservables.getObservableLabelFeature((IPatternMatch) source, expression);
         }
 
     }

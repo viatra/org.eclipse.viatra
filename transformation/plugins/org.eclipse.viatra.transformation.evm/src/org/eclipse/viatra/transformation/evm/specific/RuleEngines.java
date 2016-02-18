@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.EventDrivenVM;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryEventRealm;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm;
 
 /**
  * @author Abel Hegedus
@@ -33,9 +33,9 @@ public class RuleEngines {
      * @param engine
      * @return the prepared rule engine
      */
-    public static RuleEngine createIncQueryRuleEngine(final ViatraQueryEngine engine) {
-        //return EventDrivenVM.createRuleEngine(IncQueryEventRealm.create(engine));
-        return EventDrivenVM.createRuleEngine(IncQueryEventRealm.create(engine));
+    public static RuleEngine createViatraQueryRuleEngine(final ViatraQueryEngine engine) {
+        //return EventDrivenVM.createRuleEngine(ViatraQueryEventRealm.create(engine));
+        return EventDrivenVM.createRuleEngine(ViatraQueryEventRealm.create(engine));
     }
 
     /**
@@ -46,10 +46,10 @@ public class RuleEngines {
      * @param specifications
      * @return the prepared rule engine
      */
-    public static RuleEngine createIncQueryRuleEngine(final ViatraQueryEngine engine,
+    public static RuleEngine createViatraQueryRuleEngine(final ViatraQueryEngine engine,
             final Set<RuleSpecification<?>> specifications) {
         checkNotNull(specifications, "Cannot create rule engine with null rule specification set");
-        RuleEngine ruleEngine = createIncQueryRuleEngine(engine);
+        RuleEngine ruleEngine = createViatraQueryRuleEngine(engine);
         for (RuleSpecification<?> ruleSpecification : specifications) {
             ruleEngine.addRule(ruleSpecification);
         }

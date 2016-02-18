@@ -81,7 +81,7 @@ class VeplJvmModelInferrer extends AbstractModelInferrer {
 			patterns.generateAtomicEventPatterns(acceptor, _typeReferenceBuilder)
 		}
 
-		//generate atomic IncQuery event classes, patterns and the IQ-CEP mapping
+		//generate atomic VIATRA Query event classes, patterns and the IQ-CEP mapping
 		var queryPatterns = element.modelElements.filter[e|(e instanceof QueryResultChangeEventPattern)]
 		if (!queryPatterns.empty) {
 			queryPatterns.generateAtomicEventClasses(acceptor, _typeReferenceBuilder)

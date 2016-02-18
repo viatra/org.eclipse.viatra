@@ -12,7 +12,6 @@ package org.eclipse.viatra.cep.vepl.jvmmodel
 
 import com.google.inject.Inject
 import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance
-import org.eclipse.viatra.cep.core.api.events.ParameterizableIncQueryPatternEventInstance
 import org.eclipse.viatra.cep.core.metamodels.events.EventSource
 import org.eclipse.viatra.cep.core.metamodels.events.impl.AtomicEventPatternImpl
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
@@ -21,6 +20,7 @@ import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.viatra.cep.core.api.events.ParameterizableViatraQueryPatternEventInstance
 
 class AtomicGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
@@ -33,7 +33,7 @@ class AtomicGenerator {
 			acceptor.accept(pattern.toClass(pattern.classFqn)) [
 				documentation = pattern.documentation
 				if (pattern instanceof QueryResultChangeEventPattern) {
-					superTypes += typeRefBuilder.typeRef(ParameterizableIncQueryPatternEventInstance)
+					superTypes += typeRefBuilder.typeRef(ParameterizableViatraQueryPatternEventInstance)
 				} else if (pattern instanceof AtomicEventPattern) {
 					superTypes += typeRefBuilder.typeRef(ParameterizableEventInstance)
 					if((pattern as AtomicEventPattern).traits!=null){

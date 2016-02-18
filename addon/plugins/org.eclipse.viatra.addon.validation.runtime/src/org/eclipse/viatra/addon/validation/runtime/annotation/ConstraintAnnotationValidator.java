@@ -46,7 +46,7 @@ import com.google.inject.Inject;
  */
 public class ConstraintAnnotationValidator implements IPatternAnnotationAdditionalValidator {
 
-    private static final String VALIDATOR_BASE_CODE = "org.eclipse.incquery.livevalidation.";
+    private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.query.livevalidation.";
     public static final String SEVERITY_ISSUE_CODE = VALIDATOR_BASE_CODE + "severity";
     @Inject
     private AnnotationExpressionValidator expressionValidator;

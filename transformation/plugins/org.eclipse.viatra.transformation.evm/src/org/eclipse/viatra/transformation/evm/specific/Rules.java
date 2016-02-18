@@ -17,16 +17,16 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryEventRealm;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryEventSourceSpecification;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryFilterSemantics;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryMultiPatternMatchEventFilter;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQuerySinglePatternMatchEventFilter;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventSourceSpecification;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryFilterSemantics;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryMultiMatchEventFilter;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryMatchEventFilter;
 import org.eclipse.viatra.transformation.evm.specific.lifecycle.DefaultActivationLifeCycle;
 
 /**
@@ -48,7 +48,7 @@ public final class Rules {
      * @param jobs
      */
     public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
-        return new RuleSpecification<Match>(IncQueryEventRealm.createSourceSpecification(querySpecification), lifecycle, jobs);
+        return new RuleSpecification<Match>(ViatraQueryEventRealm.createSourceSpecification(querySpecification), lifecycle, jobs);
     }
     
     /**
@@ -67,7 +67,7 @@ public final class Rules {
         return new RuleSpecification<Match>(sourceSpecification, lifecycle, jobs);
     }
 
-    private static final class FavouredMatcherSourceSpecification<Match extends IPatternMatch> extends IncQueryEventSourceSpecification<Match>{
+    private static final class FavouredMatcherSourceSpecification<Match extends IPatternMatch> extends ViatraQueryEventSourceSpecification<Match>{
         
         private final ViatraQueryMatcher<Match> matcher;
         
@@ -78,7 +78,7 @@ public final class Rules {
 
         
         @Override
-        protected ViatraQueryMatcher<Match> getMatcher(ViatraQueryEngine engine) throws IncQueryException {
+        protected ViatraQueryMatcher<Match> getMatcher(ViatraQueryEngine engine) throws ViatraQueryException {
             if(matcher.getEngine().equals(engine)) {
                 return matcher;
             }
@@ -95,19 +95,19 @@ public final class Rules {
      * @return the event filter
      */
     public static <Match extends IPatternMatch> EventFilter<Match> newSingleMatchFilter(Match filterMatch) {
-        return IncQuerySinglePatternMatchEventFilter.createFilter(filterMatch);
+        return ViatraQueryMatchEventFilter.createFilter(filterMatch);
     }
     
     /**
      * Creates a "multi" event filter that uses the IPatternMatch.isCompatibleWith to check event atoms against a collection
-     * of filter (partial) matches. The possible semantics are documented in {@link IncQueryFilterSemantics}.
+     * of filter (partial) matches. The possible semantics are documented in {@link ViatraQueryFilterSemantics}.
      * 
      * @param filterMatches non-null match to use for filtering
      * @param semantics the filter semantics to use
      * @return the event filter
      */
-    public static <Match extends IPatternMatch> EventFilter<Match> newMultiMatchFilter(Collection<Match> filterMatches, IncQueryFilterSemantics semantics) {
-        return IncQueryMultiPatternMatchEventFilter.createFilter(filterMatches, semantics);
+    public static <Match extends IPatternMatch> EventFilter<Match> newMultiMatchFilter(Collection<Match> filterMatches, ViatraQueryFilterSemantics semantics) {
+        return ViatraQueryMultiMatchEventFilter.createFilter(filterMatches, semantics);
     }
     
 }

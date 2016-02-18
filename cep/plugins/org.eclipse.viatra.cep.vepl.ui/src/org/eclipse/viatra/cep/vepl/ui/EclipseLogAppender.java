@@ -17,7 +17,7 @@ import org.eclipse.viatra.cep.vepl.ui.internal.VeplActivator;
  * @author Peter Friese - Initial contribution and API
  * @author Sven Efftinge
  * @author Knut Wannheden - Refactored handling when used in non OSGi environment
- * @author Zoltan Ujhelyi - updated for the use of EMF-IncQuery
+ * @author Zoltan Ujhelyi - updated for the use of EMF-VIATRA Query
  * @author Istvan David - updated for the use of VIATRA-CEP
  */
 

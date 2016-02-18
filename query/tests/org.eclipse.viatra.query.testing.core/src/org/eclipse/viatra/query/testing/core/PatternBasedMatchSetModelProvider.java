@@ -15,7 +15,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord;
 
@@ -32,7 +32,7 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
     @Override
     public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet resourceSet,
             IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
-                    throws IncQueryException {
+                    throws ViatraQueryException {
         engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resourceSet));
         ViatraQueryMatcher<Match> matcher = (ViatraQueryMatcher<Match>) ((AdvancedViatraQueryEngine) engine)
                 .getMatcher(querySpecification, hint);

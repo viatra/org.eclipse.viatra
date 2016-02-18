@@ -31,7 +31,7 @@ import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.specific.RuleEngines;
 
@@ -96,7 +96,7 @@ public class ThreadContext {
      * Initializes the {@link ThreadContext} by initializing the underlying {@link ViatraQueryEngine} and
      * {@link RuleEngine}. {@link Guidance} initialization is also happening within this method.
      * 
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      */
     public void init() throws DSEException {
 
@@ -124,12 +124,12 @@ public class ThreadContext {
             // initialize query engine
             final EMFScope scope = new EMFScope(modelRoot);
             queryEngine = ViatraQueryEngine.on(scope);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             throw new DSEException("Failed to create unmanaged ViatraQueryEngine on the model.", e);
         }
 
         // initialize RuleEngine
-        ruleEngine = RuleEngines.createIncQueryRuleEngine(queryEngine);
+        ruleEngine = RuleEngines.createViatraQueryRuleEngine(queryEngine);
 
         ChangeCommand addRuleCommand = new ChangeCommand(modelRoot) {
             @Override

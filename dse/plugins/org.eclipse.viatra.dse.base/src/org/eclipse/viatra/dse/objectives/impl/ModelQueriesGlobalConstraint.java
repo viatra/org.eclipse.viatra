@@ -20,12 +20,12 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.base.Preconditions;
 
 /**
- * This global constraint collects a list of IncQuery pattern and checks if any of them has a match on along a trajectory.
+ * This global constraint collects a list of VIATRA Query pattern and checks if any of them has a match on along a trajectory.
  * If any of the patterns has a match then it is unsatisfied and the exploration should backtrack.
  * 
  * @author Andras Szabolcs Nagy
@@ -63,10 +63,10 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
     }
 
     /**
-     * Adds a new IncQuery pattern.
+     * Adds a new VIATRA Query pattern.
      * 
      * @param constraint
-     *            An IncQuery pattern.
+     *            An VIATRA Query pattern.
      * @return The actual instance to enable builder pattern like usage.
      */
     public ModelQueriesGlobalConstraint withConstraint(
@@ -106,8 +106,8 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
                 matchers.add(matcher);
             }
 
-        } catch (IncQueryException e) {
-            throw new DSEException("Couldn't get the incquery matcher, see inner exception", e);
+        } catch (ViatraQueryException e) {
+        throw new DSEException("Couldn't get the VIATRA Query matcher, see inner exception", e);
         }
     }
 

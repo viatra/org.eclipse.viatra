@@ -26,16 +26,16 @@ import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfiguration;
-import org.eclipse.viatra.addon.viewers.runtime.model.IncQueryViewerDataModel;
+import org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
-import org.eclipse.viatra.addon.viewers.runtime.zest.extensions.IncQueryViewersZestViewSupport;
+import org.eclipse.viatra.addon.viewers.runtime.zest.extensions.ViatraViewersZestViewSupport;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestContentWithIsolatedNodesProvider;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
@@ -50,7 +50,7 @@ import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.Pattern
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport {
+public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
 
 	public ReteVisualizationViewSupport(
 			IViewPart _owner,
@@ -101,7 +101,7 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
                             }
                         }
                     }
-                } catch (IncQueryException e) {
+                } catch (ViatraQueryException e) {
                     throw new RuntimeException("Failed to get query backend", e);
                 }
             }
@@ -141,7 +141,7 @@ public class ReteVisualizationViewSupport extends IncQueryViewersZestViewSupport
         }
         ViatraQueryEngine engine = getEngine();
         if (engine != null) {
-            state = IncQueryViewerDataModel.newViewerState(engine, this.configuration.getPatterns(),
+            state = ViatraViewerDataModel.newViewerState(engine, this.configuration.getPatterns(),
                     this.configuration.getFilter(),
                     ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             GraphViewer viewer = (GraphViewer) jfaceViewer;

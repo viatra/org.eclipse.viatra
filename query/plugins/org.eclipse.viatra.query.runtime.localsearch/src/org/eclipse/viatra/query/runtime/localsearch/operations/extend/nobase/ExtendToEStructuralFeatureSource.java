@@ -26,7 +26,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 /**
- * Iterates over all sources of {@link EStructuralFeature} using an {@link NavigationHelper EMF-IncQuery Base indexer}.
+ * Iterates over all sources of {@link EStructuralFeature} using an {@link NavigationHelper VIATRA Base indexer}.
  * It is assumed that the indexer is initialized for the selected {@link EStructuralFeature}.
  * 
  */

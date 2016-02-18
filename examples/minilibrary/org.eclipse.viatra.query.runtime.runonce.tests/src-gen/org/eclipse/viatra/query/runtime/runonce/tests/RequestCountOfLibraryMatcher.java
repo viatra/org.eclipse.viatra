@@ -10,11 +10,11 @@ import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.runonce.tests.RequestCountOfLibraryMatch;
 import org.eclipse.viatra.query.runtime.runonce.tests.util.RequestCountOfLibraryQuerySpecification;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * Generated pattern matcher API of the org.eclipse.viatra.query.runtime.runonce.tests.requestCountOfLibrary pattern,
@@ -40,14 +40,14 @@ import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
 @SuppressWarnings("all")
 public class RequestCountOfLibraryMatcher extends BaseMatcher<RequestCountOfLibraryMatch> {
   /**
-   * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+   * Initializes the pattern matcher within an existing VIATRA Query engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
-   * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-   * @throws IncQueryException if an error occurs during pattern matcher creation
+   * @param engine the existing VIATRA Query engine in which this matcher will be created.
+   * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public static RequestCountOfLibraryMatcher on(final ViatraQueryEngine engine) throws IncQueryException {
+  public static RequestCountOfLibraryMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
     // check if matcher already exists
     RequestCountOfLibraryMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
@@ -61,7 +61,7 @@ public class RequestCountOfLibraryMatcher extends BaseMatcher<RequestCountOfLibr
   
   private final static int POSITION_REQCOUNT = 1;
   
-  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(RequestCountOfLibraryMatcher.class);
+  private final static Logger LOGGER = ViatraQueryLoggingUtil.getLogger(RequestCountOfLibraryMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -71,26 +71,26 @@ public class RequestCountOfLibraryMatcher extends BaseMatcher<RequestCountOfLibr
    * <p>The matcher will be created within the managed {@link ViatraQueryEngine} belonging to the EMF model root, so
    * multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
    * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-   * @throws IncQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * @deprecated use {@link #on(ViatraQueryEngine)} instead, e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}
    * 
    */
   @Deprecated
-  public RequestCountOfLibraryMatcher(final Notifier emfRoot) throws IncQueryException {
+  public RequestCountOfLibraryMatcher(final Notifier emfRoot) throws ViatraQueryException {
     this(ViatraQueryEngine.on(emfRoot));
   }
   
   /**
-   * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+   * Initializes the pattern matcher within an existing VIATRA Query engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
-   * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-   * @throws IncQueryException if an error occurs during pattern matcher creation
+   * @param engine the existing VIATRA Query engine in which this matcher will be created.
+   * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * @deprecated use {@link #on(ViatraQueryEngine)} instead
    * 
    */
   @Deprecated
-  public RequestCountOfLibraryMatcher(final ViatraQueryEngine engine) throws IncQueryException {
+  public RequestCountOfLibraryMatcher(final ViatraQueryEngine engine) throws ViatraQueryException {
     super(engine, querySpecification());
   }
   
@@ -291,10 +291,10 @@ public class RequestCountOfLibraryMatcher extends BaseMatcher<RequestCountOfLibr
   
   /**
    * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
+   * @throws ViatraQueryException if the pattern definition could not be loaded
    * 
    */
-  public static IQuerySpecification<RequestCountOfLibraryMatcher> querySpecification() throws IncQueryException {
+  public static IQuerySpecification<RequestCountOfLibraryMatcher> querySpecification() throws ViatraQueryException {
     return RequestCountOfLibraryQuerySpecification.instance();
   }
 }

@@ -46,7 +46,7 @@ public abstract class Scheduler {
      * @param executor
      */
     protected Scheduler(final Executor executor) {
-        this.executor = checkNotNull(executor, "Cannot create scheduler with null IncQuery Engine!");
+        this.executor = checkNotNull(executor, "Cannot create scheduler with null VIATRA Query Engine!");
     }
 
     /**

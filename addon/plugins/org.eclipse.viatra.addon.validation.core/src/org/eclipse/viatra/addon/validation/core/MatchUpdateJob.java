@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.addon.validation.core.violationkey.ViolationKey;
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 
 /**
  * The job is used to process updated matches upon constraint violation. It is associated to the rule that is created
@@ -57,7 +57,7 @@ public class MatchUpdateJob implements IMatchProcessor<IPatternMatch> {
 
             violation.addMatch(match);
 
-            String message = IncQueryRuntimeHelper.getMessage(match, constraint.getSpecification().getMessageFormat());
+            String message = ViatraQueryRuntimeHelper.getMessage(match, constraint.getSpecification().getMessageFormat());
             if (!message.equals(violation.getMessage())) {
                 violation.setMessage(message);
                 violation.notifyListenersViolationMessageUpdated();

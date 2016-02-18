@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>viatra-query-runtime</artifactId>
   <name>VIATRA Query Runtime</name>
-  <description>Maven module for EMF-IncQuery runtime</description>
+  <description>Maven module for VIATRA Query runtime</description>
     <dependencies>
         <dependency>
             <groupId>org.eclipse.viatra</groupId>

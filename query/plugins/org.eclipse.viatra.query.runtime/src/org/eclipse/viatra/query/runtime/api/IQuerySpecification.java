@@ -12,14 +12,14 @@
 package org.eclipse.viatra.query.runtime.api;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueryHeader;
 
 /**
- * API interface for an IncQuery query specification. Each query is associated with a pattern. Methods instantiate a matcher
+ * API interface for an VIATRA query specification. Each query is associated with a pattern. Methods instantiate a matcher
  * of the pattern with various parameters.
  * 
  * <p> As of 0.9.0, some internal details (mostly relevant for query evaluator backends) have been moved to {@link #getInternalQueryRepresentation()}.  
@@ -47,11 +47,11 @@ public interface IQuerySpecification<Matcher extends ViatraQueryMatcher<? extend
      *
      * @param emfRoot
      *            the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      *             if an error occurs during pattern matcher creation
      */
     @Deprecated
-    public Matcher getMatcher(Notifier emfRoot) throws IncQueryException;
+    public Matcher getMatcher(Notifier emfRoot) throws ViatraQueryException;
 
     /**
      * Initializes the pattern matcher within an existing {@link ViatraQueryEngine}. If the pattern matcher is already
@@ -60,11 +60,11 @@ public interface IQuerySpecification<Matcher extends ViatraQueryMatcher<? extend
      * The match set will be incrementally refreshed upon updates.
      *
      * @param engine
-     *            the existing IncQuery engine in which this matcher will be created.
-     * @throws IncQueryException
+     *            the existing VIATRA Query engine in which this matcher will be created.
+     * @throws ViatraQueryException
      *             if an error occurs during pattern matcher creation
      */
-    public Matcher getMatcher(ViatraQueryEngine engine) throws IncQueryException;
+    public Matcher getMatcher(ViatraQueryEngine engine) throws ViatraQueryException;
 
     
     /**
@@ -94,7 +94,7 @@ public interface IQuerySpecification<Matcher extends ViatraQueryMatcher<? extend
      * The query is formulated over this kind of modeling platform.
      * E.g. for queries over EMF models, the {@link EMFScope} class is returned.
      */
-    public Class<? extends IncQueryScope> getPreferredScopeClass();
+    public Class<? extends QueryScope> getPreferredScopeClass();
     
     /**
      * Returns the definition of the query in a format intended for consumption by the query evaluator. 

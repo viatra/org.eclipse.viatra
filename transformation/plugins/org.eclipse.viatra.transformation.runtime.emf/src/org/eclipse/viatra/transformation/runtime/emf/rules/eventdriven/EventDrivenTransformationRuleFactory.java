@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException;
@@ -31,7 +31,7 @@ public class EventDrivenTransformationRuleFactory {
 	public class EventDrivenTransformationBuilder<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> {
 		private String name = "";
 		private IQuerySpecification<Matcher> precondition;
-		private Multimap<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateActions = HashMultimap.create();
+		private Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions = HashMultimap.create();
 		private ActivationLifeCycle lifeCycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
 		private EventFilter<? super Match> filter;
 
@@ -47,10 +47,10 @@ public class EventDrivenTransformationRuleFactory {
 		}
 
 		public EventDrivenTransformationBuilder<Match, Matcher> action(IMatchProcessor<Match> action) {
-			return action(IncQueryActivationStateEnum.APPEARED, action);
+			return action(CRUDActivationStateEnum.CREATED, action);
 		}
 
-		public EventDrivenTransformationBuilder<Match, Matcher> action(IncQueryActivationStateEnum state,
+		public EventDrivenTransformationBuilder<Match, Matcher> action(CRUDActivationStateEnum state,
 				IMatchProcessor<Match> action) {
 			stateActions.put(state, action);
 			return this;
@@ -88,7 +88,7 @@ public class EventDrivenTransformationRuleFactory {
 
 	private <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationRule<Match, Matcher> createRule(
 			String name, IQuerySpecification<Matcher> precondition,
-			Multimap<IncQueryActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
+			Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,
 			EventFilter<? super Match> filter) {
 		return new EventDrivenTransformationRule<Match, Matcher>(name, precondition, stateActions, lifeCycle, filter);
 	}

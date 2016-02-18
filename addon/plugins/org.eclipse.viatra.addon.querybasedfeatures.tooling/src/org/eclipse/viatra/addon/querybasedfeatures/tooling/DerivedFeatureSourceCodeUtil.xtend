@@ -62,7 +62,7 @@ class DerivedFeatureSourceCodeUtil {
 	/*if («feature.name»Handler != null) {
           return («feature.getType(source)») «feature.name»Handler.getSingleReferenceValue();
         } else {
-          «feature.name»Handler = IncqueryFeatureHelper.createHandler(this,
+          «feature.name»Handler = ViatraqueryFeatureHelper.createHandler(this,
               «source.genPackage.packageClassName».Literals.«source.getFeatureID(feature)»,
                "«pattern.fullyQualifiedName»", "«sourceParamName»", "«targetParamName»",
               FeatureKind.SINGLE_REFERENCE,«keepCache»);

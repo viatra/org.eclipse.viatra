@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationB
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
-import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 
 /**
@@ -138,8 +138,8 @@ class ModelLoadHelper {
 		val resource = resourceSet.loadAdditionalResourceFromUri(platformUri);
 		if (resource != null) {
 			if (resource.contents.size > 0) {
-				if (resource.contents.get(0) instanceof IncQuerySnapshot) {
-					resource.contents.get(0) as IncQuerySnapshot
+				if (resource.contents.get(0) instanceof QuerySnapshot) {
+					resource.contents.get(0) as QuerySnapshot
 				}
 			}
 		}
@@ -159,8 +159,8 @@ class ModelLoadHelper {
 		val resource = loadModelFromUri(platformUri);
 		if (resource != null) {
 			if (resource.contents.size > 0) {
-				if (resource.contents.get(0) instanceof IncQuerySnapshot) {
-					resource.contents.get(0) as IncQuerySnapshot
+				if (resource.contents.get(0) instanceof QuerySnapshot) {
+					resource.contents.get(0) as QuerySnapshot
 				}
 			}
 		}
@@ -177,7 +177,7 @@ class ModelLoadHelper {
 	 * Returns the match set record for a given pattern name after it loads the snapshot from the given platform URI.
 	 */
 	def loadExpectedResultsForPatternFromUri(ResourceSet resourceSet, String platformUri, String patternFQN) {
-		val snapshot = resourceSet.loadAdditionalResourceFromUri(platformUri) as IncQuerySnapshot
+		val snapshot = resourceSet.loadAdditionalResourceFromUri(platformUri) as QuerySnapshot
 		val matchsetrecord = snapshot.matchSetRecords.filter[patternQualifiedName.equals(patternFQN)]
 		if (matchsetrecord.size == 1) {
 			return matchsetrecord.iterator.next

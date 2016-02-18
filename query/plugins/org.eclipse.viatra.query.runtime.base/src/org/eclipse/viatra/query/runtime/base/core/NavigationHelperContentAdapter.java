@@ -49,7 +49,7 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
-import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
+import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -519,7 +519,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
     private String logTaskFormat(final String task) {
-        return "EMF-IncQuery encountered an error in processing the EMF model. " + "This happened while trying to "
+        return "VIATRA Query encountered an error in processing the EMF model. " + "This happened while trying to "
                 + task;
     }
 
@@ -800,7 +800,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 if (!isDynamicModel && packagesOfURI.size() == 2) { // only report the issue if the new EPackage
                                                                     // instance is the second for the same URI
                     processingError(
-                            new IncQueryBaseException("NsURI (" + nsURI
+                            new ViatraBaseException("NsURI (" + nsURI
                                     + ") collision detected between different instances of EPackages. If this is normal, try using dynamic EMF mode."),
                             "process new metamodel elements.");
                 }

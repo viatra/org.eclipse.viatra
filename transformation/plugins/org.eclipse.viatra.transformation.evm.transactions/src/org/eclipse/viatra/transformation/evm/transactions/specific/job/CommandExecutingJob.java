@@ -26,8 +26,8 @@ import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
  */
 public abstract class CommandExecutingJob<EventAtom> extends Job<EventAtom>{
 
-    public static final String COMMAND_EXECUTING_JOB_HELPER = "org.eclipse.incquery.evm.CommandExecutingJob.Helper";
-    public static final String EDITING_DOMAIN = "org.eclipse.incquery.evm.CommandExecutingJob.EditingDomain";
+    public static final String COMMAND_EXECUTING_JOB_HELPER = "org.eclipse.viatra.transformation.evm.CommandExecutingJob.Helper";
+    public static final String EDITING_DOMAIN = "org.eclipse.viatra.transformation.evm.CommandExecutingJob.EditingDomain";
     private final EventAtomEditingDomainProvider<EventAtom> provider;
 
     /**
@@ -112,7 +112,7 @@ public abstract class CommandExecutingJob<EventAtom> extends Job<EventAtom>{
      */
     public class JobExecutionHelper{
 
-        public static final String COMMAND_EXECUTING_JOB_COMMAND = "org.eclipse.incquery.evm.CommandExecutingJob.Command";
+        public static final String COMMAND_EXECUTING_JOB_COMMAND = "org.eclipse.viatra.transformation.evm.CommandExecutingJob.Command";
 
         private final EditingDomain editingDomain;
         private final Activation<? extends EventAtom> activation;

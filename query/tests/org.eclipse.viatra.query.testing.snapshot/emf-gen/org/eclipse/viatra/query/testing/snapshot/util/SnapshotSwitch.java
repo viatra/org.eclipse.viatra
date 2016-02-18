@@ -154,9 +154,9 @@ public class SnapshotSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case SnapshotPackage.INC_QUERY_SNAPSHOT: {
-				IncQuerySnapshot incQuerySnapshot = (IncQuerySnapshot)theEObject;
-				T result = caseIncQuerySnapshot(incQuerySnapshot);
+			case SnapshotPackage.QUERY_SNAPSHOT: {
+				QuerySnapshot querySnapshot = (QuerySnapshot)theEObject;
+				T result = caseQuerySnapshot(querySnapshot);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -360,17 +360,17 @@ public class SnapshotSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Inc Query Snapshot</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Query Snapshot</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Inc Query Snapshot</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Query Snapshot</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseIncQuerySnapshot(IncQuerySnapshot object) {
+	public T caseQuerySnapshot(QuerySnapshot object) {
 		return null;
 	}
 

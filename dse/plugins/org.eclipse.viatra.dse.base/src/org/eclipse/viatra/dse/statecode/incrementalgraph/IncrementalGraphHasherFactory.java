@@ -23,7 +23,7 @@ import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecode.incrementalgraph.impl.IncrementalGraphHasher;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.util.EMFHelper.MetaModelElements;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 public class IncrementalGraphHasherFactory implements IStateCoderFactory {
 
@@ -49,7 +49,7 @@ public class IncrementalGraphHasherFactory implements IStateCoderFactory {
     public IStateCoder createStateCoder() {
         try {
             return new IncrementalGraphHasher(classes, features);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             throw new DSEException("Failed to create incremental graph hasher", e);
         }
     }

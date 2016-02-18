@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.exceptions;
 
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * @author Zoltan Ujhelyi, Akos Horvath
  * 
  */
-public class LocalSearchException extends IncQueryException {
+public class LocalSearchException extends ViatraQueryException {
 
     private static final long serialVersionUID = -2585896573351435974L;
 

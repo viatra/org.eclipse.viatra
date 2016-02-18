@@ -21,7 +21,7 @@ import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.util.Hasher;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 public class GraphHash implements IStateCoder {
 
@@ -35,7 +35,7 @@ public class GraphHash implements IStateCoder {
 
     private Notifier modelRoot;
 
-    private void encapsulateModel(Notifier modelRoot) throws IncQueryException {
+    private void encapsulateModel(Notifier modelRoot) throws ViatraQueryException {
         this.ctx = new EGraphBuilderContext(modelRoot);
         this.vc = new ObjectCoder(ctx.getVertices(), hasher);
     }
@@ -45,8 +45,8 @@ public class GraphHash implements IStateCoder {
         try {
             this.modelRoot = notifier;
             encapsulateModel(modelRoot);
-        } catch (IncQueryException e) {
-            throw new DSEException("Failed to create IncQueryEngne", e);
+        } catch (ViatraQueryException e) {
+            throw new DSEException("Failed to create ViatraQueryEngne", e);
         }
     }
     
@@ -74,7 +74,7 @@ public class GraphHash implements IStateCoder {
         calculated = false;
         try {
             encapsulateModel(modelRoot);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             throw new DSEException(e);
         }
     }

@@ -26,7 +26,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
-import org.eclipse.viatra.query.runtime.extensibility.IncQueryRuntimeConstants;
+import org.eclipse.viatra.query.runtime.extensibility.ViatraQueryRuntimeConstants;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -98,9 +98,7 @@ public class ExtensionBasedSurrogateQueryLoader {
         if (Platform.isRunning()) {
 
             final Iterable<IConfigurationElement> config = ImmutableList.<IConfigurationElement>builder()
-                .add(Platform.getExtensionRegistry().getConfigurationElementsFor(IncQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID))
-                // FIXME remove when deprecated extension point is removed
-                .add(Platform.getExtensionRegistry().getConfigurationElementsFor(IncQueryRuntimeConstants.SURROGATE_QUERY_DEPRECATED_EXTENSIONID))
+                .add(Platform.getExtensionRegistry().getConfigurationElementsFor(ViatraQueryRuntimeConstants.SURROGATE_QUERY_EXTENSIONID))
                 .build();
             for (IConfigurationElement e : config) {
             	if (e.isValid()) {

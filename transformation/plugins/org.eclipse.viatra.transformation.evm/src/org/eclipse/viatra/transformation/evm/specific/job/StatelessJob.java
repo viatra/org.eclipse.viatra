@@ -17,7 +17,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.Job;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 
 /**
  * This class represents a {@link Job} that uses an {@link IMatchProcessor} 
@@ -39,8 +39,8 @@ public class StatelessJob<Match extends IPatternMatch> extends Job<Match> {
     /**
      * Creates a stateless job for the given state and processor.
      */
-    public StatelessJob(final IncQueryActivationStateEnum incQueryActivationStateEnum, final IMatchProcessor<Match> matchProcessor) {
-        super(incQueryActivationStateEnum);
+    public StatelessJob(final CRUDActivationStateEnum activationStateEnum, final IMatchProcessor<Match> matchProcessor) {
+        super(activationStateEnum);
         this.matchProcessor = checkNotNull(matchProcessor,
                 "StatelessJob cannot be instantiated with null match processor");
     }

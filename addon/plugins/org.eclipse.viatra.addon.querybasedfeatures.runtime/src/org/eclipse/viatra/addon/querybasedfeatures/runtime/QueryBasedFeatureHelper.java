@@ -25,9 +25,9 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * Utility class for instantiating query-based feature handlers ({@link IQueryBasedFeatureHandler}).
@@ -137,7 +137,7 @@ public final class QueryBasedFeatureHelper {
 
         QueryBasedFeature newFeature = createQueryBasedFeature(feature, kind, keepCache);
         if(newFeature == null) {
-            IncQueryLoggingUtil.getLogger(QueryBasedFeatureHelper.class).error("Handler initialization failed, feature kind " + kind + " not supported!");
+            ViatraQueryLoggingUtil.getLogger(QueryBasedFeatureHelper.class).error("Handler initialization failed, feature kind " + kind + " not supported!");
             return null;
         }
         
@@ -151,14 +151,14 @@ public final class QueryBasedFeatureHelper {
                 ViatraQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(ViatraQueryEngine.on(notifier));
                 newFeature.initialize(matcher, sourceParamName, targetParamName);
                 newFeature.startMonitoring();
-            } catch (IncQueryException e) {
-            	IncQueryLoggingUtil.getLogger(QueryBasedFeatureHelper.class).error("Handler initialization failed", e);
+            } catch (ViatraQueryException e) {
+            	ViatraQueryLoggingUtil.getLogger(QueryBasedFeatureHelper.class).error("Handler initialization failed", e);
                 return null;
             }
         } else {
-        	IncQueryLoggingUtil
+        	ViatraQueryLoggingUtil
         	        .getLogger(QueryBasedFeatureHelper.class)
-                    .error(String.format("Handler initialization failed, query specification is null for %s. Make sure to include your EMF-IncQuery project with the query definitions in the configuration.", patternFQN));
+                    .error(String.format("Handler initialization failed, query specification is null for %s. Make sure to include your VIATRA Query project with the query definitions in the configuration.", patternFQN));
         }
 
         return queryBasedFeatureHandler;

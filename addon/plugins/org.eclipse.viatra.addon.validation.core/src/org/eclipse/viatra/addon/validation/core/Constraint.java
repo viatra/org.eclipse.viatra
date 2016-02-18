@@ -31,7 +31,7 @@ import org.eclipse.viatra.addon.validation.core.violationkey.SimpleViolationKey;
 import org.eclipse.viatra.addon.validation.core.violationkey.ViolationKey;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 
 import com.google.common.collect.ImmutableSet;
@@ -98,7 +98,7 @@ public class Constraint implements IConstraint {
 
         try {
             matcher = validationEngine.getQueryEngine().getMatcher(specification.getQuerySpecification());
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             return null;
         }
@@ -117,7 +117,7 @@ public class Constraint implements IConstraint {
 
         try {
             matcher = validationEngine.getQueryEngine().getMatcher(specification.getQuerySpecification());
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             return null;
         }

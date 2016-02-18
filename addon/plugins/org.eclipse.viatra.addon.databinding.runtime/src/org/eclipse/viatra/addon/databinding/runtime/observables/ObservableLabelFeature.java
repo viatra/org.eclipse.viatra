@@ -14,7 +14,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.viatra.addon.databinding.runtime.api.IncQueryObservables;
+import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 
 /**
@@ -68,7 +68,7 @@ public class ObservableLabelFeature extends ComputedValue {
                     }
                     inExpression = !inExpression;
                 } else if (inExpression) {
-                    IObservableValue value = IncQueryObservables.getObservableValue(match, token);
+                    IObservableValue value = ViatraObservables.getObservableValue(match, token);
                     sb.append(value.getValue());
                     foundToken = true;
                 } else {

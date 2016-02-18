@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeature;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -51,7 +51,7 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
             match.set(getSourceParamName(), source);
             if (getMatcher().countMatches(match) > 1) {
                 String message = "[QueryBasedFeature] Single reference derived feature has multiple possible values, returning one arbitrary value";
-                IncQueryLoggingUtil.getLogger(getClass()).warn(message);
+                ViatraQueryLoggingUtil.getLogger(getClass()).warn(message);
             }
             IPatternMatch patternMatch = getMatcher().getOneArbitraryMatch(match);
             if (patternMatch != null) {
@@ -71,7 +71,7 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
                 sb.append("[QueryBasedFeature] Space-time continuum breached (should never happen): multiple values for single feature!\n");
                 sb.append("\n >> First value: ").append(source).append(" -> ").append(updateMemory.get(source));
                 sb.append("\n >> Second value: ").append(source).append(" -> ").append(target);
-                IncQueryLoggingUtil.getLogger(getClass()).error(sb.toString());
+                ViatraQueryLoggingUtil.getLogger(getClass()).error(sb.toString());
             } else {
                 // must handle later (either in lost matches or after that)
                 updateMemory.put(source, target);

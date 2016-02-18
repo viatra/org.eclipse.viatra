@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryFilterSemantics;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryFilterSemantics;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -29,7 +29,7 @@ import com.google.common.base.Preconditions;
  * Builder API for observable pattern match collections (lists and sets). 
  * This builder can be used for setting up complex observable collections including
  * filtering, comparator or converter. Existing matchers or rule engines are supported 
- * together with configuration from query specification or IncQuery engine. 
+ * together with configuration from query specification or VIATRA Query engine. 
  * 
  * <ul>
  * <li>
@@ -115,7 +115,7 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
      * Sets the given collection of (partial) matches as an event filter with the given semantics
      *  used by the built observable collection.
      */
-    public ObservablePatternMatchCollectionBuilder<M> setFilter(Collection<M> multifilters, IncQueryFilterSemantics semantics){
+    public ObservablePatternMatchCollectionBuilder<M> setFilter(Collection<M> multifilters, ViatraQueryFilterSemantics semantics){
         this.filter = Rules.newMultiMatchFilter(multifilters, semantics);
         return this;
     }
@@ -179,7 +179,7 @@ public class ObservablePatternMatchCollectionBuilder<M extends IPatternMatch> {
     }
 
     private void checkBuilderConfiguration() {
-        Preconditions.checkState(!(ruleEngine == null && queryEngine == null), "(IncQuery or Rule) Engine not set!");
+        Preconditions.checkState(!(ruleEngine == null && queryEngine == null), "(VIATRA Query or Rule) Engine not set!");
         Preconditions.checkState(specification != null || matcher != null, "Matcher or QuerySpecification not set!");
     }
 

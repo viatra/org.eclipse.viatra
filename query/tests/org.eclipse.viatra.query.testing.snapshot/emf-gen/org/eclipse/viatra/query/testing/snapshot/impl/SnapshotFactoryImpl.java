@@ -69,7 +69,7 @@ public class SnapshotFactoryImpl extends EFactoryImpl implements SnapshotFactory
 			case SnapshotPackage.DATE_SUBSTITUTION: return createDateSubstitution();
 			case SnapshotPackage.ENUM_SUBSTITUTION: return createEnumSubstitution();
 			case SnapshotPackage.MISCELLANEOUS_SUBSTITUTION: return createMiscellaneousSubstitution();
-			case SnapshotPackage.INC_QUERY_SNAPSHOT: return createIncQuerySnapshot();
+			case SnapshotPackage.QUERY_SNAPSHOT: return createQuerySnapshot();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -234,9 +234,9 @@ public class SnapshotFactoryImpl extends EFactoryImpl implements SnapshotFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public IncQuerySnapshot createIncQuerySnapshot() {
-		IncQuerySnapshotImpl incQuerySnapshot = new IncQuerySnapshotImpl();
-		return incQuerySnapshot;
+	public QuerySnapshot createQuerySnapshot() {
+		QuerySnapshotImpl querySnapshot = new QuerySnapshotImpl();
+		return querySnapshot;
 	}
 
 	/**

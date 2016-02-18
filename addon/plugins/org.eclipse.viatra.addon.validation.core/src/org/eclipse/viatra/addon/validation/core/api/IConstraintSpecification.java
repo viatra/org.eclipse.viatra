@@ -35,7 +35,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
  * <li>the severity level (e.g. error, warning)
  * </ul>
  * <p>
- * When constraint specifications are represented by EMF-IncQuery patterns, the corresponding query specification is
+ * When constraint specifications are represented by VIATRA Query patterns, the corresponding query specification is
  * stored.
  * 
  * @author Balint Lorand
@@ -99,7 +99,7 @@ public interface IConstraintSpecification {
     public Set<List<String>> getSymmetricKeyNames();
 
     /**
-     * Returns the IncQuery-specific query specification of the constraint specification.
+     * Returns the VIATRA Query-specific query specification of the constraint specification.
      * 
      * @return The query specification.
      */

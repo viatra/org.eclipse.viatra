@@ -37,9 +37,9 @@ public class EMFPatternLanguageEditorCallback extends NatureAddingEditorCallback
             IResource resource = editor.getResource();
             if (resource != null && resource.getProject().isAccessible() && !resource.getProject().isHidden()
                     && !resource.getProject().hasNature(ViatraQueryNature.NATURE_ID)) {
-                String title = "Invalid EMF-IncQuery Project";
+                String title = "Invalid VIATRA Query Project";
                 String message = "The project " + resource.getProject().getName()
-                        + " is not a valid EMF-IncQuery project. If it was created with EMF-IncQuery 0.6, it should be migrated - check documentation on http://wiki.eclipse.org/EMFIncQuery.";
+                        + " is not a valid VIATRA Query project.";
                 MessageDialog.openError(editor.getShell(), title, message);
 
             }

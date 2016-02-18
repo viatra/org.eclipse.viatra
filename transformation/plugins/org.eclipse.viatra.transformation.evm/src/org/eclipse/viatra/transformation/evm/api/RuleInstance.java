@@ -119,7 +119,7 @@ public class RuleInstance<EventAtom> implements IActivationNotificationProvider{
      * activation state using the supplied context.
      * 
      * @param activation
-     * @param incQueryActivationStateEnum
+     * @param activationState
      * @param atom
      * @param context
      */

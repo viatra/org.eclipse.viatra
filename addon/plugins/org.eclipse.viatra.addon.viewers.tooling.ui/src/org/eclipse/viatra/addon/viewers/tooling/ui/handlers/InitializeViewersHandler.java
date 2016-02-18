@@ -18,7 +18,7 @@ import org.eclipse.viatra.addon.viewers.tooling.ui.views.ViewersToolingViewsUtil
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
@@ -65,7 +65,7 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
                         ViewersToolingViewsUtil.initializeContentsOnView(emc.getNotifier(type), patterns, filter);
                     }
                 }
-            } catch (IncQueryException e) {
+            } catch (ViatraQueryException e) {
                 throw new ExecutionException("Error initializing pattern matcher.", e);
             } catch (IllegalArgumentException e) {
                 throw new ExecutionException("Invalid selrection", e);

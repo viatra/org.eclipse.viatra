@@ -740,7 +740,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     /**
      * This validator looks up all {@link EStructuralFeature} used in a {@link PathExpressionConstraint} and reports a
-     * warning on each that is not representable by EMF-IncQuery. This is a warning, since we only see well-behaving
+     * warning on each that is not representable by VIATRA Query. This is a warning, since we only see well-behaving
      * extensions in the host.
      * 
      * @param pathExpressionConstraint
@@ -760,12 +760,12 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     String surrogateQueryFQN = surrogateQuery == null ? "(null)" : surrogateQuery.getFullyQualifiedName();
             		info("The derived/volatile feature " + feature.getName() + " of class "
                         + feature.getEContainingClass().getName()
-                        + " used in the path expression has a surrogate query " + surrogateQueryFQN + " which will be used by EMF-IncQuery.",
+                        + " used in the path expression has a surrogate query " + surrogateQueryFQN + " which will be used by VIATRA Query.",
                         tail.getKey().getType(), null, EMFIssueCodes.SURROGATE_QUERY_EXISTS);
             	} else {
                     warning("The derived/volatile feature " + feature.getName() + " of class "
                             + feature.getEContainingClass().getName()
-                            + " used in the path expression is not representable in EMF-IncQuery."
+                            + " used in the path expression is not representable in VIATRA Query."
                             + " For details, consult the documentation on well-behaving features.",
                             tail.getKey().getType(), null, EMFIssueCodes.FEATURE_NOT_REPRESENTABLE);
             	}

@@ -19,7 +19,7 @@ import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
@@ -54,7 +54,7 @@ public class EventDrivenTransformation {
             return this;
         }
 
-        public EventDrivenTransformationBuilder setScope(EMFScope scope) throws IncQueryException {
+        public EventDrivenTransformationBuilder setScope(EMFScope scope) throws ViatraQueryException {
             this.engine = ViatraQueryEngine.on(scope);
             return this;
         }
@@ -86,11 +86,11 @@ public class EventDrivenTransformation {
          * @deprecated Use {@link #build()} instead.
          */
         @Deprecated
-		public EventDrivenTransformation create() throws IncQueryException {
+		public EventDrivenTransformation create() throws ViatraQueryException {
             return build();
         }
 
-        public EventDrivenTransformation build() throws IncQueryException {
+        public EventDrivenTransformation build() throws ViatraQueryException {
             Preconditions.checkState(engine != null, "ViatraQueryEngine must be set.");
             Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rulesToAdd = Maps.newHashMap();
             
@@ -125,11 +125,11 @@ public class EventDrivenTransformation {
 		}
     }
 
-    public static EventDrivenTransformationBuilder forScope(EMFScope scope) throws IncQueryException {
+    public static EventDrivenTransformationBuilder forScope(EMFScope scope) throws ViatraQueryException {
         return forEngine(ViatraQueryEngine.on(scope));
     }
     
-    public static EventDrivenTransformationBuilder forEngine(ViatraQueryEngine engine) throws IncQueryException {
+    public static EventDrivenTransformationBuilder forEngine(ViatraQueryEngine engine) throws ViatraQueryException {
         return new EventDrivenTransformationBuilder().setEngine(engine);
     }
     
@@ -137,7 +137,7 @@ public class EventDrivenTransformation {
      * @deprecated Use {@link #forScope(EMFScope)} or {@link #forEngine(ViatraQueryEngine)} instead!
      */
     @Deprecated
-    public static EventDrivenTransformationBuilder forSource(Notifier notifier) throws IncQueryException {
+    public static EventDrivenTransformationBuilder forSource(Notifier notifier) throws ViatraQueryException {
         return EventDrivenTransformation.forScope(new EMFScope(notifier));
     }
 

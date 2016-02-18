@@ -35,7 +35,7 @@ import org.eclipse.viatra.addon.validation.core.listeners.ConstraintListener;
  * </ul>
  * events related to the life cycle of the constraint.
  * <p>
- * For constraints specified by EMF-IncQuery patterns, the matcher is stored.
+ * For constraints specified by VIATRA Query patterns, the matcher is stored.
  * 
  * @author Balint Lorand
  *

@@ -35,11 +35,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.testing.core.ModelLoadHelper;
 import org.eclipse.viatra.query.testing.core.SnapshotHelper;
-import org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot;
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot;
 import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
@@ -109,13 +109,13 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			return;
 		}
 		IFile snapshotFile = null;
-		IFile[] files = WorkspaceResourceDialog.openFileSelection(HandlerUtil.getActiveShell(event), "Existing snapshot", "Select existing EMF-IncQuery snapshot file (Cancel for new file)", false, null, null);
-		IncQuerySnapshot snapshot = null;
+		IFile[] files = WorkspaceResourceDialog.openFileSelection(HandlerUtil.getActiveShell(event), "Existing snapshot", "Select existing Query snapshot file (Cancel for new file)", false, null, null);
+		QuerySnapshot snapshot = null;
 			
 		if(files.length == 0) {
-			snapshotFile = WorkspaceResourceDialog.openNewFile(HandlerUtil.getActiveShell(event), "New snapshot", "Select EMF-IncQuery snapshot target file (.snapshot extension)", null, null);
+			snapshotFile = WorkspaceResourceDialog.openNewFile(HandlerUtil.getActiveShell(event), "New snapshot", "Select Query snapshot target file (.snapshot extension)", null, null);
 			if(snapshotFile != null && !snapshotFile.exists()) {
-				snapshot = SnapshotFactory.eINSTANCE.createIncQuerySnapshot();
+				snapshot = SnapshotFactory.eINSTANCE.createQuerySnapshot();
 				Resource res = resourceSet.createResource(URI.createPlatformResourceURI(snapshotFile.getFullPath().toString(),true));
 				res.getContents().add(snapshot);
 			} else {
@@ -164,7 +164,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 	 * @param engine
 	 * @param snapshot
 	 */
-	private boolean validateInputSpecification(ViatraQueryEngine engine, IncQuerySnapshot snapshot) {
+	private boolean validateInputSpecification(ViatraQueryEngine engine, QuerySnapshot snapshot) {
 		if(snapshot.getInputSpecification() != null) {
 			Notifier root = helper.getEMFRootForSnapshot(snapshot);
             Notifier matcherRoot = getScopeRoot(engine.getScope());
@@ -213,7 +213,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 		return true;
 	}
 	
-	private ResourceSet getResourceSetForScope(IncQueryScope scope) {
+	private ResourceSet getResourceSetForScope(QueryScope scope) {
 	    if (scope instanceof EMFScope) {
             EMFScope emfScope = (EMFScope) scope;
             Set<? extends Notifier> scopeRoots = emfScope.getScopeRoots();
@@ -241,7 +241,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
         }
 	}
 	
-	private Notifier getScopeRoot(IncQueryScope scope) {
+	private Notifier getScopeRoot(QueryScope scope) {
         if (scope instanceof EMFScope) {
             EMFScope emfScope = (EMFScope) scope;
             Set<? extends Notifier> scopeRoots = emfScope.getScopeRoots();

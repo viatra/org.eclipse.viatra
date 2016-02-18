@@ -51,7 +51,7 @@
 										<exclude>.gitignore</exclude>
 									</excludes>
 								</fileset>
-								<fileset><!-- IncQuery generated code -->
+								<fileset><!-- Viatra Query generated code -->
 									<directory>src-gen</directory>
 									<excludes>
 										<exclude>.gitignore</exclude>

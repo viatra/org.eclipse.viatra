@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>viatra-query-language</artifactId>
-  <name>EMF-IncQuery Pattern Language Support</name>
-  <description>Maven module for EMF-IncQuery Pattern Language Support</description>
+  <name>VIATRA Query Language</name>
+  <description>Maven module for VIATRA Query Language and Generic API</description>
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.viatra</groupId>

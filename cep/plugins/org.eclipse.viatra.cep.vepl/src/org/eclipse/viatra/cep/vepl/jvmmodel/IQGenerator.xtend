@@ -20,8 +20,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor
 import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum
-import org.eclipse.viatra.query.runtime.exception.IncQueryException
 import org.eclipse.viatra.cep.core.streams.EventStream
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.QueryImport
@@ -38,6 +36,8 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum
 
 @SuppressWarnings("restriction", "discouraged")
 class IQGenerator {
@@ -113,7 +113,7 @@ class IQGenerator {
 					append('''(resourceSet)).addRules(getRules()).create();''')
 					newLine
 					append('''
-						} catch (IncQueryException e) {
+						} catch (ViatraQueryException e) {
 							e.printStackTrace();
 						}'''
 					)
@@ -182,7 +182,7 @@ class IQGenerator {
 							append('''return builder.build();''').decreaseIndentation
 							newLine
 							append('''} catch (''').append(
-								'''«referClass(it, typeRefBuilder, p, IncQueryException)» e) {''').increaseIndentation
+								'''«referClass(it, typeRefBuilder, p, ViatraQueryException)» e) {''').increaseIndentation
 							newLine
 							append('''e.printStackTrace();''').decreaseIndentation
 							newLine
@@ -263,7 +263,7 @@ class IQGenerator {
 				'''(null);''')
 			ita.append('''«getParameterMapping(ita, eventPattern)»''')
 			ita.newLine
-			ita.append('''event.setIncQueryPattern(matchedPattern);''')
+			ita.append('''event.setQueryMatch(matchedPattern);''')
 			ita.newLine
 			ita.append('''eventStream.push(event);''').decreaseIndentation
 		}
@@ -273,7 +273,7 @@ class IQGenerator {
 		ita.append('''};''')
 		ita.newLine
 		ita.append('''builder.action(''').append(
-			'''«referClass(ita, typeRefBuilder, eventPattern, IncQueryActivationStateEnum)».''').append(
+			'''«referClass(ita, typeRefBuilder, eventPattern, CRUDActivationStateEnum)».''').append(
 			'''«changeType.activationState», «changeType.actionName»_«counter»''').append(''');''')
 		ita.newLine
 	}
@@ -297,8 +297,8 @@ class IQGenerator {
 
 	def private getActivationState(QueryResultChangeType changeType) {
 		switch (changeType) {
-			case QueryResultChangeType.FOUND: return IncQueryActivationStateEnum.APPEARED
-			case QueryResultChangeType.LOST: return IncQueryActivationStateEnum.DISAPPEARED
+			case QueryResultChangeType.FOUND: return CRUDActivationStateEnum.CREATED
+			case QueryResultChangeType.LOST: return CRUDActivationStateEnum.DELETED
 		}
 	}
 

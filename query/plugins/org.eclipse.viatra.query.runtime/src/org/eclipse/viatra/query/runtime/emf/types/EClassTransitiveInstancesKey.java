@@ -11,7 +11,7 @@
 package org.eclipse.viatra.query.runtime.emf.types;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 
 /**
  * Instance tuples are of form (x), where x is an eObject instance of the given eClass or one of its subclasses.
@@ -26,12 +26,12 @@ public class EClassTransitiveInstancesKey extends BaseEMFTypeKey<EClass> {
 
 	@Override
 	public String getPrettyPrintableName() {
-        return IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
+        return ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override
 	public String getStringID() {
-		return "eClass#"+ IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
+		return "eClass#"+ ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override

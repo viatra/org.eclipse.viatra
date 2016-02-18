@@ -20,12 +20,12 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.base.Preconditions;
 
 /**
- * This hard objective collects a list of IncQuery patterns and checks if any of them has a match on a solution
+ * This hard objective collects a list of VIATRA Query patterns and checks if any of them has a match on a solution
  * (trajectoy). It is unsatisfied if any of them has a match returning 0 or it is satisfied if none of them has a match
  * returning 1.
  * 
@@ -61,10 +61,10 @@ public class ModelQueriesHardObjective extends BaseObjective {
     }
 
     /**
-     * Adds a new IncQuery pattern.
+     * Adds a new VIATRA Query Specification.
      * 
      * @param constraint
-     *            An IncQuery pattern.
+     *            An VIATRA Query Specification.
      * @return The actual instance to enable builder pattern like usage.
      */
     public ModelQueriesHardObjective withConstraint(
@@ -94,8 +94,8 @@ public class ModelQueriesHardObjective extends BaseObjective {
                 matchers.add(matcher);
             }
 
-        } catch (IncQueryException e) {
-            throw new DSEException("Couldn't get the incquery matcher, see inner exception", e);
+        } catch (ViatraQueryException e) {
+            throw new DSEException("Couldn't get the VIATRA Query Matcher, see inner exception", e);
         }
     }
 

@@ -12,14 +12,14 @@
 package org.eclipse.viatra.query.runtime.api;
 
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
- * This is a generic pattern matcher for any IncQuery pattern, with "interpretative" query execution.
+ * This is a generic pattern matcher for any VIATRA pattern, with "interpretative" query execution.
  * To use the pattern matcher on a given model, obtain a {@link GenericQuerySpecification} first, then 
  * invoke e.g. {@link GenericQuerySpecification#getMatcher(ViatraQueryEngine)}.
- * in conjunction with {@link ViatraQueryEngine#on(org.eclipse.viatra.query.runtime.api.scope.IncQueryScope)}.
+ * in conjunction with {@link ViatraQueryEngine#on(org.eclipse.viatra.query.runtime.api.scope.QueryScope)}.
  * <p>
  * Whenever available, consider using the pattern-specific generated matcher API instead.
  * 
@@ -38,7 +38,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
     protected GenericPatternMatcher(
     		ViatraQueryEngine engine, 
     		GenericQuerySpecification<? extends GenericPatternMatcher> specification) 
-    		throws IncQueryException 
+    		throws ViatraQueryException 
     {
         super(engine, specification);
     }    
@@ -68,7 +68,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
      * Internal method for {@link GenericQuerySpecification}
      * @noreference
      */
-	static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(ViatraQueryEngine engine, GenericQuerySpecification<Matcher> querySpecification) throws IncQueryException {
+	static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(ViatraQueryEngine engine, GenericQuerySpecification<Matcher> querySpecification) throws ViatraQueryException {
 		// check if matcher already exists
 		GenericPatternMatcher matcher = engine.getExistingMatcher(querySpecification);
         if (matcher == null) {

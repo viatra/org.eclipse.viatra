@@ -28,7 +28,7 @@ import org.eclipse.viatra.transformation.evm.specific.Jobs;
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.Schedulers;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.evm.specific.job.SequentialProcessorsJob;
 
 import com.google.common.collect.ImmutableList;
@@ -78,7 +78,7 @@ public final class ObservableCollectionHelper {
 
         Set<Job<Match>> jobs = getObservableCollectionJobs(observableCollectionUpdate);
         Job<Match> updateJob = Jobs.newErrorLoggingJob(new SequentialProcessorsJob<Match>(
-                IncQueryActivationStateEnum.UPDATED, ImmutableList.of(
+                CRUDActivationStateEnum.UPDATED, ImmutableList.of(
                         new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate),
                         new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate)
                 )));
@@ -103,15 +103,15 @@ public final class ObservableCollectionHelper {
 
     private static <Match extends IPatternMatch> Set<Job<Match>> getObservableCollectionJobs(
             IObservablePatternMatchCollectionUpdate<Match> observableCollectionUpdate) {
-        Job<Match> insertJob = Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED,
+        Job<Match> insertJob = Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED,
                 new ObservableCollectionProcessor<Match>(Direction.INSERT, observableCollectionUpdate)));
-        Job<Match> deleteJob = Jobs.newErrorLoggingJob(Jobs.newStatelessJob(IncQueryActivationStateEnum.DISAPPEARED,
+        Job<Match> deleteJob = Jobs.newErrorLoggingJob(Jobs.newStatelessJob(CRUDActivationStateEnum.DELETED,
                 new ObservableCollectionProcessor<Match>(Direction.DELETE, observableCollectionUpdate)));
         return ImmutableSet.of(insertJob, deleteJob);
     }
 
     protected static <Match extends IPatternMatch> RuleEngine prepareRuleEngine(ViatraQueryEngine engine, RuleSpecification<Match> specification, EventFilter<Match> filter) {
-        RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
+        RuleEngine ruleEngine = ExecutionSchemas.createViatraQueryExecutionSchema(engine,
                 Schedulers.getQueryEngineSchedulerFactory(engine));
 		ruleEngine.addRule(specification, filter);
         fireActivations(ruleEngine, specification, filter);

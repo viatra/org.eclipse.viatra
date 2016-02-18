@@ -11,7 +11,7 @@
 package org.eclipse.viatra.query.runtime.base.api;
 
 /**
- * Listener interface for change notifications from the IncQuery Base index.
+ * Listener interface for change notifications from the VIATRA Base index.
  * 
  * @author Abel Hegedus
  *
@@ -26,7 +26,7 @@ public interface EMFBaseIndexChangeListener {
     public boolean onlyOnIndexChange();
     
     /**
-     * Called after a model change is handled by the IncQuery Base index and if <code>indexChanged == onlyOnIndexChange()</code>.
+     * Called after a model change is handled by the VIATRA Base index and if <code>indexChanged == onlyOnIndexChange()</code>.
      *  
      * @param indexChanged true, if the model change also affected the contents of the base index
      */

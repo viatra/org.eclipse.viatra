@@ -36,7 +36,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySp
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
@@ -129,10 +129,10 @@ public class QueryExplorerPatternRegistry {
      * @param patternModel
      *            the parsed pattern model
      * @return the list of patterns registered
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      */
     public Set<IQuerySpecification<?>> registerPatternModel(IFile file, PatternModel patternModel)
-            throws IncQueryException {
+            throws ViatraQueryException {
         List<IQuerySpecification<?>> allCreatedSpecifications = Lists.newArrayList();
         Set<IQuerySpecification<?>> activeSpecifications = Sets.newLinkedHashSet();
 
@@ -149,10 +149,10 @@ public class QueryExplorerPatternRegistry {
                 } else {
                     String message = "A pattern with the fully qualified name '" + patternFqn
                             + "' already exists in the pattern registry.";
-                    IncQueryException incQueryException = new IncQueryException(message,
+                    ViatraQueryException queryException = new ViatraQueryException(message,
                             "Duplicate qualified name of pattern");
                     IStatus status = new Status(IStatus.WARNING, ViatraQueryGUIPlugin.PLUGIN_ID, message,
-                            incQueryException);
+                            queryException);
                     logger.log(status);
                     warnings.add(status);
                 }

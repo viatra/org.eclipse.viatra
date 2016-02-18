@@ -20,16 +20,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
-import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraEngineImpl;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.collect.Sets;
 
 /**
- * Global registry of active IncQuery engines.
+ * Global registry of active VIATRA Query Engines.
  * 
  * <p>
  * Manages an {@link ViatraQueryEngine} for each model (more precisely scope), that is created on demand. Managed engines are shared between
@@ -63,16 +63,16 @@ public class ViatraQueryEngineManager {
      * <p>
      * it will not be GC'ed before because of {@link BaseIndexListener#iqEngine}
      */
-    Map<IncQueryScope, WeakReference<ViatraEngineImpl>> engines;
+    Map<QueryScope, WeakReference<ViatraQueryEngineImpl>> engines;
 
     ViatraQueryEngineManager() {
         super();
-        engines = new WeakHashMap<IncQueryScope, WeakReference<ViatraEngineImpl>>();
+        engines = new WeakHashMap<QueryScope, WeakReference<ViatraQueryEngineImpl>>();
         initializationListeners = new HashSet<ViatraQueryEngineInitializationListener>();
     }
 
     /**
-     * Creates a managed IncQuery engine at a given scope (e.g. an EMF Resource or ResourceSet, as in {@link EMFScope}) 
+     * Creates a managed VIATRA Query Engine at a given scope (e.g. an EMF Resource or ResourceSet, as in {@link EMFScope}) 
      * or retrieves an already existing one. Repeated invocations for a single model root will return the same engine. 
      * Consequently, the engine will be reused between different clients querying the same model, providing performance benefits.
      * 
@@ -83,27 +83,27 @@ public class ViatraQueryEngineManager {
      * 		the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
      * 		Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
      * @return a new or previously existing engine
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      */
-    public ViatraQueryEngine getQueryEngine(IncQueryScope scope) throws IncQueryException {
-    	ViatraEngineImpl engine = getEngineInternal(scope);
+    public ViatraQueryEngine getQueryEngine(QueryScope scope) throws ViatraQueryException {
+    	ViatraQueryEngineImpl engine = getEngineInternal(scope);
         if (engine == null) {
-            engine = new ViatraEngineImpl(this, scope);
-            engines.put(scope, new WeakReference<ViatraEngineImpl>(engine));
+            engine = new ViatraQueryEngineImpl(this, scope);
+            engines.put(scope, new WeakReference<ViatraQueryEngineImpl>(engine));
             notifyInitializationListeners(engine);
         }
         return engine;
     }
 
     /**
-     * Retrieves an already existing managed IncQuery engine.
+     * Retrieves an already existing managed VIATRA Query Engine.
      * 
      * @param scope 
      * 		the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
      * 		Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
      * @return a previously existing engine, or null if no engine is active for the given EMF model root
      */
-    public ViatraQueryEngine getQueryEngineIfExists(IncQueryScope scope) {
+    public ViatraQueryEngine getQueryEngineIfExists(QueryScope scope) {
         return getEngineInternal(scope);
     }
 
@@ -114,7 +114,7 @@ public class ViatraQueryEngineManager {
      */
     public Set<ViatraQueryEngine> getExistingQueryEngines(){
         Set<ViatraQueryEngine> existingEngines = null;
-        for (WeakReference<ViatraEngineImpl> engineRef : engines.values()) {
+        for (WeakReference<ViatraQueryEngineImpl> engineRef : engines.values()) {
         	AdvancedViatraQueryEngine engine = engineRef == null ? null : engineRef.get();
             if(existingEngines == null) {
                 existingEngines = Sets.newHashSet();
@@ -164,8 +164,8 @@ public class ViatraQueryEngineManager {
                 }
             }
         } catch (Exception ex) {
-        	IncQueryLoggingUtil.getLogger(getClass()).fatal(
-                    "IncQuery Engine Manager encountered an error in delivering notifications"
+        	ViatraQueryLoggingUtil.getLogger(getClass()).fatal(
+                    "VIATRA Query Engine Manager encountered an error in delivering notifications"
                             + " about engine initialization. ", ex);
         }
     }
@@ -174,9 +174,9 @@ public class ViatraQueryEngineManager {
      * @param emfRoot
      * @return
      */
-    private ViatraEngineImpl getEngineInternal(IncQueryScope scope) {
-        final WeakReference<ViatraEngineImpl> engineRef = engines.get(scope);
-        ViatraEngineImpl engine = engineRef == null ? null : engineRef.get();
+    private ViatraQueryEngineImpl getEngineInternal(QueryScope scope) {
+        final WeakReference<ViatraQueryEngineImpl> engineRef = engines.get(scope);
+        ViatraQueryEngineImpl engine = engineRef == null ? null : engineRef.get();
         return engine;
     }
 

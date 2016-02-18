@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Configuration DTO for IncQuery Viewers components.
+ * Configuration DTO for VIATRA Viewers components.
  * 
  * @author istvanrath
  *

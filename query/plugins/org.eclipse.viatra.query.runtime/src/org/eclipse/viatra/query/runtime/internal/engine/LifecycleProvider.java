@@ -46,7 +46,7 @@ public final class LifecycleProvider extends ListenerContainer<ViatraQueryEngine
 //                        function.apply(listener);
 //                    } catch (Exception ex) {
 //                        logger.error(
-//                                "IncQuery encountered an error in delivering notification to listener "
+//                                "VIATRA Query encountered an error in delivering notification to listener "
 //                                        + listener + ".", ex);
 //                    }
 //                }
@@ -61,7 +61,7 @@ public final class LifecycleProvider extends ListenerContainer<ViatraQueryEngine
                         listener.matcherInstantiated(matcher);
                     } catch (Exception ex) {
                         logger.error(
-                                "IncQuery encountered an error in delivering matcher initialization notification to listener "
+                                "VIATRA Query encountered an error in delivering matcher initialization notification to listener "
                                         + listener + ".", ex);
                     }
                 }
@@ -82,7 +82,7 @@ public final class LifecycleProvider extends ListenerContainer<ViatraQueryEngine
                         listener.engineBecameTainted(description, t);
                     } catch (Exception ex) {
                         logger.error(
-                                "IncQuery encountered an error in delivering engine tainted notification to listener "
+                                "VIATRA Query encountered an error in delivering engine tainted notification to listener "
                                         + listener + ".", ex);
                     }
                 }
@@ -103,7 +103,7 @@ public final class LifecycleProvider extends ListenerContainer<ViatraQueryEngine
                         listener.engineWiped();
                     } catch (Exception ex) {
                         logger.error(
-                                "IncQuery encountered an error in delivering engine wiped notification to listener "
+                                "VIATRA Query encountered an error in delivering engine wiped notification to listener "
                                         + listener + ".", ex);
                     }
                 }
@@ -124,7 +124,7 @@ public final class LifecycleProvider extends ListenerContainer<ViatraQueryEngine
                         listener.engineDisposed();
                     } catch (Exception ex) {
                         logger.error(
-                                "IncQuery encountered an error in delivering engine disposed notification to listener "
+                                "VIATRA Query encountered an error in delivering engine disposed notification to listener "
                                         + listener + ".", ex);
                     }
                 }

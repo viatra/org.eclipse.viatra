@@ -27,8 +27,8 @@ import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.collect.Lists;
 
@@ -58,8 +58,8 @@ public final class ViewerTraceabilityUtil {
             Param2itemMatcher matcher = Param2itemMatcher.on(engine);
             return matcher.getAllMatches(source, null, null);
 
-        } catch (IncQueryException e) {
-            Logger logger = IncQueryLoggingUtil.getLogger(ViewerTraceabilityUtil.class);
+        } catch (ViatraQueryException e) {
+            Logger logger = ViatraQueryLoggingUtil.getLogger(ViewerTraceabilityUtil.class);
             logger.error(e.getMessage());
         }
 		return Collections.emptySet(); 
@@ -82,8 +82,8 @@ public final class ViewerTraceabilityUtil {
             Param2edgeMatcher matcher = Param2edgeMatcher.on(engine);
             return matcher.getAllMatches(source, target, null, null);
 
-        } catch (IncQueryException e) {
-            Logger logger = IncQueryLoggingUtil.getLogger(ViewerTraceabilityUtil.class);
+        } catch (ViatraQueryException e) {
+            Logger logger = ViatraQueryLoggingUtil.getLogger(ViewerTraceabilityUtil.class);
             logger.error(e.getMessage());
         }
 		return Collections.emptySet(); 
@@ -106,8 +106,8 @@ public final class ViewerTraceabilityUtil {
             Param2containmentMatcher matcher = Param2containmentMatcher.on(engine);
             return matcher.getAllMatches(source, target, null, null);
 
-        } catch (IncQueryException e) {
-            Logger logger = IncQueryLoggingUtil.getLogger(ViewerTraceabilityUtil.class);
+        } catch (ViatraQueryException e) {
+            Logger logger = ViatraQueryLoggingUtil.getLogger(ViewerTraceabilityUtil.class);
             logger.error(e.getMessage());
         }
 		return Collections.emptySet(); 

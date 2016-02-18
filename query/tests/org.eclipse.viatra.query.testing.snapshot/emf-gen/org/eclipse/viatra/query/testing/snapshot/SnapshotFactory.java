@@ -130,13 +130,13 @@ public interface SnapshotFactory extends EFactory {
 	MiscellaneousSubstitution createMiscellaneousSubstitution();
 
 	/**
-	 * Returns a new object of class '<em>Inc Query Snapshot</em>'.
+	 * Returns a new object of class '<em>Query Snapshot</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Inc Query Snapshot</em>'.
+	 * @return a new object of class '<em>Query Snapshot</em>'.
 	 * @generated
 	 */
-	IncQuerySnapshot createIncQuerySnapshot();
+	QuerySnapshot createQuerySnapshot();
 
 	/**
 	 * Returns the package supported by this factory.

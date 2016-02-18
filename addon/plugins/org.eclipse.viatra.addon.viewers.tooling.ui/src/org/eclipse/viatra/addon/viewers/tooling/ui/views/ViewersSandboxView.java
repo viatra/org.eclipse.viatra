@@ -42,7 +42,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.PropertySheetPage;
-import org.eclipse.viatra.addon.viewers.runtime.model.IncQueryViewerDataModel;
+import org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewersAnnotatedPatternTester;
@@ -51,7 +51,7 @@ import org.eclipse.viatra.addon.viewers.tooling.ui.ViewersToolingPlugin;
 import org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -223,20 +223,20 @@ public class ViewersSandboxView extends ViewPart implements ISelectionProvider {
     }
 
     public void setContents(Notifier model, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter)
-            throws IncQueryException {
+            throws ViatraQueryException {
         if (model != null) {
         	if (state!=null) {
         		// dispose any previous viewerstate
         		state.dispose();
         	}
-            state = IncQueryViewerDataModel.newViewerState(getEngine(model), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+            state = ViatraViewerDataModel.newViewerState(getEngine(model), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             for (IViewerSandboxTab tab : tabList) {
                 tab.bindState(state);
             }
         }
     }
 
-    private AdvancedViatraQueryEngine getEngine(Notifier model) throws IncQueryException {
+    private AdvancedViatraQueryEngine getEngine(Notifier model) throws ViatraQueryException {
         if (engine != null) {
             engine.dispose();
         }

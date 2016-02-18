@@ -14,12 +14,12 @@ package org.eclipse.viatra.query.patternlanguage.emf.specification;
 import org.eclipse.viatra.query.runtime.api.GenericMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.GenericPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
- * This is a generic query specification for EMF-IncQuery pattern matchers, for "interpretative" query execution. Instantiate the
+ * This is a generic query specification for VIATRA Query pattern matchers, for "interpretative" query execution. Instantiate the
  * specification with any registered pattern (or through a {@link SpecificationBuilder} instance), and then use the specification 
  * to obtain an actual pattern matcher operating on a given model.
  *
@@ -52,12 +52,12 @@ public class GenericQuerySpecification
 	}
 
     @Override
-    public GenericPatternMatcher instantiate(ViatraQueryEngine engine) throws IncQueryException {
+    public GenericPatternMatcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException {
         return GenericPatternMatcher.on(engine, this);
     }
 
 	@Override
-	public Class<? extends IncQueryScope> getPreferredScopeClass() {
+	public Class<? extends QueryScope> getPreferredScopeClass() {
 		return EMFScope.class;
 	}
 

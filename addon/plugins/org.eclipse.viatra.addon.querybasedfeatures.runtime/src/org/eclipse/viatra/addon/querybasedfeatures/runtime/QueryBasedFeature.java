@@ -26,9 +26,9 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener.ChangeLevel;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.collect.Sets;
 
@@ -72,7 +72,7 @@ public abstract class QueryBasedFeature {
             afterUpdate();
             sendNotfications();
             // engineForMatcher().getLogger()
-            // .error("[IncqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
+            // .error("[ViatraqueryFeatureHandler] Exception during update: " + e.getMessage(), e);
         }
 
         @Override
@@ -97,8 +97,8 @@ public abstract class QueryBasedFeature {
             try {
                 matcher = (ViatraQueryMatcher<IPatternMatch>) QuerySpecificationRegistry
                         .getQuerySpecification(patternName).getMatcher(engineForMatcher());
-            } catch (IncQueryException e) {
-                IncQueryLoggingUtil.getLogger(getClass()).error(
+            } catch (ViatraQueryException e) {
+                ViatraQueryLoggingUtil.getLogger(getClass()).error(
                         "[QueryBasedFeature] Exception during wipe callback: " + e.getMessage(), e);
             }
 //            dm = matcher.newDeltaMonitor(false);
@@ -134,7 +134,7 @@ public abstract class QueryBasedFeature {
     protected void initialize(final ViatraQueryMatcher<IPatternMatch> matcher, String sourceParamName,
             String targetParamName) {
         if (initialized) {
-            IncQueryLoggingUtil.getLogger(getClass()).error("[QueryBasedFeature] Feature already initialized!");
+            ViatraQueryLoggingUtil.getLogger(getClass()).error("[QueryBasedFeature] Feature already initialized!");
             return;
         }
         initialized = true;
@@ -142,11 +142,11 @@ public abstract class QueryBasedFeature {
         this.sourceParamName = sourceParamName;
         this.targetParamName = targetParamName;
         if (matcher.getPositionOfParameter(sourceParamName) == null) {
-            IncQueryLoggingUtil.getLogger(getClass()).error(
+            ViatraQueryLoggingUtil.getLogger(getClass()).error(
                     "[QueryBasedFeature] Source parameter " + sourceParamName + " not found!");
         }
         if (targetParamName != null && matcher.getPositionOfParameter(targetParamName) == null) {
-            IncQueryLoggingUtil.getLogger(getClass()).error(
+            ViatraQueryLoggingUtil.getLogger(getClass()).error(
                     "[QueryBasedFeature] Target parameter " + targetParamName + " not found!");
         }
 //        this.dm = matcher.newDeltaMonitor(true);

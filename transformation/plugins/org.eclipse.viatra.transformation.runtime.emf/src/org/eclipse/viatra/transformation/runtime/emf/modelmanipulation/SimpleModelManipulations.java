@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 public class SimpleModelManipulations extends AbstractModelManipulations{
 
@@ -88,7 +88,7 @@ public class SimpleModelManipulations extends AbstractModelManipulations{
 			throws ModelManipulationException {
 		try {
 			getBaseEMFIndex().cheapMoveTo(what, newContainer, reference);
-		} catch (IncQueryException e) {
+		} catch (ViatraQueryException e) {
 			throw new ModelManipulationException(e);
 		}
 	}
@@ -97,7 +97,7 @@ public class SimpleModelManipulations extends AbstractModelManipulations{
 	protected void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException {
 		try {
 			getBaseEMFIndex().cheapMoveTo(what, newContainer.getContents());
-		} catch (IncQueryException e) {
+		} catch (ViatraQueryException e) {
 			throw new ModelManipulationException(e);
 		}
 	}

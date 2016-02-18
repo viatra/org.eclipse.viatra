@@ -34,7 +34,7 @@ import org.eclipse.viatra.addon.validation.core.listeners.ViolationListener;
  * <ul>
  * <li>registering listeners for notifications on life cycle events, e.g. a change in the message.
  * </ul>
- * For violation of constraints from EMF-IncQuery patterns, the match is also stored.
+ * For violation of constraints from VIATRA patterns, the match is also stored.
  * 
  * @author Balint Lorand
  *

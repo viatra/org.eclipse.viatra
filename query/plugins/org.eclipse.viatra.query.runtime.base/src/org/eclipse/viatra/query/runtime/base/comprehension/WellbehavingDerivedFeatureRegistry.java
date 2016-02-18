@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.base.IncQueryBasePlugin;
+import org.eclipse.viatra.query.runtime.base.ViatraBasePlugin;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -45,7 +45,7 @@ public class WellbehavingDerivedFeatureRegistry {
     }
 
     /**
-     * Called by IncQueryBasePlugin.
+     * Called by ViatraBasePlugin.
      */
     public static void initRegistry() {
         getContributedWellbehavingDerivedFeatures().clear();
@@ -55,7 +55,7 @@ public class WellbehavingDerivedFeatureRegistry {
         IExtensionRegistry reg = Platform.getExtensionRegistry();
         IExtensionPoint poi;
 
-        poi = reg.getExtensionPoint(IncQueryBasePlugin.WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID);
+        poi = reg.getExtensionPoint(ViatraBasePlugin.WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID);
         if (poi != null) {
             IExtension[] exts = poi.getExtensions();
 

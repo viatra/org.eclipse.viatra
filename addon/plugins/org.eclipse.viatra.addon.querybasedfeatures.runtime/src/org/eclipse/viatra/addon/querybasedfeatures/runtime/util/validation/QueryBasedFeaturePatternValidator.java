@@ -43,7 +43,7 @@ import com.google.inject.Inject;
  */
 public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAdditionalValidator {
 
-    private static final String VALIDATOR_BASE_CODE = "org.eclipse.incquery.querybasedfeatures.";
+    private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.addon.querybasedfeatures.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
     public static final String METAMODEL_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_metamodel";
     public static final String PATTERN_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_pattern";

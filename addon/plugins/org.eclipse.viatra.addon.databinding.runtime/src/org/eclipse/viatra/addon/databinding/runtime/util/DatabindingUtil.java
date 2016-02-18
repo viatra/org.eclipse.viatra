@@ -11,21 +11,21 @@
 package org.eclipse.viatra.addon.databinding.runtime.util;
 
 import org.eclipse.viatra.addon.databinding.runtime.adapter.DatabindingAdapter;
-import org.eclipse.viatra.addon.databinding.runtime.api.IncQueryObservables;
+import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 
 /**
  * @author istvanrath
- * @deprecated functionality moved to {@link IncQueryObservables}
+ * @deprecated functionality moved to {@link ViatraObservables}
  */
 public class DatabindingUtil {
 
     /**
-     * @deprecated Use {@link IncQueryObservables#getDatabindingAdapter(IQuerySpecification) } instead
+     * @deprecated Use {@link ViatraObservables#getDatabindingAdapter(IQuerySpecification) } instead
      */
     public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(IQuerySpecification<?> query) {
-        return IncQueryObservables.getDatabindingAdapter(query);
+        return ViatraObservables.getDatabindingAdapter(query);
     }
 
 }

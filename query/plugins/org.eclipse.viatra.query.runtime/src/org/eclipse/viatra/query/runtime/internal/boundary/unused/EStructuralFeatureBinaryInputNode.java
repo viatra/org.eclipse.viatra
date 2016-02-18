@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
+import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
@@ -82,9 +82,9 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 	 * @param engine
 	 * @param reteContainer
 	 * @param feature
-	 * @throws IncQueryBaseException 
+	 * @throws ViatraBaseException 
 	 */
-	public EStructuralFeatureBinaryInputNode(ViatraQueryEngine engine, ReteContainer reteContainer, EStructuralFeature feature) throws IncQueryBaseException {
+	public EStructuralFeatureBinaryInputNode(ViatraQueryEngine engine, ReteContainer reteContainer, EStructuralFeature feature) throws ViatraBaseException {
 		super(reteContainer);
 		this.feature = feature;
 		setTag(feature.getName());
@@ -237,7 +237,7 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 								}
 							} catch (Exception ex) {
 								//engine.getLogger().logError(					
-								//		"IncQuery encountered an error in processing the EMF model. ",
+								//		"VIATRA encountered an error in processing the EMF model. ",
 								//	ex); 
 								return null;
 							}

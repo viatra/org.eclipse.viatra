@@ -11,8 +11,8 @@
 package org.eclipse.viatra.transformation.evm.specific.lifecycle;
 
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryEventTypeEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 
 /**
  * This is the default implementation for an activation life cycle.
@@ -65,45 +65,45 @@ public final class DefaultActivationLifeCycle extends UnmodifiableActivationLife
             final boolean updateStateUsed,
             final boolean disappearedStateUsed) {
         
-        super(IncQueryActivationStateEnum.INACTIVE);
+        super(CRUDActivationStateEnum.INACTIVE);
 
-        internalAddStateTransition(IncQueryActivationStateEnum.INACTIVE, IncQueryEventTypeEnum.MATCH_APPEARS,
-                IncQueryActivationStateEnum.APPEARED);
+        internalAddStateTransition(CRUDActivationStateEnum.INACTIVE, CRUDEventTypeEnum.CREATED,
+                CRUDActivationStateEnum.CREATED);
 
-        internalAddStateTransition(IncQueryActivationStateEnum.APPEARED, IncQueryEventTypeEnum.MATCH_DISAPPEARS,
-                IncQueryActivationStateEnum.INACTIVE);
-        internalAddStateTransition(IncQueryActivationStateEnum.APPEARED, EventType.RuleEngineEventType.FIRE,
-                IncQueryActivationStateEnum.FIRED);
+        internalAddStateTransition(CRUDActivationStateEnum.CREATED, CRUDEventTypeEnum.DELETED,
+                CRUDActivationStateEnum.INACTIVE);
+        internalAddStateTransition(CRUDActivationStateEnum.CREATED, EventType.RuleEngineEventType.FIRE,
+                CRUDActivationStateEnum.FIRED);
 
         if (updateStateUsed) {
-            internalAddStateTransition(IncQueryActivationStateEnum.FIRED, IncQueryEventTypeEnum.MATCH_UPDATES,
-                    IncQueryActivationStateEnum.UPDATED);
-            internalAddStateTransition(IncQueryActivationStateEnum.UPDATED, EventType.RuleEngineEventType.FIRE,
-                    IncQueryActivationStateEnum.FIRED);
+            internalAddStateTransition(CRUDActivationStateEnum.FIRED, CRUDEventTypeEnum.UPDATED,
+                    CRUDActivationStateEnum.UPDATED);
+            internalAddStateTransition(CRUDActivationStateEnum.UPDATED, EventType.RuleEngineEventType.FIRE,
+                    CRUDActivationStateEnum.FIRED);
             if (disappearedStateUsed) {
-                internalAddStateTransition(IncQueryActivationStateEnum.UPDATED, IncQueryEventTypeEnum.MATCH_DISAPPEARS,
-                        IncQueryActivationStateEnum.DISAPPEARED);
+                internalAddStateTransition(CRUDActivationStateEnum.UPDATED, CRUDEventTypeEnum.DELETED,
+                        CRUDActivationStateEnum.DELETED);
             } else {
-                internalAddStateTransition(IncQueryActivationStateEnum.UPDATED, IncQueryEventTypeEnum.MATCH_DISAPPEARS,
-                        IncQueryActivationStateEnum.INACTIVE);
+                internalAddStateTransition(CRUDActivationStateEnum.UPDATED, CRUDEventTypeEnum.DELETED,
+                        CRUDActivationStateEnum.INACTIVE);
             }
         }
 
         if (disappearedStateUsed) {
-            internalAddStateTransition(IncQueryActivationStateEnum.FIRED, IncQueryEventTypeEnum.MATCH_DISAPPEARS,
-                    IncQueryActivationStateEnum.DISAPPEARED);
+            internalAddStateTransition(CRUDActivationStateEnum.FIRED, CRUDEventTypeEnum.DELETED,
+                    CRUDActivationStateEnum.DELETED);
             if(updateStateUsed){
-                internalAddStateTransition(IncQueryActivationStateEnum.DISAPPEARED, IncQueryEventTypeEnum.MATCH_APPEARS,
-                        IncQueryActivationStateEnum.UPDATED);
+                internalAddStateTransition(CRUDActivationStateEnum.DELETED, CRUDEventTypeEnum.CREATED,
+                        CRUDActivationStateEnum.UPDATED);
             } else {
-                internalAddStateTransition(IncQueryActivationStateEnum.DISAPPEARED, IncQueryEventTypeEnum.MATCH_APPEARS,
-                        IncQueryActivationStateEnum.FIRED);
+                internalAddStateTransition(CRUDActivationStateEnum.DELETED, CRUDEventTypeEnum.CREATED,
+                        CRUDActivationStateEnum.FIRED);
             }
-            internalAddStateTransition(IncQueryActivationStateEnum.DISAPPEARED, EventType.RuleEngineEventType.FIRE,
-                    IncQueryActivationStateEnum.INACTIVE);
+            internalAddStateTransition(CRUDActivationStateEnum.DELETED, EventType.RuleEngineEventType.FIRE,
+                    CRUDActivationStateEnum.INACTIVE);
         } else {
-            internalAddStateTransition(IncQueryActivationStateEnum.FIRED, IncQueryEventTypeEnum.MATCH_DISAPPEARS,
-                    IncQueryActivationStateEnum.INACTIVE);
+            internalAddStateTransition(CRUDActivationStateEnum.FIRED, CRUDEventTypeEnum.DELETED,
+                    CRUDActivationStateEnum.INACTIVE);
         }
 
     }

@@ -85,25 +85,25 @@ class JavadocInferrer {
 		<p>The matcher will be created within the managed {@link ViatraQueryEngine} belonging to the EMF model root, so
 		multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
 		@param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-		@throws IncQueryException if an error occurs during pattern matcher creation
+		@throws ViatraQueryException if an error occurs during pattern matcher creation
 		@deprecated use {@link #on(ViatraQueryEngine)} instead, e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}
 	'''
 
 	def javadocMatcherConstructorEngine(Pattern pattern) '''
-		Initializes the pattern matcher within an existing EMF-IncQuery engine.
+		Initializes the pattern matcher within an existing VIATRA Query engine.
 		If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
 		The match set will be incrementally refreshed upon updates.
-		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
-		@throws IncQueryException if an error occurs during pattern matcher creation
+		@param engine the existing VIATRA Query engine in which this matcher will be created.
+		@throws ViatraQueryException if an error occurs during pattern matcher creation
 		@deprecated use {@link #on(ViatraQueryEngine)} instead
 	'''
 
 	def javadocMatcherStaticOnEngine(Pattern pattern) '''
-		Initializes the pattern matcher within an existing EMF-IncQuery engine.
+		Initializes the pattern matcher within an existing VIATRA Query engine.
 		If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
 		The match set will be incrementally refreshed upon updates.
-		@param engine the existing EMF-IncQuery engine in which this matcher will be created.
-		@throws IncQueryException if an error occurs during pattern matcher creation
+		@param engine the existing VIATRA Query engine in which this matcher will be created.
+		@throws ViatraQueryException if an error occurs during pattern matcher creation
 	'''
 
 	def javadocGetAllMatchesMethod(Pattern pattern) '''
@@ -202,19 +202,19 @@ class JavadocInferrer {
 
 	def javadocQuerySpecificationMethod(Pattern pattern) '''
 		@return the singleton instance of the query specification of this pattern
-		@throws IncQueryException if the pattern definition could not be loaded
+		@throws ViatraQueryException if the pattern definition could not be loaded
 	'''
 
 	def javadocQuerySpecificationInstanceMethod(Pattern pattern) '''
 		@return the singleton instance of the query specification
-		@throws IncQueryException if the pattern definition could not be loaded
+		@throws ViatraQueryException if the pattern definition could not be loaded
 	'''
 
 	def javadocGroupClass(PatternModel model) '''
 		A pattern group formed of all patterns defined in «model.modelFileName».vql.
 
 		<p>Use the static instance as any {@link org.eclipse.viatra.query.runtime.api.IPatternGroup}, to conveniently prepare
-		an EMF-IncQuery engine for matching all patterns originally defined in file «model.modelFileName».vql,
+		an VIATRA Query engine for matching all patterns originally defined in file «model.modelFileName».vql,
 		in order to achieve better performance than one-by-one on-demand matcher initialization.
 
 		<p> From package «model.packageName», the group contains the definition of the following patterns: <ul>
@@ -229,7 +229,7 @@ class JavadocInferrer {
 		Access the pattern group.
 
 		@return the singleton instance of the group
-		@throws IncQueryException if there was an error loading the generated code of pattern specifications
+		@throws ViatraQueryException if there was an error loading the generated code of pattern specifications
    	'''
 
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 
 /**
  * Sequentially executes a list of match processors in a stateless manner.
@@ -27,12 +27,12 @@ public class SequentialProcessorsJob<Match extends IPatternMatch> extends Statel
     /**
      * Creates a stateless job for the given state and list of processors.
      * 
-     * @param incQueryActivationStateEnum
+     * @param cRUDActivationStateEnum
      * @param matchProcessors
      */
-    public SequentialProcessorsJob(IncQueryActivationStateEnum incQueryActivationStateEnum,
+    public SequentialProcessorsJob(CRUDActivationStateEnum cRUDActivationStateEnum,
             final List<? extends IMatchProcessor<Match>> matchProcessors) {
-        super(incQueryActivationStateEnum, new IMatchProcessor<Match>() {
+        super(cRUDActivationStateEnum, new IMatchProcessor<Match>() {
             @Override
             public void process(Match match) {
                 for (IMatchProcessor<Match> matchProcessor : matchProcessors) {

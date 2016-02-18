@@ -12,15 +12,15 @@
 package org.eclipse.viatra.query.runtime;
 
 /**
- * Interface for storing string constants related to IncQuery's extension points.
+ * Interface for storing string constants related to VIATRA Query's extension points.
  *
  * @author Istvan Rath
  *
  */
 public interface IExtensions {
 
-    public static final String QUERY_SPECIFICATION_EXTENSION_POINT_ID = IncQueryRuntimePlugin.PLUGIN_ID + ".queryspecification";
+    public static final String QUERY_SPECIFICATION_EXTENSION_POINT_ID = ViatraQueryRuntimePlugin.PLUGIN_ID + ".queryspecification";
 
-    public static final String INJECTOREXTENSIONID = IncQueryRuntimePlugin.PLUGIN_ID + ".injectorprovider";
+    public static final String INJECTOREXTENSIONID = ViatraQueryRuntimePlugin.PLUGIN_ID + ".injectorprovider";
 
 }

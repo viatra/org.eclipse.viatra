@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.SelectionHelper;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfiguration;
-import org.eclipse.viatra.addon.viewers.runtime.model.IncQueryViewerDataModel;
+import org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewersAnnotatedPatternTester;
@@ -48,7 +48,7 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFea
 import org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants;
 
@@ -262,19 +262,19 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     void applyConfiguration(ViewersComponentConfiguration c) {
     	try {
 			doSetContents(c.getModel(), c.getPatterns(), c.getFilter());
-		} catch (IncQueryException e) {
+		} catch (ViatraQueryException e) {
 			ViewersMultiSandboxView.log("applyConfiguration", e);
 		}
     }
     
-    public void initializeContents(ViewersComponentConfiguration c) throws IncQueryException {
+    public void initializeContents(ViewersComponentConfiguration c) throws ViatraQueryException {
     	if (c!=null) {
     		initializeContents(c.getModel(), c.getPatterns(), c.getFilter());
     	}
     }
 
 	public void initializeContents(Notifier model, Collection<IQuerySpecification<?>> _patterns, ViewerDataFilter filter)
-            throws IncQueryException {
+            throws ViatraQueryException {
         if (model != null) {
         	Collection<IQuerySpecification<?>> patterns = getPatternsWithProperAnnotations(_patterns);
         	this.initialConfiguration = new ViewersComponentConfiguration(model,patterns,filter);
@@ -283,19 +283,19 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         }
     }
 
-	private void doSetContents(Notifier model, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter) throws IncQueryException {
+	private void doSetContents(Notifier model, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter) throws ViatraQueryException {
 		if (state!=null) {
     		// dispose any previous viewerstate
     		state.dispose();
     	}
-        state = IncQueryViewerDataModel.newViewerState(getEngine(model), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+        state = ViatraViewerDataModel.newViewerState(getEngine(model), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
         for (IViewerSandboxTab tab : tabList) {
             tab.bindState(state);
         }
 	}
 	
 	
-    private AdvancedViatraQueryEngine getEngine(Notifier model) throws IncQueryException {
+    private AdvancedViatraQueryEngine getEngine(Notifier model) throws ViatraQueryException {
         if (engine != null) {
             engine.dispose();
         }
@@ -306,7 +306,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
                 .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
         
         engine = AdvancedViatraQueryEngine.createUnmanagedEngine(model, wildcardMode, dynamicEMFMode);
-        ViewersMultiSandboxView.log("Viewers initialized a new IncQuery engine with wildcardMode: "+wildcardMode+", dynamicMode: "+dynamicEMFMode);
+        ViewersMultiSandboxView.log("Viewers initialized a new VIATRA Query engine with wildcardMode: "+wildcardMode+", dynamicMode: "+dynamicEMFMode);
         return engine;
     }
 
@@ -334,7 +334,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     public ISelection getSelection() {
        	IViewerSandboxTab tab = getCurrentContributedTab();
        	if (tab!=null) {
-            // unwrap incquery viewers model elements to EObjects
+            // unwrap VIATRA viewers model elements to EObjects
             return selectionHelper.unwrapElements_ViewersElementsToEObjects( getCurrentContributedTab().getSelection() );
         } else {
             return StructuredSelection.EMPTY;

@@ -15,10 +15,10 @@ import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -67,16 +67,16 @@ public abstract class ViatraQueryEngine {
      * 
      * @param emfScopeRoot the scope in which matches supported by the engine should be registered
      * @return a (managed) {@link ViatraQueryEngine} instance
-     * @throws IncQueryException on initialization errors.
-     * @deprecated use {@link #on(IncQueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
+     * @throws ViatraQueryException on initialization errors.
+     * @deprecated use {@link #on(QueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
      */
 	@Deprecated
-	public static ViatraQueryEngine on(Notifier emfScopeRoot) throws IncQueryException {
+	public static ViatraQueryEngine on(Notifier emfScopeRoot) throws ViatraQueryException {
 		return ViatraQueryEngineManager.getInstance().getQueryEngine(new EMFScope(emfScopeRoot));
 	}
     
     /**
-     * Obtain a (managed) {@link ViatraQueryEngine} to evaluate queries over a given scope specified by an {@link IncQueryScope}.
+     * Obtain a (managed) {@link ViatraQueryEngine} to evaluate queries over a given scope specified by an {@link QueryScope}.
      * 
      * <p> For a given matcher scope, the same engine will be returned to any client. 
      * This facilitates the reuse of internal caches of the engine, greatly improving performance.  
@@ -85,16 +85,16 @@ public abstract class ViatraQueryEngine {
      * The engine will be garbage collected along with the model. 
      * 
      * <p>
-     * Advanced users: see {@link AdvancedViatraQueryEngine#createUnmanagedEngine(IncQueryScope)} to obtain a private, 
+     * Advanced users: see {@link AdvancedViatraQueryEngine#createUnmanagedEngine(QueryScope)} to obtain a private, 
      * unmanaged engine that is not shared with other clients and allows tight control over its lifecycle. 
      * 
      * @param scope 
      * 		the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
      * 		Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
      * @return a (managed) {@link ViatraQueryEngine} instance
-     * @throws IncQueryException on initialization errors.
+     * @throws ViatraQueryException on initialization errors.
      */
-	public static ViatraQueryEngine on(IncQueryScope scope) throws IncQueryException {
+	public static ViatraQueryEngine on(QueryScope scope) throws ViatraQueryException {
 		return ViatraQueryEngineManager.getInstance().getQueryEngine(scope);
 	}
 
@@ -106,19 +106,19 @@ public abstract class ViatraQueryEngine {
      *  consider {@link EMFScope#extractUnderlyingEMFIndex(ViatraQueryEngine)} instead to access EMF-specific details.
      * 
      * @return the baseIndex the NavigationHelper maintaining the base index
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      *             if the base index could not be constructed
      */
-	public abstract IBaseIndex getBaseIndex() throws IncQueryException;
+	public abstract IBaseIndex getBaseIndex() throws ViatraQueryException;
 
 	/**
 	 * Access a pattern matcher based on a {@link IQuerySpecification}. 
 	 * Multiple calls will return the same matcher.
-	 * @param querySpecification a {@link IQuerySpecification} that describes an IncQuery query
+	 * @param querySpecification a {@link IQuerySpecification} that describes an VIATRA query specification
 	 * @return a pattern matcher corresponding to the specification
-	 * @throws IncQueryException if the matcher could not be initialized
+	 * @throws ViatraQueryException if the matcher could not be initialized
 	 */
-    public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws IncQueryException;
+    public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws ViatraQueryException;
 
 	/**
 	 * Access a pattern matcher for the graph pattern with the given fully qualified name. 
@@ -126,15 +126,15 @@ public abstract class ViatraQueryEngine {
 	 *  or else if the matcher for the pattern has been generated and registered. 
 	 * Multiple calls will return the same matcher. 
 	 * 
-	 * @param patternFQN the fully qualified name of an IncQuery graph pattern
+	 * @param patternFQN the fully qualified name of an VIATRA query specification
 	 * @return a pattern matcher corresponding to the specification
-	 * @throws IncQueryException if the matcher could not be initialized
+	 * @throws ViatraQueryException if the matcher could not be initialized
 	 */
-	public abstract ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws IncQueryException;
+	public abstract ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws ViatraQueryException;
     
     /**
      * Access an existing pattern matcher based on a {@link IQuerySpecification}.
-     * @param querySpecification a {@link IQuerySpecification} that describes an IncQuery query
+     * @param querySpecification a {@link IQuerySpecification} that describes an VIATRA query specification
      * @return a pattern matcher corresponding to the specification, <code>null</code> if a matcher does not exist yet.
      */
 	public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification);
@@ -166,6 +166,6 @@ public abstract class ViatraQueryEngine {
     /**
      * @return the scope of query evaluation; the definition of the set of model elements that this engine is operates on.
      */
-	public abstract IncQueryScope getScope();
+	public abstract QueryScope getScope();
 
 }

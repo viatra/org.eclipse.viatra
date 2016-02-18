@@ -11,11 +11,11 @@
 package org.eclipse.viatra.query.runtime.api;
 
 import org.eclipse.viatra.query.runtime.api.impl.BaseQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
- * This is a generic query specification for IncQuery pattern matchers, for "interpretative" query execution. 
+ * This is a generic query specification for VIATRA pattern matchers, for "interpretative" query execution. 
  * Should be subclassed by query specification implementations specific to query languages.
  *
  * <p>
@@ -61,7 +61,7 @@ public abstract class GenericQuerySpecification<Matcher extends GenericPatternMa
 	 * Derived classes should use this implementation of {@link #instantiate(ViatraQueryEngine)} 
 	 * if they use {@link GenericPatternMatcher} proper.
 	 */
-	protected GenericPatternMatcher defaultInstantiate(ViatraQueryEngine engine) throws IncQueryException {
+	protected GenericPatternMatcher defaultInstantiate(ViatraQueryEngine engine) throws ViatraQueryException {
 		return GenericPatternMatcher.instantiate(engine, this);
 	}
 

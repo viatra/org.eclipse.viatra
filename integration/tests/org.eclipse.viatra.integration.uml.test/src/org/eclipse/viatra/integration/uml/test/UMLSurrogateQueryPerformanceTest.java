@@ -15,9 +15,9 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures;
 import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.testing.core.QueryPerformanceTest;
 import org.junit.Ignore;
 
@@ -31,7 +31,7 @@ public class UMLSurrogateQueryPerformanceTest extends QueryPerformanceTest {
     private static final String INPUT_MODEL_PATH = "/org.eclipse.uml2.uml.resources/metamodels/UML.metamodel.uml";
 
     @Override
-    public IncQueryScope getScope() throws IncQueryException {
+    public QueryScope getScope() throws ViatraQueryException {
         ResourceSetImpl rs = new ResourceSetImpl();
         URI umlModelUri = URI.createPlatformPluginURI(INPUT_MODEL_PATH, true);
         rs.getResource(umlModelUri, true);
@@ -40,7 +40,7 @@ public class UMLSurrogateQueryPerformanceTest extends QueryPerformanceTest {
     }
 
     @Override
-    public IQueryGroup getQueryGroup() throws IncQueryException {
+    public IQueryGroup getQueryGroup() throws ViatraQueryException {
         return GenericQueryGroup.of(
                 DerivedFeatures.instance()
                 );

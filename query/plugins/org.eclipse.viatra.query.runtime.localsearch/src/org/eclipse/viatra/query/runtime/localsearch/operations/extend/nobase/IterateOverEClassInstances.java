@@ -25,7 +25,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
- * Iterates all available {@link EClass} instances without using an {@link NavigationHelper EMF-IncQuery Base indexer}.
+ * Iterates all available {@link EClass} instances without using an {@link NavigationHelper VIATRA Base indexer}.
  * 
  * @author Zoltan Ujhelyi
  */

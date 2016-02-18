@@ -12,9 +12,9 @@ import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * Generated pattern matcher API of the org.eclipse.viatra.query.application.queries.eObject pattern,
@@ -40,14 +40,14 @@ import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
 @SuppressWarnings("all")
 public class EObjectMatcher extends BaseMatcher<EObjectMatch> {
   /**
-   * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+   * Initializes the pattern matcher within an existing VIATRA Query engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
-   * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-   * @throws IncQueryException if an error occurs during pattern matcher creation
+   * @param engine the existing VIATRA Query engine in which this matcher will be created.
+   * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * 
    */
-  public static EObjectMatcher on(final ViatraQueryEngine engine) throws IncQueryException {
+  public static EObjectMatcher on(final ViatraQueryEngine engine) throws ViatraQueryException {
     // check if matcher already exists
     EObjectMatcher matcher = engine.getExistingMatcher(querySpecification());
     if (matcher == null) {
@@ -59,7 +59,7 @@ public class EObjectMatcher extends BaseMatcher<EObjectMatch> {
   
   private final static int POSITION_O = 0;
   
-  private final static Logger LOGGER = IncQueryLoggingUtil.getLogger(EObjectMatcher.class);
+  private final static Logger LOGGER = ViatraQueryLoggingUtil.getLogger(EObjectMatcher.class);
   
   /**
    * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
@@ -69,26 +69,26 @@ public class EObjectMatcher extends BaseMatcher<EObjectMatch> {
    * <p>The matcher will be created within the managed {@link ViatraQueryEngine} belonging to the EMF model root, so
    * multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
    * @param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-   * @throws IncQueryException if an error occurs during pattern matcher creation
+   * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * @deprecated use {@link #on(ViatraQueryEngine)} instead, e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}
    * 
    */
   @Deprecated
-  public EObjectMatcher(final Notifier emfRoot) throws IncQueryException {
+  public EObjectMatcher(final Notifier emfRoot) throws ViatraQueryException {
     this(ViatraQueryEngine.on(emfRoot));
   }
   
   /**
-   * Initializes the pattern matcher within an existing EMF-IncQuery engine.
+   * Initializes the pattern matcher within an existing VIATRA Query engine.
    * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
    * The match set will be incrementally refreshed upon updates.
-   * @param engine the existing EMF-IncQuery engine in which this matcher will be created.
-   * @throws IncQueryException if an error occurs during pattern matcher creation
+   * @param engine the existing VIATRA Query engine in which this matcher will be created.
+   * @throws ViatraQueryException if an error occurs during pattern matcher creation
    * @deprecated use {@link #on(ViatraQueryEngine)} instead
    * 
    */
   @Deprecated
-  public EObjectMatcher(final ViatraQueryEngine engine) throws IncQueryException {
+  public EObjectMatcher(final ViatraQueryEngine engine) throws ViatraQueryException {
     super(engine, querySpecification());
   }
   
@@ -220,10 +220,10 @@ public class EObjectMatcher extends BaseMatcher<EObjectMatch> {
   
   /**
    * @return the singleton instance of the query specification of this pattern
-   * @throws IncQueryException if the pattern definition could not be loaded
+   * @throws ViatraQueryException if the pattern definition could not be loaded
    * 
    */
-  public static IQuerySpecification<EObjectMatcher> querySpecification() throws IncQueryException {
+  public static IQuerySpecification<EObjectMatcher> querySpecification() throws ViatraQueryException {
     return EObjectQuerySpecification.instance();
   }
 }

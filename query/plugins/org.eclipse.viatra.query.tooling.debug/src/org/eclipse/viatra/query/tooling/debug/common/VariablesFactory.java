@@ -16,7 +16,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIObjectValue;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.sun.jdi.ClassLoaderReference;
 import com.sun.jdi.ThreadReference;
@@ -42,7 +42,7 @@ public abstract class VariablesFactory {
                 return classLoaderReference.virtualMachine();
             }
         } catch (DebugException e) {
-            IncQueryLoggingUtil.getLogger(VariablesFactory.class).error("Couldn't retrieve the virtual machine instance!", e);
+            ViatraQueryLoggingUtil.getLogger(VariablesFactory.class).error("Couldn't retrieve the virtual machine instance!", e);
             return null;
         }
         return null;

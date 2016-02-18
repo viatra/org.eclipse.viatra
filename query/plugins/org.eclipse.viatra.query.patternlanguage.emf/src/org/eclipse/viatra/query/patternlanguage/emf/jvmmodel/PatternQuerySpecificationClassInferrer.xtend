@@ -28,7 +28,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
-import org.eclipse.viatra.query.runtime.exception.IncQueryException
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference
@@ -44,6 +43,7 @@ import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -108,7 +108,7 @@ class PatternQuerySpecificationClassInferrer {
    		querySpecificationClass.members += pattern.toMethod("instance", typeRef(querySpecificationClass)) [
 			visibility = JvmVisibility::PUBLIC
 			static = true
-			exceptions += typeRef(typeof (IncQueryException))
+			exceptions += typeRef(typeof (ViatraQueryException))
 			documentation = pattern.javadocQuerySpecificationInstanceMethod.toString
 			body = '''
 					try{
@@ -123,7 +123,7 @@ class PatternQuerySpecificationClassInferrer {
 			visibility = JvmVisibility::PROTECTED
 			annotations += annotationRef(typeof (Override))
 			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
-			exceptions += typeRef(typeof (IncQueryException))
+			exceptions += typeRef(typeof (ViatraQueryException))
 			body = if (isPublic) { 
 				'''return «pattern.matcherClassName».on(engine);'''
 			} else {
@@ -194,8 +194,8 @@ class PatternQuerySpecificationClassInferrer {
 						«inferBodies(pattern)»
 						«inferAnnotations(pattern)»
 						// to silence compiler error
-						if (false) throw new IncQueryException("Never", "happens");
-					} catch («IncQueryException» ex) {
+						if (false) throw new ViatraQueryException("Never", "happens");
+					} catch («ViatraQueryException» ex) {
 						throw processDependencyException(ex);
 					}
 					return bodies;

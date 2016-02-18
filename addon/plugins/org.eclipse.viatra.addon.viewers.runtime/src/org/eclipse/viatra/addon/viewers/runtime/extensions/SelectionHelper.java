@@ -28,7 +28,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Helper class for bidirectional selection synchronization support for
- * IncQuery Viewers components.
+ * VIATRA Viewers components.
  * 
  * @author istvanrath
  *

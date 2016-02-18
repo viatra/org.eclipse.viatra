@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
@@ -82,7 +82,7 @@ public class StartLocalSearchHandler extends AbstractHandler {
 					planExecutorThread.start();
 				}
 			}
-		} catch (IncQueryException e) {
+		} catch (ViatraQueryException e) {
 			throw new RuntimeException(e);
 		} catch (QueryProcessingException e1) {
 			throw new RuntimeException(e1);

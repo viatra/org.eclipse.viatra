@@ -16,7 +16,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 public class PatternWithCardinality {
 
@@ -78,15 +78,15 @@ public class PatternWithCardinality {
      * Determines if the pattern is satisfied.
      * 
      * @return True if the pattern is satisfied.
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      */
     public boolean isPatternSatisfied(ViatraQueryEngine engine) {
         // TODO optimization: cache matcher; catch exception elsewhere
         int numOfMatches = 0;
         try {
             numOfMatches = querySpecification.getMatcher(engine).countMatches();
-        } catch (IncQueryException e) {
-            throw new DSEException("IncqueryException from PatternWithCardinality.isPatternSatisfied", e);
+        } catch (ViatraQueryException e) {
+            throw new DSEException("ViatraqueryException from PatternWithCardinality.isPatternSatisfied", e);
         }
         switch (cardinalityType) {
         case AT_LEAST:

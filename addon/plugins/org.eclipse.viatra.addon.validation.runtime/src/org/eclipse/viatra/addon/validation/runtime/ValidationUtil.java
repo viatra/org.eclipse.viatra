@@ -19,7 +19,7 @@ import java.util.Set;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 public final class ValidationUtil {
 
@@ -39,7 +39,7 @@ public final class ValidationUtil {
     }
 
     public static synchronized void addNotifier(IEditorPart editorPart, Notifier notifier) {
-        adapterMap.put(editorPart, new ConstraintAdapter(editorPart, notifier, IncQueryLoggingUtil.getLogger(ValidationUtil.class)));
+        adapterMap.put(editorPart, new ConstraintAdapter(editorPart, notifier, ViatraQueryLoggingUtil.getLogger(ValidationUtil.class)));
     }
 
     public static void registerEditorPart(IEditorPart editorPart) {

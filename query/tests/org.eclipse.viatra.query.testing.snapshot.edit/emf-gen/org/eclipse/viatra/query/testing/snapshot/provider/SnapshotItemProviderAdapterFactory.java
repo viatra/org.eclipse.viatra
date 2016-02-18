@@ -348,26 +348,26 @@ public class SnapshotItemProviderAdapterFactory extends SnapshotAdapterFactory i
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected IncQuerySnapshotItemProvider incQuerySnapshotItemProvider;
+	protected QuerySnapshotItemProvider querySnapshotItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot}.
+	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createIncQuerySnapshotAdapter() {
-		if (incQuerySnapshotItemProvider == null) {
-			incQuerySnapshotItemProvider = new IncQuerySnapshotItemProvider(this);
+	public Adapter createQuerySnapshotAdapter() {
+		if (querySnapshotItemProvider == null) {
+			querySnapshotItemProvider = new QuerySnapshotItemProvider(this);
 		}
 
-		return incQuerySnapshotItemProvider;
+		return querySnapshotItemProvider;
 	}
 
 	/**
@@ -481,7 +481,7 @@ public class SnapshotItemProviderAdapterFactory extends SnapshotAdapterFactory i
 		if (dateSubstitutionItemProvider != null) dateSubstitutionItemProvider.dispose();
 		if (enumSubstitutionItemProvider != null) enumSubstitutionItemProvider.dispose();
 		if (miscellaneousSubstitutionItemProvider != null) miscellaneousSubstitutionItemProvider.dispose();
-		if (incQuerySnapshotItemProvider != null) incQuerySnapshotItemProvider.dispose();
+		if (querySnapshotItemProvider != null) querySnapshotItemProvider.dispose();
 	}
 
 }

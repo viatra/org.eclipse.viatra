@@ -21,7 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfiguration;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueryHeader;
 import org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization;
 
@@ -38,7 +38,7 @@ public class ReteVisualizationView extends ViewPart implements IZoomableWorkbenc
             for (PQueryHeader query : ReteVisualization.instance().getSpecifications()) {
                 queryNames.add(query.getFullyQualifiedName());
             }
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             throw new RuntimeException("Failed to get Rete Visualization query specifications", e);
         }
         viewSupport = new ReteVisualizationViewSupport(

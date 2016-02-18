@@ -13,7 +13,7 @@ package org.eclipse.viatra.query.runtime.matchers.backend;
 import java.util.Map;
 
 /**
- * Provides IncQuery with additional hints on how a query should be evaluated. The same hint can be provided to multiple queries. 
+ * Provides VIATRA Query with additional hints on how a query should be evaluated. The same hint can be provided to multiple queries. 
  * 
  * <p>
  * Here be dragons: for advanced users only.

@@ -24,8 +24,8 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener.ChangeLevel;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryBaseIndexChangeListener;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.api.scope.ViatraBaseIndexChangeListener;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -64,7 +64,7 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
                 this.queryEngine.getBaseIndex().addBaseIndexChangeListener(indexListener);
                 // add listener to new matchers (use lifecycle listener)
                 this.queryEngine.addLifecycleListener(selfListener);
-            } catch (IncQueryException e) {
+            } catch (ViatraQueryException e) {
                 throw new IllegalStateException("Model update listener used on engine without base index", e);
             }
         }
@@ -101,7 +101,7 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
     private void removeBaseIndexChangeListener() {
         try {
             this.queryEngine.getBaseIndex().removeBaseIndexChangeListener(indexListener);
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             throw new IllegalStateException("Model update listener used on engine without base index", e);
         }
     }
@@ -149,7 +149,7 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
                             listener.notifyChanged(tempLevel);
                         } catch (Exception ex) {
                             logger.error(
-                                    "IncQuery encountered an error in delivering model update notification to listener "
+                                    "VIATRA Query encountered an error in delivering model update notification to listener "
                                             + listener + ".", ex);
                         }
                     }
@@ -164,7 +164,7 @@ public final class ModelUpdateProvider extends ListenerContainer<ViatraQueryMode
     // model update "providers":
     // - model: IQBase callback even if not dirty
     // - index: IQBase dirty callback
-    private final IncQueryBaseIndexChangeListener indexListener = new IncQueryBaseIndexChangeListener() {
+    private final ViatraBaseIndexChangeListener indexListener = new ViatraBaseIndexChangeListener() {
         
         public boolean onlyOnIndexChange() {
             return false;

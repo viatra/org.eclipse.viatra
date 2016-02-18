@@ -21,7 +21,7 @@ import org.eclipse.viatra.transformation.evm.api.Executor;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.Scheduler;
 import org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryEventRealm;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm;
 
 /**
  * @author Abel Hegedus
@@ -39,9 +39,9 @@ public class ExecutionSchemas {
      * @param specifications
      * @return the prepared execution schema
      */
-    public static ExecutionSchema createIncQueryExecutionSchema(final ViatraQueryEngine engine,
+    public static ExecutionSchema createViatraQueryExecutionSchema(final ViatraQueryEngine engine,
             final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<?>> specifications) {
-        return EventDrivenVM.createExecutionSchema(IncQueryEventRealm.create(engine), schedulerFactory, specifications);
+        return EventDrivenVM.createExecutionSchema(ViatraQueryEventRealm.create(engine), schedulerFactory, specifications);
     }
 
     /**
@@ -53,10 +53,10 @@ public class ExecutionSchemas {
      * @param schedulerFactory
      * @return the prepared execution schema
      */
-    public static ExecutionSchema createIncQueryExecutionSchema(final ViatraQueryEngine engine,
+    public static ExecutionSchema createViatraQueryExecutionSchema(final ViatraQueryEngine engine,
             final ISchedulerFactory schedulerFactory) {
         checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
-        Executor executor = new Executor(IncQueryEventRealm.create(engine));
+        Executor executor = new Executor(ViatraQueryEventRealm.create(engine));
         Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
         return ExecutionSchema.create(scheduler);
     }

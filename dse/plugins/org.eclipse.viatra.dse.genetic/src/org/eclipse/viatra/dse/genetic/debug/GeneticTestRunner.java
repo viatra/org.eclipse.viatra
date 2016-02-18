@@ -60,7 +60,7 @@ import org.eclipse.viatra.dse.genetic.selectors.NonDominatedAndCrowdingDistanceS
 import org.eclipse.viatra.dse.genetic.selectors.ParetoSelector;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.StrategyDependentSolutionStore;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * This abstract class helps to test out genetic algorithms run by the {@link GeneticDesignSpaceExplorer} if inherited.
@@ -111,9 +111,9 @@ public abstract class GeneticTestRunner extends BaseTestRunner {
      * @param configRow
      *            The corrsponding row from the configuration csv file.
      * @return The configured {@link GeneticDesignSpaceExplorer}.
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      */
-    public abstract void configDSE(Row configRow, DesignSpaceExplorer dse, GeneticStrategyBuilder builder) throws IncQueryException;
+    public abstract void configDSE(Row configRow, DesignSpaceExplorer dse, GeneticStrategyBuilder builder) throws ViatraQueryException;
 
     /**
      * If needed, an XMI serializer can be registered here, for loading the test models.

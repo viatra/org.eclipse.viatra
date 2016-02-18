@@ -29,8 +29,7 @@ import org.eclipse.xtext.builder.impl.XtextBuilder;
 import com.google.inject.Inject;
 
 /**
- * An incremental project builder for IncQuery projects. Based on the {@link XtextBuilder} class, but simplified for
- * IncQuery generation.
+ * An incremental project builder for VIATRA Query projects.
  *
  * @author Zoltan Ujhelyi
  *

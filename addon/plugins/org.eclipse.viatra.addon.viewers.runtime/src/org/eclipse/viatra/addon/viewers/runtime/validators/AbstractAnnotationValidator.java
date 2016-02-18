@@ -31,7 +31,7 @@ import com.google.inject.Inject;
  */
 public abstract class AbstractAnnotationValidator implements IPatternAnnotationAdditionalValidator {
 
-    protected static final String VALIDATOR_BASE_CODE = "org.eclipse.incquery.viewers.";
+    protected static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.query.viewers.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
     public static final String EXPRESSION_MISMATCH_ISSUE_CODE = VALIDATOR_BASE_CODE + "expressionmismatch";
     @Inject

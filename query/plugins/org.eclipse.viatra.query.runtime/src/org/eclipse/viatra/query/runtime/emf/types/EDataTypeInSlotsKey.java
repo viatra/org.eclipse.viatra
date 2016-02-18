@@ -11,7 +11,7 @@
 package org.eclipse.viatra.query.runtime.emf.types;
 
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 
 /**
  * Instance tuples are of form (x), where x is an instance of the given eDataType residing at an attribute slot of an eObject in the model.
@@ -29,12 +29,12 @@ public class EDataTypeInSlotsKey extends BaseEMFTypeKey<EDataType> {
 
 	@Override
 	public String getPrettyPrintableName() {
-		return "(Attribute Slot Values: " + IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey) + ")";
+		return "(Attribute Slot Values: " + ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey) + ")";
 	}
 
 	@Override
 	public String getStringID() {
-		return "slotValue#" + IncQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
+		return "slotValue#" + ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override

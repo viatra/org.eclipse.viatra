@@ -22,17 +22,17 @@ import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.scope.IEngineContext;
 import org.eclipse.viatra.query.runtime.api.scope.IIndexingErrorListener;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * An IncQuery scope consisting of EMF objects contained in multiple {@link ResourceSet}s, a single {@link ResourceSet}, {@link Resource} or a containment subtree below a given {@link EObject}.
+ * An {@link QueryScope} consisting of EMF objects contained in multiple {@link ResourceSet}s, a single {@link ResourceSet}, {@link Resource} or a containment subtree below a given {@link EObject}.
  * 
  * <p> The scope is characterized by a root and some options (see {@link BaseIndexOptions}) such as dynamic EMF mode, subtree filtering etc.
  * <p>
@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Bergmann Gabor
  *
  */
-public class EMFScope extends IncQueryScope {
+public class EMFScope extends QueryScope {
     
     private Set<? extends Notifier> scopeRoots;
     private BaseIndexOptions options;
@@ -48,9 +48,9 @@ public class EMFScope extends IncQueryScope {
     /**
      * Creates an EMF scope at the given root, with default options (recommended for most users).
      * @param scopeRoot the root of the EMF scope
-     * @throws IncQueryException if scopeRoot is not an EMF ResourceSet, Resource or EObject
+     * @throws ViatraQueryException if scopeRoot is not an EMF ResourceSet, Resource or EObject
      */
-    public EMFScope(Notifier scopeRoot) throws IncQueryException {
+    public EMFScope(Notifier scopeRoot) throws ViatraQueryException {
         this(ImmutableSet.of(scopeRoot), new BaseIndexOptions());
     }
 
@@ -59,18 +59,18 @@ public class EMFScope extends IncQueryScope {
      * <p> Most users should consider {@link #EMFScope(Notifier)} instead.
      * @param scopeRoot the root of the EMF scope
      * @param options the base index building settings
-     * @throws IncQueryException if scopeRoot is not an EMF ResourceSet, Resource or EObject
+     * @throws ViatraQueryException if scopeRoot is not an EMF ResourceSet, Resource or EObject
      */
-    public EMFScope(Notifier scopeRoot, BaseIndexOptions options) throws IncQueryException {
+    public EMFScope(Notifier scopeRoot, BaseIndexOptions options) throws ViatraQueryException {
         this(ImmutableSet.of(scopeRoot), options);
     }
 
     /**
      * Creates an EMF scope at the given roots, with default options (recommended for most users).
      * @param scopeRoots the roots of the EMF scope, must be {@link ResourceSet}s
-     * @throws IncQueryException if not all scopeRoots are {@link ResourceSet}s
+     * @throws ViatraQueryException if not all scopeRoots are {@link ResourceSet}s
      */
-    public EMFScope(Set<? extends ResourceSet> scopeRoots) throws IncQueryException {
+    public EMFScope(Set<? extends ResourceSet> scopeRoots) throws ViatraQueryException {
         this(scopeRoots, new BaseIndexOptions());
     }
 
@@ -79,9 +79,9 @@ public class EMFScope extends IncQueryScope {
      * <p> Most users should consider {@link #EMFScope(Set)} instead.
      * @param scopeRoots the roots of the EMF scope, must be {@link ResourceSet}s
      * @param options the base index building settings
-     * @throws IncQueryException if not all scopeRoots are {@link ResourceSet}s
+     * @throws ViatraQueryException if not all scopeRoots are {@link ResourceSet}s
      */
-    public EMFScope(Set<? extends Notifier> scopeRoots, BaseIndexOptions options) throws IncQueryException {
+    public EMFScope(Set<? extends Notifier> scopeRoots, BaseIndexOptions options) throws ViatraQueryException {
         super();
         if (scopeRoots.isEmpty()) {
             throw new IllegalArgumentException("No scope roots given");
@@ -94,12 +94,12 @@ public class EMFScope extends IncQueryScope {
         this.options = options.copy();
     }
 
-    private void checkScopeRoots(Set<? extends Notifier> scopeRoots, Predicate<Object> predicate) throws IncQueryException {
+    private void checkScopeRoots(Set<? extends Notifier> scopeRoots, Predicate<Object> predicate) throws ViatraQueryException {
         for (Notifier scopeRoot : scopeRoots) {
             if (!predicate.apply(scopeRoot))
-                throw new IncQueryException(IncQueryException.INVALID_EMFROOT
+                throw new ViatraQueryException(ViatraQueryException.INVALID_EMFROOT
                         + (scopeRoot == null ? "(null)" : scopeRoot.getClass().getName()),
-                        IncQueryException.INVALID_EMFROOT_SHORT);
+                        ViatraQueryException.INVALID_EMFROOT_SHORT);
         }
     }
 
@@ -174,17 +174,17 @@ public class EMFScope extends IncQueryScope {
     }
 
     /**
-     * Provides access to the underlying EMF model index ({@link NavigationHelper}) from an IncQuery engine instantiated on an EMFScope
+     * Provides access to the underlying EMF model index ({@link NavigationHelper}) from a VIATRA Query engine instantiated on an EMFScope
      * 
-     * @param engine an already existing EMF-IncQuery engine instantiated on an EMFScope
+     * @param engine an already existing VIATRA Query engine instantiated on an EMFScope
      * @return the underlying EMF base index that indexes the contents of the EMF model
-     * @throws IncQueryException if base index initialization fails
+     * @throws ViatraQueryException if base index initialization fails
      */
-    public static NavigationHelper extractUnderlyingEMFIndex(ViatraQueryEngine engine) throws IncQueryException {
-        final IncQueryScope scope = engine.getScope();
+    public static NavigationHelper extractUnderlyingEMFIndex(ViatraQueryEngine engine) throws ViatraQueryException {
+        final QueryScope scope = engine.getScope();
          if (scope instanceof EMFScope)
              return ((EMFBaseIndexWrapper)AdvancedViatraQueryEngine.from(engine).getBaseIndex()).getNavigationHelper();
-         else throw new IllegalArgumentException("Cannot extract EMF base index from IncQuery engine instantiated on non-EMF scope " + scope);
+         else throw new IllegalArgumentException("Cannot extract EMF base index from VIATRA Query engine instantiated on non-EMF scope " + scope);
     }
     
 }

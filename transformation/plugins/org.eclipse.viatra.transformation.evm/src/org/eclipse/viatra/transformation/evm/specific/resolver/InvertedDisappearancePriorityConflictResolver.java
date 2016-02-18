@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 
 /**
  * A conflict resolver implementation that assigns a fixed priority for each
@@ -51,7 +51,7 @@ public class InvertedDisappearancePriorityConflictResolver extends FixedPriority
 
 		@Override
 		protected Integer getRulePriority(Activation<?> activation) {
-			if (IncQueryActivationStateEnum.DISAPPEARED.equals(activation.getState())) {
+			if (CRUDActivationStateEnum.DELETED.equals(activation.getState())) {
 				return (-1) * super.getRulePriority(activation);
 			}
 			return super.getRulePriority(activation);

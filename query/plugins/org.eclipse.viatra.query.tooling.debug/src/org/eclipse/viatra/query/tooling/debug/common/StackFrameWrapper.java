@@ -20,7 +20,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIDebugModelMessages;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.sun.jdi.StackFrame;
 
@@ -44,12 +44,12 @@ public class StackFrameWrapper extends JDIStackFrame {
     protected VariablesFactory variablesFactory;
     
     /**
-     * Transforms the {@link JDIStackFrame} to an "IncQuery-specific" one. 
+     * Transforms the {@link JDIStackFrame} to an "VIATRA Query-specific" one. 
      * This means that all variables are ignored from the original stack frame and 
      * {@link ViatraQueryEngine} instances are added instead. 
      * 
      * @param frame the original stack frame
-     * @return the transformed IncQuery specific stack frame
+     * @return the transformed VIATRA Query specific stack frame
      */
     public static StackFrameWrapper transform(JDIStackFrame frame) {
         if (stackFrameMap.get(frame) != null) {
@@ -57,12 +57,12 @@ public class StackFrameWrapper extends JDIStackFrame {
         } else {
             try {
                 StackFrameWrapper transformed = new StackFrameWrapper(frame, (JDIThread) frame.getThread(),
-                        (StackFrame) IncQueryDebugUtil.getField(frame, "fStackFrame"),
-                        (Integer) IncQueryDebugUtil.getField(frame, "fDepth"));
+                        (StackFrame) ViatraQueryDebugUtil.getField(frame, "fStackFrame"),
+                        (Integer) ViatraQueryDebugUtil.getField(frame, "fDepth"));
                 stackFrameMap.put(frame, transformed);
                 return transformed;
             } catch (Exception e) {
-                IncQueryLoggingUtil.getLogger(StackFrameWrapper.class).error("Stack frame transformation has failed!", e);
+                ViatraQueryLoggingUtil.getLogger(StackFrameWrapper.class).error("Stack frame transformation has failed!", e);
                 return null;
             }
         }

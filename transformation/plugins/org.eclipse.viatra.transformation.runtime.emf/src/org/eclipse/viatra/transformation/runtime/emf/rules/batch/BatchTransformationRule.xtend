@@ -20,13 +20,13 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter
 import org.eclipse.viatra.transformation.evm.api.event.EventType.RuleEngineEventType
 import org.eclipse.viatra.transformation.evm.specific.Jobs
 import org.eclipse.viatra.transformation.evm.specific.Rules
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryEventTypeEnum
-import org.eclipse.viatra.transformation.evm.specific.event.IncQuerySinglePatternMatchEventFilter
-import org.eclipse.viatra.transformation.evm.specific.lifecycle.DefaultActivationLifeCycle
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryMatchEventFilter
 import org.eclipse.viatra.transformation.evm.specific.lifecycle.UnmodifiableActivationLifeCycle
 import org.eclipse.viatra.transformation.runtime.emf.rules.ITransformationRule
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum
+import org.eclipse.viatra.transformation.evm.specific.Lifecycles
 
 /**
  * Wrapper class for transformation rule definition to hide EVM specific internals.
@@ -42,18 +42,18 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends Viatra
 	 * Lifecycle for a rule that does not store the list of fired activations; thus allows re-firing the same activation again. 
 	 */
 	public static val ActivationLifeCycle STATELESS_RULE_LIFECYCLE = {
-		val cycle= ActivationLifeCycle.create(IncQueryActivationStateEnum::INACTIVE)
+		val cycle= ActivationLifeCycle.create(CRUDActivationStateEnum::INACTIVE)
 		
-		cycle.addStateTransition(IncQueryActivationStateEnum::INACTIVE, IncQueryEventTypeEnum::MATCH_APPEARS, IncQueryActivationStateEnum::APPEARED)
-		cycle.addStateTransition(IncQueryActivationStateEnum::APPEARED, RuleEngineEventType::FIRE, IncQueryActivationStateEnum::APPEARED)
-		cycle.addStateTransition(IncQueryActivationStateEnum::APPEARED, IncQueryEventTypeEnum::MATCH_DISAPPEARS, IncQueryActivationStateEnum::INACTIVE)
+		cycle.addStateTransition(CRUDActivationStateEnum::INACTIVE, CRUDEventTypeEnum::CREATED, CRUDActivationStateEnum::CREATED)
+		cycle.addStateTransition(CRUDActivationStateEnum::CREATED, RuleEngineEventType::FIRE, CRUDActivationStateEnum::CREATED)
+		cycle.addStateTransition(CRUDActivationStateEnum::CREATED, CRUDEventTypeEnum::DELETED, CRUDActivationStateEnum::INACTIVE)
 		
 		UnmodifiableActivationLifeCycle::copyOf(cycle)
 	}
 	/**
 	 * Lifecycle for a rule that stores the list of fired activations; thus effectively forbids re-firing the same activation.
 	 */
-	public static val STATEFUL_RULE_LIFECYCLE = DefaultActivationLifeCycle::DEFAULT_NO_UPDATE_AND_DISAPPEAR
+	public static val STATEFUL_RULE_LIFECYCLE = Lifecycles::getDefault(false, false)
 
 	protected String ruleName
 	private val ActivationLifeCycle lifecycle
@@ -68,7 +68,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends Viatra
 	}
 	
 	new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action) {
-	    this(rulename, matcher, lifecycle, action, IncQuerySinglePatternMatchEventFilter.createFilter(matcher.newEmptyMatch.toImmutable as Match))
+	    this(rulename, matcher, lifecycle, action, ViatraQueryMatchEventFilter.createFilter(matcher.newEmptyMatch.toImmutable as Match))
 	}
 	new(String rulename, IQuerySpecification<Matcher> matcher, ActivationLifeCycle lifecycle, IMatchProcessor<Match> action, EventFilter<Match> filter) {
 		this.ruleName = rulename
@@ -103,7 +103,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends Viatra
     override getRuleSpecification(){
     	if(ruleSpec == null){
 		    val querySpec = precondition
-		    val Job<Match> job = Jobs::newStatelessJob(IncQueryActivationStateEnum::APPEARED, action)
+		    val Job<Match> job = Jobs::newStatelessJob(CRUDActivationStateEnum::CREATED, action)
 		    
 		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, lifecycle, newHashSet(job))
     	}

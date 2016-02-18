@@ -26,7 +26,7 @@ import org.eclipse.viatra.transformation.evm.specific.ExecutionSchemas;
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.Schedulers;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.evm.specific.job.StatelessJob;
 
 /**
@@ -53,7 +53,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
         super(Logger.getLogger(EVMBasedQueryResultMultimap.class));
         this.schema = schema;
         this.jobs = new HashSet<Job<Match>>();
-        jobs.add(new StatelessJob<Match>(IncQueryActivationStateEnum.APPEARED, new IMatchProcessor<Match>() {
+        jobs.add(new StatelessJob<Match>(CRUDActivationStateEnum.CREATED, new IMatchProcessor<Match>() {
             @Override
             public void process(final Match match) {
                 KeyType key = getKeyFromMatch(match);
@@ -62,7 +62,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
             }
         }));
 
-        jobs.add(new StatelessJob<Match>(IncQueryActivationStateEnum.DISAPPEARED, new IMatchProcessor<Match>() {
+        jobs.add(new StatelessJob<Match>(CRUDActivationStateEnum.DELETED, new IMatchProcessor<Match>() {
             @Override
             public void process(final Match match) {
                 KeyType key = getKeyFromMatch(match);
@@ -78,7 +78,7 @@ public abstract class EVMBasedQueryResultMultimap<Match extends IPatternMatch, K
      * 
      */
     protected EVMBasedQueryResultMultimap(final ViatraQueryEngine engine) {
-        this(ExecutionSchemas.createIncQueryExecutionSchema(engine,
+        this(ExecutionSchemas.createViatraQueryExecutionSchema(engine,
                 Schedulers.getQueryEngineSchedulerFactory(engine)));
     }
 

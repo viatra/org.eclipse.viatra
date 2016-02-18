@@ -15,9 +15,9 @@ import org.eclipse.viatra.addon.validation.core.ValidationEngine;
 import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
 import org.eclipse.viatra.addon.validation.core.api.IValidationEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * @author Abel Hegedus
@@ -33,14 +33,14 @@ public final class ValidationInitializerUtil {
      *            The Notifier object on which the validation engine should be initialized.
      * @param editorId
      *            An editor Id for which we wish to use the registered constraint specifications at the
-     *            org.eclipse.incquery.livevalidation.runtime.constraintspecification extension point.
+     *            org.eclipse.viatra.addon.livevalidation.runtime.constraintspecification extension point.
      * @return The initialized validation engine.
-     * @throws IncQueryException if there is an error creating the engine on the scope
+     * @throws ViatraQueryException if there is an error creating the engine on the scope
      */
-    public static IValidationEngine initializeValidationWithRegisteredConstraintsOnScope(IncQueryScope scope,
-            String editorId) throws IncQueryException {
+    public static IValidationEngine initializeValidationWithRegisteredConstraintsOnScope(QueryScope scope,
+            String editorId) throws ViatraQueryException {
         ViatraQueryEngine engine = ViatraQueryEngine.on(scope);
-        Logger logger = IncQueryLoggingUtil.getLogger(ValidationEngine.class);
+        Logger logger = ViatraQueryLoggingUtil.getLogger(ValidationEngine.class);
         IValidationEngine validationEngine = ValidationEngine.builder().setEngine(engine).setLogger(logger).build();
     
         for (IConstraintSpecification constraintSpecification : ConstraintExtensionRegistry.getConstraintSpecificationsForEditorId(editorId)) {

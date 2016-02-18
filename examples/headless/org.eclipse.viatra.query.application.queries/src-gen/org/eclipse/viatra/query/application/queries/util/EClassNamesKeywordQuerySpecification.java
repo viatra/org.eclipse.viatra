@@ -15,7 +15,7 @@ import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificat
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IValueProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -43,10 +43,10 @@ public final class EClassNamesKeywordQuerySpecification extends BaseGeneratedEMF
   
   /**
    * @return the singleton instance of the query specification
-   * @throws IncQueryException if the pattern definition could not be loaded
+   * @throws ViatraQueryException if the pattern definition could not be loaded
    * 
    */
-  public static EClassNamesKeywordQuerySpecification instance() throws IncQueryException {
+  public static EClassNamesKeywordQuerySpecification instance() throws ViatraQueryException {
     try{
     	return LazyHolder.INSTANCE;
     } catch (ExceptionInInitializerError err) {
@@ -55,7 +55,7 @@ public final class EClassNamesKeywordQuerySpecification extends BaseGeneratedEMF
   }
   
   @Override
-  protected EClassNamesKeywordMatcher instantiate(final ViatraQueryEngine engine) throws IncQueryException {
+  protected EClassNamesKeywordMatcher instantiate(final ViatraQueryEngine engine) throws ViatraQueryException {
     return EClassNamesKeywordMatcher.on(engine);
   }
   
@@ -155,8 +155,8 @@ public final class EClassNamesKeywordQuerySpecification extends BaseGeneratedEMF
       		bodies.add(body);
       	}
       	// to silence compiler error
-      	if (false) throw new IncQueryException("Never", "happens");
-      } catch (IncQueryException ex) {
+      	if (false) throw new ViatraQueryException("Never", "happens");
+      } catch (ViatraQueryException ex) {
       	throw processDependencyException(ex);
       }
       return bodies;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.job;
 
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.CompositeJob;
 import org.eclipse.viatra.transformation.evm.api.Context;
@@ -35,7 +35,7 @@ public class ErrorLoggingJob<EventAtom> extends CompositeJob<EventAtom> {
 
     @Override
     protected void handleError(Activation<? extends EventAtom> activation, Exception exception, Context context) {
-        IncQueryLoggingUtil.getLogger(getClass()).error("Exception occurred while executing job on activation " + activation +"!",
+        ViatraQueryLoggingUtil.getLogger(getClass()).error("Exception occurred while executing job on activation " + activation +"!",
                 exception);
     }
 

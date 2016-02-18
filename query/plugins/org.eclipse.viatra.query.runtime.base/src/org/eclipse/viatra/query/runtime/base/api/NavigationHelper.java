@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
-import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
+import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 
 /**
  * 
@@ -77,7 +77,7 @@ import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
  * the result sets (where {@link Setting} is instantiated) or an unmodifiable collection of the result view.
  * 
  * <p>
- * Instantiate using {@link IncQueryBaseFactory}
+ * Instantiate using {@link ViatraBaseFactory}
  * 
  * @author Tamas Szabo
  * @noimplement This interface is not intended to be implemented by clients.
@@ -595,7 +595,7 @@ public interface NavigationHelper {
      * 
      * @param emfRoot
      */
-    public void addRoot(Notifier emfRoot) throws IncQueryBaseException;
+    public void addRoot(Notifier emfRoot) throws ViatraBaseException;
     
     /**
      * Moves an EObject (along with its entire containment subtree) within the containment hierarchy of the EMF model. 

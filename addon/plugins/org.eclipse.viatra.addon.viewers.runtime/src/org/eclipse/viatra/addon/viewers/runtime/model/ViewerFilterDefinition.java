@@ -15,7 +15,7 @@ import java.util.Collection;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryFilterSemantics;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryFilterSemantics;
 
 /**
  *
@@ -27,7 +27,7 @@ public class ViewerFilterDefinition {
 
     IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern;
 
-    IncQueryFilterSemantics semantics;
+    ViatraQueryFilterSemantics semantics;
 
     IPatternMatch singleFilterMatch;
 
@@ -35,11 +35,11 @@ public class ViewerFilterDefinition {
 
     /**
      * @param pattern the {@link IQuerySpecification} this filter configuration is attached to
-     * @param semantics {@link IncQueryFilterSemantics} prescribing how this configuration should be interpreted
-     * @param singleFilterMatch mandatory for SINGLE {@link IncQueryFilterSemantics}
-     * @param filterMatches mandatory for non-SINGLE {@link IncQueryFilterSemantics}
+     * @param semantics {@link ViatraQueryFilterSemantics} prescribing how this configuration should be interpreted
+     * @param singleFilterMatch mandatory for SINGLE {@link ViatraQueryFilterSemantics}
+     * @param filterMatches mandatory for non-SINGLE {@link ViatraQueryFilterSemantics}
      */
-    public ViewerFilterDefinition(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern, IncQueryFilterSemantics semantics, IPatternMatch singleFilterMatch,
+    public ViewerFilterDefinition(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern, ViatraQueryFilterSemantics semantics, IPatternMatch singleFilterMatch,
             Collection<IPatternMatch> filterMatches) {
         super();
         this.pattern = pattern;

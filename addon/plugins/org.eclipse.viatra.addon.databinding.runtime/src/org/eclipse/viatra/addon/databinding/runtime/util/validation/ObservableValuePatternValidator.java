@@ -32,7 +32,7 @@ import com.google.inject.Inject;
  */
 public class ObservableValuePatternValidator implements IPatternAnnotationAdditionalValidator {
 
-    private static final String VALIDATOR_BASE_CODE = "org.eclipse.incquery.databinding.";
+    private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.addon.databinding.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
     public static final String EXPRESSION_MISMATCH_ISSUE_CODE = VALIDATOR_BASE_CODE + "expressionmismatch";
 

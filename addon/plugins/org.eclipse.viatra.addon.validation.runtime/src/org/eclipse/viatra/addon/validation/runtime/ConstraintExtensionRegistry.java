@@ -35,7 +35,7 @@ import com.google.common.collect.Sets;
 /**
  * The constraint extension registry is singleton utility for 
  * accessing the constraint specifications registered through extensions
- * (see EMF-IncQuery @Constraint annotation)
+ * (see VIATRA @Constraint annotation)
  * 
  * @author Abel Hegedus
  *

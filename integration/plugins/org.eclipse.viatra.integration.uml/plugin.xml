@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures" point="org.eclipse.viatra.query.runtime.queryspecification">
-    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures" id="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
-  </extension>
   <extension id="extension.surrogate.org.eclipse.viatra.integration.uml.derivedfeatures.classifierFeature" point="org.eclipse.viatra.query.runtime.surrogatequeryemf">
     <surrogate-query-emf class-name="Classifier" feature-name="feature" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" query-fqn="org.eclipse.viatra.integration.uml.derivedfeatures.classifierFeature" surrogate-query="org.eclipse.viatra.query.runtime.extensibility.PQueryExtensionFactory:org.eclipse.viatra.integration.uml.derivedfeatures.util.ClassifierFeatureQuerySpecification"/>
   </extension>
@@ -166,5 +163,8 @@
   </extension>
   <extension id="extension.surrogate.org.eclipse.viatra.integration.uml.derivedfeatures.packageOwnedStereotype" point="org.eclipse.viatra.query.runtime.surrogatequeryemf">
     <surrogate-query-emf class-name="Package" feature-name="ownedStereotype" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" query-fqn="org.eclipse.viatra.integration.uml.derivedfeatures.packageOwnedStereotype" surrogate-query="org.eclipse.viatra.query.runtime.extensibility.PQueryExtensionFactory:org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedStereotypeQuerySpecification"/>
+  </extension>
+  <extension id="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures" id="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
   </extension>
 </plugin>

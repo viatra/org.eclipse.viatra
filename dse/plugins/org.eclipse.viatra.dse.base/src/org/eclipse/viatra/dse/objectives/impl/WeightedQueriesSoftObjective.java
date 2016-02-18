@@ -20,12 +20,12 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.base.Preconditions;
 
 /**
- * This soft objective collects a list of IncQuery patterns and weights. Then the fitness value of a solution is
+ * This soft objective collects a list of VIATRA queries and weights. Then the fitness value of a solution is
  * calculated in the following way:
  * <p>
  * <code>fitness = sum( pattern[i].countMatches() * weight[i] )</code>
@@ -70,10 +70,10 @@ public class WeightedQueriesSoftObjective extends BaseObjective {
     }
 
     /**
-     * Adds a new IncQuery pattern.
+     * Adds a new VIATRA Query Specification.
      * 
      * @param constraint
-     *            An IncQuery pattern.
+     *            A VIATRA Query Specification.
      * @param weight
      *            The weight of the pattern.
      * @return The actual instance to enable builder pattern like usage.
@@ -107,8 +107,8 @@ public class WeightedQueriesSoftObjective extends BaseObjective {
                 matchers.add(matcher);
             }
 
-        } catch (IncQueryException e) {
-            throw new DSEException("Couldn't initialize the incquery matcher, see inner exception", e);
+        } catch (ViatraQueryException e) {
+            throw new DSEException("Couldn't initialize the VIATRA Query matcher, see inner exception", e);
         }
     }
 

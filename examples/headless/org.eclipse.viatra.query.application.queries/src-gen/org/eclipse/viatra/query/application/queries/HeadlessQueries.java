@@ -18,13 +18,13 @@ import org.eclipse.viatra.query.application.queries.util.EPackageQuerySpecificat
 import org.eclipse.viatra.query.application.queries.util.SubPackageQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * A pattern group formed of all patterns defined in headlessQueries.vql.
  * 
  * <p>Use the static instance as any {@link org.eclipse.viatra.query.runtime.api.IPatternGroup}, to conveniently prepare
- * an EMF-IncQuery engine for matching all patterns originally defined in file headlessQueries.vql,
+ * an VIATRA Query engine for matching all patterns originally defined in file headlessQueries.vql,
  * in order to achieve better performance than one-by-one on-demand matcher initialization.
  * 
  * <p> From package org.eclipse.viatra.query.application.queries, the group contains the definition of the following patterns: <ul>
@@ -47,10 +47,10 @@ public final class HeadlessQueries extends BaseGeneratedPatternGroup {
    * Access the pattern group.
    * 
    * @return the singleton instance of the group
-   * @throws IncQueryException if there was an error loading the generated code of pattern specifications
+   * @throws ViatraQueryException if there was an error loading the generated code of pattern specifications
    * 
    */
-  public static HeadlessQueries instance() throws IncQueryException {
+  public static HeadlessQueries instance() throws ViatraQueryException {
     if (INSTANCE == null) {
     	INSTANCE = new HeadlessQueries();
     }
@@ -59,7 +59,7 @@ public final class HeadlessQueries extends BaseGeneratedPatternGroup {
   
   private static HeadlessQueries INSTANCE;
   
-  private HeadlessQueries() throws IncQueryException {
+  private HeadlessQueries() throws ViatraQueryException {
     querySpecifications.add(EClassNamesQuerySpecification.instance());
     querySpecifications.add(EClassNamesKeywordQuerySpecification.instance());
     querySpecifications.add(EObjectQuerySpecification.instance());
@@ -70,67 +70,67 @@ public final class HeadlessQueries extends BaseGeneratedPatternGroup {
     querySpecifications.add(EClassQuerySpecification.instance());
   }
   
-  public EClassNamesQuerySpecification getEClassNames() throws IncQueryException {
+  public EClassNamesQuerySpecification getEClassNames() throws ViatraQueryException {
     return EClassNamesQuerySpecification.instance();
   }
   
-  public EClassNamesMatcher getEClassNames(final ViatraQueryEngine engine) throws IncQueryException {
+  public EClassNamesMatcher getEClassNames(final ViatraQueryEngine engine) throws ViatraQueryException {
     return EClassNamesMatcher.on(engine);
   }
   
-  public EClassNamesKeywordQuerySpecification getEClassNamesKeyword() throws IncQueryException {
+  public EClassNamesKeywordQuerySpecification getEClassNamesKeyword() throws ViatraQueryException {
     return EClassNamesKeywordQuerySpecification.instance();
   }
   
-  public EClassNamesKeywordMatcher getEClassNamesKeyword(final ViatraQueryEngine engine) throws IncQueryException {
+  public EClassNamesKeywordMatcher getEClassNamesKeyword(final ViatraQueryEngine engine) throws ViatraQueryException {
     return EClassNamesKeywordMatcher.on(engine);
   }
   
-  public EObjectQuerySpecification getEObject() throws IncQueryException {
+  public EObjectQuerySpecification getEObject() throws ViatraQueryException {
     return EObjectQuerySpecification.instance();
   }
   
-  public EObjectMatcher getEObject(final ViatraQueryEngine engine) throws IncQueryException {
+  public EObjectMatcher getEObject(final ViatraQueryEngine engine) throws ViatraQueryException {
     return EObjectMatcher.on(engine);
   }
   
-  public ClassesInPackageQuerySpecification getClassesInPackage() throws IncQueryException {
+  public ClassesInPackageQuerySpecification getClassesInPackage() throws ViatraQueryException {
     return ClassesInPackageQuerySpecification.instance();
   }
   
-  public ClassesInPackageMatcher getClassesInPackage(final ViatraQueryEngine engine) throws IncQueryException {
+  public ClassesInPackageMatcher getClassesInPackage(final ViatraQueryEngine engine) throws ViatraQueryException {
     return ClassesInPackageMatcher.on(engine);
   }
   
-  public SubPackageQuerySpecification getSubPackage() throws IncQueryException {
+  public SubPackageQuerySpecification getSubPackage() throws ViatraQueryException {
     return SubPackageQuerySpecification.instance();
   }
   
-  public SubPackageMatcher getSubPackage(final ViatraQueryEngine engine) throws IncQueryException {
+  public SubPackageMatcher getSubPackage(final ViatraQueryEngine engine) throws ViatraQueryException {
     return SubPackageMatcher.on(engine);
   }
   
-  public ClassesInPackageHierarchyQuerySpecification getClassesInPackageHierarchy() throws IncQueryException {
+  public ClassesInPackageHierarchyQuerySpecification getClassesInPackageHierarchy() throws ViatraQueryException {
     return ClassesInPackageHierarchyQuerySpecification.instance();
   }
   
-  public ClassesInPackageHierarchyMatcher getClassesInPackageHierarchy(final ViatraQueryEngine engine) throws IncQueryException {
+  public ClassesInPackageHierarchyMatcher getClassesInPackageHierarchy(final ViatraQueryEngine engine) throws ViatraQueryException {
     return ClassesInPackageHierarchyMatcher.on(engine);
   }
   
-  public EPackageQuerySpecification getEPackage() throws IncQueryException {
+  public EPackageQuerySpecification getEPackage() throws ViatraQueryException {
     return EPackageQuerySpecification.instance();
   }
   
-  public EPackageMatcher getEPackage(final ViatraQueryEngine engine) throws IncQueryException {
+  public EPackageMatcher getEPackage(final ViatraQueryEngine engine) throws ViatraQueryException {
     return EPackageMatcher.on(engine);
   }
   
-  public EClassQuerySpecification getEClass() throws IncQueryException {
+  public EClassQuerySpecification getEClass() throws ViatraQueryException {
     return EClassQuerySpecification.instance();
   }
   
-  public EClassMatcher getEClass(final ViatraQueryEngine engine) throws IncQueryException {
+  public EClassMatcher getEClass(final ViatraQueryEngine engine) throws ViatraQueryException {
     return EClassMatcher.on(engine);
   }
 }

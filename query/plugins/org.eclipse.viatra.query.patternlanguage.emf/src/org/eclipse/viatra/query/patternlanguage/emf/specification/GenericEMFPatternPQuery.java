@@ -35,7 +35,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
- * This is a generic (i.e. not pattern-specific) class for the internal representation of EMF-IncQuery queries, for "interpretative" query execution. 
+ * This is a generic (i.e. not pattern-specific) class for the internal representation of VIATRA queries, for "interpretative" query execution. 
  * 
  * <p> End users should use {link GenericQuerySpecification} instead.
  *

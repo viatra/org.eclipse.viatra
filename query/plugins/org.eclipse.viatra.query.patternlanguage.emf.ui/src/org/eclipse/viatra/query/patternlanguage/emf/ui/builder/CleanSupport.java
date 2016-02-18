@@ -28,7 +28,7 @@ import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra.query.runtime.IExtensions;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
@@ -84,7 +84,7 @@ public class CleanSupport {
     }
 
     private void internalFullClean(IBuildContext context, IProgressMonitor monitor) throws CoreException,
-            IncQueryException {
+            ViatraQueryException {
         IProject modelProject = context.getBuiltProject();
         // clean all fragments
         cleanAllFragment(modelProject);
@@ -154,7 +154,7 @@ public class CleanSupport {
     }
 
     private void internalNormalClean(IBuildContext context, List<Delta> relevantDeltas, IProgressMonitor monitor)
-            throws CoreException, IncQueryException {
+            throws CoreException, ViatraQueryException {
         for (Delta delta : relevantDeltas) {
             if (delta.getOld() != null) {
                 OldVersionHelper oldVersion = injector.getInstance(OldVersionHelper.class);

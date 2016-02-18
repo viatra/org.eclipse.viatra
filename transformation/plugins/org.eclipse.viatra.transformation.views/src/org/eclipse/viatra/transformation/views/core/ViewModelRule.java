@@ -21,7 +21,7 @@ import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.Jobs;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.views.traceablilty.generic.AbstractQuerySpecificationDescriptor;
 import org.eclipse.viatra.transformation.views.traceablilty.generic.GenericReferencedQuerySpecification;
 import org.eclipse.viatra.transformation.views.traceablilty.generic.GenericTracedQuerySpecification;
@@ -63,15 +63,15 @@ public abstract class ViewModelRule {
 
     // Jobs
     protected Job<GenericPatternMatch> getAppearedJob() {
-        return Jobs.newNopJob(IncQueryActivationStateEnum.APPEARED);
+        return Jobs.newNopJob(CRUDActivationStateEnum.CREATED);
     }
 
     protected Job<GenericPatternMatch> getDisappearedJob() {
-        return Jobs.newNopJob(IncQueryActivationStateEnum.DISAPPEARED);
+        return Jobs.newNopJob(CRUDActivationStateEnum.DELETED);
     }
 
     protected Job<GenericPatternMatch> getUpdatedJob() {
-        return Jobs.newNopJob(IncQueryActivationStateEnum.UPDATED);
+        return Jobs.newNopJob(CRUDActivationStateEnum.UPDATED);
     }
     // - Jobs
     
@@ -88,8 +88,8 @@ public abstract class ViewModelRule {
         Builder<Job<GenericPatternMatch>> builder = ImmutableSet.builder();
         {
             builder.add(getAppearedJob());
-            builder.add(Jobs.<GenericPatternMatch> newNopJob(IncQueryActivationStateEnum.DISAPPEARED));
-            builder.add(Jobs.<GenericPatternMatch> newNopJob(IncQueryActivationStateEnum.UPDATED));
+            builder.add(Jobs.<GenericPatternMatch> newNopJob(CRUDActivationStateEnum.DELETED));
+            builder.add(Jobs.<GenericPatternMatch> newNopJob(CRUDActivationStateEnum.UPDATED));
         }
 
         RuleSpecification<GenericPatternMatch> ruleSpecification = Rules.newMatcherRuleSpecification(
@@ -104,7 +104,7 @@ public abstract class ViewModelRule {
     private void registerTraceabilitySpecification(ExecutionSchema executionSchema) {
         Builder<Job<GenericPatternMatch>> builder = ImmutableSet.builder();
         {
-            builder.add(Jobs.<GenericPatternMatch> newNopJob(IncQueryActivationStateEnum.APPEARED));
+            builder.add(Jobs.<GenericPatternMatch> newNopJob(CRUDActivationStateEnum.CREATED));
             builder.add(getDisappearedJob());
             builder.add(getUpdatedJob());
         }

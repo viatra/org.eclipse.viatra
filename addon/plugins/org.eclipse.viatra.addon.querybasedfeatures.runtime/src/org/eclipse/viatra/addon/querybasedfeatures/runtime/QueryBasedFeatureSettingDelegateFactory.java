@@ -29,7 +29,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 
 import com.google.common.base.Preconditions;
@@ -61,7 +61,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
         return specificationMap;
     }
     
-    protected AdvancedViatraQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) throws IncQueryException {
+    protected AdvancedViatraQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) throws ViatraQueryException {
         if(dynamicEMFMode) {
             WeakReference<AdvancedViatraQueryEngine> reference = engineMap.get(notifier);
             if(reference != null && reference.get() != null) {
@@ -124,7 +124,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
 //                if(patternInfosByFQN.size() > 0) {
 //                    querySpec = patternInfosByFQN.get(0).getQuerySpecification();
 //                    if(patternInfosByFQN.size() > 1) {
-//                        IncQueryLoggingUtil.getDefaultLogger().warn("Multiple patterns (" + patternInfosByFQN + ") registered for FQN " + patternFQN);
+//                        ViatraQueryLoggingUtil.getDefaultLogger().warn("Multiple patterns (" + patternInfosByFQN + ") registered for FQN " + patternFQN);
 //                    }
 //                }
             }

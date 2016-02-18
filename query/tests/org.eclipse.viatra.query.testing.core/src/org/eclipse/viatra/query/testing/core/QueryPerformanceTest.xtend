@@ -9,19 +9,19 @@ import org.apache.log4j.Logger
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope
-import org.eclipse.viatra.query.runtime.exception.IncQueryException
 import org.eclipse.viatra.query.runtime.extensibility.QueryBackendRegistry
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil
 import org.junit.Test
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements of the base index and
- * Rete networks of individual queries on a given IncQueryScope and with a given query group.
+ * Rete networks of individual queries on a given {@link QueryScope} and with a given query group.
  * 
  * <p/>
  * This test case prepares a ViatraQueryEngine on the given scope and with the provided query group.
@@ -40,7 +40,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
  */
 abstract class QueryPerformanceTest {
 
-	protected static extension Logger logger = IncQueryLoggingUtil.getLogger(QueryPerformanceTest)
+	protected static extension Logger logger = ViatraQueryLoggingUtil.getLogger(QueryPerformanceTest)
 
 	AdvancedViatraQueryEngine queryEngine
 	Map<String, Long> results = Maps.newTreeMap()
@@ -48,12 +48,12 @@ abstract class QueryPerformanceTest {
 	/**
 	 * This method shall return a scope that identifies the input artifact used for performance testing the queries.
 	 */
-	def IncQueryScope getScope() throws IncQueryException
+	def QueryScope getScope() throws ViatraQueryException
 
 	/**
 	 * This method shall return the query group that contains the set of queries to evaluate.
 	 */
-	def IQueryGroup getQueryGroup() throws IncQueryException
+	def IQueryGroup getQueryGroup() throws ViatraQueryException
 
 	/**
 	 * This method shall return the query backend class that will be used for evaluation.
@@ -75,7 +75,7 @@ abstract class QueryPerformanceTest {
 		queryGroup.prepare(queryEngine)
 		logMemoryProperties("Base index created")
 		queryEngine.wipe()
-		logMemoryProperties("IncQuery engine wiped")
+		logMemoryProperties("VIATRA Query engine wiped")
 		info("Prepared query performance test")
 	}
 

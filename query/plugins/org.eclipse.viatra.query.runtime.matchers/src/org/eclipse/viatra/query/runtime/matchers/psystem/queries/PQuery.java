@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 /**
  * Internal representation of a query / graph pattern (using a constraint system formalism), 
  * to be interpreted by a query evaluator ({@link IQueryBackend}). 
- * End-users of IncQuery should access a query as an IQuerySpecification instead. 
+ * End-users of VIATRA Query should access a query as an IQuerySpecification instead. 
  * 
  * <p>
  * PQuerys are definitions of queries usable inside pattern descriptions. Such description always has (a non-null) name. The query

@@ -62,7 +62,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="MiscellaneousSubstitution" eSuperTypes="#//MatchSubstitutionRecord">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IncQuerySnapshot">
+  <eClassifiers xsi:type="ecore:EClass" name="QuerySnapshot">
     <eStructuralFeatures xsi:type="ecore:EReference" name="matchSetRecords" upperBound="-1"
         eType="#//MatchSetRecord" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoots" upperBound="-1"

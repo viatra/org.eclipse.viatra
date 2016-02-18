@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -36,7 +36,7 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     
 	protected final PQuery wrappedPQuery;
 	
-    protected abstract Matcher instantiate(ViatraQueryEngine engine) throws IncQueryException;
+    protected abstract Matcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException;
 
     
     
@@ -57,18 +57,18 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     }
     
     @Override
-    public Matcher getMatcher(Notifier emfRoot) throws IncQueryException {
+    public Matcher getMatcher(Notifier emfRoot) throws ViatraQueryException {
         ViatraQueryEngine engine = ViatraQueryEngine.on(emfRoot);
         ensureInitializedInternal();
         return getMatcher(engine);
     }
 
     @Override
-    public Matcher getMatcher(ViatraQueryEngine engine) throws IncQueryException {
+    public Matcher getMatcher(ViatraQueryEngine engine) throws ViatraQueryException {
     	ensureInitializedInternal();
     	if (engine.getScope().isCompatibleWithQueryScope(this.getPreferredScopeClass()))
     		return instantiate(engine);
-    	else throw new IncQueryException(
+    	else throw new ViatraQueryException(
     			String.format(
     					"Scope class incompatibility: the query %s is formulated over query scopes of class %s, " + 
     					" thus the query engine formulated over scope %s of class %s cannot evaluate it.", 
@@ -77,11 +77,11 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     			"Incompatible scope classes of engine and query.");
     }
 
-	protected void ensureInitializedInternal() throws IncQueryException {
+	protected void ensureInitializedInternal() throws ViatraQueryException {
 		try {
 			wrappedPQuery.ensureInitialized();
 		} catch (QueryInitializationException e) {
-			throw new IncQueryException(e);
+			throw new ViatraQueryException(e);
 		}
 	}
 	protected void ensureInitializedInternalSneaky() {
@@ -97,17 +97,17 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
     // // EXPERIMENTAL
     //
     // @Override
-    // public Matcher getMatcher(TransactionalEditingDomain trDomain) throws IncQueryRuntimeException {
+    // public Matcher getMatcher(TransactionalEditingDomain trDomain) throws ViatraQueryException {
     // return getMatcher(trDomain, 0);
     // }
     //
     // @Override
-    // public Matcher getMatcher(TransactionalEditingDomain trDomain, int numThreads) throws IncQueryRuntimeException {
+    // public Matcher getMatcher(TransactionalEditingDomain trDomain, int numThreads) throws ViatraQueryException {
     // try {
     // ViatraQueryEngine engine = EngineManager.getInstance().getReteEngine(trDomain, numThreads);
     // return instantiate(engine);
     // } catch (RetePatternBuildException e) {
-    // throw new IncQueryRuntimeException(e);
+    // throw new ViatraQueryException(e);
     // }
     // }
 	

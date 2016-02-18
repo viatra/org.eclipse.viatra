@@ -39,7 +39,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra.addon.databinding.runtime.adapter.DatabindingAdapter;
-import org.eclipse.viatra.addon.databinding.runtime.api.IncQueryObservables;
+import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.addon.databinding.runtime.util.DatabindingUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification;
@@ -333,7 +333,7 @@ public class DisplayUtil {
 //        if (generatedMatcher) {
 //            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
 //        } else {
-            return IncQueryObservables.getDatabindingAdapter(pattern);
+            return ViatraObservables.getDatabindingAdapter(pattern);
 //        }
     }
 

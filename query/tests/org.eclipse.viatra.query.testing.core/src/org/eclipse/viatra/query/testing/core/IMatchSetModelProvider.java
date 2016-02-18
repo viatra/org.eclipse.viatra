@@ -13,7 +13,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord;
 
 /**
@@ -29,11 +29,11 @@ public interface IMatchSetModelProvider {
      * 
      * @param querySpecification
      * @return recorded matches
-     * @throws IncQueryException
+     * @throws ViatraQueryException
      */
     public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet resourceSet,
             IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
-                    throws IncQueryException;
+                    throws ViatraQueryException;
 
     public void dispose();
 

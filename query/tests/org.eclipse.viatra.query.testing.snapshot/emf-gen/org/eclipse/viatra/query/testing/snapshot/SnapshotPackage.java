@@ -765,14 +765,14 @@ public interface SnapshotPackage extends EPackage {
 	int MISCELLANEOUS_SUBSTITUTION_OPERATION_COUNT = MATCH_SUBSTITUTION_RECORD_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.viatra.query.testing.snapshot.impl.IncQuerySnapshotImpl <em>Inc Query Snapshot</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.viatra.query.testing.snapshot.impl.QuerySnapshotImpl <em>Query Snapshot</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.viatra.query.testing.snapshot.impl.IncQuerySnapshotImpl
-	 * @see org.eclipse.viatra.query.testing.snapshot.impl.SnapshotPackageImpl#getIncQuerySnapshot()
+	 * @see org.eclipse.viatra.query.testing.snapshot.impl.QuerySnapshotImpl
+	 * @see org.eclipse.viatra.query.testing.snapshot.impl.SnapshotPackageImpl#getQuerySnapshot()
 	 * @generated
 	 */
-	int INC_QUERY_SNAPSHOT = 13;
+	int QUERY_SNAPSHOT = 13;
 
 	/**
 	 * The feature id for the '<em><b>Match Set Records</b></em>' containment reference list.
@@ -781,7 +781,7 @@ public interface SnapshotPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int INC_QUERY_SNAPSHOT__MATCH_SET_RECORDS = 0;
+	int QUERY_SNAPSHOT__MATCH_SET_RECORDS = 0;
 
 	/**
 	 * The feature id for the '<em><b>Model Roots</b></em>' reference list.
@@ -790,7 +790,7 @@ public interface SnapshotPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int INC_QUERY_SNAPSHOT__MODEL_ROOTS = 1;
+	int QUERY_SNAPSHOT__MODEL_ROOTS = 1;
 
 	/**
 	 * The feature id for the '<em><b>Input Specification</b></em>' attribute.
@@ -799,25 +799,25 @@ public interface SnapshotPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int INC_QUERY_SNAPSHOT__INPUT_SPECIFICATION = 2;
+	int QUERY_SNAPSHOT__INPUT_SPECIFICATION = 2;
 
 	/**
-	 * The number of structural features of the '<em>Inc Query Snapshot</em>' class.
+	 * The number of structural features of the '<em>Query Snapshot</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int INC_QUERY_SNAPSHOT_FEATURE_COUNT = 3;
+	int QUERY_SNAPSHOT_FEATURE_COUNT = 3;
 
 	/**
-	 * The number of operations of the '<em>Inc Query Snapshot</em>' class.
+	 * The number of operations of the '<em>Query Snapshot</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int INC_QUERY_SNAPSHOT_OPERATION_COUNT = 0;
+	int QUERY_SNAPSHOT_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.viatra.query.testing.snapshot.InputSpecification <em>Input Specification</em>}' enum.
@@ -1169,47 +1169,47 @@ public interface SnapshotPackage extends EPackage {
 	EAttribute getMiscellaneousSubstitution_Value();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot <em>Inc Query Snapshot</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot <em>Query Snapshot</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Inc Query Snapshot</em>'.
-	 * @see org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
+	 * @return the meta object for class '<em>Query Snapshot</em>'.
+	 * @see org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 	 * @generated
 	 */
-	EClass getIncQuerySnapshot();
+	EClass getQuerySnapshot();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot#getMatchSetRecords <em>Match Set Records</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot#getMatchSetRecords <em>Match Set Records</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference list '<em>Match Set Records</em>'.
-	 * @see org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot#getMatchSetRecords()
-	 * @see #getIncQuerySnapshot()
+	 * @see org.eclipse.viatra.query.testing.snapshot.QuerySnapshot#getMatchSetRecords()
+	 * @see #getQuerySnapshot()
 	 * @generated
 	 */
-	EReference getIncQuerySnapshot_MatchSetRecords();
+	EReference getQuerySnapshot_MatchSetRecords();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot#getModelRoots <em>Model Roots</em>}'.
+	 * Returns the meta object for the reference list '{@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot#getModelRoots <em>Model Roots</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the reference list '<em>Model Roots</em>'.
-	 * @see org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot#getModelRoots()
-	 * @see #getIncQuerySnapshot()
+	 * @see org.eclipse.viatra.query.testing.snapshot.QuerySnapshot#getModelRoots()
+	 * @see #getQuerySnapshot()
 	 * @generated
 	 */
-	EReference getIncQuerySnapshot_ModelRoots();
+	EReference getQuerySnapshot_ModelRoots();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot#getInputSpecification <em>Input Specification</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot#getInputSpecification <em>Input Specification</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Input Specification</em>'.
-	 * @see org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot#getInputSpecification()
-	 * @see #getIncQuerySnapshot()
+	 * @see org.eclipse.viatra.query.testing.snapshot.QuerySnapshot#getInputSpecification()
+	 * @see #getQuerySnapshot()
 	 * @generated
 	 */
-	EAttribute getIncQuerySnapshot_InputSpecification();
+	EAttribute getQuerySnapshot_InputSpecification();
 
 	/**
 	 * Returns the meta object for enum '{@link org.eclipse.viatra.query.testing.snapshot.InputSpecification <em>Input Specification</em>}'.
@@ -1529,14 +1529,14 @@ public interface SnapshotPackage extends EPackage {
 		EAttribute MISCELLANEOUS_SUBSTITUTION__VALUE = eINSTANCE.getMiscellaneousSubstitution_Value();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.viatra.query.testing.snapshot.impl.IncQuerySnapshotImpl <em>Inc Query Snapshot</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.viatra.query.testing.snapshot.impl.QuerySnapshotImpl <em>Query Snapshot</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.viatra.query.testing.snapshot.impl.IncQuerySnapshotImpl
-		 * @see org.eclipse.viatra.query.testing.snapshot.impl.SnapshotPackageImpl#getIncQuerySnapshot()
+		 * @see org.eclipse.viatra.query.testing.snapshot.impl.QuerySnapshotImpl
+		 * @see org.eclipse.viatra.query.testing.snapshot.impl.SnapshotPackageImpl#getQuerySnapshot()
 		 * @generated
 		 */
-		EClass INC_QUERY_SNAPSHOT = eINSTANCE.getIncQuerySnapshot();
+		EClass QUERY_SNAPSHOT = eINSTANCE.getQuerySnapshot();
 
 		/**
 		 * The meta object literal for the '<em><b>Match Set Records</b></em>' containment reference list feature.
@@ -1544,7 +1544,7 @@ public interface SnapshotPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference INC_QUERY_SNAPSHOT__MATCH_SET_RECORDS = eINSTANCE.getIncQuerySnapshot_MatchSetRecords();
+		EReference QUERY_SNAPSHOT__MATCH_SET_RECORDS = eINSTANCE.getQuerySnapshot_MatchSetRecords();
 
 		/**
 		 * The meta object literal for the '<em><b>Model Roots</b></em>' reference list feature.
@@ -1552,7 +1552,7 @@ public interface SnapshotPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference INC_QUERY_SNAPSHOT__MODEL_ROOTS = eINSTANCE.getIncQuerySnapshot_ModelRoots();
+		EReference QUERY_SNAPSHOT__MODEL_ROOTS = eINSTANCE.getQuerySnapshot_ModelRoots();
 
 		/**
 		 * The meta object literal for the '<em><b>Input Specification</b></em>' attribute feature.
@@ -1560,7 +1560,7 @@ public interface SnapshotPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute INC_QUERY_SNAPSHOT__INPUT_SPECIFICATION = eINSTANCE.getIncQuerySnapshot_InputSpecification();
+		EAttribute QUERY_SNAPSHOT__INPUT_SPECIFICATION = eINSTANCE.getQuerySnapshot_InputSpecification();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.viatra.query.testing.snapshot.InputSpecification <em>Input Specification</em>}' enum.

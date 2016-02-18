@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
  */
 public interface IBaseIndex {
 	// TODO lightweightObserver?
-	// TODO IncQueryBaseIndexChangeListener?
+	// TODO ViatraBaseIndexChangeListener?
 	
     /**
      * The given callback will be executed, and all model traversals and index registrations will be delayed until the
@@ -36,19 +36,19 @@ public interface IBaseIndex {
      * Adds a coarse-grained listener that will be invoked after the NavigationHelper index or the underlying model is changed. Can be used
      * e.g. to check model contents. Not intended for general use.
      * 
-     * <p/> See {@link #removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener)}
+     * <p/> See {@link #removeBaseIndexChangeListener(ViatraBaseIndexChangeListener)}
      * @param listener
      */
-    public void addBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener);
+    public void addBaseIndexChangeListener(ViatraBaseIndexChangeListener listener);
     
     /**
      * Removes a registered listener.
      * 
-     * <p/> See {@link #addBaseIndexChangeListener(IncQueryBaseIndexChangeListener)}
+     * <p/> See {@link #addBaseIndexChangeListener(ViatraBaseIndexChangeListener)}
      * 
      * @param listener
      */
-    public void removeBaseIndexChangeListener(IncQueryBaseIndexChangeListener listener);
+    public void removeBaseIndexChangeListener(ViatraBaseIndexChangeListener listener);
     
     /**
      * Updates the value of indexed derived features that are not well-behaving.

@@ -20,7 +20,7 @@ import org.eclipse.xtext.xbase.ui.highlighting.XbaseHighlightingConfiguration;
 @SuppressWarnings("restriction")
 public class EMFPatternLanguageHighlightingConfiguration extends XbaseHighlightingConfiguration {
 
-    public static final String METAMODEL_REFERENCE = "incquery.metamodel.reference";
+    public static final String METAMODEL_REFERENCE = "viatra.query.metamodel.reference";
 
     @Override
     public void configure(IHighlightingConfigurationAcceptor acceptor) {

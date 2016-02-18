@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
@@ -79,7 +79,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
                 queryExplorer.getPatternsViewer().refresh();
                 queryExplorer.getPatternsViewerRoot().getGeneratedPatternsRoot().updateHasChildren();
                 queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().updateHasChildren();
-            } catch (IncQueryException e) {
+            } catch (ViatraQueryException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -112,7 +112,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
         queryExplorerInstance.getPatternsViewer().refresh();
     }
 
-    private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr, QueryEvaluationHint hint) throws IncQueryException {
+    private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr, QueryEvaluationHint hint) throws ViatraQueryException {
     	PatternModel newParsedModel = null;
     	if (this.resource!=null) {
     		newParsedModel = dbUtil.extractPatternModelFromResource(resource);

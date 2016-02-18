@@ -881,7 +881,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
         if (!elementsWithWarnings.isEmpty()) {
             warning("There is at least one potentially problematic java call in the check()/eval() expression. Custom java calls "
-                    + "are considered unsafe in IncQuery unless they are annotated with @"
+                    + "are considered unsafe in VIATRA Query unless they are annotated with @"
                     + Pure.class.getSimpleName()
                     + " or registered with the "
                     + PureWhitelistExtensionLoader.EXTENSION_ID

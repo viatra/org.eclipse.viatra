@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.viatra.addon.validation.runtime" id="constraint" name="constraint"/>
       </appinfo>
       <documentation>
-         Plugins may contribute Constraints to be validated by the EMF-IncQuery validation engine
+         Plugins may contribute Constraints to be validated by the VIATRA validation engine
       </documentation>
    </annotation>
 

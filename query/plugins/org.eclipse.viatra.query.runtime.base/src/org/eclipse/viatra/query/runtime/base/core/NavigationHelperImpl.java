@@ -54,7 +54,7 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
-import org.eclipse.viatra.query.runtime.base.exception.IncQueryBaseException;
+import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.LinkedHashMultimap;
@@ -197,7 +197,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         return comprehension;
     }
     
-    public NavigationHelperImpl(Notifier emfRoot, BaseIndexOptions options, Logger logger) throws IncQueryBaseException {
+    public NavigationHelperImpl(Notifier emfRoot, BaseIndexOptions options, Logger logger) throws ViatraBaseException {
         this.baseIndexOptions = options.copy();
         this.logger = logger;
         assert (logger != null);
@@ -641,7 +641,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                         listener.notifyChanged(baseIndexChanged);
                     }
                 } catch (Exception ex) {
-                    notifyFatalListener("EMF-IncQuery Base encountered an error in delivering notifications about changes. ",
+                    notifyFatalListener("VIATRA Base encountered an error in delivering notifications about changes. ",
                             ex);
                 }
             }
@@ -1097,7 +1097,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         			}
         		}
 	        } catch (Exception e) {
-	            notifyFatalListener("EMF-IncQuery Base encountered an error while traversing the EMF model to gather new information. ",
+	            notifyFatalListener("VIATRA Base encountered an error while traversing the EMF model to gather new information. ",
 	                            e);
 	            throw new InvocationTargetException(e);
 	        }
@@ -1114,7 +1114,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
-    public void addRoot(Notifier emfRoot) throws IncQueryBaseException {
+    public void addRoot(Notifier emfRoot) throws ViatraBaseException {
         addRootInternal(emfRoot);
     }
 
@@ -1161,11 +1161,11 @@ public class NavigationHelperImpl implements NavigationHelper {
     
     /**
      * @param emfRoot
-     * @throws IncQueryBaseException
+     * @throws ViatraBaseException
      */
-    private void addRootInternal(Notifier emfRoot) throws IncQueryBaseException {
+    private void addRootInternal(Notifier emfRoot) throws ViatraBaseException {
         if (!((emfRoot instanceof EObject) || (emfRoot instanceof Resource) || (emfRoot instanceof ResourceSet))) {
-            throw new IncQueryBaseException(IncQueryBaseException.INVALID_EMFROOT);
+            throw new ViatraBaseException(ViatraBaseException.INVALID_EMFROOT);
         }
         expandToAdditionalRoot(emfRoot);
     }

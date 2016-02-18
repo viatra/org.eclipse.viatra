@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
 
@@ -56,7 +56,7 @@ public class PatternMatchDialogLabelProvider implements ILabelProvider {
         if (element instanceof IPatternMatch) {
             String message = DisplayUtil.getMessage((IPatternMatch) element);//, true);
             if (message != null) {
-                return IncQueryRuntimeHelper.getMessage((IPatternMatch) element, message);
+                return ViatraQueryRuntimeHelper.getMessage((IPatternMatch) element, message);
             } else {
                 return element.toString();
             }

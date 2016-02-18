@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.emf.helper.IncQueryRuntimeHelper;
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
 
 /**
@@ -43,12 +43,12 @@ public class MatchComparator implements Comparator<IPatternMatch> {
     public int compare(IPatternMatch match1, IPatternMatch match2) {
         try {
             EObject obj = (EObject) match1.get(clazz);
-            EStructuralFeature feature = IncQueryRuntimeHelper.getFeature(obj, attribute);
+            EStructuralFeature feature = ViatraQueryRuntimeHelper.getFeature(obj, attribute);
             Object value1 = obj.eGet(feature);
 
             if (value1 instanceof Comparable) {
                 EObject compObj = (EObject) match2.get(clazz);
-                EStructuralFeature compFeature = IncQueryRuntimeHelper.getFeature(compObj, attribute);
+                EStructuralFeature compFeature = ViatraQueryRuntimeHelper.getFeature(compObj, attribute);
                 Object value2 = compObj.eGet(compFeature);
                 return ((Comparable) value1).compareTo(value2) * (ascending ? 1 : -1);
             }

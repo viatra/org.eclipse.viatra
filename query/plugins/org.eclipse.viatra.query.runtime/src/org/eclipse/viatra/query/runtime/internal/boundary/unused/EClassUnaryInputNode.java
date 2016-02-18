@@ -176,7 +176,7 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 						return signature.getSize() == 1 && clazz.isInstance(signature.get(0));
 					} catch (Exception ex) {
 					//	engine.getLogger().logError(					
-					//			"IncQuery encountered an error in processing the EMF model. ",
+					//			"VIATRA Query encountered an error in processing the EMF model. ",
 					//		ex); 
 						return false;
 					}

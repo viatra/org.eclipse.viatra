@@ -120,8 +120,8 @@ public class SnapshotAdapterFactory extends AdapterFactoryImpl {
 				return createMiscellaneousSubstitutionAdapter();
 			}
 			@Override
-			public Adapter caseIncQuerySnapshot(IncQuerySnapshot object) {
-				return createIncQuerySnapshotAdapter();
+			public Adapter caseQuerySnapshot(QuerySnapshot object) {
+				return createQuerySnapshotAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -326,16 +326,16 @@ public class SnapshotAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot <em>Inc Query Snapshot</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot <em>Query Snapshot</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.viatra.query.testing.snapshot.IncQuerySnapshot
+	 * @see org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 	 * @generated
 	 */
-	public Adapter createIncQuerySnapshotAdapter() {
+	public Adapter createQuerySnapshotAdapter() {
 		return null;
 	}
 

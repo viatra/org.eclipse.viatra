@@ -17,9 +17,9 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.debug.core.IJavaVariable;
 import org.eclipse.jdt.internal.debug.core.model.JDIDebugTarget;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
-import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugValue;
-import org.eclipse.viatra.query.tooling.debug.common.IncQueryDebugVariable;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
+import org.eclipse.viatra.query.tooling.debug.common.ViatraQueryDebugValue;
+import org.eclipse.viatra.query.tooling.debug.common.ViatraQueryDebugVariable;
 import org.eclipse.viatra.query.tooling.debug.variables.ValueWrapper;
 
 import com.sun.jdi.ArrayReference;
@@ -27,14 +27,14 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.Value;
 
 /**
- * The value of an IncQuery Debug Variable which represents an {@link ViatraQueryMatcher} instance. Children variables are 
+ * The value of an Viatra Query Debug Variable which represents an {@link ViatraQueryMatcher} instance. Children variables are 
  * the pattern matches.
  * 
  * @author Tamas Szabo (itemis AG)
  *
  */
 @SuppressWarnings("restriction")
-public class MatcherValue extends IncQueryDebugValue {
+public class MatcherValue extends ViatraQueryDebugValue {
 
     public MatcherValue(JDIDebugTarget debugTarget, ValueWrapper value) {
         super(debugTarget, value);
@@ -50,7 +50,7 @@ public class MatcherValue extends IncQueryDebugValue {
                 return null;
             }
         } catch (Exception e) {
-            IncQueryLoggingUtil.getLogger(MatcherValue.class).error("Label initialization has failed!", e);
+            ViatraQueryLoggingUtil.getLogger(MatcherValue.class).error("Label initialization has failed!", e);
             return null;
         }
     }
@@ -69,7 +69,7 @@ public class MatcherValue extends IncQueryDebugValue {
                     for (Value match : matches.getValues()) {
                         if (match != null) {
                             ValueWrapper wrappedMatch = ValueWrapper.wrap(match, fValue.getThreadReference());
-                            IncQueryDebugVariable var = new IncQueryDebugVariable(this.getJavaDebugTarget());
+                            ViatraQueryDebugVariable var = new ViatraQueryDebugVariable(this.getJavaDebugTarget());
                             MatchValue value = new MatchValue(debugTarget, wrappedMatch);
                             var.setValue(value);
                             fVariables.add(var);

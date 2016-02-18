@@ -16,7 +16,7 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryFilterSemantics;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryFilterSemantics;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -74,12 +74,12 @@ public class ViewerDataFilter {
         Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), "Filter already defined for pattern "
                 + pattern.getFullyQualifiedName());
         filterDefinitions.put(pattern, new ViewerFilterDefinition(pattern, 
-                IncQueryFilterSemantics.SINGLE, 
+                ViatraQueryFilterSemantics.SINGLE, 
                 match, 
                 null));
     }
     
-    public void addMultiFilter(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern, Collection<IPatternMatch> matches, IncQueryFilterSemantics semantics) {
+    public void addMultiFilter(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern, Collection<IPatternMatch> matches, ViatraQueryFilterSemantics semantics) {
         Preconditions.checkArgument(!filterDefinitions.containsKey(pattern), "Filter already defined for pattern "
                 + pattern.getFullyQualifiedName());
         filterDefinitions.put(pattern, new ViewerFilterDefinition(pattern, 

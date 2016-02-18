@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Interface for an IncQuery matcher associated with a graph pattern.
+ * Interface for an VIATRA Query matcher associated with a graph pattern.
  * 
  * @param <Match>
  *            the IPatternMatch type representing a single match of this pattern.
@@ -161,12 +161,6 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
 
     // CHANGE MONITORING
     // attach delta monitor for high-level change detection
-
-    // MOVED TO ADVANCED INCQUERY ENGINE
-    //public abstract void addCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener, boolean fireNow);
-
-    // MOVED TO ADVANCED INCQUERY ENGINE
-    //public abstract void removeCallbackOnMatchUpdate(IMatchUpdateListener<? super Match> listener);
     
     // USE {@link IMatchUpdateListener} or EVM instead
 	//    @Deprecated
@@ -175,18 +169,6 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
     // USE {@link IMatchUpdateListener} or EVM instead
 	//    @Deprecated
 	//	public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
-
-    // MOVED TO INCQUERY ENGINE
-    //public boolean addCallbackAfterUpdates(Runnable callback);
-
-    // MOVED TO INCQUERY ENGINE
-    //public boolean removeCallbackAfterUpdates(Runnable callback);
-
-    // MOVED TO INCQUERY ENGINE
-    //public boolean addCallbackAfterWipes(Runnable callback);
-
-    // MOVED TO INCQUERY ENGINE
-    //public boolean removeCallbackAfterWipes(Runnable callback);
 
     /**
      * Returns an empty, mutable Match for the matcher. 

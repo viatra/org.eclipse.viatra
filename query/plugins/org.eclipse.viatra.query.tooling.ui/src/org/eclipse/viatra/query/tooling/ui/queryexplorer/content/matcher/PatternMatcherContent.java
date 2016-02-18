@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -77,7 +77,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
 	        try {
 	            usedBackend = hint.getQueryBackendClass();
 	            matcher = (ViatraQueryMatcher<IPatternMatch>) engine.getMatcher(specification, hint);
-	        } catch (IncQueryException e) {
+	        } catch (ViatraQueryException e) {
 	            this.exceptionMessage = e.getShortMessage();
 	            this.exception = e;
 	            logException();

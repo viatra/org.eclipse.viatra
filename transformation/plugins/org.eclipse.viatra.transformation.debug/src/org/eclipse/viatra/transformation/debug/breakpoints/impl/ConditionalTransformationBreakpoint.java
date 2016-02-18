@@ -12,12 +12,12 @@ package org.eclipse.viatra.transformation.debug.breakpoints.impl;
 
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.debug.breakpoints.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
 /**
- * Class that can be used to specify breakpoint rules via IncQuery query specifications. It is mainly used by 
+ * Class that can be used to specify breakpoint rules via query specifications. It is mainly used by 
  * the VIATRA {@link org.eclipse.viatra.transformation.debug.TransformationDebugger}  class.
  * 
  * @author Peter Lunk
@@ -38,7 +38,7 @@ public class ConditionalTransformationBreakpoint implements ITransformationBreak
     public boolean shouldBreak(Activation<?> a) {
         try {
             return engine.getMatcher(spec).getAllMatches().size() == numberOfMatches;
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             e.printStackTrace();
             return false;
         }

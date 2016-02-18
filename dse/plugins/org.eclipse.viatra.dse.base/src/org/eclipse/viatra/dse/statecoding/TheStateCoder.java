@@ -41,9 +41,9 @@ public class TheStateCoder implements IStateCoder {
         // try {
         // EMFScope scope = new EMFScope(notifier);
         // queryEngine = ViatraQueryEngine.on(scope);
-        // } catch (IncQueryException e1) {
-        // logger.error("Failed to initialize IncQuery engine on the given notifier", e1);
-        // throw new DSEException("Failed to initialize IncQuery engine on the given notifier");
+        // } catch (ViatraQueryException e1) {
+        // logger.error("Failed to initialize VIATRA Query engine on the given notifier", e1);
+        // throw new DSEException("Failed to initialize VIATRA Query engine on the given notifier");
         // }
 
         objectProvider.init(notifier, sdg);
@@ -195,7 +195,7 @@ public class TheStateCoder implements IStateCoder {
                 if (eReferred == null) {
                     continue;
                 } else if (eReferred instanceof EList<?>) {
-                    // TODO this is slow, use incquery
+                    // TODO this is slow, use VIATRA Query
                     for (Object referredEObject : ((EList<?>) eReferred)) {
                         if (referredEObject.equals(eObject)) {
                             return addStateCode(sd.node, (EObject) dependentEObject);

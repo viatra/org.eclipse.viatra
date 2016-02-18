@@ -27,7 +27,7 @@ import org.eclipse.emf.ecore.EStructuralFeature.Setting;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * Utility class used in the generation of statecodes over arbitrary EMF models. It iteratively expands the EMF relation
@@ -63,7 +63,7 @@ public class EGraphBuilderContext {
         }
     }
 
-    public EGraphBuilderContext(Notifier modelRoot) throws IncQueryException {
+    public EGraphBuilderContext(Notifier modelRoot) throws ViatraQueryException {
         this.root = (EObject) modelRoot;
         EMFScope scope = new EMFScope(modelRoot);
         this.engine = ViatraQueryEngine.on(scope);
@@ -117,7 +117,7 @@ public class EGraphBuilderContext {
         if (helperInstance == null) {
             try {
                 helperInstance = EMFScope.extractUnderlyingEMFIndex(engine);
-            } catch (IncQueryException e) {
+            } catch (ViatraQueryException e) {
                 logger.error(e);
             }
         }

@@ -17,7 +17,6 @@ import org.eclipse.gef4.zest.core.viewers.GraphViewer
 import org.eclipse.gef4.zest.core.widgets.ZestStyles
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.transformation.evm.api.Activation
-import org.eclipse.viatra.addon.viewers.runtime.model.IncQueryViewerDataModel
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature
 import org.eclipse.swt.SWT
@@ -32,11 +31,12 @@ import org.eclipse.swt.widgets.Shell
 import org.eclipse.swt.widgets.Text
 import org.eclipse.viatra.transformation.debug.TransformationDebugger.DebuggerActions
 import org.eclipse.viatra.transformation.debug.controller.IDebugController;
-import org.eclipse.viatra.addon.viewers.runtime.zest.IncQueryGraphViewers
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
+import org.eclipse.viatra.addon.viewers.runtime.zest.ViatraGraphViewers
+import org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel
 
 /**
- * Debugger UI implementation that utilizes the EMF IncQuery viewers framework
+ * Debugger UI implementation that utilizes the VIATRA Viewers framework
  * 
  * @author Peter Lunk
  */
@@ -157,9 +157,9 @@ class ViewersDebugger implements IDebugController{
 			viewer.setLayoutAlgorithm(new GridLayoutAlgorithm())
 			
 			
-			val state = IncQueryViewerDataModel.newViewerState(engine, queries, ViewerDataFilter.UNFILTERED,
+			val state = org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel.newViewerState(engine, queries, ViewerDataFilter.UNFILTERED,
 				ImmutableSet.of(ViewerStateFeature.EDGE))
-			IncQueryGraphViewers.bind(viewer, state);
+			org.eclipse.viatra.addon.viewers.runtime.zest.ViatraGraphViewers.bind(viewer, state);
 			shell.open();
 			initialized = true
 			while (!shell.isDisposed()) {

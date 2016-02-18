@@ -28,10 +28,10 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.api.scope.IncQueryScope;
+import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
@@ -71,7 +71,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
         if (engine == null) {
             engine = createEngine();
             key.setEngine(engine);
-            RuleEngine ruleEngine = ExecutionSchemas.createIncQueryExecutionSchema(engine,
+            RuleEngine ruleEngine = ExecutionSchemas.createViatraQueryExecutionSchema(engine,
                     Schedulers.getQueryEngineSchedulerFactory(engine));
             key.setRuleEngine(ruleEngine);
             engine.addLifecycleListener(taintListener);
@@ -86,10 +86,10 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
 
         try {
             BaseIndexOptions options = new BaseIndexOptions(dynamicEMFMode, wildcardMode);
-            IncQueryScope scope = new EMFScope(key.getNotifier(), options);
+            QueryScope scope = new EMFScope(key.getNotifier(), options);
             AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
             return engine;
-        } catch (IncQueryException e) {
+        } catch (ViatraQueryException e) {
             logger.log(new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, "Could not retrieve ViatraQueryEngine for "
                     + key.getNotifier(), e));
             return null;
@@ -109,7 +109,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
                 }
             });
             contentStatus = Status.OK_STATUS;
-        } catch (IncQueryException ex) {
+        } catch (ViatraQueryException ex) {
             reportMatcherError("Cannot initialize pattern matcher engine.", ex);
         } catch (InvocationTargetException e) {
             reportMatcherError("Error during pattern matcher construction: " + e.getCause().getMessage(), e.getCause());

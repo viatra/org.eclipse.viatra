@@ -15,7 +15,7 @@ import java.util.Collection;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * A run-once query engine is used to get matches for queries without incremental support.
@@ -34,7 +34,7 @@ public interface IRunOnceQueryEngine {
      * @return matches represented as a Match object.
      */
     <Match extends IPatternMatch> Collection<Match> getAllMatches(
-            final IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) throws IncQueryException;
+            final IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) throws ViatraQueryException;
 
     /**
      * @return the scope of pattern matching, i.e. the root of the EMF model tree that this engine is attached to.

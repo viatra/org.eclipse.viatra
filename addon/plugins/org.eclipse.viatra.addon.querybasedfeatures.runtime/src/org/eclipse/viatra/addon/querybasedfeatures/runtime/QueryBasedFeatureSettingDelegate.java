@@ -24,9 +24,9 @@ import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
-import org.eclipse.viatra.query.runtime.util.IncQueryLoggingUtil;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
  * TODO process pattern annotation for specific settings when initializing (e.g. source, target, keepCache, etc)
@@ -53,10 +53,10 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
     
     /**
      * Constructs a new {@link QueryBasedFeatureSettingDelegate} instance based on the given parameters.
-     * The scope of the incquery engine in this case will be the one provided by {@link QueryBasedFeatureHelper.prepareNotifierForSource({@link InternalEObject})}.
+     * The scope of the VIATRA Query engine in this case will be the one provided by {@link QueryBasedFeatureHelper.prepareNotifierForSource({@link InternalEObject})}.
      *  
      * @param eStructuralFeature the parent structural feature of the setting delegate
-     * @param factory the factory used to create incquery engine for the setting delegate
+     * @param factory the factory used to create VIATRA Query engine for the setting delegate
      * @param querySpecification the query specification used for the evaluation of the setting delegate
      * @param dynamicEMFMode indicates whether the engine should be created in dynamic EMF mode
      */
@@ -70,7 +70,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
      * Constructs a new {@link QueryBasedFeatureSettingDelegate} instance based on the given parameters.
      * 
      * @param eStructuralFeature the parent structural feature of the setting delegate
-     * @param factory the factory used to create incquery engine for the setting delegate
+     * @param factory the factory used to create VIATRA Query engine for the setting delegate
      * @param querySpecification the query specification used for the evaluation of the setting delegate
      * @param isResourceScope indicates whether the {@link Resource} of the {@link InternalEObject} is enough as a scope during the evaluation of the setting delegate 
      * @param dynamicEMFMode indicates whether the engine should be created in dynamic EMF mode
@@ -140,8 +140,8 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         AdvancedViatraQueryEngine engine = null;
         try {
             engine = delegateFactory.getEngineForNotifier(notifierForSource, dynamicEMFMode);
-        } catch (IncQueryException e) {
-            IncQueryLoggingUtil.getLogger(getClass()).error("Engine preparation failed", e);
+        } catch (ViatraQueryException e) {
+            ViatraQueryLoggingUtil.getLogger(getClass()).error("Engine preparation failed", e);
             throw new IllegalStateException("Engine preparation failed", e);
         }
         
@@ -164,8 +164,8 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
                     queryBasedFeature.initialize(matcher, parameters.sourceVar, parameters.targetVar);
                     queryBasedFeature.startMonitoring();
                 }
-            } catch (IncQueryException e) {
-                IncQueryLoggingUtil.getLogger(getClass()).error("Handler initialization failed", e);
+            } catch (ViatraQueryException e) {
+                ViatraQueryLoggingUtil.getLogger(getClass()).error("Handler initialization failed", e);
             }
         }
 

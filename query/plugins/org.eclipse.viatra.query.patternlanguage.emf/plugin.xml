@@ -2,7 +2,6 @@
 <?eclipse version="3.0"?>
 
 <plugin>
-  <extension-point id="surrogatequeryemf" name="EMF-IncQuery Surrogate Query (deprecated)" schema="schema/surrogatequeryemf.exsd"/>
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
        uri = "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage" 
