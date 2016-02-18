@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper
 import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IContainer
+import org.eclipse.core.resources.ResourcesPlugin
 
 class JavaProjectMigrator extends JavaProjectMigratorData{
 	
@@ -98,12 +99,16 @@ class JavaProjectMigrator extends JavaProjectMigratorData{
 		 * Collect XTend files
 		 */
 		val xtendlist = <IFile>newLinkedList()
-		javaProject.project.accept([
-			if (it instanceof IFile && "xtend".equalsIgnoreCase(it.fileExtension)){
-				xtendlist.add(it as IFile)
+		for(p : javaProject.packageFragmentRoots){
+			if (p.kind == IPackageFragmentRoot::K_SOURCE){
+				ResourcesPlugin.workspace.root.getFolder(p.path).accept([
+					if (it instanceof IFile && "xtend".equalsIgnoreCase(it.fileExtension)){
+						xtendlist.add(it as IFile)
+					}
+					return it instanceof IContainer
+				])
 			}
-			return it instanceof IContainer
-		])
+		}
 		
 		/*
 		 * Replace imports in XTend files
