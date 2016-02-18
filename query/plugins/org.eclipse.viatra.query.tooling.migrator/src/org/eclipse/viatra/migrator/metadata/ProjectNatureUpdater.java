@@ -45,8 +45,8 @@ public class ProjectNatureUpdater extends AbstractHandler {
                 if (project != null) {
                     final NatureUpdaterJob job = new NatureUpdaterJob(project);
                     job.schedule();
-                    ICommandService service = HandlerUtil.getActiveSite(event).getService(ICommandService.class);
                     try {
+                    	ICommandService service = ((ICommandService)HandlerUtil.getActiveSite(event).getService(ICommandService.class));
 						service.getCommand(MigratorConstants.API_MIGRATOR_COMMAND_ID).executeWithChecks(event);
 					} catch (NotDefinedException | NotEnabledException | NotHandledException e) {
 						throw new ExecutionException("Error migrating project", e);
