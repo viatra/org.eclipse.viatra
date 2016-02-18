@@ -166,9 +166,6 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 					return tuples();
 				}
 				
-				/* (non-Javadoc)
-				 * @see org.eclipse.incquery.runtimerete.index.NullIndexer#isEmpty()
-				 */
 				@Override
 				protected boolean isEmpty() {
 	//				final Set<? extends Object> values = baseIndex.getValuesOfFeature(feature);
@@ -176,9 +173,6 @@ public class EStructuralFeatureBinaryInputNode extends StandardNode implements D
 				    return false;
 				}
 				
-				/* (non-Javadoc)
-				 * @see org.eclipse.incquery.runtimerete.index.NullIndexer#isSingleElement()
-				 */
 				@Override
 				protected boolean isSingleElement() {
 	//				final Set<Setting> settings = baseIndex.getOccurrencesOfFeature(feature);

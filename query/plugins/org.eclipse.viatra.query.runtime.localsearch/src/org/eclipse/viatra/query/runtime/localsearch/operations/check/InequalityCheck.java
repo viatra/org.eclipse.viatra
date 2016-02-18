@@ -31,9 +31,6 @@ public class InequalityCheck extends CheckOperation {
         this.targetLocation = targetLocation;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperation#check(org.eclipse.viatra.query.runtime.localsearch.MatchingFrame)
-     */
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
         Object source = frame.getValue(sourceLocation);
@@ -47,9 +44,6 @@ public class InequalityCheck extends CheckOperation {
         return !source.equals(target);
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "InequalityCheck";

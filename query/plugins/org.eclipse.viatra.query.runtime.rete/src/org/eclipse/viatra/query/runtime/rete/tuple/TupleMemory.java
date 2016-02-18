@@ -166,11 +166,6 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
         // return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "TM" + occurences.keySet();

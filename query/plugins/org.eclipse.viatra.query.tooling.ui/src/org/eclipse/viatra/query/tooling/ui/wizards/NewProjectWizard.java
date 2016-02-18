@@ -50,11 +50,6 @@ public class NewProjectWizard extends Wizard implements INewWizard {
     @Inject
     private Logger logger;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.wizard.Wizard#addPages()
-     */
     @Override
     public void addPages() {
         projectCreationPage = new WizardNewProjectCreationPage("NewIncQueryProject");

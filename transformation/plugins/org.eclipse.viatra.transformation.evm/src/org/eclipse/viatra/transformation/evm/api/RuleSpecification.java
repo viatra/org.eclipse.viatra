@@ -136,11 +136,6 @@ public class RuleSpecification<EventAtom> {
         return jobs;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("lifecycle", lifeCycle).add("jobs", jobs).toString();

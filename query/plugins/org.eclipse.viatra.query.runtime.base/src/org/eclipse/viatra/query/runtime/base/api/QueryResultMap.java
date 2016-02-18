@@ -41,17 +41,11 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
         setLogger(logger);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#getCacheEntries()
-     */
     @Override
     protected Collection<java.util.Map.Entry<KeyType, ValueType>> getCacheEntries() {
         return cache.entrySet();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#internalCachePut(java.lang.Object, java.lang.Object)
-     */
     @Override
     protected boolean internalCachePut(KeyType key, ValueType value) {
         ValueType put = cache.put(key, value);
@@ -62,26 +56,17 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#internalCacheRemove(java.lang.Object, java.lang.Object)
-     */
     @Override
     protected boolean internalCacheRemove(KeyType key, ValueType value) {
         ValueType remove = cache.remove(key);
         return remove != null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#internalCacheSize()
-     */
     @Override
     protected int internalCacheSize() {
         return cache.size();
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#internalCacheContainsEntry(java.lang.Object, java.lang.Object)
-     */
     @Override
     protected boolean internalCacheContainsEntry(KeyType key, ValueType value) {
         return cache.containsKey(key) && cache.get(key).equals(value);
@@ -104,25 +89,16 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
     
     // ======================= implemented Map methods ======================
 
-    /* (non-Javadoc)
-     * @see java.util.Map#clear()
-     */
     @Override
     public void clear() {
         internalClear();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#containsKey(java.lang.Object)
-     */
     @Override
     public boolean containsKey(Object key) {
         return cache.containsKey(key);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#containsValue(java.lang.Object)
-     */
     @Override
     public boolean containsValue(Object value) {
         return cache.containsValue(value);
@@ -140,17 +116,11 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
         return Collections.unmodifiableSet((Set<Entry<KeyType, ValueType>>) getCacheEntries());
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#get(java.lang.Object)
-     */
     @Override
     public ValueType get(Object key) {
         return cache.get(key);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#isEmpty()
-     */
     @Override
     public boolean isEmpty() {
         return cache.isEmpty();
@@ -222,9 +192,6 @@ public abstract class QueryResultMap<KeyType,ValueType> extends QueryResultAssoc
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#size()
-     */
     @Override
     public int size() {
         return internalCacheSize();

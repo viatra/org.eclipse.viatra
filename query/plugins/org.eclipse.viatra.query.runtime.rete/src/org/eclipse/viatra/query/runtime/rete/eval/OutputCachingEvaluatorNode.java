@@ -37,17 +37,11 @@ public abstract class OutputCachingEvaluatorNode extends AbstractEvaluatorNode i
 	Map<Tuple, Tuple> outputCache = CollectionsFactory.getMap();
 	//Map<Tuple, SoftReference<Object>> opportunisticCacheResults = new WeakHashMap<Tuple, SoftReference<Object>>();
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.tuple.Clearable#clear()
-	 */
 	@Override
 	public void clear() {
 		outputCache.clear();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.network.Supplier#pullInto(java.util.Collection)
-	 */
 	@Override
 	public void pullInto(Collection<Tuple> collector) {
 		for (Tuple output : outputCache.values()) {
@@ -55,9 +49,6 @@ public abstract class OutputCachingEvaluatorNode extends AbstractEvaluatorNode i
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.network.Receiver#update(org.eclipse.viatra.query.runtime.rete.network.Direction, org.eclipse.viatra.query.runtime.rete.tuple.Tuple)
-	 */
 	@Override
 	public void update(Direction direction, Tuple updateElement) {
 		switch (direction) {

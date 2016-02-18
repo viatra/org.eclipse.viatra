@@ -160,11 +160,6 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
 		return false;
 	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.incquery.querybasedui.runtime.sources.QueryLabelProvider#dispose()
-     */
     @Override
     public void dispose() {
         for (Entry<RGB, Color> colorEntry : colorMap.entrySet()) {
@@ -176,11 +171,6 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
         super.dispose();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider#getConnectionStyle(java.lang.Object)
-     */
     @Override
     public int getConnectionStyle(Object rel) {
     	// handle containments specially
@@ -204,11 +194,6 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
         return ZestStyles.CONNECTIONS_SOLID | ZestStyles.CONNECTIONS_DIRECTED;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider#getColor(java.lang.Object)
-     */
     @Override
     public Color getColor(Object rel) {
         if (rel instanceof Edge) {
@@ -217,21 +202,11 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider#getHighlightColor(java.lang.Object)
-     */
     @Override
     public Color getHighlightColor(Object rel) {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider#getLineWidth(java.lang.Object)
-     */
     @Override
     public int getLineWidth(Object rel) {
         if (rel instanceof Edge) {
@@ -240,19 +215,11 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
         return -1;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider#getRouter(java.lang.Object)
-     */
     @Override
     public ConnectionRouter getRouter(Object rel) {
         return new BendpointConnectionRouter();
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider#getConnectionDecorator(java.lang.Object)
-	 */
 	@Override
 	public IConnectionDecorator getConnectionDecorator(Object rel) {
 		// TODO implement connection decorator

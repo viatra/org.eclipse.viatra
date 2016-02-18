@@ -35,9 +35,6 @@ public class StructuralFeatureCheck extends CheckOperation {
         this.feature = feature;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckOperation#check(org.eclipse.viatra.query.runtime.localsearch.MatchingFrame)
-     */
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
         try {

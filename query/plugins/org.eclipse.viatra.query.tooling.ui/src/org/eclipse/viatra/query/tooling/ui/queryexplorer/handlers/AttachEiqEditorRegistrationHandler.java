@@ -118,9 +118,6 @@ public class AttachEiqEditorRegistrationHandler extends AbstractHandler {
 			targetFile = f;
 		}
     	
-		/* (non-Javadoc)
-		 * @see org.eclipse.xtext.ui.editor.model.IXtextModelListener#modelChanged(org.eclipse.xtext.resource.XtextResource)
-		 */
 		@Override
 		public void modelChanged(XtextResource resource) {
 			// update Query Explorer contents if the are not errors

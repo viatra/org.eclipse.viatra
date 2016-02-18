@@ -136,11 +136,6 @@ public class ResourceOrderingXtextGenerator extends AbstractMojo {
      */
     private ClusteringConfig clusteringConfig;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.plugin.Mojo#execute()
-     */
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
             getLog().info("skipped.");

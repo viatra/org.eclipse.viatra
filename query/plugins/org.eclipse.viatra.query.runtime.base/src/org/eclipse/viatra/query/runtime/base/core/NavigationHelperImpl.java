@@ -1119,9 +1119,6 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.NavigationHelper#cheapMoveTo(org.eclipse.emf.ecore.EObject, org.eclipse.emf.common.util.EList)
-     */
     @Override
     public <T extends EObject> void cheapMoveTo(T element, EList<T> targetContainmentReferenceList) {
     	if (element.eAdapters().contains(contentAdapter) && 
@@ -1142,9 +1139,6 @@ public class NavigationHelperImpl implements NavigationHelper {
     	}
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.NavigationHelper#cheapMoveTo(org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EObject, org.eclipse.emf.ecore.EReference)
-     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature) {

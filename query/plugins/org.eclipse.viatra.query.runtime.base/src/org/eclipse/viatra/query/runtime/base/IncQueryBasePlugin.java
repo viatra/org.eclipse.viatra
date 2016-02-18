@@ -23,11 +23,6 @@ public class IncQueryBasePlugin extends Plugin {
     public static final String PLUGIN_ID = "org.eclipse.viatra.query.runtime.base";
     public static final String WELLBEHAVING_DERIVED_FEATURE_EXTENSION_POINT_ID = "org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features";
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-     */
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
@@ -35,11 +30,6 @@ public class IncQueryBasePlugin extends Plugin {
         WellbehavingDerivedFeatureRegistry.initRegistry();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-     */
     @Override
     public void stop(BundleContext context) throws Exception {
         plugin = null;

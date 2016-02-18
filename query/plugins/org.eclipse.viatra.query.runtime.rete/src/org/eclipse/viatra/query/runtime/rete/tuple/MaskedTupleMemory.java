@@ -172,11 +172,6 @@ public class MaskedTupleMemory implements Clearable, Iterable<Tuple> {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "MTM<" + mask + "|" + matchings + ">";

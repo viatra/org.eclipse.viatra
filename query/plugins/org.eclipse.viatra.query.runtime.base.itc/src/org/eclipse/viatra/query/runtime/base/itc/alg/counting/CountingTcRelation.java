@@ -163,11 +163,6 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("TcRelation = ");
@@ -230,11 +225,6 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {

@@ -258,11 +258,6 @@ public class TupleMask {
         return useInheritance ? new LeftInheritanceTuple(unmasked, combined) : new FlatTuple(combined);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int PRIME = 31;
@@ -272,11 +267,6 @@ public class TupleMask {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -296,11 +286,6 @@ public class TupleMask {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

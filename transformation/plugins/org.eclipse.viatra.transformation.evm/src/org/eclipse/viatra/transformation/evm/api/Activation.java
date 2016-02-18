@@ -109,9 +109,6 @@ public class Activation<EventAtom> {
         return cachedHash;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return Objects.toStringHelper(this).

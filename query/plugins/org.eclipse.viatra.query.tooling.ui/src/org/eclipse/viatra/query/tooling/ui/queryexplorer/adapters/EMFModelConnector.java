@@ -173,9 +173,6 @@ public class EMFModelConnector implements IModelConnector {
         return new TreePath(nodes.toArray());
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.api.IModelConnector#getOwner()
-	 */
 	@Override
 	public IWorkbenchPart getOwner() {
 		return this.editorPart;

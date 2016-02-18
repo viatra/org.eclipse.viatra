@@ -41,11 +41,6 @@ public class OrderingHeuristics implements Comparator<PConstraint> {
         this.context = context;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     @Override
     public int compare(PConstraint o1, PConstraint o2) {
         return new OrderingCompareAgent<PConstraint>(o1, o2) {

@@ -53,9 +53,6 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
 	}
 //    protected Map<Tuple, Object> cachedResults = CollectionsFactory.getMap(); 
 	
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.viatra.query.runtime.rete.network.Supplier#pullInto(java.util.Collection)
-//	 */
 //	@Override
 //	public void pullInto(Collection<Tuple> collector) {
 //		for (Tuple tuple : allTuples()) {

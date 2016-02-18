@@ -57,12 +57,6 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
 
         private String filterString = "";
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers .Viewer, java.lang.Object,
-         * java.lang.Object)
-         */
         @Override
         public boolean select(Viewer viewer, Object parentElement, Object element) {
             StringMatcher matcher = new StringMatcher("*" + filterString + "*", true, false);
@@ -125,11 +119,6 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
 
         table.addMouseListener(new MouseAdapter() {
 
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-             */
             @Override
             public void mouseDoubleClick(MouseEvent e) {
                 if (table.getSelectionCount() > 0) {

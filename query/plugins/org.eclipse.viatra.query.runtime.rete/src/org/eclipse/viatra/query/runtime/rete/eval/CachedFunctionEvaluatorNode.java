@@ -37,9 +37,6 @@ public class CachedFunctionEvaluatorNode extends OutputCachingEvaluatorNode {
 		return new LeftInheritanceTuple(incoming, new Object[]{runtimeContext.wrapElement(evaluationresult)});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.eval.AbstractEvaluatorNode#logNodeName()
-	 */
 	@Override
 	protected String logNodeName() {
 		return "eval()";

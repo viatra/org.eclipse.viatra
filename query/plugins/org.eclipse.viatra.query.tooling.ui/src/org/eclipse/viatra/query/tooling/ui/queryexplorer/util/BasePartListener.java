@@ -18,51 +18,26 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class BasePartListener implements IPartListener {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-     */
     @Override
     public void partActivated(IWorkbenchPart part) {
         // empty method
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-     */
     @Override
     public void partBroughtToTop(IWorkbenchPart part) {
         // empty method
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-     */
     @Override
     public void partClosed(IWorkbenchPart part) {
         // empty method
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-     */
     @Override
     public void partDeactivated(IWorkbenchPart part) {
         // empty method
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-     */
     @Override
     public void partOpened(IWorkbenchPart part) {
         // empty method

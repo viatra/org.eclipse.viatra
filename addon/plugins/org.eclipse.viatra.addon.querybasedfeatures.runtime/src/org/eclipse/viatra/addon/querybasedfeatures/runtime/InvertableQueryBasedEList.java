@@ -40,22 +40,12 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
         this.inverter = inverter;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#validate(int, java.lang.Object)
-     */
     @Override
     protected ComputedType validate(int index, ComputedType object) {
         ComputedType s = super.validate(index, object);
         return inverter.validate(s);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#primitiveGet(int)
-     */
     @SuppressWarnings("unchecked")
     @Override
     protected ComputedType primitiveGet(int index) {
@@ -72,11 +62,6 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
         // return (Source) handler.getManyReferenceValue(sourceObject).get(index);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#setUnique(int, java.lang.Object)
-     */
     @Override
     public ComputedType setUnique(int index, ComputedType object) {
         ComputedType source = get(index);
@@ -85,33 +70,18 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
         return source;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#addUnique(java.lang.Object)
-     */
     @Override
     public void addUnique(ComputedType object) {
         StorageType newTarget = inverter.invert(object);
         storageEList.add(newTarget);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#addUnique(int, java.lang.Object)
-     */
     @Override
     public void addUnique(int index, ComputedType object) {
         StorageType newTarget = inverter.invert(object);
         storageEList.add(index, newTarget);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#addAllUnique(java.util.Collection)
-     */
     @Override
     public boolean addAllUnique(Collection<? extends ComputedType> collection) {
         boolean hasChanged = false;
@@ -122,11 +92,6 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
         return hasChanged;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#addAllUnique(int, java.util.Collection)
-     */
     @Override
     public boolean addAllUnique(int index, Collection<? extends ComputedType> collection) {
         int oldSize = storageEList.size();
@@ -139,11 +104,6 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
         return oldSize < storageEList.size();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#addAllUnique(java.lang.Object[], int, int)
-     */
     @Override
     public boolean addAllUnique(Object[] objects, int start, int end) {
         boolean hasChanged = false;
@@ -155,11 +115,6 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
         return hasChanged;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#addAllUnique(int, java.lang.Object[], int, int)
-     */
     @Override
     public boolean addAllUnique(int index, Object[] objects, int start, int end) {
         int oldSize = storageEList.size();
@@ -173,11 +128,6 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
         return oldSize < storageEList.size();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#remove(int)
-     */
     @Override
     public ComputedType remove(int index) {
         ComputedType source = get(index);
@@ -186,11 +136,6 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
         return source;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#move(int, int)
-     */
     @Override
     public ComputedType move(int targetIndex, int sourceIndex) {
         ComputedType tSource = get(sourceIndex);
@@ -199,32 +144,17 @@ public class InvertableQueryBasedEList<ComputedType, StorageType> extends Abstra
         return tSource;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.emf.common.util.AbstractEList#basicList()
-     */
     @SuppressWarnings("unchecked")
     @Override
     protected List<ComputedType> basicList() {
         return (List<ComputedType>) handler.getManyReferenceValue(sourceObject);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.AbstractList#get(int)
-     */
     @Override
     public ComputedType get(int index) {
         return basicGet(index);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.AbstractCollection#size()
-     */
     @Override
     public int size() {
         return handler.getManyReferenceValue(sourceObject).size();

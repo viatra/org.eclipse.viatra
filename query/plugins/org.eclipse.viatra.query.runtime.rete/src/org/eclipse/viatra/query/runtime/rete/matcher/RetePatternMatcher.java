@@ -337,9 +337,6 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 		return matchAll(parameters, notNull(parameters));
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider#getQueryBackend()
-	 */
 	@Override
 	public IQueryBackend getQueryBackend() {
 		return engine;

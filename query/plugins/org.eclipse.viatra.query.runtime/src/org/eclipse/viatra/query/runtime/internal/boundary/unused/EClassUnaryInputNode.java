@@ -81,9 +81,6 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.network.Supplier#pullInto(java.util.Collection)
-	 */
 	@Override
 	public void pullInto(Collection<Tuple> collector) {
 //		final Set<EObject> allInstances = baseIndex.getAllInstances(clazz);
@@ -93,9 +90,6 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 		collector.addAll(tuples());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.boundary.Disconnectable#disconnect()
-	 */
 	@Override
 	public void disconnect() {
 //		baseIndex.unregisterInstanceListener(listener);
@@ -148,9 +142,6 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 					return tuples();
 				}
 				
-				/* (non-Javadoc)
-				 * @see org.eclipse.viatra.query.runtime.rete.index.NullIndexer#isEmpty()
-				 */
 				@Override
 				protected boolean isEmpty() {
 		//			final Set<EObject> allInstances = baseIndex.getAllInstances(clazz);
@@ -158,9 +149,6 @@ public class EClassUnaryInputNode extends StandardNode implements Disconnectable
 				    return false;
 				}
 				
-				/* (non-Javadoc)
-				 * @see org.eclipse.viatra.query.runtime.rete.index.NullIndexer#isSingleElement()
-				 */
 				@Override
 				protected boolean isSingleElement() {
 				//	final Set<EObject> allInstances = baseIndex.getAllInstances(clazz);

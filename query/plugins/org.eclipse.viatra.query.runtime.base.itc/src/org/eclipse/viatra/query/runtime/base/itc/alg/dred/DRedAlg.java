@@ -84,11 +84,6 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         this.graphDataSource.detachObserver(dfsa);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itc.igraph.IGraphObserver#edgeInserted(java.lang.Object, java.lang.Object)
-     */
     @Override
     public void edgeInserted(V source, V target) {
         if (!source.equals(target)) {
@@ -132,11 +127,6 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itc.igraph.IGraphObserver#edgeDeleted(java.lang.Object, java.lang.Object)
-     */
     @Override
     public void edgeDeleted(V source, V target) {
         if (!source.equals(target)) {
@@ -227,21 +217,11 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itc.igraph.IGraphObserver#nodeInserted(java.lang.Object)
-     */
     @Override
     public void nodeInserted(V n) {
         // Node inserted does not result new tc tuple.
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itc.igraph.IGraphObserver#nodeDeleted(java.lang.Object)
-     */
     @Override
     public void nodeDeleted(V n) {
         // FIXME node deletion may involve the deletion of incoming and outgoing edges too
@@ -273,51 +253,26 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         this.tc = tc;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itc.igraph.ITcDataSource#isReachable(java.lang.Object, java.lang.Object)
-     */
     @Override
     public boolean isReachable(V source, V target) {
         return tc.containsTuple(source, target);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itc.igraph.ITcDataSource#attachObserver(itc.igraph.ITcObserver)
-     */
     @Override
     public void attachObserver(ITcObserver<V> to) {
         this.observers.add(to);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itc.igraph.ITcDataSource#detachObserver(itc.igraph.ITcObserver)
-     */
     @Override
     public void detachObserver(ITcObserver<V> to) {
         this.observers.remove(to);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itc.igraph.ITcDataSource#getTargetNodes(java.lang.Object)
-     */
     @Override
     public Set<V> getAllReachableTargets(V source) {
         return tc.getTupleEnds(source);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see itc.igraph.ITcDataSource#getSourceNodes(java.lang.Object)
-     */
     @Override
     public Set<V> getAllReachableSources(V target) {
         return tc.getTupleStarts(target);

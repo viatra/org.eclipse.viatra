@@ -152,11 +152,6 @@ public class DRedTcRelation<V> implements Serializable, ITcRelation<V> {
         return new HashSet<V>(t);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("TcRelation = ");

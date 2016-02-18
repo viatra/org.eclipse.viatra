@@ -455,9 +455,6 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
 
     // updaters for change notification
     // if the corresponding rete input isn't created yet, call is ignored
-    /* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateUnary(org.eclipse.viatra.query.runtime.rete.network.Direction, java.lang.Object, java.lang.Object)
-	 */
     
     private static Direction direction(boolean isInsertion) {
     	return isInsertion ? Direction.INSERT : Direction.REVOKE;
@@ -478,9 +475,6 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
 //        }
 //    }
 //
-//    /* (non-Javadoc)
-//	 * @see org.eclipse.viatra.query.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateTernaryEdge(org.eclipse.viatra.query.runtime.rete.network.Direction, java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object)
-//	 */
 //    @Override
 //	public void updateTernaryEdge(boolean isInsertion, Object relation, Object from, Object to, Object typeObject) {
 //        Address<? extends Tunnel> root = inputConnector.getTernaryEdgeRoot(typeObject);
@@ -496,10 +490,6 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
 //            }
 //        }
 //    }
-//
-//    /* (non-Javadoc)
-//	 * @see org.eclipse.viatra.query.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateBinaryEdge(org.eclipse.viatra.query.runtime.rete.network.Direction, java.lang.Object, java.lang.Object, java.lang.Object)
-//	 */
 //    @Override
 //	public void updateBinaryEdge(boolean isInsertion, Object from, Object to, Object typeObject) {
 //        Address<? extends Tunnel> root = inputConnector.getBinaryEdgeRoot(typeObject);
@@ -515,9 +505,6 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
 //        }
 //    }
 //
-//    /* (non-Javadoc)
-//	 * @see org.eclipse.viatra.query.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateContainment(org.eclipse.viatra.query.runtime.rete.network.Direction, java.lang.Object, java.lang.Object)
-//	 */
 //    @Override
 //	public void updateContainment(boolean isInsertion, Object container, Object element) {
 //        final Address<? extends Tunnel> containmentRoot = inputConnector.getContainmentRoot();
@@ -529,9 +516,6 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
 //        }
 //    }
 //
-//    /* (non-Javadoc)
-//	 * @see org.eclipse.viatra.query.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateInstantiation(org.eclipse.viatra.query.runtime.rete.network.Direction, java.lang.Object, java.lang.Object)
-//	 */
 //    @Override
 //	public void updateInstantiation(boolean isInsertion, Object parent, Object child) {
 //        final Address<? extends Tunnel> instantiationRoot = inputConnector.getInstantiationRoot();
@@ -543,9 +527,6 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
 //        }
 //    }
 //
-//    /* (non-Javadoc)
-//	 * @see org.eclipse.viatra.query.runtime.rete.boundary.IPatternMatcherRuntimeContextListener#updateGeneralization(org.eclipse.viatra.query.runtime.rete.network.Direction, java.lang.Object, java.lang.Object)
-//	 */
 //    @Override
 //	public void updateGeneralization(boolean isInsertion, Object parent, Object child) {
 //       final Address<? extends Tunnel> generalizationRoot = inputConnector.getGeneralizationRoot();

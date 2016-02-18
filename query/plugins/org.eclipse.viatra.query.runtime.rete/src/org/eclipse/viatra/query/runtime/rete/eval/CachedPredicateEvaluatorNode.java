@@ -30,17 +30,11 @@ public class CachedPredicateEvaluatorNode extends OutputCachingEvaluatorNode {
 		super(reteContainer, logger, evaluator, parameterPositions, sourceTupleWidth);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.eval.AbstractEvaluatorNode#tupleFromResult(org.eclipse.viatra.query.runtime.rete.tuple.Tuple, java.lang.Object)
-	 */
 	@Override
 	protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
 		return Boolean.TRUE.equals(evaluationresult) ? incoming : null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.eval.AbstractEvaluatorNode#logNodeName()
-	 */
 	@Override
 	protected String logNodeName() {
 		return "check()";

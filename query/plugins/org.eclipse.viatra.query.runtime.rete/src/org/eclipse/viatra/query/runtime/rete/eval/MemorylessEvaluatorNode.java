@@ -32,9 +32,6 @@ public abstract class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
 		super(reteContainer, logger, evaluator, parameterPositions, tupleWidth);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.network.Supplier#pullInto(java.util.Collection)
-	 */
 	@Override
 	public void pullInto(Collection<Tuple> collector) {
 		Collection<Tuple> parentTuples = new ArrayList<Tuple>(collector);
@@ -44,9 +41,6 @@ public abstract class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.viatra.query.runtime.rete.network.Receiver#update(org.eclipse.viatra.query.runtime.rete.network.Direction, org.eclipse.viatra.query.runtime.rete.tuple.Tuple)
-	 */
 	@Override
 	public void update(Direction direction, Tuple updateElement) {
 		propagateUpdate(direction, tupleFromResult(updateElement, evaluateTerm(updateElement)));

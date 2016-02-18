@@ -137,11 +137,6 @@ public class ItemRule extends ViewModelRule {
                 }));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.viatra.transformation.views.core.ViewModelRule#prepareFilter()
-     */
     @Override
     protected EventFilter<IPatternMatch> prepareFilter() {
         return createFilter(baseFilter);

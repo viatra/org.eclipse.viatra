@@ -52,14 +52,6 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
     @Inject
     private IEMFTypeProvider typeProvider;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator#executeAdditionalValidation
-     * (org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation,
-     * org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback)
-     */
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
         boolean foundErrors = false;

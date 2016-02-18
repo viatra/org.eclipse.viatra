@@ -63,41 +63,26 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
         setLogger(logger);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#getCacheEntries()
-     */
     @Override
     protected Collection<Entry<KeyType, ValueType>> getCacheEntries() {
         return cache.entries();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#internalCachePut(java.lang.Object, java.lang.Object)
-     */
     @Override
     protected boolean internalCachePut(KeyType key, ValueType value) {
         return cache.put(key, value);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#internalCacheRemove(java.lang.Object, java.lang.Object)
-     */
     @Override
     protected boolean internalCacheRemove(KeyType key, ValueType value) {
         return cache.remove(key, value);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#internalCacheContainsEntry(java.lang.Object, java.lang.Object)
-     */
     @Override
     protected boolean internalCacheContainsEntry(KeyType key, ValueType value) {
         return cache.containsEntry(key, value);
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.base.api.QueryResultAssociativeStore#internalCacheSize()
-     */
     @Override
     protected int internalCacheSize() {
         return cache.size();
@@ -120,51 +105,26 @@ public abstract class QueryResultMultimap<KeyType, ValueType> extends QueryResul
 
     // ======================= implemented Multimap methods ======================
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.common.collect.Multimap#size()
-     */
     @Override
     public int size() {
         return cache.size();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.common.collect.Multimap#isEmpty()
-     */
     @Override
     public boolean isEmpty() {
         return cache.isEmpty();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.common.collect.Multimap#containsKey(java.lang.Object)
-     */
     @Override
     public boolean containsKey(Object key) {
         return cache.containsKey(key);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.common.collect.Multimap#containsValue(java.lang.Object)
-     */
     @Override
     public boolean containsValue(Object value) {
         return cache.containsValue(value);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.google.common.collect.Multimap#containsEntry(java.lang.Object, java.lang.Object)
-     */
     @Override
     public boolean containsEntry(Object key, Object value) {
         return cache.containsEntry(key, value);

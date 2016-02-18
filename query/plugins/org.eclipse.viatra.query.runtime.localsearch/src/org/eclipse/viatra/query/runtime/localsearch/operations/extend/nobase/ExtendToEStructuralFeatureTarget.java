@@ -38,9 +38,6 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
         this.feature = feature;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation#onInitialize(org.eclipse.viatra.query.runtime.localsearch.MatchingFrame)
-     */
     @SuppressWarnings("unchecked")
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {

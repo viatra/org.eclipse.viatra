@@ -41,9 +41,6 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> {
         return feature;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation#onInitialize(org.eclipse.viatra.query.runtime.localsearch.MatchingFrame)
-     */
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
         final Collection<EObject> values = context.getBaseIndex().findByFeatureValue(frame.getValue(targetPosition), feature);

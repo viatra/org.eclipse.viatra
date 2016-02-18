@@ -150,11 +150,6 @@ public class ModelElementCellEditor extends CellEditor {
         });
 
         dialogButton.addSelectionListener(new SelectionAdapter() {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-             */
             public void widgetSelected(SelectionEvent event) {
                 TableItem selection = table.getSelection()[0];
                 MatcherConfiguration matcherConfiguration = (MatcherConfiguration) selection.getData();

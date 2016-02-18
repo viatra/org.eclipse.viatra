@@ -61,10 +61,6 @@ public class TimedScheduler extends Scheduler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.viatra.transformation.evm.api.Scheduler#dispose()
-     */
     @Override
     public void dispose() {
         interrupted = true;
@@ -94,9 +90,6 @@ public class TimedScheduler extends Scheduler {
             return interval;
         }
         
-        /* (non-Javadoc)
-         * @see org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory#prepareScheduler()
-         */
         @Override
         public Scheduler prepareScheduler(final Executor engine) {
             return new TimedScheduler(engine, interval);

@@ -22,11 +22,6 @@ import org.eclipse.viatra.query.runtime.rete.util.OrderingCompareAgent;
  */
 public class JoinOrderingHeuristics implements Comparator<JoinCandidate> {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     @Override
     public int compare(JoinCandidate jc1, JoinCandidate jc2) {
         return new OrderingCompareAgent<JoinCandidate>(jc1, jc2) {

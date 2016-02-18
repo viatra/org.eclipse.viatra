@@ -40,9 +40,6 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
         super(executor);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.viatra.transformation.evm.api.Scheduler#dispose()
-     */
     @Override
     public void dispose() {
         factory.provider.removeUpdateCompleteListener(this);
@@ -76,11 +73,6 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
             this.provider = provider;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory#prepareScheduler()
-         */
         @Override
         public Scheduler prepareScheduler(final Executor engine) {
             UpdateCompleteBasedScheduler scheduler = new UpdateCompleteBasedScheduler(engine);
