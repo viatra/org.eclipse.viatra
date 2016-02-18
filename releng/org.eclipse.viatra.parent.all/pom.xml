@@ -21,6 +21,7 @@
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.localsearch.ui</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.retevis</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.debug</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.migrator</module>
 		<module>../../query/tests/org.eclipse.viatra.query.patternlanguage.tests</module>
 		<module>../../query/tests/org.eclipse.viatra.query.patternlanguage.emf.tests</module>
 		<module>../../query/tests/org.eclipse.viatra.query.runtime.tests</module>
