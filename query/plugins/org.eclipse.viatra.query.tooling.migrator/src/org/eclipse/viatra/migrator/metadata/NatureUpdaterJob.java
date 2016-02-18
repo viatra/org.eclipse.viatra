@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.handlers;
+package org.eclipse.viatra.migrator.metadata;
 
 import java.util.List;
 
@@ -19,32 +19,24 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
+import org.eclipse.viatra.migrator.MigratorConstants;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
-import org.eclipse.xtext.resource.IEObjectDescription;
-import org.eclipse.xtext.resource.IResourceDescription;
-import org.eclipse.xtext.resource.IResourceDescriptions;
+import org.eclipse.xtext.build.IncrementalBuilder;
 import org.eclipse.xtext.ui.XtextProjectHelper;
 import org.eclipse.xtext.xbase.lib.Pair;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
 
 /**
  * Helper class for updating EMF-IncQuery project to current versions. Currently
@@ -61,8 +53,6 @@ import com.google.inject.Inject;
 class NatureUpdaterJob extends Job {
 
 	private IProject project;
-	@Inject
-	private IResourceDescriptions index;
 
 	public NatureUpdaterJob(IProject project) {
 		super(String.format("Updating project %s", project.getName()));
@@ -79,7 +69,7 @@ class NatureUpdaterJob extends Job {
 		ICommand[] commands = desc.getBuildSpec();
 		for (int i = 0; i < commands.length; i++) {
 
-			if (ProjectNatureUpdater.isIncorrectBuilderID(commands[i].getBuilderName())) {
+			if (MigratorConstants.isIncorrectBuilderID(commands[i].getBuilderName())) {
 				commands[i].setBuilderName(ViatraQueryNature.BUILDER_ID);
 			}
 		}
@@ -149,7 +139,7 @@ class NatureUpdaterJob extends Job {
     }
 
 	private void removeGlobalEiq(IProject project) throws CoreException {
-		final IResource globalEiqFile = project.findMember(ProjectNatureUpdater.GLOBAL_EIQ_PATH);
+		final IResource globalEiqFile = project.findMember(MigratorConstants.GLOBAL_EIQ_PATH);
 		if (globalEiqFile != null) {
 			final IProgressMonitor monitor = new NullProgressMonitor();
 			final IContainer parent = globalEiqFile.getParent();
@@ -164,7 +154,7 @@ class NatureUpdaterJob extends Job {
 		final List<Pair<String, String>> removableExtensions = Lists.newArrayList();
 	
 		removableExtensions.add(new Pair<String, String>("", "org.eclipse.incquery.runtime.queryspecification"));
-		removableExtensions.add(new Pair<String, String>("", ProjectNatureUpdater.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID));
+		removableExtensions.add(new Pair<String, String>("", MigratorConstants.XEXPRESSIONEVALUATOR_EXTENSION_POINT_ID));
 		ProjectGenerationHelper.removeAllExtension(project, removableExtensions);
 	}
 
@@ -177,7 +167,7 @@ class NatureUpdaterJob extends Job {
 			final ImmutableList<String> newIDs = project.hasNature(ViatraQueryNature.NATURE_ID)
 					? ImmutableList.<String> of() : ImmutableList.of(ViatraQueryNature.NATURE_ID);
 			Builder<String> builder = ImmutableList.<String> builder();
-			for (String ID : ProjectNatureUpdater.INCORRECT_NATURE_IDS) {
+			for (String ID : MigratorConstants.INCORRECT_NATURE_IDS) {
 				if (project.hasNature(ID)) {
 					builder.add(ID);
 				}
@@ -192,6 +182,7 @@ class NatureUpdaterJob extends Job {
 			renamePatternDefinitionFiles(project);
 			removeExpressionExtensions(project);
 			ProjectGenerationHelper.ensurePackageImports(project, ImmutableList.<String> of("org.apache.log4j"));
+			project.build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
 		} catch (CoreException e) {
 			return new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, "Error updating project natures", e);
 		}

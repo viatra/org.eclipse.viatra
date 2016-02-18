@@ -276,10 +276,6 @@
             class="org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.ResetUIHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.resetui">
       </handler>
-      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.handlers.ProjectNatureUpdater"
-            commandId="org.eclipse.viatra.query.tooling.ui.addnature">
-      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -472,58 +468,6 @@
             </visibleWhen>
          </command>            -->
          </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.addnature"
-               icon="icons/logo2.png"
-               label="Update EMF-IncQuery Nature"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate>
-                  <adapt
-                        type="org.eclipse.core.resources.IProject">
-                     <and>
-                        <test
-                              property="org.eclipse.core.resources.open"
-                              value="true">
-                        </test>
-                        <test
-                              property="org.eclipse.viatra.query.tooling.ui.project.current">
-                        </test>
-                     </and>
-                  </adapt>
-               </iterate>
-            </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.viatra.query.tooling.ui.addnature"
-               icon="icons/logo2.png"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <iterate>
-                  <adapt
-                        type="org.eclipse.core.resources.IProject">
-                     <and>
-                        <not>
-                           <test
-                                 property="org.eclipse.core.resources.projectNature"
-                                 value="org.eclipse.viatra.query.projectnature">
-                           </test>
-                        </not>
-                        <test
-                              property="org.eclipse.core.resources.open"
-                              value="true">
-                        </test>
-                     </and>
-                  </adapt>
-               </iterate>
-            </visibleWhen>
-         </command>
-      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -595,11 +539,6 @@
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.resetui"
             name="Reset UI">
-      </command>
-      <command
-            categoryId="org.eclipse.viatra.query.tooling.category"
-            id="org.eclipse.viatra.query.tooling.ui.addnature"
-            name="Add EMF-IncQuery Nature">
       </command>
    </extension>
    <extension
@@ -681,15 +620,5 @@
                class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory">
                <parameter name="guicekey" value="org.eclipse.viatra.query.tooling.ui.builder.ViatraQueryProjectBuilder"/>
          </run></builder>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="org.eclipse.viatra.query.tooling.ui.handlers.QueryProjectVersionTester"
-            id="org.eclipse.viatra.query.tooling.ui.projectPropertyTester"
-            namespace="org.eclipse.viatra.query.tooling.ui.project"
-            properties="current"
-            type="org.eclipse.core.resources.IProject">
-      </propertyTester>
    </extension>
 </plugin>

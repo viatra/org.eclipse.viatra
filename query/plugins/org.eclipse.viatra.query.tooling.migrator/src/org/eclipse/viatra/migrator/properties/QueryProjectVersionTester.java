@@ -8,7 +8,7 @@
  * Contributors:
  *   Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.tooling.ui.handlers;
+package org.eclipse.viatra.migrator.properties;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.expressions.PropertyTester;
@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.viatra.migrator.MigratorConstants;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.xtext.ui.XtextProjectHelper;
 
@@ -28,7 +29,7 @@ import org.eclipse.xtext.ui.XtextProjectHelper;
  */
 public class QueryProjectVersionTester extends PropertyTester {
 
-    private final static String VERSION_TESTER = "current";
+    private final static String VERSION_TESTER = "outdated";
 
     private boolean hasIncorrectBuildCommandOrdering(IProject project) throws CoreException {
         IProjectDescription desc = project.getDescription();
@@ -61,11 +62,11 @@ public class QueryProjectVersionTester extends PropertyTester {
         try {
             if (VERSION_TESTER.equals(property) && receiver instanceof IProject && ((IProject)receiver).isAccessible()) {
                 IProject project = (IProject) receiver;
-                for (String ID : ProjectNatureUpdater.INCORRECT_NATURE_IDS) {
+                for (String ID : MigratorConstants.INCORRECT_NATURE_IDS) {
 	                if (project.hasNature(ID)) {
 	                    return true;
 	                } else if (project.hasNature(ViatraQueryNature.NATURE_ID)) {
-	                     return project.findMember(ProjectNatureUpdater.GLOBAL_EIQ_PATH) != null
+	                     return project.findMember(MigratorConstants.GLOBAL_EIQ_PATH) != null
 	                        || hasIncorrectBuildCommandOrdering(project) || hasLog4jDependency(project);
 	                }
                 }
