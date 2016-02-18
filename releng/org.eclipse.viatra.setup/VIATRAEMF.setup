@@ -300,7 +300,8 @@
   </setupTask>
   <setupTask
       xsi:type="setup:CompoundTask"
-      name="Bootstrap">
+      name="Bootstrap"
+      excludedTriggers="STARTUP MANUAL">
     <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateReteRecipeMetamodel.mwe2.launch">
