@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.viatra.migrator
 
+import java.lang.reflect.Field
 import java.util.Map
 import java.util.Map.Entry
 import org.eclipse.core.filebuffers.FileBuffers
 import org.eclipse.core.filebuffers.LocationKind
+import org.eclipse.core.resources.IContainer
+import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.IProject
+import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.SubMonitor
 import org.eclipse.jdt.core.ICompilationUnit
@@ -32,9 +36,6 @@ import org.eclipse.jdt.core.dom.SimpleName
 import org.eclipse.jdt.core.dom.SimpleType
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper
-import org.eclipse.core.resources.IFile
-import org.eclipse.core.resources.IContainer
-import org.eclipse.core.resources.ResourcesPlugin
 
 class JavaProjectMigrator extends JavaProjectMigratorData{
 	
@@ -138,8 +139,23 @@ class JavaProjectMigrator extends JavaProjectMigratorData{
 		replacer.save
 	}
 	
+	/**
+	 * Get JLS supported by the runtime JDT platform
+	 */
+	def getJLS(){
+		try{
+			/* Viatra officially supports Java7, but in order to be able to precisely update
+			 * Java8 code also, we detect whether current JDT supports it. 
+			 * This detection uses reflection to avoid compile-time dependency. */ 
+			val f = AST.getField("JLS8")
+			return f.getInt(null);
+		}catch(NoSuchFieldException e){
+			return AST.JLS4;
+		}
+	}
+	
 	def parse(ICompilationUnit unit, IProgressMonitor monitor){
-		val parser = ASTParser.newParser(AST.JLS8); 
+		val parser = ASTParser.newParser(JLS); 
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setSource(unit);
 		parser.setResolveBindings(true);
