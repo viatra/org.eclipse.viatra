@@ -21,13 +21,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
-import org.eclipse.viatra.query.tooling.generator.model.generatorModel.IncQueryGeneratorModel;
+import org.eclipse.viatra.query.tooling.generator.model.generatorModel.ViatraQueryGeneratorModel;
 
 /**
  * Helper interface for accessing eiq genmodels
  * 
  */
-public interface IEiqGenmodelProvider {
+public interface IVQGenmodelProvider {
 
     /**
      * Gets the generator model for a selected IncQuery-related context object (e.g. a {@link Pattern}). If the project
@@ -40,17 +40,17 @@ public interface IEiqGenmodelProvider {
      *             if the parameter pattern is not serialized into a {@link ResourceSet} that is not linked to an
      *             IncQuery project
      */
-    IncQueryGeneratorModel getGeneratorModel(EObject context);
+    ViatraQueryGeneratorModel getGeneratorModel(EObject context);
 
     /**
-     * Gets the generator model for a selected IncQuery project. If the project has no generator model specified, this
+     * Gets the generator model for a selected Viatra Query project. If the project has no generator model specified, this
      * method returns an empty generator model. The genmodel will be placed into the specified resource set
      * 
      * @param project
      * @param set
      * @return the loaded generator model
      */
-    IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set);
+    ViatraQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set);
 
     /**
      * Saves the changes to the generator model instance in the selected project. The provider assumes that the genmodel
@@ -59,11 +59,11 @@ public interface IEiqGenmodelProvider {
      * 
      * @throws IOException
      */
-    void saveGeneratorModel(IProject project, IncQueryGeneratorModel generatorModel) throws IOException;
+    void saveGeneratorModel(IProject project, ViatraQueryGeneratorModel generatorModel) throws IOException;
 
     /**
      * Collects all EPackage objects available from a selected project, including the ones from the EPackage Registry.
-     * If the project features an eiqgen files, the packages referenced there are also included.
+     * If the project features an vqgen files, the packages referenced there are also included.
      * 
      * @param project
      * @return a non-null collection of packages

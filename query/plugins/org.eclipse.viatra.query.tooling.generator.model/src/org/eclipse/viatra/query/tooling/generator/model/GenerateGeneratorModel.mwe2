@@ -15,7 +15,7 @@ import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
 var grammarURI = "classpath:/org/eclipse/viatra/query/tooling/generator/model/GeneratorModel.xtext"
-var file.extensions = "eiqgen"
+var file.extensions = "vqgen"
 var projectName = "org.eclipse.viatra.query.tooling.generator.model"
 var runtimeProject = "../${projectName}"
 

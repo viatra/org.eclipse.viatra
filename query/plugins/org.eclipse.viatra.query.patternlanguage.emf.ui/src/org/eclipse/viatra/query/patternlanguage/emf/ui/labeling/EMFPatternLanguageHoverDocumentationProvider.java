@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParame
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.ui.hover.XbaseHoverDocumentationProvider;
 
@@ -35,7 +35,7 @@ import com.google.inject.Inject;
 public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocumentationProvider {
 
     @Inject
-    private IEiqGenmodelProvider genmodelProvider;
+    private IVQGenmodelProvider genmodelProvider;
     @Inject
     private PatternAnnotationProvider annotationProvider;
     @Inject

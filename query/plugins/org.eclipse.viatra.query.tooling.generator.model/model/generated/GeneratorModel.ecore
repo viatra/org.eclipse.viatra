@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="generatorModel" nsURI="http://www.eclipse.org/viatra/query/tooling/generator/model/IQGenModel"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="generatorModel" nsURI="http://www.eclipse.org/viatra/query/tooling/generator/model/QueryGenModel"
     nsPrefix="generatorModel">
-  <eClassifiers xsi:type="ecore:EClass" name="IncQueryGeneratorModel">
+  <eClassifiers xsi:type="ecore:EClass" name="ViatraQueryGeneratorModel">
     <eStructuralFeatures xsi:type="ecore:EReference" name="genmodels" upperBound="-1"
         eType="#//GeneratorModelReference" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="configuration" upperBound="-1"

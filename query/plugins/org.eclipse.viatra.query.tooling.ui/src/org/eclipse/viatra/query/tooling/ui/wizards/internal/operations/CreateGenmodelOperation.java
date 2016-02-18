@@ -24,11 +24,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.viatra.query.tooling.generator.model.generatorModel.GeneratorModelFactory;
 import org.eclipse.viatra.query.tooling.generator.model.generatorModel.GeneratorModelReference;
-import org.eclipse.viatra.query.tooling.generator.model.generatorModel.IncQueryGeneratorModel;
+import org.eclipse.viatra.query.tooling.generator.model.generatorModel.ViatraQueryGeneratorModel;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.StringInputStream;
@@ -36,10 +36,10 @@ import org.eclipse.xtext.util.StringInputStream;
 public class CreateGenmodelOperation extends WorkspaceModifyOperation {
     private final IProject project;
     private final Collection<GenModel> genmodels;
-    private final IEiqGenmodelProvider genmodelProvider;
+    private final IVQGenmodelProvider genmodelProvider;
     private final IResourceSetProvider resourceSetProvider;
 
-    public CreateGenmodelOperation(IProject project, Collection<GenModel> genmodels, IEiqGenmodelProvider genmodelProvider,
+    public CreateGenmodelOperation(IProject project, Collection<GenModel> genmodels, IVQGenmodelProvider genmodelProvider,
             IResourceSetProvider resourceSetProvider) {
         this.project = project;
         this.genmodels = genmodels;
@@ -50,7 +50,7 @@ public class CreateGenmodelOperation extends WorkspaceModifyOperation {
     @Override
     protected void execute(IProgressMonitor monitor) throws CoreException {
         try {
-            IncQueryGeneratorModel generatorModel = genmodelProvider.getGeneratorModel(project,
+            ViatraQueryGeneratorModel generatorModel = genmodelProvider.getGeneratorModel(project,
                     resourceSetProvider.get(project));
             EList<GeneratorModelReference> genmodelRefs = generatorModel.getGenmodels();
             for (GenModel ecoreGenmodel : genmodels) {
@@ -59,7 +59,7 @@ public class CreateGenmodelOperation extends WorkspaceModifyOperation {
                 genmodelRefs.add(ref);
             }
             if (genmodelRefs.isEmpty()) {
-                IFile file = project.getFile(ViatraQueryNature.IQGENMODEL);
+                IFile file = project.getFile(ViatraQueryNature.VQGENMODEL);
                 file.create(new StringInputStream(""), false, new SubProgressMonitor(monitor, 1));
             } else {
                 genmodelProvider.saveGeneratorModel(project, generatorModel);

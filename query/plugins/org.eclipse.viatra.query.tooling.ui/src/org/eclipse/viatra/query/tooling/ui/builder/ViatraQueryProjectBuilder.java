@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.xtext.builder.impl.XtextBuilder;
 
@@ -73,7 +73,7 @@ public class ViatraQueryProjectBuilder extends IncrementalProjectBuilder {
     public static final String BUILDER_ID = ViatraQueryNature.BUILDER_ID;
 
     @Inject
-    private IEiqGenmodelProvider genmodelProvider;
+    private IVQGenmodelProvider genmodelProvider;
 
     @Override
     protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {

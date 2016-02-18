@@ -9,9 +9,9 @@
     usedGenPackages="platform:/resource/org.eclipse.emf.codegen.ecore/model/GenModel.genmodel#//genmodel platform:/resource/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore">
   <genPackages prefix="GeneratorModel" basePackage="org.eclipse.viatra.query.tooling.generator.model"
       disposableProviderFactory="true" ecorePackage="GeneratorModel.ecore#/">
-    <genClasses ecoreClass="GeneratorModel.ecore#//IncQueryGeneratorModel">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GeneratorModel.ecore#//IncQueryGeneratorModel/genmodels"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GeneratorModel.ecore#//IncQueryGeneratorModel/configuration"/>
+    <genClasses ecoreClass="GeneratorModel.ecore#//ViatraQueryGeneratorModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GeneratorModel.ecore#//ViatraQueryGeneratorModel/genmodels"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GeneratorModel.ecore#//ViatraQueryGeneratorModel/configuration"/>
     </genClasses>
     <genClasses ecoreClass="GeneratorModel.ecore#//GeneratorModelReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference GeneratorModel.ecore#//GeneratorModelReference/genmodel"/>

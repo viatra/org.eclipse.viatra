@@ -43,7 +43,7 @@ import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.ExtensionBasedGenerationFragmentProvider;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.GenModelMetamodelProviderService;
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.viatra.query.tooling.core.targetplatform.ITargetPlatformMetamodelLoader;
 import org.eclipse.viatra.query.tooling.core.targetplatform.TargetPlatformMetamodelProviderService;
 import org.eclipse.viatra.query.tooling.core.targetplatform.TargetPlatformMetamodelsIndex;
@@ -120,7 +120,7 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
         return EMFPatternLanguageHighlightingConfiguration.class;
     }
 
-    public Class<? extends IEiqGenmodelProvider> bindIEiqGenmodelProvider() {
+    public Class<? extends IVQGenmodelProvider> bindIEVQGenmodelProvider() {
         return GenModelMetamodelProviderService.class;
     }
 

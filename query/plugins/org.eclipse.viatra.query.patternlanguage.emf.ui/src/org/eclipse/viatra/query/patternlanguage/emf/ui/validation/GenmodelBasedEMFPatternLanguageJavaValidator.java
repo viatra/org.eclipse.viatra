@@ -33,7 +33,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes;
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.ui.resource.IStorage2UriMapper;
@@ -46,7 +46,7 @@ import com.google.inject.Inject;
 public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLanguageJavaValidator {
 
     @Inject
-    private IEiqGenmodelProvider genmodelProvider;
+    private IVQGenmodelProvider genmodelProvider;
     @Inject
     private IJavaProjectProvider projectProvider;
     @Inject

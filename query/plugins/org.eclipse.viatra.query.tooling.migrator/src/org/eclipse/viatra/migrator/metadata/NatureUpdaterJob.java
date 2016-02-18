@@ -30,7 +30,6 @@ import org.eclipse.viatra.migrator.MigratorConstants;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
-import org.eclipse.xtext.build.IncrementalBuilder;
 import org.eclipse.xtext.ui.XtextProjectHelper;
 import org.eclipse.xtext.xbase.lib.Pair;
 
@@ -132,7 +131,9 @@ class NatureUpdaterJob extends Job {
 			public boolean visit(IResource resource) throws CoreException {
 				if (resource instanceof IFile && "eiq".equals(resource.getFileExtension())) {
 					((IFile)resource).move(resource.getFullPath().removeFileExtension().addFileExtension("vql"), false, monitor);
-				}
+				} else if (resource instanceof IFile && "eiqgen".equals(resource.getFileExtension())) {
+					((IFile)resource).move(resource.getFullPath().removeFileExtension().addFileExtension("vqgen"), false, monitor);
+				} 
 				return true;
 			}
 		});

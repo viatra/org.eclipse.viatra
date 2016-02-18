@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.generator.IFileSystemAccess
 
@@ -30,6 +29,7 @@ import static extension org.eclipse.viatra.query.patternlanguage.helper.CorePatt
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.runtime.extensibility.PQueryExtensionFactory
 import org.eclipse.viatra.query.runtime.extensibility.IncQueryRuntimeConstants
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider
 
 /**
  * @author Abel Hegedus
@@ -37,7 +37,7 @@ import org.eclipse.viatra.query.runtime.extensibility.IncQueryRuntimeConstants
  */
 class SurrogateGeneratorFragment implements IGenerationFragment {
     
-    @Inject protected IEiqGenmodelProvider provider
+    @Inject protected IVQGenmodelProvider provider
     @Inject protected Logger logger
     @Inject protected IErrorFeedback errorFeedback
     @Inject protected extension ExtensionGenerator exGen

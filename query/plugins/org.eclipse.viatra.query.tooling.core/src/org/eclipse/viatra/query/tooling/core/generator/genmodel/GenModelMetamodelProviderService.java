@@ -39,7 +39,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderIn
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.viatra.query.tooling.generator.model.generatorModel.GeneratorModelFactory;
 import org.eclipse.viatra.query.tooling.generator.model.generatorModel.GeneratorModelReference;
-import org.eclipse.viatra.query.tooling.generator.model.generatorModel.IncQueryGeneratorModel;
+import org.eclipse.viatra.query.tooling.generator.model.generatorModel.ViatraQueryGeneratorModel;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.EObjectDescription;
@@ -59,10 +59,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
-public class GenModelMetamodelProviderService extends BaseMetamodelProviderService implements IEiqGenmodelProvider, IMetamodelProviderInstance {
+public class GenModelMetamodelProviderService extends BaseMetamodelProviderService implements IVQGenmodelProvider, IMetamodelProviderInstance {
 
     @Inject
-    private IEiqGenmodelProvider provider;
+    private IVQGenmodelProvider provider;
     
     private static final class NameTransformerFunction implements Function<IEObjectDescription, QualifiedName> {
         @Override
@@ -105,7 +105,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     }
     
     private URI getGenmodelURI(IProject project) {
-        IFile file = project.getFile(ViatraQueryNature.IQGENMODEL);
+        IFile file = project.getFile(ViatraQueryNature.VQGENMODEL);
         return URI.createPlatformResourceURI(file.getFullPath().toString(), false);
     }
 
@@ -113,7 +113,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     public IScope getAllMetamodelObjects(IScope delegateScope, EObject ctx) {
         Preconditions.checkNotNull(ctx, "Context is required");
         Iterable<IEObjectDescription> referencedPackages = Lists.newArrayList();
-        IncQueryGeneratorModel generatorModel = getGeneratorModel(ctx);
+        ViatraQueryGeneratorModel generatorModel = getGeneratorModel(ctx);
         if (generatorModel != null) {
             for (GeneratorModelReference generatorModelReference : generatorModel.getGenmodels()) {
                 Iterable<IEObjectDescription> packages = Iterables.transform(
@@ -142,9 +142,9 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     @Override
     public Collection<EPackage> getAllMetamodelObjects(IProject project) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.hasNature(ViatraQueryNature.NATURE_ID),
-                "Only works for EMF-IncQuery projects");
+                "Only works for VIATRA Query projects");
         Set<EPackage> referencedPackages = Sets.newLinkedHashSet();
-        IncQueryGeneratorModel generatorModel = getGeneratorModel(project);
+        ViatraQueryGeneratorModel generatorModel = getGeneratorModel(project);
         for (GeneratorModelReference generatorModelReference : generatorModel.getGenmodels()) {
             referencedPackages.addAll(Lists.transform(getAllGenPackages(generatorModelReference.getGenmodel()),
                     new Function<GenPackage, EPackage>() {
@@ -175,7 +175,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     }
 
     @Override
-    public IncQueryGeneratorModel getGeneratorModel(EObject pattern) {
+    public ViatraQueryGeneratorModel getGeneratorModel(EObject pattern) {
         Resource res = pattern.eResource();
         if (res != null && projectProvider != null) {
             ResourceSet set = res.getResourceSet();
@@ -184,11 +184,11 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
         throw new IllegalArgumentException("The project of the context cannot be determined.");
     }
 
-    public IncQueryGeneratorModel getGeneratorModel(IProject project) {
+    public ViatraQueryGeneratorModel getGeneratorModel(IProject project) {
         return getGeneratorModel(project, new ResourceSetImpl());
     }
 
-    public IncQueryGeneratorModel getGeneratorModel(ResourceSet set) {
+    public ViatraQueryGeneratorModel getGeneratorModel(ResourceSet set) {
         if (projectProvider != null) {
             IJavaProject javaProject = projectProvider.getJavaProject(set);
             if (javaProject != null) {
@@ -199,20 +199,20 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     }
 
     @Override
-    public IncQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set) {
-        IFile file = project.getFile(ViatraQueryNature.IQGENMODEL);
+    public ViatraQueryGeneratorModel getGeneratorModel(IProject project, ResourceSet set) {
+        IFile file = project.getFile(ViatraQueryNature.VQGENMODEL);
         if (file.exists()) {
             URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
             Resource resource = set.getResource(uri, true);
             if (!resource.getContents().isEmpty()) {
-                return (IncQueryGeneratorModel) resource.getContents().get(0);
+                return (ViatraQueryGeneratorModel) resource.getContents().get(0);
             }
         }
-        return GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
+        return GeneratorModelFactory.eINSTANCE.createViatraQueryGeneratorModel();
     }
 
     @Override
-    public void saveGeneratorModel(IProject project, IncQueryGeneratorModel generatorModel) throws IOException {
+    public void saveGeneratorModel(IProject project, ViatraQueryGeneratorModel generatorModel) throws IOException {
         Resource eResource = generatorModel.eResource();
         if (eResource != null) {
             eResource.save(Maps.newHashMap());
@@ -236,8 +236,8 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
 
     @Override
     public GenPackage findGenPackage(EObject ctx, final String packageNsUri) {
-        IncQueryGeneratorModel eiqGenModel = getGeneratorModel(ctx);
-        return findGenPackage(eiqGenModel, ctx.eResource().getResourceSet(), packageNsUri);
+        ViatraQueryGeneratorModel vqGenModel = getGeneratorModel(ctx);
+        return findGenPackage(vqGenModel, ctx.eResource().getResourceSet(), packageNsUri);
     }
 
     @Override
@@ -247,16 +247,16 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
 
     @Override
     public GenPackage findGenPackage(ResourceSet set, final String packageNsUri) {
-        IncQueryGeneratorModel eiqGenModel = getGeneratorModel(set);
-        return findGenPackage(eiqGenModel, set, packageNsUri);
+        ViatraQueryGeneratorModel vqGenModel = getGeneratorModel(set);
+        return findGenPackage(vqGenModel, set, packageNsUri);
     }
 
-    private GenPackage findGenPackage(IncQueryGeneratorModel eiqGenModel, ResourceSet set, final String packageNsUri) {
-        // eiqGenModel is null if loading a pattern from the registry
+    private GenPackage findGenPackage(ViatraQueryGeneratorModel vqGenModel, ResourceSet set, final String packageNsUri) {
+        // vqGenModel is null if loading a pattern from the registry
         // in this case only fallback to package Registry works
-        if (eiqGenModel != null) {
+        if (vqGenModel != null) {
             Iterable<GenPackage> genPackageIterable = Lists.newArrayList();
-            for (GeneratorModelReference generatorModelReference : eiqGenModel.getGenmodels()) {
+            for (GeneratorModelReference generatorModelReference : vqGenModel.getGenmodels()) {
                 genPackageIterable = Iterables.concat(genPackageIterable,
                         getAllGenPackages(generatorModelReference.getGenmodel()));
             }
@@ -299,7 +299,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     }
 
     public IFile getGeneratorModelFile(IProject project) {
-        return project.getFile(ViatraQueryNature.IQGENMODEL);
+        return project.getFile(ViatraQueryNature.VQGENMODEL);
     }
 
     @Override
@@ -308,18 +308,18 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     }
 
     /**
-     * Initializes and returns the IncQuery generator model for the selected project. If the model is already
+     * Initializes and returns the VIATRA Query generator model for the selected project. If the model is already
      * initialized, it returns the existing model.
      * 
      */
-    public IncQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
+    public ViatraQueryGeneratorModel initializeGeneratorModel(IProject project, ResourceSet set) {
         IFile file = getGeneratorModelFile(project);
         if (file.exists()) {
             return getGeneratorModel(project, set);
         } else {
             URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
             Resource resource = set.createResource(uri);
-            IncQueryGeneratorModel model = GeneratorModelFactory.eINSTANCE.createIncQueryGeneratorModel();
+            ViatraQueryGeneratorModel model = GeneratorModelFactory.eINSTANCE.createViatraQueryGeneratorModel();
             resource.getContents().add(model);
             return model;
         }

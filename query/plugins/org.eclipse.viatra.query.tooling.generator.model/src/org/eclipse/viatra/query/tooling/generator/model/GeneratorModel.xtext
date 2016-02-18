@@ -12,9 +12,9 @@ grammar org.eclipse.viatra.query.tooling.generator.model.GeneratorModel with org
 
 import "http://www.eclipse.org/emf/2002/GenModel" as genmodel
 
-generate generatorModel "http://www.eclipse.org/viatra/query/tooling/generator/model/IQGenModel"
+generate generatorModel "http://www.eclipse.org/viatra/query/tooling/generator/model/QueryGenModel"
 
-IncQueryGeneratorModel:
+ViatraQueryGeneratorModel:
 	(genmodels += GeneratorModelReference)*
 	(configuration += Configuration)*
 ;

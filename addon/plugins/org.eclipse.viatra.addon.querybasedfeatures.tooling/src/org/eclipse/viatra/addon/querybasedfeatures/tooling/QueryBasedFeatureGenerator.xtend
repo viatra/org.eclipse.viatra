@@ -28,11 +28,11 @@ import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.generator.IFileSystemAccess
 
 import static extension org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper.*
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider
 
 /**
  * @author Abel Hegedus
@@ -40,7 +40,7 @@ import static extension org.eclipse.viatra.query.patternlanguage.helper.CorePatt
  */
 class QueryBasedFeatureGenerator implements IGenerationFragment {
 
-  @Inject protected IEiqGenmodelProvider provider
+  @Inject protected IVQGenmodelProvider provider
   @Inject protected Logger logger
   @Inject protected IErrorFeedback errorFeedback
   @Inject protected extension ExtensionGenerator exGen

@@ -27,7 +27,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.util.Strings
 
@@ -39,7 +39,7 @@ implements IGenerationFragment {
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 
 	@Inject
-	private IEiqGenmodelProvider eiqGenModelProvider
+	private IVQGenmodelProvider vqGenModelProvider
 
 	@Inject
 	private IErrorFeedback feedback
@@ -51,7 +51,7 @@ implements IGenerationFragment {
 	private static String VALIDATION_EXTENSION_POINT = "org.eclipse.viatra.addon.validation.runtime.constraint"
 	private static String ECLIPSE_MENUS_EXTENSION_POINT = "org.eclipse.ui.menus"
 	private static String annotationLiteral = "Constraint"
-	private static String VALIDATION_ERROR_CODE = "org.eclipse.incquery.validation.error"
+	private static String VALIDATION_ERROR_CODE = "org.eclipse.viatra.addon.validation.error"
 
 	override generateFiles(Pattern pattern, IFileSystemAccess fsa) {
 
@@ -77,7 +77,7 @@ implements IGenerationFragment {
 		val patternModel = pattern.eContainer as PatternModel;
     for (imp : EMFPatternLanguageHelper::getPackageImportsIterable(patternModel)) {
       val pack = imp.EPackage;
-      val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
+      val genPackage = vqGenModelProvider.findGenPackage(pattern, pack);
 
       if (genPackage != null) {
         val editorId = genPackage.qualifiedEditorClassName+"ID";
@@ -137,7 +137,7 @@ implements IGenerationFragment {
               val patternModel = pattern.eContainer as PatternModel;
               for (imp : EMFPatternLanguageHelper::getPackageImportsIterable(patternModel)) {
                 val pack = imp.EPackage;
-                val genPackage = eiqGenModelProvider.findGenPackage(pattern, pack);
+                val genPackage = vqGenModelProvider.findGenPackage(pattern, pack);
 
                 if (genPackage != null) {
                   val editorId = genPackage.qualifiedEditorClassName+"ID";

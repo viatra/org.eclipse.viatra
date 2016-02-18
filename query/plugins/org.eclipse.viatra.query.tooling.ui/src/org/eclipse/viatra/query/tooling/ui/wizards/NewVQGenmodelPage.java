@@ -55,7 +55,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
-public class NewEiqGenmodelPage extends WizardPage {
+public class NewVQGenmodelPage extends WizardPage {
     // private DataBindingContext m_bindingContext;
     private final FormToolkit formToolkit = new FormToolkit(Display.getDefault());
     private Tree referencedGenmodels;
@@ -70,7 +70,7 @@ public class NewEiqGenmodelPage extends WizardPage {
     /**
      * Create the wizard.
      */
-    public NewEiqGenmodelPage(boolean displayCreateComposite) {
+    public NewVQGenmodelPage(boolean displayCreateComposite) {
         super("wizardPage");
         this.displayCreateComposite = displayCreateComposite;
         setTitle("EMF-IncQuery Generator model");
@@ -107,7 +107,7 @@ public class NewEiqGenmodelPage extends WizardPage {
 
             formToolkit.createLabel(composite, "Filename", SWT.NONE);
 
-            formToolkit.createLabel(composite, "generator.eiqgen", SWT.NONE);
+            formToolkit.createLabel(composite, "generator.vqgen", SWT.NONE);
         }
 
         Section sctnReferencedEmfGenerator = formToolkit.createSection(container, Section.EXPANDED | Section.TITLE_BAR);

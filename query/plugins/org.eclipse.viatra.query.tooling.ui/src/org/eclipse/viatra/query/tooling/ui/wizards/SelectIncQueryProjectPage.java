@@ -61,7 +61,7 @@ public class SelectIncQueryProjectPage extends WizardPage {
 
         @Override
         public Color getForeground(Object element) {
-            if (element instanceof IProject && ((IProject) element).findMember(ViatraQueryNature.IQGENMODEL) != null) {
+            if (element instanceof IProject && ((IProject) element).findMember(ViatraQueryNature.VQGENMODEL) != null) {
                 return disabledColor;
             }
             return super.getForeground(element);
@@ -69,7 +69,7 @@ public class SelectIncQueryProjectPage extends WizardPage {
 
         @Override
         public String getToolTipText(Object element) {
-            if (element instanceof IProject && ((IProject) element).findMember(ViatraQueryNature.IQGENMODEL) != null) {
+            if (element instanceof IProject && ((IProject) element).findMember(ViatraQueryNature.VQGENMODEL) != null) {
                 return String.format("Project %s has already defined an EMF-IncQuery Generator model.",
                         ((IProject) element).getName());
             }
@@ -185,7 +185,7 @@ public class SelectIncQueryProjectPage extends WizardPage {
     @Override
     public boolean isPageComplete() {
         return !viewer.getSelection().isEmpty()
-                && !(getSelectedProject().findMember(ViatraQueryNature.IQGENMODEL) != null);
+                && !(getSelectedProject().findMember(ViatraQueryNature.VQGENMODEL) != null);
     }
 
 }

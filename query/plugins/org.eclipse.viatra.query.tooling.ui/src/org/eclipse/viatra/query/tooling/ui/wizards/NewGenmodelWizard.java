@@ -29,7 +29,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.viatra.query.tooling.ui.wizards.internal.operations.CompositeWorkspaceModifyOperation;
 import org.eclipse.viatra.query.tooling.ui.wizards.internal.operations.CreateGenmodelOperation;
@@ -43,10 +43,10 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
     private IWorkbench workbench;
     private IStructuredSelection selection;
     private SelectIncQueryProjectPage projectPage;
-    private NewEiqGenmodelPage genmodelPage;
+    private NewVQGenmodelPage genmodelPage;
 
     @Inject
-    private IEiqGenmodelProvider genmodelProvider;
+    private IVQGenmodelProvider genmodelProvider;
     @Inject
     private IResourceSetProvider resourceSetProvider;
     @Inject
@@ -56,7 +56,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
     public void addPages() {
         projectPage = new SelectIncQueryProjectPage("Select EMF-IncQuery project", selection, logger);
         addPage(projectPage);
-        genmodelPage = new NewEiqGenmodelPage(false);
+        genmodelPage = new NewVQGenmodelPage(false);
         addPage(genmodelPage);
     }
 
@@ -96,7 +96,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
             return false;
         }
 
-        IFile genmodelFile = (IFile) project.findMember(ViatraQueryNature.IQGENMODEL);
+        IFile genmodelFile = (IFile) project.findMember(ViatraQueryNature.VQGENMODEL);
         BasicNewProjectResourceWizard.selectAndReveal(genmodelFile, workbench.getActiveWorkbenchWindow());
 
         IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();

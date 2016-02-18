@@ -42,7 +42,7 @@ import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.viatra.query.tooling.core.generator.GenerateQuerySpecificationExtension;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
-import org.eclipse.viatra.query.tooling.core.generator.genmodel.IEiqGenmodelProvider;
+import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.builder.BuilderParticipant;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
@@ -83,7 +83,7 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
     private GenerateQuerySpecificationExtension querySpecificationExtensionGenerator;
 
     @Inject
-    private IEiqGenmodelProvider genmodelProvider;
+    private IVQGenmodelProvider genmodelProvider;
 
     @Inject
     private Logger logger;
