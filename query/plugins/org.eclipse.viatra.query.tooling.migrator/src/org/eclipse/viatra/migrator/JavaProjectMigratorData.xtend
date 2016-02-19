@@ -174,7 +174,42 @@ abstract class JavaProjectMigratorData {
 	
 			"org.eclipse.incquery.runtime.internal.api.impl.IncQueryEngineImpl" -> "org.eclipse.viatra.query.runtime.internal.api.impl.ViatraQueryEngineImpl",
 	
-			"org.eclipse.viatra.emf.runtime.update.IQEngineUpdateCompleteProvider" -> "org.eclipse.viatra.transformation.evm.update.QueryEngineUpdateCompleteProvider"
+			"org.eclipse.viatra.emf.runtime.update.IQEngineUpdateCompleteProvider" -> "org.eclipse.viatra.transformation.evm.update.QueryEngineUpdateCompleteProvider",
+			
+			"org.eclipse.incquery.runtime.exception.IncQueryException" -> "org.eclipse.viatra.query.runtime.exception.ViatraQueryException",
+            "org.eclipse.incquery.runtime.util.IncQueryLoggingUtil" ->  "org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil",
+            "org.eclipse.incquery.runtime.api.scope.IncQueryScope" ->   "org.eclipse.viatra.query.runtime.api.scope.QueryScope",
+            "org.eclipse.incquery.runtime.emf.helper.IncQueryRuntimeHelper" -> "org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventRealm" -> "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSource" -> "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventSource",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventSourceSpecification" -> "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventSourceSpecification",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQuerySinglePatternMatchEventFilter" -> "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryMatchEventFilter",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryMultiPatternMatchEventFilter" ->  "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryMultiMatchEventFilter",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryFilterSemantics" -> "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryFilterSemantics",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventHandler" -> "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventHandler",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryRuleInstanceBuilder" -> "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryRuleInstanceBuilder",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum" -> "org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryEvent" ->   "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEvent",
+            "org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventTypeEnum" -> "org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum",
+            "org.eclipse.incquery.runtime.base.exception.IncQueryBaseException" -> "org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException",
+            "org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory"  ->  "org.eclipse.viatra.query.runtime.base.api.ViatraBaseFactory",
+            "org.eclipse.incquery.runtime.base.api.scope.IncQueryBaseIndexChangeListener" ->  "org.eclipse.viatra.query.runtime.api.scope.ViatraBaseIndexChangeListener",
+			
+			
+			"org.eclipse.viatra.cep.core.api.events.ParameterizableIncQueryPatternEventInstance" ->  "org.eclipse.viatra.cep.core.api.events.ParameterizableViatraQueryPatternEventInstance",
+            "org.eclipse.incquery.databinding.runtime.api.IncQueryObservables" ->  "org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables",
+            "org.eclipse.incquery.databinding.runtime.api.IncQueryHeadlessRealm" -> "org.eclipse.viatra.addon.databinding.runtime.api.ViatraHeadlessRealm",
+    
+            "org.eclipse.incquery.tooling.core.generator.genmodel.IEiqGenmodelProvider" ->   "org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider",
+            "org.eclipse.incquery.tooling.generator.model.generatorModel.IncQueryGeneratorModel" ->  "org.eclipse.viatra.query.tooling.generator.model.generatorModel.ViatraQueryGeneratorModel",
+            
+            "org.eclipse.incquery.viewers.runtime.IncQueryViewerSupport" ->  "org.eclipse.viatra.addon.viewers.runtime.ViatraViewerSupport",
+            "org.eclipse.incquery.viewers.runtime.extensions.jface.IncQueryViewersJFaceViewSupport" -> "org.eclipse.viatra.addon.viewers.runtime.extensions.jface.ViatraViewersJFaceViewSupport",
+            "org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersViewSupport" -> "org.eclipse.viatra.addon.viewers.runtime.extensions.ViatraViewersViewSupport",
+            "org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport" -> "org.eclipse.viatra.addon.viewers.runtime.extensions.ViatraViewersPartSupport",
+            "org.eclipse.incquery.viewers.runtime.zest.IncQueryGraphViewers" -> "org.eclipse.viatra.addon.viewers.runtime.zest.ViatraGraphViewers",
+            "org.eclipse.incquery.viewers.runtime.model.IncQueryViewerDataModel" -> "org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel",
+            "org.eclipse.incquery.viewers.runtime.zest.extensions.IncQueryViewersZestViewSupport" -> "org.eclipse.viatra.addon.viewers.runtime.zest.extensions.ViatraViewersZestViewSupport"
 		)
 		
 		/*
