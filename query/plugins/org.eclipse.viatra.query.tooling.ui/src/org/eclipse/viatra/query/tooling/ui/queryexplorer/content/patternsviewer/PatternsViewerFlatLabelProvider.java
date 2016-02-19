@@ -50,7 +50,7 @@ public class PatternsViewerFlatLabelProvider implements ILabelProvider {
         ImageRegistry imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry();
 
         if (element instanceof PatternLeaf) {
-            return imageRegistry.get(ViatraQueryGUIPlugin.ICON_EIQ);
+            return imageRegistry.get(ViatraQueryGUIPlugin.ICON_VQL);
         } else if (element instanceof PatternComposite) {
             if (!element.equals(input.getGeneratedPatternsRoot()) && !element.equals(input.getGenericPatternsRoot())) {
                 return imageRegistry.get(ViatraQueryGUIPlugin.ICON_EPACKAGE);

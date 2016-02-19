@@ -1,7 +1,7 @@
 package org.eclipse.viatra.examples.uml.evm;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Set;
 
@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.Context;
@@ -43,7 +43,7 @@ import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.RuleEngines;
 import org.eclipse.viatra.transformation.evm.specific.Rules;
 import org.eclipse.viatra.transformation.evm.specific.Schedulers;
-import org.eclipse.viatra.transformation.evm.specific.event.IncQueryActivationStateEnum;
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 import org.eclipse.viatra.transformation.evm.specific.scheduler.UpdateCompleteBasedScheduler.UpdateCompleteBasedSchedulerFactory;
 import org.junit.Test;
 
@@ -63,7 +63,7 @@ public class UMLexampleForEVM {
             // create IncQueryEngine for the resource set
             final ViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resourceSet));
             // create rule engine over IncQueryEngine
-            final RuleEngine ruleEngine = RuleEngines.createIncQueryRuleEngine(engine);
+            final RuleEngine ruleEngine = RuleEngines.createViatraQueryRuleEngine(engine);
             // set logger level to debug to see activation life-cycle events
             ruleEngine.getLogger().setLevel(Level.DEBUG);
             // create context for execution
@@ -107,14 +107,14 @@ public class UMLexampleForEVM {
             // disposed
             ruleEngine.dispose();
 
-        } catch (final IncQueryException e) {
+        } catch (final ViatraQueryException e) {
             e.printStackTrace();
         }
 
     }
 
     private void testFilteredRules(final ViatraQueryEngine engine, final RuleEngine ruleEngine,
-            final RuleSpecification<PossibleSuperClassMatch> createGeneralization) throws IncQueryException {
+            final RuleSpecification<PossibleSuperClassMatch> createGeneralization) throws ViatraQueryException {
         assertFalse(ruleEngine.addRule(createGeneralization));
 
         final PossibleSuperClassMatcher matcher = PossibleSuperClassMatcher.on(engine);
@@ -158,7 +158,7 @@ public class UMLexampleForEVM {
             // use IQBase update callback for scheduling execution
             final UpdateCompleteBasedSchedulerFactory schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(engine);
             // create execution schema over IncQueryEngine
-            final ExecutionSchema executionSchema = ExecutionSchemas.createIncQueryExecutionSchema(engine, schedulerFactory);
+            final ExecutionSchema executionSchema = ExecutionSchemas.createViatraQueryExecutionSchema(engine, schedulerFactory);
             // set logger level to debug to see activation life-cycle events
             executionSchema.getLogger().setLevel(Level.DEBUG);
 
@@ -191,16 +191,16 @@ public class UMLexampleForEVM {
             // rules until disposed
             executionSchema.dispose();
 
-        } catch (final IncQueryException e) {
+        } catch (final ViatraQueryException e) {
             e.printStackTrace();
         }
 
     }
 
-    private RuleSpecification<PossibleSuperClassMatch> getCreateGeneralizationRule() throws IncQueryException {
+    private RuleSpecification<PossibleSuperClassMatch> getCreateGeneralizationRule() throws ViatraQueryException {
         // the job specifies what to do when an activation is fired in the given
         // state
-        final Job<PossibleSuperClassMatch> job = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new PossibleSuperClassProcessor() {
+        final Job<PossibleSuperClassMatch> job = Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED, new PossibleSuperClassProcessor() {
             @Override
             public void process(final Class cl, final Class sup) {
                 System.out.println("Found cl " + cl + " without superclass");
@@ -219,8 +219,8 @@ public class UMLexampleForEVM {
         return spec;
     }
 
-    private RuleSpecification<OnlyInheritedOperationsMatch> getCreateOperationRule() throws IncQueryException {
-        final Job<OnlyInheritedOperationsMatch> job = Jobs.newStatelessJob(IncQueryActivationStateEnum.APPEARED, new OnlyInheritedOperationsProcessor() {
+    private RuleSpecification<OnlyInheritedOperationsMatch> getCreateOperationRule() throws ViatraQueryException {
+        final Job<OnlyInheritedOperationsMatch> job = Jobs.newStatelessJob(CRUDActivationStateEnum.CREATED, new OnlyInheritedOperationsProcessor() {
             @Override
             public void process(final Class cl) {
                 System.out.println("Found class " + cl + " without operation");

@@ -42,7 +42,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
 
     private IWorkbench workbench;
     private IStructuredSelection selection;
-    private SelectIncQueryProjectPage projectPage;
+    private SelectViatraQueryProjectPage projectPage;
     private NewVQGenmodelPage genmodelPage;
 
     @Inject
@@ -54,7 +54,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
 
     @Override
     public void addPages() {
-        projectPage = new SelectIncQueryProjectPage("Select EMF-IncQuery project", selection, logger);
+        projectPage = new SelectViatraQueryProjectPage("Select VIATRA Query project", selection, logger);
         addPage(projectPage);
         genmodelPage = new NewVQGenmodelPage(false);
         addPage(genmodelPage);
@@ -91,7 +91,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
             return false;
         } catch (InvocationTargetException e) {
             Throwable realException = e.getTargetException();
-            logger.error("Cannot initialize EMF-IncQuery generator model " + realException.getMessage(), realException);
+            logger.error("Cannot initialize VIATRA Query generator model " + realException.getMessage(), realException);
             MessageDialog.openError(getShell(), "Error", realException.getMessage());
             return false;
         }
@@ -105,7 +105,7 @@ public class NewGenmodelWizard extends Wizard implements INewWizard {
             page.openEditor(new FileEditorInput(genmodelFile),
                     workbench.getEditorRegistry().getDefaultEditor(genmodelFile.getName()).getId());
         } catch (PartInitException e) {
-            logger.error("Cannot open EMF-IncQuery generator model", e);
+            logger.error("Cannot open VIATRA Query generator model", e);
         }
         return true;
     }

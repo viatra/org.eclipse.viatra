@@ -149,7 +149,7 @@ public class EnsurePluginSupport {
                 }
             }
         } else {
-            // if no contributed extensions (like no pattern in the eiq file)
+            // if no contributed extensions (like no pattern in the vql file)
             // remove all previous extension
             for (IProject proj : removableExtensionMap.keySet()) {
                 Iterable<Pair<String, String>> removableExtensions = removableExtensionMap.get(proj);

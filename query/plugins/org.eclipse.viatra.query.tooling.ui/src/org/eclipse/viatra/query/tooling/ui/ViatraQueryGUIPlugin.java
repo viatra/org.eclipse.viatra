@@ -43,7 +43,7 @@ public class ViatraQueryGUIPlugin extends AbstractUIPlugin {
     public static final String ICON_ARROW_TOP = "arrow_top";
     public static final String ICON_ARROW_BOTTOM = "arrow_bottom";
     public static final String ICON_EPACKAGE = "epackage";
-    public static final String ICON_EIQ = "eiq";
+    public static final String ICON_VQL = "vql";
 
     // The shared instance
     private static ViatraQueryGUIPlugin plugin;
@@ -91,7 +91,7 @@ public class ViatraQueryGUIPlugin extends AbstractUIPlugin {
         reg.put(ICON_ARROW_TOP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_top.gif"));
         reg.put(ICON_ARROW_BOTTOM, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_bottom.gif"));
         reg.put(ICON_EPACKAGE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/epackage.gif"));
-        reg.put(ICON_EIQ, imageDescriptorFromPlugin(PLUGIN_ID, "icons/logo2.png"));
+        reg.put(ICON_VQL, imageDescriptorFromPlugin(PLUGIN_ID, "icons/logo2.png"));
     }
 
     public void logException(String message, Throwable exception) {

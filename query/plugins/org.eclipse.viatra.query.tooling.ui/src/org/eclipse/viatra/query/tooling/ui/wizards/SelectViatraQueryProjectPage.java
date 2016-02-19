@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 
-public class SelectIncQueryProjectPage extends WizardPage {
+public class SelectViatraQueryProjectPage extends WizardPage {
     private final static class ProjectColumnLabelProvider extends ColumnLabelProvider {
         private Color disabledColor;
 
@@ -70,7 +70,7 @@ public class SelectIncQueryProjectPage extends WizardPage {
         @Override
         public String getToolTipText(Object element) {
             if (element instanceof IProject && ((IProject) element).findMember(ViatraQueryNature.VQGENMODEL) != null) {
-                return String.format("Project %s has already defined an EMF-IncQuery Generator model.",
+                return String.format("Project %s has already defined an VIATRA Query Generator model.",
                         ((IProject) element).getName());
             }
             return super.getToolTipText(element);
@@ -86,12 +86,12 @@ public class SelectIncQueryProjectPage extends WizardPage {
     /**
      * Create the wizard.
      */
-    public SelectIncQueryProjectPage(String title, IStructuredSelection selection, Logger logger) {
+    public SelectViatraQueryProjectPage(String title, IStructuredSelection selection, Logger logger) {
         super("wizardPage");
         this.selection = selection;
         this.logger = logger;
         setTitle(title);
-        setDescription("Select an EMF-IncQuery project without an EMF-IncQuery Generator model");
+        setDescription("Select a VIATRA Query project without a VIATRA Query Generator model");
     }
 
     /**

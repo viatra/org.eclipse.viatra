@@ -41,27 +41,27 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 
 /**
- * First page of the {@link NewEiqFileWizard} which allows to specify the details of the container for a pattern.
+ * First page of the {@link NewVqlFileWizard} which allows to specify the details of the container for a pattern.
  * 
  * @author Tamas Szabo
  * 
  */
 @SuppressWarnings("restriction")
-public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPage {
+public class NewVqlFileWizardContainerConfigurationPage extends NewTypeWizardPage {
 
     private Text fileText;
-    private static final String TITLE = "EMF-IncQuery Query Definition Wizard";
+    private static final String TITLE = "VIATRA Query Definition Wizard";
     private static final String THE_GIVEN_FILE_ALREADY_EXISTS = "The given file already exists!";
     private static final String defaultEiqFileName = "";
     private static final String SOURCE_FOLDER_ERROR = "You must specify a valid source folder!";
     private static final String FILE_NAME_ERROR = "File name must be specified!";
     private static final String FILE_NAME_NOT_VALID = "File name must be valid!";
-    private static final String FILE_EXTENSION_ERROR = "File extension must be \"eiq\"!";
+    private static final String FILE_EXTENSION_ERROR = "File extension must be \"vql\"!";
     private static final String DEFAULT_PACKAGE_ERROR = "A non-empty Java package must be specified!";
     private static final String PACKAGE_NAME_WARNING = "Only lower case Java package names supported.";
 
-    public NewEiqFileWizardContainerConfigurationPage() {
-        super(false, "eiq");
+    public NewVqlFileWizardContainerConfigurationPage() {
+        super(false, "vql");
         setTitle(TITLE);
     }
 
@@ -164,11 +164,11 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
             } else {
                 int dotLoc = fileName.lastIndexOf('.');
                 String ext = fileName.substring(dotLoc + 1);
-                wrongExtension = !ext.equalsIgnoreCase("eiq");
+                wrongExtension = !ext.equalsIgnoreCase("vql");
 
                 String name = fileName.substring(0, dotLoc);
-                IStatus nameValidatorStatus = JavaConventions.validateTypeVariableName(name, JavaCore.VERSION_1_6,
-                        JavaCore.VERSION_1_6);
+                IStatus nameValidatorStatus = JavaConventions.validateTypeVariableName(name, JavaCore.VERSION_1_7,
+                        JavaCore.VERSION_1_7);
                 if (nameValidatorStatus.getSeverity() == IStatus.ERROR) {
                     si.setError(String.format("Filename %s is not a valid Java type name.", name));
                 }
@@ -196,7 +196,7 @@ public class NewEiqFileWizardContainerConfigurationPage extends NewTypeWizardPag
         }
         IJavaProject project = getJavaProject();
         if (project == null || !project.exists()) {
-            return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
+            return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_7, JavaCore.VERSION_1_7);
         }
         IStatus status = JavaConventionsUtil.validatePackageName(text, project);
         if (!text.equalsIgnoreCase(text)) {

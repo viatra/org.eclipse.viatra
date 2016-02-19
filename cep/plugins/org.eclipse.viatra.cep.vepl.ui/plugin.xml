@@ -81,9 +81,10 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.eclipse.viatra.cep.vepl.ui.VeplExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.viatra.cep.vepl.Vepl"
-            name="Vepl">
+              category="org.eclipse.viatra.query.tooling.ui.viatra"
+              class="org.eclipse.viatra.cep.vepl.ui.VeplExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+              id="org.eclipse.viatra.cep.vepl.Vepl"
+              name="VEPL">
             <keywordReference id="org.eclipse.viatra.cep.vepl.ui.keyword_Vepl"/>
         </page>
         <page

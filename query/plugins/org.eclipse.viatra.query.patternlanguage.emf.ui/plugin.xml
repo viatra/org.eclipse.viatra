@@ -82,9 +82,10 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage"
-            name="VIATRA Query Language">
+              category="org.eclipse.viatra.query.tooling.ui.viatra"
+              class="org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+              id="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage"
+              name="Query Language">
             <keywordReference id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage"/>
         </page>
         <page

@@ -19,7 +19,7 @@ import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import com.google.inject.Inject;
 
 /**
- * Adapter factory for the default EMF generated model editors and our own EIQ editor.
+ * Adapter factory for the default EMF generated model editors and our own VQL editor.
  */
 @SuppressWarnings("rawtypes")
 public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactory {
@@ -32,7 +32,7 @@ public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactor
         if (adapterType == IModelConnector.class && adaptableObject instanceof IEditorPart) {
             IEditorPart editorPart = (IEditorPart) adaptableObject;
             if ("org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage".equals(editorPart.getSite().getId())) {
-                return new EIQEditorModelConnector(editorPart, resourceSetProvider);
+                return new VQLEditorModelConnector(editorPart, resourceSetProvider);
             } else if (adaptableObject instanceof IEditingDomainProvider) {
                 return new EMFModelConnector(editorPart);
             }

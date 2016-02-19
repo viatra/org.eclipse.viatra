@@ -20,7 +20,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-public class LoadEiqPatternHandler extends AbstractHandler {
+public class LoadVqlPatternHandler extends AbstractHandler {
 
     @Inject
     Injector injector;

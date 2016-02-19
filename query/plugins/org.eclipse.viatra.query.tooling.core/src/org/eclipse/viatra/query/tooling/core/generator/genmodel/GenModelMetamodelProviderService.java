@@ -133,7 +133,7 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
                 referencedPackages = Iterables.concat(referencedPackages, packages);
             }
         }
-        // The FilteringScope is used to ensure elements in eiq genmodel are not accidentally found in the parent
+        // The FilteringScope is used to ensure elements in vql genmodel are not accidentally found in the parent
         // version
         return new SimpleScope(new FilteringScope(super.getAllMetamodelObjects(delegateScope, ctx), new ParentScopeFilter(
                 referencedPackages)), referencedPackages);

@@ -8,13 +8,13 @@
             allPopups="false"
             locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
          <command
-               commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers.resourceset"
-               label="Reinitialize IncQuery Viewers"
+               commandId="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resourceset"
+               label="Reinitialize VIATRA Viewers"
                style="push">
          </command>
          <command
-               commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers.resource"
-               label="Reinitialize IncQuery Viewers (resource scope)"
+               commandId="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resource"
+               label="Reinitialize VIATRA Viewers (resource scope)"
                style="push">
          </command>
       </menuContribution>
@@ -23,40 +23,29 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            categoryId="org.eclipse.incquery.viewers.tooling.ui.category"
-            id="org.eclipse.incquery.viewers.tooling.ui.initViewers.resourceset"
-            name="Reinitialize IncQuery Viewers (resourceset)">
+            categoryId="org.eclipse.viatra.addon.viewers.tooling.ui.category"
+            id="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resourceset"
+            name="Reinitialize VIATRA Viewers (resourceset)">
       </command>
       <command
-            categoryId="org.eclipse.incquery.viewers.tooling.ui.category"
-            id="org.eclipse.incquery.viewers.tooling.ui.initViewers.resource"
-            name="Reinitialize IncQuery Viewers (resource)">
+            categoryId="org.eclipse.viatra.addon.viewers.tooling.ui.category"
+            id="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resource"
+            name="Reinitialize VIATRA Viewers (resource)">
       </command>
       <category
-            id="org.eclipse.incquery.viewers.tooling.ui.category"
-            name="IncQuery Viewers">
+            id="org.eclipse.viatra.addon.viewers.tooling.ui.category"
+            name="VIATRA Viewers">
       </category>
    </extension>
    
    <extension
-         point="org.eclipse.ui.views">
-      <!--
-      <view
-            category="org.eclipse.viatra.query.tooling.ui"
-            class="org.eclipse.incquery.viewers.tooling.ui.views.ViewersSandboxView"
-            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
-            id="org.eclipse.incquery.viewers.tooling.ui.sandbox"
-            name="IncQuery Viewers Sandbox"
-            restorable="true">
-      </view>
-      -->
-      
+         point="org.eclipse.ui.views"> 
       <view
             category="org.eclipse.viatra.query.tooling.ui"
             class="org.eclipse.viatra.addon.viewers.tooling.ui.views.ViewersMultiSandboxView"
             icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
             id="org.eclipse.viatra.addon.viewers.tooling.ui.sandbox"
-            name="IncQuery Viewers Sandbox"
+            name="Viewers Sandbox"
             restorable="true">
       </view>
    </extension>
@@ -64,7 +53,7 @@
          point="org.eclipse.ui.handlers">
       <handler
             class="org.eclipse.viatra.addon.viewers.tooling.ui.handlers.InitializeViewersHandlerResource"
-            commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers.resource">
+            commandId="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resource">
          <enabledWhen>
             <with
                   variable="selection">
@@ -86,7 +75,7 @@
       </handler>
       <handler
             class="org.eclipse.viatra.addon.viewers.tooling.ui.handlers.InitializeViewersHandlerResourceSet"
-            commandId="org.eclipse.incquery.viewers.tooling.ui.initViewers.resourceset">
+            commandId="org.eclipse.viatra.addon.viewers.tooling.ui.initViewers.resourceset">
          <enabledWhen>
             <with
                   variable="selection">

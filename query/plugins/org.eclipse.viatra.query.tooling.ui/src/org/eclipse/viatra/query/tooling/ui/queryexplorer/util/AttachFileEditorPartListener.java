@@ -18,13 +18,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.AttachEiqEditorRegistrationHandler;
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.AttachVqlEditorRegistrationHandler;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.PatternUnregistrationHandler;
 
 /**
  * The PartListener is used to observe EditorPart close actions.
  * 
- * The main functionality is that if an EIQ editor is being closed while "attached"
+ * The main functionality is that if an VQL editor is being closed while "attached"
  * to the QE, the attachment must be eliminated.
  * 
  * @author Tamas Szabo
@@ -32,11 +32,11 @@ import org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.PatternUnregis
  */
 public class AttachFileEditorPartListener extends BasePartListener {
 
-    //private final static String dialogTitle = ".eiq file editor closing";
+    //private final static String dialogTitle = ".vql file editor closing";
 
-    private AttachEiqEditorRegistrationHandler attachHandler;
+    private AttachVqlEditorRegistrationHandler attachHandler;
     
-    public AttachFileEditorPartListener(AttachEiqEditorRegistrationHandler h) {
+    public AttachFileEditorPartListener(AttachVqlEditorRegistrationHandler h) {
     	this.attachHandler = h;
     }
     
@@ -49,7 +49,7 @@ public class AttachFileEditorPartListener extends BasePartListener {
 
             if (editorInput instanceof FileEditorInput) {
                 IFile file = ((FileEditorInput) editorInput).getFile();
-                if (file != null && file.getFileExtension().matches("eiq") 
+                if (file != null && file.getFileExtension().matches("vql") 
                 		&& attachHandler.thereIsAnAttachedEditorForFile(file)
                 		&& QueryExplorerPatternRegistry.getInstance().getFiles().contains(file)) {
 //                    String question = "There are patterns (from file named '" + file.getName()

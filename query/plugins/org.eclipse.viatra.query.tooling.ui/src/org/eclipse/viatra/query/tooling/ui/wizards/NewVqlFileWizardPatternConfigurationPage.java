@@ -41,16 +41,16 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
- * Second page of the {@link NewEiqFileWizard} which allows to specify pattern parameters and imported {@link EPackage}
+ * Second page of the {@link NewVqlFileWizard} which allows to specify pattern parameters and imported {@link EPackage}
  * s.
  * 
  * @author Tamas Szabo
  * 
  */
 @SuppressWarnings("restriction")
-public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
+public class NewVqlFileWizardPatternConfigurationPage extends WizardPage {
 
-    private static final String TITLE = "EMF-IncQuery Query Definition Wizard";
+    private static final String TITLE = "VIATRA Query Definition Wizard";
     private static final String PATTERN_NAME_SHOULD_BE_SPECIFIED = "Pattern name should be specified!";
     private static final String PATTERN_NAME_MUST_BE_SPECIFIED = "Pattern name must be specified, if at least one parameter is set!";
     private Text patternText;
@@ -69,7 +69,7 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
     
     private ResourceSet resourceSet;
 
-    public NewEiqFileWizardPatternConfigurationPage() {
+    public NewVqlFileWizardPatternConfigurationPage() {
         super(TITLE);
         setTitle(TITLE);
         parameterSet = false;
@@ -78,7 +78,7 @@ public class NewEiqFileWizardPatternConfigurationPage extends WizardPage {
     private void createImportsControl(Composite parent, int nColumns) {
         String[] buttonLiterals = new String[] { "Add", "Remove" };
 
-        NewEiqFileWizardContainerConfigurationPage firstPage = (NewEiqFileWizardContainerConfigurationPage) this
+        NewVqlFileWizardContainerConfigurationPage firstPage = (NewVqlFileWizardContainerConfigurationPage) this
                 .getPreviousPage();
         resourceSet = resourceSetProvider.get(firstPage.getProject());
 

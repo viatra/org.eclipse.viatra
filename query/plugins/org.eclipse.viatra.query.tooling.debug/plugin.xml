@@ -4,11 +4,11 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            category="org.eclipse.incquery.tooling.ui"
+            category="org.eclipse.viatra.query.tooling.ui"
             class="org.eclipse.viatra.query.tooling.debug.variables.ViatraQueryVariablesView"
             icon="icons/logo2.png"
-            id="org.eclipse.incquery.tooling.debug.variables.IncQueryVariablesView"
-            name="EMF-IncQuery Variables"
+            id="org.eclipse.viatra.query.tooling.debug.variables.Viatra.QueryVariablesView"
+            name="VIATRA Query Variables"
             restorable="true">
       </view>
    </extension>

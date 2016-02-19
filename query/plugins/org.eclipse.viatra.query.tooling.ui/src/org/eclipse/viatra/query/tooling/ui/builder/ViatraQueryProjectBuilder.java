@@ -85,7 +85,7 @@ public class ViatraQueryProjectBuilder extends IncrementalProjectBuilder {
                     @Override
                     public boolean visit(IResource resource) throws CoreException {
                         final String extension = resource.getFileExtension();
-                        if ("eiq".equals(extension)) {
+                        if ("vql".equals(extension)) {
                             resource.touch(new NullProgressMonitor());
                         }
                         return false;

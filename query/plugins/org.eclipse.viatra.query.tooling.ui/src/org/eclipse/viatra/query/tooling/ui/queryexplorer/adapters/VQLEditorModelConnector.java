@@ -20,13 +20,13 @@ import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
 /**
- * Model connector implementation for our own EIQ model editor.
+ * Model connector implementation for our own VQL model editor.
  */
-public class EIQEditorModelConnector extends EMFModelConnector {
+public class VQLEditorModelConnector extends EMFModelConnector {
 
     private final IResourceSetProvider resourceSetProvider;
 
-    public EIQEditorModelConnector(IEditorPart editorPart, IResourceSetProvider resourceSetProvider) {
+    public VQLEditorModelConnector(IEditorPart editorPart, IResourceSetProvider resourceSetProvider) {
         super(editorPart);
         this.resourceSetProvider = resourceSetProvider;
     }
@@ -35,21 +35,21 @@ public class EIQEditorModelConnector extends EMFModelConnector {
     public Notifier getNotifier(IModelConnectorTypeEnum modelConnectorTypeEnum) {
         Notifier result = null;
         if (IModelConnectorTypeEnum.RESOURCESET.equals(modelConnectorTypeEnum)) {
-            // XXX It should load the depending eiq's as well
+            // XXX It should load the depending vql's as well
             IFile file = (IFile) editorPart.getEditorInput().getAdapter(IFile.class);
             if (file != null) {
-                result = loadEIQFile(file);
+                result = loadVQLFile(file);
             }
         } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
             IFile file = (IFile) editorPart.getEditorInput().getAdapter(IFile.class);
             if (file != null) {
-                result = loadEIQFile(file);
+                result = loadVQLFile(file);
             }
         }
         return result;
     }
 
-    private Resource loadEIQFile(IFile file) {
+    private Resource loadVQLFile(IFile file) {
         ResourceSet resourceSet = resourceSetProvider.get(file.getProject());
         URI fileURI = URI.createPlatformResourceURI(file.getFullPath().toString(), false);
         return resourceSet.getResource(fileURI, true);

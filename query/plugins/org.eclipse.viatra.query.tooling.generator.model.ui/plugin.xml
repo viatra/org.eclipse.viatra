@@ -81,9 +81,10 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.eclipse.viatra.query.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.viatra.query.tooling.generator.model.GeneratorModel"
-            name="GeneratorModel">
+              category="org.eclipse.viatra.query.tooling.ui.viatra"
+              class="org.eclipse.viatra.query.tooling.generator.model.ui.GeneratorModelExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+              id="org.eclipse.viatra.query.tooling.generator.model.GeneratorModel"
+              name="Generator Model">
             <keywordReference id="org.eclipse.viatra.query.tooling.generator.model.ui.keyword_GeneratorModel"/>
         </page>
         <page

@@ -75,7 +75,7 @@ public class GenericViatraQueryApplication {
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("ecore", new EcoreResourceFactoryImpl());
 		URI fileURI = URI.createFileURI(eiqFile);
 	    URI modelURI = URI.createFileURI(model);
-		System.out.println(hla.executeDemo_GenericAPI_LoadFromEIQ(modelURI, fileURI, patternFQN));
+		System.out.println(hla.executeDemo_GenericAPI_LoadFromVQL(modelURI, fileURI, patternFQN));
 		System.out.println(hla.executeTrackChangesDemo_Advanced(modelURI, patternFQN));
 		
 	}

@@ -13,7 +13,7 @@ package org.eclipse.viatra.query.tooling.ui.queryexplorer.preference;
 
 public class PreferenceConstants {
 
-    public static final String WILDCARD_MODE = "org.eclipse.incquery.tooling.gui.queryexplorer.WildcardMode";
-    public static final String DYNAMIC_EMF_MODE = "org.eclipse.incquery.tooling.gui.queryexplorer.DynamicEMFMode";
+    public static final String WILDCARD_MODE = "org.eclipse.viatra.query.tooling.ui.queryexplorer.WildcardMode";
+    public static final String DYNAMIC_EMF_MODE = "org.eclipse.viatra.query.tooling.ui.queryexplorer.DynamicEMFMode";
 
 }

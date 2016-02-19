@@ -355,10 +355,10 @@ public class DisplayUtil {
 
 
     /**
-     * Parses the given .eiq file into a {@link PatternModel}.
+     * Parses the given .vql file into a {@link PatternModel}.
      *
      * @param file
-     *            the .eiq file instance
+     *            the .vql file instance
      * @return the parsed pattern model or null in case of error
      */
     public PatternModel parseEPM(IFile file) {

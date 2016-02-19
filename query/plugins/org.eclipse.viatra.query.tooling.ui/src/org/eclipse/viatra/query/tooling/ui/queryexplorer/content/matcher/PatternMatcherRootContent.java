@@ -134,7 +134,7 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
             // generated matchers are inserted in front of the list
             this.children.addChild(0, pm);
         } else {
-            // generic matchers are inserted in the list according to the order in the eiq file
+            // generic matchers are inserted in the list according to the order in the vql file
             this.children.addChild(pm);
         }
     }

@@ -69,9 +69,9 @@ public class GenericEclipseViatraQueryApplication implements IApplication {
 
 		ViatraQueryHeadlessAdvanced hla = new ViatraQueryHeadlessAdvanced();
 //		System.out.println(hla.executeDemo_GenericAPI(model, patternFQN));
-		URI fileURI = URI.createPlatformPluginURI("org.eclipse.viatra.query.application.queries/src/org/eclipse/viatra/query/application/queries/headlessQueries.eiq", false);
+		URI fileURI = URI.createPlatformPluginURI("org.eclipse.viatra.query.application.queries/src/org/eclipse/viatra/query/application/queries/headlessQueries.vql", false);
 	    URI modelURI = URI.createFileURI(model);
-		System.out.println(hla.executeDemo_GenericAPI_LoadFromEIQ(modelURI, fileURI, patternFQN));
+		System.out.println(hla.executeDemo_GenericAPI_LoadFromVQL(modelURI, fileURI, patternFQN));
 		System.out.println(hla.executeTrackChangesDemo_Advanced(modelURI, patternFQN));
 		
 		return IApplication.EXIT_OK;

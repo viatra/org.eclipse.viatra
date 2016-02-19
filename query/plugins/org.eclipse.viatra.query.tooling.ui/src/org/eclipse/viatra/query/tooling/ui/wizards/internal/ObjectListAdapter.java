@@ -16,7 +16,7 @@ import org.eclipse.jdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.viatra.query.tooling.core.targetplatform.ITargetPlatformMetamodelLoader;
-import org.eclipse.viatra.query.tooling.ui.wizards.NewEiqFileWizardPatternConfigurationPage;
+import org.eclipse.viatra.query.tooling.ui.wizards.NewVqlFileWizardPatternConfigurationPage;
 
 /**
  * An {@link IListAdapter} implementation for specifying pattern parameters in the wizard.
@@ -28,10 +28,10 @@ import org.eclipse.viatra.query.tooling.ui.wizards.NewEiqFileWizardPatternConfig
 public class ObjectListAdapter implements IListAdapter<ObjectParameter> {
 
     private ListDialogField<String> importList;
-    private NewEiqFileWizardPatternConfigurationPage page;
+    private NewVqlFileWizardPatternConfigurationPage page;
 	private ITargetPlatformMetamodelLoader metamodelLoader;
 
-    public ObjectListAdapter(NewEiqFileWizardPatternConfigurationPage page, ListDialogField<String> importList, ITargetPlatformMetamodelLoader metamodelLoader) {
+    public ObjectListAdapter(NewVqlFileWizardPatternConfigurationPage page, ListDialogField<String> importList, ITargetPlatformMetamodelLoader metamodelLoader) {
         this.importList = importList;
         this.page = page;
 		this.metamodelLoader = metamodelLoader;

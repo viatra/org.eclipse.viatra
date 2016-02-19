@@ -5,11 +5,11 @@
          point="org.eclipse.ui.commands">
       <!--<command
             id="org.eclipse.viatra.addon.validation.runtime.ui.initValidatorsOnSelection"
-            name="Initialize EMF-IncQuery Validators on Selected Subtree">
+            name="Initialize VIATRA Validators on Selected Subtree">
       </command>-->
       <command
             id="org.eclipse.viatra.addon.validation.runtime.ui.initValidatorsOnEditor"
-            name="Initialize EMF-IncQuery Validators on Editor">
+            name="Initialize VIATRA Validators on Editor">
       </command>
    </extension>
    <extension
@@ -30,7 +30,7 @@
             locationURI="popup:org.eclipse.ui.popup.any">
          <menu
                id="org.eclipse.viatra.addon.validation.runtime.ui.menu"
-               label="EMF-IncQuery Validation">
+               label="VIATRA Validation">
             <command
                   commandId="org.eclipse.viatra.addon.validation.runtime.ui.initValidatorsOnEditor"
                   style="push">

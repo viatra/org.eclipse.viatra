@@ -19,13 +19,13 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.incquery.examples.uml.queries.util.EmptyClassQuerySpecification;
-import org.eclipse.incquery.examples.uml.queries.util.HasPropertyOrOperationQuerySpecification;
-import org.eclipse.incquery.examples.uml.queries.util.HasPropertyQuerySpecification;
+import org.eclipse.viatra.examples.uml.queries.util.EmptyClassQuerySpecification;
+import org.eclipse.viatra.examples.uml.queries.util.HasPropertyOrOperationQuerySpecification;
+import org.eclipse.viatra.examples.uml.queries.util.HasPropertyQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.IncQueryException;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -45,7 +45,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class FlattenerTest {
 
     @Parameters
-    public static Collection<Object[]> querySpecifications() throws IncQueryException {
+    public static Collection<Object[]> querySpecifications() throws ViatraQueryException {
         return Arrays.asList(new Object[][] { 
                 { HasPropertyOrOperationQuerySpecification.instance() },
                 { HasPropertyQuerySpecification.instance() }, 

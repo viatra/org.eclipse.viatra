@@ -33,18 +33,18 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
- * "Attach Eiq Editor" registration handler.
+ * "Attach VQL Editor" registration handler.
  * 
- * Attempts to glue itself to an open EIQ editor by registering an Xtext model change listener.
+ * Attempts to glue itself to an open VQL editor by registering an Xtext model change listener.
  * 
- * This listener will listen to resource (model) changes inside the  Eiq editor and update the Query Explorer
+ * This listener will listen to resource (model) changes inside the  VQL editor and update the Query Explorer
  * accordingly.
  * 
  * @author istvanrath
  *
  */
 @SuppressWarnings("restriction")
-public class AttachEiqEditorRegistrationHandler extends AbstractHandler {
+public class AttachVqlEditorRegistrationHandler extends AbstractHandler {
 
     @Inject
     private Injector injector;

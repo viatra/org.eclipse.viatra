@@ -53,10 +53,10 @@ abstract class CommonStaticQueryTester {
 		return snapshotURI.loadExpectedResultsFromUri as QuerySnapshot
 	}
 	def queryInput() { // Creates new resource set
-		return queryInputEIQURI.loadPatternModelFromUri(injector, queryInputDependencyURIs) as PatternModel
+		return queryInputVQLURI.loadPatternModelFromUri(injector, queryInputDependencyURIs) as PatternModel
 	}
 
 	def String snapshotURI() // abstract
-	def String queryInputEIQURI() // abstract
+	def String queryInputVQLURI() // abstract
 	def Iterable<String> queryInputDependencyURIs() // abstract
 }

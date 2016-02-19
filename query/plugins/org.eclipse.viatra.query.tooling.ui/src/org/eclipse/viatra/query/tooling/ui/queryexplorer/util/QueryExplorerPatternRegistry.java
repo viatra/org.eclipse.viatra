@@ -66,7 +66,7 @@ public class QueryExplorerPatternRegistry {
 
     private static QueryExplorerPatternRegistry instance;
 
-    // maps the eiq files to the list of patterns which were registered from that file
+    // maps the vql files to the list of patterns which were registered from that file
     private final ListMultimap<IFile, IQuerySpecification<?>> registeredPatterModels;
     private final List<IQuerySpecification<?>> activePatterns;
     private final Map<String, IQuerySpecification<?>> patternNameMap;
@@ -125,7 +125,7 @@ public class QueryExplorerPatternRegistry {
      * Registers the patterns within the given (parsed) pattern model.
      *
      * @param file
-     *            the eiq file instance
+     *            the vql file instance
      * @param patternModel
      *            the parsed pattern model
      * @return the list of patterns registered
@@ -212,7 +212,7 @@ public class QueryExplorerPatternRegistry {
      * Returns the (unmodifiable) list of registered patterns from the given file.
      *
      * @param file
-     *            the eiq file instance
+     *            the vql file instance
      * @return the list of patterns registered
      */
     public List<IQuerySpecification<?>> getRegisteredPatternsForFile(IFile file) {
@@ -230,11 +230,11 @@ public class QueryExplorerPatternRegistry {
     }
 
     /**
-     * Unregisters the patterns within the given eiq file and returns the list of those patterns that were currently
+     * Unregisters the patterns within the given vql file and returns the list of those patterns that were currently
      * active from the given file.
      *
      * @param file
-     *            the eiq file instance
+     *            the vql file instance
      * @return the list of removed patterns
      */
     public List<IQuerySpecification<?>> unregisterPatternModel(IFile file) {
@@ -340,20 +340,20 @@ public class QueryExplorerPatternRegistry {
     }
 
     /**
-     * Returns the list of eiq files from which patterns are registered.
+     * Returns the list of vql files from which patterns are registered.
      *
-     * @return the list of eiq files
+     * @return the list of vql files
      */
     public Collection<IFile> getFiles() {
         return Collections.unmodifiableCollection(registeredPatterModels.keySet());
     }
 
     /**
-     * Returns the eiq file instance that the given pattern can be found in.
+     * Returns the vql file instance that the given pattern can be found in.
      *
      * @param pattern
      *            the pattern instance
-     * @return the eiq file
+     * @return the vql file
      */
     public IFile getFileForPattern(IQuerySpecification<?> pattern) {
         if (pattern != null && patternNameMap.containsValue(pattern)) {

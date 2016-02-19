@@ -73,7 +73,7 @@ public class NewVQGenmodelPage extends WizardPage {
     public NewVQGenmodelPage(boolean displayCreateComposite) {
         super("wizardPage");
         this.displayCreateComposite = displayCreateComposite;
-        setTitle("EMF-IncQuery Generator model");
+        setTitle("VIATRA Query Generator model");
         setDescription("Set up a generator model used for code generation.");
         set = new ResourceSetImpl();
     }
@@ -264,7 +264,7 @@ public class NewVQGenmodelPage extends WizardPage {
             }
         };
         IFile[] files = WorkspaceResourceDialog.openFileSelection(getShell(), "Select EMF Generator model",
-                "Select EMF generator model(s) to add to the initialized EMF-IncQuery generator model", true, null,
+                "Select EMF generator model(s) to add to the initialized VIATRA Query generator model", true, null,
                 ImmutableList.of(genmodelFileFilter));
         for (IFile file : files) {
             URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);

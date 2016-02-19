@@ -24,7 +24,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.tooling.generator.model.generatorModel.ViatraQueryGeneratorModel;
 
 /**
- * Helper interface for accessing eiq genmodels
+ * Helper interface for accessing vql genmodels
  * 
  */
 public interface IVQGenmodelProvider {

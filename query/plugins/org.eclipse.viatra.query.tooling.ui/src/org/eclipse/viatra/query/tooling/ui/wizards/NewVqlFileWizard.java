@@ -58,11 +58,11 @@ import com.google.inject.Injector;
  * @author Tamas Szabo
  * 
  */
-public class NewEiqFileWizard extends Wizard implements INewWizard {
+public class NewVqlFileWizard extends Wizard implements INewWizard {
 
-    private static final String NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE = "Create a new EMF-IncQuery Query Definition file.";
-    private NewEiqFileWizardContainerConfigurationPage page1;
-    private NewEiqFileWizardPatternConfigurationPage page2;
+    private static final String NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE = "Create a new VIATRA Query Definition file.";
+    private NewVqlFileWizardContainerConfigurationPage page1;
+    private NewVqlFileWizardPatternConfigurationPage page2;
     private ISelection selection;
     private IWorkbench workbench;
     private final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -71,17 +71,17 @@ public class NewEiqFileWizard extends Wizard implements INewWizard {
     @Inject
     private Injector injector;
 
-    public NewEiqFileWizard() {
+    public NewVqlFileWizard() {
         super();
         setNeedsProgressMonitor(true);
     }
 
     @Override
     public void addPages() {
-        page1 = new NewEiqFileWizardContainerConfigurationPage();
+        page1 = new NewVqlFileWizardContainerConfigurationPage();
         page1.init((IStructuredSelection) selection);
         page1.setDescription(NEW_EMF_INC_QUERY_QUERY_DEFINITION_FILE);
-        page2 = new NewEiqFileWizardPatternConfigurationPage();
+        page2 = new NewVqlFileWizardPatternConfigurationPage();
         injector.injectMembers(page2);
         addPage(page1);
         addPage(page2);

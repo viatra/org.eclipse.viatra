@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 
 /**
- * A wizard class for initializing an EMF IncQuery project.
+ * A wizard class for initializing a VIATRA Query project.
  * 
  * @author Zoltan Ujhelyi
  * 
@@ -52,9 +52,9 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 
     @Override
     public void addPages() {
-        projectCreationPage = new WizardNewProjectCreationPage("NewIncQueryProject");
-        projectCreationPage.setTitle("New EMF IncQuery Project");
-        projectCreationPage.setDescription("Create a new EMF IncQuery project.");
+        projectCreationPage = new WizardNewProjectCreationPage("NewViatraQueryProject");
+        projectCreationPage.setTitle("New VIATRA Query Project");
+        projectCreationPage.setDescription("Create a new VIATRA Query project.");
         addPage(projectCreationPage);
     }
 
@@ -88,11 +88,11 @@ public class NewProjectWizard extends Wizard implements INewWizard {
                 try {
                     projectHandle.delete(true, new NullProgressMonitor());
                 } catch (CoreException e1) {
-                    logger.error("Cannot remove partially created EMF-IncQuery project.", e1);
+                    logger.error("Cannot remove partially created VIATRA Query project.", e1);
                 }
             }
             Throwable realException = e.getTargetException();
-            logger.error("Cannot create EMF-IncQuery project: " + realException.getMessage(), realException);
+            logger.error("Cannot create VIATRA Query project: " + realException.getMessage(), realException);
             MessageDialog.openError(getShell(), "Error", realException.getMessage());
             return false;
         }

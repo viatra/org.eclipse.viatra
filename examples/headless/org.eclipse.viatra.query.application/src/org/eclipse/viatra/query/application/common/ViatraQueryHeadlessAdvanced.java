@@ -51,7 +51,7 @@ public class ViatraQueryHeadlessAdvanced extends ViatraQueryHeadless {
 	 * @param patternFQN
 	 * @return
 	 */
-	public String executeDemo_GenericAPI_LoadFromEIQ(URI modelURI, URI fileURI, String patternFQN) {
+	public String executeDemo_GenericAPI_LoadFromVQL(URI modelURI, URI fileURI, String patternFQN) {
 		final StringBuilder results = new StringBuilder();
 		Resource resource = loadModel(modelURI);
 		if (resource != null) {

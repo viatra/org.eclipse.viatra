@@ -5,7 +5,7 @@
          point="org.eclipse.ui.newWizards">
       <category
             id="org.eclipse.viatra.query.tooling.ui.category"
-            name="EMF-IncQuery">
+            name="VIATRA">
       </category>
       <wizard
             category="org.eclipse.viatra.query.tooling.ui.category"
@@ -13,17 +13,17 @@
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             icon="icons/logo2.png"
             id="org.eclipse.viatra.query.tooling.ui.newproject"
-            name="EMF-IncQuery Project"
+            name="Query Project"
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
             project="true">
       </wizard>
       <wizard
             category="org.eclipse.viatra.query.tooling.ui.category"
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.wizards.NewEiqFileWizard"
+            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.wizards.NewVqlFileWizard"
             finalPerspective="org.eclipse.pde.ui.PDEPerspective"
             icon="icons/logo2.png"
             id="org.eclipse.viatra.query.tooling.ui.newvqlfile"
-            name="EMF-IncQuery Query Definition "
+            name="Query Definition "
             preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
       </wizard>
       <wizard
@@ -31,29 +31,29 @@
             class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.wizards.NewGenmodelWizard"
             icon="icons/logo2.png"
             id="org.eclipse.viatra.query.tooling.ui.newvqlgenmodel"
-            name="EMF-IncQuery Generator Model"
+            name="Query Generator Model"
             project="false">
       </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <category
-            id="org.eclipse.incquery"
-            name="EMF-IncQuery">
+            id="org.eclipse.viatra"
+            name="VIATRA">
       </category>
       <cheatsheet
-            category="org.eclipse.incquery"
+            category="org.eclipse.viatra"
             composite="true"
             contentFile="cheatsheets/gettingstarted.xml"
             id="org.eclipse.viatra.query.tooling.ui.cheatsheet"
-            name="Getting Started with EMF-IncQuery">
+            name="Getting Started with VIATRA Query">
       </cheatsheet>
    </extension>
 <extension
          point="org.eclipse.ui.views">
       <category
             id="org.eclipse.viatra.query.tooling.ui"
-            name="EMF-IncQuery">
+            name="VIATRA">
       </category>
       <view
             category="org.eclipse.viatra.query.tooling.ui"
@@ -206,7 +206,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadEiqPatternHandler"
+            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadVqlPatternHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.loadmodel">
          <activeWhen>
             <reference
@@ -215,7 +215,7 @@
          </activeWhen>
       </handler>
  <!--     <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.AttachEiqEditorRegistrationHandler"
+            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.AttachVqlEditorRegistrationHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.loadmodel">
          <activeWhen>
             <reference
@@ -224,7 +224,7 @@
          </activeWhen>
       </handler> -->
 <!--      <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.AttachEiqEditorRegistrationHandler"
+            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.AttachVqlEditorRegistrationHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.attachmodel">
          <activeWhen>
             <reference
@@ -265,7 +265,7 @@
             commandId="org.eclipse.viatra.query.tooling.ui.loadvqlmodel">
       </handler>
       <handler
-            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadEiqPatternHandler"
+            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.LoadVqlPatternHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.loadvqlpattern">
       </handler>
       <handler
@@ -284,7 +284,7 @@
             locationURI="popup:org.eclipse.ui.popup.any">
          <menu
                id="org.eclipse.viatra.query.tooling.ui.navigator.popup"
-               label="EMF-IncQuery">
+               label="VIATRA">
             <command
                   commandId="org.eclipse.viatra.query.tooling.ui.runtimematcherreg"
                   style="push">
@@ -357,7 +357,7 @@
             locationURI="popup:#TextEditorContext?after=group.edit">
          <menu
                id="org.eclipse.viatra.query.tooling.ui.menu.emfpatternlanguage"
-               label="EMF-IncQuery">
+               label="VIATRA">
             <command
                   commandId="org.eclipse.viatra.query.tooling.ui.runtimematcherreg"
                   style="push">
@@ -492,9 +492,9 @@
             name="Show location">
       </command>
       <category
-            description="Commands related to EMF-IncQuery"
+            description="Commands related to VIATRA"
             id="org.eclipse.viatra.query.tooling.category"
-            name="EMF-IncQuery">
+            name="VIATRA">
       </category>
       <command
             categoryId="org.eclipse.viatra.query.tooling.category"
@@ -544,13 +544,18 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage"
+            category="org.eclipse.viatra.query.tooling.ui.viatra"
             class="org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PatternInitializationPreferencePage"
-            id="org.eclipse.viatra.query.tooling.ui.page1"
+            id="org.eclipse.viatra.query.tooling.ui.queryexplorer"
             name="Query Explorer">
          <keywordReference
                id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage">
          </keywordReference>
+      </page>
+      <page
+            class="org.eclipse.viatra.query.tooling.ui.preferences.RootPreferencePage"
+            id="org.eclipse.viatra.query.tooling.ui.viatra"
+            name="VIATRA">
       </page>
    </extension>
    <extension
@@ -612,7 +617,7 @@
    </extension>
    <extension
          id="org.eclipse.viatra.query.tooling.ui.projectbuilder"
-         name="EMF-IncQuery Project Builder"
+         name="VIATRA Query Project Builder"
          point="org.eclipse.core.resources.builders">
       <builder
             hasNature="true">
