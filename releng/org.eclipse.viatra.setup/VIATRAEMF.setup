@@ -300,8 +300,10 @@
   </setupTask>
   <setupTask
       xsi:type="setup:CompoundTask"
-      name="Bootstrap"
-      excludedTriggers="STARTUP MANUAL">
+      excludedTriggers="STARTUP MANUAL"
+      name="Bootstrap">
+    <setupTask
+        xsi:type="projects:ProjectsBuildTask"/>
     <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateReteRecipeMetamodel.mwe2.launch">
@@ -323,30 +325,42 @@
       <description></description>
     </setupTask>
     <setupTask
+        xsi:type="projects:ProjectsBuildTask"/>
+    <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GeneratePatternLanguage.mwe2.launch">
       <description></description>
     </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsBuildTask"/>
     <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
       <description></description>
     </setupTask>
     <setupTask
+        xsi:type="projects:ProjectsBuildTask"/>
+    <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateGeneratorModel.mwe2.launch">
       <description></description>
     </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsBuildTask"/>
     <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateIncQueryXcore.mwe2.launch">
       <description></description>
     </setupTask>
     <setupTask
+        xsi:type="projects:ProjectsBuildTask"/>
+    <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateCepMetamodels.mwe2.launch">
       <description></description>
     </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsBuildTask"/>
     <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateVepl.mwe2.launch">
