@@ -43,6 +43,10 @@
          id="org.eclipse.viatra.addon.viewers.runtime.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.viatra.addon.validation.runtime.feature"
+         version="0.0.0"/>
+
    <requires>
       <import feature="org.eclipse.jdt"/>
       <import feature="org.eclipse.pde"/>
