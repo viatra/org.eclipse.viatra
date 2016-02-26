@@ -1,6 +1,0 @@
-bin
-plugin.xml_gen
-*.class
-*_trace
-.settings
-.launch
