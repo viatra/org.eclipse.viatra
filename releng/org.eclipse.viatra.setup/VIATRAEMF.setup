@@ -75,11 +75,6 @@
     <description>Initialize JDT's package explorer to show working sets as its root objects</description>
   </setupTask>
   <setupTask
-      xsi:type="setup:VariableTask"
-      name="eclipse.target.platform"
-      defaultValue="mars"
-      storageURI="scope://Workspace"/>
-  <setupTask
       xsi:type="setup.p2:P2Task">
     <requirement
         name="org.eclipse.xtext.sdk.feature.group"
@@ -90,8 +85,6 @@
         name="org.eclipse.egit.feature.group"/>
     <requirement
         name="org.eclipse.emf.sdk.feature.group"/>
-    <repository
-        url="http://download.eclipse.org/releases/${eclipse.target.platform}"/>
     <repository
         url="http://download.itemis.com/updates/releases"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
@@ -160,7 +153,7 @@
           name="org.eclipse.uml2.sdk.feature.group"
           versionRange="[5.0.0,6.0.0)"/>
       <repositoryList
-          name="mars">
+          name="Mars">
         <repository
             url="http://download.eclipse.org/incquery/updates-extra/release/"/>
         <repository
@@ -176,8 +169,6 @@
         <repository
             url="http://download.eclipse.org/incquery/updates-extra/release"/>
       </repositoryList>
-      <repositoryList
-          name="indigo"/>
     </targlet>
   </setupTask>
   <setupTask
@@ -303,8 +294,6 @@
       excludedTriggers="STARTUP MANUAL"
       name="Bootstrap">
     <setupTask
-        xsi:type="projects:ProjectsBuildTask"/>
-    <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateReteRecipeMetamodel.mwe2.launch">
       <description></description>
@@ -325,8 +314,6 @@
       <description></description>
     </setupTask>
     <setupTask
-        xsi:type="projects:ProjectsBuildTask"/>
-    <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GeneratePatternLanguage.mwe2.launch">
       <description></description>
@@ -339,28 +326,15 @@
       <description></description>
     </setupTask>
     <setupTask
-        xsi:type="projects:ProjectsBuildTask"/>
-    <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateGeneratorModel.mwe2.launch">
       <description></description>
     </setupTask>
     <setupTask
-        xsi:type="projects:ProjectsBuildTask"/>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        launcher="org.eclipse.viatra.setup/GenerateIncQueryXcore.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="projects:ProjectsBuildTask"/>
-    <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateCepMetamodels.mwe2.launch">
       <description></description>
     </setupTask>
-    <setupTask
-        xsi:type="projects:ProjectsBuildTask"/>
     <setupTask
         xsi:type="launching:LaunchTask"
         launcher="org.eclipse.viatra.setup/GenerateVepl.mwe2.launch">
