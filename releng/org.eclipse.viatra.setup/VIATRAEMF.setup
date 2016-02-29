@@ -113,7 +113,7 @@
   <setupTask
       xsi:type="setup.targlets:TargletTask"
       predecessor="//@setupTasks.11"
-      successor="//@setupTasks.12/@setupTasks.10 //@setupTasks.12/@setupTasks.9 //@setupTasks.12/@setupTasks.7 //@setupTasks.12/@setupTasks.2 //@setupTasks.12/@setupTasks.6 //@setupTasks.12/@setupTasks.1 //@setupTasks.12/@setupTasks.3 //@setupTasks.12/@setupTasks.4 //@setupTasks.12/@setupTasks.12 viatra.xtext.postgen">
+      successor="//@setupTasks.12/@setupTasks.5 //@setupTasks.12/@setupTasks.10 //@setupTasks.12/@setupTasks.8 //@setupTasks.12/@setupTasks.2 //@setupTasks.12/@setupTasks.7 //@setupTasks.12/@setupTasks.1 //@setupTasks.12/@setupTasks.3 //@setupTasks.12/@setupTasks.4 //@setupTasks.12/@setupTasks.11 viatra.xtext.postgen">
     <targlet
         name="${scope.project.label}"
         activeRepositoryList="${eclipse.target.platform}">
@@ -361,135 +361,74 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.pregen"
-        predecessor="//@setupTasks.12/@setupTasks.6"
-        successor="//@setupTasks.12/@setupTasks.1"/>
+        predecessor="//@setupTasks.11 //@setupTasks.8"/>
     <setupTask
         xsi:type="launching:LaunchTask"
-        successor="//@setupTasks.12/@setupTasks.2"
+        predecessor="viatra.pregen"
+        successor="viatra.xtext.pregen"
         launcher="org.eclipse.viatra.setup/GenerateReteRecipeMetamodel.mwe2.launch">
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="#//@setupTasks.8"/>
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@setupTasks.4"/>
       <description></description>
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
+        predecessor="viatra.pregen"
+        successor="viatra.xtext.pregen"
         launcher="org.eclipse.viatra.setup/GenerateNotationMetamodel.mwe2.launch">
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@setupTasks.4"/>
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="#//@setupTasks.8"/>
-      <predecessor
-          xsi:type="projects:ProjectsImportTask"
-          href="#//@setupTasks.11"/>
-      <predecessor
-          xsi:type="git:GitCloneTask"
-          href="#git.clone.viatra"/>
       <description></description>
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
-        successor="//@setupTasks.12/@setupTasks.4"
+        predecessor="viatra.pregen"
+        successor="viatra.xtext.pregen"
         launcher="org.eclipse.viatra.setup/GenerateTraceabilityMetamodel.mwe2.launch">
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@setupTasks.4"/>
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="#//@setupTasks.8"/>
       <description></description>
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
+        predecessor="viatra.pregen"
         successor="viatra.xtext.pregen"
         launcher="org.eclipse.viatra.setup/GenerateTransformationTraceMetamodel.mwe2.launch">
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="#//@setupTasks.8"/>
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@setupTasks.4"/>
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        predecessor="viatra.pregen"
+        successor="viatra.xtext.pregen"
+        launcher="org.eclipse.viatra.setup/GenerateCepMetamodels.mwe2.launch">
       <description></description>
     </setupTask>
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.xtext.pregen"
-        successor="//@setupTasks.12/@setupTasks.6"
         refresh="true"/>
     <setupTask
         xsi:type="launching:LaunchTask"
-        successor="//@setupTasks.12/@setupTasks.7"
+        predecessor="viatra.xtext.pregen"
+        successor="viatra.xtext.postgen"
         launcher="org.eclipse.viatra.setup/GeneratePatternLanguage.mwe2.launch">
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="#//@setupTasks.8"/>
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@setupTasks.4"/>
       <description></description>
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
+        predecessor="viatra.xtext.pregen"
         successor="viatra.xtext.postgen"
         launcher="org.eclipse.viatra.setup/GenerateGeneratorModel.mwe2.launch">
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="#//@setupTasks.8"/>
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@setupTasks.4"/>
       <description></description>
     </setupTask>
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.xtext.postgen"
-        predecessor="//@setupTasks.12/@setupTasks.6 //@setupTasks.12/@setupTasks.1"
-        successor="//@setupTasks.12/@setupTasks.9"
         refresh="true"/>
     <setupTask
         xsi:type="launching:LaunchTask"
-        successor="//@setupTasks.12/@setupTasks.10"
+        predecessor="viatra.xtext.postgen"
         launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="#//@setupTasks.8"/>
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@setupTasks.4"/>
       <description></description>
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
-        successor="viatra.vepl.pregen"
-        launcher="org.eclipse.viatra.setup/GenerateCepMetamodels.mwe2.launch">
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="#//@setupTasks.8"/>
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@setupTasks.4"/>
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="projects:ProjectsBuildTask"
-        id="viatra.vepl.pregen"
-        predecessor="//@setupTasks.12/@setupTasks.6"
-        successor="//@setupTasks.12/@setupTasks.12"
-        refresh="true"/>
-    <setupTask
-        xsi:type="launching:LaunchTask"
+        predecessor="viatra.xtext.postgen"
         launcher="org.eclipse.viatra.setup/GenerateVepl.mwe2.launch">
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="#//@setupTasks.8"/>
-      <predecessor
-          xsi:type="setup.targlets:TargletTask"
-          href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@setupTasks.4"/>
       <description></description>
     </setupTask>
   </setupTask>
