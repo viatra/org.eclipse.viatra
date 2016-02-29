@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA Query-by-example support
+Bundle-SymbolicName: org.eclipse.viatra.addon.querybyexample
+Bundle-Version: 0.13.0.qualifier
+Export-Package: org.eclipse.viatra.addon.querybyexample.interfaces,
+ org.eclipse.viatra.addon.querybyexample.interfaces.beans,
+ org.eclipse.viatra.addon.querybyexample.services
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;bundle-version="2.8.3",
+ org.apache.log4j;bundle-version="1.2.15",
+ org.eclipse.viatra.query.runtime;bundle-version="[1.3.0,2.0.0)"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: The Eclipse VIATRA Project

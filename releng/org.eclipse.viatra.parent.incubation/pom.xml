@@ -44,10 +44,13 @@
 		<module>../../dse/features/org.eclipse.viatra.dse.feature</module>
 
 		<!-- Addons -->
+		<module>../../addon/plugins/org.eclipse.viatra.addon.querybyexample</module>
+        <module>../../addon/plugins/org.eclipse.viatra.addon.querybyexample.ui</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.viewers.runtime</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.viewers.runtime.zest</module>
 		<module>../../addon/plugins/org.eclipse.viatra.addon.viewers.tooling.ui.zest</module>
+		<module>../../addon/features/org.eclipse.viatra.addon.querybyexample.feature</module>
 		<module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.feature</module>
 		<module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.zest.feature</module>
 		<module>../../addon/features/org.eclipse.viatra.addon.viewers.tooling.feature</module>

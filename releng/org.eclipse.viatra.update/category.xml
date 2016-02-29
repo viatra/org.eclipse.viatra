@@ -42,6 +42,9 @@
    <feature url="features/org.eclipse.viatra.transformation.debug.feature_0.13.0.qualifier.jar" id="org.eclipse.viatra.transformation.debug.feature" version="0.13.0.qualifier">
       <category name="org.eclipse.viatra.addons"/>
    </feature>
+   <feature url="features/org.eclipse.viatra.addon.querybyexample.feature_0.13.0.qualifier.jar" id="org.eclipse.viatra.addon.querybyexample.feature" version="0.13.0.qualifier">
+      <category name="org.eclipse.viatra.addons"/>
+   </feature>
    <category-def name="org.eclipse.viatra" label="VIATRA Core"/>
    <category-def name="org.eclipse.viatra.addons" label="VIATRA Addons"/>
    <category-def name="org.eclipse.viatra.integrations" label="VIATRA Integrations"/>
