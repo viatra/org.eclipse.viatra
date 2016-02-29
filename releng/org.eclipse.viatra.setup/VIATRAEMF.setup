@@ -112,6 +112,7 @@
   </setupTask>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
+      predecessor="//@setupTasks.11"
       successor="//@setupTasks.12/@setupTasks.11 //@setupTasks.12/@setupTasks.10 //@setupTasks.12/@setupTasks.8 //@setupTasks.12/@setupTasks.3 //@setupTasks.12/@setupTasks.7 //@setupTasks.12/@setupTasks.2 //@setupTasks.12/@setupTasks.4 //@setupTasks.12/@setupTasks.5 //@setupTasks.12/@setupTasks.13 viatra.xtext.postgen">
     <targlet
         name="${scope.project.label}"
@@ -308,7 +309,8 @@
     <description>The dynamic working sets for ${scope.project.label}</description>
   </setupTask>
   <setupTask
-      xsi:type="projects:ProjectsImportTask">
+      xsi:type="projects:ProjectsImportTask"
+      predecessor="git.clone.viatra">
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/releng"
         locateNestedProjects="true">
