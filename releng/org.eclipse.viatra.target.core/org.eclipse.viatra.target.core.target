@@ -47,7 +47,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.facet.sdk.feature.feature.group" version="1.0.1.201508190910"/>
-<repository location="http://download.eclipse.org/facet/updates/release/1.0.1"/>
+<repository location="http://archive.eclipse.org/facet/updates/release/1.0.1"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.8.2.v201511170842"/>
