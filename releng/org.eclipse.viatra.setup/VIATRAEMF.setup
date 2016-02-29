@@ -362,7 +362,6 @@
       <setupTask
           xsi:type="setup:PreferenceTask"
           id="disable.cancel.compile.error"
-          excludedTriggers="STARTUP"
           successor="//@setupTasks.12/@setupTasks.2"
           key="/instance/org.eclipse.debug.ui/org.eclipse.debug.ui.cancel_launch_with_compile_errors"
           value="always"/>
@@ -370,12 +369,10 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.pregen"
-        excludedTriggers="STARTUP"
         predecessor="//@setupTasks.12/@setupTasks.7 disable.cancel.compile.error"
         successor="//@setupTasks.12/@setupTasks.2"/>
     <setupTask
         xsi:type="launching:LaunchTask"
-        excludedTriggers="STARTUP"
         successor="//@setupTasks.12/@setupTasks.3"
         launcher="org.eclipse.viatra.setup/GenerateReteRecipeMetamodel.mwe2.launch">
       <predecessor
@@ -388,7 +385,6 @@
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
-        excludedTriggers="MANUAL"
         launcher="org.eclipse.viatra.setup/GenerateNotationMetamodel.mwe2.launch">
       <predecessor
           xsi:type="setup.targlets:TargletTask"
@@ -396,11 +392,16 @@
       <predecessor
           xsi:type="setup.targlets:TargletTask"
           href="#//@setupTasks.8"/>
+      <predecessor
+          xsi:type="projects:ProjectsImportTask"
+          href="#//@setupTasks.11"/>
+      <predecessor
+          xsi:type="git:GitCloneTask"
+          href="#git.clone.viatra"/>
       <description></description>
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
-        excludedTriggers="MANUAL"
         successor="//@setupTasks.12/@setupTasks.5"
         launcher="org.eclipse.viatra.setup/GenerateTraceabilityMetamodel.mwe2.launch">
       <predecessor
@@ -413,7 +414,6 @@
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
-        excludedTriggers="STARTUP"
         successor="viatra.xtext.pregen"
         launcher="org.eclipse.viatra.setup/GenerateTransformationTraceMetamodel.mwe2.launch">
       <predecessor
@@ -427,12 +427,10 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.xtext.pregen"
-        excludedTriggers="STARTUP"
         successor="//@setupTasks.12/@setupTasks.7"
         refresh="true"/>
     <setupTask
         xsi:type="launching:LaunchTask"
-        excludedTriggers="STARTUP"
         successor="//@setupTasks.12/@setupTasks.8"
         launcher="org.eclipse.viatra.setup/GeneratePatternLanguage.mwe2.launch">
       <predecessor
@@ -445,7 +443,6 @@
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
-        excludedTriggers="STARTUP"
         successor="viatra.xtext.postgen"
         launcher="org.eclipse.viatra.setup/GenerateGeneratorModel.mwe2.launch">
       <predecessor
@@ -459,13 +456,11 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.xtext.postgen"
-        excludedTriggers="STARTUP"
         predecessor="//@setupTasks.12/@setupTasks.7"
         successor="//@setupTasks.12/@setupTasks.10"
         refresh="true"/>
     <setupTask
         xsi:type="launching:LaunchTask"
-        excludedTriggers="STARTUP"
         successor="//@setupTasks.12/@setupTasks.11"
         launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
       <predecessor
@@ -478,7 +473,6 @@
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
-        excludedTriggers="STARTUP"
         successor="viatra.vepl.pregen"
         launcher="org.eclipse.viatra.setup/GenerateCepMetamodels.mwe2.launch">
       <predecessor
@@ -492,13 +486,11 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.vepl.pregen"
-        excludedTriggers="STARTUP"
         predecessor="//@setupTasks.12/@setupTasks.7"
         successor="//@setupTasks.12/@setupTasks.13"
         refresh="true"/>
     <setupTask
         xsi:type="launching:LaunchTask"
-        excludedTriggers="STARTUP"
         successor="enable.cancel.compile.error"
         launcher="org.eclipse.viatra.setup/GenerateVepl.mwe2.launch">
       <predecessor
@@ -515,7 +507,6 @@
       <setupTask
           xsi:type="setup:PreferenceTask"
           id="enable.cancel.compile.error"
-          excludedTriggers="STARTUP"
           predecessor="//@setupTasks.12/@setupTasks.11 //@setupTasks.12/@setupTasks.10 //@setupTasks.12/@setupTasks.8 //@setupTasks.12/@setupTasks.3 //@setupTasks.12/@setupTasks.7 //@setupTasks.12/@setupTasks.2 //@setupTasks.12/@setupTasks.4 //@setupTasks.12/@setupTasks.5 //@setupTasks.12/@setupTasks.13 viatra.pregen viatra.vepl.pregen viatra.xtext.postgen viatra.xtext.pregen"
           key="/instance/org.eclipse.debug.ui/org.eclipse.debug.ui.cancel_launch_with_compile_errors"
           value="prompt"/>
