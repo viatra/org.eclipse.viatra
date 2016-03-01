@@ -62,6 +62,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
     Logger logger;
 
 	private final Multimap<String, TargetPlatformMetamodel> entries = ArrayListMultimap.create();
+	private final Set<String> processedPlugins = Sets.newHashSet();
 	private Set<URI> reportedProblematicGenmodelUris = Sets.newHashSet();
     private Map<URI, URI> platformURIMap = new HashMap<URI, URI>();
 //    private Map<String, URI> ePackageNsURIToGenModelLocationMap;
@@ -80,27 +81,32 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 		}
 		
 		/* Remove entries that disappeared */
-		Set<String> remove = new HashSet<String>(entries.keySet());
+		Set<String> remove = new HashSet<String>(processedPlugins);
 		remove.removeAll(pluginset.keySet());
 		for(String id : remove){
 			entries.removeAll(id);
+			processedPlugins.remove(id);
 		}
+		/* Add new entries */
+		Set<String> added = new HashSet<String>(pluginset.keySet());
+		added.removeAll(processedPlugins);
+		// compute platform URI map only when platform plugin list changed
+		if(!added.isEmpty()){
+			platformURIMap = EcorePlugin.computePlatformURIMap(true);
+			// TODO this map could be used instead of reading the extensions ourselves
+			// ePackageNsURIToGenModelLocationMap = EcorePlugin.getEPackageNsURIToGenModelLocationMap(true);
+		}
+
 		/* Always reload workspace plugins */
 		for(String id : workspacePlugins){
 			entries.removeAll(id);
+			added.add(id);
 		}
 		
-		/* Add new entries */
-		Set<String> added = new HashSet<String>(pluginset.keySet());
-		added.removeAll(entries.keySet());
-		if(!added.isEmpty()){
-		    platformURIMap = EcorePlugin.computePlatformURIMap(true);
-		    // TODO this map could be used instead of reading the extensions ourselves
-//		    ePackageNsURIToGenModelLocationMap = EcorePlugin.getEPackageNsURIToGenModelLocationMap(true);
-		}
 		for(String id : added){
 			IPluginBase base = pluginset.get(id);
 			entries.putAll(id, load(base));
+			processedPlugins.add(id);
 		}
 	}
 	
