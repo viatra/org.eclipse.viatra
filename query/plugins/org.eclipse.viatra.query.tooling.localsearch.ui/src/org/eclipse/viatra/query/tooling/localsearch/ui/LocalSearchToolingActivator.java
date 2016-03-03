@@ -27,8 +27,6 @@ public class LocalSearchToolingActivator extends AbstractUIPlugin {
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
-        //Register local search backend inside the engine
-        QueryBackendRegistry.getInstance().registerQueryBackendFactory(LocalSearchBackend.class, LocalSearchBackendFactory.INSTANCE);
     }
 
 }
