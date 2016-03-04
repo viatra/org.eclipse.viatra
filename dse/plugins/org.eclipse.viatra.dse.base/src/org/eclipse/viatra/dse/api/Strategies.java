@@ -15,6 +15,7 @@ import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy2;
 import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.HillClimbingStrategy;
+import org.eclipse.viatra.dse.api.strategy.impl.HillClimbingStrategy2;
 import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 
@@ -59,5 +60,9 @@ public final class Strategies {
     
     public static HillClimbingStrategy creatHillClimbingStrategy() {
         return new HillClimbingStrategy();
+    }
+
+    public static HillClimbingStrategy2 creatHillClimbingStrategy2() {
+        return new HillClimbingStrategy2();
     }
 }
