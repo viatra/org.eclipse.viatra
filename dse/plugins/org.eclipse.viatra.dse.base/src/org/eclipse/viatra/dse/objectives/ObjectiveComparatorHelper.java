@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.google.common.base.Preconditions;
+
 /**
  * This class is responsible to compare and sort fitness values. {@link TrajectoryFitness} instances can be added to an
  * instance of this class, that it can sort them.
@@ -118,6 +120,7 @@ public class ObjectiveComparatorHelper {
      * @return
      */
     public List<ArrayList<TrajectoryFitness>> getFronts() {
+        Preconditions.checkArgument(!trajectoryFitnesses.isEmpty(), "No trajectory fitnesses were added.");
         List<ArrayList<TrajectoryFitness>> fronts = new ArrayList<ArrayList<TrajectoryFitness>>();
 
         Map<TrajectoryFitness, ArrayList<TrajectoryFitness>> dominatedInstances = new HashMap<TrajectoryFitness, ArrayList<TrajectoryFitness>>();
