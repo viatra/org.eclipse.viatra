@@ -33,6 +33,7 @@ import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.dse.objectives.LeveledObjectivesHelper;
 import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.solutionstore.SimpleSolutionStore;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
@@ -228,83 +229,7 @@ public class GlobalContext {
     private List<IDesignSpaceVisualizer> visualizers;
 
     public void initLeveledObjectives() {
-        if (objectives.size() == 0) {
-            leveledObjectives = new IObjective[0][0];
-            return;
-        }
-
-        int level = objectives.get(0).getLevel();
-        boolean oneLevelOnly = true;
-        for (IObjective objective : objectives) {
-            if (objective.getLevel() != level) {
-                oneLevelOnly = false;
-                break;
-            }
-        }
-
-        if (oneLevelOnly) {
-            leveledObjectives = new IObjective[1][objectives.size()];
-            for(int i = 0; i<objectives.size(); i++) {
-                leveledObjectives[0][i] = objectives.get(i);
-            }
-            return;
-        }
-
-        IObjective[] objectivesArray = getSortedByLevelObjectives(objectives);
-
-        int numberOfLevels = getNumberOfObjectiveLevels(objectivesArray);
-        
-        leveledObjectives = new IObjective[numberOfLevels][];
-
-        fillLeveledObjectives(objectivesArray);
-
-    }
-
-    private void fillLeveledObjectives(IObjective[] objectivesArray) {
-        int actLevel = objectivesArray[0].getLevel();
-        int levelIndex = 0;
-        int lastIndex = 0;
-        int corrigationForLastLevel = 0;
-        for (int i = 0; i < objectivesArray.length; i++) {
-            if (i == objectivesArray.length-1) {
-                corrigationForLastLevel = 1;
-            }
-            if (objectivesArray[i].getLevel() != actLevel || corrigationForLastLevel == 1) {
-                leveledObjectives[levelIndex] = new IObjective[i - lastIndex + corrigationForLastLevel];
-                for (int j = lastIndex; j < i + corrigationForLastLevel; j++) {
-                    leveledObjectives[levelIndex][j - lastIndex] = objectivesArray[j];
-                }
-                actLevel = objectivesArray[i].getLevel();
-                levelIndex++;
-                lastIndex = i;
-            }
-        }
-    }
-
-    private int getNumberOfObjectiveLevels(IObjective[] objectivesArray) {
-
-        int actLevel = objectivesArray[0].getLevel();
-        int numberOfLevels = 1;
-
-        for (int i = 1; i < objectivesArray.length; i++) {
-            if (objectivesArray[i].getLevel() != actLevel) {
-                numberOfLevels++;
-                actLevel = objectivesArray[i].getLevel();
-            }
-        }
-
-        return numberOfLevels;
-    }
-    
-    private IObjective[] getSortedByLevelObjectives(List<IObjective> objectives) {
-        IObjective[] objectivesArray = objectives.toArray(new IObjective[objectives.size()]);
-        Arrays.sort(objectivesArray, new Comparator<IObjective>() {
-            @Override
-            public int compare(IObjective o1, IObjective o2) {
-                return Integer.valueOf(o1.getLevel()).compareTo(o2.getLevel());
-            }
-        });
-        return objectivesArray;
+        leveledObjectives = new LeveledObjectivesHelper(objectives).initLeveledObjectives();
     }
 
     public void reset() {
