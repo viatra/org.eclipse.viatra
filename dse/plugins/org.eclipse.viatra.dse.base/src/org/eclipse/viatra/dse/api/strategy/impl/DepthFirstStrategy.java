@@ -26,7 +26,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
-public class DepthFirstStrategy2 implements IStrategy {
+public class DepthFirstStrategy implements IStrategy {
 
     private int maxDepth;
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
@@ -39,7 +39,7 @@ public class DepthFirstStrategy2 implements IStrategy {
 
     private Random random = new Random(); 
     
-    public DepthFirstStrategy2(int maxDepth) {
+    public DepthFirstStrategy(int maxDepth) {
         if (maxDepth <= 0) {
             this.maxDepth = Integer.MAX_VALUE;
         } else {
@@ -54,7 +54,7 @@ public class DepthFirstStrategy2 implements IStrategy {
             globalContext.setSharedObject(new Object());
             int maxThreads = globalContext.getThreadPool().getMaximumPoolSize();
             for (int i = 1; i < maxThreads; i++) {
-                globalContext.tryStartNewThread(context, context.getModelRoot(), true, new DepthFirstStrategy2(maxDepth));
+                globalContext.tryStartNewThread(context, context.getModelRoot(), true, new DepthFirstStrategy(maxDepth));
             }
         }
         

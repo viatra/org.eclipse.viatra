@@ -24,7 +24,7 @@ import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
-public class HillClimbingStrategy2 implements IStrategy {
+public class HillClimbingStrategy implements IStrategy {
 
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
     private DesignSpaceManager dsm;
@@ -37,11 +37,11 @@ public class HillClimbingStrategy2 implements IStrategy {
     private double percentOfOpenedStates;
     private ObjectiveComparatorHelper objectiveComparatorHelper;
 
-    public HillClimbingStrategy2() {
+    public HillClimbingStrategy() {
         this(2);
     }
 
-    public HillClimbingStrategy2(double percentOfOpenedStates) {
+    public HillClimbingStrategy(double percentOfOpenedStates) {
         this.percentOfOpenedStates = percentOfOpenedStates;
     }
 

@@ -29,7 +29,7 @@ import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
 import com.google.common.collect.Lists;
 
-public class FixedPriorityStrategy2 implements IStrategy {
+public class FixedPriorityStrategy implements IStrategy {
 
     private int maxDepth = Integer.MAX_VALUE;
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
@@ -50,7 +50,7 @@ public class FixedPriorityStrategy2 implements IStrategy {
      *            The depth limit.
      * @return The actual instance to enable a builder pattern like usage.
      */
-    public FixedPriorityStrategy2 withDepthLimit(int maxDepth) {
+    public FixedPriorityStrategy withDepthLimit(int maxDepth) {
         if (maxDepth <= 0) {
             this.maxDepth = Integer.MAX_VALUE;
         } else {
@@ -68,7 +68,7 @@ public class FixedPriorityStrategy2 implements IStrategy {
      *            The priority of the rule.
      * @return The actual instance to enable a builder pattern like usage.
      */
-    public FixedPriorityStrategy2 withRulePriority(DSETransformationRule<?, ?> rule, int priority) {
+    public FixedPriorityStrategy withRulePriority(DSETransformationRule<?, ?> rule, int priority) {
         priorities.put(rule, priority);
         return this;
     }

@@ -26,7 +26,7 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
-public class BreadthFirstStrategy2 implements IStrategy {
+public class BreadthFirstStrategy implements IStrategy {
 
     private static final class BfsSharedObject {
         private final ConcurrentLinkedQueue<List<ITransition>> trajectoryQueue1 = new ConcurrentLinkedQueue<>();
@@ -80,10 +80,10 @@ public class BreadthFirstStrategy2 implements IStrategy {
     private SolutionStore solutionStore;
     private boolean isFirstThread = false;
 
-    public BreadthFirstStrategy2() {
+    public BreadthFirstStrategy() {
     }
 
-    public BreadthFirstStrategy2(int maxDepth) {
+    public BreadthFirstStrategy(int maxDepth) {
         this.maxDepth = maxDepth;
     }
 
@@ -125,7 +125,7 @@ public class BreadthFirstStrategy2 implements IStrategy {
 
             GlobalContext globalContext = context.getGlobalContext();
             while (globalContext.tryStartNewThread(context, context.getModelRoot(), true,
-                    new BreadthFirstStrategy2(maxDepth)) != null) {
+                    new BreadthFirstStrategy(maxDepth)) != null) {
             }
         } else {
             try {
