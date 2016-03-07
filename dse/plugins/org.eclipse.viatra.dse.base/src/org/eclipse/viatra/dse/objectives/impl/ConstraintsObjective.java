@@ -38,7 +38,7 @@ import com.google.common.base.Preconditions;
  */
 public class ConstraintsObjective extends BaseObjective {
 
-    public static final String DEFAULT_NAME = "WeightedQueriesObjective";
+    public static final String DEFAULT_NAME = "ConstraintsObjective";
 
     protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> softConstraints;
     protected List<Double> weights;
@@ -179,6 +179,10 @@ public class ConstraintsObjective extends BaseObjective {
 
     @Override
     public Double getFitness(ThreadContext context) {
+
+        if (softConstraints.isEmpty() && satisifiesHardObjective(null)) {
+            return new Double(1d);
+        }
 
         double result = 0;
 
