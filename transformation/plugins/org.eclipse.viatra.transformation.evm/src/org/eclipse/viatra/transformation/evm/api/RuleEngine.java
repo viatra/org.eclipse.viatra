@@ -20,7 +20,6 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ScopedConflictSet;
-import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -165,7 +164,7 @@ public class RuleEngine {
      * @param state
      * @return an immutable set of the activations in the given state
      */
-    public Set<Activation<?>> getActivations(final CRUDActivationStateEnum state) {
+    public Set<Activation<?>> getActivations(final ActivationState state) {
         checkNotNull(state, "Activation state must be specified!");
         return ImmutableSet.copyOf(ruleBase.getAgenda().getActivations(state));
     }
