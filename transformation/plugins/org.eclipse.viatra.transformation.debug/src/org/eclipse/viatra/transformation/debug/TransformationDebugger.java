@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.debug;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.viatra.transformation.debug.adapter.impl.AbstractTransformationAdapter;
@@ -38,8 +39,8 @@ public class TransformationDebugger extends AbstractTransformationAdapter{
         ui = usedUI;
     }
     
-    public TransformationDebugger(List<ITransformationBreakpoint> breakpoints, IDebugController usedUI) {
-        this.breakPoints = breakpoints;
+    public TransformationDebugger(IDebugController usedUI, ITransformationBreakpoint ... breakpoints) {
+    	this.breakPoints = Arrays.asList(breakpoints);
         ui = usedUI;
     }
 

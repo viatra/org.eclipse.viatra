@@ -29,13 +29,13 @@ class TransformationDebuggerConfiguration implements IAdapterConfiguration{
 	
 	new(IDebugController usedController, ITransformationBreakpoint ... breakpoints){
 		adapters = Lists.newArrayList
-		adapters.add(new TransformationDebugger(breakpoints.toList, usedController))
+		adapters.add(new TransformationDebugger(usedController, breakpoints))
 	}
 	
 	new(ITransformationBreakpoint ... breakpoints){
 		val usedUI = new ConsoleDebugger
 		adapters = Lists.newArrayList
-		adapters.add(new TransformationDebugger(breakpoints.toList, usedUI))
+		adapters.add(new TransformationDebugger(usedUI, breakpoints))
 	}
 	
 	override getAdapters() {
