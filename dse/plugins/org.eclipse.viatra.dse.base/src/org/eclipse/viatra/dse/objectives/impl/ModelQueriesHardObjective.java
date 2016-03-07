@@ -31,7 +31,9 @@ import com.google.common.base.Preconditions;
  * 
  * @author Andras Szabolcs Nagy
  *
+ * @deprecated Use {@link ConstraintsObjective} instead.
  */
+@Deprecated
 public class ModelQueriesHardObjective extends BaseObjective {
 
     protected static final String DEFAULT_NAME = "ModelQueriesHardObjective";

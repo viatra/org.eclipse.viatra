@@ -40,6 +40,7 @@ import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.dse.objectives.impl.ConstraintsObjective;
 import org.eclipse.viatra.dse.util.EMFHelper;
 
 import com.google.common.base.Preconditions;
@@ -68,7 +69,7 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
     private int noBetterSolutionForXIterations = 0;
     private ThreadContext context;
     private List<IObjective> objectives;
-    private GeneticConstraintObjective genObjective;
+    private ConstraintsObjective genObjective;
     private String fileName;
     
     public MainGeneticStrategy(GeneticSharedObject sharedObject) {
@@ -91,7 +92,7 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
         
         IObjective[][] leveledObjectives = context.getLeveledObjectives();
         IObjective objective = leveledObjectives[0][0];
-        if (!(objective instanceof GeneticConstraintObjective) || leveledObjectives[0].length != 1) {
+        if (!(objective instanceof ConstraintsObjective) || leveledObjectives[0].length != 1) {
             throw new DSEException("The only objective on the first level should be the GeneticSoftConstraintHardObjective.");
         }
         
@@ -111,7 +112,7 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
 
         objectives = context.getGlobalContext().getObjectives();
         
-        genObjective = (GeneticConstraintObjective) context.getLeveledObjectives()[0][0];
+        genObjective = (ConstraintsObjective) context.getLeveledObjectives()[0][0];
         
         logger.debug("MainGeneticStratgey is inited");
     }
@@ -428,8 +429,8 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                 .getTransitionTrajectory());
         InstanceData instance = new InstanceData(trajectory);
         instance.objectives = context.calculateFitness();
-        for (int i = 0; i<genObjective.getNames().size(); i++) {
-            instance.violations.put(genObjective.getNames().get(i), genObjective.getMatches().get(i));
+        for (int i = 0; i<genObjective.getSoftNames().size(); i++) {
+            instance.violations.put(genObjective.getSoftNames().get(i), genObjective.getSoftMatches().get(i));
         }
         parentPopulation.add(instance);
         

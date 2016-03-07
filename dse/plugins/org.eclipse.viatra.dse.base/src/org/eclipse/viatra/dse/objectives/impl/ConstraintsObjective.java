@@ -24,13 +24,16 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import com.google.common.base.Preconditions;
 
 /**
- * This soft objective collects a list of VIATRA Query patterns and weights. Then the fitness value of a solution is
- * calculated in the following way:
+ * This objective serves as soft and as hard objective at the same time by defining two lists of VIATRA Query
+ * specifications.
+ * 
+ * As a soft objective, it collects a list of VIATRA Query specifications, which have predefined weights. Then the
+ * fitness value of an arbitrary solution is calculated in the following way:
  * <p>
  * <code>fitness = sum( pattern[i].countMatches() * weight[i] )</code>
  * <p>
- * Hard constraints can also be registered with this type of objective. If every VIATRA Query pattern has a match the hard
- * constraint is considered to be fulfilled.
+ * As a hard objective it collects a separate list of VIATRA Query specifications. If every one of them has a match the
+ * hard constraint is considered to be fulfilled.
  * 
  * @author Andras Szabolcs Nagy
  * @see IObjective
@@ -47,8 +50,8 @@ public class ConstraintsObjective extends BaseObjective {
     protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> hardConstraints;
     protected List<String> hardNames;
 
-    protected List<ViatraQueryMatcher<? extends IPatternMatch>> softMatchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>();
-    protected List<ViatraQueryMatcher<? extends IPatternMatch>> hardMatchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>();
+    protected List<ViatraQueryMatcher<? extends IPatternMatch>> softMatchers;
+    protected List<ViatraQueryMatcher<? extends IPatternMatch>> hardMatchers;
     protected List<Integer> softMatches;
     protected List<Integer> hardMatches;
 
@@ -252,4 +255,29 @@ public class ConstraintsObjective extends BaseObjective {
         }
         return result;
     }
+
+    public List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getSoftConstraints() {
+        return softConstraints;
+    }
+
+    public List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getHardConstraints() {
+        return hardConstraints;
+    }
+
+    public List<String> getSoftNames() {
+        return softNames;
+    }
+
+    public List<String> getHardNames() {
+        return hardNames;
+    }
+
+    public List<Integer> getSoftMatches() {
+        return softMatches;
+    }
+
+    public List<Integer> getHardMatches() {
+        return hardMatches;
+    }
+
 }

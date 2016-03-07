@@ -33,7 +33,9 @@ import com.google.common.base.Preconditions;
  * @author Andras Szabolcs Nagy
  * @see IObjective
  *
+ * @deprecated Use {@link ConstraintsObjective} instead.
  */
+@Deprecated
 public class WeightedQueriesSoftObjective extends BaseObjective {
 
     public static final String DEFAULT_NAME = "WeightedQueriesSoftObjective";
