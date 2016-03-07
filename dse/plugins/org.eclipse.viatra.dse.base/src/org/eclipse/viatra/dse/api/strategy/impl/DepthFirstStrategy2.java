@@ -40,7 +40,11 @@ public class DepthFirstStrategy2 implements IStrategy {
     private Random random = new Random(); 
     
     public DepthFirstStrategy2(int maxDepth) {
-        this.maxDepth = maxDepth;
+        if (maxDepth <= 0) {
+            this.maxDepth = Integer.MAX_VALUE;
+        } else {
+            this.maxDepth = maxDepth;
+        }
     }
     
     @Override
@@ -91,7 +95,6 @@ public class DepthFirstStrategy2 implements IStrategy {
                 }
             }
 
-            // TODO getDepth()
             if (dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() >= maxDepth) {
                 boolean isSuccessfulUndo = dsm.undoLastTransformation();
                 if (!isSuccessfulUndo) {
