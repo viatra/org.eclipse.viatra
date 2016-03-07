@@ -44,7 +44,7 @@ import com.google.common.collect.Sets;
  * Class responsible for monitoring changes in a specified model. It uses {@link IQuerySpecification} objects or EMV
  * Rules defined by the user to achieve this.
  * 
- * Based on the instance model to be monitored, an VIATRA Query Engine should be initialized and handed over to this class.
+ * Based on the instance model to be monitored, a VIATRA Query Engine should be initialized and handed over to this class.
  * An ExecutionSchema is initialized based on the VIATRA Query Engine, then the rules defined by the user are registered in
  * it.
  * 
@@ -71,7 +71,7 @@ public class ChangeMonitor extends IChangeMonitor {
 
     /**
      * Constructor that creates a new ChangeMonitor instance based on the specified ViatraQuery engine. Note that to
-     * monitor changes of a specific model instance, an VIATRA Query should be initialized on said model instance.
+     * monitor changes of a specific model instance, a VIATRA Query should be initialized on said model instance.
      * 
      * @param engine
      *            The ViatraQueryEngine the monitor is based on.

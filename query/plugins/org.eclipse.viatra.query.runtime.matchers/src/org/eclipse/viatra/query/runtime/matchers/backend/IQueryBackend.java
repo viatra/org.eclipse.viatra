@@ -14,7 +14,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingExcepti
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
- * Internal interface for an VIATRA query specification. Each query is associated with a pattern. Methods instantiate a matcher
+ * Internal interface for a VIATRA query specification. Each query is associated with a pattern. Methods instantiate a matcher
  * of the pattern with various parameters.
  *
  * @author Bergmann Gábor

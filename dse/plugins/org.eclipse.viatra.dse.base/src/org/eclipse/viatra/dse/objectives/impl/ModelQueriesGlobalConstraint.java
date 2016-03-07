@@ -66,7 +66,7 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
      * Adds a new VIATRA Query pattern.
      * 
      * @param constraint
-     *            An VIATRA Query pattern.
+     *            A VIATRA Query pattern.
      * @return The actual instance to enable builder pattern like usage.
      */
     public ModelQueriesGlobalConstraint withConstraint(

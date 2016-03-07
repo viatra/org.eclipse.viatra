@@ -19,7 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueryHeader;
 
 /**
- * API interface for an VIATRA query specification. Each query is associated with a pattern. Methods instantiate a matcher
+ * API interface for a VIATRA query specification. Each query is associated with a pattern. Methods instantiate a matcher
  * of the pattern with various parameters.
  * 
  * <p> As of 0.9.0, some internal details (mostly relevant for query evaluator backends) have been moved to {@link #getInternalQueryRepresentation()}.  

@@ -114,7 +114,7 @@ public abstract class ViatraQueryEngine {
 	/**
 	 * Access a pattern matcher based on a {@link IQuerySpecification}. 
 	 * Multiple calls will return the same matcher.
-	 * @param querySpecification a {@link IQuerySpecification} that describes an VIATRA query specification
+	 * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query specification
 	 * @return a pattern matcher corresponding to the specification
 	 * @throws ViatraQueryException if the matcher could not be initialized
 	 */
@@ -126,7 +126,7 @@ public abstract class ViatraQueryEngine {
 	 *  or else if the matcher for the pattern has been generated and registered. 
 	 * Multiple calls will return the same matcher. 
 	 * 
-	 * @param patternFQN the fully qualified name of an VIATRA query specification
+	 * @param patternFQN the fully qualified name of a VIATRA query specification
 	 * @return a pattern matcher corresponding to the specification
 	 * @throws ViatraQueryException if the matcher could not be initialized
 	 */
@@ -134,7 +134,7 @@ public abstract class ViatraQueryEngine {
     
     /**
      * Access an existing pattern matcher based on a {@link IQuerySpecification}.
-     * @param querySpecification a {@link IQuerySpecification} that describes an VIATRA query specification
+     * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query specification
      * @return a pattern matcher corresponding to the specification, <code>null</code> if a matcher does not exist yet.
      */
 	public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification);

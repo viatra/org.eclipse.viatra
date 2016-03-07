@@ -32,11 +32,11 @@ public class ViatraQueryException extends Exception {
     /**
 	 * @since 0.9
 	 */
-    public static final String PROCESSING_PROBLEM = "The following error occurred during the processing of a query (e.g. for the preparation of an VIATRA pattern matcher)";
+    public static final String PROCESSING_PROBLEM = "The following error occurred during the processing of a query (e.g. for the preparation of a VIATRA pattern matcher)";
     /**
 	 * @since 0.9
 	 */
-    public static final String QUERY_INIT_PROBLEM = "The following error occurred during the initialization of an VIATRA query specification";
+    public static final String QUERY_INIT_PROBLEM = "The following error occurred during the initialization of a VIATRA query specification";
     public static final String GETNAME_FAILED = "Could not get 'name' attribute of the result";
 
     public static final String INVALID_EMFROOT = "Incremental EMF query engine can only be attached on the contents of an EMF EObject, Resource, ResourceSet or multiple ResourceSets. Received instead: ";

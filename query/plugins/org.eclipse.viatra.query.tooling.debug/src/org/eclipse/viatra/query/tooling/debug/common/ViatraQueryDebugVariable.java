@@ -21,7 +21,7 @@ import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 
 /**
- * An VIATRA Query Debug variable which has a specific JDI value attached.  
+ * A VIATRA Query Debug variable which has a specific JDI value attached.  
  * Variables will be displayed in the Eclipse Debug View.
  * 
  * @author Tamas Szabo (itemis AG)

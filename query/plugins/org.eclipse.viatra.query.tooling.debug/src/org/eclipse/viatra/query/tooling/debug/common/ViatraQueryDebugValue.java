@@ -20,7 +20,7 @@ import org.eclipse.jdt.internal.debug.core.model.JDIValue;
 import org.eclipse.viatra.query.tooling.debug.variables.ValueWrapper;
 
 /**
- * An instances of this class represents the value of an VIATRA Query Debug variable. It is also responsible for the
+ * An instances of this class represents the value of a VIATRA Query Debug variable. It is also responsible for the
  * creation of the children variables.
  * <br><br>
  * WARNING: Java Reflection and the Java Debug API are used heavily for the creation of the label and the children

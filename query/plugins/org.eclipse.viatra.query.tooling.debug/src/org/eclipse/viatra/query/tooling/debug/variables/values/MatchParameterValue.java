@@ -35,7 +35,7 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 
 /**
- * The value of an VIATRA Query Debug Variable which represents a match parameter. The children variables are created by
+ * The value of a VIATRA Query Debug Variable which represents a match parameter. The children variables are created by
  * the original {@link JDIValue#getVariables()} logic.
  * 
  * @author Tamas Szabo (itemis AG)

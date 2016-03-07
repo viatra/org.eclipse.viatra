@@ -70,7 +70,7 @@ public class SelectViatraQueryProjectPage extends WizardPage {
         @Override
         public String getToolTipText(Object element) {
             if (element instanceof IProject && ((IProject) element).findMember(ViatraQueryNature.VQGENMODEL) != null) {
-                return String.format("Project %s has already defined an VIATRA Query Generator model.",
+                return String.format("Project %s has already defined a VIATRA Query Generator model.",
                         ((IProject) element).getName());
             }
             return super.getToolTipText(element);

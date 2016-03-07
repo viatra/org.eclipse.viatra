@@ -31,7 +31,7 @@ import com.sun.jdi.StringReference;
 import com.sun.jdi.Value;
 
 /**
- * The value of an VIATRA Query Debug Variable which represents an {@link ViatraQueryEngine} instance. This is the root element of the 
+ * The value of a VIATRA Query Debug Variable which represents an {@link ViatraQueryEngine} instance. This is the root element of the 
  * 'engine - matcher - match - match parameters' content hierarchy. <br>
  * <br>
  * It is crucial, which class name is used for capturing the engine instances, because no subtyping relationship can be

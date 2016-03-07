@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 
 /**
- * Advanced interface to an VIATRA incremental evaluation engine.
+ * Advanced interface to a VIATRA incremental evaluation engine.
  * 
  * <p>
  * You can create a new, private, unmanaged {@link AdvancedViatraQueryEngine} instance using
@@ -294,7 +294,7 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
 	 * Access a pattern matcher based on a {@link IQuerySpecification}, overriding some of the default query evaluation hints. 
 	 * Multiple calls will return the same matcher.
 	 * <p> Hints are only effective the first time a matcher is created.
-	 * @param querySpecification a {@link IQuerySpecification} that describes an VIATRA query
+	 * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query
 	 * @return a pattern matcher corresponding to the specification
      * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with the query
 	 * @throws ViatraQueryException if the matcher could not be initialized

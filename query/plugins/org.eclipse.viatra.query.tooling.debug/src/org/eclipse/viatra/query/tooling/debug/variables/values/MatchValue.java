@@ -27,7 +27,7 @@ import com.sun.jdi.ArrayReference;
 import com.sun.jdi.StringReference;
 
 /**
- * The value of an VIATRA Query Debug Variable which represents an {@link IPatternMatch} instance. Children variables are 
+ * The value of a VIATRA Query Debug Variable which represents an {@link IPatternMatch} instance. Children variables are 
  * the pattern match parameters.
  * 
  * @author Tamas Szabo (itemis AG)

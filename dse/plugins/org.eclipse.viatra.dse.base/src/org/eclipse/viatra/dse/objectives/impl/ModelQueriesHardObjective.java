@@ -66,7 +66,7 @@ public class ModelQueriesHardObjective extends BaseObjective {
      * Adds a new VIATRA Query Specification.
      * 
      * @param constraint
-     *            An VIATRA Query Specification.
+     *            A VIATRA Query Specification.
      * @return The actual instance to enable builder pattern like usage.
      */
     public ModelQueriesHardObjective withConstraint(

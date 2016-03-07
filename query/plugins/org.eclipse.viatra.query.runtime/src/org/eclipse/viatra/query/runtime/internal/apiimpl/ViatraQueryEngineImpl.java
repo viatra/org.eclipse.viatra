@@ -596,7 +596,7 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
 	}
 
     // /**
-    // * EXPERIMENTAL: Creates an VIATRA Query Engine that executes post-commit, or retrieves an already existing one.
+    // * EXPERIMENTAL: Creates a VIATRA Query Engine that executes post-commit, or retrieves an already existing one.
     // * @param emfRoot the EMF root where this engine should operate
     // * @param reteThreads experimental feature; 0 is recommended
     // * @return a new or previously existing engine

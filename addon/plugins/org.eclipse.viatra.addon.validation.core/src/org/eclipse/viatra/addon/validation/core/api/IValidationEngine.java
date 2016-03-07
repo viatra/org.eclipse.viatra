@@ -17,7 +17,7 @@ import java.util.Collection;
 import org.eclipse.viatra.addon.validation.core.listeners.ValidationEngineListener;
 
 /**
- * A validation engine is responsible for managing the constraints existing in the scope of an VIATRA Query Engine (e.g.
+ * A validation engine is responsible for managing the constraints existing in the scope of a VIATRA Query Engine (e.g.
  * resource set) for a set of constraint specifications added to the validation engine.
  * <p>
  * The validation engine provides capabilities for:

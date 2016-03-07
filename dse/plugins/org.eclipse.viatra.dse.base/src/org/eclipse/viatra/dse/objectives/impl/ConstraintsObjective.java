@@ -125,7 +125,7 @@ public class ConstraintsObjective extends BaseObjective {
      * @param name
      *            A name for the soft constraint.
      * @param softConstraint
-     *            An VIATRA Query pattern specification.
+     *            A VIATRA Query pattern specification.
      * @param weight
      *            The weight of the pattern.
      * @return The actual instance to enable builder pattern like usage.
@@ -142,7 +142,7 @@ public class ConstraintsObjective extends BaseObjective {
      * Adds a new soft constraint with the name of the query specification's fully qualified name.
      * 
      * @param softConstraint
-     *            An VIATRA Query pattern specification.
+     *            A VIATRA Query pattern specification.
      * @param weight
      *            The weight of the pattern.
      * @return The actual instance to enable builder pattern like usage.
@@ -158,7 +158,7 @@ public class ConstraintsObjective extends BaseObjective {
      * @param name
      *            A name for the hard constraint.
      * @param softConstraint
-     *            An VIATRA Query pattern specification.
+     *            A VIATRA Query pattern specification.
      * @return The actual instance to enable builder pattern like usage.
      */
     public ConstraintsObjective withHardConstraint(String name,
@@ -172,7 +172,7 @@ public class ConstraintsObjective extends BaseObjective {
      * Adds a new hard constraint with the name of the query specification's fully qualified name.
      * 
      * @param softConstraint
-     *            An VIATRA Query pattern specification.
+     *            A VIATRA Query pattern specification.
      * @return The actual instance to enable builder pattern like usage.
      */
     public ConstraintsObjective withHardConstraint(

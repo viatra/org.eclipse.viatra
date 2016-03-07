@@ -24,7 +24,7 @@ import org.eclipse.xtext.ui.XtextProjectHelper;
 public class ViatraQueryNature implements IProjectNature {
 
     /**
-     * The project nature identifier used for defining the project nature of an VIATRA Query project.
+     * The project nature identifier used for defining the project nature of a VIATRA Query project.
      */
     public static final String NATURE_ID = "org.eclipse.viatra.query.projectnature"; //$NON-NLS-1$
     public static final String XTEXT_NATURE_ID = XtextProjectHelper.NATURE_ID;
