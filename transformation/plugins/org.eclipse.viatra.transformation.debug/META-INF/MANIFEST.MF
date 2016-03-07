@@ -18,5 +18,6 @@ Export-Package: org.eclipse.viatra.transformation.debug,
  org.eclipse.viatra.transformation.debug.breakpoints,
  org.eclipse.viatra.transformation.debug.breakpoints.impl,
  org.eclipse.viatra.transformation.debug.configuration,
- org.eclipse.viatra.transformation.debug.controller
+ org.eclipse.viatra.transformation.debug.controller,
+ org.eclipse.viatra.transformation.debug.controller.impl
 Import-Package: org.apache.log4j;version="1.2.15"

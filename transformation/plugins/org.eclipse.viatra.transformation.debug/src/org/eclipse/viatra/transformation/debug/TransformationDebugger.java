@@ -17,6 +17,7 @@ import org.eclipse.viatra.transformation.debug.adapter.impl.AbstractTransformati
 import org.eclipse.viatra.transformation.debug.breakpoints.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.breakpoints.impl.TransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.controller.IDebugController;
+import org.eclipse.viatra.transformation.debug.controller.impl.ConsoleDebugger;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
 import com.google.common.collect.Lists;
@@ -42,6 +43,11 @@ public class TransformationDebugger extends AbstractTransformationAdapter{
     public TransformationDebugger(IDebugController usedUI, ITransformationBreakpoint ... breakpoints) {
     	this.breakPoints = Arrays.asList(breakpoints);
         ui = usedUI;
+    }
+    
+    public TransformationDebugger(ITransformationBreakpoint ... breakpoints) {
+    	this.breakPoints = Arrays.asList(breakpoints);
+        ui = new ConsoleDebugger();
     }
 
     @Override
