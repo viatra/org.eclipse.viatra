@@ -38,7 +38,9 @@ import org.eclipse.viatra.dse.solutionstore.ISolutionStore.StopExecutionType;
  * 
  * @author Andras Szabolcs Nagy
  * 
+ * @deprecated Implement the {@link IStrategy} interface instead.
  */
+@Deprecated
 public abstract class LocalSearchStrategyBase implements IStrategy {
 
     private static final String STATE_EVALUATION = "stateEvaluation";
