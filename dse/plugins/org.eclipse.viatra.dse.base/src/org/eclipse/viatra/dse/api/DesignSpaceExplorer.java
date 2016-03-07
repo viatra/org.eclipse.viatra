@@ -278,7 +278,12 @@ public class DesignSpaceExplorer {
      * 
      * @param solutionStore
      *            The {@link ISolutionStore} implementation.
+     * 
+     * @deprecated This method is only used by the strategies implementing the deprecated
+     *             {@link LocalSearchStrategyBase} abstract class. Use
+     *             {@link DesignSpaceExplorer#setSolutionStore(SolutionStore)} instead.
      */
+    @Deprecated
     public void setSolutionStore(ISolutionStore solutionStore) {
         globalContext.setSolutionStore(solutionStore);
     }

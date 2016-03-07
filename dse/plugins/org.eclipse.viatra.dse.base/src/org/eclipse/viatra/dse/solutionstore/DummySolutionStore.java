@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.ThreadContext;
 
 /**
@@ -22,7 +23,10 @@ import org.eclipse.viatra.dse.base.ThreadContext;
  * 
  * @author Andras Szabolcs Nagy
  * 
+ * @deprecated This solution store is only used by the strategies implementing the deprecated
+ *             {@link LocalSearchStrategyBase} abstract class.
  */
+@Deprecated
 public class DummySolutionStore implements ISolutionStore {
 
     @Override

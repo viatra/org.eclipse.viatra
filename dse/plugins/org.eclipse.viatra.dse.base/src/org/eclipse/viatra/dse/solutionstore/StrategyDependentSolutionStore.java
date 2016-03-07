@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.solutionstore;
 
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.ThreadContext;
 
 /**
@@ -23,7 +24,10 @@ import org.eclipse.viatra.dse.base.ThreadContext;
  * 
  * @author Andras Szabolcs Nagy
  *
+ * @deprecated This solution store is only used by the strategies implementing the deprecated
+ *             {@link LocalSearchStrategyBase} abstract class.
  */
+@Deprecated
 public class StrategyDependentSolutionStore extends SimpleSolutionStore {
 
     @Override

@@ -22,7 +22,10 @@ import org.eclipse.viatra.dse.base.ThreadContext;
  * 
  * @author Andras Szabolcs Nagy
  * 
+ * @deprecated This solution store is only used by the strategies implementing the deprecated
+ *             {@link LocalSearchStrategyBase} abstract class.
  */
+@Deprecated
 public interface ISolutionStore {
 
     /**

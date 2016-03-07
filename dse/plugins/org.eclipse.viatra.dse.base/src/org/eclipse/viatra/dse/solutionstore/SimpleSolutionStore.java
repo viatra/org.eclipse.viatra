@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.strategy.interfaces.ISolutionFoundHandler;
+import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
@@ -30,7 +31,10 @@ import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
  * 
  * @author Andras Szabolcs Nagy
  *
+ * @deprecated This solution store is only used by the strategies implementing the deprecated
+ *             {@link LocalSearchStrategyBase} abstract class.
  */
+@Deprecated
 public class SimpleSolutionStore implements ISolutionStore {
 
     private final ConcurrentHashMap<Object, Solution> solutions = new ConcurrentHashMap<Object, Solution>(5, 0.75f, 1);
