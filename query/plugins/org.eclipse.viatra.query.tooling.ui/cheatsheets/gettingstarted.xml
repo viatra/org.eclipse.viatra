@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<compositeCheatsheet name="Getting Started with EMF-IncQuery">
-   <taskGroup kind="set" name="Query your models using IncQuery" skip="false">
+<compositeCheatsheet name="Getting Started with VIATRA Query">
+   <taskGroup kind="set" name="Query your models using VIATRA Query" skip="false">
       <intro>
-         <a href="http://eclipse.org/incquery">EMF-IncQuery</a> is a technology that can be used to <b>efficiently query EMF instance models</b> in an <b>incremental way</b>. After completing the tasks, you will know how to create an IncQuery plug-in, how to use it, and where to look for further information. These sheets guide you through simple example that works immediately.
+         <a href="http://eclipse.org/VIATRA/Query">VIATRA Query</a> is a technology that can be used to <b>efficiently query EMF instance models</b> in an <b>incremental way</b>. After completing the tasks, you will know how to create a VIATRA Query plug-in, how to use it, and where to look for further information. These sheets guide you through simple example that works immediately.
       </intro>
       <onCompletion>
       </onCompletion>
-      <task kind="cheatsheet" name="Creating an EMF-IncQuery Project" skip="false">
+      <task kind="cheatsheet" name="Creating a VIATRA Query Project" skip="false">
          <intro>
-            This sheet describes how to create an EMF-IncQuery plug-in project from scratch.
+            This sheet describes how to create a VIATRA Query plug-in project from scratch.
          </intro>
          <onCompletion>
          </onCompletion>
@@ -17,7 +17,7 @@
       </task>
       <task kind="cheatsheet" name="Creating and Executing Queries" skip="false">
          <intro>
-            This sheet describes how to create EMF-IncQuery queries.
+            This sheet describes how to create VIATRA queries.
          </intro>
          <onCompletion>
          </onCompletion>
@@ -26,7 +26,7 @@
       </task>
       <task kind="cheatsheet" name="Generating Code from Queries" skip="false">
          <intro>
-            This cheat sheet describes the automatic creation of a <b>sample UI project</b> which demonstrates how EMF-IncQuery queries can be invoked from Java code. The Sample UI project provides a menu contribution that displays the query results in a dialog window.
+            This cheat sheet demonstrates how VIATRA queries can be invoked from Java code.
          </intro>
          <onCompletion>
          </onCompletion>
