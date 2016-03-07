@@ -63,12 +63,21 @@ public class ConcurrentDesignSpace implements IDesignSpace {
         // Is the state exists? if yes then return false
         State state = getStateById(newStateId);
         if (state != null) {
-            // set transition's results in
-            if (sourceTransition != null && !state.getIncomingTransitions().contains(sourceTransition)) {
-                sourceTransition.setResultsIn(state);
-                state.addInTransition((Transition) sourceTransition);
-                fireTransitionFiredEvent(sourceTransition);
+
+            if (sourceTransition == null) {
+                return false;
             }
+
+            Collection<? extends ITransition> incomingTransitions = state.getIncomingTransitions();
+            for (ITransition t : incomingTransitions) {
+                if (t == sourceTransition) {
+                    return false;
+                }
+            }
+
+            sourceTransition.setResultsIn(state);
+            state.addInTransition((Transition) sourceTransition);
+            fireTransitionFiredEvent(sourceTransition);
             return false;
         }
 
