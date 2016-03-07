@@ -42,6 +42,9 @@
    <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.201406280202.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.201406280202">
       <category name="thirdparty"/>
    </feature>
+   <feature url="features/org.eclipse.viatra.transformation.debug.feature_0.12.0.qualifier.jar" id="org.eclipse.viatra.transformation.debug.feature" version="0.12.0.qualifier">
+      <category name="org.eclipse.viatra.addons"/>
+   </feature>
    <category-def name="org.eclipse.viatra" label="VIATRA Core"/>
    <category-def name="org.eclipse.viatra.addons" label="VIATRA Addons"/>
    <category-def name="org.eclipse.viatra.integrations" label="VIATRA Integrations"/>
