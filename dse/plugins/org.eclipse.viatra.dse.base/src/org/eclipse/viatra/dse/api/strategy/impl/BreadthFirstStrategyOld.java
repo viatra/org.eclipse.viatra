@@ -23,7 +23,8 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
-public class BreadthFirstStrategy extends LocalSearchStrategyBase {
+@Deprecated
+class BreadthFirstStrategyOld extends LocalSearchStrategyBase {
 
     private class TransitionWrapper {
         private ITransition transition;
@@ -48,10 +49,10 @@ public class BreadthFirstStrategy extends LocalSearchStrategyBase {
     private boolean isInterrupted = false;
     private ThreadContext context;
 
-    public BreadthFirstStrategy() {
+    public BreadthFirstStrategyOld() {
     }
 
-    public BreadthFirstStrategy(int maxDepth) {
+    public BreadthFirstStrategyOld(int maxDepth) {
         this.maxDepth = maxDepth;
     }
 

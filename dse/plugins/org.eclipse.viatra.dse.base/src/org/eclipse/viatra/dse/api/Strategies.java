@@ -11,13 +11,9 @@
 package org.eclipse.viatra.dse.api;
 
 import org.eclipse.viatra.dse.api.strategy.impl.BreadthFirstStrategy2;
-import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy2;
-import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy2;
-import org.eclipse.viatra.dse.api.strategy.impl.HillClimbingStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.HillClimbingStrategy2;
-import org.eclipse.viatra.dse.api.strategy.impl.ParallelBFSStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 
 /**
@@ -31,20 +27,8 @@ public final class Strategies {
     private Strategies() {
     }
 
-    public static DepthFirstStrategy createDFSStrategy(int depthLimit) {
-        return new DepthFirstStrategy(depthLimit);
-    }
-
     public static DepthFirstStrategy2 createDFSStrategy2(int depthLimit) {
         return new DepthFirstStrategy2(depthLimit);
-    }
-
-    public static FixedPriorityStrategy createFixedPriorityStrategy() {
-        return createFixedPriorityStrategy(0);
-    }
-
-    public static FixedPriorityStrategy createFixedPriorityStrategy(int depthLimit) {
-        return new FixedPriorityStrategy().withDepthLimit(depthLimit);
     }
 
     public static FixedPriorityStrategy2 createFixedPriorityStrategy2() {
@@ -55,22 +39,10 @@ public final class Strategies {
         return new FixedPriorityStrategy2().withDepthLimit(depthLimit);
     }
 
-    public static ParallelBFSStrategy createBFSStrategy() {
-        return createBFSStrategy(0);
-    }
-
-    public static ParallelBFSStrategy createBFSStrategy(int depthLimit) {
-        return new ParallelBFSStrategy(depthLimit);
-    }
-
     public static BreadthFirstStrategy2 createBfsStrategy2(int depthLimit) {
         return new BreadthFirstStrategy2(depthLimit);
     }
     
-    public static HillClimbingStrategy creatHillClimbingStrategy() {
-        return new HillClimbingStrategy();
-    }
-
     public static HillClimbingStrategy2 creatHillClimbingStrategy2() {
         return new HillClimbingStrategy2();
     }

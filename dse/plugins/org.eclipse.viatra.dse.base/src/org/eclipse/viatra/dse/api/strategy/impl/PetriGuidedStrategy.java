@@ -22,12 +22,13 @@ import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptio
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
+@Deprecated
 public class PetriGuidedStrategy extends LocalSearchStrategyBase {
 
     private List<DSETransformationRule<?, ?>> petriTrajectory;
     private int actIndex = 0;
     private List<Integer> trajectoyIndexes = new ArrayList<Integer>();
-    private BreadthFirstStrategy breadthFirstSearch;
+    private BreadthFirstStrategyOld breadthFirstSearch;
     private boolean lastWasPetriTurn = true;
     private boolean isInterrupted = false;
     private FilterOptions filterOptions;
@@ -80,7 +81,7 @@ public class PetriGuidedStrategy extends LocalSearchStrategyBase {
                 actIndex++;
                 trajectoyIndexes.add(dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() + 1);
                 lastWasPetriTurn = true;
-                breadthFirstSearch = new BreadthFirstStrategy();
+                breadthFirstSearch = new BreadthFirstStrategyOld();
                 return t;
             }
         }
