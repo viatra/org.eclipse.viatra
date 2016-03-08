@@ -10,6 +10,8 @@
 package org.eclipse.viatra.dse.objectives;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +30,14 @@ public class ObjectiveComparatorHelper {
     private IObjective[][] leveledObjectives;
     private List<TrajectoryFitness> trajectoryFitnesses = new ArrayList<TrajectoryFitness>();
     private Random random = new Random();
+    private boolean computeCrowdingDistance = false;
 
     public ObjectiveComparatorHelper(IObjective[][] leveledObjectives) {
         this.leveledObjectives = leveledObjectives;
+    }
+
+    public void setComputeCrowdingDistance(boolean computeCrowdingDistance) {
+        this.computeCrowdingDistance = computeCrowdingDistance;
     }
 
     /**
@@ -76,6 +83,7 @@ public class ObjectiveComparatorHelper {
 
     /**
      * Adds a {@link TrajectoryFitness} to an inner list to compare later.
+     * 
      * @param trajectoryFitness
      */
     public void addTrajectoryFitness(TrajectoryFitness trajectoryFitness) {
@@ -91,6 +99,7 @@ public class ObjectiveComparatorHelper {
 
     /**
      * Returns the inner {@link TrajectoryFitness} list.
+     * 
      * @return
      */
     public List<TrajectoryFitness> getTrajectoryFitnesses() {
@@ -99,6 +108,7 @@ public class ObjectiveComparatorHelper {
 
     /**
      * Returns a random {@link TrajectoryFitness} from the pareto front.
+     * 
      * @return
      */
     public TrajectoryFitness getRandomBest() {
@@ -109,6 +119,7 @@ public class ObjectiveComparatorHelper {
 
     /**
      * Returns the pareto front of the previously added {@link TrajectoryFitness}.
+     * 
      * @return
      */
     public List<TrajectoryFitness> getParetoFront() {
@@ -117,9 +128,10 @@ public class ObjectiveComparatorHelper {
 
     /**
      * Returns the previously added {@link TrajectoryFitness} instances in fronts.
+     * 
      * @return
      */
-    public List<ArrayList<TrajectoryFitness>> getFronts() {
+    public List<? extends List<TrajectoryFitness>> getFronts() {
         Preconditions.checkArgument(!trajectoryFitnesses.isEmpty(), "No trajectory fitnesses were added.");
         List<ArrayList<TrajectoryFitness>> fronts = new ArrayList<ArrayList<TrajectoryFitness>>();
 
@@ -169,11 +181,57 @@ public class ObjectiveComparatorHelper {
             }
             i++;
             if (!nextDominationFront.isEmpty()) {
+                if (computeCrowdingDistance) {
+                    crowdingDistanceAssignment(nextDominationFront, leveledObjectives);
+                }
                 fronts.add(nextDominationFront);
             }
         }
 
         return fronts;
+    }
+
+    /**
+     * Executes the crowding distance assignment for the specified front.
+     * 
+     * @param front
+     */
+    public static void crowdingDistanceAssignment(List<TrajectoryFitness> front, IObjective[][] leveledObjectives) {
+
+        for (TrajectoryFitness InstanceData : front) {
+            // initialize crowding distance
+            InstanceData.crowdingDistance = 0;
+        }
+
+        for (final IObjective[] objectives : leveledObjectives) {
+            for (final IObjective objective : objectives) {
+
+                final String m = objective.getName();
+                TrajectoryFitness[] sortedFront = front.toArray(new TrajectoryFitness[0]);
+                // sort using m-th objective value
+                Arrays.sort(sortedFront, new Comparator<TrajectoryFitness>() {
+                    @Override
+                    public int compare(TrajectoryFitness o1, TrajectoryFitness o2) {
+                        objective.getComparator().compare(o1.fitness.get(m), o2.fitness.get(m));
+                        return 0;
+                    }
+                });
+                // so that boundary points are always selected
+                sortedFront[0].crowdingDistance = Double.POSITIVE_INFINITY;
+                sortedFront[sortedFront.length - 1].crowdingDistance = Double.POSITIVE_INFINITY;
+                // If minimal and maximal fitness value for this objective are
+                // equal, then do not change crowding distance
+                if (sortedFront[0].fitness.get(m) != sortedFront[sortedFront.length - 1].fitness.get(m)) {
+                    for (int i = 1; i < sortedFront.length - 1; i++) {
+                        double newCrowdingDistance = sortedFront[i].crowdingDistance;
+                        newCrowdingDistance += (sortedFront[i + 1].fitness.get(m) - sortedFront[i - 1].fitness.get(m))
+                                / (sortedFront[sortedFront.length - 1].fitness.get(m) - sortedFront[0].fitness.get(m));
+
+                        sortedFront[i].crowdingDistance = newCrowdingDistance;
+                    }
+                }
+            }
+        }
     }
 
 }
