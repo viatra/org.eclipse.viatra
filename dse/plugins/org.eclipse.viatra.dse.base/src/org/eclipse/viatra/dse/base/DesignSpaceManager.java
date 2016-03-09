@@ -309,6 +309,10 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         return true;
     }
 
+    public void undoUntilRoot() {
+        while(undoLastTransformation());
+    }
+
     private Object generateMatchCode(IPatternMatch match) {
         return stateCoder.createActivationCode(match);
     }

@@ -82,8 +82,7 @@ public class RandomInitalSelector implements IInitialPopulationSelector {
 
             foundInstances++;
             initialPopulation.add(new TrajectoryFitness(dsm.getTrajectoryInfo(), context.calculateFitness()));
-            while (dsm.undoLastTransformation())
-                ;
+            dsm.undoUntilRoot();
             lengthRemaining = newLength();
         }
     }
