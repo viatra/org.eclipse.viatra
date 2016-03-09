@@ -41,7 +41,8 @@ public abstract class DatabindingAdapter<T extends IPatternMatch> {
 
         @Override
         public Object getValueType() {
-            return Object.class;
+            //TODO if typed as object bindings are not displayed correctly
+        	return null;
         }
 
         @Override
