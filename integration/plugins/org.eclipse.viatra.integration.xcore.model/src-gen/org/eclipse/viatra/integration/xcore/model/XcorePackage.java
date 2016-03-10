@@ -23,119 +23,119 @@ import org.eclipse.emf.ecore.EReference;
  * @generated
  */
 public interface XcorePackage extends EPackage {
-	/**
+    /**
      * The package name.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	String eNAME = "xcore";
+    String eNAME = "xcore";
 
-	/**
+    /**
      * The package namespace URI.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	String eNS_URI = "http://www.eclipse.org/incquery/IncQueryXcoreLanguage";
+    String eNS_URI = "http://www.eclipse.org/viatra/query/patternlanguage/ViatraQueryXcoreLanguage";
 
-	/**
+    /**
      * The package namespace name.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	String eNS_PREFIX = "xcore";
+    String eNS_PREFIX = "xcore";
 
-	/**
+    /**
      * The singleton instance of the package.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	XcorePackage eINSTANCE = org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl.init();
+    XcorePackage eINSTANCE = org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl.init();
 
-	/**
-     * The meta object id for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XIncQueryDerivedFeatureImpl <em>XInc Query Derived Feature</em>}' class.
+    /**
+     * The meta object id for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryDerivedFeatureImpl <em>XViatra Query Derived Feature</em>}' class.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.integration.xcore.model.impl.XIncQueryDerivedFeatureImpl
-     * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXIncQueryDerivedFeature()
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryDerivedFeatureImpl
+     * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXViatraQueryDerivedFeature()
      * @generated
      */
-	int XINC_QUERY_DERIVED_FEATURE = 0;
+    int XVIATRA_QUERY_DERIVED_FEATURE = 0;
 
-	/**
+    /**
      * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE__ANNOTATIONS = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__ANNOTATIONS;
+    int XVIATRA_QUERY_DERIVED_FEATURE__ANNOTATIONS = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__ANNOTATIONS;
 
-	/**
+    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE__NAME = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__NAME;
+    int XVIATRA_QUERY_DERIVED_FEATURE__NAME = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__NAME;
 
-	/**
+    /**
      * The feature id for the '<em><b>Unordered</b></em>' attribute.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE__UNORDERED = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__UNORDERED;
+    int XVIATRA_QUERY_DERIVED_FEATURE__UNORDERED = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__UNORDERED;
 
-	/**
+    /**
      * The feature id for the '<em><b>Unique</b></em>' attribute.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE__UNIQUE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__UNIQUE;
+    int XVIATRA_QUERY_DERIVED_FEATURE__UNIQUE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__UNIQUE;
 
-	/**
+    /**
      * The feature id for the '<em><b>Type</b></em>' containment reference.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE__TYPE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__TYPE;
+    int XVIATRA_QUERY_DERIVED_FEATURE__TYPE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__TYPE;
 
-	/**
+    /**
      * The feature id for the '<em><b>Multiplicity</b></em>' attribute.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE__MULTIPLICITY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__MULTIPLICITY;
+    int XVIATRA_QUERY_DERIVED_FEATURE__MULTIPLICITY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__MULTIPLICITY;
 
-	/**
+    /**
      * The feature id for the '<em><b>Containing Class</b></em>' container reference.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE__CONTAINING_CLASS = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__CONTAINING_CLASS;
+    int XVIATRA_QUERY_DERIVED_FEATURE__CONTAINING_CLASS = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__CONTAINING_CLASS;
 
-	/**
+    /**
      * The feature id for the '<em><b>Readonly</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int XINC_QUERY_DERIVED_FEATURE__READONLY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__READONLY;
+    int XVIATRA_QUERY_DERIVED_FEATURE__READONLY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__READONLY;
 
     /**
      * The feature id for the '<em><b>Volatile</b></em>' attribute.
@@ -144,7 +144,7 @@ public interface XcorePackage extends EPackage {
      * @generated
      * @ordered
      */
-    int XINC_QUERY_DERIVED_FEATURE__VOLATILE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__VOLATILE;
+    int XVIATRA_QUERY_DERIVED_FEATURE__VOLATILE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__VOLATILE;
 
     /**
      * The feature id for the '<em><b>Transient</b></em>' attribute.
@@ -153,7 +153,7 @@ public interface XcorePackage extends EPackage {
      * @generated
      * @ordered
      */
-    int XINC_QUERY_DERIVED_FEATURE__TRANSIENT = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__TRANSIENT;
+    int XVIATRA_QUERY_DERIVED_FEATURE__TRANSIENT = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__TRANSIENT;
 
     /**
      * The feature id for the '<em><b>Unsettable</b></em>' attribute.
@@ -162,7 +162,7 @@ public interface XcorePackage extends EPackage {
      * @generated
      * @ordered
      */
-    int XINC_QUERY_DERIVED_FEATURE__UNSETTABLE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__UNSETTABLE;
+    int XVIATRA_QUERY_DERIVED_FEATURE__UNSETTABLE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__UNSETTABLE;
 
     /**
      * The feature id for the '<em><b>Derived</b></em>' attribute.
@@ -171,7 +171,7 @@ public interface XcorePackage extends EPackage {
      * @generated
      * @ordered
      */
-    int XINC_QUERY_DERIVED_FEATURE__DERIVED = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__DERIVED;
+    int XVIATRA_QUERY_DERIVED_FEATURE__DERIVED = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__DERIVED;
 
     /**
      * The feature id for the '<em><b>Get Body</b></em>' containment reference.
@@ -180,7 +180,7 @@ public interface XcorePackage extends EPackage {
      * @generated
      * @ordered
      */
-    int XINC_QUERY_DERIVED_FEATURE__GET_BODY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__GET_BODY;
+    int XVIATRA_QUERY_DERIVED_FEATURE__GET_BODY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__GET_BODY;
 
     /**
      * The feature id for the '<em><b>Set Body</b></em>' containment reference.
@@ -189,7 +189,7 @@ public interface XcorePackage extends EPackage {
      * @generated
      * @ordered
      */
-    int XINC_QUERY_DERIVED_FEATURE__SET_BODY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__SET_BODY;
+    int XVIATRA_QUERY_DERIVED_FEATURE__SET_BODY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__SET_BODY;
 
     /**
      * The feature id for the '<em><b>Is Set Body</b></em>' containment reference.
@@ -198,7 +198,7 @@ public interface XcorePackage extends EPackage {
      * @generated
      * @ordered
      */
-    int XINC_QUERY_DERIVED_FEATURE__IS_SET_BODY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__IS_SET_BODY;
+    int XVIATRA_QUERY_DERIVED_FEATURE__IS_SET_BODY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__IS_SET_BODY;
 
     /**
      * The feature id for the '<em><b>Unset Body</b></em>' containment reference.
@@ -207,295 +207,295 @@ public interface XcorePackage extends EPackage {
      * @generated
      * @ordered
      */
-    int XINC_QUERY_DERIVED_FEATURE__UNSET_BODY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__UNSET_BODY;
+    int XVIATRA_QUERY_DERIVED_FEATURE__UNSET_BODY = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE__UNSET_BODY;
 
     /**
      * The feature id for the '<em><b>Pattern</b></em>' reference.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE__PATTERN = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE_FEATURE_COUNT + 0;
+    int XVIATRA_QUERY_DERIVED_FEATURE__PATTERN = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE_FEATURE_COUNT + 0;
 
-	/**
+    /**
      * The feature id for the '<em><b>Reference</b></em>' attribute.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE__REFERENCE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE_FEATURE_COUNT + 1;
+    int XVIATRA_QUERY_DERIVED_FEATURE__REFERENCE = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE_FEATURE_COUNT + 1;
 
-	/**
-     * The number of structural features of the '<em>XInc Query Derived Feature</em>' class.
+    /**
+     * The number of structural features of the '<em>XViatra Query Derived Feature</em>' class.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_DERIVED_FEATURE_FEATURE_COUNT = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE_FEATURE_COUNT + 2;
+    int XVIATRA_QUERY_DERIVED_FEATURE_FEATURE_COUNT = org.eclipse.emf.ecore.xcore.XcorePackage.XSTRUCTURAL_FEATURE_FEATURE_COUNT + 2;
 
-	/**
-     * The meta object id for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XIncQueryPackageImpl <em>XInc Query Package</em>}' class.
+    /**
+     * The meta object id for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryPackageImpl <em>XViatra Query Package</em>}' class.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.integration.xcore.model.impl.XIncQueryPackageImpl
-     * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXIncQueryPackage()
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryPackageImpl
+     * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXViatraQueryPackage()
      * @generated
      */
-	int XINC_QUERY_PACKAGE = 1;
+    int XVIATRA_QUERY_PACKAGE = 1;
 
-	/**
+    /**
      * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_PACKAGE__ANNOTATIONS = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__ANNOTATIONS;
+    int XVIATRA_QUERY_PACKAGE__ANNOTATIONS = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__ANNOTATIONS;
 
-	/**
+    /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_PACKAGE__NAME = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__NAME;
+    int XVIATRA_QUERY_PACKAGE__NAME = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__NAME;
 
-	/**
+    /**
      * The feature id for the '<em><b>Import Directives</b></em>' containment reference list.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_PACKAGE__IMPORT_DIRECTIVES = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__IMPORT_DIRECTIVES;
+    int XVIATRA_QUERY_PACKAGE__IMPORT_DIRECTIVES = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__IMPORT_DIRECTIVES;
 
-	/**
+    /**
      * The feature id for the '<em><b>Annotation Directives</b></em>' containment reference list.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_PACKAGE__ANNOTATION_DIRECTIVES = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__ANNOTATION_DIRECTIVES;
+    int XVIATRA_QUERY_PACKAGE__ANNOTATION_DIRECTIVES = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__ANNOTATION_DIRECTIVES;
 
-	/**
+    /**
      * The feature id for the '<em><b>Classifiers</b></em>' containment reference list.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_PACKAGE__CLASSIFIERS = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__CLASSIFIERS;
+    int XVIATRA_QUERY_PACKAGE__CLASSIFIERS = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE__CLASSIFIERS;
 
-	/**
+    /**
      * The feature id for the '<em><b>Imported Inc Queries</b></em>' containment reference list.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE_FEATURE_COUNT + 0;
+    int XVIATRA_QUERY_PACKAGE__IMPORTED_INC_QUERIES = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE_FEATURE_COUNT + 0;
 
-	/**
-     * The number of structural features of the '<em>XInc Query Package</em>' class.
+    /**
+     * The number of structural features of the '<em>XViatra Query Package</em>' class.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_PACKAGE_FEATURE_COUNT = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE_FEATURE_COUNT + 1;
+    int XVIATRA_QUERY_PACKAGE_FEATURE_COUNT = org.eclipse.emf.ecore.xcore.XcorePackage.XPACKAGE_FEATURE_COUNT + 1;
 
-	/**
-     * The meta object id for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XIncQueryImportImpl <em>XInc Query Import</em>}' class.
+    /**
+     * The meta object id for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryImportImpl <em>XViatra Query Import</em>}' class.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-     * @see org.eclipse.viatra.integration.xcore.model.impl.XIncQueryImportImpl
-     * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXIncQueryImport()
+     * <!-- end-user-doc -->
+     * @see org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryImportImpl
+     * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXViatraQueryImport()
      * @generated
      */
-	int XINC_QUERY_IMPORT = 2;
+    int XVIATRA_QUERY_IMPORT = 2;
 
-	/**
+    /**
      * The feature id for the '<em><b>Imported Pattern Model</b></em>' reference.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL = 0;
+    int XVIATRA_QUERY_IMPORT__IMPORTED_PATTERN_MODEL = 0;
 
-	/**
-     * The number of structural features of the '<em>XInc Query Import</em>' class.
+    /**
+     * The number of structural features of the '<em>XViatra Query Import</em>' class.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-	int XINC_QUERY_IMPORT_FEATURE_COUNT = 1;
+    int XVIATRA_QUERY_IMPORT_FEATURE_COUNT = 1;
 
 
-	/**
-     * Returns the meta object for class '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature <em>XInc Query Derived Feature</em>}'.
+    /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryDerivedFeature <em>XViatra Query Derived Feature</em>}'.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-     * @return the meta object for class '<em>XInc Query Derived Feature</em>'.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>XViatra Query Derived Feature</em>'.
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryDerivedFeature
      * @generated
      */
-	EClass getXIncQueryDerivedFeature();
+    EClass getXViatraQueryDerivedFeature();
 
-	/**
-     * Returns the meta object for the reference '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature#getPattern <em>Pattern</em>}'.
+    /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryDerivedFeature#getPattern <em>Pattern</em>}'.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @return the meta object for the reference '<em>Pattern</em>'.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature#getPattern()
-     * @see #getXIncQueryDerivedFeature()
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryDerivedFeature#getPattern()
+     * @see #getXViatraQueryDerivedFeature()
      * @generated
      */
-	EReference getXIncQueryDerivedFeature_Pattern();
+    EReference getXViatraQueryDerivedFeature_Pattern();
 
-	/**
-     * Returns the meta object for the attribute '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature#isReference <em>Reference</em>}'.
+    /**
+     * Returns the meta object for the attribute '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryDerivedFeature#isReference <em>Reference</em>}'.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @return the meta object for the attribute '<em>Reference</em>'.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature#isReference()
-     * @see #getXIncQueryDerivedFeature()
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryDerivedFeature#isReference()
+     * @see #getXViatraQueryDerivedFeature()
      * @generated
      */
-	EAttribute getXIncQueryDerivedFeature_Reference();
+    EAttribute getXViatraQueryDerivedFeature_Reference();
 
-	/**
-     * Returns the meta object for class '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryPackage <em>XInc Query Package</em>}'.
+    /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryPackage <em>XViatra Query Package</em>}'.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-     * @return the meta object for class '<em>XInc Query Package</em>'.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryPackage
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>XViatra Query Package</em>'.
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryPackage
      * @generated
      */
-	EClass getXIncQueryPackage();
+    EClass getXViatraQueryPackage();
 
-	/**
-     * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryPackage#getImportedIncQueries <em>Imported Inc Queries</em>}'.
+    /**
+     * Returns the meta object for the containment reference list '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryPackage#getImportedIncQueries <em>Imported Inc Queries</em>}'.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @return the meta object for the containment reference list '<em>Imported Inc Queries</em>'.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryPackage#getImportedIncQueries()
-     * @see #getXIncQueryPackage()
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryPackage#getImportedIncQueries()
+     * @see #getXViatraQueryPackage()
      * @generated
      */
-	EReference getXIncQueryPackage_ImportedIncQueries();
+    EReference getXViatraQueryPackage_ImportedIncQueries();
 
-	/**
-     * Returns the meta object for class '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryImport <em>XInc Query Import</em>}'.
+    /**
+     * Returns the meta object for class '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryImport <em>XViatra Query Import</em>}'.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-     * @return the meta object for class '<em>XInc Query Import</em>'.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryImport
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>XViatra Query Import</em>'.
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryImport
      * @generated
      */
-	EClass getXIncQueryImport();
+    EClass getXViatraQueryImport();
 
-	/**
-     * Returns the meta object for the reference '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryImport#getImportedPatternModel <em>Imported Pattern Model</em>}'.
+    /**
+     * Returns the meta object for the reference '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryImport#getImportedPatternModel <em>Imported Pattern Model</em>}'.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @return the meta object for the reference '<em>Imported Pattern Model</em>'.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryImport#getImportedPatternModel()
-     * @see #getXIncQueryImport()
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryImport#getImportedPatternModel()
+     * @see #getXViatraQueryImport()
      * @generated
      */
-	EReference getXIncQueryImport_ImportedPatternModel();
+    EReference getXViatraQueryImport_ImportedPatternModel();
 
-	/**
+    /**
      * Returns the factory that creates the instances of the model.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @return the factory that creates the instances of the model.
      * @generated
      */
-	XcoreFactory getXcoreFactory();
+    XcoreFactory getXcoreFactory();
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * Defines literals for the meta objects that represent
-	 * <ul>
-	 *   <li>each class,</li>
-	 *   <li>each feature of each class,</li>
-	 *   <li>each enum,</li>
-	 *   <li>and each data type</li>
-	 * </ul>
-	 * <!-- end-user-doc -->
+     * Defines literals for the meta objects that represent
+     * <ul>
+     *   <li>each class,</li>
+     *   <li>each feature of each class,</li>
+     *   <li>each enum,</li>
+     *   <li>and each data type</li>
+     * </ul>
+     * <!-- end-user-doc -->
      * @generated
      */
-	interface Literals {
-		/**
-         * The meta object literal for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XIncQueryDerivedFeatureImpl <em>XInc Query Derived Feature</em>}' class.
+    interface Literals {
+        /**
+         * The meta object literal for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryDerivedFeatureImpl <em>XViatra Query Derived Feature</em>}' class.
          * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.integration.xcore.model.impl.XIncQueryDerivedFeatureImpl
-         * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXIncQueryDerivedFeature()
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryDerivedFeatureImpl
+         * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXViatraQueryDerivedFeature()
          * @generated
          */
-		EClass XINC_QUERY_DERIVED_FEATURE = eINSTANCE.getXIncQueryDerivedFeature();
+        EClass XVIATRA_QUERY_DERIVED_FEATURE = eINSTANCE.getXViatraQueryDerivedFeature();
 
-		/**
+        /**
          * The meta object literal for the '<em><b>Pattern</b></em>' reference feature.
          * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
+         * <!-- end-user-doc -->
          * @generated
          */
-		EReference XINC_QUERY_DERIVED_FEATURE__PATTERN = eINSTANCE.getXIncQueryDerivedFeature_Pattern();
+        EReference XVIATRA_QUERY_DERIVED_FEATURE__PATTERN = eINSTANCE.getXViatraQueryDerivedFeature_Pattern();
 
-		/**
+        /**
          * The meta object literal for the '<em><b>Reference</b></em>' attribute feature.
          * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
+         * <!-- end-user-doc -->
          * @generated
          */
-		EAttribute XINC_QUERY_DERIVED_FEATURE__REFERENCE = eINSTANCE.getXIncQueryDerivedFeature_Reference();
+        EAttribute XVIATRA_QUERY_DERIVED_FEATURE__REFERENCE = eINSTANCE.getXViatraQueryDerivedFeature_Reference();
 
-		/**
-         * The meta object literal for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XIncQueryPackageImpl <em>XInc Query Package</em>}' class.
+        /**
+         * The meta object literal for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryPackageImpl <em>XViatra Query Package</em>}' class.
          * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.integration.xcore.model.impl.XIncQueryPackageImpl
-         * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXIncQueryPackage()
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryPackageImpl
+         * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXViatraQueryPackage()
          * @generated
          */
-		EClass XINC_QUERY_PACKAGE = eINSTANCE.getXIncQueryPackage();
+        EClass XVIATRA_QUERY_PACKAGE = eINSTANCE.getXViatraQueryPackage();
 
-		/**
+        /**
          * The meta object literal for the '<em><b>Imported Inc Queries</b></em>' containment reference list feature.
          * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
+         * <!-- end-user-doc -->
          * @generated
          */
-		EReference XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES = eINSTANCE.getXIncQueryPackage_ImportedIncQueries();
+        EReference XVIATRA_QUERY_PACKAGE__IMPORTED_INC_QUERIES = eINSTANCE.getXViatraQueryPackage_ImportedIncQueries();
 
-		/**
-         * The meta object literal for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XIncQueryImportImpl <em>XInc Query Import</em>}' class.
+        /**
+         * The meta object literal for the '{@link org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryImportImpl <em>XViatra Query Import</em>}' class.
          * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-         * @see org.eclipse.viatra.integration.xcore.model.impl.XIncQueryImportImpl
-         * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXIncQueryImport()
+         * <!-- end-user-doc -->
+         * @see org.eclipse.viatra.integration.xcore.model.impl.XViatraQueryImportImpl
+         * @see org.eclipse.viatra.integration.xcore.model.impl.XcorePackageImpl#getXViatraQueryImport()
          * @generated
          */
-		EClass XINC_QUERY_IMPORT = eINSTANCE.getXIncQueryImport();
+        EClass XVIATRA_QUERY_IMPORT = eINSTANCE.getXViatraQueryImport();
 
-		/**
+        /**
          * The meta object literal for the '<em><b>Imported Pattern Model</b></em>' reference feature.
          * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
+         * <!-- end-user-doc -->
          * @generated
          */
-		EReference XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL = eINSTANCE.getXIncQueryImport_ImportedPatternModel();
+        EReference XVIATRA_QUERY_IMPORT__IMPORTED_PATTERN_MODEL = eINSTANCE.getXViatraQueryImport_ImportedPatternModel();
 
-	}
+    }
 
 } //XcorePackage

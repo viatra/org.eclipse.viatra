@@ -79,7 +79,7 @@ import com.google.inject.Inject;
  * 
  * It also uses a trick to initialize the Query Specification Registry (necessary for SettingDelegate-supported 
  * query-based derived features) from on a separate, properly set up (classpath-wise) Xtext-resourceset,
- * which will be filled with all the .EIQ files from the project of the file the editor is opened on.
+ * which will be filled with all the .VQL files from the project of the file the editor is opened on.
  * 
  * Based on verbatim copy of sections of {@link EcoreEditor}.
  * 
@@ -94,7 +94,6 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 
 	
 	private void log(String msg) {
-		//System.out.println(msg);
 		EcoreEditorPlugin.INSTANCE.log(msg);
 	}
 	
@@ -102,7 +101,6 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 
     @Override
     public void init(IEditorSite site, IEditorInput editorInput) {
-    	//initializeRegistryFromSeparateResourceSet_WorkspaceTraversal(editorInput);
         super.init(site, editorInput);
         site.getPage().addSelectionListener(revealSelectionListener);
     }
@@ -113,7 +111,7 @@ public class CustomizedEcoreEditor extends EcoreEditor {
 			final ResourceSet resourceSet = provider.get(((IFileEditorInput)input).getFile().getProject());
 			// load all EIQs from the main resourceset again, but in a different resourceset
 			for (Resource resource : editingDomain.getResourceSet().getResources()) {
-	            if (resource.getURI().toString().endsWith(".eiq")) {
+	            if (resource.getURI().toString().endsWith(".vql")) {
 	            	Resource patternResource = resourceSet.getResource(resource.getURI(), true);
 	            	if (patternResource!=null) {
 	            		initReg(patternResource);

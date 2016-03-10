@@ -6,50 +6,50 @@
     <extension
             point="org.eclipse.ui.editors">
         <editor
-              class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+              class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
               contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
               default="true"
-              extensions="xcoreiq"
+              extensions="xvql"
               icon="icons/XcoreModelFile.gif"
-              id="org.eclipse.viatra.integration.xcore.IncQueryXcore"
-              matchingStrategy="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.editor.JavaEditorInputMatcher"
-              name="Xcore Editor (with IncQuery support)">
+              id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore"
+              matchingStrategy="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.editor.JavaEditorInputMatcher"
+              name="Xcore Editor (with ViatraQuery support)">
         </editor>
     </extension>
     <extension
         point="org.eclipse.ui.handlers">
         <handler
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
             commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
             <activeWhen>
                 <reference
-                    definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+                    definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
         <handler
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
-            commandId="org.eclipse.viatra.integration.xcore.IncQueryXcore.validate">
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
+            commandId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.validate">
          <activeWhen>
             <reference
-                    definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+                    definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
             </reference>
          </activeWhen>
       	</handler>
       	<!-- copy qualified name -->
         <handler
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName">
             <activeWhen>
-				<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened" />
+				<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened" />
             </activeWhen>
         </handler>
         <handler
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedNameHandler"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedNameHandler"
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName">
             <activeWhen>
             	<and>
-            		<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.XtextEditor.opened" />
+            		<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.XtextEditor.opened" />
 	                <iterate>
 						<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
 					</iterate>
@@ -58,22 +58,22 @@
         </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
-        <definition id="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+        <definition id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
             <and>
                 <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="org.eclipse.viatra.integration.xcore.IncQueryXcore" 
+                        value="org.eclipse.viatra.integration.xcore.ViatraQueryXcore" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
         </definition>
-        <definition id="org.eclipse.viatra.integration.xcore.IncQueryXcore.XtextEditor.opened">
+        <definition id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.XtextEditor.opened">
             <and>
                 <reference definitionId="isXtextEditorActive"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="org.eclipse.viatra.integration.xcore.IncQueryXcore" 
+                        value="org.eclipse.viatra.integration.xcore.ViatraQueryXcore" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
@@ -82,33 +82,33 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.viatra.integration.xcore.IncQueryXcore"
-            name="IncQueryXcore">
-            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_IncQueryXcore"/>
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore"
+            name="ViatraQueryXcore">
+            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_ViatraQueryXcore"/>
         </page>
         <page
-            category="org.eclipse.viatra.integration.xcore.IncQueryXcore"
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="org.eclipse.viatra.integration.xcore.IncQueryXcore.coloring"
+            category="org.eclipse.viatra.integration.xcore.ViatraQueryXcore"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
+            id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.coloring"
             name="Syntax Coloring">
-            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_IncQueryXcore"/>
+            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_ViatraQueryXcore"/>
         </page>
         <page
-            category="org.eclipse.viatra.integration.xcore.IncQueryXcore"
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="org.eclipse.viatra.integration.xcore.IncQueryXcore.templates"
+            category="org.eclipse.viatra.integration.xcore.ViatraQueryXcore"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
+            id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.templates"
             name="Templates">
-            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_IncQueryXcore"/>
+            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_ViatraQueryXcore"/>
         </page>
     </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="org.eclipse.viatra.integration.xcore.IncQueryXcore"
-            name="IncQueryXcore">
-            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_IncQueryXcore"/>
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore"
+            name="ViatraQueryXcore">
+            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_ViatraQueryXcore"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
@@ -118,14 +118,14 @@
     <extension
         point="org.eclipse.ui.keywords">
         <keyword
-            id="org.eclipse.viatra.integration.xcore.ui.keyword_IncQueryXcore"
-            label="IncQueryXcore"/>
+            id="org.eclipse.viatra.integration.xcore.ui.keyword_ViatraQueryXcore"
+            label="ViatraQueryXcore"/>
     </extension>
     <extension
          point="org.eclipse.ui.commands">
       <command
             description="Trigger expensive validation"
-            id="org.eclipse.viatra.integration.xcore.IncQueryXcore.validate"
+            id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.validate"
             name="Validate">
       </command>
       <!-- copy qualified name -->
@@ -146,12 +146,12 @@
         <menuContribution
             locationURI="popup:#TextEditorContext?after=group.edit">
              <command
-                 commandId="org.eclipse.viatra.integration.xcore.IncQueryXcore.validate"
+                 commandId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.validate"
                  style="push"
                  tooltip="Trigger expensive validation">
             <visibleWhen checkEnabled="false">
                 <reference
-                    definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+                    definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
                 </reference>
             </visibleWhen>
          </command>  
@@ -161,7 +161,7 @@
          	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName" 
          		style="push" tooltip="Copy Qualified Name">
             	<visibleWhen checkEnabled="false">
-                	<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened" />
+                	<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened" />
             	</visibleWhen>
          	</command>  
          </menuContribution>
@@ -169,7 +169,7 @@
          	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName"
             	style="push" tooltip="Copy Qualified Name">
             	<visibleWhen checkEnabled="false">
-                	<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened" />
+                	<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened" />
             	</visibleWhen>
          	</command>  
          </menuContribution>
@@ -178,7 +178,7 @@
 				style="push" tooltip="Copy Qualified Name">
          		<visibleWhen checkEnabled="false">
 	            	<and>
-	            		<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.XtextEditor.opened" />
+	            		<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.XtextEditor.opened" />
 						<iterate>
 							<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
 						</iterate>
@@ -193,7 +193,7 @@
                  style="push">
 	            <visibleWhen checkEnabled="false">
 	                <reference
-	                    definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+	                    definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
 	                </reference>
 	            </visibleWhen>
          	</command>
@@ -203,7 +203,7 @@
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
 			<command commandId="org.eclipse.xtext.ui.editor.FindReferences">
 				<visibleWhen checkEnabled="false">
-                	<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+                	<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
                 	</reference>
             	</visibleWhen>
 			</command>
@@ -211,20 +211,20 @@
 	</extension>
 	<extension point="org.eclipse.ui.handlers">
 	    <handler
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
             commandId="org.eclipse.xtext.ui.editor.FindReferences">
             <activeWhen>
                 <reference
-                    definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+                    definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
         <handler
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.emf.ecore.xcore.ui.CreateDynamicInstanceHandler"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.emf.ecore.xcore.ui.CreateDynamicInstanceHandler"
             commandId="org.eclipse.emf.ecore.xcore.ui.CreateDynamicInstance">
             <activeWhen>
                 <reference
-                    definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+                    definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
@@ -235,14 +235,14 @@
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
 		<parser
-			class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
-			type="xcoreiq">
+			class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+			type="xvql">
 		</parser>
 	</extension>
 	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
         <resourceServiceProvider
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
-            uriExtension="xcoreiq">
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+            uriExtension="xvql">
         </resourceServiceProvider>
     </extension>
 
@@ -250,27 +250,27 @@
    <extension
          point="org.eclipse.xtext.builder.participant">
       <participant
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
       </participant>
    </extension>
    <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            category="org.eclipse.viatra.integration.xcore.IncQueryXcore"
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="org.eclipse.viatra.integration.xcore.IncQueryXcore.compiler.preferencePage"
+            category="org.eclipse.viatra.integration.xcore.ViatraQueryXcore"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.compiler.preferencePage"
             name="Compiler">
-            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_IncQueryXcore"/>
+            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_ViatraQueryXcore"/>
         </page>
     </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-            category="org.eclipse.viatra.integration.xcore.IncQueryXcore"
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="org.eclipse.viatra.integration.xcore.IncQueryXcore.compiler.propertyPage"
+            category="org.eclipse.viatra.integration.xcore.ViatraQueryXcore"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.compiler.propertyPage"
             name="Compiler">
-            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_IncQueryXcore"/>
+            <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_ViatraQueryXcore"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
@@ -282,11 +282,11 @@
 	<extension
 		point="org.eclipse.ui.handlers">
 		<handler 
-			class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
+			class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
 			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
 			<activeWhen>
 				<reference
-					definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+					definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -306,33 +306,33 @@
 				style="push"
 				tooltip="Open Quick Outline">
 				<visibleWhen checkEnabled="false">
-					<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened"/>
+					<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened"/>
 				</visibleWhen>
 			</command>
 		</menuContribution>
 	</extension>
-    <!-- quickfix marker resolution generator for org.eclipse.viatra.integration.xcore.IncQueryXcore -->
+    <!-- quickfix marker resolution generator for org.eclipse.viatra.integration.xcore.ViatraQueryXcore -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="org.eclipse.viatra.integration.xcore.ui.incqueryxcore.check.fast">
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="org.eclipse.viatra.integration.xcore.ui.viatraqueryxcore.check.fast">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="org.eclipse.viatra.integration.xcore.ui.incqueryxcore.check.normal">
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="org.eclipse.viatra.integration.xcore.ui.viatraqueryxcore.check.normal">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="org.eclipse.viatra.integration.xcore.ui.incqueryxcore.check.expensive">
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="org.eclipse.viatra.integration.xcore.ui.viatraqueryxcore.check.expensive">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -342,11 +342,11 @@
    	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
-			class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
+			class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
 			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
 			<activeWhen>
 				<reference
-					definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+					definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -358,7 +358,7 @@
                style="push">
             <visibleWhen checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+                     definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
                </reference>
             </visibleWhen>
          </command>
@@ -366,11 +366,11 @@
    </extension>
    <extension point="org.eclipse.ui.preferencePages">
 	    <page
-	        category="org.eclipse.viatra.integration.xcore.IncQueryXcore"
-	        class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="org.eclipse.viatra.integration.xcore.IncQueryXcore.refactoring"
+	        category="org.eclipse.viatra.integration.xcore.ViatraQueryXcore"
+	        class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+	        id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.refactoring"
 	        name="Refactoring">
-	        <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_IncQueryXcore"/>
+	        <keywordReference id="org.eclipse.viatra.integration.xcore.ui.keyword_ViatraQueryXcore"/>
 	    </page>
 	</extension>
 
@@ -378,20 +378,20 @@
 	<extension
 		point="org.eclipse.ui.handlers">
 		<handler 
-			class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.hierarchy.OpenTypeHierarchyHandler"
+			class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.hierarchy.OpenTypeHierarchyHandler"
 			commandId="org.eclipse.xtext.xbase.ui.hierarchy.OpenTypeHierarchy">
 			<activeWhen>
 				<reference
-					definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+					definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
 		<handler 
-			class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.hierarchy.QuickTypeHierarchyHandler"
+			class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.hierarchy.QuickTypeHierarchyHandler"
 			commandId="org.eclipse.jdt.ui.edit.text.java.open.hierarchy">
 			<activeWhen>
 				<reference
-					definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+					definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -403,7 +403,7 @@
 				style="push"
 				tooltip="Open Type Hierarchy">
 				<visibleWhen checkEnabled="false">
-					<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened"/>
+					<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened"/>
 				</visibleWhen>
 			</command>
 		</menuContribution>
@@ -413,7 +413,7 @@
 				style="push"
 				tooltip="Quick Type Hierarchy">
 				<visibleWhen checkEnabled="false">
-					<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened"/>
+					<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened"/>
 				</visibleWhen>
 			</command>
 		</menuContribution>
@@ -422,11 +422,11 @@
 	<extension
 		point="org.eclipse.ui.handlers">
 		<handler 
-			class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.hierarchy.OpenCallHierachyHandler"
+			class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.hierarchy.OpenCallHierachyHandler"
 			commandId="org.eclipse.xtext.xbase.ui.hierarchy.OpenCallHierarchy">
 			<activeWhen>
 				<reference
-					definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+					definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -439,38 +439,38 @@
 				style="push"
 				tooltip="Open Call Hierarchy">
 				<visibleWhen checkEnabled="false">
-					<reference definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened"/>
+					<reference definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened"/>
 				</visibleWhen>
 			</command>
 		</menuContribution>
 	</extension>
 	<extension
          point="org.eclipse.core.runtime.adapters">
-      <factory class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.builder.smap.StratumBreakpointAdapterFactory"
+      <factory class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.builder.smap.StratumBreakpointAdapterFactory"
          adaptableType="org.eclipse.xtext.ui.editor.XtextEditor">
          <adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
       </factory> 
    </extension>
    <extension point="org.eclipse.ui.editorActions">
-      <editorContribution targetID="org.eclipse.viatra.integration.xcore.IncQueryXcore" 
-                          id="org.eclipse.viatra.integration.xcore.IncQueryXcore.ide.rulerActions">
+      <editorContribution targetID="org.eclipse.viatra.integration.xcore.ViatraQueryXcore" 
+                          id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.ide.rulerActions">
 	     <action
 	             label="Not Used"
-	             class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+	             class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
 	             style="push"
 	             actionID="RulerDoubleClick"
-	             id="org.eclipse.viatra.integration.xcore.IncQueryXcore.doubleClickBreakpointAction"/>
+	             id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.doubleClickBreakpointAction"/>
 	  </editorContribution>
    </extension>
    <extension point="org.eclipse.ui.popupMenus">
       <viewerContribution
          targetID="example.rulerContextMenuId"
-         id="org.eclipse.viatra.integration.xcore.IncQueryXcore.ide.RulerPopupActions">
+         id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.ide.RulerPopupActions">
          <action
             label="Toggle Breakpoint"
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
             menubarPath="additions"
-            id="org.eclipse.viatra.integration.xcore.IncQueryXcore.ide.rulerContextMenu.toggleBreakpointAction">
+            id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.ide.rulerContextMenu.toggleBreakpointAction">
          </action>
       </viewerContribution>
    </extension>
@@ -478,11 +478,11 @@
     <!-- Introduce Local Variable Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
-			class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.refactoring.ExtractVariableHandler"
+			class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.xbase.ui.refactoring.ExtractVariableHandler"
 			commandId="org.eclipse.xtext.xbase.ui.refactoring.ExtractLocalVariable">
 			<activeWhen>
 				<reference
-					definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+					definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -494,7 +494,7 @@
                style="push">
             <visibleWhen checkEnabled="false">
                <reference
-                     definitionId="org.eclipse.viatra.integration.xcore.IncQueryXcore.Editor.opened">
+                     definitionId="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.Editor.opened">
                </reference>
             </visibleWhen>
          </command>
@@ -502,21 +502,21 @@
    </extension>  
 
   <extension point="org.eclipse.compare.contentViewers">
-    <viewer id="org.eclipse.viatra.integration.xcore.IncQueryXcore.compare.contentViewers"
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="xcoreiq">
+    <viewer id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.compare.contentViewers"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+            extensions="xvql">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
-    <viewer id="org.eclipse.viatra.integration.xcore.IncQueryXcore.compare.contentMergeViewers"
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="xcoreiq" label="IncQueryXcore Compare">
+    <viewer id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.compare.contentMergeViewers"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+            extensions="xvql" label="ViatraQueryXcore Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
-    <provider id="org.eclipse.viatra.integration.xcore.IncQueryXcore.editors.documentProviders"
-            class="org.eclipse.viatra.integration.xcore.ui.IncQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-            extensions="xcoreiq">
+    <provider id="org.eclipse.viatra.integration.xcore.ViatraQueryXcore.editors.documentProviders"
+            class="org.eclipse.viatra.integration.xcore.ui.ViatraQueryXcoreExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
+            extensions="xvql">
     </provider>
   </extension>
 

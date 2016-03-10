@@ -1,21 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<plugin>
-
-   <extension
-         id="library.viewers.livedemo.writer"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.livedemo.util.WriterQuerySpecification$Provider"
-            id="library.viewers.livedemo.writer">
-      </matcher>
-   </extension>
-   <extension
-         id="library.viewers.livedemo.influencedBy"
-         point="org.eclipse.incquery.runtime.queryspecification">
-      <matcher
-            querySpecificationProvider="library.viewers.livedemo.util.InfluencedByQuerySpecification$Provider"
-            id="library.viewers.livedemo.influencedBy">
-      </matcher>
-   </extension>
-
+<?xml version="1.0" encoding="UTF-8"?><plugin>
+  <extension id="library.viewers.livedemo.ViewersQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:library.viewers.livedemo.ViewersQueries" id="library.viewers.livedemo.ViewersQueries"/>
+  </extension>
 </plugin>

@@ -5,13 +5,12 @@ package org.eclipse.viatra.integration.xcore.model.impl;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
+
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature;
-import org.eclipse.viatra.integration.xcore.model.XIncQueryImport;
-import org.eclipse.viatra.integration.xcore.model.XIncQueryPackage;
-import org.eclipse.viatra.integration.xcore.model.XcoreFactory;
-import org.eclipse.viatra.integration.xcore.model.XcorePackage;
+
+import org.eclipse.viatra.integration.xcore.model.*;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,13 +19,13 @@ import org.eclipse.viatra.integration.xcore.model.XcorePackage;
  * @generated
  */
 public class XcoreFactoryImpl extends EFactoryImpl implements XcoreFactory {
-	/**
+    /**
      * Creates the default factory implementation.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public static XcoreFactory init() {
+    public static XcoreFactory init() {
         try {
             XcoreFactory theXcoreFactory = (XcoreFactory)EPackage.Registry.INSTANCE.getEFactory(XcorePackage.eNS_URI);
             if (theXcoreFactory != null) {
@@ -39,79 +38,79 @@ public class XcoreFactoryImpl extends EFactoryImpl implements XcoreFactory {
         return new XcoreFactoryImpl();
     }
 
-	/**
+    /**
      * Creates an instance of the factory.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public XcoreFactoryImpl() {
+    public XcoreFactoryImpl() {
         super();
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	@Override
-	public EObject create(EClass eClass) {
+    @Override
+    public EObject create(EClass eClass) {
         switch (eClass.getClassifierID()) {
-            case XcorePackage.XINC_QUERY_DERIVED_FEATURE: return createXIncQueryDerivedFeature();
-            case XcorePackage.XINC_QUERY_PACKAGE: return createXIncQueryPackage();
-            case XcorePackage.XINC_QUERY_IMPORT: return createXIncQueryImport();
+            case XcorePackage.XVIATRA_QUERY_DERIVED_FEATURE: return createXViatraQueryDerivedFeature();
+            case XcorePackage.XVIATRA_QUERY_PACKAGE: return createXViatraQueryPackage();
+            case XcorePackage.XVIATRA_QUERY_IMPORT: return createXViatraQueryImport();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public XIncQueryDerivedFeature createXIncQueryDerivedFeature() {
-        XIncQueryDerivedFeatureImpl xIncQueryDerivedFeature = new XIncQueryDerivedFeatureImpl();
-        return xIncQueryDerivedFeature;
+    public XViatraQueryDerivedFeature createXViatraQueryDerivedFeature() {
+        XViatraQueryDerivedFeatureImpl xViatraQueryDerivedFeature = new XViatraQueryDerivedFeatureImpl();
+        return xViatraQueryDerivedFeature;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public XIncQueryPackage createXIncQueryPackage() {
-        XIncQueryPackageImpl xIncQueryPackage = new XIncQueryPackageImpl();
-        return xIncQueryPackage;
+    public XViatraQueryPackage createXViatraQueryPackage() {
+        XViatraQueryPackageImpl xViatraQueryPackage = new XViatraQueryPackageImpl();
+        return xViatraQueryPackage;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public XIncQueryImport createXIncQueryImport() {
-        XIncQueryImportImpl xIncQueryImport = new XIncQueryImportImpl();
-        return xIncQueryImport;
+    public XViatraQueryImport createXViatraQueryImport() {
+        XViatraQueryImportImpl xViatraQueryImport = new XViatraQueryImportImpl();
+        return xViatraQueryImport;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public XcorePackage getXcorePackage() {
+    public XcorePackage getXcorePackage() {
         return (XcorePackage)getEPackage();
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @deprecated
      * @generated
      */
-	@Deprecated
-	public static XcorePackage getPackage() {
+    @Deprecated
+    public static XcorePackage getPackage() {
         return XcorePackage.eINSTANCE;
     }
 

@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator
 
 /**
- * Generator for the IncQuery derived feature definitions. The pattern based derived features in the IncQuery & Xcore metamodel 
+ * Generator for the Viatra Query derived feature definitions. The pattern based derived features in the Viatra Query & Xcore metamodel 
  * will be backed by a well-behaving derived feature in runtime.
  * 
  * @author Tamas Szabo (itemis AG)
