@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.transformation.runtime.emf.feature"
-      label="VIATRA EMF Engine"
+      label="VIATRA Transformation Engine"
       version="1.2.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
    <description url="http://www.example.com/description">
-      VIATRA EMF Support
+      VIATRA Transformation Engine - EVM and Xtend based DSL
    </description>
 
    <requires>
