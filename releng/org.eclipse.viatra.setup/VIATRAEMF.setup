@@ -313,46 +313,25 @@
       predecessor="git.clone.viatra">
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/releng"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/addon"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/cep"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/dse"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/integration"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/query"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/transformation"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
   </setupTask>
   <setupTask
       xsi:type="setup:CompoundTask"
