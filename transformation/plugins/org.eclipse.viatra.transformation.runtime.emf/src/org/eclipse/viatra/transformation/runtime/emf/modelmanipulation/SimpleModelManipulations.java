@@ -23,82 +23,78 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
-public class SimpleModelManipulations extends AbstractModelManipulations{
+public class SimpleModelManipulations extends AbstractModelManipulations {
 
-	public SimpleModelManipulations(ViatraQueryEngine engine) {
-		super(engine);
-	}
+    public SimpleModelManipulations(ViatraQueryEngine engine) {
+        super(engine);
+    }
 
-	@Override
-	protected EObject doCreate(Resource res, EClass clazz)
-			throws ModelManipulationException {
-		EObject obj = EcoreUtil.create(clazz);
-		res.getContents().add(obj);
-		return obj;
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	protected EObject doCreate(EObject container, EReference reference,
-			EClass clazz) {
-		EObject obj = EcoreUtil.create(clazz);
-		if (reference.isMany()) {
-			((EList)container.eGet(reference)).add(obj);
-		} else {
-			container.eSet(reference, obj);
-		}
-		return obj;
-	}
-	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	protected void doAdd(EObject container, EStructuralFeature reference,
-			Collection<? extends Object> elements) throws ModelManipulationException {
-		((EList)container.eGet(reference)).addAll(elements);
-	}
-	
-	@Override
-	protected void doSet(EObject container, EStructuralFeature feature,
-			Object value) {
-		container.eSet(feature, value);
-	}
+    @Override
+    protected EObject doCreate(Resource res, EClass clazz) throws ModelManipulationException {
+        EObject obj = EcoreUtil.create(clazz);
+        res.getContents().add(obj);
+        return obj;
+    }
 
-	@Override
-	protected void doRemove(EObject object) throws ModelManipulationException {
-		EcoreUtil.remove(object);
-	}
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    protected EObject doCreate(EObject container, EReference reference, EClass clazz) {
+        EObject obj = EcoreUtil.create(clazz);
+        if (reference.isMany()) {
+            ((EList) container.eGet(reference)).add(obj);
+        } else {
+            container.eSet(reference, obj);
+        }
+        return obj;
+    }
 
-	@Override
-	protected void doRemove(EObject container, EStructuralFeature reference)
-			throws ModelManipulationException {
-		List<?> list = (List<?>) container.eGet(reference);
-		list.clear();
-	}
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    protected void doAdd(EObject container, EStructuralFeature reference, Collection<? extends Object> elements)
+            throws ModelManipulationException {
+        ((EList) container.eGet(reference)).addAll(elements);
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	protected void doRemove(EObject container, EReference reference,
-			EObject element) throws ModelManipulationException {
-		((EList)container.eGet(reference)).remove(element);
-		
-	}
+    @Override
+    protected void doSet(EObject container, EStructuralFeature feature, Object value) {
+        container.eSet(feature, value);
+    }
 
-	@Override
-	protected void doMoveTo(EObject what, EObject newContainer, EReference reference)
-			throws ModelManipulationException {
-		try {
-			getBaseEMFIndex().cheapMoveTo(what, newContainer, reference);
-		} catch (ViatraQueryException e) {
-			throw new ModelManipulationException(e);
-		}
-	}
+    @Override
+    protected void doRemove(EObject object) throws ModelManipulationException {
+        EcoreUtil.remove(object);
+    }
 
-	@Override
-	protected void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException {
-		try {
-			getBaseEMFIndex().cheapMoveTo(what, newContainer.getContents());
-		} catch (ViatraQueryException e) {
-			throw new ModelManipulationException(e);
-		}
-	}
+    @Override
+    protected void doRemove(EObject container, EStructuralFeature reference) throws ModelManipulationException {
+        List<?> list = (List<?>) container.eGet(reference);
+        list.clear();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected void doRemove(EObject container, EReference reference, EObject element)
+            throws ModelManipulationException {
+        ((EList) container.eGet(reference)).remove(element);
+
+    }
+
+    @Override
+    protected void doMoveTo(EObject what, EObject newContainer, EReference reference)
+            throws ModelManipulationException {
+        try {
+            getBaseEMFIndex().cheapMoveTo(what, newContainer, reference);
+        } catch (ViatraQueryException e) {
+            throw new ModelManipulationException(e);
+        }
+    }
+
+    @Override
+    protected void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException {
+        try {
+            getBaseEMFIndex().cheapMoveTo(what, newContainer.getContents());
+        } catch (ViatraQueryException e) {
+            throw new ModelManipulationException(e);
+        }
+    }
 }

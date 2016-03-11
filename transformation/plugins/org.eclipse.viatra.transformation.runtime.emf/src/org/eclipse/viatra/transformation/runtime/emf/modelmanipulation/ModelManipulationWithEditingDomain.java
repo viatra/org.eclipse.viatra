@@ -31,121 +31,111 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 public class ModelManipulationWithEditingDomain extends AbstractModelManipulations {
 
-	EditingDomain domain;
+    EditingDomain domain;
 
-	private class MoveEObjectCommand extends AddCommand {
+    private class MoveEObjectCommand extends AddCommand {
 
-		
-		
-		public MoveEObjectCommand(EditingDomain domain, EList<?> list,
-				Object value) {
-			super(domain, list, value);
-		}
+        public MoveEObjectCommand(EditingDomain domain, EList<?> list, Object value) {
+            super(domain, list, value);
+        }
 
-		public MoveEObjectCommand(EditingDomain domain, EObject owner,
-				EStructuralFeature feature, Object value) {
-			super(domain, owner, feature, value);
-		}
+        public MoveEObjectCommand(EditingDomain domain, EObject owner, EStructuralFeature feature, Object value) {
+            super(domain, owner, feature, value);
+        }
 
-		@Override
-		public void doExecute() {
-			try {
-				for (Object obj : collection) {
-					getBaseEMFIndex().cheapMoveTo((EObject)obj, owner, (EReference)feature);
-				}
-			} catch (ViatraQueryException e) {
-				throw new WrappedException(new ModelManipulationException(e));
-			}
-		}
+        @Override
+        public void doExecute() {
+            try {
+                for (Object obj : collection) {
+                    getBaseEMFIndex().cheapMoveTo((EObject) obj, owner, (EReference) feature);
+                }
+            } catch (ViatraQueryException e) {
+                throw new WrappedException(new ModelManipulationException(e));
+            }
+        }
 
-		@Override
-		public void doUndo() {
-			throw new UnsupportedOperationException("Undoing move is not supported in VIATRA.");
-		}
-		
-	}
-	
-	public ModelManipulationWithEditingDomain(ViatraQueryEngine engine, EditingDomain domain) {
-		super(engine);
-		this.domain = domain;
-	}
+        @Override
+        public void doUndo() {
+            throw new UnsupportedOperationException("Undoing move is not supported in VIATRA.");
+        }
 
-	@Override
-	protected EObject doCreate(Resource res, EClass clazz)
-			throws ModelManipulationException {
-		EObject obj = EcoreUtil.create(clazz);
-		Command createCommand = AddCommand.create(domain, res, null,
-				res.getContents());
-		executeCommand(createCommand);
-		return obj;
-	}
+    }
 
-	@Override
-	protected EObject doCreate(EObject container, EReference reference,
-			EClass clazz) throws ModelManipulationException {
-		EObject obj = EcoreUtil.create(clazz);
-		Command createCommand = AddCommand.create(domain, container, reference,
-				obj);
-		executeCommand(createCommand);
-		return obj;
-	}
+    public ModelManipulationWithEditingDomain(ViatraQueryEngine engine, EditingDomain domain) {
+        super(engine);
+        this.domain = domain;
+    }
 
-	@Override
-	protected void doAdd(EObject container, EStructuralFeature feature, Collection<? extends Object> elements)
-			throws ModelManipulationException {
-		Command createCommand = AddCommand.create(domain, container, feature,
-				elements);
-		executeCommand(createCommand);
-	}
+    @Override
+    protected EObject doCreate(Resource res, EClass clazz) throws ModelManipulationException {
+        EObject obj = EcoreUtil.create(clazz);
+        Command createCommand = AddCommand.create(domain, res, null, res.getContents());
+        executeCommand(createCommand);
+        return obj;
+    }
 
-	@Override
-	protected void doSet(EObject container, EStructuralFeature feature,
-			Object value) throws ModelManipulationException {
-		Command setCommand = SetCommand.create(domain, container, feature, value);
-		executeCommand(setCommand);
-	}
+    @Override
+    protected EObject doCreate(EObject container, EReference reference, EClass clazz)
+            throws ModelManipulationException {
+        EObject obj = EcoreUtil.create(clazz);
+        Command createCommand = AddCommand.create(domain, container, reference, obj);
+        executeCommand(createCommand);
+        return obj;
+    }
 
-	@Override
-	protected void doRemove(EObject object) throws ModelManipulationException {
-		Command removeCommand = DeleteCommand.create(domain, object);
-		executeCommand(removeCommand);
-	}
+    @Override
+    protected void doAdd(EObject container, EStructuralFeature feature, Collection<? extends Object> elements)
+            throws ModelManipulationException {
+        Command createCommand = AddCommand.create(domain, container, feature, elements);
+        executeCommand(createCommand);
+    }
 
-	@Override
-	protected void doRemove(EObject container, EReference reference,
-			EObject element) throws ModelManipulationException {
-		Command removeCommand = RemoveCommand.create(domain, container,
-				reference, element);
-		executeCommand(removeCommand);
-	}
+    @Override
+    protected void doSet(EObject container, EStructuralFeature feature, Object value)
+            throws ModelManipulationException {
+        Command setCommand = SetCommand.create(domain, container, feature, value);
+        executeCommand(setCommand);
+    }
 
-	@Override
-	protected void doRemove(EObject container, EStructuralFeature reference)
-			throws ModelManipulationException {
-		Collection<?> list = (Collection<?>) container.eGet(reference);
-		Command removeCommand = RemoveCommand.create(domain, container, reference, list);
-		executeCommand(removeCommand);
-	}
+    @Override
+    protected void doRemove(EObject object) throws ModelManipulationException {
+        Command removeCommand = DeleteCommand.create(domain, object);
+        executeCommand(removeCommand);
+    }
 
-	@Override
-	protected void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException {
-		MoveEObjectCommand moveCommand = new MoveEObjectCommand(domain, newContainer.getContents(), what);
-		executeCommand(moveCommand);
-	}
-	
-	@Override
-	protected void doMoveTo(EObject what, EObject newContainer, EReference reference) throws ModelManipulationException {
-		MoveEObjectCommand moveCommand = new MoveEObjectCommand(domain, newContainer, reference, what);
-		executeCommand(moveCommand);
-	}
+    @Override
+    protected void doRemove(EObject container, EReference reference, EObject element)
+            throws ModelManipulationException {
+        Command removeCommand = RemoveCommand.create(domain, container, reference, element);
+        executeCommand(removeCommand);
+    }
 
-	protected void executeCommand(Command command)
-			throws ModelManipulationException {
-		if (command.canExecute()) {
-			command.execute();
-		} else {
-		    throw new ModelManipulationException("Cannot execute command");
-		}
-	}
+    @Override
+    protected void doRemove(EObject container, EStructuralFeature reference) throws ModelManipulationException {
+        Collection<?> list = (Collection<?>) container.eGet(reference);
+        Command removeCommand = RemoveCommand.create(domain, container, reference, list);
+        executeCommand(removeCommand);
+    }
+
+    @Override
+    protected void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException {
+        MoveEObjectCommand moveCommand = new MoveEObjectCommand(domain, newContainer.getContents(), what);
+        executeCommand(moveCommand);
+    }
+
+    @Override
+    protected void doMoveTo(EObject what, EObject newContainer, EReference reference)
+            throws ModelManipulationException {
+        MoveEObjectCommand moveCommand = new MoveEObjectCommand(domain, newContainer, reference, what);
+        executeCommand(moveCommand);
+    }
+
+    protected void executeCommand(Command command) throws ModelManipulationException {
+        if (command.canExecute()) {
+            command.execute();
+        } else {
+            throw new ModelManipulationException("Cannot execute command");
+        }
+    }
 
 }
