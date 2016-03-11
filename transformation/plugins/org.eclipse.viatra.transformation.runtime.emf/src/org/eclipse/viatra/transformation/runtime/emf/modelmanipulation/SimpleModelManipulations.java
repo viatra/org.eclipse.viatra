@@ -55,6 +55,13 @@ public class SimpleModelManipulations extends AbstractModelManipulations {
         ((EList) container.eGet(reference)).addAll(elements);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    protected void doAdd(EObject container, EStructuralFeature reference, Object what, int index)
+            throws ModelManipulationException {
+        ((EList) container.eGet(reference)).add(index, what);
+    }
+
     @Override
     protected void doSet(EObject container, EStructuralFeature feature, Object value) {
         container.eSet(feature, value);
@@ -71,12 +78,16 @@ public class SimpleModelManipulations extends AbstractModelManipulations {
         list.clear();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    protected void doRemove(EObject container, EReference reference, EObject element)
+    protected void doRemove(EObject container, EStructuralFeature feature, Object element)
             throws ModelManipulationException {
-        ((EList) container.eGet(reference)).remove(element);
+        ((EList<?>) container.eGet(feature)).remove(element);
+    }
 
+    @Override
+    protected void doRemove(EObject container, EStructuralFeature feature, int index)
+            throws ModelManipulationException {
+        ((EList<?>)container.eGet(feature)).remove(index);
     }
 
     @Override
@@ -89,6 +100,17 @@ public class SimpleModelManipulations extends AbstractModelManipulations {
         }
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    protected void doMoveTo(EObject what, EObject newContainer, EReference reference, int index)
+            throws ModelManipulationException {
+        if (reference.isMany()) {
+            ((EList)newContainer.eGet(reference)).add(index, what);
+        } else{
+            newContainer.eSet(reference, what);
+        }
+    }
+
     @Override
     protected void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException {
         try {
@@ -96,5 +118,16 @@ public class SimpleModelManipulations extends AbstractModelManipulations {
         } catch (ViatraQueryException e) {
             throw new ModelManipulationException(e);
         }
+    }
+
+    @Override
+    protected void doMoveTo(EObject what, Resource newContainer, int index) throws ModelManipulationException {
+        newContainer.getContents().add(index, what);
+    }
+
+    @Override
+    protected void doChangeIndex(EObject container, EStructuralFeature feature, int oldIndex, int newIndex) {
+        EList featureValue = (EList)container.eGet(feature);
+        featureValue.move(newIndex, oldIndex);
     }
 }

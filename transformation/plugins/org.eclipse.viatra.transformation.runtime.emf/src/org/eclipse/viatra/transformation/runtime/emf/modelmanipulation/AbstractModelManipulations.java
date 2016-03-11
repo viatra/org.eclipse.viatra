@@ -58,13 +58,21 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 
     protected abstract void doMoveTo(EObject what, Resource newContainer) throws ModelManipulationException;
 
+    protected abstract void doMoveTo(EObject what, Resource newContainer, int index) throws ModelManipulationException;
+
     protected abstract void doMoveTo(EObject what, EObject newContainer, EReference reference)
             throws ModelManipulationException;
 
+    protected abstract void doMoveTo(EObject what, EObject newContainer, EReference reference, int index)
+            throws ModelManipulationException;
+    
     /**
      * Remove a non-containment reference value
      */
-    protected abstract void doRemove(EObject container, EReference reference, EObject element)
+    protected abstract void doRemove(EObject container, EStructuralFeature feature, Object element)
+            throws ModelManipulationException;
+
+    protected abstract void doRemove(EObject container, EStructuralFeature feature, int index)
             throws ModelManipulationException;
 
     /**
@@ -77,6 +85,9 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     protected abstract void doAdd(EObject container, EStructuralFeature reference, Collection<? extends Object> element)
             throws ModelManipulationException;
 
+    protected abstract void doAdd(EObject container, EStructuralFeature reference, Object object, int index)
+            throws ModelManipulationException;
+
     protected abstract void doSet(EObject container, EStructuralFeature feature, Object value)
             throws ModelManipulationException;
 
@@ -84,6 +95,9 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
             throws ModelManipulationException;
 
     protected abstract EObject doCreate(Resource res, EClass clazz) throws ModelManipulationException;
+
+    protected abstract void doChangeIndex(EObject container, EStructuralFeature feature, int oldIndex, int newIndex)
+            throws ModelManipulationException;
 
     @Override
     public EObject create(Resource res, EClass clazz) throws ModelManipulationException {
@@ -111,8 +125,13 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
 
     @Override
     public void addTo(EObject container, EStructuralFeature feature, Object element) throws ModelManipulationException {
-
         addTo(container, feature, ImmutableList.of(element));
+    }
+    
+    @Override
+    public void add(EObject container, EStructuralFeature feature, Object element, int index)
+            throws ModelManipulationException {
+        addTo(container, feature, element, index);
     }
 
     @Override
@@ -122,14 +141,28 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     }
 
     @Override
+    public void addTo(EObject container, EStructuralFeature feature, Object element, int index)
+            throws ModelManipulationException {
+        EClass containerClass = container.eClass();
+        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+                "The container of EClass %s does neither define or inherit an EReference or EAttribute named %s.",
+                containerClass.getName(), feature.getName());
+        Preconditions.checkArgument(feature.isMany(),
+                "The EStructuralFeature %s must have an upper bound larger than 1.", feature.getName());
+        Preconditions.checkArgument(!(feature instanceof EReference && ((EReference) feature).isContainment()),
+                "Adding existing elements into the containment reference %s is not supported.", feature.getName());
+        doAdd(container, feature, element, index);
+    }
+    
+    @Override
     public void addTo(EObject container, EStructuralFeature feature, Collection<? extends Object> elements)
             throws ModelManipulationException {
         EClass containerClass = container.eClass();
-        Preconditions.checkArgument(!(containerClass.getEAllStructuralFeatures().contains(container)),
+        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
                 "The container of EClass %s does neither define or inherit an EReference or EAttribute named %s.",
                 containerClass.getName(), feature.getName());
-        Preconditions.checkArgument(feature.isMany(), "The EAttribute %s must have an upper bound larger than 1.",
-                feature.getName());
+        Preconditions.checkArgument(feature.isMany(),
+                "The EStructuralFeature %s must have an upper bound larger than 1.", feature.getName());
         Preconditions.checkArgument(!(feature instanceof EReference && ((EReference) feature).isContainment()),
                 "Adding existing elements into the containment reference %s is not supported.", feature.getName());
         doAdd(container, feature, elements);
@@ -141,7 +174,7 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
         Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
                 "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
                 containerClass.getName(), feature.getName());
-        Preconditions.checkArgument(!feature.isMany(), "The feature %s must have an upper bound of 1.",
+        Preconditions.checkArgument(!feature.isMany(), "The EStructuralFeature %s must have an upper bound of 1.",
                 feature.getName());
         doSet(container, feature, value);
     }
@@ -152,19 +185,35 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     }
 
     @Override
-    public void remove(EObject container, EReference reference, EObject element) throws ModelManipulationException {
-        Preconditions.checkArgument(reference.isMany(), "Remove only works on references with 'many' multiplicity.");
-        if (reference.isContainment()) {
-            doRemove(element);
-        } else {
-            doRemove(container, reference, element);
-        }
+    public void remove(EObject container, EStructuralFeature feature, Object element)
+            throws ModelManipulationException {
+        EClass containerClass = container.eClass();
+        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+                "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
+                containerClass.getName(), feature.getName());
+        Preconditions.checkArgument(feature.isMany(),
+                "Remove only works on EStructuralFeatures with 'many' multiplicity.");
+        doRemove(container, feature, element);
     }
 
     @Override
-    public void remove(EObject container, EStructuralFeature reference) throws ModelManipulationException {
-        Preconditions.checkArgument(reference.isMany(), "Remove only works on references with 'many' multiplicity.");
-        doRemove(container, reference);
+    public void remove(EObject container, EStructuralFeature feature, int index) throws ModelManipulationException {
+        EClass containerClass = container.eClass();
+        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+                "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
+                containerClass.getName(), feature.getName());
+        Preconditions.checkArgument(feature.isMany(), "Remove only works on features with 'many' multiplicity.");
+        doRemove(container, feature, index);
+    }
+    
+    @Override
+    public void remove(EObject container, EStructuralFeature feature) throws ModelManipulationException {
+        EClass containerClass = container.eClass();
+        Preconditions.checkArgument(containerClass.getEAllStructuralFeatures().contains(feature),
+                "The container of EClass %s does neither define or inherit an EAttribute or EReference %s.",
+                containerClass.getName(), feature.getName());
+        Preconditions.checkArgument(feature.isMany(), "Remove only works on references with 'many' multiplicity.");
+        doRemove(container, feature);
     }
 
     @Override
@@ -173,8 +222,19 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
     }
 
     @Override
+    public void moveTo(EObject what, Resource newContainer, int index) throws ModelManipulationException {
+        doMoveTo(what, newContainer, index);
+    }
+
+    @Override
     public void moveTo(EObject what, EObject newContainer, EReference reference) throws ModelManipulationException {
         doMoveTo(what, newContainer, reference);
+    }
+
+    @Override
+    public void moveTo(EObject what, EObject newContainer, EReference reference, int index)
+            throws ModelManipulationException {
+        doMoveTo(what, newContainer, reference, index);
     }
 
     @Override
@@ -183,4 +243,9 @@ public abstract class AbstractModelManipulations implements IModelManipulations 
         doMoveTo(what, newContainer, reference);
     }
 
+    @Override
+    public void changeIndex(EObject container, EStructuralFeature feature, int oldIndex, int newIndex)
+            throws ModelManipulationException {
+        doChangeIndex(container, feature, oldIndex, newIndex);
+    }
 }
