@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!ENTITY antrunner SYSTEM "ant-runner.xml">
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -30,4 +31,39 @@
 			</plugin>
 		</plugins>
 	</build>
+	   <profiles>
+        <profile>
+            <id>build-integration-composite</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>BUILD_TYPE</name>
+                    <value>integration</value>
+                </property>
+            </activation>
+        &antrunner;
+        </profile>
+        <profile>
+            <id>build-milestone-composite</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>BUILD_TYPE</name>
+                    <value>milestone</value>
+                </property>
+            </activation>
+        &antrunner;
+        </profile>
+        <profile>
+            <id>build-release-composite</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>BUILD_TYPE</name>
+                    <value>release</value>
+                </property>
+            </activation>
+        &antrunner;
+        </profile>
+    </profiles>
 </project>
