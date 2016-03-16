@@ -67,22 +67,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     }
 
     /**
-     * Flattens a given PQuery.
-     * 
-     * @param pQuery
-     *            the query to flatten
-     * @return a PDisjunction containing the flattened bodies
-     * @deprecated Use {@link #rewrite(PDisjunction)} instead
-     */
-    public PDisjunction flatten(PQuery pQuery) {
-        try {
-            return rewrite(pQuery.getDisjunctBodies());
-        } catch (RewriterException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
 	 * This function holds the actual flattening logic for a PQuery
 	 * 
 	 * @param rootDisjunction

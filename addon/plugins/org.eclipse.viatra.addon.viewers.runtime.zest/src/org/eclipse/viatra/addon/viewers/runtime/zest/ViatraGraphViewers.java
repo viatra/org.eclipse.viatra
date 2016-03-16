@@ -28,29 +28,6 @@ public class ViatraGraphViewers {
 	}
 
 	/**
-	 * 
-	 * @deprecated Use {@link #bind(GraphViewer, ViewerStateSet)} where
-	 *             {@link ViewerStateSet} consists of the shared data between
-	 *             various viewers.
-	 */
-//	public static void bind(GraphViewer viewer, ViewerDataModel model) {
-//		bind(viewer, model, ViewerDataFilter.UNFILTERED);
-//	}
-
-	/**
-	 * 
-	 * @deprecated Use {@link #bind(GraphViewer, ViewerStateSet)} where
-	 *             {@link ViewerStateSet} consists of the shared data between
-	 *             various viewers.
-	 */
-//	public static void bind(GraphViewer viewer, ViewerDataModel model,
-//			ViewerDataFilter filter) {
-//		ViewerState state = ViewerState.newInstance(model, filter,
-//				ImmutableSet.of(ViewerStateFeature.EDGE));
-//		bind(viewer, state);
-//	}
-
-	/**
 	 * The basic bindings does not support isolated nodes but is more
 	 * performant. If the graph contains isolated nodes, use
 	 * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState)} instead.

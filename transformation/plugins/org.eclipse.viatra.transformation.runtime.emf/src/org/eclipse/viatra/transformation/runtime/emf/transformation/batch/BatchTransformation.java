@@ -58,21 +58,6 @@ public class BatchTransformation {
 		return new BatchTransformation(ruleEngine, AdvancedViatraQueryEngine.from(engine), false);
 	}
 	
-	@Deprecated
-	public BatchTransformation(Resource resource) throws ViatraQueryException {
-		this(AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resource)));
-	}
-
-	@Deprecated
-	public BatchTransformation(ResourceSet set) throws ViatraQueryException {
-		this(AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(set)));
-	}
-
-	@Deprecated
-	public BatchTransformation(RuleEngine ruleEngine, AdvancedViatraQueryEngine queryEngine) {
-		this(ruleEngine, queryEngine, false);
-	}
-	
 	private BatchTransformation(AdvancedViatraQueryEngine queryEngine) {
 		this(RuleEngines.createViatraQueryRuleEngine(queryEngine), queryEngine, true);
 	}

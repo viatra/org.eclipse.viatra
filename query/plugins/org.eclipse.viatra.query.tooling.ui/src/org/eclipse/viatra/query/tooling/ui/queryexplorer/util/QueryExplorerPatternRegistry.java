@@ -367,25 +367,6 @@ public class QueryExplorerPatternRegistry {
     }
 
     /**
-     * Returns true if the user declared "@QueryExplorer(checked=false)" on the pattern.
-     * 
-     * @param query
-     * @return
-     * @deprecated Use {@link #getQueryExplorerCheckedValue(IQuerySpecification)} instead
-     */
-    public static boolean isQueryExplorerCheckedFalse(IQuerySpecification<?> query) {
-        PAnnotation annotation = query.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
-        if (annotation != null) {
-            Object checkedValue = annotation.getFirstValue(QueryExplorer.QUERY_EXPLORER_CHECKED_PARAMETER);
-            if (checkedValue != null) {
-                if (!(Boolean) checkedValue)
-                    return true;
-            }
-        }
-        return false;
-    }
-    
-    /**
      * Returns an Optional that has <i>value</i> if the user
      * declared "@QueryExplorer(checked=<i>value</i>)" on the pattern.
      * If the attribute is not set, returns absent.

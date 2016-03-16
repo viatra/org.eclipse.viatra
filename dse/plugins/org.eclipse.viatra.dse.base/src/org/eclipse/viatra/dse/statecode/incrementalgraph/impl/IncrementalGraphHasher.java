@@ -354,12 +354,9 @@ public class IncrementalGraphHasher implements IStateCoder, InstanceListener {
     }
 
     private List<EObject> getAllObjects() {
-        Collection<Notifier> root = new ArrayList<Notifier>();
-        root.add(((EMFScope)queryEngine.getScope()).getScopeRoot());
-
         List<EObject> objects = new ArrayList<EObject>();
 
-        TreeIterator<EObject> iterator = EcoreUtil.getAllContents(root);
+        TreeIterator<EObject> iterator = EcoreUtil.getAllContents(((EMFScope)queryEngine.getScope()).getScopeRoots());
 
         while (iterator.hasNext()) {
             Notifier n = iterator.next();

@@ -30,30 +30,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueryHeader;
 public interface IQuerySpecification<Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> extends PQueryHeader {
 
     /**
-     * Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet). If a pattern
-     * matcher is already constructed with the same root, only a lightweight reference is created.
-     *
-     *
-     * <p>
-     * The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
-     * <p>
-     * The match set will be incrementally refreshed upon updates from this scope.
-     *
-     * <p>
-     * The matcher will be created within the managed {@link ViatraQueryEngine} belonging to the EMF model root, so
-     * multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
-     *
-     * @deprecated use {@link #getMatcher(ViatraQueryEngine)} instead, e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}.
-     *
-     * @param emfRoot
-     *            the root of the EMF tree where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-     * @throws ViatraQueryException
-     *             if an error occurs during pattern matcher creation
-     */
-    @Deprecated
-    public Matcher getMatcher(Notifier emfRoot) throws ViatraQueryException;
-
-    /**
      * Initializes the pattern matcher within an existing {@link ViatraQueryEngine}. If the pattern matcher is already
      * constructed in the engine, only a lightweight reference is created.
      * <p>

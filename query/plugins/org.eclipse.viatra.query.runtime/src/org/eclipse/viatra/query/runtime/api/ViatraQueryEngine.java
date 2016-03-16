@@ -51,30 +51,7 @@ import com.google.common.collect.Sets;
  */
 public abstract class ViatraQueryEngine {
     
-    /**
-     * Obtain a (managed) {@link ViatraQueryEngine} on a matcher scope specified by a scope root of type {@link Notifier}.
-     * 
-     * <p> For a given matcher scope, the same engine will be returned to any client. 
-     * This facilitates the reuse of internal caches of the engine, greatly improving performance.  
-     * 
-     * <p> The lifecycle of this engine is centrally managed, and will not be disposed as long as the model is retained in memory. 
-     * The engine will be garbage collected along with the model. 
-     * 
-     * <p>
-     * Advanced users: see {@link AdvancedViatraQueryEngine#createUnmanagedEngine(Notifier)} to obtain a private, 
-     * 
-     * unmanaged engine that is not shared with other clients and allows tight control over its lifecycle. 
-     * 
-     * @param emfScopeRoot the scope in which matches supported by the engine should be registered
-     * @return a (managed) {@link ViatraQueryEngine} instance
-     * @throws ViatraQueryException on initialization errors.
-     * @deprecated use {@link #on(QueryScope)} instead to evaluate queries on both EMF and non-EMF scopes.
-     */
-	@Deprecated
-	public static ViatraQueryEngine on(Notifier emfScopeRoot) throws ViatraQueryException {
-		return ViatraQueryEngineManager.getInstance().getQueryEngine(new EMFScope(emfScopeRoot));
-	}
-    
+   
     /**
      * Obtain a (managed) {@link ViatraQueryEngine} to evaluate queries over a given scope specified by an {@link QueryScope}.
      * 
@@ -155,13 +132,6 @@ public abstract class ViatraQueryEngine {
             }
         }));
 	}
-
-    /**
-     * @deprecated only valid for EMF scopes; use {@link #getScope()} to get scope information in the general case.
-     * @return the scope of pattern matching, i.e. the root of the EMF model tree that this engine is attached to.
-     */
-	@Deprecated
-	public abstract Notifier getEMFRoot();
 
     /**
      * @return the scope of query evaluation; the definition of the set of model elements that this engine is operates on.

@@ -126,37 +126,6 @@ public class SurrogateQueryRegistry {
     }
 
     /**
-     * @return the map of features with registered surrogate query FQNs
-     * @deprecated use {@link #getRegisteredSurrogateQueries()} instead
-     */
-    public Map<IInputKey, PQuery> getRegisteredSurrogateQueryFQNMap() {
-        return Maps.transformValues(registeredSurrogateQueryMap, new ProvidedValueFunction());
-    }
-    
-    /**
-     * @return the map of features with dynamically added surrogate query FQNs
-     * @deprecated use {@link #getDynamicSurrogateQueries()} instead
-     */
-    public Map<IInputKey, PQuery> getDynamicSurrogateQueryFQNMap() {
-        return Maps.transformValues(dynamicSurrogateQueryMap, new ProvidedValueFunction());
-    }
-    
-    /**
-     * Returns a copy of the map that contains all features with surrogate queries.
-     * Dynamically added surrogates override registered surrogates and each feature will only appear once in the map. 
-     * 
-     * @return a new copy of the map that contains all features with surrogate queries.
-     * @deprecated use {@link #getAllSurrogateQueries()} instead
-     */
-    @Deprecated
-    public Map<IInputKey, PQuery> getAllSurrogateQueryFQNMap() {
-    	Map<IInputKey, IProvider<PQuery>> allSurrogateQueries = 
-        		Maps.newHashMap(registeredSurrogateQueryMap);
-        allSurrogateQueries.putAll(dynamicSurrogateQueryMap);
-        return Maps.transformValues(allSurrogateQueries, new ProvidedValueFunction());
-    }
-    
-    /**
      * @return an unmodifiable set of features with registered surrogate queries
      */
     public Set<IInputKey> getRegisteredSurrogateQueries() {

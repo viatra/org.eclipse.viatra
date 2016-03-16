@@ -37,23 +37,6 @@ import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEn
 public final class DefaultActivationLifeCycle extends UnmodifiableActivationLifeCycle {
 
     /**
-     * @deprecated Use {@link Lifecycles#getDefault(true, true)} instead.
-     */
-    public static final DefaultActivationLifeCycle DEFAULT = new DefaultActivationLifeCycle(true, true);
-    /**
-     * @deprecated Use {@link Lifecycles#getDefault(false, true)} instead.
-     */
-    public static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE = new DefaultActivationLifeCycle(false, true);
-    /**
-     * @deprecated Use {@link Lifecycles#getDefault(true, false)} instead.
-     */
-    public static final DefaultActivationLifeCycle DEFAULT_NO_DISAPPEAR = new DefaultActivationLifeCycle(true, false);
-    /**
-     * @deprecated Use {@link Lifecycles#getDefault(false, false)} instead.
-     */
-    public static final DefaultActivationLifeCycle DEFAULT_NO_UPDATE_AND_DISAPPEAR = new DefaultActivationLifeCycle(false, false);
-
-    /**
      * Creates an activation life cycle with the default state transition map.
      * 
      * @param updateStateUsed
@@ -108,13 +91,4 @@ public final class DefaultActivationLifeCycle extends UnmodifiableActivationLife
 
     }
     
-    /**
-     * Creates an activation life cycle with the default state transition map using both Updated and Disappeared states.
-     * 
-     * @deprecated Use {@link DefaultActivationLifeCycle(true, true, false)} instead.
-     */
-    public DefaultActivationLifeCycle() {
-        this(true, true);
-    }
-
 }

@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -54,13 +55,6 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
 	@Override
     public PQuery getInternalQueryRepresentation() {
     	return wrappedPQuery;
-    }
-    
-    @Override
-    public Matcher getMatcher(Notifier emfRoot) throws ViatraQueryException {
-        ViatraQueryEngine engine = ViatraQueryEngine.on(emfRoot);
-        ensureInitializedInternal();
-        return getMatcher(engine);
     }
 
     @Override

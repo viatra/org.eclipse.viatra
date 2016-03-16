@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
@@ -97,7 +98,8 @@ public class RunOnceQueryEngine implements IRunOnceQueryEngine {
             engine.getBaseIndex().resampleDerivedFeatures();
         } else {
             // create new engine if it doesn't exists
-            engine = AdvancedViatraQueryEngine.createUnmanagedEngine(notifier, baseIndexOptions);
+            //TODO correct scope handling
+            engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(notifier, baseIndexOptions));
         }
         ViatraQueryMatcher<Match> matcher = engine.getMatcher(querySpecification);
         Collection<Match> allMatches = matcher.getAllMatches();

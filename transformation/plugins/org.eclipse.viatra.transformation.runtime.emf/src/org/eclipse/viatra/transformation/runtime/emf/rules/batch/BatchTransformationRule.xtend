@@ -85,14 +85,6 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends Viatra
 	    this.filter = filter
 	}
 	
-	/**
-	 * @deprecated Use {#getName) instead
-	 */
-	@Deprecated()
-    def getRuleName() {
-    	getName()
-    }
-
     override getName() {
         ruleName
     }

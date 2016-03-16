@@ -82,14 +82,6 @@ public class EventDrivenTransformation {
             return this;
         }
         
-        /**
-         * @deprecated Use {@link #build()} instead.
-         */
-        @Deprecated
-		public EventDrivenTransformation create() throws ViatraQueryException {
-            return build();
-        }
-
         public EventDrivenTransformation build() throws ViatraQueryException {
             Preconditions.checkState(engine != null, "ViatraQueryEngine must be set.");
             Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rulesToAdd = Maps.newHashMap();
@@ -133,14 +125,6 @@ public class EventDrivenTransformation {
         return new EventDrivenTransformationBuilder().setEngine(engine);
     }
     
-    /**
-     * @deprecated Use {@link #forScope(EMFScope)} or {@link #forEngine(ViatraQueryEngine)} instead!
-     */
-    @Deprecated
-    public static EventDrivenTransformationBuilder forSource(Notifier notifier) throws ViatraQueryException {
-        return EventDrivenTransformation.forScope(new EMFScope(notifier));
-    }
-
     private EventDrivenTransformation(ExecutionSchema executionSchema, ViatraQueryEngine queryEngine) {
         this.executionSchema = executionSchema;
         this.queryEngine = queryEngine;

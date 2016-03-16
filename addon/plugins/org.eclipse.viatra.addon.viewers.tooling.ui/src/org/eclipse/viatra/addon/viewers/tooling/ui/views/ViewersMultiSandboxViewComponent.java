@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -48,6 +47,8 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFea
 import org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.IViewerSandboxTab;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants;
@@ -261,7 +262,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     // this is called by the settings tab
     void applyConfiguration(ViewersComponentConfiguration c) {
     	try {
-			doSetContents(c.getModel(), c.getPatterns(), c.getFilter());
+			doSetContents(c.getScope(), c.getPatterns(), c.getFilter());
 		} catch (ViatraQueryException e) {
 			ViewersMultiSandboxView.log("applyConfiguration", e);
 		}
@@ -269,11 +270,11 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
     
     public void initializeContents(ViewersComponentConfiguration c) throws ViatraQueryException {
     	if (c!=null) {
-    		initializeContents(c.getModel(), c.getPatterns(), c.getFilter());
+    		initializeContents(c.getScope(), c.getPatterns(), c.getFilter());
     	}
     }
 
-	public void initializeContents(Notifier model, Collection<IQuerySpecification<?>> _patterns, ViewerDataFilter filter)
+	public void initializeContents(EMFScope model, Collection<IQuerySpecification<?>> _patterns, ViewerDataFilter filter)
             throws ViatraQueryException {
         if (model != null) {
         	Collection<IQuerySpecification<?>> patterns = getPatternsWithProperAnnotations(_patterns);
@@ -283,19 +284,19 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         }
     }
 
-	private void doSetContents(Notifier model, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter) throws ViatraQueryException {
+	private void doSetContents(EMFScope scope, Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter) throws ViatraQueryException {
 		if (state!=null) {
     		// dispose any previous viewerstate
     		state.dispose();
     	}
-        state = ViatraViewerDataModel.newViewerState(getEngine(model), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+        state = ViatraViewerDataModel.newViewerState(getEngine(scope), getPatternsWithProperAnnotations(patterns), filter, ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
         for (IViewerSandboxTab tab : tabList) {
             tab.bindState(state);
         }
 	}
 	
 	
-    private AdvancedViatraQueryEngine getEngine(Notifier model) throws ViatraQueryException {
+    private AdvancedViatraQueryEngine getEngine(EMFScope scope) throws ViatraQueryException {
         if (engine != null) {
             engine.dispose();
         }
@@ -305,7 +306,8 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
         boolean dynamicEMFMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
                 .getBoolean(PreferenceConstants.DYNAMIC_EMF_MODE);
         
-        engine = AdvancedViatraQueryEngine.createUnmanagedEngine(model, wildcardMode, dynamicEMFMode);
+        engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(scope.getScopeRoots(),
+                new BaseIndexOptions().withDynamicEMFMode(dynamicEMFMode).withWildcardMode(wildcardMode)));
         ViewersMultiSandboxView.log("Viewers initialized a new VIATRA Query engine with wildcardMode: "+wildcardMode+", dynamicMode: "+dynamicEMFMode);
         return engine;
     }

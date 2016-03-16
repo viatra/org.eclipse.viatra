@@ -20,31 +20,27 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
- * This is a generic pattern matcher for any VIATRA Query pattern, with
- * "interpretative" query execution. Use the pattern matcher on a given model
- * via {@link #on(ViatraQueryEngine, Pattern)}, e.g. in conjunction with
+ * This is a generic pattern matcher for any VIATRA Query pattern, with "interpretative" query execution. Use the
+ * pattern matcher on a given model via {@link #on(ViatraQueryEngine, Pattern)}, e.g. in conjunction with
  * {@link ViatraQueryEngine#on(Notifier)}.
  * <p>
- * Whenever available, consider using the pattern-specific generated matcher API
- * instead.
+ * Whenever available, consider using the pattern-specific generated matcher API instead.
  * 
  * <p>
  * Matches of the pattern will be represented as {@link GenericPatternMatch}.
+ * 
+ * <p>
+ * Clients should use {@link SpecificationBuilder} to convert EMF patterns to {@link IQuerySpecification}s, or
+ * {@link org.eclipse.viatra.query.runtime.api.GenericPatternMatcher} for other purposes. Note that the class
+ * {@link GenericPatternMatch} has also been moved.
  * 
  * @author Bergmann Gábor
  * @see GenericPatternMatch
  * @see GenericMatchProcessor
  * @see GenericQuerySpecification
  * 
- * @deprecated direct reference not recommended. As of 0.9, clients should use
- *             {@link SpecificationBuilder} to convert EMF patterns to
- *             {@link IQuerySpecification}s, or
- *             {@link org.eclipse.viatra.query.runtime.api.GenericPatternMatcher}
- *             for other purposes. Note that the class
- *             {@link GenericPatternMatch} has also been moved.
  */
-@Deprecated
-public class GenericPatternMatcher extends
+class GenericPatternMatcher extends
 		org.eclipse.viatra.query.runtime.api.GenericPatternMatcher {
 
 	protected GenericPatternMatcher(ViatraQueryEngine engine,

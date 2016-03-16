@@ -15,6 +15,7 @@ import java.util.Collection;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
@@ -29,7 +30,7 @@ public final class ViewersToolingViewsUtil {
 	public static void initializeContentsOnView(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter) throws ViatraQueryException {
 		//ViewersSandboxView.getInstance().setContents(model, patterns, filter);
 		ViewersMultiSandboxView.ensureOpen();
-		ViewersMultiSandboxView.getInstance().initializeContents(model, queries, filter);
+		ViewersMultiSandboxView.getInstance().initializeContents(new EMFScope(model), queries, filter);
 	}
 	
 	

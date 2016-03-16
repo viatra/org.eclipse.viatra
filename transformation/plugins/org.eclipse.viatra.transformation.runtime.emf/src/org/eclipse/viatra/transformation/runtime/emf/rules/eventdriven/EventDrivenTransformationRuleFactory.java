@@ -16,8 +16,8 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.transformation.evm.api.ActivationLifeCycle;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.viatra.transformation.evm.specific.Lifecycles;
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum;
-import org.eclipse.viatra.transformation.evm.specific.lifecycle.DefaultActivationLifeCycle;
 import org.eclipse.viatra.transformation.runtime.emf.filters.MatchParameterFilter;
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -32,7 +32,7 @@ public class EventDrivenTransformationRuleFactory {
 		private String name = "";
 		private IQuerySpecification<Matcher> precondition;
 		private Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions = HashMultimap.create();
-		private ActivationLifeCycle lifeCycle = DefaultActivationLifeCycle.DEFAULT_NO_UPDATE_AND_DISAPPEAR;
+		private ActivationLifeCycle lifeCycle = Lifecycles.getDefault(false, false);
 		private EventFilter<? super Match> filter;
 
 		public EventDrivenTransformationBuilder<Match, Matcher> name(String name) {

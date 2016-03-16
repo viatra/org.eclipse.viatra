@@ -218,19 +218,6 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         }
         return sources;
     }
-    
-    @Override
-    public List<V> getReachabilityPath(V source, V target) {
-    	if (!isReachable(source, target)) {
-    		return null;
-    	}
-    	else {
-    		Set<V> nodesInSubGraph = CollectionHelper.intersection(this.getAllReachableSources(target), this.getAllReachableTargets(source));
-    		nodesInSubGraph.add(source);
-    		nodesInSubGraph.add(target); 
-    		return GraphHelper.constructPath(source, target, nodesInSubGraph, gds);
-    	}
-    }
 
     private void notifyTcObservers(V source, V target, int dir) {
         for (ITcObserver<V> o : observers) {

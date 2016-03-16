@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 import static org.junit.Assert.*
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 /**
  * Primitive methods for executing a functional test for VIATRA Queries.
@@ -176,7 +177,7 @@ class TestExecutor {
 	def assertMatchResults(PatternModel patternModel, QuerySnapshot snapshot){
 		val diff = newHashSet
 		val input = snapshot.EMFRootForSnapshot
-		val engine = ViatraQueryEngine::on(input);
+		val engine = ViatraQueryEngine::on(new EMFScope(input));
 		engine.registerLogger
 		snapshot.matchSetRecords.forEach() [matchSet |
 			val matcher = patternModel.initializeMatcherFromModel(engine,matchSet.patternQualifiedName)

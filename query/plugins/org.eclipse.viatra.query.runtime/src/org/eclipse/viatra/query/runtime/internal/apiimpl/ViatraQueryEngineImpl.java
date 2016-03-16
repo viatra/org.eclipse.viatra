@@ -137,11 +137,6 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
         this.modelUpdateProvider = new ModelUpdateProvider(this, getLogger());
         this.engineContext = scope.createEngineContext(this, taintListener, getLogger());
     }
-
-    @Override
-	public Notifier getEMFRoot() {
-        return ((EMFScope)scope).getScopeRoot();
-    }
     
     @Override
 	public Set<? extends ViatraQueryMatcher<? extends IPatternMatch>> getCurrentMatchers(){

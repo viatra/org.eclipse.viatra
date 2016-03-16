@@ -43,6 +43,7 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.viatra.addon.viewers.tooling.ui.ViewersToolingPlugin;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.collect.Lists;
@@ -91,7 +92,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
 	private ViewersMultiSandboxViewComponent currentComponent;
 	SashForm container;
 	
-	public void initializeContents(Notifier model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter)
+	public void initializeContents(EMFScope model, Collection<IQuerySpecification<?>> queries, ViewerDataFilter filter)
             throws ViatraQueryException {
         if (model != null) {
         	defaultComponent.initializeContents(model, queries, filter);

@@ -12,7 +12,6 @@
 package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel
 
 import com.google.inject.Inject
-import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
@@ -25,7 +24,6 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import java.util.HashSet
 import java.util.Set
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor
-import org.eclipse.viatra.query.runtime.rete.misc.DeltaMonitor
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple
 import java.util.Collection
@@ -122,20 +120,10 @@ class PatternMatcherClassInferrer {
    	 * Infers constructors for Matcher class based on the input 'pattern'.
    	 */
    	def inferConstructors(JvmDeclaredType matcherClass, Pattern pattern) {
-   		matcherClass.members += pattern.toConstructor [
-   			simpleName = pattern.matcherClassName
-   			annotations += annotationRef(typeof(Deprecated))
-			visibility = JvmVisibility::PUBLIC
-			documentation = pattern.javadocMatcherConstructorNotifier.toString
-			parameters += pattern.toParameter("emfRoot", typeRef(typeof (Notifier)))
-			exceptions += typeRef(typeof (ViatraQueryException))
-			body = '''this(«ViatraQueryEngine».on(emfRoot));'''
-		]
 
 		matcherClass.members += pattern.toConstructor [
 			simpleName = pattern.matcherClassName
-			annotations += annotationRef(typeof (Deprecated))
-			visibility = JvmVisibility::PUBLIC
+			visibility = JvmVisibility::PRIVATE
 			documentation = pattern.javadocMatcherConstructorEngine.toString
 			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
 			exceptions += typeRef(typeof (ViatraQueryException))

@@ -9,8 +9,6 @@ import org.apache.log4j.Logger
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.extensibility.QueryBackendRegistry
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.junit.Test
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine
@@ -18,6 +16,8 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
+import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements of the base index and
@@ -61,8 +61,8 @@ abstract class QueryPerformanceTest {
 	 * 
 	 * Default implementation returns the registered default backend class.
 	 */
-	def Class<? extends IQueryBackend> getQueryBackend() {
-		QueryBackendRegistry.getInstance.defaultBackendClass
+	def IQueryBackendFactory getQueryBackendFactory() {
+		new ReteBackendFactory()
 	}
 
 	protected def prepare() {
@@ -99,7 +99,7 @@ abstract class QueryPerformanceTest {
 
 			debug("Building Rete")
 			val watch = Stopwatch.createStarted
-			val matcher = queryEngine.getMatcher(specification, new QueryEvaluationHint(queryBackend, newHashMap))
+			val matcher = queryEngine.getMatcher(specification, new QueryEvaluationHint(queryBackendFactory, newHashMap))
 			watch.stop()
 			val countMatches = matcher.countMatches
 			val usedHeapAfter = logMemoryProperties("Matcher created")

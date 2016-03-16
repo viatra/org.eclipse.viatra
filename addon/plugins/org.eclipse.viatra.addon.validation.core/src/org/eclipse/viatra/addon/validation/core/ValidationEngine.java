@@ -84,33 +84,6 @@ public class ValidationEngine implements IValidationEngine {
         ISchedulerFactory schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(queryEngine);
         this.executionSchema = ExecutionSchemas.createViatraQueryExecutionSchema(queryEngine, schedulerFactory);
     }
-    
-    /**
-     * Creates a new validation engine initialized on a managed {@link ViatraQueryEngine}
-     * with the given Notifier as scope and with the given Logger.
-     * 
-     * @param notifier
-     * @param logger
-     * 
-     * @deprecated use {@link ValidationEngineBuilder} instead.
-     * @throws IllegalArgumentException if either argument is null
-     */
-    public ValidationEngine(Notifier notifier, Logger logger) {
-
-        checkArgument(notifier != null, "Notifier cannot be null");
-        checkArgument(logger != null, "Logger cannot be null");
-        this.logger = logger;
-        this.constraintMap = new HashMap<IConstraintSpecification, Constraint>();
-        this.listeners = new HashSet<ValidationEngineListener>();
-
-        try {
-            this.queryEngine = ViatraQueryEngine.on(new EMFScope(notifier));
-            ISchedulerFactory schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(queryEngine);
-            this.executionSchema = ExecutionSchemas.createViatraQueryExecutionSchema(queryEngine, schedulerFactory);
-        } catch (ViatraQueryException e) {
-            logger.error(String.format("Exception occured when creating engine for validation: %s", e.getMessage()), e);
-        }
-    }
 
     @Override
     public void initialize() {

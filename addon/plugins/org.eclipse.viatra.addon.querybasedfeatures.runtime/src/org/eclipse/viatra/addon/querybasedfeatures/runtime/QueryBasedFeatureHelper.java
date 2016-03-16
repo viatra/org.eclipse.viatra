@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
@@ -148,7 +149,7 @@ public final class QueryBasedFeatureHelper {
         IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getQuerySpecification(patternFQN);
         if (querySpecification != null) {
             try {
-                ViatraQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(ViatraQueryEngine.on(notifier));
+                ViatraQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(ViatraQueryEngine.on(new EMFScope(notifier)));
                 newFeature.initialize(matcher, sourceParamName, targetParamName);
                 newFeature.startMonitoring();
             } catch (ViatraQueryException e) {

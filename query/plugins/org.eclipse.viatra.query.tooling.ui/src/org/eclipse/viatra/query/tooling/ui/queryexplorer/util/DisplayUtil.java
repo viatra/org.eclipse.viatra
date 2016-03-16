@@ -40,7 +40,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra.addon.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
-import org.eclipse.viatra.addon.databinding.runtime.util.DatabindingUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
@@ -71,7 +70,6 @@ public class DisplayUtil {
     private static Map<String, IMarker> orderByPatternMarkers = Maps.newHashMap();
 
 
-    public static final String PATTERNUI_ANNOTATION = "PatternUI";
     public static final String ORDERBY_ANNOTATION = "OrderBy";
 
 
@@ -287,10 +285,6 @@ public class DisplayUtil {
                 pattern = p;
 
                 PAnnotation annotation = p.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
-                if (annotation == null) {
-                    // Try with deprecated PatternUI annotation
-                    annotation = p.getFirstAnnotationByName(PATTERNUI_ANNOTATION);
-                }
                 if (annotation != null) {
                     return (String)annotation.getFirstValue("message");
                 }

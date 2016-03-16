@@ -75,15 +75,6 @@ public class ViatraViewerDataModel extends ViewerDataModel {
         return logger;
     }
 
-    /**
-     * @deprecated Due to independence from databinding
-     * Dispose of this {@link ViatraViewerDataModel} instance.
-     */
-    @Deprecated
-    @Override
-    public void dispose(){
-    }
-    
     /* factory method */
  	
  	/**
