@@ -272,5 +272,14 @@ public class SolutionTrajectory {
         sb.append(fitness.toString());
         return sb.toString();
     }
+    
+    @Override
+    public int hashCode() {
+        return activationCodes.hashCode();
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        return activationCodes.equals(obj);
+    }
 }

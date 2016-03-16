@@ -66,20 +66,18 @@ public class HillClimbingStrategy implements IStrategy {
             }
         }
 
-        Fitness previousFitness = context.calculateFitness();
+        do {
 
-        mainloop: do {
+            Fitness previousFitness = context.calculateFitness();
 
             Collection<? extends ITransition> transitionsFromCurrentState = dsm.getTransitionsFromCurrentState();
-            
+
             while (transitionsFromCurrentState.isEmpty()) {
-                logger.debug("No transitions from current state: backtrack.");
-                if (!dsm.undoLastTransformation()) {
-                    logger.debug("Cannot backtrack any further, terminating.");
-                    break mainloop;
-                }
+                logger.debug("No transitions from current state: considered as a solution.");
+                saveSolutionAndBacktrack();
+                continue;
             }
-            
+
             ArrayList<ITransition> transitionsToTry = new ArrayList<>(transitionsFromCurrentState.size());
             for (ITransition transition : transitionsFromCurrentState) {
                 transitionsToTry.add(transition);
@@ -110,23 +108,19 @@ public class HillClimbingStrategy implements IStrategy {
             }
 
             if (objectiveComparatorHelper.getTrajectoryFitnesses().isEmpty()) {
-                logger.debug("No viable transitions from current state: backtrack.");
-                dsm.undoLastTransformation();
+                logger.debug("No viable transitions from current state: considered as a solution.");
+                saveSolutionAndBacktrack();
                 continue;
             }
-            
+
             TrajectoryFitness randomBestFitness = objectiveComparatorHelper.getRandomBest();
             objectiveComparatorHelper.clearTrajectoryFitnesses();
 
             int compare = objectiveComparatorHelper.compare(previousFitness, randomBestFitness.fitness);
 
             if (compare >= 0) {
-                context.calculateFitness();
-                solutionStore.newSolution(context);
-                logger.debug("Found solution: " + dsm.getTrajectoryInfo().toString());
-                logger.debug("Backtrack for more solutions, if needed.");
-                while(dsm.undoLastTransformation());
-                break;
+                saveSolutionAndBacktrack();
+                continue;
             } else {
                 previousFitness = randomBestFitness.fitness;
                 ITransition transition = randomBestFitness.trajectory[randomBestFitness.trajectory.length - 1];
@@ -141,6 +135,14 @@ public class HillClimbingStrategy implements IStrategy {
         } while (true);
 
         logger.info("Terminated.");
+    }
+
+    private void saveSolutionAndBacktrack() {
+        context.calculateFitness();
+        solutionStore.newSolution(context);
+        logger.debug("Found solution: " + dsm.getTrajectoryInfo().toString());
+        logger.debug("Backtrack for more solutions, if needed.");
+        while(dsm.undoLastTransformation());
     }
 
     @Override
