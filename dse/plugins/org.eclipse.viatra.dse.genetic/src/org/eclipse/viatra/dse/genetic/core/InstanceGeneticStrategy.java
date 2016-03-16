@@ -159,8 +159,8 @@ public class InstanceGeneticStrategy extends LocalSearchStrategyBase {
 
                 Fitness fitness = context.calculateFitness();
                 actInstanceData.objectives = fitness;
-                for (int i = 0; i<genObjective.getSoftNames().size(); i++) {
-                    actInstanceData.violations.put(genObjective.getSoftNames().get(i), genObjective.getSoftMatches().get(i));
+                for (int i = 0; i<genObjective.getSoftConstraints().size(); i++) {
+                    actInstanceData.violations.put(genObjective.getSoftName(i), genObjective.getSoftMatches().get(i));
                 }
                 actInstanceData.sumOfConstraintViolationMeauserement = fitness.get(genObjective.getName());
 

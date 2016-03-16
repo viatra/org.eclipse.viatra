@@ -129,7 +129,7 @@ public class GeneticDebugger {
         InstanceData individual = populationToDebug.get(0);
 
         ConstraintsObjective genObjective = (ConstraintsObjective) gc.getLeveledObjectives()[0][0];
-        orderedSoftConstraints = new ArrayList<String>(genObjective.getSoftNames());
+        orderedSoftConstraints = genObjective.getSoftNames();
         Collections.sort(orderedSoftConstraints);
         for (String softConstraint : orderedSoftConstraints) {
             sb.append(softConstraint);

@@ -429,8 +429,8 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
                 .getTransitionTrajectory());
         InstanceData instance = new InstanceData(trajectory);
         instance.objectives = context.calculateFitness();
-        for (int i = 0; i<genObjective.getSoftNames().size(); i++) {
-            instance.violations.put(genObjective.getSoftNames().get(i), genObjective.getSoftMatches().get(i));
+        for (int i = 0; i<genObjective.getSoftConstraints().size(); i++) {
+            instance.violations.put(genObjective.getSoftName(i), genObjective.getSoftMatches().get(i));
         }
         parentPopulation.add(instance);
         
