@@ -66,7 +66,7 @@ public class HillClimbingStrategy implements IStrategy {
             }
         }
 
-        do {
+        mainloop: do {
 
             Fitness previousFitness = context.calculateFitness();
 
@@ -75,7 +75,7 @@ public class HillClimbingStrategy implements IStrategy {
             while (transitionsFromCurrentState.isEmpty()) {
                 logger.debug("No transitions from current state: considered as a solution.");
                 saveSolutionAndBacktrack();
-                continue;
+                continue mainloop;
             }
 
             ArrayList<ITransition> transitionsToTry = new ArrayList<>(transitionsFromCurrentState.size());
