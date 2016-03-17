@@ -28,11 +28,13 @@ class TraitGenerator {
 			acceptor.accept(trait.toInterface(trait.traitInterfaceFqn.toString) [
 				for (param : (trait as Trait).parameters.parameters) {
 					members += param.toMethod("get"+param.typedParameter.name.toFirstUpper, param.typedParameter.type)[
-						visibility = JvmVisibility.DEFAULT 
+						visibility = JvmVisibility.PUBLIC 
+						abstract = true // TODO needed to fix bug 489825
 					]
 					members += param.toMethod("set"+param.typedParameter.name.toFirstUpper, typeRefBuilder.typeRef("void"))[
-						visibility = JvmVisibility.DEFAULT
+						visibility = JvmVisibility.PUBLIC
 						parameters += param.toParameter(param.typedParameter.name, param.typedParameter.type)
+						abstract = true // TODO needed to fix bug 489825
 					]
 				}
 			])
