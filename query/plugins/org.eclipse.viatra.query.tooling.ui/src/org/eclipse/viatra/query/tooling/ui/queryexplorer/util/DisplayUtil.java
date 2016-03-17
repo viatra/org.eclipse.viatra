@@ -48,6 +48,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
@@ -200,7 +201,7 @@ public class DisplayUtil {
      * @param backend
      * @return
      */
-    public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, Class<? extends IQueryBackend> backend) {
+    public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, IQueryBackendFactory backend) {
         return getMessage(matcher, matchesSize, patternFqn, false, false, null, backend);
     }
     
@@ -220,7 +221,7 @@ public class DisplayUtil {
      * @return the label associated to the matcher
      */
     public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
-            String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage, Class<? extends IQueryBackend> backend) {
+            String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage, IQueryBackendFactory backend) {
         if (matcher == null) {
         	if (exceptionMessage != null)
         		return String.format("%s - %s", patternFqn, exceptionMessage);
@@ -253,8 +254,8 @@ public class DisplayUtil {
      * @param backend
      * @return a user-readable name for the given {@link IQueryBackend} implementation.
      */
-    public static String getQueryBackendName(Class<? extends IQueryBackend> backend){
-        return backend.getSimpleName();
+    public static String getQueryBackendName(IQueryBackendFactory backend){
+        return backend.getBackendClass().getSimpleName();
     }
 
     /**
