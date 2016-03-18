@@ -27,9 +27,9 @@ import org.eclipse.viatra.query.patternlanguage.emf.types.EMFPatternTypeProvider
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.util.ResourceDiagnosticFeedback;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
-import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback.EmptyErrorFeedback;
 import org.eclipse.viatra.query.patternlanguage.emf.util.SimpleClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageSyntaxErrorMessageProvider;
@@ -137,7 +137,7 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     }
 
     public Class<? extends IErrorFeedback> bindIErrorFeedback() {
-        return EmptyErrorFeedback.class;
+        return ResourceDiagnosticFeedback.class;
     }
     
     public Class<? extends ITypeSystem> bindITypeSystem() {

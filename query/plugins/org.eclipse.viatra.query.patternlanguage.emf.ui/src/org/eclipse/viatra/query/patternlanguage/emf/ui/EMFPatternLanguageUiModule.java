@@ -26,7 +26,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJ
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.ui.feedback.GeneratorMarkerFeedback;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverDocumentationProvider;
@@ -36,7 +35,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.validation.GenmodelBasedEMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator;
@@ -127,10 +125,6 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @Override
     public Class<? extends IEObjectHoverDocumentationProvider> bindIEObjectHoverDocumentationProvider() {
         return EMFPatternLanguageHoverDocumentationProvider.class;
-    }
-
-    public Class<? extends IErrorFeedback> bindIErrorFeedback() {
-        return GeneratorMarkerFeedback.class;
     }
 
     @SingletonBinding(eager = true)
