@@ -11,9 +11,7 @@
 package org.eclipse.viatra.dse.base;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -106,7 +104,7 @@ public class GlobalContext {
                     throw new DSEException(
                             "If the newly started thread's root EObject is different then the original, it must be cloned. Change parameters.");
                 } else {
-                    model = originalThreadContext.getModelRoot();
+                    model = originalThreadContext.getModel();
                 }
             }
 
@@ -118,7 +116,7 @@ public class GlobalContext {
             ThreadContext newThreadContext;
             if (cloneModel) {
                 TrajectoryInfo trajectoryInfo = originalThreadContext.getDesignSpaceManager().getTrajectoryInfo();
-                newThreadContext = new ThreadContext(this, strategy, domain, model != null ? null : trajectoryInfo,
+                newThreadContext = new ThreadContext(this, strategy, model, model != null ? null : trajectoryInfo,
                         originalThreadContext.getGuidance());
             } else {
                 // TODO This is only appropriate if this is the first thread

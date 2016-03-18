@@ -101,7 +101,7 @@ public class MainGeneticStrategy extends LocalSearchStrategyBase implements ISto
             throw new DSEException("The genetic strategy needs at least two threads.");
         }
 
-        sharedObject.initialModel = EMFHelper.clone(context.getModelRoot());
+        sharedObject.initialModel = EMFHelper.clone(context.getModel());
 
         sharedObject.instancesToBeChecked = new ArrayBlockingQueue<InstanceData>(sharedObject.sizeOfPopulation, false);
 

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -29,6 +30,7 @@ import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
+import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -50,7 +52,7 @@ public class ThreadContext {
     private RuleEngine ruleEngine;
     private ViatraQueryEngine queryEngine;
     private EditingDomain domain;
-    private EObject modelRoot;
+    private Notifier model;
     private DesignSpaceManager designSpaceManager;
     private List<IObjective> objectives;
     private List<IGlobalConstraint> globalConstraints;
@@ -78,11 +80,13 @@ public class ThreadContext {
      * @param trajectoryInfoToClone
      * @param parentGuidance
      */
-    public ThreadContext(final GlobalContext globalContext, IStrategy strategy, EditingDomain domain,
+    public ThreadContext(final GlobalContext globalContext, IStrategy strategy, Notifier model,
             TrajectoryInfo trajectoryInfoToClone, Guidance parentGuidance) {
+        checkArgument(model != null, "Cannot initialize ThreadContext on a null model.");
         this.globalContext = globalContext;
         this.strategy = strategy;
-        this.domain = domain;
+        this.model = model;
+        this.domain = EMFHelper.createEditingDomain(model);
 
         // clone if it is not null
         this.trajectoryInfo = trajectoryInfoToClone == null ? null : trajectoryInfoToClone.clone();
@@ -117,12 +121,10 @@ public class ThreadContext {
         // prohibit re-initialization
         checkArgument(!inited.getAndSet(true), "This Thread context has been initialized already!");
 
-        modelRoot = domain.getResourceSet().getResources().get(0).getContents().get(0);
-        checkArgument(modelRoot != null, "Cannot initialize ThreadContext on a null model.");
 
         try {
             // initialize query engine
-            final EMFScope scope = new EMFScope(modelRoot);
+            final EMFScope scope = new EMFScope(model);
             queryEngine = ViatraQueryEngine.on(scope);
         } catch (ViatraQueryException e) {
             throw new DSEException("Failed to create unmanaged ViatraQueryEngine on the model.", e);
@@ -131,7 +133,7 @@ public class ThreadContext {
         // initialize RuleEngine
         ruleEngine = RuleEngines.createViatraQueryRuleEngine(queryEngine);
 
-        ChangeCommand addRuleCommand = new ChangeCommand(modelRoot) {
+        ChangeCommand addRuleCommand = new ChangeCommand(model) {
             @Override
             protected void doExecute() {
                 // add rules to the RuleEngine
@@ -168,7 +170,7 @@ public class ThreadContext {
 
         }
         // create the thread specific DesignSpaceManager
-        designSpaceManager = new DesignSpaceManager(this, modelRoot, domain, globalContext.getStateCoderFactory(),
+        designSpaceManager = new DesignSpaceManager(this, model, domain, globalContext.getStateCoderFactory(),
                 globalContext.getDesignSpace(), trajectoryInfo, ruleEngine, queryEngine);
 
         // if there is a guidance registered, hook this thread's
@@ -246,8 +248,8 @@ public class ThreadContext {
         return domain;
     }
 
-    public EObject getModelRoot() {
-        return modelRoot;
+    public Notifier getModel() {
+        return model;
     }
 
     public ViatraQueryEngine getQueryEngine() {

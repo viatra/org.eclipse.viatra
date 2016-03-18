@@ -437,7 +437,7 @@ public class DesignSpaceExplorer {
 
         // Create main thread with given model, without cloning.
         ThreadContext threadContext = new ThreadContext(globalContext, strategy,
-                EMFHelper.createEditingDomain(model), null, null);
+                model, null, null);
         threadContext.setGuidance(guidance);
 
         globalContext.tryStartNewThread(threadContext, false);
