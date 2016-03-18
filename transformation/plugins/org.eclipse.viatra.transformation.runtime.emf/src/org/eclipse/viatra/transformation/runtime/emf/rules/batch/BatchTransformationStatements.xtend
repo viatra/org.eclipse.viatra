@@ -226,7 +226,7 @@ class BatchTransformationStatements {
 	}
 	
     /**
-	 * Selects and fires an activation of the selected rule with a corresponding filter.</p>
+	 * Selects and fires an activation of the selected rule with no corresponding filter.</p>
 	 * 
 	 * <p><strong>Warning</strong>: the selection criteria is not specified - it is neither random nor controllable
 	 */
@@ -234,6 +234,15 @@ class BatchTransformationStatements {
 		val filter = rule.ruleSpecification.createEmptyFilter
 		rule.ruleSpecification.fireOne(filter)
 	}
+	
+    /**
+     * Selects and fires an activation of the selected rule with a corresponding filter</p>
+	 * 
+	 * <p><strong>Warning</strong>: the selection criteria is not specified - it is neither random nor controllable
+     */
+    def <Match extends IPatternMatch> fireOne(BatchTransformationRule<Match, ?> rule, Pair<String, Object>... parameterFilter) {
+        rule.ruleSpecification.fireOne(new MatchParameterFilter(parameterFilter))
+    }
 	
 	/**
 	 * Selects and fires an activation of the selected rule with a corresponding filter.</p>
