@@ -19,6 +19,7 @@ import org.junit.Test
 
 import static org.junit.Assert.*
 import org.eclipse.viatra.integration.mwe2.initializer.MWE2IntegrationInitializer
+import com.google.common.collect.Lists
 
 /**
  * 
@@ -262,9 +263,27 @@ public class MWE2IntegrationTest {
 	}
 	
 	def private void testWithParallel(String fileLocation, String ... expected) {
-		var result = runTest(fileLocation)
-		assertEquals("Result does not match with expected value",expected.toSet, result.toSet);
+		val result = runTest(fileLocation)
+		val missing = Lists.newArrayList
+		//in case of parallel run tests, the order of the received messages is ignored
+		//we only check that the correct messages are present 
+		for(String s : expected){
+		    var boolean contains  = false
+            for(String r : result){
+                if(r.equals(s)){
+                    contains = true
+                }
+            }
+            if(contains){
+                result.remove(s)
+            }else{
+                missing.add(s)
+            }
+		}
 		
+				
+		assertTrue('''The following elements from the expected values are missing: «missing»''', missing.size == 0)
+		assertTrue('''Additional elements are contained in the result: «result»''', result.size ==0)
 
 	}
 	
