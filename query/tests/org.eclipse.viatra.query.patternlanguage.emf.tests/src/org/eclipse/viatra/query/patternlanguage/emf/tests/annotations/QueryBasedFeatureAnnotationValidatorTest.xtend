@@ -155,7 +155,10 @@ class QueryBasedFeatureAnnotationValidatorTest extends AbstractValidatorTest{
 			}'
 		) 
 		val validationResult = tester.validate(model)
-    validationResult.assertError(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE);
+        validationResult.assertAll(
+            getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE),
+            getErrorCode(QueryBasedFeaturePatternValidator::METAMODEL_ISSUE_CODE)
+        );
 	}
 	
 }
