@@ -9,8 +9,11 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>../../releng/org.eclipse.viatra.target.all</module>
+		<module>../../releng/org.eclipse.viatra.target.rcp</module>
 		<module>../../releng/org.eclipse.viatra.update</module>
 		<module>../../releng/org.eclipse.viatra.docs</module>
+		<module>../../releng/org.eclipse.viatra.rcpproduct</module>
+		
 
 		<!-- Query -->
 		<module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.ui</module>
