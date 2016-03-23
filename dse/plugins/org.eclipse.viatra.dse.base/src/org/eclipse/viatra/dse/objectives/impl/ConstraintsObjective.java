@@ -43,80 +43,64 @@ public class ConstraintsObjective extends BaseObjective {
 
     public static final String DEFAULT_NAME = "ConstraintsObjective";
 
-    protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> softConstraints;
-    protected List<Double> weights;
-    protected List<String> softNames;
+    public static class QueryConstraint {
+        public final String name;
+        public final IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> query;
+        public final Double weight;
+        public final ModelQueryType type;
 
-    protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> hardConstraints;
-    protected List<String> hardNames;
+        public QueryConstraint(String name,
+                IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> query, Double weight,
+                ModelQueryType type) {
+            this.name = name;
+            this.query = query;
+            this.weight = weight;
+            this.type = type;
+        }
+
+        public QueryConstraint(String name,
+                IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> query, Double weight) {
+            this(name, query, weight, ModelQueryType.MUST_HAVE_MATCH);
+        }
+
+        public QueryConstraint(String name,
+                IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> query, ModelQueryType type) {
+            this(name, query, 0d, type);
+        }
+    }
+
+    protected List<QueryConstraint> softConstraints;
+    protected List<QueryConstraint> hardConstraints;
 
     protected List<ViatraQueryMatcher<? extends IPatternMatch>> softMatchers;
     protected List<ViatraQueryMatcher<? extends IPatternMatch>> hardMatchers;
     protected List<Integer> softMatches;
     protected List<Integer> hardMatches;
 
-    public ConstraintsObjective(String name,
-            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> softConstraints,
-            List<Double> weights,
-            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> hardConstraints) {
+    public ConstraintsObjective(String name, List<QueryConstraint> softConstraints,
+            List<QueryConstraint> hardConstraints) {
         super(name);
         Preconditions.checkNotNull(softConstraints, "The list of soft constraints cannot be null.");
         Preconditions.checkNotNull(hardConstraints, "The list of hard constraints cannot be null.");
-        Preconditions.checkNotNull(weights, "The list of weights cannot be null.");
-        Preconditions.checkArgument(softConstraints.size() == weights.size(),
-                "The size of the two list must be equivalent.");
 
         this.softConstraints = softConstraints;
-        this.weights = weights;
         this.hardConstraints = hardConstraints;
-
-        this.softNames = new ArrayList<String>(softConstraints.size());
-        this.hardNames = new ArrayList<String>(hardConstraints.size());
-
-        for (IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> hardConstraint : hardConstraints) {
-            hardNames.add(hardConstraint.getFullyQualifiedName());
-        }
-        for (IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> softConstraint : softConstraints) {
-            softNames.add(softConstraint.getFullyQualifiedName());
-        }
     }
 
-    public ConstraintsObjective(String name,
-            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> softConstraints,
-            List<Double> weights) {
-        this(name, softConstraints, weights,
-                new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
+    public ConstraintsObjective(String name, List<QueryConstraint> hardConstraints) {
+        this(name, new ArrayList<QueryConstraint>(), hardConstraints);
     }
 
-    public ConstraintsObjective(
-            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> softConstraints,
-            List<Double> weights) {
-        this(DEFAULT_NAME, softConstraints, weights,
-                new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
-    }
-
-    public ConstraintsObjective(String name,
-            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> hardConstraints) {
-        this(name, hardConstraints, new ArrayList<Double>(),
-                new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
-    }
-
-    public ConstraintsObjective(
-            List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> hardConstraints) {
-        this(DEFAULT_NAME, hardConstraints, new ArrayList<Double>(),
-                new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
+    public ConstraintsObjective(List<QueryConstraint> hardConstraints) {
+        this(DEFAULT_NAME, new ArrayList<QueryConstraint>(), hardConstraints);
     }
 
     public ConstraintsObjective(String name) {
-        this(name, new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>(),
-                new ArrayList<Double>(),
-                new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
+        this(name, new ArrayList<QueryConstraint>(), new ArrayList<QueryConstraint>());
     }
 
     public ConstraintsObjective() {
-        this(DEFAULT_NAME, new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>(),
-                new ArrayList<Double>(),
-                new ArrayList<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>());
+        this(DEFAULT_NAME, new ArrayList<QueryConstraint>(), new ArrayList<QueryConstraint>());
     }
 
     /**
@@ -132,9 +116,7 @@ public class ConstraintsObjective extends BaseObjective {
      */
     public ConstraintsObjective withSoftConstraint(String name,
             IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> softConstraint, double weight) {
-        softConstraints.add(softConstraint);
-        weights.add(new Double(weight));
-        softNames.add(name);
+        softConstraints.add(new QueryConstraint(name, softConstraint, weight));
         return this;
     }
 
@@ -159,17 +141,21 @@ public class ConstraintsObjective extends BaseObjective {
      *            A name for the hard constraint.
      * @param softConstraint
      *            A VIATRA Query pattern specification.
+     * @param type
+     *            {@link ModelQueryType}, which determines whether the constraint should have at least one match or none
+     *            at all.
      * @return The actual instance to enable builder pattern like usage.
      */
     public ConstraintsObjective withHardConstraint(String name,
-            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> hardConstraint) {
-        hardConstraints.add(hardConstraint);
-        hardNames.add(name);
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> hardConstraint,
+            ModelQueryType type) {
+        hardConstraints.add(new QueryConstraint(name, hardConstraint, type));
         return this;
     }
 
     /**
-     * Adds a new hard constraint with the name of the query specification's fully qualified name.
+     * Adds a new hard constraint with the name of the query specification's fully qualified name and the default
+     * {@link ModelQueryType#MUST_HAVE_MATCH}.
      * 
      * @param softConstraint
      *            A VIATRA Query pattern specification.
@@ -177,7 +163,24 @@ public class ConstraintsObjective extends BaseObjective {
      */
     public ConstraintsObjective withHardConstraint(
             IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> hardConstraint) {
-        return withHardConstraint(hardConstraint.getFullyQualifiedName(), hardConstraint);
+        return withHardConstraint(hardConstraint.getFullyQualifiedName(), hardConstraint,
+                ModelQueryType.MUST_HAVE_MATCH);
+    }
+
+    /**
+     * Adds a new hard constraint with the name of the query specification's fully qualified name.
+     * 
+     * @param softConstraint
+     *            A VIATRA Query pattern specification.
+     * @param type
+     *            {@link ModelQueryType}, which determines whether the constraint should have at least one match or none
+     *            at all.
+     * @return The actual instance to enable builder pattern like usage.
+     */
+    public ConstraintsObjective withHardConstraint(
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> hardConstraint,
+            ModelQueryType type) {
+        return withHardConstraint(hardConstraint.getFullyQualifiedName(), hardConstraint, type);
     }
 
     @Override
@@ -191,7 +194,7 @@ public class ConstraintsObjective extends BaseObjective {
 
         for (int i = 0; i < softConstraints.size(); i++) {
             int countMatches = softMatchers.get(i).countMatches();
-            result += countMatches * weights.get(i);
+            result += countMatches * softConstraints.get(i).weight;
             softMatches.set(i, Integer.valueOf(countMatches));
         }
 
@@ -205,22 +208,22 @@ public class ConstraintsObjective extends BaseObjective {
         softMatchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>(softConstraints.size());
         hardMatches = new ArrayList<Integer>(hardConstraints.size());
         hardMatchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>(hardConstraints.size());
-        for (IQuerySpecification<?> qs : softConstraints) {
+        for (QueryConstraint qc : softConstraints) {
             softMatches.add(0);
         }
-        for (IQuerySpecification<?> qs : hardConstraints) {
+        for (QueryConstraint qc : hardConstraints) {
             hardMatches.add(0);
         }
 
         try {
             ViatraQueryEngine queryEngine = context.getQueryEngine();
 
-            for (IQuerySpecification<?> qs : softConstraints) {
-                softMatchers.add(qs.getMatcher(queryEngine));
+            for (QueryConstraint qc : softConstraints) {
+                softMatchers.add(qc.query.getMatcher(queryEngine));
             }
 
-            for (IQuerySpecification<?> qs : hardConstraints) {
-                hardMatchers.add(qs.getMatcher(queryEngine));
+            for (QueryConstraint qc : hardConstraints) {
+                hardMatchers.add(qc.query.getMatcher(queryEngine));
             }
 
         } catch (ViatraQueryException e) {
@@ -230,9 +233,8 @@ public class ConstraintsObjective extends BaseObjective {
 
     @Override
     public IObjective createNew() {
-        ConstraintsObjective result = new ConstraintsObjective(name, softConstraints, weights, hardConstraints);
-        result.softNames = softNames;
-        result.hardNames = hardNames;
+        new ArrayList<Double>(softConstraints.size());
+        ConstraintsObjective result = new ConstraintsObjective(name, softConstraints, hardConstraints);
         return result.withComparator(comparator).withLevel(level);
     }
 
@@ -247,29 +249,31 @@ public class ConstraintsObjective extends BaseObjective {
         boolean result = true;
 
         for (int i = 0; i < hardConstraints.size(); i++) {
+            ModelQueryType type = hardConstraints.get(i).type;
             int countMatches = hardMatchers.get(i).countMatches();
             hardMatches.set(i, Integer.valueOf(countMatches));
-            if (countMatches <= 0) {
+            if ((type.equals(ModelQueryType.MUST_HAVE_MATCH) && countMatches <= 0)
+                    || (type.equals(ModelQueryType.NO_MATCH) && countMatches > 0)) {
                 result = false;
             }
         }
         return result;
     }
 
-    public List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getSoftConstraints() {
+    public List<QueryConstraint> getSoftConstraints() {
         return softConstraints;
     }
 
-    public List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getHardConstraints() {
+    public List<QueryConstraint> getHardConstraints() {
         return hardConstraints;
     }
 
-    public List<String> getSoftNames() {
-        return softNames;
+    public String getSoftName(int index) {
+        return softConstraints.get(index).name;
     }
 
-    public List<String> getHardNames() {
-        return hardNames;
+    public String getHardName(int index) {
+        return hardConstraints.get(index).name;
     }
 
     public List<Integer> getSoftMatches() {
@@ -278,6 +282,14 @@ public class ConstraintsObjective extends BaseObjective {
 
     public List<Integer> getHardMatches() {
         return hardMatches;
+    }
+
+    public ArrayList<String> getSoftNames() {
+        ArrayList<String> softNames = new ArrayList<>(softConstraints.size());
+        for (QueryConstraint qc : softConstraints) {
+            softNames.add(qc.name);
+        }
+        return softNames;
     }
 
 }

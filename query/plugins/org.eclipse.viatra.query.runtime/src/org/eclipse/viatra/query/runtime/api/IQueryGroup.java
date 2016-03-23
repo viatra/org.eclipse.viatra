@@ -44,23 +44,6 @@ public interface IQueryGroup {
     public void prepare(ViatraQueryEngine engine) throws ViatraQueryException;
 
     /**
-     * Initializes the contained patterns over a given EMF model root (recommended: Resource or ResourceSet). If a
-     * pattern matcher engine with the same root already exists, it will be reused.
-     * 
-     * <p>The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
-     * The match set will be incrementally refreshed upon updates from this scope.
-     * 
-     * @param emfRoot
-     *            the root of the EMF tree where the pattern matchers will operate. Recommended: Resource or
-     *            ResourceSet.
-     * @throws ViatraQueryException
-     *             if an error occurs during pattern matcher creation
-     * @deprecated use {@link #prepare(ViatraQueryEngine)} instead, e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}            
-     */
-	@Deprecated
-    public void prepare(Notifier emfRoot) throws ViatraQueryException;
-
-    /**
      * Returns the currently assigned {@link IQuerySpecification}s.
      */
     public Set<IQuerySpecification<?>> getSpecifications();

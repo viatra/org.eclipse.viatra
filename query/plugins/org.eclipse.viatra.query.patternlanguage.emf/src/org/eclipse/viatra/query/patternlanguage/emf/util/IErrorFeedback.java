@@ -82,23 +82,4 @@ public interface IErrorFeedback {
      */
     void reportError(Resource resource, String message, String errorCode, Severity severity, String markerType);
 
-    public static final class EmptyErrorFeedback implements IErrorFeedback {
-
-		@Override
-		public void clearMarkers(Resource resource, String markerType) {}
-
-		@Override
-		public void reportError(EObject ctx, String message, String errorCode,
-				Severity severity, String markerType) {}
-
-		@Override
-		public void reportErrorNoLocation(EObject ctx, String message,
-				String errorCode, Severity severity, String markerType) {}
-
-		@Override
-		public void reportError(Resource file, String message, String errorCode,
-				Severity severity, String markerType) {}
-
-    }
-
 }

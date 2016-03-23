@@ -74,14 +74,6 @@ public class BaseIndexOptions {
         this.dynamicEMFMode = dynamicEMFMode;
         this.wildcardMode = wildcardMode;
     }
-
-    /**
-     * 
-     * @deprecated Unsafe to use as setting it after the engine has been is undefined; use {@link #withDynamicEMFMode(boolean)} instead
-     */
-    public void setDynamicEMFMode(boolean dynamicEMFMode) {
-            this.dynamicEMFMode = dynamicEMFMode;
-    }
     
     /**
      * 
@@ -92,17 +84,6 @@ public class BaseIndexOptions {
     	BaseIndexOptions result = copy();
         result.dynamicEMFMode = dynamicEMFMode;
         return result;
-    }
-
-    /**
-     * Adds an object-level filter to the indexer. Warning - object-level indexing can increase indexing time
-     * noticeably. If possibly, use {@link #withObjectFilterConfiguration(IBaseIndexObjectFilter)} instead.
-     * 
-     * @param filter
-     * @deprecated Unsafe to use as setting it after the engine has been is undefined; use {@link #withResourceFilterConfiguration(IBaseIndexResourceFilter)} instead
-     */
-    public void setObjectFilterConfiguration(IBaseIndexObjectFilter filter) {
-        notifierFilterConfiguration = filter;
     }
     
     /**
@@ -123,16 +104,6 @@ public class BaseIndexOptions {
      */
     public IBaseIndexObjectFilter getObjectFilterConfiguration() {
         return notifierFilterConfiguration;
-    }
-
-    /**
-     * Adds a resource filter to the current configuration
-     * 
-     * @param filter
-     * @deprecated Unsafe to use as setting it after the engine has been is undefined; use {@link #withResourceFilterConfiguration(IBaseIndexResourceFilter)} instead
-     */
-    public void setResourceFilter(IBaseIndexResourceFilter filter) {
-        resourceFilterConfiguration = filter;
     }
     
     /**
@@ -166,16 +137,6 @@ public class BaseIndexOptions {
      */
     public boolean isTraverseOnlyWellBehavingDerivedFeatures() {
         return traverseOnlyWellBehavingDerivedFeatures;
-    }
-
-    
-    /**
-     * 
-     * @param wildcardMode
-     * @deprecated Unsafe to use as setting it after the engine has been is undefined; use {@link #withWildcardMode(boolean)} instead
-     */
-    public void setWildcardMode(boolean wildcardMode) {
-        this.wildcardMode = wildcardMode;
     }
     
     /**

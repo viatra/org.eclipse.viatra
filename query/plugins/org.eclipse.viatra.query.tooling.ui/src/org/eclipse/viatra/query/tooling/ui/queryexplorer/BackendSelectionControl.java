@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryexplorer;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
@@ -28,11 +23,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
-import org.eclipse.viatra.query.runtime.extensibility.QueryBackendRegistry;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
+import org.eclipse.viatra.query.tooling.ui.registry.QueryBackendRegistry;
+
+import com.google.common.collect.Iterables;
 
 /**
  * This Control is used on the {@link QueryExplorer} view's toolbar to enable selection of {@link IQueryBackend} 
@@ -73,18 +70,14 @@ public class BackendSelectionControl extends WorkbenchWindowControlContribution 
      * 
      * @param backend
      */
-    private void applyBackendSelection(Class<? extends IQueryBackend> backend){
+    private void applyBackendSelection(IQueryBackendFactory backend){
         QueryEvaluationHint oldHint = getQueryExplorer().getHints();
         QueryEvaluationHint newHint = new QueryEvaluationHint(backend, oldHint.getBackendHints());
         getQueryExplorer().setHints(newHint);
     }
     
-    private static Collection<Class<? extends IQueryBackend>> getRegisteredQueryBackendImplementations(){
-        List<Class<? extends IQueryBackend>> result = new LinkedList<Class<? extends IQueryBackend>>();
-        for(Entry<Class<? extends IQueryBackend>, IQueryBackendFactory> entry : QueryBackendRegistry.getInstance().getAllKnownFactories()){
-            result.add(entry.getKey());
-        }
-        return result;
+    private static Iterable<IQueryBackendFactory> getRegisteredQueryBackendImplementations(){
+        return QueryBackendRegistry.getInstance().getAllKnownFactories();
     }
     
     @Override
@@ -92,31 +85,29 @@ public class BackendSelectionControl extends WorkbenchWindowControlContribution 
         final ComboViewer viewer = new ComboViewer(parent, SWT.BORDER | SWT.READ_ONLY);
         viewer.setContentProvider(new ArrayContentProvider());
         viewer.setLabelProvider(new LabelProvider(){
-            @SuppressWarnings("unchecked")
             @Override
             public String getText(Object element) {
-                if (element instanceof Class<?>){
-                    return DisplayUtil.getQueryBackendName((Class<? extends IQueryBackend>) element);
+                if (element instanceof IQueryBackendFactory){
+                    return DisplayUtil.getQueryBackendName((IQueryBackendFactory) element);
                 }
                 return super.getText(element);
             }
         });
-        viewer.setInput(getRegisteredQueryBackendImplementations().toArray());
-        Class<? extends IQueryBackend> queryBackendClass = getQueryExplorer().getHints().getQueryBackendClass();
+        viewer.setInput(Iterables.toArray(getRegisteredQueryBackendImplementations(), IQueryBackendFactory.class));
+        IQueryBackendFactory queryBackendFactory = getQueryExplorer().getHints().getQueryBackendFactory();
 		viewer.setSelection(
-				queryBackendClass != null ? new StructuredSelection(queryBackendClass) : new StructuredSelection());
+				queryBackendFactory != null ? new StructuredSelection(queryBackendFactory) : new StructuredSelection());
         
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             
-            @SuppressWarnings("unchecked")
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
                 final ISelection select = event.getSelection();
                 if (select instanceof IStructuredSelection){
                     IStructuredSelection selection = (IStructuredSelection) select;
                     Object o = selection.getFirstElement();
-                    if (o instanceof Class<?>){
-                        applyBackendSelection((Class<? extends IQueryBackend>) o);
+                    if (o instanceof IQueryBackendFactory){
+                        applyBackendSelection((IQueryBackendFactory) o);
                     }
                 }
             }

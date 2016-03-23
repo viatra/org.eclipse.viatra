@@ -29,6 +29,8 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification;
+import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 
@@ -67,12 +69,12 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
             if(reference != null && reference.get() != null) {
                 return reference.get();
             } else {
-                AdvancedViatraQueryEngine unmanagedEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(notifier, false, dynamicEMFMode);
+                AdvancedViatraQueryEngine unmanagedEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(notifier, new BaseIndexOptions().withDynamicEMFMode(dynamicEMFMode)));
                 engineMap.put(notifier, new WeakReference<AdvancedViatraQueryEngine>(unmanagedEngine));
                 return unmanagedEngine;
             }
         } else {
-            return AdvancedViatraQueryEngine.from(ViatraQueryEngine.on(notifier));
+            return AdvancedViatraQueryEngine.from(ViatraQueryEngine.on(new EMFScope(notifier)));
         }
     }
     

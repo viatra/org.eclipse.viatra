@@ -28,6 +28,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
@@ -64,7 +65,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
     private MatchComparator matchComparator;
     private IListChangeListener listChangeListener;
 
-    private Class<? extends IQueryBackend> usedBackend = null;
+    private IQueryBackendFactory usedBackend = null;
     
     public PatternMatcherContent(PatternMatcherRootContent parent, AdvancedViatraQueryEngine engine, RuleEngine ruleEngine, 
             final IQuerySpecification<?> specification, boolean generated, QueryEvaluationHint hint) {
@@ -75,7 +76,7 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
 
         if (specification.getInternalQueryRepresentation().getStatus() != PQueryStatus.ERROR) {
 	        try {
-	            usedBackend = hint.getQueryBackendClass();
+	            usedBackend = hint.getQueryBackendFactory();
 	            matcher = (ViatraQueryMatcher<IPatternMatch>) engine.getMatcher(specification, hint);
 	        } catch (ViatraQueryException e) {
 	            this.exceptionMessage = e.getShortMessage();

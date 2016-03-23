@@ -53,7 +53,6 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
        }
        bodyClass.generateEReference(varClass)
        varClass.generateReferenceToVariableDecl(varRefClass)
-       bodyClass.generateEOperation(varClass)
 
        pathExpressionConstraint.changeHeadType(pathExpressionHead)
        pathExpressionElement.changeTailType(pathExpressionTail)
@@ -96,27 +95,16 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	}
 
 	def generateEReference(EClass bodyClass, EClass varClass) {
-		val varRef = EcoreFactory::eINSTANCE.createEReference
-		varRef.transient = true
-		varRef.derived = true
-		varRef.name = "variables"
-		varRef.lowerBound = 0
-		varRef.upperBound = -1
-		varRef.EType = varClass
-		//PatternLanguageClassResolver::variableType
-		//PatternLanguagePackage::eINSTANCE.variable
-		varRef.changeable = false
-		varRef.containment = true
+		val variablesEReference = EcoreFactory::eINSTANCE.createEReference
+		variablesEReference.transient = true
+		variablesEReference.name = "variables"
+		variablesEReference.lowerBound = 0
+		variablesEReference.upperBound = -1
+		variablesEReference.EType = varClass
+		variablesEReference.changeable = true
+		variablesEReference.containment = true
 
-		val body = EcoreFactory::eINSTANCE.createEAnnotation
-		body.source = GenModelPackage::eNS_URI
-		val map = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap.Entry<String,String>
-	        map.key = "suppressedGetVisibility"
-	        map.value = "true"
-	        body.details.add(map)
-
-	    varRef.EAnnotations += body
-		bodyClass.EStructuralFeatures += varRef
+		bodyClass.EStructuralFeatures += variablesEReference
 	}
 
 	/**
@@ -125,7 +113,6 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	def generateReferenceToVariableDecl(EClass varClass, EClass varRefClass) {
 		val varRefs = EcoreFactory::eINSTANCE.createEReference
 		varRefs.transient = true
-		varRefs.derived = true
 		varRefs.name = "references"
 		varRefs.lowerBound = 0
 		varRefs.upperBound = -1
@@ -135,7 +122,6 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 
 		val variable = EcoreFactory::eINSTANCE.createEReference
 		variable.transient = true
-		variable.derived = true
 		variable.name = "variable"
 		variable.lowerBound = 0
 		variable.upperBound = 1
@@ -145,77 +131,6 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 
 		varRefs.EOpposite = variable
 		variable.EOpposite = varRefs
-
-		val op = EcoreFactory::eINSTANCE.createEOperation
-		op.EType = varClass
-		op.name = "getVariable"
-		op.upperBound = 1
-		val body = EcoreFactory::eINSTANCE.createEAnnotation
-		body.source = GenModelPackage::eNS_URI
-		val map = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap.Entry<String,String>
-	        map.key = "body"
-	        map.value = '''
-		if (variable == null) {
-			InternalEObject container = this.eContainer;
-			while (container != null
-				&& !(container instanceof org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
-				|| container instanceof org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern)) {
-			container = container.eInternalContainer();
-			}
-
-			if (container instanceof org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody) {
-				//The side-effect of this call initializes the variable
-				((org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody) container).getVariables();
-			} else if (container instanceof org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern) {
-				org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern pattern =
-				(org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern) container;
-				for (org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable var : pattern.getParameters()) {
-					if (var.getName() != null && var.getName().equals(getVar())) {
-						setVariable(var);
-					}
-				}
-			}
-		}
-		return variable;'''
-	    body.details.add(map)
-	    op.EAnnotations += body
-		varRefClass.EOperations += op
-
-		val suppressAnnotation = EcoreFactory::eINSTANCE.createEAnnotation
-		suppressAnnotation.source = GenModelPackage::eNS_URI
-		val suppressBody = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap.Entry<String,String>
-	        suppressBody.key = "suppressedGetVisibility"
-	        suppressBody.value = "true"
-	        suppressAnnotation.details.add(suppressBody)
-
-	    varRefClass.EAllReferences.findFirst[name == "variable"].EAnnotations += suppressAnnotation
-	}
-
-	/**
-	 * Generates an EOperation that corresponds with the derived attribute called ''variables''
-	 * of the PatternBody.
-	 */
-	def generateEOperation(EClass bodyClass, EClass varClass) {
-		val op = EcoreFactory::eINSTANCE.createEOperation
-		op.name = "getVariables"
-		op.EType = varClass
-		//PatternLanguageClassResolver::variableType
-		//PatternLanguagePackage::eINSTANCE.variable
-		op.upperBound = -1
-		val body = EcoreFactory::eINSTANCE.createEAnnotation
-		body.source = GenModelPackage::eNS_URI
-		val map = EcoreFactory::eINSTANCE.create(EcorePackage::eINSTANCE.getEStringToStringMapEntry()) as BasicEMap.Entry<String,String>
-	        map.key = "body"
-	        map.value =
-	           "	if (variables == null)
-      {
-          variables = new EObjectContainmentEList<Variable>(Variable.class, this, PatternLanguagePackage.PATTERN_BODY__VARIABLES);
-      }
-
-      return org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper.getAllVariablesInBody(this, variables);"
-	        body.details.add(map)
-	        op.EAnnotations += body
-	        bodyClass.EOperations += op
 	}
 
 	def changeHeadType(EClass constraint, EClass head){

@@ -111,20 +111,6 @@ public class EMFScope extends QueryScope {
     }
     
     /**
-     * @return the scope root ({@link ResourceSet}, {@link Resource} or {@link EObject}) containing the model, if there is only 1
-     * @throws IllegalStateException if there is more than 1 root
-     * @deprecated use {@link #getScopeRoots()} instead
-     */
-    @Deprecated
-    public Notifier getScopeRoot() {
-        if (scopeRoots.size() == 1) {
-            return scopeRoots.iterator().next();
-        } else {
-            throw new IllegalStateException("This is a multi-root scope");
-        }
-    }
-    
-    /**
      * @return the options
      */
     public BaseIndexOptions getOptions() {

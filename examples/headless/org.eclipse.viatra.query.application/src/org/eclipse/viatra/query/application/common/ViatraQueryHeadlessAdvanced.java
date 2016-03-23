@@ -31,11 +31,9 @@ import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
-import org.eclipse.viatra.query.runtime.rete.misc.DeltaMonitor;
 
 /**
  * @author Abel Hegedus
@@ -59,7 +57,7 @@ public class ViatraQueryHeadlessAdvanced extends ViatraQueryHeadless {
 				// get all matches of the pattern
 				// create an *unmanaged* engine to ensure that noone else is going
 				// to use our engine
-				AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(resource);
+				AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resource));
 				// instantiate a pattern matcher through the registry, by only knowing its FQN
 				// assuming that there is a pattern definition registered matching 'patternFQN'
 				
@@ -142,7 +140,6 @@ public class ViatraQueryHeadlessAdvanced extends ViatraQueryHeadless {
 				});
 				// phase 3: prepare for advanced change processing
 				changeProcessing_lowlevel(results, matcher, engine);
-				changeProcessing_deltaMonitor(results, matcher, engine);
 				// phase 4: modify model, change processor will update results accordingly
 				performModelModification(resource);
 			}
@@ -176,40 +173,6 @@ public class ViatraQueryHeadlessAdvanced extends ViatraQueryHeadless {
 				results.append("\tNew match found by changeset low level callback: " + match.prettyPrint()+"\n");
 			}
 		}, false);
-	}
-	
-	@Deprecated
-	private void changeProcessing_deltaMonitor(final StringBuilder results,
-			ViatraQueryMatcher<? extends IPatternMatch> matcher,
-			AdvancedViatraQueryEngine engine) {
-		final DeltaMonitor<? extends IPatternMatch> dm = matcher.newDeltaMonitor(false);
-		// (+) these updates are guaranteed to be called in a *consistent* state,
-		// i.e. when the pattern matcher is guaranteed to be consistent with the model
-		// anything can be written into the callback method
-		// (-) the downside is that the callback is called after *every* update
-		// that propagates through the matcher, i.e. also when the updates do not actually
-		// influence the result set you are interested in. Hence, the performance is somewhat
-		// lower than for the "lowlevel" option.
-		engine.addModelUpdateListener(new ViatraQueryModelUpdateListener() {
-
-			@Override
-			public void notifyChanged(ChangeLevel changeLevel) {
-				for (IPatternMatch newMatch : dm.matchFoundEvents) {
-					results.append("\tNew match found by changeset delta monitor: " + newMatch.prettyPrint()+"\n");
-				}
-				for (IPatternMatch lostMatch : dm.matchLostEvents) {
-					// left empty
-				}
-				dm.clear();
-			}
-
-			@Override
-			public ChangeLevel getLevel() {
-				return ChangeLevel.MATCHSET;
-			}
-			
-		});
-				
 	}
 	
 	

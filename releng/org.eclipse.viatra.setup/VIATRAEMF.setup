@@ -219,11 +219,11 @@
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.viatra.setup"/>
         <operand
-            xsi:type="predicates:OrPredicate">
-          <operand
-              xsi:type="predicates:NamePredicate"
-              pattern=".*viatra\.transformation.*"/>
-        </operand>
+            xsi:type="predicates:NamePredicate"
+            pattern=".*viatra\.transformation.*"/>
+        <operand
+            xsi:type="predicates:NaturePredicate"
+            nature="org.eclipse.pde.PluginNature"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -236,6 +236,9 @@
         <operand
             xsi:type="predicates:NamePredicate"
             pattern=".*viatra\.query.*"/>
+        <operand
+            xsi:type="predicates:NaturePredicate"
+            nature="org.eclipse.pde.PluginNature"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -248,6 +251,9 @@
         <operand
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.viatra.setup"/>
+        <operand
+            xsi:type="predicates:NaturePredicate"
+            nature="org.eclipse.pde.PluginNature"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -261,6 +267,9 @@
         <operand
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.viatra.setup"/>
+        <operand
+            xsi:type="predicates:NaturePredicate"
+            nature="org.eclipse.pde.PluginNature"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -276,6 +285,9 @@
           <operand
               xsi:type="predicates:LocationPredicate"
               pattern=".*/setup/.*"/>
+          <operand
+              xsi:type="predicates:NaturePredicate"
+              nature="org.eclipse.pde.FeatureNature"/>
         </operand>
         <operand
             xsi:type="predicates:RepositoryPredicate"
@@ -292,6 +304,9 @@
         <operand
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.viatra.setup"/>
+        <operand
+            xsi:type="predicates:NaturePredicate"
+            nature="org.eclipse.pde.PluginNature"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -304,6 +319,9 @@
         <operand
             xsi:type="predicates:RepositoryPredicate"
             project="org.eclipse.viatra.setup"/>
+        <operand
+            xsi:type="predicates:NaturePredicate"
+            nature="org.eclipse.pde.PluginNature"/>
       </predicate>
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
@@ -313,46 +331,31 @@
       predecessor="git.clone.viatra">
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/releng"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/addon"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/cep"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/dse"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/integration"
         locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
+      <excludedPath>plugins/org.eclipse.viatra.integration.xcore</excludedPath>
+      <excludedPath>plugins/org.eclipse.viatra.integration.xcore.model</excludedPath>
+      <excludedPath>plugins/org.eclipse.viatra.integration.xcore.modeleditor</excludedPath>
+      <excludedPath>features/org.eclipse.viatra.integration.xcore.feature</excludedPath>
+      <excludedPath>plugins/org.eclipse.viatra.integration.xcore.ui</excludedPath>
     </sourceLocator>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/query"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/transformation"
-        locateNestedProjects="true">
-      <excludedPath>examples</excludedPath>
-      <excludedPath>maven</excludedPath>
-    </sourceLocator>
+        locateNestedProjects="true"/>
   </setupTask>
   <setupTask
       xsi:type="setup:CompoundTask"
@@ -361,7 +364,8 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.pregen"
-        predecessor="//@setupTasks.11 //@setupTasks.8"/>
+        predecessor="//@setupTasks.11 //@setupTasks.8"
+        onlyNewProjects="true"/>
     <setupTask
         xsi:type="launching:LaunchTask"
         predecessor="viatra.pregen"
@@ -400,6 +404,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.xtext.pregen"
+        onlyNewProjects="true"
         refresh="true"/>
     <setupTask
         xsi:type="launching:LaunchTask"
@@ -418,6 +423,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.xtext.postgen"
+        onlyNewProjects="true"
         refresh="true"/>
     <setupTask
         xsi:type="launching:LaunchTask"

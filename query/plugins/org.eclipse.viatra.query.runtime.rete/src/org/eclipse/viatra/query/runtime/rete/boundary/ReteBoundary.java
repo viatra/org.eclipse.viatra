@@ -545,31 +545,6 @@ public class ReteBoundary /*implements IPatternMatcherRuntimeContextListener*/ {
             network.waitForReteTermination();
     }
 
-    /**
-     * @deprecated Use {@link Node#assignTraceInfo(org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo)}
-     */
-    @Deprecated
-    public void registerParentPlanForReceiver(Address<? extends Receiver> receiver,
-            SubPlan parentPlan) {
-        Set<SubPlan> parents = parentPlansOfReceiver.get(receiver);
-        if (parents == null) {
-            parents = CollectionsFactory.getSet();//new HashSet<SubPlan<Address<? extends Supplier>>>();
-            parentPlansOfReceiver.put(receiver, parents);
-        }
-        parents.add(parentPlan);
-    }
-
-    /**
-     * @deprecated Use {@link Node#getTraceInfos()}
-     */
-    @Deprecated
-    public Set<SubPlan> getParentPlansOfReceiver(Address<? extends Receiver> receiver) {
-        Set<SubPlan> parents = parentPlansOfReceiver.get(receiver);
-        if (parents == null)
-            parents = Collections.emptySet();
-        return parents;
-    }
-
     public void mapPlanToAddress(SubPlan plan, Address<? extends Supplier> handle) {
         subplanToAddressMapping.put(plan, handle);
     }

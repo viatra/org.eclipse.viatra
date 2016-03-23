@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
@@ -60,7 +60,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
     // the editing domain encapsulating the working model
     private final EditingDomain domain;
-    private EObject modelRoot;
+    private Notifier model;
 
     private final IDesignSpace designSpace;
 
@@ -84,14 +84,14 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
     private static final long SLEEP_INTERVAL = 1;
 
-    public DesignSpaceManager(ThreadContext context, EObject modelRoot, EditingDomain domain, IStateCoderFactory factory,
+    public DesignSpaceManager(ThreadContext context, Notifier model, EditingDomain domain, IStateCoderFactory factory,
             IDesignSpace designSpace, TrajectoryInfo trajectory, RuleEngine ruleEngine, ViatraQueryEngine engine) {
         checkNotNull(designSpace, "Cannot initialize crawler on a null design space!");
         checkNotNull(domain, "Cannot initialize crawler on a null editing domain!");
         checkNotNull(factory, "Cannot initialize crawler without a serializer factory!");
 
         this.context = context;
-        this.modelRoot = modelRoot;
+        this.model = model;
         this.ruleEngine = ruleEngine;
         this.designSpace = designSpace;
         this.domain = domain;
@@ -99,7 +99,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
         // init serializer
         stateCoder = factory.createStateCoder();
-        stateCoder.init(modelRoot);
+        stateCoder.init(model);
 
         Object initialStateId = stateCoder.createStateCode();
         isNewState = designSpace.addState(null, initialStateId, generateTransitions());
@@ -120,7 +120,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
         final Activation<?> activation = getActivationByTransitionId(transition);
 
         // assemble the new RecordingCommand to fire the Transition
-        ChangeCommand rc = new ChangeCommand(modelRoot) {
+        ChangeCommand rc = new ChangeCommand(model) {
             @Override
             protected void doExecute() {
                 activation.fire(evmContext);

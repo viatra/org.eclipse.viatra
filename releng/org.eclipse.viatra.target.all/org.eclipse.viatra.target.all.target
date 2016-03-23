@@ -54,8 +54,8 @@
 <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.2/R201511170842/mwe2lang/"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xpand.sdk.feature.group" version="2.1.0.v201505260349"/>
-<repository location="http://download.eclipse.org/modeling/m2t/xpand/updates/releases/R201505260349"/>
+<unit id="org.eclipse.xpand.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/xpand/R201406030414"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>

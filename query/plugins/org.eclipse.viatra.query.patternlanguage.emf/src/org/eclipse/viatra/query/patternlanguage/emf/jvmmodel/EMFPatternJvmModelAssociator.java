@@ -12,8 +12,8 @@
 package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel;
 
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
+import org.eclipse.viatra.query.patternlanguage.jvmmodel.PatternLanguageJvmModelAssociator;
 import org.eclipse.xtext.resource.DerivedStateAwareResource;
-import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
 
 import com.google.inject.Inject;
 
@@ -23,7 +23,7 @@ import com.google.inject.Inject;
  * @author Mark Czotter
  *
  */
-public class EMFPatternJvmModelAssociator extends JvmModelAssociator {
+public class EMFPatternJvmModelAssociator extends PatternLanguageJvmModelAssociator {
 
     @Inject
     private IErrorFeedback feedback;

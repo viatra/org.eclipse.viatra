@@ -158,18 +158,7 @@ public interface ViatraQueryMatcher<Match extends IPatternMatch> {
     public abstract boolean forOneArbitraryMatch(Match partialMatch, IMatchProcessor<? super Match> processor);
 
     // variant(s) with input binding as pattern-specific parameters: not declared in interface
-
-    // CHANGE MONITORING
-    // attach delta monitor for high-level change detection
     
-    // USE {@link IMatchUpdateListener} or EVM instead
-	//    @Deprecated
-	//	public abstract DeltaMonitor<Match> newDeltaMonitor(boolean fillAtStart);
-
-    // USE {@link IMatchUpdateListener} or EVM instead
-	//    @Deprecated
-	//	public abstract DeltaMonitor<Match> newFilteredDeltaMonitor(boolean fillAtStart, Match partialMatch);
-
     /**
      * Returns an empty, mutable Match for the matcher. 
      * Fields of the mutable match can be filled to create a partial match, usable as matcher input. 

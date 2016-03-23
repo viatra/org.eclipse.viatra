@@ -23,6 +23,9 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 		<viatra.main.version>1.2.0-SNAPSHOT</viatra.main.version>
 		<viatra.incubation.version>0.12.0-SNAPSHOT</viatra.incubation.version>
+		<!-- Composite site related properties -->
+		<viatra.updates.dir>updates</viatra.updates.dir>
+		<viatra.download.area>target/composite</viatra.download.area>
 	</properties>
 	<build>
 		<plugins>

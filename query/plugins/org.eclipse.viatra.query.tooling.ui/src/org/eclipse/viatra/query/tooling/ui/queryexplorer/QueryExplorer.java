@@ -48,7 +48,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.extensibility.QueryBackendRegistry;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.detail.DetailsViewerUtil;
@@ -73,6 +72,7 @@ import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CheckStateListener
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CheckStateProvider;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
+import org.eclipse.viatra.query.tooling.ui.registry.QueryBackendRegistry;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -140,7 +140,7 @@ public class QueryExplorer extends ViewPart {
         flatLP = new PatternsViewerFlatLabelProvider(patternsViewerInput);
         hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
         hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
-        hints = new QueryEvaluationHint(QueryBackendRegistry.getInstance().getDefaultBackendClass(), new HashMap<String, Object>());
+        hints = new QueryEvaluationHint(QueryBackendRegistry.getInstance().getDefaultBackend(), new HashMap<String, Object>());
     }
     
     /**

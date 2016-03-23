@@ -4,18 +4,19 @@ package org.eclipse.viatra.integration.xcore.model.util;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
+
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+
 import org.eclipse.emf.ecore.EObject;
+
 import org.eclipse.emf.ecore.xcore.XMember;
 import org.eclipse.emf.ecore.xcore.XModelElement;
 import org.eclipse.emf.ecore.xcore.XNamedElement;
 import org.eclipse.emf.ecore.xcore.XPackage;
 import org.eclipse.emf.ecore.xcore.XStructuralFeature;
 import org.eclipse.emf.ecore.xcore.XTypedElement;
-import org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature;
-import org.eclipse.viatra.integration.xcore.model.XIncQueryImport;
-import org.eclipse.viatra.integration.xcore.model.XIncQueryPackage;
-import org.eclipse.viatra.integration.xcore.model.XcorePackage;
+
+import org.eclipse.viatra.integration.xcore.model.*;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,36 +27,36 @@ import org.eclipse.viatra.integration.xcore.model.XcorePackage;
  * @generated
  */
 public class XcoreAdapterFactory extends AdapterFactoryImpl {
-	/**
+    /**
      * The cached model package.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	protected static XcorePackage modelPackage;
+    protected static XcorePackage modelPackage;
 
-	/**
+    /**
      * Creates an instance of the adapter factory.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public XcoreAdapterFactory() {
+    public XcoreAdapterFactory() {
         if (modelPackage == null) {
             modelPackage = XcorePackage.eINSTANCE;
         }
     }
 
-	/**
+    /**
      * Returns whether this factory is applicable for the type of the object.
      * <!-- begin-user-doc -->
-	 * This implementation returns <code>true</code> if the object is either the model's package or is an instance object of the model.
-	 * <!-- end-user-doc -->
+     * This implementation returns <code>true</code> if the object is either the model's package or is an instance object of the model.
+     * <!-- end-user-doc -->
      * @return whether this factory is applicable for the type of the object.
      * @generated
      */
-	@Override
-	public boolean isFactoryForType(Object object) {
+    @Override
+    public boolean isFactoryForType(Object object) {
         if (object == modelPackage) {
             return true;
         }
@@ -65,25 +66,25 @@ public class XcoreAdapterFactory extends AdapterFactoryImpl {
         return false;
     }
 
-	/**
+    /**
      * The switch that delegates to the <code>createXXX</code> methods.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	protected XcoreSwitch<Adapter> modelSwitch =
-		new XcoreSwitch<Adapter>() {
+    protected XcoreSwitch<Adapter> modelSwitch =
+        new XcoreSwitch<Adapter>() {
             @Override
-            public Adapter caseXIncQueryDerivedFeature(XIncQueryDerivedFeature object) {
-                return createXIncQueryDerivedFeatureAdapter();
+            public Adapter caseXViatraQueryDerivedFeature(XViatraQueryDerivedFeature object) {
+                return createXViatraQueryDerivedFeatureAdapter();
             }
             @Override
-            public Adapter caseXIncQueryPackage(XIncQueryPackage object) {
-                return createXIncQueryPackageAdapter();
+            public Adapter caseXViatraQueryPackage(XViatraQueryPackage object) {
+                return createXViatraQueryPackageAdapter();
             }
             @Override
-            public Adapter caseXIncQueryImport(XIncQueryImport object) {
-                return createXIncQueryImportAdapter();
+            public Adapter caseXViatraQueryImport(XViatraQueryImport object) {
+                return createXViatraQueryImportAdapter();
             }
             @Override
             public Adapter caseXModelElement(XModelElement object) {
@@ -115,119 +116,119 @@ public class XcoreAdapterFactory extends AdapterFactoryImpl {
             }
         };
 
-	/**
+    /**
      * Creates an adapter for the <code>target</code>.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @param target the object to adapt.
      * @return the adapter for the <code>target</code>.
      * @generated
      */
-	@Override
-	public Adapter createAdapter(Notifier target) {
+    @Override
+    public Adapter createAdapter(Notifier target) {
         return modelSwitch.doSwitch((EObject)target);
     }
 
 
-	/**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature <em>XInc Query Derived Feature</em>}'.
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryDerivedFeature <em>XViatra Query Derived Feature</em>}'.
      * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryDerivedFeature
      * @generated
      */
-	public Adapter createXIncQueryDerivedFeatureAdapter() {
+    public Adapter createXViatraQueryDerivedFeatureAdapter() {
         return null;
     }
 
-	/**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryPackage <em>XInc Query Package</em>}'.
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryPackage <em>XViatra Query Package</em>}'.
      * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryPackage
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryPackage
      * @generated
      */
-	public Adapter createXIncQueryPackageAdapter() {
+    public Adapter createXViatraQueryPackageAdapter() {
         return null;
     }
 
-	/**
-     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.integration.xcore.model.XIncQueryImport <em>XInc Query Import</em>}'.
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.viatra.integration.xcore.model.XViatraQueryImport <em>XViatra Query Import</em>}'.
      * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.viatra.integration.xcore.model.XIncQueryImport
+     * @see org.eclipse.viatra.integration.xcore.model.XViatraQueryImport
      * @generated
      */
-	public Adapter createXIncQueryImportAdapter() {
+    public Adapter createXViatraQueryImportAdapter() {
         return null;
     }
 
-	/**
+    /**
      * Creates a new adapter for an object of class '{@link org.eclipse.emf.ecore.xcore.XModelElement <em>XModel Element</em>}'.
      * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.eclipse.emf.ecore.xcore.XModelElement
      * @generated
      */
-	public Adapter createXModelElementAdapter() {
+    public Adapter createXModelElementAdapter() {
         return null;
     }
 
-	/**
+    /**
      * Creates a new adapter for an object of class '{@link org.eclipse.emf.ecore.xcore.XNamedElement <em>XNamed Element</em>}'.
      * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.eclipse.emf.ecore.xcore.XNamedElement
      * @generated
      */
-	public Adapter createXNamedElementAdapter() {
+    public Adapter createXNamedElementAdapter() {
         return null;
     }
 
-	/**
+    /**
      * Creates a new adapter for an object of class '{@link org.eclipse.emf.ecore.xcore.XTypedElement <em>XTyped Element</em>}'.
      * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.eclipse.emf.ecore.xcore.XTypedElement
      * @generated
      */
-	public Adapter createXTypedElementAdapter() {
+    public Adapter createXTypedElementAdapter() {
         return null;
     }
 
-	/**
+    /**
      * Creates a new adapter for an object of class '{@link org.eclipse.emf.ecore.xcore.XMember <em>XMember</em>}'.
      * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.eclipse.emf.ecore.xcore.XMember
      * @generated
      */
-	public Adapter createXMemberAdapter() {
+    public Adapter createXMemberAdapter() {
         return null;
     }
 
-	/**
+    /**
      * Creates a new adapter for an object of class '{@link org.eclipse.emf.ecore.xcore.XStructuralFeature <em>XStructural Feature</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
@@ -244,26 +245,26 @@ public class XcoreAdapterFactory extends AdapterFactoryImpl {
     /**
      * Creates a new adapter for an object of class '{@link org.eclipse.emf.ecore.xcore.XPackage <em>XPackage</em>}'.
      * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.eclipse.emf.ecore.xcore.XPackage
      * @generated
      */
-	public Adapter createXPackageAdapter() {
+    public Adapter createXPackageAdapter() {
         return null;
     }
 
-	/**
+    /**
      * Creates a new adapter for the default case.
      * <!-- begin-user-doc -->
-	 * This default implementation returns null.
-	 * <!-- end-user-doc -->
+     * This default implementation returns null.
+     * <!-- end-user-doc -->
      * @return the new adapter.
      * @generated
      */
-	public Adapter createEObjectAdapter() {
+    public Adapter createEObjectAdapter() {
         return null;
     }
 

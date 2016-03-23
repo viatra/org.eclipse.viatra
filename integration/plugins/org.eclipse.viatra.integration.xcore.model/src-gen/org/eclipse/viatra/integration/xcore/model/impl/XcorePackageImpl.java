@@ -6,12 +6,15 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-import org.eclipse.viatra.integration.xcore.model.XIncQueryDerivedFeature;
-import org.eclipse.viatra.integration.xcore.model.XIncQueryImport;
-import org.eclipse.viatra.integration.xcore.model.XIncQueryPackage;
+
+import org.eclipse.viatra.integration.xcore.model.XViatraQueryDerivedFeature;
+import org.eclipse.viatra.integration.xcore.model.XViatraQueryImport;
+import org.eclipse.viatra.integration.xcore.model.XViatraQueryPackage;
 import org.eclipse.viatra.integration.xcore.model.XcoreFactory;
 import org.eclipse.viatra.integration.xcore.model.XcorePackage;
+
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
 
 /**
@@ -21,28 +24,28 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageP
  * @generated
  */
 public class XcorePackageImpl extends EPackageImpl implements XcorePackage {
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	private EClass xIncQueryDerivedFeatureEClass = null;
+    private EClass xViatraQueryDerivedFeatureEClass = null;
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	private EClass xIncQueryPackageEClass = null;
+    private EClass xViatraQueryPackageEClass = null;
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	private EClass xIncQueryImportEClass = null;
+    private EClass xViatraQueryImportEClass = null;
 
-	/**
+    /**
      * Creates an instance of the model <b>Package</b>, registered with
      * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
      * package URI value.
@@ -51,36 +54,36 @@ public class XcorePackageImpl extends EPackageImpl implements XcorePackage {
      * initialization of the package, or returns the registered package,
      * if one already exists.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @see org.eclipse.emf.ecore.EPackage.Registry
      * @see org.eclipse.viatra.integration.xcore.model.XcorePackage#eNS_URI
      * @see #init()
      * @generated
      */
-	private XcorePackageImpl() {
+    private XcorePackageImpl() {
         super(eNS_URI, XcoreFactory.eINSTANCE);
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	private static boolean isInited = false;
+    private static boolean isInited = false;
 
-	/**
+    /**
      * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
      * 
      * <p>This method is used to initialize {@link XcorePackage#eINSTANCE} when that field is accessed.
      * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @see #eNS_URI
      * @see #createPackageContents()
      * @see #initializePackageContents()
      * @generated
      */
-	public static XcorePackage init() {
+    public static XcorePackage init() {
         if (isInited) return (XcorePackage)EPackage.Registry.INSTANCE.getEPackage(XcorePackage.eNS_URI);
 
         // Obtain or create and register package
@@ -107,123 +110,123 @@ public class XcorePackageImpl extends EPackageImpl implements XcorePackage {
         return theXcorePackage;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public EClass getXIncQueryDerivedFeature() {
-        return xIncQueryDerivedFeatureEClass;
+    public EClass getXViatraQueryDerivedFeature() {
+        return xViatraQueryDerivedFeatureEClass;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public EReference getXIncQueryDerivedFeature_Pattern() {
-        return (EReference)xIncQueryDerivedFeatureEClass.getEStructuralFeatures().get(0);
+    public EReference getXViatraQueryDerivedFeature_Pattern() {
+        return (EReference)xViatraQueryDerivedFeatureEClass.getEStructuralFeatures().get(0);
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public EAttribute getXIncQueryDerivedFeature_Reference() {
-        return (EAttribute)xIncQueryDerivedFeatureEClass.getEStructuralFeatures().get(1);
+    public EAttribute getXViatraQueryDerivedFeature_Reference() {
+        return (EAttribute)xViatraQueryDerivedFeatureEClass.getEStructuralFeatures().get(1);
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public EClass getXIncQueryPackage() {
-        return xIncQueryPackageEClass;
+    public EClass getXViatraQueryPackage() {
+        return xViatraQueryPackageEClass;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public EReference getXIncQueryPackage_ImportedIncQueries() {
-        return (EReference)xIncQueryPackageEClass.getEStructuralFeatures().get(0);
+    public EReference getXViatraQueryPackage_ImportedIncQueries() {
+        return (EReference)xViatraQueryPackageEClass.getEStructuralFeatures().get(0);
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public EClass getXIncQueryImport() {
-        return xIncQueryImportEClass;
+    public EClass getXViatraQueryImport() {
+        return xViatraQueryImportEClass;
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public EReference getXIncQueryImport_ImportedPatternModel() {
-        return (EReference)xIncQueryImportEClass.getEStructuralFeatures().get(0);
+    public EReference getXViatraQueryImport_ImportedPatternModel() {
+        return (EReference)xViatraQueryImportEClass.getEStructuralFeatures().get(0);
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public XcoreFactory getXcoreFactory() {
+    public XcoreFactory getXcoreFactory() {
         return (XcoreFactory)getEFactoryInstance();
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	private boolean isCreated = false;
+    private boolean isCreated = false;
 
-	/**
+    /**
      * Creates the meta-model objects for the package.  This method is
      * guarded to have no affect on any invocation but its first.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public void createPackageContents() {
+    public void createPackageContents() {
         if (isCreated) return;
         isCreated = true;
 
         // Create classes and their features
-        xIncQueryDerivedFeatureEClass = createEClass(XINC_QUERY_DERIVED_FEATURE);
-        createEReference(xIncQueryDerivedFeatureEClass, XINC_QUERY_DERIVED_FEATURE__PATTERN);
-        createEAttribute(xIncQueryDerivedFeatureEClass, XINC_QUERY_DERIVED_FEATURE__REFERENCE);
+        xViatraQueryDerivedFeatureEClass = createEClass(XVIATRA_QUERY_DERIVED_FEATURE);
+        createEReference(xViatraQueryDerivedFeatureEClass, XVIATRA_QUERY_DERIVED_FEATURE__PATTERN);
+        createEAttribute(xViatraQueryDerivedFeatureEClass, XVIATRA_QUERY_DERIVED_FEATURE__REFERENCE);
 
-        xIncQueryPackageEClass = createEClass(XINC_QUERY_PACKAGE);
-        createEReference(xIncQueryPackageEClass, XINC_QUERY_PACKAGE__IMPORTED_INC_QUERIES);
+        xViatraQueryPackageEClass = createEClass(XVIATRA_QUERY_PACKAGE);
+        createEReference(xViatraQueryPackageEClass, XVIATRA_QUERY_PACKAGE__IMPORTED_INC_QUERIES);
 
-        xIncQueryImportEClass = createEClass(XINC_QUERY_IMPORT);
-        createEReference(xIncQueryImportEClass, XINC_QUERY_IMPORT__IMPORTED_PATTERN_MODEL);
+        xViatraQueryImportEClass = createEClass(XVIATRA_QUERY_IMPORT);
+        createEReference(xViatraQueryImportEClass, XVIATRA_QUERY_IMPORT__IMPORTED_PATTERN_MODEL);
     }
 
-	/**
+    /**
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	private boolean isInitialized = false;
+    private boolean isInitialized = false;
 
-	/**
+    /**
      * Complete the initialization of the package and its meta-model.  This
      * method is guarded to have no affect on any invocation but its first.
      * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
-	public void initializePackageContents() {
+    public void initializePackageContents() {
         if (isInitialized) return;
         isInitialized = true;
 
@@ -241,19 +244,19 @@ public class XcorePackageImpl extends EPackageImpl implements XcorePackage {
         // Set bounds for type parameters
 
         // Add supertypes to classes
-        xIncQueryDerivedFeatureEClass.getESuperTypes().add(theXcorePackage_1.getXStructuralFeature());
-        xIncQueryPackageEClass.getESuperTypes().add(theXcorePackage_1.getXPackage());
+        xViatraQueryDerivedFeatureEClass.getESuperTypes().add(theXcorePackage_1.getXStructuralFeature());
+        xViatraQueryPackageEClass.getESuperTypes().add(theXcorePackage_1.getXPackage());
 
         // Initialize classes and features; add operations and parameters
-        initEClass(xIncQueryDerivedFeatureEClass, XIncQueryDerivedFeature.class, "XIncQueryDerivedFeature", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getXIncQueryDerivedFeature_Pattern(), thePatternLanguagePackage.getPattern(), null, "pattern", null, 0, 1, XIncQueryDerivedFeature.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getXIncQueryDerivedFeature_Reference(), ecorePackage.getEBoolean(), "reference", "false", 1, 1, XIncQueryDerivedFeature.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEClass(xViatraQueryDerivedFeatureEClass, XViatraQueryDerivedFeature.class, "XViatraQueryDerivedFeature", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getXViatraQueryDerivedFeature_Pattern(), thePatternLanguagePackage.getPattern(), null, "pattern", null, 0, 1, XViatraQueryDerivedFeature.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getXViatraQueryDerivedFeature_Reference(), ecorePackage.getEBoolean(), "reference", "false", 1, 1, XViatraQueryDerivedFeature.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(xIncQueryPackageEClass, XIncQueryPackage.class, "XIncQueryPackage", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getXIncQueryPackage_ImportedIncQueries(), this.getXIncQueryImport(), null, "importedIncQueries", null, 0, -1, XIncQueryPackage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEClass(xViatraQueryPackageEClass, XViatraQueryPackage.class, "XViatraQueryPackage", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getXViatraQueryPackage_ImportedIncQueries(), this.getXViatraQueryImport(), null, "importedIncQueries", null, 0, -1, XViatraQueryPackage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(xIncQueryImportEClass, XIncQueryImport.class, "XIncQueryImport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getXIncQueryImport_ImportedPatternModel(), thePatternLanguagePackage.getPatternModel(), null, "importedPatternModel", null, 1, 1, XIncQueryImport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEClass(xViatraQueryImportEClass, XViatraQueryImport.class, "XViatraQueryImport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEReference(getXViatraQueryImport_ImportedPatternModel(), thePatternLanguagePackage.getPatternModel(), null, "importedPatternModel", null, 1, 1, XViatraQueryImport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Create resource
         createResource(eNS_URI);

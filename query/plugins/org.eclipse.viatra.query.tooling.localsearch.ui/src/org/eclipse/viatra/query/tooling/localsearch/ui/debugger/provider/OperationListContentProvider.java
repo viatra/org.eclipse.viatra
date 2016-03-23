@@ -40,7 +40,6 @@ public class OperationListContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getElements(Object inputElement/*root*/) {
 		if (inputElement != null) {
-			@SuppressWarnings("unchecked")
 			SearchPlanViewModel model = (SearchPlanViewModel)inputElement;
 			List<SearchOperationViewerNode> elements = model.getTopLevelElements();
 			return elements.toArray(new Object[elements.size()]);

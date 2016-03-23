@@ -88,7 +88,12 @@ public class SolutionStore {
         enoughSolutions = enoughSolutionsImpl;
     }
 
-    public synchronized void newSolution(ThreadContext context) {
+    /**
+     * 
+     * @param context
+     * @return True if the solutions is not found previously.
+     */
+    public synchronized boolean newSolution(ThreadContext context) {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         Object id = dsm.getCurrentState().getId();
@@ -99,7 +104,11 @@ public class SolutionStore {
         Solution solution = solutions.get(id);
 
         if (solution != null) {
-            solution.addTrajectory(solutionTrajectory);
+            if (solution.getTrajectories().contains(solutionTrajectory)) {
+                return false;
+            } else {
+                solution.addTrajectory(solutionTrajectory);
+            }
         } else {
             Solution newSolution = new Solution(id, solutionTrajectory);
             solutions.put(id, newSolution);
@@ -116,6 +125,8 @@ public class SolutionStore {
         if (enoughSolutions.enoughSolutions()) {
             context.getGlobalContext().stopAllThreads();
         }
+        
+        return true;
     }
 
     public synchronized Collection<Solution> getSolutions() {

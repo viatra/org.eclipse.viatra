@@ -13,8 +13,6 @@ package org.eclipse.viatra.addon.viewers.runtime;
 
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
-import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.sources.ListContentProvider;
 import org.eclipse.viatra.addon.viewers.runtime.sources.QueryLabelProvider;
@@ -25,27 +23,6 @@ import org.eclipse.viatra.addon.viewers.runtime.sources.TreeContentProvider;
  * 
  */
 public class ViatraViewerSupport {
-
-	/**
-	 * 
-	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerState)} where
-	 *             {@link ViewerStateSet} consists of the shared data between
-	 *             various viewers.
-	 */
-	public static void bind(AbstractListViewer viewer, ViewerDataModel model) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * 
-	 * @deprecated Use {@link #bind(AbstractListViewer, ViewerStateSet)} where
-	 *             {@link ViewerStateSet} consists of the shared data between
-	 *             various viewers.
-	 */
-	public static void bind(AbstractListViewer viewer, ViewerDataModel model,
-			ViewerDataFilter filter) {
-	    throw new UnsupportedOperationException();
-	 }
 
 	/**
 	 * Bind the viewerstate to the list viewer.
@@ -74,27 +51,6 @@ public class ViatraViewerSupport {
 		viewer.setLabelProvider(new QueryLabelProvider(state));
 		viewer.setInput(state);			
 		viewer.refresh();
-	}
-
-	/**
-	 * 
-	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerStateSet)} where
-	 *             {@link ViewerStateSet} consists of the shared data between
-	 *             various viewers.
-	 */
-	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model) {
-	    throw new UnsupportedOperationException();
-	 }
-
-	/**
-	 * 
-	 * @deprecated Use {@link #bind(AbstractTreeViewer, ViewerState)} where
-	 *             {@link ViewerState} consists of the shared data between
-	 *             various viewers.
-	 */
-	public static void bind(AbstractTreeViewer viewer, ViewerDataModel model,
-			ViewerDataFilter filter) {
-	    throw new UnsupportedOperationException();
 	}
 
 	/**

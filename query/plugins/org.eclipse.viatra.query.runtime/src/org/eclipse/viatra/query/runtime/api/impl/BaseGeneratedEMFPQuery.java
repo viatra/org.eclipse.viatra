@@ -26,12 +26,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
  *
  */
 public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
-	
-	/**
-	 * This field exists only to maintain compatibility with old generated code.
-	 */
-	@Deprecated
-	protected static final Object CONTEXT = null;
 		
     protected QueryInitializationException processDependencyException(ViatraQueryException ex) {
     	if (ex.getCause() instanceof QueryInitializationException) 

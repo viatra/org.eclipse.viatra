@@ -226,13 +226,6 @@ public class PBody {
     }
 
     /**
-     * @deprecated Use {@link #setSymbolicParameters(List<ExportedParameter>)} instead
-     */
-    public void setExportedParameters(List<ExportedParameter> symbolicParameters) {
-        setSymbolicParameters(symbolicParameters);
-    }
-
-    /**
      * Sets the exported parameter constraints of the body, if this instance is mutable.
      * @param symbolicParameters the new value
      */

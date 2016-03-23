@@ -71,31 +71,12 @@ class JavadocInferrer {
 		Clients should derive an (anonymous) class that implements the abstract process().
 	'''
 
-	def javadocEvaluatorClass(Pattern pattern) '''
-		A xbase xexpression evaluator tailored for the «pattern.fullyQualifiedName» pattern.'''
-
-	def javadocEvaluatorClassWrapperMethod(Pattern pattern) '''
-		A wrapper method for calling the generated java method with the correct attributes.'''
-
-   	def javadocMatcherConstructorNotifier(Pattern pattern) '''
-		Initializes the pattern matcher over a given EMF model root (recommended: Resource or ResourceSet).
-		If a pattern matcher is already constructed with the same root, only a light-weight reference is returned.
-		The scope of pattern matching will be the given EMF model root and below (see FAQ for more precise definition).
-		The match set will be incrementally refreshed upon updates from this scope.
-		<p>The matcher will be created within the managed {@link ViatraQueryEngine} belonging to the EMF model root, so
-		multiple matchers will reuse the same engine and benefit from increased performance and reduced memory footprint.
-		@param emfRoot the root of the EMF containment hierarchy where the pattern matcher will operate. Recommended: Resource or ResourceSet.
-		@throws ViatraQueryException if an error occurs during pattern matcher creation
-		@deprecated use {@link #on(ViatraQueryEngine)} instead, e.g. in conjunction with {@link ViatraQueryEngine#on(Notifier)}
-	'''
-
 	def javadocMatcherConstructorEngine(Pattern pattern) '''
 		Initializes the pattern matcher within an existing VIATRA Query engine.
 		If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
 		The match set will be incrementally refreshed upon updates.
 		@param engine the existing VIATRA Query engine in which this matcher will be created.
 		@throws ViatraQueryException if an error occurs during pattern matcher creation
-		@deprecated use {@link #on(ViatraQueryEngine)} instead
 	'''
 
 	def javadocMatcherStaticOnEngine(Pattern pattern) '''

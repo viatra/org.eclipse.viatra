@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.LeveledObjectivesHelper;
-import org.eclipse.viatra.dse.objectives.impl.ModelQueriesHardObjective;
+import org.eclipse.viatra.dse.objectives.impl.ConstraintsObjective;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,51 +23,51 @@ public class LeveledObjectivesHelperTest {
         return Arrays.asList(new Object[][] { 
                 { "EmptyList", new ArrayList<IObjective>(), 0 },
                 { "OneObjective", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(0)), 1 },
+                        new ConstraintsObjective().withLevel(0)), 1 },
                 { "ThreeAtSameLevel", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(0),
-                        new ModelQueriesHardObjective().withLevel(0),
-                        new ModelQueriesHardObjective().withLevel(0)), 1 },
+                        new ConstraintsObjective().withLevel(0),
+                        new ConstraintsObjective().withLevel(0),
+                        new ConstraintsObjective().withLevel(0)), 1 },
                 { "TwoLevels", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(0),
-                        new ModelQueriesHardObjective().withLevel(1)), 2 },
+                        new ConstraintsObjective().withLevel(0),
+                        new ConstraintsObjective().withLevel(1)), 2 },
                 { "TwoLevelsReverseOrder", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(1),
-                        new ModelQueriesHardObjective().withLevel(0)), 2 },
+                        new ConstraintsObjective().withLevel(1),
+                        new ConstraintsObjective().withLevel(0)), 2 },
                 { "TwoLevelsDoubleLast", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(0),
-                        new ModelQueriesHardObjective().withLevel(1),
-                        new ModelQueriesHardObjective().withLevel(1)), 2 },
+                        new ConstraintsObjective().withLevel(0),
+                        new ConstraintsObjective().withLevel(1),
+                        new ConstraintsObjective().withLevel(1)), 2 },
                 { "TwoLevelsDoubleFirst", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(0),
-                        new ModelQueriesHardObjective().withLevel(0),
-                        new ModelQueriesHardObjective().withLevel(1)), 2 },
+                        new ConstraintsObjective().withLevel(0),
+                        new ConstraintsObjective().withLevel(0),
+                        new ConstraintsObjective().withLevel(1)), 2 },
                 { "TwoLevelsDifferentOrder", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(1),
-                        new ModelQueriesHardObjective().withLevel(0),
-                        new ModelQueriesHardObjective().withLevel(1)), 2 },
+                        new ConstraintsObjective().withLevel(1),
+                        new ConstraintsObjective().withLevel(0),
+                        new ConstraintsObjective().withLevel(1)), 2 },
                 { "OneInEachLevel", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(1),
-                        new ModelQueriesHardObjective().withLevel(3),
-                        new ModelQueriesHardObjective().withLevel(2),
-                        new ModelQueriesHardObjective().withLevel(4)), 4 },
+                        new ConstraintsObjective().withLevel(1),
+                        new ConstraintsObjective().withLevel(3),
+                        new ConstraintsObjective().withLevel(2),
+                        new ConstraintsObjective().withLevel(4)), 4 },
                 { "TwoInEachLEvel", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(3),
-                        new ModelQueriesHardObjective().withLevel(2),
-                        new ModelQueriesHardObjective().withLevel(3),
-                        new ModelQueriesHardObjective().withLevel(1),
-                        new ModelQueriesHardObjective().withLevel(2),
-                        new ModelQueriesHardObjective().withLevel(0),
-                        new ModelQueriesHardObjective().withLevel(0),
-                        new ModelQueriesHardObjective().withLevel(1)), 4 },
+                        new ConstraintsObjective().withLevel(3),
+                        new ConstraintsObjective().withLevel(2),
+                        new ConstraintsObjective().withLevel(3),
+                        new ConstraintsObjective().withLevel(1),
+                        new ConstraintsObjective().withLevel(2),
+                        new ConstraintsObjective().withLevel(0),
+                        new ConstraintsObjective().withLevel(0),
+                        new ConstraintsObjective().withLevel(1)), 4 },
                 { "WierdNumbers", Arrays.asList(
-                        new ModelQueriesHardObjective().withLevel(42),
-                        new ModelQueriesHardObjective().withLevel(-3),
-                        new ModelQueriesHardObjective().withLevel(-3),
-                        new ModelQueriesHardObjective().withLevel(42),
-                        new ModelQueriesHardObjective().withLevel(22),
-                        new ModelQueriesHardObjective().withLevel(-22),
-                        new ModelQueriesHardObjective().withLevel(1)), 5 },
+                        new ConstraintsObjective().withLevel(42),
+                        new ConstraintsObjective().withLevel(-3),
+                        new ConstraintsObjective().withLevel(-3),
+                        new ConstraintsObjective().withLevel(42),
+                        new ConstraintsObjective().withLevel(22),
+                        new ConstraintsObjective().withLevel(-22),
+                        new ConstraintsObjective().withLevel(1)), 5 },
            });
     }
 

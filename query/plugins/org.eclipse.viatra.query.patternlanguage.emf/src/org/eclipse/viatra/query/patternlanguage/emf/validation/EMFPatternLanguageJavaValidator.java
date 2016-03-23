@@ -79,6 +79,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.inject.Inject;
@@ -357,7 +358,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      */
     @Check(CheckType.NORMAL)
     public void checkForCartesianProduct(PatternBody patternBody) {
-        List<Variable> variables = patternBody.getVariables();
+        List<Variable> variables = Lists.newArrayList(patternBody.getVariables());
         List<Variable> unnamedRunningVariables = CorePatternLanguageHelper.getUnnamedRunningVariables(patternBody);
         variables.removeAll(unnamedRunningVariables);
         UnionFind<Variable> justPositiveUnionFindForVariables = new UnionFind<Variable>(variables);

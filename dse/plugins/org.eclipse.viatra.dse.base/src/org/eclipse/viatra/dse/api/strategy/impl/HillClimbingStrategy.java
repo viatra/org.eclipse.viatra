@@ -66,11 +66,18 @@ public class HillClimbingStrategy implements IStrategy {
             }
         }
 
-        Fitness previousFitness = context.calculateFitness();
+        mainloop: do {
 
-        do {
+            Fitness previousFitness = context.calculateFitness();
 
             Collection<? extends ITransition> transitionsFromCurrentState = dsm.getTransitionsFromCurrentState();
+
+            while (transitionsFromCurrentState.isEmpty()) {
+                logger.debug("No transitions from current state: considered as a solution.");
+                saveSolutionAndBacktrack();
+                continue mainloop;
+            }
+
             ArrayList<ITransition> transitionsToTry = new ArrayList<>(transitionsFromCurrentState.size());
             for (ITransition transition : transitionsFromCurrentState) {
                 transitionsToTry.add(transition);
@@ -84,13 +91,13 @@ public class HillClimbingStrategy implements IStrategy {
                 dsm.fireActivation(transition);
 
                 if (!context.checkGlobalConstraints()) {
-                    dsm.undoLastTransformation();
                     logger.debug("Global contraint is not satisifed, backtrack.");
+                    dsm.undoLastTransformation();
                     continue;
                 }
                 if (dsm.isCurentStateInTrajectory()) {
-                    dsm.undoLastTransformation();
                     logger.debug("Current state is in trajectory, backtrack.");
+                    dsm.undoLastTransformation();
                     continue;
                 }
 
@@ -100,16 +107,20 @@ public class HillClimbingStrategy implements IStrategy {
                 dsm.undoLastTransformation();
             }
 
+            if (objectiveComparatorHelper.getTrajectoryFitnesses().isEmpty()) {
+                logger.debug("No viable transitions from current state: considered as a solution.");
+                saveSolutionAndBacktrack();
+                continue;
+            }
+
             TrajectoryFitness randomBestFitness = objectiveComparatorHelper.getRandomBest();
             objectiveComparatorHelper.clearTrajectoryFitnesses();
 
             int compare = objectiveComparatorHelper.compare(previousFitness, randomBestFitness.fitness);
 
             if (compare >= 0) {
-                context.calculateFitness();
-                solutionStore.newSolution(context);
-                logger.debug("Found solution: " + dsm.getTrajectoryInfo().toString());
-                break;
+                saveSolutionAndBacktrack();
+                continue;
             } else {
                 previousFitness = randomBestFitness.fitness;
                 ITransition transition = randomBestFitness.trajectory[randomBestFitness.trajectory.length - 1];
@@ -124,6 +135,14 @@ public class HillClimbingStrategy implements IStrategy {
         } while (true);
 
         logger.info("Terminated.");
+    }
+
+    private void saveSolutionAndBacktrack() {
+        context.calculateFitness();
+        solutionStore.newSolution(context);
+        logger.debug("Found solution: " + dsm.getTrajectoryInfo().toString());
+        logger.debug("Backtrack for more solutions, if needed.");
+        while(dsm.undoLastTransformation());
     }
 
     @Override

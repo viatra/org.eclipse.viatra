@@ -10,6 +10,6 @@
 package org.eclipse.viatra.dse.objectives.impl;
 
 public enum ModelQueryType {
-    ALL_MUST_HAVE_MATCH,
+    MUST_HAVE_MATCH,
     NO_MATCH
 }

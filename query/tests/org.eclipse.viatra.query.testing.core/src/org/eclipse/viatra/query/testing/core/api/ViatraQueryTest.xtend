@@ -16,7 +16,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.SnapshotMatchSetModelProvider
@@ -24,6 +23,7 @@ import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.testing.core.ViatraQueryTestCase
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 
 /**
  * This class defines an API to easily construct test cases. The base conception is to provide
@@ -97,8 +97,8 @@ class ViatraQueryTest {
 	/**
 	 * Add match result set with a query initialized using the given query backend
 	 */
-	def with(Class<? extends IQueryBackend> queryBackendClass) {
-		val QueryEvaluationHint hint = new QueryEvaluationHint(queryBackendClass, emptyMap);
+	def with(IQueryBackendFactory queryBackendFactory) {
+		val QueryEvaluationHint hint = new QueryEvaluationHint(queryBackendFactory, emptyMap);
 		with(hint)
 	}
 

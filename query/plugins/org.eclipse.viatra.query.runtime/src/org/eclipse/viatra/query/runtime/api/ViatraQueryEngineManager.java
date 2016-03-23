@@ -58,10 +58,11 @@ public class ViatraQueryEngineManager {
     }
 
     /**
-     * Only a weak reference is kept on engine, so that it can be GC'ed if the model becomes unreachable.
-     * 
-     * <p>
-     * it will not be GC'ed before because of {@link BaseIndexListener#iqEngine}
+     * The engine manager keeps track of the managed engines via weak references only, so it will not keep unused
+     * managed engines from being garbage collected. Still, as long as the user keeps the model in memory, the
+     * associated managed engine will not be garbage collected, as it is expected to be strongly reachable from the
+     * model via the scope-specific base index or change notification listeners (see
+     * {@link BaseIndexListener#iqEngine}).
      */
     Map<QueryScope, WeakReference<ViatraQueryEngineImpl>> engines;
 

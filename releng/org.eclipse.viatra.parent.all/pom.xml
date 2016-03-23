@@ -10,6 +10,7 @@
 	<modules>
 		<module>../../releng/org.eclipse.viatra.target.all</module>
 		<module>../../releng/org.eclipse.viatra.update</module>
+		<module>../../releng/org.eclipse.viatra.docs</module>
 
 		<!-- Query -->
 		<module>../../query/plugins/org.eclipse.viatra.query.patternlanguage.ui</module>

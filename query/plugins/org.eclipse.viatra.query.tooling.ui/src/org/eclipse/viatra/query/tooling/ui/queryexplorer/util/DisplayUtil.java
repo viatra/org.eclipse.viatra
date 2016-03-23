@@ -40,7 +40,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.viatra.addon.databinding.runtime.adapter.DatabindingAdapter;
 import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
-import org.eclipse.viatra.addon.databinding.runtime.util.DatabindingUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
@@ -49,6 +48,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
@@ -71,7 +71,6 @@ public class DisplayUtil {
     private static Map<String, IMarker> orderByPatternMarkers = Maps.newHashMap();
 
 
-    public static final String PATTERNUI_ANNOTATION = "PatternUI";
     public static final String ORDERBY_ANNOTATION = "OrderBy";
 
 
@@ -202,7 +201,7 @@ public class DisplayUtil {
      * @param backend
      * @return
      */
-    public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, Class<? extends IQueryBackend> backend) {
+    public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize, String patternFqn, IQueryBackendFactory backend) {
         return getMessage(matcher, matchesSize, patternFqn, false, false, null, backend);
     }
     
@@ -222,7 +221,7 @@ public class DisplayUtil {
      * @return the label associated to the matcher
      */
     public static String getMessage(ViatraQueryMatcher<? extends IPatternMatch> matcher, int matchesSize,
-            String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage, Class<? extends IQueryBackend> backend) {
+            String patternFqn, boolean isGenerated, boolean isFiltered, String exceptionMessage, IQueryBackendFactory backend) {
         if (matcher == null) {
         	if (exceptionMessage != null)
         		return String.format("%s - %s", patternFqn, exceptionMessage);
@@ -255,8 +254,8 @@ public class DisplayUtil {
      * @param backend
      * @return a user-readable name for the given {@link IQueryBackend} implementation.
      */
-    public static String getQueryBackendName(Class<? extends IQueryBackend> backend){
-        return backend.getSimpleName();
+    public static String getQueryBackendName(IQueryBackendFactory backend){
+        return backend.getBackendClass().getSimpleName();
     }
 
     /**
@@ -287,10 +286,6 @@ public class DisplayUtil {
                 pattern = p;
 
                 PAnnotation annotation = p.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
-                if (annotation == null) {
-                    // Try with deprecated PatternUI annotation
-                    annotation = p.getFirstAnnotationByName(PATTERNUI_ANNOTATION);
-                }
                 if (annotation != null) {
                     return (String)annotation.getFirstValue("message");
                 }

@@ -89,7 +89,7 @@ public class ModelQueriesGlobalConstraint implements IGlobalConstraint {
     public boolean checkGlobalConstraint(ThreadContext context) {
         for (ViatraQueryMatcher<? extends IPatternMatch> matcher : matchers) {
             if ((type.equals(ModelQueryType.NO_MATCH) && matcher.countMatches() > 0)
-                    || (type.equals(ModelQueryType.ALL_MUST_HAVE_MATCH) && matcher.countMatches() == 0)) {
+                    || (type.equals(ModelQueryType.MUST_HAVE_MATCH) && matcher.countMatches() == 0)) {
                 return false;
             }
         }

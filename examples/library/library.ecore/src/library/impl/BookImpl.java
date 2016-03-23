@@ -25,12 +25,12 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link library.impl.BookImpl#getTitle <em>Title</em>}</li>
  *   <li>{@link library.impl.BookImpl#getWriters <em>Writers</em>}</li>
  *   <li>{@link library.impl.BookImpl#getCitations <em>Citations</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

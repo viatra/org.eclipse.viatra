@@ -39,7 +39,7 @@ public class ModelQueriesHardObjective extends BaseObjective {
     protected static final String DEFAULT_NAME = "ModelQueriesHardObjective";
     protected List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints;
     protected List<ViatraQueryMatcher<? extends IPatternMatch>> matchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>();
-    protected ModelQueryType type = ModelQueryType.ALL_MUST_HAVE_MATCH;
+    protected ModelQueryType type = ModelQueryType.MUST_HAVE_MATCH;
 
     public ModelQueriesHardObjective(String name,
             List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> constraints) {
@@ -78,7 +78,7 @@ public class ModelQueriesHardObjective extends BaseObjective {
     @Override
     public Double getFitness(ThreadContext context) {
         for (ViatraQueryMatcher<? extends IPatternMatch> matcher : matchers) {
-            if ((type.equals(ModelQueryType.ALL_MUST_HAVE_MATCH) && matcher.countMatches() == 0)
+            if ((type.equals(ModelQueryType.MUST_HAVE_MATCH) && matcher.countMatches() == 0)
                     || (type.equals(ModelQueryType.NO_MATCH) && matcher.countMatches() > 0)) {
                 return 0d;
             }

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<library:Library xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:library="library">
-  <writers firstName="A" lastName="B" books="//@books.0"/>
-  <books title="C" writers="//@writers.0"/>
-</library:Library>

@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 /**
  * Helper methods for loading models from files or URIs.
@@ -112,7 +113,7 @@ class ModelLoadHelper {
 	}
 
 	def initializeMatcherFromModel(PatternModel model, Notifier emfRoot, String patternName) {
-		val engine = ViatraQueryEngine::on(emfRoot);
+		val engine = ViatraQueryEngine::on(new EMFScope(emfRoot));
 		model.initializeMatcherFromModel(engine, patternName)
 	}
 
@@ -121,7 +122,7 @@ class ModelLoadHelper {
 	 */
 	def initializeMatcherFromRegistry(Notifier emfRoot, String patternFQN) {
 		val querySpecification = QuerySpecificationRegistry::getQuerySpecification(patternFQN)
-		querySpecification.getMatcher(ViatraQueryEngine::on(emfRoot))
+		querySpecification.getMatcher(ViatraQueryEngine::on(new EMFScope(emfRoot)))
 	}
 
 	/**

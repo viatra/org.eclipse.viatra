@@ -46,7 +46,7 @@
 				<version>3.5.1</version>
 				<configuration>
 					<workflowEngine>mwe2</workflowEngine>
-					<workflowDescriptor>src/org/eclipse/viatra/integration/xcore/GenerateIncQueryXcore.mwe2</workflowDescriptor>
+					<workflowDescriptor>src/org/eclipse/viatra/integration/xcore/GenerateViatraQueryXcore.mwe2</workflowDescriptor>
 					<jvmSettings>
 						<fork>true</fork>
 						<jvmArgs>

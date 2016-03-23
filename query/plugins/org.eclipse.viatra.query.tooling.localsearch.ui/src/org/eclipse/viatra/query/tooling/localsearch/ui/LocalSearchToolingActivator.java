@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.localsearch.ui;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.viatra.query.runtime.extensibility.QueryBackendRegistry;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
 import org.osgi.framework.BundleContext;
 
 /**

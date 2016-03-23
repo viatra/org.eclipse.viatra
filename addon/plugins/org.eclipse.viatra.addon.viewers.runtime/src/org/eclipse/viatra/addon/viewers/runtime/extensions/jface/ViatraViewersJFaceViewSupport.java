@@ -30,6 +30,7 @@ import org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -71,7 +72,7 @@ public class ViatraViewersJFaceViewSupport extends ViatraViewersViewSupport impl
     	}
 		ViatraQueryEngine engine = getEngine();
 		if (engine!=null) {
-			this.configuration.setModel(engine.getEMFRoot());
+			this.configuration.setModel((EMFScope) engine.getScope());
 			state = ViatraViewerDataModel.newViewerState(
 					engine, 
 	    			this.configuration.getPatterns(), 

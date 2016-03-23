@@ -39,25 +39,6 @@ public class QueryEvaluationHint {
 		this.queryBackendFactory = queryBackendFactory;
 		this.backendHints = backendHints;
 	}
-
-
-
-	/**
-	 * Specifies the suggested query backend, and additional backend-specific options. Both parameters are optional.
-	 * 
-     * @param queryBackendClass <u>ignored</u>; see deprecation message. Originally meant to override the query evaluator algorithm (whose factory must be registered); passing null would retain the default algorithm associated with the query
-     * @param backendHints each entry in the map overrides backend-specific options regarding query evaluation (null-valued map entries permitted to erase hints); passing null means default options associated with the query
-	 * 
-	 * @deprecated Given backend class will be ignored. Use {@link #QueryEvaluationHint(IQueryBackendFactory, Map)} instead to override the evaluator backend. 
-	 */
-	@Deprecated
-	public QueryEvaluationHint(
-			Class<? extends IQueryBackend> queryBackendClass,
-			Map<String, Object> backendHints) {
-		this((IQueryBackendFactory) null, backendHints);
-	}
-
-	
 	
 	/**
 	 * A suggestion for choosing the query evaluator algorithm. 
@@ -68,17 +49,6 @@ public class QueryEvaluationHint {
 		return queryBackendFactory;
 	}
 
-	/**
-	 * A suggestion for choosing the query evaluator algorithm. 
-	 * 
-	 * <p> Can be null.
-	 * @deprecated use {@link #getQueryBackendFactory()}
-	 */
-	@Deprecated
-	public Class<? extends IQueryBackend> getQueryBackendClass() {
-		return queryBackendFactory == null ? null : queryBackendFactory.getBackendClass();
-	}
-	
 	/**
 	 * Each entry in the map overrides backend-specific options regarding query evaluation. 
 	 * 

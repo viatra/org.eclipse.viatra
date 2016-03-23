@@ -28,6 +28,7 @@ import org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.collect.ImmutableList;
@@ -138,7 +139,7 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
     protected ViatraQueryEngine getEngine() {
     	Assert.isNotNull(this.modelSource);
     	try {
-			return ViatraQueryEngine.on( this.modelSource );
+			return ViatraQueryEngine.on(new EMFScope(this.modelSource));
 		} catch (ViatraQueryException e) {
 			ViewersRuntimePlugin.getDefault().getLog().log(new Status(Status.ERROR, ViewersRuntimePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));;
 		}
