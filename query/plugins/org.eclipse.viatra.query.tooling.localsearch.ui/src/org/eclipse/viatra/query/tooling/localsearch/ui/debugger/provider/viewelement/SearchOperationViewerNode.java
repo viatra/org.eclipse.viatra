@@ -71,24 +71,28 @@ public class SearchOperationViewerNode {
 		operationStatus = OperationStatus.QUEUED;
 		children = Lists.newArrayList();
 
-		if (searchOperation != null) {
+        try {
+            if (searchOperation != null) {
 
-			this.labelText = searchOperation.toString();
+                this.labelText = searchOperation.toString();
 
-			this.labelText += "(";
-			BiMap<Integer, PVariable> variableMapping = planExecutor.getVariableMapping();
-			List<Integer> variablePositions = searchOperation.getVariablePositions();
-			for (int i = 0; i < variablePositions.size(); i++) {
-				PVariable pVariable = variableMapping.get(variablePositions.get(i));
-				this.labelText += pVariable.getName();
-				if (i != variablePositions.size() - 1) {
-					this.labelText += ", ";
-				}
-			}
-			this.labelText += ")";
-		} else {
-			this.labelText = "Match found";
-		}
+                this.labelText += "(";
+                BiMap<Integer, PVariable> variableMapping = planExecutor.getVariableMapping();
+                List<Integer> variablePositions = searchOperation.getVariablePositions();
+                for (int i = 0; i < variablePositions.size(); i++) {
+                    PVariable pVariable = variableMapping.get(variablePositions.get(i));
+                    this.labelText += pVariable.getName();
+                    if (i != variablePositions.size() - 1) {
+                        this.labelText += ", ";
+                    }
+                }
+                this.labelText += ")";
+            } else {
+                this.labelText = "Match found";
+            }
+        } catch (Exception e) {
+            this.labelText = "Error while calculating label: " + e.getMessage() + "(" + e.getClass().getSimpleName() + ")";
+        }
 
 	}
 
