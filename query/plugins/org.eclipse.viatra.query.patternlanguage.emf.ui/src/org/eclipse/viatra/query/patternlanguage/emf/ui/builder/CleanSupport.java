@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
@@ -120,8 +121,10 @@ public class CleanSupport {
             for (OutputConfiguration config : fsa.getOutputConfigurations().values()) {
                 cleanFragmentFolder(fragmentProject, config);
             }
-            // clean all removable extensions
-            ProjectGenerationHelper.removeAllExtension(fragmentProject, fragment.getRemovableExtensions());
+            if (PDE.hasPluginNature(fragmentProject)) {
+                // clean all removable extensions
+                ProjectGenerationHelper.removeAllExtension(fragmentProject, fragment.getRemovableExtensions());
+            }
             // removing all fragment-related markers
             fragmentProject.deleteMarkers(IErrorFeedback.FRAGMENT_ERROR_TYPE, true, IResource.DEPTH_INFINITE);
         }
