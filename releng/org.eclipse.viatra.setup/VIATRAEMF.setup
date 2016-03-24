@@ -389,6 +389,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.cep.premetamodelgen"
+        predecessor="//@setupTasks.8"
         onlyNewProjects="true"
         refresh="true">
       <description></description>
