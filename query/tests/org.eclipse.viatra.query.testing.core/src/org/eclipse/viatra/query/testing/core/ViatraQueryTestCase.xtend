@@ -11,7 +11,6 @@ package org.eclipse.viatra.query.testing.core
 
 import java.util.LinkedList
 import java.util.List
-import java.util.function.Predicate
 import junit.framework.AssertionFailedError
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
@@ -46,7 +45,7 @@ class ViatraQueryTestCase {
 		resourceSet.getResource(uri, true)
 	}
 	
-	def <T extends EObject> modifyModel(Class<T> clazz, Predicate<T> condition, (T)=>void operation){
+	def <T extends EObject> modifyModel(Class<T> clazz, (T)=>boolean condition, (T)=>void operation){
 	    val nonIncrementals = modelProviders.filter[!updatedByModify]
 	    modelProviders.removeAll(nonIncrementals)
 	    nonIncrementals.forEach[dispose]
@@ -55,7 +54,7 @@ class ViatraQueryTestCase {
 	        val element = iterator.next
 	        if (clazz.isInstance(element)){
 	           val cast = clazz.cast(element)
-                if (condition.test(cast)){
+                if (condition.apply(cast)){
 	                operation.apply(clazz.cast(element))
 	           }
 	        }

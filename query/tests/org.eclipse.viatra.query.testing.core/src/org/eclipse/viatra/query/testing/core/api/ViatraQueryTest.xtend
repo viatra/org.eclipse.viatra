@@ -13,7 +13,6 @@ import com.google.common.base.Preconditions
 import com.google.inject.Injector
 import java.util.LinkedList
 import java.util.List
-import java.util.function.Predicate
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
@@ -148,7 +147,7 @@ class ViatraQueryTest {
     /**
      * Execute the given operation on the model. This call will also remove every non-incremental result set.
      */
-    def <T extends EObject> modify(Class<T> clazz, Predicate<T> condition, (T)=>void operation){
+    def <T extends EObject> modify(Class<T> clazz, (T)=>boolean condition, (T)=>void operation){
         testCase.modifyModel(clazz, condition, operation)
         this
     }
