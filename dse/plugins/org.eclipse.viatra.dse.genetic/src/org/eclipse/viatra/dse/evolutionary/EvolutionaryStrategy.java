@@ -69,6 +69,9 @@ public class EvolutionaryStrategy implements IStrategy {
         childPopulation = new HashSet<>(childPopulationSize);
         
         evaluationStrategy.init(context);
+        for (IEvolutionaryStrategyAdapter adapter : adapters) {
+            adapter.init(context);
+        }
         
         // TODO no design space
         // context.setDesignSpace(new DummyDesignSpace())
@@ -93,11 +96,15 @@ public class EvolutionaryStrategy implements IStrategy {
             
             List<TrajectoryFitness> survivedPopulation = survivalStrategy.selectSurvivedPopulation(frontsOfCurrentPopulation);
             
+            for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
+                trajectoryFitness.survive++;
+            }
+            
             boolean stop = stopCondition.checkStopCondition(survivedPopulation);
 
             if (!adapters.isEmpty()) {
                 for (IEvolutionaryStrategyAdapter adapter : adapters) {
-                    adapter.iterationCompleted(frontsOfCurrentPopulation, survivedPopulation, stop);
+                    adapter.iterationCompleted(currentPopulation, frontsOfCurrentPopulation, survivedPopulation, stop);
                 }
             }
             
@@ -125,8 +132,11 @@ public class EvolutionaryStrategy implements IStrategy {
             double mutationChance = mutationRate.getMutationChance(currentPopulation, survivedPopulation, parentPopulation);
             
             childPopulation.clear();
+            for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
+                childPopulation.add(trajectoryFitness);
+            }
             // implicit duplication check - same if very same trajectory 
-            while (childPopulationSize > childPopulation.size()) {
+            while (childPopulationSize > childPopulation.size() - survivedPopulation.size()) {
 
                 if (childPopulation.size() == childPopulationSize - 1 || random.nextDouble() < mutationChance) {
                     int index = random.nextInt(mutations.size());
@@ -145,8 +155,6 @@ public class EvolutionaryStrategy implements IStrategy {
                 }
             }
             
-            
-            // TODO ?
             currentPopulation = new ArrayList<TrajectoryFitness>(childPopulation);
         }
         

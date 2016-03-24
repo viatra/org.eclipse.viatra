@@ -11,6 +11,7 @@ package org.eclipse.viatra.dse.evolutionary;
 
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IEvaluationStrategy;
+import org.eclipse.viatra.dse.evolutionary.interfaces.IEvolutionaryStrategyAdapter;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutationRate;
@@ -67,7 +68,23 @@ public class EvolutionaryStrategyBuilder {
         strategy.crossovers.add(crossover);
     }
 
+    public void addCrossover(ICrossover crossover, int weight) {
+        for (; weight > 0; weight--) {
+            strategy.crossovers.add(crossover);
+        }
+    }
+
     public void addMutation(IMutation mutation) {
         strategy.mutations.add(mutation);
+    }
+
+    public void addMutation(IMutation mutation, int weight) {
+        for (; weight > 0; weight--) {
+            strategy.mutations.add(mutation);
+        }
+    }
+
+    public void addStrategyAdapter(IEvolutionaryStrategyAdapter adapter) {
+        strategy.adapters.add(adapter);
     }
 }
