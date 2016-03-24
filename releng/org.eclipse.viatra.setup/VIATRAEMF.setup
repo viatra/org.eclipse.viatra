@@ -113,7 +113,7 @@
   <setupTask
       xsi:type="setup.targlets:TargletTask"
       predecessor="//@setupTasks.11"
-      successor="//@projects[name='cep']/@setupTasks.1 //@projects[name='cep']/@setupTasks.3">
+      successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
     <targlet
         name="${scope.project.label}"
         activeRepositoryList="${eclipse.target.platform}">
@@ -233,7 +233,7 @@
     <setupTask
         xsi:type="setup.targlets:TargletTask"
         predecessor="//@setupTasks.11"
-        successor="//@projects[name='cep']/@setupTasks.1 //@projects[name='cep']/@setupTasks.3">
+        successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
           activeRepositoryList="${eclipse.target.platform}">
@@ -309,7 +309,7 @@
     <setupTask
         xsi:type="setup.targlets:TargletTask"
         predecessor="//@setupTasks.11"
-        successor="//@projects[name='cep']/@setupTasks.1 //@projects[name='cep']/@setupTasks.3">
+        successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="VIATRA Core">
         <requirement
@@ -385,6 +385,13 @@
       <sourceLocator
           rootFolder="${git.clone.viatra.location}/cep"
           locateNestedProjects="true"/>
+    </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsBuildTask"
+        id="viatra.cep.premetamodelgen"
+        onlyNewProjects="true"
+        refresh="true">
+      <description></description>
     </setupTask>
     <setupTask
         xsi:type="launching:LaunchTask"
@@ -475,7 +482,7 @@
     <setupTask
         xsi:type="setup.targlets:TargletTask"
         predecessor="//@setupTasks.11"
-        successor="//@projects[name='cep']/@setupTasks.1 //@projects[name='cep']/@setupTasks.3">
+        successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
           activeRepositoryList="${eclipse.target.platform}">
