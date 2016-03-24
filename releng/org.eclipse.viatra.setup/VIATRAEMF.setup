@@ -13,8 +13,8 @@
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
     xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/launching/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Launching.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
-    name="viatra"
-    label="VIATRA">
+    name="viatra.core"
+    label="VIATRA test">
   <setupTask
       xsi:type="jdt:JRETask"
       version="JavaSE-1.7"
@@ -113,7 +113,7 @@
   <setupTask
       xsi:type="setup.targlets:TargletTask"
       predecessor="//@setupTasks.11"
-      successor="//@setupTasks.12/@setupTasks.5 //@setupTasks.12/@setupTasks.10 //@setupTasks.12/@setupTasks.8 //@setupTasks.12/@setupTasks.2 //@setupTasks.12/@setupTasks.7 //@setupTasks.12/@setupTasks.1 //@setupTasks.12/@setupTasks.3 //@setupTasks.12/@setupTasks.4 //@setupTasks.12/@setupTasks.11 viatra.xtext.postgen">
+      successor="//@projects[name='cep']/@setupTasks.1 //@projects[name='cep']/@setupTasks.3">
     <targlet
         name="${scope.project.label}"
         activeRepositoryList="${eclipse.target.platform}">
@@ -126,15 +126,6 @@
           versionRange="[2.9.0,2.10.0)"/>
       <requirement
           name="org.eclipse.emf.sdk.feature.group"/>
-      <requirement
-          name="org.eclipse.modisco.infrastructure.feature.feature.group"
-          versionRange="[0.13.0,0.14.0)"/>
-      <requirement
-          name="org.eclipse.gmf.runtime.notation.sdk.feature.group"/>
-      <requirement
-          name="org.eclipse.gmf.runtime.sdk.feature.group"/>
-      <requirement
-          name="org.eclipse.graphiti.sdk.feature.feature.group"/>
       <requirement
           name="org.eclipse.sdk.feature.group"/>
       <requirement
@@ -149,9 +140,6 @@
       <requirement
           name="com.google.inject.multibindings"
           versionRange="[3.0.0,4.0.0)"/>
-      <requirement
-          name="org.eclipse.uml2.sdk.feature.group"
-          versionRange="[5.0.0,6.0.0)"/>
       <repositoryList
           name="Mars">
         <repository
@@ -210,67 +198,6 @@
   <setupTask
       xsi:type="setup.workingsets:WorkingSetTask">
     <workingSet
-        name="VIATRA Transformations">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.setup"/>
-        <operand
-            xsi:type="predicates:NamePredicate"
-            pattern=".*viatra\.transformation.*"/>
-        <operand
-            xsi:type="predicates:NaturePredicate"
-            nature="org.eclipse.pde.PluginNature"/>
-      </predicate>
-    </workingSet>
-    <workingSet
-        name="VIATRA Incremental Queries">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.setup"/>
-        <operand
-            xsi:type="predicates:NamePredicate"
-            pattern=".*viatra\.query.*"/>
-        <operand
-            xsi:type="predicates:NaturePredicate"
-            nature="org.eclipse.pde.PluginNature"/>
-      </predicate>
-    </workingSet>
-    <workingSet
-        name="VIATRA CEP">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:NamePredicate"
-            pattern=".*viatra\.cep.*"/>
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.setup"/>
-        <operand
-            xsi:type="predicates:NaturePredicate"
-            nature="org.eclipse.pde.PluginNature"/>
-      </predicate>
-    </workingSet>
-    <workingSet
-        name="VIATRA DSE"
-        id="">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:NamePredicate"
-            pattern=".*viatra\.dse.*"/>
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.setup"/>
-        <operand
-            xsi:type="predicates:NaturePredicate"
-            nature="org.eclipse.pde.PluginNature"/>
-      </predicate>
-    </workingSet>
-    <workingSet
         name="VIATRA Releng"
         id="">
       <predicate
@@ -292,36 +219,6 @@
             project="org.eclipse.viatra.setup"/>
       </predicate>
     </workingSet>
-    <workingSet
-        name="VIATRA Integrations">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:NamePredicate"
-            pattern=".*viatra\.integration.*"/>
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.setup"/>
-        <operand
-            xsi:type="predicates:NaturePredicate"
-            nature="org.eclipse.pde.PluginNature"/>
-      </predicate>
-    </workingSet>
-    <workingSet
-        name="VIATRA Addons">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:NamePredicate"
-            pattern=".*viatra\.addon.*"/>
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.setup"/>
-        <operand
-            xsi:type="predicates:NaturePredicate"
-            nature="org.eclipse.pde.PluginNature"/>
-      </predicate>
-    </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -330,118 +227,13 @@
     <sourceLocator
         rootFolder="${git.clone.viatra.location}/releng"
         locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location}/addon"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location}/cep"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location}/dse"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location}/integration"
-        locateNestedProjects="true">
-      <excludedPath>plugins/org.eclipse.viatra.integration.xcore</excludedPath>
-      <excludedPath>plugins/org.eclipse.viatra.integration.xcore.model</excludedPath>
-      <excludedPath>plugins/org.eclipse.viatra.integration.xcore.modeleditor</excludedPath>
-      <excludedPath>features/org.eclipse.viatra.integration.xcore.feature</excludedPath>
-      <excludedPath>plugins/org.eclipse.viatra.integration.xcore.ui</excludedPath>
-    </sourceLocator>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location}/query"
-        locateNestedProjects="true"/>
-    <sourceLocator
-        rootFolder="${git.clone.viatra.location}/transformation"
-        locateNestedProjects="true"/>
-  </setupTask>
-  <setupTask
-      xsi:type="setup:CompoundTask"
-      excludedTriggers="STARTUP MANUAL"
-      name="Bootstrap">
-    <setupTask
-        xsi:type="projects:ProjectsBuildTask"
-        id="viatra.pregen"
-        predecessor="//@setupTasks.11 //@setupTasks.8"
-        onlyNewProjects="true"/>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.pregen"
-        successor="viatra.xtext.pregen"
-        launcher="org.eclipse.viatra.setup/GenerateReteRecipeMetamodel.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.pregen"
-        successor="viatra.xtext.pregen"
-        launcher="org.eclipse.viatra.setup/GenerateNotationMetamodel.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.pregen"
-        successor="viatra.xtext.pregen"
-        launcher="org.eclipse.viatra.setup/GenerateTraceabilityMetamodel.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.pregen"
-        successor="viatra.xtext.pregen"
-        launcher="org.eclipse.viatra.setup/GenerateTransformationTraceMetamodel.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.pregen"
-        successor="viatra.xtext.pregen"
-        launcher="org.eclipse.viatra.setup/GenerateCepMetamodels.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="projects:ProjectsBuildTask"
-        id="viatra.xtext.pregen"
-        onlyNewProjects="true"
-        refresh="true"/>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.xtext.pregen"
-        successor="viatra.xtext.postgen"
-        launcher="org.eclipse.viatra.setup/GeneratePatternLanguage.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.xtext.pregen"
-        successor="viatra.xtext.postgen"
-        launcher="org.eclipse.viatra.setup/GenerateGeneratorModel.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="projects:ProjectsBuildTask"
-        id="viatra.xtext.postgen"
-        onlyNewProjects="true"
-        refresh="true"/>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.xtext.postgen"
-        launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
-      <description></description>
-    </setupTask>
-    <setupTask
-        xsi:type="launching:LaunchTask"
-        predecessor="viatra.xtext.postgen"
-        launcher="org.eclipse.viatra.setup/GenerateVepl.mwe2.launch">
-      <description></description>
-    </setupTask>
   </setupTask>
   <project name="xcore"
       label="Xcore Integration">
     <setupTask
         xsi:type="setup.targlets:TargletTask"
         predecessor="//@setupTasks.11"
-        successor="//@setupTasks.12/@setupTasks.5 //@setupTasks.12/@setupTasks.10 //@setupTasks.12/@setupTasks.8 //@setupTasks.12/@setupTasks.2 //@setupTasks.12/@setupTasks.7 //@setupTasks.12/@setupTasks.1 //@setupTasks.12/@setupTasks.3 //@setupTasks.12/@setupTasks.4 //@setupTasks.12/@setupTasks.11 viatra.xtext.postgen">
+        successor="//@projects[name='cep']/@setupTasks.1 //@projects[name='cep']/@setupTasks.3">
       <targlet
           name="${scope.project.label}"
           activeRepositoryList="${eclipse.target.platform}">
@@ -503,6 +295,393 @@
     <stream
         name="master"/>
     <description></description>
+  </project>
+  <project name="tooling"
+      label="VIATRA Tooling">
+    <setupTask
+        xsi:type="setup.p2:P2Task"
+        label="Installs VIATRA SDK to the development environment.">
+      <requirement
+          name="org.eclipse.viatra.query.sdk.feature.source.feature.group"/>
+      <repository
+          url="https://hudson.eclipse.org/viatra/job/viatra-master/lastSuccessfulBuild/artifact/releng/org.eclipse.viatra.update/target/repository"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask"
+        predecessor="//@setupTasks.11"
+        successor="//@projects[name='cep']/@setupTasks.1 //@projects[name='cep']/@setupTasks.3">
+      <targlet
+          name="VIATRA Core">
+        <requirement
+            name="org.eclipse.viatra.query.sdk.feature.source.feature.group"/>
+        <repositoryList>
+          <repository
+              url="https://hudson.eclipse.org/viatra/job/viatra-master/lastSuccessfulBuild/artifact/releng/org.eclipse.viatra.update/target/repository"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
+    <stream
+        name="master"/>
+    <description>Installs the development environment of VIATRA into the host instance</description>
+  </project>
+  <project name="dse"
+      label="DSE">
+    <setupTask
+        xsi:type="projects:ProjectsImportTask">
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/dse"
+          locateNestedProjects="true"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="VIATRA DSE"
+          id="">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern=".*viatra\.dse.*"/>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+          <operand
+              xsi:type="predicates:NaturePredicate"
+              nature="org.eclipse.pde.PluginNature"/>
+        </predicate>
+      </workingSet>
+      <workingSet
+          name="VIATRA Releng"
+          id="">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:OrPredicate">
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/releng/.*"/>
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/setup/.*"/>
+            <operand
+                xsi:type="predicates:NaturePredicate"
+                nature="org.eclipse.pde.FeatureNature"/>
+          </operand>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+        </predicate>
+      </workingSet>
+      <description>The dynamic working sets for ${scope.project.label}</description>
+    </setupTask>
+    <stream
+        name="master"/>
+    <description>Design space exploration for VIATRA</description>
+  </project>
+  <project name="cep"
+      label="CEP">
+    <setupTask
+        xsi:type="projects:ProjectsImportTask">
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/cep"
+          locateNestedProjects="true"/>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateCepMetamodels.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="projects:ProjectsBuildTask"
+        id="viatra.cep.preveplgen"
+        onlyNewProjects="true"
+        refresh="true">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="launching:LaunchTask"
+        launcher="org.eclipse.viatra.setup/GenerateVepl.mwe2.launch">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="VIATRA CEP">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern=".*viatra\.cep.*"/>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+          <operand
+              xsi:type="predicates:NaturePredicate"
+              nature="org.eclipse.pde.PluginNature"/>
+        </predicate>
+      </workingSet>
+      <workingSet
+          name="VIATRA Releng"
+          id="">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:OrPredicate">
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/releng/.*"/>
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/setup/.*"/>
+            <operand
+                xsi:type="predicates:NaturePredicate"
+                nature="org.eclipse.pde.FeatureNature"/>
+          </operand>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+        </predicate>
+      </workingSet>
+      <description>The dynamic working sets for ${scope.project.label}</description>
+    </setupTask>
+    <stream
+        name="master"/>
+    <description>Complex Event Processing for VIATRA</description>
+  </project>
+  <project name="core"
+      label="VIATRA Core">
+    <setupTask
+        xsi:type="projects:ProjectsImportTask"
+        predecessor="git.clone.viatra">
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/addon"
+          locateNestedProjects="true"/>
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/integration"
+          locateNestedProjects="true">
+        <excludedPath>plugins/org.eclipse.viatra.integration.xcore</excludedPath>
+        <excludedPath>plugins/org.eclipse.viatra.integration.xcore.model</excludedPath>
+        <excludedPath>plugins/org.eclipse.viatra.integration.xcore.modeleditor</excludedPath>
+        <excludedPath>features/org.eclipse.viatra.integration.xcore.feature</excludedPath>
+        <excludedPath>plugins/org.eclipse.viatra.integration.xcore.ui</excludedPath>
+      </sourceLocator>
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/query"
+          locateNestedProjects="true"/>
+      <sourceLocator
+          rootFolder="${git.clone.viatra.location}/transformation"
+          locateNestedProjects="true"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask"
+        predecessor="//@setupTasks.11"
+        successor="//@projects[name='cep']/@setupTasks.1 //@projects[name='cep']/@setupTasks.3">
+      <targlet
+          name="${scope.project.label}"
+          activeRepositoryList="${eclipse.target.platform}">
+        <requirement
+            name="org.eclipse.modisco.infrastructure.feature.feature.group"
+            versionRange="[0.13.0,0.14.0)"/>
+        <requirement
+            name="org.eclipse.gmf.runtime.notation.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.gmf.runtime.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.graphiti.sdk.feature.feature.group"/>
+        <requirement
+            name="org.eclipse.uml2.sdk.feature.group"
+            versionRange="[5.0.0,6.0.0)"/>
+        <repositoryList
+            name="Mars">
+          <repository
+              url="http://download.eclipse.org/viatra/dependency"/>
+          <repository
+              url="http://download.eclipse.org/releases/mars"/>
+          <repository
+              url="http://download.itemis.com/updates/releases"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+        </repositoryList>
+        <repositoryList
+            name="Neon">
+          <repository
+              url="http://download.eclipse.org/viatra/dependency"/>
+          <repository
+              url="http://download.eclipse.org/releases/neon"/>
+          <repository
+              url="http://download.itemis.com/updates/releases"/>
+          <repository
+              url="http://download.eclipse.org/cbi/updates/license"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/mdt/modisco/updates/release"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        excludedTriggers="STARTUP MANUAL"
+        name="Bootstrap">
+      <setupTask
+          xsi:type="projects:ProjectsBuildTask"
+          id="viatra.pregen"
+          predecessor="//@setupTasks.11 //@setupTasks.8"
+          onlyNewProjects="true"/>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.pregen"
+          successor="viatra.xtext.pregen"
+          launcher="org.eclipse.viatra.setup/GenerateReteRecipeMetamodel.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.pregen"
+          successor="viatra.xtext.pregen"
+          launcher="org.eclipse.viatra.setup/GenerateNotationMetamodel.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.pregen"
+          successor="viatra.xtext.pregen"
+          launcher="org.eclipse.viatra.setup/GenerateTraceabilityMetamodel.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.pregen"
+          successor="viatra.xtext.pregen"
+          launcher="org.eclipse.viatra.setup/GenerateTransformationTraceMetamodel.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="projects:ProjectsBuildTask"
+          id="viatra.xtext.pregen"
+          onlyNewProjects="true"
+          refresh="true"/>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.xtext.pregen"
+          successor="viatra.xtext.postgen"
+          launcher="org.eclipse.viatra.setup/GeneratePatternLanguage.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.xtext.pregen"
+          successor="viatra.xtext.postgen"
+          launcher="org.eclipse.viatra.setup/GenerateGeneratorModel.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="projects:ProjectsBuildTask"
+          id="viatra.xtext.postgen"
+          onlyNewProjects="true"
+          refresh="true"/>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.xtext.postgen"
+          launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
+        <description></description>
+      </setupTask>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="VIATRA Transformations">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern=".*viatra\.transformation.*"/>
+          <operand
+              xsi:type="predicates:NaturePredicate"
+              nature="org.eclipse.pde.PluginNature"/>
+        </predicate>
+      </workingSet>
+      <workingSet
+          name="VIATRA Incremental Queries">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern=".*viatra\.query.*"/>
+          <operand
+              xsi:type="predicates:NaturePredicate"
+              nature="org.eclipse.pde.PluginNature"/>
+        </predicate>
+      </workingSet>
+      <workingSet
+          name="VIATRA Releng"
+          id="">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:OrPredicate">
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/releng/.*"/>
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/setup/.*"/>
+            <operand
+                xsi:type="predicates:NaturePredicate"
+                nature="org.eclipse.pde.FeatureNature"/>
+          </operand>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+        </predicate>
+      </workingSet>
+      <workingSet
+          name="VIATRA Integrations">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern=".*viatra\.integration.*"/>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+          <operand
+              xsi:type="predicates:NaturePredicate"
+              nature="org.eclipse.pde.PluginNature"/>
+        </predicate>
+      </workingSet>
+      <workingSet
+          name="VIATRA Addons">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern=".*viatra\.addon.*"/>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+          <operand
+              xsi:type="predicates:NaturePredicate"
+              nature="org.eclipse.pde.PluginNature"/>
+        </predicate>
+      </workingSet>
+      <description>The dynamic working sets for ${scope.project.label}</description>
+    </setupTask>
+    <stream
+        name="master"/>
+    <description>Viatra query and transformation framework</description>
   </project>
   <stream name="master"/>
   <logicalProjectContainer
