@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.interfaces;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -18,7 +17,7 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 public interface ISurvivalStrategy {
 
     void init(ThreadContext context);
-    Collection<TrajectoryFitness> selectSurvivedPopulation(
+    List<TrajectoryFitness> selectSurvivedPopulation(
             List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation);
 
 }

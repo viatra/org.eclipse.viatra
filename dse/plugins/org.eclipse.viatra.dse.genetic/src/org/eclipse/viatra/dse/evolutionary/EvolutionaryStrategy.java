@@ -10,7 +10,6 @@
 package org.eclipse.viatra.dse.evolutionary;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +23,7 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IEvaluationStrategy;
+import org.eclipse.viatra.dse.evolutionary.interfaces.IEvolutionaryStrategyAdapter;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutationRate;
@@ -49,6 +49,8 @@ public class EvolutionaryStrategy implements IStrategy {
     protected List<ICrossover> crossovers = new ArrayList<>();
     protected List<IMutation> mutations = new ArrayList<>();
 
+    protected List<IEvolutionaryStrategyAdapter> adapters = new ArrayList<>();
+    
     // local variables
     private ThreadContext context;
     private GlobalContext gc;
@@ -78,21 +80,24 @@ public class EvolutionaryStrategy implements IStrategy {
         initialPopulationSelector.setPopulationSize(populationSize);
         initialPopulationSelector.initStrategy(context);
         initialPopulationSelector.explore();
-        Collection<TrajectoryFitness> currentPopulation = initialPopulationSelector.getInitialPopulation();
+        List<TrajectoryFitness> currentPopulation = initialPopulationSelector.getInitialPopulation();
 
         // TODO start instance workers
         
         while (isInterrupted.get()) {
             
-            // rank solutions with evaluation strategy
             List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation = evaluationStrategy.evaluatePopulation(currentPopulation);
             
-            // get survived solutions
-            Collection<TrajectoryFitness> survivedPopulation = survivalStrategy.selectSurvivedPopulation(frontsOfCurrentPopulation);
-            
-            // TODO debug
+            List<TrajectoryFitness> survivedPopulation = survivalStrategy.selectSurvivedPopulation(frontsOfCurrentPopulation);
             
             boolean stop = stopCondition.checkStopCondition(survivedPopulation);
+
+            if (!adapters.isEmpty()) {
+                for (IEvolutionaryStrategyAdapter adapter : adapters) {
+                    adapter.iterationCompleted(frontsOfCurrentPopulation, survivedPopulation, stop);
+                }
+            }
+            
             if (stop) {
                 for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
                     if (trajectoryFitness.rank == 1) {
@@ -109,7 +114,7 @@ public class EvolutionaryStrategy implements IStrategy {
             }
 
             // get potential parents
-            Collection<TrajectoryFitness> parentPopulation = reproductionStrategy.getParentPopulation(currentPopulation, survivedPopulation);
+            List<TrajectoryFitness> parentPopulation = reproductionStrategy.getParentPopulation(currentPopulation, frontsOfCurrentPopulation, survivedPopulation);
             
             // child generation and duplication check
             parentSelectionStrategy.init(parentPopulation);
@@ -129,12 +134,17 @@ public class EvolutionaryStrategy implements IStrategy {
                 } else {
                     int index = random.nextInt(crossovers.size());
                     ICrossover crossover = crossovers.get(index);
-                    TrajectoryFitness[] parents = parentSelectionStrategy.getNextTwoParents();
-                    TrajectoryFitness[] children = crossover.mutate(parents[0], parents[1], context);
+                    TrajectoryFitness parent1 = parentSelectionStrategy.getNextParent();
+                    TrajectoryFitness parent2 = parentSelectionStrategy.getNextParent();
+                    TrajectoryFitness[] children = crossover.mutate(parent1, parent2, context);
                     childPopulation.add(children[0]);
                     childPopulation.add(children[1]);
                 }
             }
+            
+            
+            // TODO ?
+            currentPopulation = new ArrayList<TrajectoryFitness>(childPopulation);
         }
         
     }

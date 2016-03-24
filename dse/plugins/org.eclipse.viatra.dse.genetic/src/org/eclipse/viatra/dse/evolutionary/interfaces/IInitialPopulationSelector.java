@@ -9,9 +9,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.interfaces;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public interface IInitialPopulationSelector extends IStrategy {
@@ -25,5 +26,5 @@ public interface IInitialPopulationSelector extends IStrategy {
      */
     void setPopulationSize(int populationSize);
     
-    Collection<TrajectoryFitness> getInitialPopulation();
+    List<TrajectoryFitness> getInitialPopulation();
 }

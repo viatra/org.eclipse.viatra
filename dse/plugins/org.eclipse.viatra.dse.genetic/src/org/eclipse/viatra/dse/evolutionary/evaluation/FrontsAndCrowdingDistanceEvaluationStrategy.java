@@ -7,9 +7,8 @@
  * Contributors:
  *   Andras Szabolcs Nagy - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.dse.evolutionary;
+package org.eclipse.viatra.dse.evolutionary.evaluation;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -28,7 +27,7 @@ public class FrontsAndCrowdingDistanceEvaluationStrategy implements IEvaluationS
     }
 
     @Override
-    public List<? extends List<TrajectoryFitness>> evaluatePopulation(Collection<TrajectoryFitness> currentPopulation) {
+    public List<? extends List<TrajectoryFitness>> evaluatePopulation(List<TrajectoryFitness> currentPopulation) {
         return helper.getFronts();
     }
 

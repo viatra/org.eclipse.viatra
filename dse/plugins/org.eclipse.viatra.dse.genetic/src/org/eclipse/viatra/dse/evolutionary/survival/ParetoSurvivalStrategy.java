@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.survival;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -23,7 +22,7 @@ public class ParetoSurvivalStrategy implements ISurvivalStrategy {
     }
 
     @Override
-    public Collection<TrajectoryFitness> selectSurvivedPopulation(
+    public List<TrajectoryFitness> selectSurvivedPopulation(
             List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation) {
         return frontsOfCurrentPopulation.get(0);
     }

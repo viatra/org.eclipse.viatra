@@ -7,9 +7,9 @@
  * Contributors:
  *   Andras Szabolcs Nagy - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.dse.evolutionary;
+package org.eclipse.viatra.dse.evolutionary.reproduction;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.viatra.dse.evolutionary.interfaces.IReproductionStrategy;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
@@ -19,7 +19,7 @@ public class SimpleReproductionStrategy implements IReproductionStrategy {
     private ReproductionStrategyType type;
 
     public enum ReproductionStrategyType {
-        CURRENT_POPULATION, SURVIVED_POPULATION
+        CURRENT_POPULATION, SURVIVED_POPULATION, FIRST_FRONT
     }
 
     public SimpleReproductionStrategy(ReproductionStrategyType type) {
@@ -27,10 +27,13 @@ public class SimpleReproductionStrategy implements IReproductionStrategy {
     }
 
     @Override
-    public Collection<TrajectoryFitness> getParentPopulation(Collection<TrajectoryFitness> currentPopulation,
-            Collection<TrajectoryFitness> survivedPopulation) {
+    public List<TrajectoryFitness> getParentPopulation(List<TrajectoryFitness> currentPopulation,
+            List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation,
+            List<TrajectoryFitness> survivedPopulation) {
         if (type.equals(ReproductionStrategyType.CURRENT_POPULATION)) {
             return currentPopulation;
+        } else if (type.equals(ReproductionStrategyType.FIRST_FRONT)) {
+            return frontsOfCurrentPopulation.get(0);
         } else {
             return survivedPopulation;
         }

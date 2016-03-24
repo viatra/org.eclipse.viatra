@@ -25,17 +25,25 @@ public class FirstNSolutionsSurvivalStrategy implements ISurvivalStrategy {
 
     private int numberOfSelectedInstances = -1;
 
+    public FirstNSolutionsSurvivalStrategy() {
+        
+    }
+
+    public FirstNSolutionsSurvivalStrategy(int numberOfSelectedInstances) {
+        this.numberOfSelectedInstances = numberOfSelectedInstances;
+    }
+    
     public void setNumberOfSelectedInstances(int numberOfSelectedInstances) {
         this.numberOfSelectedInstances = numberOfSelectedInstances;
     }
 
     @Override
     public void init(ThreadContext context) {
-        Preconditions.checkArgument(numberOfSelectedInstances != -1, "Number of selected instances is not set.");
+        Preconditions.checkArgument(numberOfSelectedInstances > 0, "Number of selected instances is not correctly set.");
     }
 
     @Override
-    public Collection<TrajectoryFitness> selectSurvivedPopulation(List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation) {
+    public List<TrajectoryFitness> selectSurvivedPopulation(List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation) {
 
         List<TrajectoryFitness> survivedPopulation = new ArrayList<>();
 

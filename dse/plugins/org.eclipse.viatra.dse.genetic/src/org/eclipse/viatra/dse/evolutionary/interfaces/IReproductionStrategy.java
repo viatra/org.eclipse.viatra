@@ -9,14 +9,15 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.interfaces;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public interface IReproductionStrategy {
 
-    Collection<TrajectoryFitness> getParentPopulation(
-            Collection<TrajectoryFitness> currentPopulation,
-            Collection<TrajectoryFitness> survivedPopulation);
+    List<TrajectoryFitness> getParentPopulation(
+            List<TrajectoryFitness> currentPopulation,
+            List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation,
+            List<TrajectoryFitness> survivedPopulation);
 
 }

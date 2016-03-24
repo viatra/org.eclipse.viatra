@@ -107,7 +107,7 @@ public class RandomInitalSelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public Collection<TrajectoryFitness> getInitialPopulation() {
+    public List<TrajectoryFitness> getInitialPopulation() {
         return initialPopulation;
     }
 
