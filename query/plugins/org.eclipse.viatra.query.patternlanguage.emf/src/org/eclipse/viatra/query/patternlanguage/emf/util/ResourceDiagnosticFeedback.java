@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.util;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -32,13 +34,15 @@ public final class ResourceDiagnosticFeedback implements IErrorFeedback {
     public void clearMarkers(Resource resource, final String markerType) {
         if (resource != null) {
             EList<Diagnostic> errors = resource.getErrors();
-            errors.removeAll(Collections2.filter(errors, new Predicate<Diagnostic>() {
+            Collection<Diagnostic> filter = Collections2.filter(errors, new Predicate<Diagnostic>() {
 
                 @Override
                 public boolean apply(Diagnostic input) {
-                    return !(input instanceof EObjectDiagnosticImpl && markerType.contentEquals(((EObjectDiagnosticImpl)input).getCode()));
+                    return input instanceof EObjectDiagnosticImpl
+                            && markerType.contentEquals(((EObjectDiagnosticImpl)input).getCode());
                 }
-            }));
+            });
+            errors.removeAll(filter);
         }
     }
 

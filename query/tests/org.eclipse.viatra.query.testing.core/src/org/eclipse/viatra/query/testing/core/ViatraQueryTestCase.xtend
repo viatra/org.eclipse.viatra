@@ -13,7 +13,7 @@ import java.util.LinkedList
 import java.util.List
 import junit.framework.AssertionFailedError
 import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.testing.core.internal.MatchSetRecordDiff
+import org.junit.AssumptionViolatedException
 
 /** 
  * @author Grill Balázs
@@ -43,14 +44,39 @@ class ViatraQueryTestCase {
 	def loadModel(URI uri) {
 		resourceSet.getResource(uri, true)
 	}
-
-	def modifyModel(URI uri, (Resource)=>void operation){
-		operation.apply(resourceSet.getResource(uri, false))
+	
+	def <T extends EObject> modifyModel(Class<T> clazz, (T)=>boolean condition, (T)=>void operation){
+	    val nonIncrementals = modelProviders.filter[!updatedByModify]
+	    modelProviders.removeAll(nonIncrementals)
+	    nonIncrementals.forEach[dispose]
+	    val iterator = resourceSet.allContents
+	    while(iterator.hasNext){
+	        val element = iterator.next
+	        if (clazz.isInstance(element)){
+	           val cast = clazz.cast(element)
+                if (condition.apply(cast)){
+	                operation.apply(clazz.cast(element))
+	           }
+	        }
+	    }
 	}
 
 	def addMatchSetModelProvider(IMatchSetModelProvider matchSetModelProvider) {
 		modelProviders.add(matchSetModelProvider);
 	}
+
+    def <Match extends IPatternMatch> assumeMatchSetsAreAvailable(
+        IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) {
+        
+        modelProviders.forEach[
+            try{
+                it.getMatchSetRecord(resourceSet, querySpecification, null)
+            }catch(IllegalArgumentException e){
+                throw new AssumptionViolatedException(e.message, e)
+            }
+        ]
+                    
+    }
 
 	def <Match extends IPatternMatch> assertMatchSetsEqual(
 		IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) {

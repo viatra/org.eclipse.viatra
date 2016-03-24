@@ -28,7 +28,6 @@ import org.eclipse.viatra.query.testing.snapshot.DoubleSubstitution
 import org.eclipse.viatra.query.testing.snapshot.EMFSubstitution
 import org.eclipse.viatra.query.testing.snapshot.EnumSubstitution
 import org.eclipse.viatra.query.testing.snapshot.FloatSubstitution
-import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 import org.eclipse.viatra.query.testing.snapshot.InputSpecification
 import org.eclipse.viatra.query.testing.snapshot.IntSubstitution
 import org.eclipse.viatra.query.testing.snapshot.LongSubstitution
@@ -36,6 +35,7 @@ import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord
 import org.eclipse.viatra.query.testing.snapshot.MiscellaneousSubstitution
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory
 import org.eclipse.viatra.query.testing.snapshot.StringSubstitution
 
@@ -302,17 +302,17 @@ class SnapshotHelper {
 	 */
 	def String prettyPrint(MatchRecord record){
 		val sb = new StringBuilder()
-		val first = #[true]
-		record.substitutions.forEach[
-			if (first.get(0)){
-				first.set(0, false);
-			}else{
-				sb.append(", ");
-			}
-			sb.append(it.parameterName)
-			sb.append(" = ");
-			sb.append(it.derivedValue)
-		]
+		var first = true
+		for(substitution : record.substitutions){
+		    if (first){
+                first= false;
+            }else{
+                sb.append(", ");
+            }
+            sb.append(substitution.parameterName)
+            sb.append(" = ");
+            sb.append(substitution.derivedValue)
+		}
 		return sb.toString
 	}
 

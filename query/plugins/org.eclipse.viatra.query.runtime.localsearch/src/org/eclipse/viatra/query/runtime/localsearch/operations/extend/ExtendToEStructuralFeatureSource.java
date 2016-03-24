@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
@@ -54,7 +55,7 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("extend to source ")
-    	.append(feature.getContainerClass().getSimpleName())
+    	.append(((EClass)feature.eContainer()).getName())
     	.append('.')
     	.append(feature.getName());
         return builder.toString();

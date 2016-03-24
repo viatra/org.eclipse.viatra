@@ -13,9 +13,9 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 /** 
@@ -31,10 +31,16 @@ class SnapshotMatchSetModelProvider implements IMatchSetModelProvider {
 		val FQN = querySpecification.getFullyQualifiedName()
 		val snapshot = resourceSet.getResource(snapshotModel, true).contents.filter(QuerySnapshot)
 		if (snapshot.empty) throw new IllegalArgumentException(snapshotModel+" is not a Snapshot model")
-		(snapshot).head?.matchSetRecords.findFirst[FQN == it.patternQualifiedName]	
+		val record = (snapshot).head?.matchSetRecords.findFirst[FQN == it.patternQualifiedName]
+		if (record == null) throw new IllegalArgumentException("Could not find snapshot for "+FQN+" in "+snapshotModel)
+		record
 	}
 
 	override dispose() {
 	}
+	
+    override updatedByModify() {
+        false
+    }
 
 }

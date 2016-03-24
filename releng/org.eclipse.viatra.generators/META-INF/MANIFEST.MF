@@ -10,9 +10,9 @@ Require-Bundle: org.eclipse.emf.mwe2.launch,
  org.objectweb.asm,
  org.apache.commons.logging,
  org.eclipse.emf.codegen.ecore,
- org.eclipse.viatra.query.runtime.rete.recipes,
- org.eclipse.viatra.addon.viewers.runtime,
- org.eclipse.viatra.transformation.views,
- org.eclipse.viatra.transformation.tracer,
- org.eclipse.viatra.cep.core.metamodels
+ org.eclipse.viatra.query.runtime.rete.recipes;resolution:=optional,
+ org.eclipse.viatra.addon.viewers.runtime;resolution:=optional,
+ org.eclipse.viatra.transformation.views;resolution:=optional,
+ org.eclipse.viatra.transformation.tracer;resolution:=optional,
+ org.eclipse.viatra.cep.core.metamodels;resolution:=optional
 Import-Package: org.apache.log4j

@@ -98,15 +98,10 @@
 		<module>../../integration/features/org.eclipse.viatra.integration.modisco.feature</module>
 		<module>../../integration/tests/org.eclipse.viatra.integration.mwe2.test</module>
 		<module>../../integration/tests/org.eclipse.viatra.integration.uml.test</module>
-		<module>../../integration/plugins/org.eclipse.viatra.integration.xcore.model</module>
-		<module>../../integration/plugins/org.eclipse.viatra.integration.xcore</module>
-		<module>../../integration/plugins/org.eclipse.viatra.integration.xcore.modeleditor</module>
-		<module>../../integration/plugins/org.eclipse.viatra.integration.xcore.ui</module>
 		<module>../../integration/features/org.eclipse.viatra.integration.gmf.feature</module>
 		<module>../../integration/features/org.eclipse.viatra.integration.graphiti.feature</module>
 		<module>../../integration/features/org.eclipse.viatra.integration.mwe2.feature</module>
 		<module>../../integration/features/org.eclipse.viatra.integration.uml.feature</module>
-		<module>../../integration/features/org.eclipse.viatra.integration.xcore.feature</module>
 
 	</modules>
 	<parent>
@@ -163,4 +158,22 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>xcore</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>xcore.integration</name>
+				</property>
+			</activation>
+			<modules>
+				<module>../../integration/plugins/org.eclipse.viatra.integration.xcore.model</module>
+				<module>../../integration/plugins/org.eclipse.viatra.integration.xcore</module>
+				<module>../../integration/plugins/org.eclipse.viatra.integration.xcore.modeleditor</module>
+				<module>../../integration/plugins/org.eclipse.viatra.integration.xcore.ui</module>
+				<module>../../integration/features/org.eclipse.viatra.integration.xcore.feature</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>
