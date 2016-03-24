@@ -28,7 +28,13 @@ public class FrontsAndCrowdingDistanceEvaluationStrategy implements IEvaluationS
 
     @Override
     public List<? extends List<TrajectoryFitness>> evaluatePopulation(List<TrajectoryFitness> currentPopulation) {
-        return helper.getFronts();
+        
+        for (TrajectoryFitness trajectoryFitness : currentPopulation) {
+            helper.addTrajectoryFitness(trajectoryFitness);
+        }
+        List<? extends List<TrajectoryFitness>> fronts = helper.getFronts();
+        helper.clearTrajectoryFitnesses();
+        return fronts;
     }
 
 }

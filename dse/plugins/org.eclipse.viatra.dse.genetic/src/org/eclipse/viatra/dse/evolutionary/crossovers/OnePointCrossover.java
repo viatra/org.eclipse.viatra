@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.crossovers;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.api.DSEException;
@@ -52,7 +54,16 @@ public class OnePointCrossover implements ICrossover {
             dsm.fireActivation(parent1t[i]);
         }
         for (int i = index; i < p2Size; i++) {
-            dsm.fireActivation(parent2t[i]);
+            ITransition transitionToFire = parent2t[i];
+            Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
+            Iterator<? extends ITransition> iterator = transitions.iterator();
+            
+            while (iterator.hasNext()) {
+                ITransition t = iterator.next();
+                if (t.getId().equals(transitionToFire.getId())) {
+                    dsm.fireActivation(t);
+                }
+            }
         }
 
         Fitness fitness = context.calculateFitness();
@@ -64,7 +75,16 @@ public class OnePointCrossover implements ICrossover {
             dsm.fireActivation(parent2t[i]);
         }
         for (int i = index; i < p1Size; i++) {
-            dsm.fireActivation(parent1t[i]);
+            ITransition transitionToFire = parent1t[i];
+            Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
+            Iterator<? extends ITransition> iterator = transitions.iterator();
+            
+            while (iterator.hasNext()) {
+                ITransition t = iterator.next();
+                if (t.getId().equals(transitionToFire.getId())) {
+                    dsm.fireActivation(t);
+                }
+            }
         }
 
         fitness = context.calculateFitness();

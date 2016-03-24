@@ -67,6 +67,9 @@ public class EvolutionaryStrategy implements IStrategy {
         dsm = context.getDesignSpaceManager();
         solutionStore = gc.getSolutionStore2();
         childPopulation = new HashSet<>(childPopulationSize);
+        
+        evaluationStrategy.init(context);
+        
         // TODO no design space
         // context.setDesignSpace(new DummyDesignSpace())
         // context.setTrajectorySaver(new FullTrajectorySaver())
@@ -84,7 +87,7 @@ public class EvolutionaryStrategy implements IStrategy {
 
         // TODO start instance workers
         
-        while (isInterrupted.get()) {
+        while (!isInterrupted.get()) {
             
             List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation = evaluationStrategy.evaluatePopulation(currentPopulation);
             
