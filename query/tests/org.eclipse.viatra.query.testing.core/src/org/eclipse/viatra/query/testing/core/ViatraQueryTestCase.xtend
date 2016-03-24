@@ -21,7 +21,7 @@ import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.testing.core.internal.MatchSetRecordDiff
-import org.junit.AssumptionViolatedException
+import org.junit.Assume
 
 /** 
  * @author Grill Balázs
@@ -72,7 +72,7 @@ class ViatraQueryTestCase {
             try{
                 it.getMatchSetRecord(resourceSet, querySpecification, null)
             }catch(IllegalArgumentException e){
-                throw new AssumptionViolatedException(e.message, e)
+                Assume.assumeNoException(e)
             }
         ]
                     
