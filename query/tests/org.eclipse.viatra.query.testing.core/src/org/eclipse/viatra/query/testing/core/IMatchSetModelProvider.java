@@ -36,5 +36,13 @@ public interface IMatchSetModelProvider {
                     throws ViatraQueryException;
 
     public void dispose();
+    
+    /**
+     * Return true if the result of this provider is updated by input model modifications, thus a subsequent
+     * getMathcSetRecord() call will reflect the changes.
+     * 
+     * @return
+     */
+    public boolean updatedByModify();
 
 }

@@ -48,4 +48,9 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
             engine = null;
         }
     }
+
+	@Override
+	public boolean updatedByModify() {
+		return true;
+	}
 }

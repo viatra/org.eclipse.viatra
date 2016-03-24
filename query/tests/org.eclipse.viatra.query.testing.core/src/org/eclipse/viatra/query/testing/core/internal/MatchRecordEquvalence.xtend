@@ -20,7 +20,7 @@ import org.eclipse.viatra.query.testing.snapshot.MatchRecord
  */
 class MatchRecordEquvalence extends Equivalence<MatchRecord> {
 	
-	extension SnapshotHelper
+	extension SnapshotHelper = new SnapshotHelper
 	
 	public static val INSTANCE = new MatchRecordEquvalence
 	
