@@ -7,67 +7,64 @@
  *
  * Contributors:
  *   Abel Hegedus - initial API and implementation
+ *   Peter Lunk - revised EVM structure for adapter support
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The scheduler is used to define when the executor of a schema should
- * start its execution strategy.
+ * The scheduler is used to define when the executor of a schema should start its execution strategy.
  * 
- * @author Abel Hegedus
+ * @author Abel Hegedus, Peter Lunk
  * 
  */
 public abstract class Scheduler {
-    
+
     /**
      * Factory interface for preparing a scheduler for a given executor.
      * 
      * @author Abel Hegedus
      *
      */
-    public interface ISchedulerFactory{
-       
+    public interface ISchedulerFactory {
+
         /**
          * Creates a scheduler for the given executor.
          * 
-         * @param executor
+         * @param execution
          */
-        Scheduler prepareScheduler(final Executor executor);
+        Scheduler prepareScheduler(final ScheduledExecution execution);
 
     }
 
-    private Executor executor;
+    private ScheduledExecution execution;
 
     /**
      * Creates a scheduler for the given executor.
      * 
      * @param executor
      */
-    protected Scheduler(final Executor executor) {
-        this.executor = checkNotNull(executor, "Cannot create scheduler with null VIATRA Query Engine!");
+    protected Scheduler(final ScheduledExecution execution) {
+        this.execution = checkNotNull(execution, "Cannot create scheduler with null VIATRA Scheduled Execution!");
     }
 
     /**
      * Notifies executor of "tick". Subclasses should call this method to generate "ticks".
      */
     protected void schedule() {
-        executor.schedule();
+        execution.schedule();
     }
-    
-    /**
-     * @return the executor
-     */
-    public Executor getExecutor() {
-        return executor;
+
+    public ScheduledExecution getExecution() {
+        return execution;
     }
-    
+
     /**
      * Disposes of the scheduler by disposing its executor.
      */
     public void dispose() {
-        executor.dispose();
+        execution.dispose();
     }
-    
+
 }

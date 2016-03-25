@@ -11,11 +11,9 @@
 package org.eclipse.viatra.integration.mwe2.eventdriven.mwe2impl;
 
 import org.eclipse.viatra.integration.mwe2.eventdriven.IController;
-import org.eclipse.viatra.transformation.evm.api.Activation;
-import org.eclipse.viatra.transformation.evm.api.Context;
-import org.eclipse.viatra.transformation.evm.api.Executor;
+import org.eclipse.viatra.transformation.evm.api.ConflictSetIterator;
+import org.eclipse.viatra.transformation.evm.api.ScheduledExecution;
 import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
-import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 
 /**
  * A VIATRA EVM Executor, that enables the MWE 2 workflow to control any EVM based fine-grained event-driven
@@ -28,17 +26,13 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
  * @author Peter Lunk
  *
  */
-public class MWE2ControlledExecutor extends Executor implements IController {
+public class MWE2ControlledExecution extends ScheduledExecution implements IController {
     protected boolean canRun = false;
     protected boolean scheduled = false;
     protected boolean finished = false;
 
-    public MWE2ControlledExecutor(EventRealm realm) {
+    public MWE2ControlledExecution(EventRealm realm) {
         super(realm);
-    }
-    
-    public MWE2ControlledExecutor(EventRealm eventRealm, Context context){
-        super(eventRealm, context);
     }
 
     /**
@@ -52,8 +46,8 @@ public class MWE2ControlledExecutor extends Executor implements IController {
     public void run() {
         if (scheduled) {
             finished = false;
-
-            doSchedule();
+            
+            schedule();
 
             finished = true;
             canRun = false;
@@ -73,7 +67,9 @@ public class MWE2ControlledExecutor extends Executor implements IController {
         if (canRun) {
             finished = false;
 
-            doSchedule();
+            getExecutor().startExecution("Started MWE2 scheduling");
+            getExecutor().execute(new ConflictSetIterator(getRuleBase().getAgenda().getConflictSet()));
+            getExecutor().endExecution("Ended MWE2 scheduling");
 
             finished = true;
             canRun = false;
@@ -81,21 +77,6 @@ public class MWE2ControlledExecutor extends Executor implements IController {
         } else if (!scheduled) {
             scheduled = true;
         }
-    }
-
-    private void doSchedule() {
-        if (!startScheduling()) {
-            return;
-        }
-
-        Activation<?> nextActivation = null;
-        ChangeableConflictSet conflictSet = getRuleBase().getAgenda().getConflictSet();
-        while ((nextActivation = conflictSet.getNextActivation()) != null) {
-            getRuleBase().getLogger().debug("Executing: " + nextActivation + " in " + this);
-            nextActivation.fire(getContext());
-        }
-
-        endScheduling();
     }
 
     @Override

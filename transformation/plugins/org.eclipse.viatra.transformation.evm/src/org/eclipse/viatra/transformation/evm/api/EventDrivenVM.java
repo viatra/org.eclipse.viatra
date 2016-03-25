@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   Abel Hegedus - initial API and implementation
+ *   Peter Lunk - revised EVM structure for adapter support
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.api;
 
@@ -24,7 +25,7 @@ import org.eclipse.viatra.transformation.evm.api.event.EventRealm;
  * The static create methods use the provided parameters to set up the EVM
  * and return a facade object for accessing it.
  * 
- * @author Abel Hegedus
+ * @author Abel Hegedus, Peter Lunk
  * 
  */
 public final class EventDrivenVM {
@@ -40,10 +41,10 @@ public final class EventDrivenVM {
      * @return the prepared rule engine
      */
     public static RuleEngine createRuleEngine(final EventRealm eventRealm) {
-        RuleBase ruleBase = new RuleBase(eventRealm);
+    	RuleBase ruleBase = new RuleBase(eventRealm, new Agenda());
         return RuleEngine.create(ruleBase);
     }
-
+    
     /**
      * Creates a new execution schema that is initialized over the given
      * EventRealm, creates an executor and rule base with the given
@@ -58,12 +59,13 @@ public final class EventDrivenVM {
             final ISchedulerFactory schedulerFactory, final Set<RuleSpecification<?>> specifications) {
         checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
         checkNotNull(specifications, "Cannot create execution schema with null rule specification set");
-        Executor executor = new Executor(eventRealm);
-        RuleBase ruleBase = executor.getRuleBase();
+        IExecutor executor = new Executor();
+        RuleBase ruleBase = new RuleBase(eventRealm, new Agenda());
+        ScheduledExecution execution = new ScheduledExecution(ruleBase, executor);
         for (RuleSpecification<?> specification : specifications) {
             instantiateRuleInRuleBase(ruleBase, specification);
         }
-        Scheduler scheduler = schedulerFactory.prepareScheduler(executor);
+        Scheduler scheduler = schedulerFactory.prepareScheduler(execution);
         return ExecutionSchema.create(scheduler);
     }
 

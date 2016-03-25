@@ -30,7 +30,7 @@ public class ExecutionSchema extends RuleEngine {
      * @param scheduler
      */
     protected ExecutionSchema(final Scheduler scheduler) {
-        super(checkNotNull(scheduler, "Cannot create trigger engine with null scheduler!").getExecutor().getRuleBase());
+        super(checkNotNull(scheduler, "Cannot create trigger engine with null scheduler!").getExecution().getRuleBase());
         this.scheduler = scheduler;
     }
 
@@ -62,7 +62,7 @@ public class ExecutionSchema extends RuleEngine {
      * @return the context of the executor
      */
     public Context getContext() {
-        return scheduler.getExecutor().getContext();
+        return scheduler.getExecution().getExecutor().getContext();
     }
 
     /**
@@ -71,6 +71,6 @@ public class ExecutionSchema extends RuleEngine {
      *  without waiting for or otherwise forcing a scheduling event.
      */
     public void startUnscheduledExecution() {
-        scheduler.getExecutor().schedule();
+        scheduler.getExecution().schedule();
     }
 }

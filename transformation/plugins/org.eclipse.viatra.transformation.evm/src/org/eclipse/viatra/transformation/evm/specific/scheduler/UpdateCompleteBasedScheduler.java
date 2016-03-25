@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.scheduler;
 
-import org.eclipse.viatra.transformation.evm.api.Executor;
+import org.eclipse.viatra.transformation.evm.api.ScheduledExecution;
 import org.eclipse.viatra.transformation.evm.api.Scheduler;
 import org.eclipse.viatra.transformation.evm.update.IUpdateCompleteListener;
 import org.eclipse.viatra.transformation.evm.update.IUpdateCompleteProvider;
@@ -36,8 +36,8 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
     /**
      * Creates a scheduler for the given executor.
      */
-    protected UpdateCompleteBasedScheduler(final Executor executor) {
-        super(executor);
+    protected UpdateCompleteBasedScheduler(final ScheduledExecution execution) {
+        super(execution);
     }
 
     @Override
@@ -74,8 +74,8 @@ public class UpdateCompleteBasedScheduler extends Scheduler implements IUpdateCo
         }
 
         @Override
-        public Scheduler prepareScheduler(final Executor engine) {
-            UpdateCompleteBasedScheduler scheduler = new UpdateCompleteBasedScheduler(engine);
+        public Scheduler prepareScheduler(final ScheduledExecution execution) {
+            UpdateCompleteBasedScheduler scheduler = new UpdateCompleteBasedScheduler(execution);
             scheduler.factory = this;
             provider.addUpdateCompleteListener(scheduler, true);
             return scheduler;

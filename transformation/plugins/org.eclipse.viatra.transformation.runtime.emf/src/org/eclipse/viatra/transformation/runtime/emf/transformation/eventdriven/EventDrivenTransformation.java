@@ -7,6 +7,7 @@
  *
  * Contributors:
  *   Istvan David - initial API and implementation
+ *   Peter Lunk - revised Transformation API structure for adapter support
  *******************************************************************************/
 package org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven;
 
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Level;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -22,7 +22,15 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
+import org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory;
+import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
+import org.eclipse.viatra.transformation.evm.api.adapter.IAdapterConfiguration;
+import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter;
+import org.eclipse.viatra.transformation.evm.api.adapter.IEVMListener;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
+import org.eclipse.viatra.transformation.evm.specific.ExecutionSchemas;
+import org.eclipse.viatra.transformation.evm.specific.Schedulers;
+import org.eclipse.viatra.transformation.evm.specific.resolver.ArbitraryOrderConflictResolver;
 import org.eclipse.viatra.transformation.runtime.emf.rules.EventDrivenTransformationRuleGroup;
 import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRule;
 
@@ -38,35 +46,48 @@ public class EventDrivenTransformation {
     private ViatraQueryEngine queryEngine;
     private ExecutionSchema executionSchema;
     private Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rules;
-    
+
     public static class EventDrivenTransformationBuilder {
-
-        private final String SCHEMA_ERROR = "Cannot set both Conflict Resolver and Execution Schema properties.";
-
-        private ConflictResolver resolver;
+        private ConflictResolver conflictResolver;
         private ViatraQueryEngine engine;
-        private ExecutionSchema schema;
+        private ISchedulerFactory schedulerFactory;
         private List<EventDrivenTransformationRule<?, ?>> rules = Lists.newArrayList();
-
-        public EventDrivenTransformationBuilder setConflictResolver(ConflictResolver resolver) {
-            Preconditions.checkState(schema == null, SCHEMA_ERROR);
-            this.resolver = resolver;
-            return this;
-        }
+        private List<IEVMAdapter> adapters = Lists.newArrayList();
+        private List<IEVMListener> listeners = Lists.newArrayList();
 
         public EventDrivenTransformationBuilder setScope(EMFScope scope) throws ViatraQueryException {
             this.engine = ViatraQueryEngine.on(scope);
             return this;
         }
 
-        public EventDrivenTransformationBuilder setEngine(ViatraQueryEngine engine) {
+        public EventDrivenTransformationBuilder setQueryEngine(ViatraQueryEngine engine) {
             this.engine = engine;
             return this;
         }
 
-        public EventDrivenTransformationBuilder setSchema(ExecutionSchema schema) {
-            Preconditions.checkState(resolver == null, SCHEMA_ERROR);
-            this.schema = schema;
+        public EventDrivenTransformationBuilder addAdapter(IEVMAdapter adapter) {
+            this.adapters.add(adapter);
+            return this;
+        }
+
+        public EventDrivenTransformationBuilder addListener(IEVMListener listener) {
+            this.listeners.add(listener);
+            return this;
+        }
+
+        public EventDrivenTransformationBuilder addAdapterConfiguration(IAdapterConfiguration config) {
+            this.listeners.addAll(config.getListeners());
+            this.adapters.addAll(config.getAdapters());
+            return this;
+        }
+
+        public EventDrivenTransformationBuilder setSchedulerFactory(ISchedulerFactory schedulerFactory) {
+            this.schedulerFactory = schedulerFactory;
+            return this;
+        }
+
+        public EventDrivenTransformationBuilder setConflictResolver(ConflictResolver resolver) {
+            this.conflictResolver = resolver;
             return this;
         }
 
@@ -81,18 +102,26 @@ public class EventDrivenTransformation {
             }
             return this;
         }
-        
+
         public EventDrivenTransformation build() throws ViatraQueryException {
             Preconditions.checkState(engine != null, "ViatraQueryEngine must be set.");
             Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rulesToAdd = Maps.newHashMap();
-            
-            if (schema == null) {
-                final ExecutionSchemaBuilder builder = new ExecutionSchemaBuilder().setEngine(engine);
-                if (resolver != null) {
-                    builder.setConflictResolver(resolver);
-                }
-                schema = builder.build();
+
+            if (schedulerFactory == null) {
+                schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(engine);
             }
+            if (conflictResolver == null) {
+                conflictResolver = new ArbitraryOrderConflictResolver();
+            }
+
+            AdaptableEVM vm = new AdaptableEVM();
+            vm.addAdapters(adapters);
+            vm.addListeners(listeners);
+
+            ExecutionSchema schema = (adapters.size() > 0 || listeners.size() > 0)
+                    ? vm.createAdaptableExecutionSchema(engine, schedulerFactory, conflictResolver)
+                    : ExecutionSchemas.createViatraQueryExecutionSchema(engine, schedulerFactory, conflictResolver);
+
             Iterable<IQuerySpecification<?>> preconditions = collectPreconditions();
             GenericQueryGroup.of(Sets.newHashSet(preconditions)).prepare(engine);
             for (EventDrivenTransformationRule<?, ?> rule : rules) {
@@ -102,29 +131,30 @@ public class EventDrivenTransformation {
             EventDrivenTransformation transformation = new EventDrivenTransformation(schema, engine);
             transformation.setRules(rulesToAdd);
             return transformation;
-
         }
 
-		private Iterable<IQuerySpecification<?>> collectPreconditions() {
-			Iterable<EventDrivenTransformationRule<?, ?>> notNullRules = Iterables.filter(rules, Predicates.notNull());
-			Iterable<IQuerySpecification<?>> preconditions = Iterables.transform(notNullRules, new Function<EventDrivenTransformationRule<?, ?>, IQuerySpecification<?>>(){
-				@Override
-				public IQuerySpecification<?> apply(EventDrivenTransformationRule<?, ?> rule) {
-					return rule.getPrecondition();
-				}
-			});
-			return Iterables.filter(preconditions, Predicates.notNull());
-		}
+        private Iterable<IQuerySpecification<?>> collectPreconditions() {
+            Iterable<EventDrivenTransformationRule<?, ?>> notNullRules = Iterables.filter(rules, Predicates.notNull());
+            Iterable<IQuerySpecification<?>> preconditions = Iterables.transform(notNullRules,
+                    new Function<EventDrivenTransformationRule<?, ?>, IQuerySpecification<?>>() {
+                        @Override
+                        public IQuerySpecification<?> apply(EventDrivenTransformationRule<?, ?> rule) {
+                            return rule.getPrecondition();
+                        }
+                    });
+            return Iterables.filter(preconditions, Predicates.notNull());
+        }
+
     }
 
     public static EventDrivenTransformationBuilder forScope(EMFScope scope) throws ViatraQueryException {
         return forEngine(ViatraQueryEngine.on(scope));
     }
-    
+
     public static EventDrivenTransformationBuilder forEngine(ViatraQueryEngine engine) throws ViatraQueryException {
-        return new EventDrivenTransformationBuilder().setEngine(engine);
+        return new EventDrivenTransformationBuilder().setQueryEngine(engine);
     }
-    
+
     private EventDrivenTransformation(ExecutionSchema executionSchema, ViatraQueryEngine queryEngine) {
         this.executionSchema = executionSchema;
         this.queryEngine = queryEngine;
@@ -148,15 +178,15 @@ public class EventDrivenTransformation {
             executionSchema.getLogger().setLevel(Level.DEBUG);
         }
     }
-    
+
     public Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> getTransformationRules() {
         return rules;
     }
 
-    public void setRules(Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rules) {
+    protected void setRules(Map<RuleSpecification<?>, EventDrivenTransformationRule<?, ?>> rules) {
         this.rules = rules;
     }
-    
+
     public void dispose() {
         executionSchema.dispose();
     }

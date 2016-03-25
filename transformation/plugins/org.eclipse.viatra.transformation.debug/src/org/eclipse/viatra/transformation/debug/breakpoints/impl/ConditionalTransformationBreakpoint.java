@@ -18,7 +18,7 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
 
 /**
  * Class that can be used to specify breakpoint rules via query specifications. It is mainly used by 
- * the VIATRA {@link org.eclipse.viatra.transformation.debug.TransformationDebugger}  class.
+ * the VIATRA {@link org.eclipse.viatra.transformation.debug.TransformationDebugListener}  class.
  * 
  * @author Peter Lunk
  *

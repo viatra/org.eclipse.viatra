@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific.scheduler;
 
-import org.eclipse.viatra.transformation.evm.api.Executor;
+import org.eclipse.viatra.transformation.evm.api.ScheduledExecution;
 import org.eclipse.viatra.transformation.evm.api.Scheduler;
 
 /**
@@ -25,13 +25,13 @@ public class TimedScheduler extends Scheduler {
     private volatile boolean interrupted = false;
     
     /**
-     * Creates a timed scheduler for the given executor and interval.
+     * Creates a timed scheduler for the given Scheduled execution and interval.
      * 
-     * @param executor
+     * @param execution
      * @param interval
      */
-    protected TimedScheduler(final Executor executor, final long interval) {
-        super(executor);
+    protected TimedScheduler(final ScheduledExecution execution, final long interval) {
+        super(execution);
         this.interval = interval;
         new FiringThread().start();
     }
@@ -91,8 +91,8 @@ public class TimedScheduler extends Scheduler {
         }
         
         @Override
-        public Scheduler prepareScheduler(final Executor engine) {
-            return new TimedScheduler(engine, interval);
+        public Scheduler prepareScheduler(final ScheduledExecution execution) {
+            return new TimedScheduler(execution, interval);
         }
         
         /**

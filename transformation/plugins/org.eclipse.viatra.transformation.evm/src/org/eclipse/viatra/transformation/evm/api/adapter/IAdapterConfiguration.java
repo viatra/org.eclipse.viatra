@@ -8,15 +8,18 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.transformation.debug.adapter;
+package org.eclipse.viatra.transformation.evm.api.adapter;
 
 import java.util.List;
 
 /**
- * Interface that defines the methods of VIATRA transformation adapter configurations. 
+ * Interface that defines the methods of VIATRA transformation adapter configurations. Adapter configurations can
+ * contain {@link IEVMListener} and {@link IEVMAdapter} objects
  * 
  * @author Peter Lunk
  */
 public interface IAdapterConfiguration {
-    public List<ITransformationAdapter> getAdapters();
+    public List<IEVMListener> getListeners();
+
+    public List<IEVMAdapter> getAdapters();
 }

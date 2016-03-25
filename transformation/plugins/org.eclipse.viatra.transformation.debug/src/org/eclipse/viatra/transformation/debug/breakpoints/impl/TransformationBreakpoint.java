@@ -17,7 +17,7 @@ import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
 
 /**
  * Class that can be used to identify individual EVM rule activations. It is mainly used by 
- * the VIATRA {@link org.eclipse.viatra.transformation.debug.TransformationDebugger}  class.
+ * the VIATRA {@link org.eclipse.viatra.transformation.debug.TransformationDebugListener}  class.
  * 
  * @author Peter Lunk
  *
@@ -75,7 +75,7 @@ public class TransformationBreakpoint implements ITransformationBreakpoint{
      */
     @Override
     public boolean shouldBreak(Activation<?> a) {
-        if (!ruleSpecification.equals(a.getInstance().getSpecification())) {
+        if (!ruleSpecification.getName().equals(a.getInstance().getSpecification().getName())) {
             return false;
         }
         if (eventAtom != null) {

@@ -20,6 +20,6 @@ import org.eclipse.viatra.transformation.tracer.transformationtrace.Transformati
  */
 public interface ITraceModelSerializer {
     public void serializeTraceModel(TransformationTrace trace);
-    
+
     public TransformationTrace loadTraceModel();
 }

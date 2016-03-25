@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *   Peter Lunk - initial API and implementation
  *******************************************************************************/
@@ -26,37 +26,36 @@ import org.eclipse.viatra.transformation.tracer.transformationtrace.Transformati
  * @author Peter Lunk
  */
 class DefaultTraceModelSerializer implements ITraceModelSerializer {
-	URI location
-	
-	new(URI targetlocation){
-		this.location = targetlocation
-	}
-	
-	override loadTraceModel() {
-	    TransformationtracePackage.eINSTANCE.eClass();
-	    val reg = Resource.Factory.Registry.INSTANCE;
-		val m = reg.getExtensionToFactoryMap();
-		m.put("transformationtrace", new XMIResourceFactoryImpl());
-	    val resSet = new ResourceSetImpl();
-	   	val resource = resSet.getResource(URI
-        .createURI("transformationtrace/trace.transformationtrace"), true);
-	    val trace = resource.getContents().get(0) as TransformationTrace
-	    return trace;
-	}
+    URI location
 
-	override serializeTraceModel(TransformationTrace trace) {
-		val reg = Resource.Factory.Registry.INSTANCE;
-		val m = reg.getExtensionToFactoryMap();
-		m.put("transformationtrace", new XMIResourceFactoryImpl());
-		val resSet = new ResourceSetImpl();
-		val resource = resSet.createResource(location);
-		resource.getContents().add(trace);
+    new(URI targetlocation) {
+        this.location = targetlocation
+    }
 
-		try {
-			resource.save(Collections.EMPTY_MAP);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    override loadTraceModel() {
+        TransformationtracePackage.eINSTANCE.eClass();
+        val reg = Resource.Factory.Registry.INSTANCE;
+        val m = reg.getExtensionToFactoryMap();
+        m.put("transformationtrace", new XMIResourceFactoryImpl());
+        val resSet = new ResourceSetImpl();
+        val resource = resSet.getResource(URI.createURI("transformationtrace/trace.transformationtrace"), true);
+        val trace = resource.getContents().get(0) as TransformationTrace
+        return trace;
+    }
+
+    override serializeTraceModel(TransformationTrace trace) {
+        val reg = Resource.Factory.Registry.INSTANCE;
+        val m = reg.getExtensionToFactoryMap();
+        m.put("transformationtrace", new XMIResourceFactoryImpl());
+        val resSet = new ResourceSetImpl();
+        val resource = resSet.createResource(location);
+        resource.getContents().add(trace);
+
+        try {
+            resource.save(Collections.EMPTY_MAP);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

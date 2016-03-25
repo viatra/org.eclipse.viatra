@@ -93,7 +93,6 @@
 		<module>../../integration/plugins/org.eclipse.viatra.integration.gmf</module>
 		<module>../../integration/plugins/org.eclipse.viatra.integration.modisco</module>
 		<module>../../integration/plugins/org.eclipse.viatra.integration.mwe2</module>
-		<module>../../integration/plugins/org.eclipse.viatra.integration.mwe2.debug</module>
 		<module>../../integration/plugins/org.eclipse.viatra.integration.uml</module>
 		<module>../../integration/features/org.eclipse.viatra.integration.modisco.feature</module>
 		<module>../../integration/tests/org.eclipse.viatra.integration.mwe2.test</module>

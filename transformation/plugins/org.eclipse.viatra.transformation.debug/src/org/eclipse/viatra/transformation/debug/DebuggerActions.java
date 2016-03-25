@@ -8,15 +8,14 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.integration.mwe2.debug
+package org.eclipse.viatra.transformation.debug;
 
 /**
- * Factory class that can be used to create MWE 2 controlled Adapter supporting executors for VIATRA Event driven transformations.
+ * Enum that contains basic debug actions.
  * 
  * @author Peter Lunk
+ *
  */
-class MWE2AdaptableExecutorFactory {
-	def MWE2AdaptableExecutorBuilder createMWE2AdaptableExecutor(){
-		new MWE2AdaptableExecutorBuilder
-	}
+public enum DebuggerActions {
+    Step, Continue
 }

@@ -13,6 +13,7 @@ package org.eclipse.viatra.integration.mwe2.eventdriven.mwe2impl;
 import org.eclipse.viatra.integration.mwe2.eventdriven.IController;
 import org.eclipse.viatra.integration.mwe2.eventdriven.ISchedulerController;
 import org.eclipse.viatra.transformation.evm.api.Executor;
+import org.eclipse.viatra.transformation.evm.api.ScheduledExecution;
 import org.eclipse.viatra.transformation.evm.api.Scheduler;
 
 /**
@@ -33,7 +34,7 @@ public class MWE2BaseControllableScheduler extends Scheduler implements IControl
         return finished;
     }
 
-    protected MWE2BaseControllableScheduler(Executor executor,
+    protected MWE2BaseControllableScheduler(ScheduledExecution executor,
             ISchedulerController<MWE2BaseControllableScheduler> controller) {
         super(executor);
         this.controller = controller;
@@ -58,8 +59,8 @@ public class MWE2BaseControllableScheduler extends Scheduler implements IControl
         private MWE2BaseControllableScheduler scheduler;
 
         @Override
-        public Scheduler prepareScheduler(final Executor engine) {
-            MWE2BaseControllableScheduler scheduler = new MWE2BaseControllableScheduler(engine, this);
+        public Scheduler prepareScheduler(final ScheduledExecution execution) {
+            MWE2BaseControllableScheduler scheduler = new MWE2BaseControllableScheduler(execution, this);
             setScheduler(scheduler);
             return scheduler;
         }

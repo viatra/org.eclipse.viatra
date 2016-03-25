@@ -17,8 +17,8 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations
 import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.SimpleModelManipulations
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRuleFactory
-import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationStatements
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
+import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
 
 class ResetTransformations {
 	extension BatchTransformationRuleFactory ruleFactory = new BatchTransformationRuleFactory
@@ -27,8 +27,8 @@ class ResetTransformations {
 	extension IModelManipulations manipulation
 
 	new(InternalModel internalModel) {
-		transformation = BatchTransformation.forScope(new EMFScope(internalModel))
-		statements = new BatchTransformationStatements(transformation)
+		transformation = BatchTransformation.forScope(new EMFScope(internalModel)).build
+		statements = transformation.transformationStatements
 		manipulation = new SimpleModelManipulations(transformation.queryEngine)
 	}
 

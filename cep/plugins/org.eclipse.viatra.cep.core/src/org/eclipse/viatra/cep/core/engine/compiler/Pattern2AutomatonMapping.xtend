@@ -12,18 +12,18 @@
 package org.eclipse.viatra.cep.core.engine.compiler
 
 import org.eclipse.emf.ecore.resource.ResourceSet
-import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.cep.core.engine.compiler.rules.AtomicMappingRules
 import org.eclipse.viatra.cep.core.engine.compiler.rules.ComplexMappingRules
 import org.eclipse.viatra.cep.core.engine.compiler.rules.OptimizationRules
 import org.eclipse.viatra.cep.core.metamodels.automaton.InternalModel
 import org.eclipse.viatra.cep.core.metamodels.events.EventModel
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations
 import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.SimpleModelManipulations
 import org.eclipse.viatra.transformation.runtime.emf.rules.BatchTransformationRuleGroup
-import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationStatements
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
+import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
 
 class Pattern2AutomatonMapping {
 
@@ -54,8 +54,8 @@ class Pattern2AutomatonMapping {
 		complexMappingRules = new ComplexMappingRules(internalModel, traceModel)
 		optimizationRules = new OptimizationRules(internalModel, traceModel)
 
-		transformation = BatchTransformation.forScope(new EMFScope(resourceSet))
-		statements = new BatchTransformationStatements(transformation)
+		transformation = BatchTransformation.forScope(new EMFScope(resourceSet)).build
+		statements = transformation.transformationStatements
 		manipulation = new SimpleModelManipulations(transformation.queryEngine)
 	}
 

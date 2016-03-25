@@ -12,12 +12,12 @@ package org.eclipse.viatra.transformation.debug.controller;
 
 import java.util.Set;
 
-import org.eclipse.viatra.transformation.debug.TransformationDebugger.DebuggerActions;
+import org.eclipse.viatra.transformation.debug.DebuggerActions;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
 /**
  * Interface that defines methods to interact with the user. These are used by the the VIATRA
- * {@link org.eclipse.viatra.transformation.debug.TransformationDebugger} class, to inform the user about the
+ * {@link org.eclipse.viatra.transformation.debug.TransformationDebugListener} class, to inform the user about the
  * transformation context, and receive user input.
  * 
  * @author Peter Lunk

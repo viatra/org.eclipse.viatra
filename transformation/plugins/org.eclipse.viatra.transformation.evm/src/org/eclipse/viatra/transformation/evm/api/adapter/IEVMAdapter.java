@@ -8,17 +8,23 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.transformation.tracer.activationcoder;
+package org.eclipse.viatra.transformation.evm.api.adapter;
+
+import java.util.Iterator;
 
 import org.eclipse.viatra.transformation.evm.api.Activation;
-import org.eclipse.viatra.transformation.tracer.transformationtrace.ActivationTrace;
+import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 
 /**
- * Interface that defines methods for for creating traces based on individual rule activations.
+ * Interface that defines the methods of EVM adapter objects. The interface contains callback methods for various EVM
+ * events. Through these methods {@link IEVMAdapter} implementations can alter the execution of an EVM program.
  * 
  * @author Peter Lunk
- *
  */
-public interface IActivationCoder {
-    public ActivationTrace createActivationCode(Activation<?> activation);
+public interface IEVMAdapter {
+
+    public Iterator<Activation<?>> getExecutableActivations(Iterator<Activation<?>> iterator);
+
+    public ChangeableConflictSet getConflictSet(ChangeableConflictSet set);
+
 }
