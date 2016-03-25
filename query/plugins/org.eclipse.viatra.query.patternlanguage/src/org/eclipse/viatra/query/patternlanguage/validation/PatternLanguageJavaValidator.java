@@ -86,6 +86,8 @@ import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -470,23 +472,24 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         public Map<PatternCall, Set<PatternCall>> get() {
             Map<PatternCall, Set<PatternCall>> graph = new HashMap<PatternCall, Set<PatternCall>>();
             TreeIterator<EObject> resourceIterator = resource.getAllContents();
+            Set<PatternCall> knownCalls = 
+                    Sets.newHashSet(Iterators.filter(resourceIterator, PatternCall.class));
+            Set<PatternCall> unprocessedCalls = Sets.difference(knownCalls, graph.keySet()); 
+                    
+            while (!unprocessedCalls.isEmpty()) {
+                PatternCall source = unprocessedCalls.iterator().next();
+                Set<PatternCall> targets = new TreeSet<PatternCall>(patternCallComparator);
+                graph.put(source, targets);
 
-            while (resourceIterator.hasNext()) {
-                EObject resourceContent = resourceIterator.next();
-                if (resourceContent instanceof PatternCall) {
-                    PatternCall source = (PatternCall) resourceContent;
-                    Set<PatternCall> targets = new TreeSet<PatternCall>(patternCallComparator);
-                    graph.put(source, targets);
-
-                    TreeIterator<EObject> headIterator = source.getPatternRef().eAllContents();
-                    while (headIterator.hasNext()) {
-                        EObject headContent = headIterator.next();
-                        if (headContent instanceof PatternCall) {
-                            PatternCall target = (PatternCall) headContent;
-                            targets.add(target);
-                        }
+                TreeIterator<EObject> headIterator = source.getPatternRef().eAllContents();
+                while (headIterator.hasNext()) {
+                    EObject headContent = headIterator.next();
+                    if (headContent instanceof PatternCall) {
+                        PatternCall target = (PatternCall) headContent;
+                        targets.add(target);
                     }
                 }
+                knownCalls.addAll(targets);
             }
 
             return graph;
