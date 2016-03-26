@@ -91,11 +91,6 @@
     <description>Initialize JDT's package explorer to show working sets as its root objects</description>
   </setupTask>
   <setupTask
-      xsi:type="setup:VariableTask"
-      name="eclipse.target.platform"
-      defaultValue="Mars"
-      storageURI="scope://Workspace"/>
-  <setupTask
       xsi:type="setup.p2:P2Task">
     <requirement
         name="org.eclipse.xtext.sdk.feature.group"
@@ -112,11 +107,11 @@
   </setupTask>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
-      predecessor="//@setupTasks.11"
+      predecessor="//@setupTasks.10"
       successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
     <targlet
         name="${scope.project.label}"
-        activeRepositoryList="${eclipse.target.platform}">
+        activeRepositoryList="Mars">
       <requirement
           name="org.eclipse.license.feature.group"/>
       <requirement
@@ -125,7 +120,8 @@
           name="org.eclipse.xtext.sdk.feature.group"
           versionRange="[2.9.0,2.10.0)"/>
       <requirement
-          name="org.eclipse.emf.sdk.feature.group"/>
+          name="org.eclipse.emf.sdk.feature.group"
+          versionRange="[2.0.0,2.12.0)"/>
       <requirement
           name="org.eclipse.sdk.feature.group"/>
       <requirement
@@ -232,11 +228,11 @@
       label="Xcore Integration">
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.10"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
-          activeRepositoryList="${eclipse.target.platform}">
+          activeRepositoryList="Mars">
         <requirement
             name="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
         <repositoryList
@@ -308,10 +304,10 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.10"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
-          name="VIATRA Core">
+          name="${scope.project.label}">
         <requirement
             name="org.eclipse.viatra.query.sdk.feature.source.feature.group"/>
         <repositoryList>
@@ -389,7 +385,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.cep.premetamodelgen"
-        predecessor="//@setupTasks.8"
+        predecessor="//@setupTasks.7"
         onlyNewProjects="true"
         refresh="true">
       <description></description>
@@ -482,11 +478,11 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.10"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
-          activeRepositoryList="${eclipse.target.platform}">
+          activeRepositoryList="Mars">
         <requirement
             name="org.eclipse.modisco.infrastructure.feature.feature.group"
             versionRange="[0.13.0,0.14.0)"/>
@@ -540,7 +536,7 @@
       <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.pregen"
-          predecessor="//@setupTasks.11 //@setupTasks.8"
+          predecessor="//@setupTasks.10 //@setupTasks.7"
           onlyNewProjects="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
