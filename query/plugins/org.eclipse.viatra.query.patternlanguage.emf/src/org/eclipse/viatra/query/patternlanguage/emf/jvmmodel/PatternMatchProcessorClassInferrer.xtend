@@ -20,6 +20,9 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
+import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.xtext.diagnostics.Severity
 
 /**
  * {@link IMatchProcessor} implementation inferrer.
@@ -31,6 +34,7 @@ class PatternMatchProcessorClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject extension JavadocInferrer
+	@Inject private IErrorFeedback feedback
 	@Extension private JvmTypeReferenceBuilder builder
 	@Extension private JvmAnnotationReferenceBuilder annBuilder
 
@@ -54,22 +58,27 @@ class PatternMatchProcessorClassInferrer {
    	 * Infers methods for Processor class based on the input 'pattern'.
    	 */
   	def inferProcessorClassMethods(JvmDeclaredType processorClass, Pattern pattern, JvmType matchClassRef) {
-  		processorClass.members += pattern.toMethod("process", null) [
-  			returnType = typeRef(Void::TYPE)
-			documentation = pattern.javadocProcessMethod.toString
-			abstract = true
-			for (parameter : pattern.parameters){
-				it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
-			}
-		]
-		processorClass.members += pattern.toMethod("process", null) [
-			returnType = typeRef(Void::TYPE)
-			annotations += annotationRef(typeof (Override))
-			parameters += pattern.toParameter("match", typeRef(matchClassRef))
-			body = '''
-				process(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);
-			'''
-		]
+  		try {
+  		    processorClass.members += pattern.toMethod("process", null) [
+  			   returnType = typeRef(Void::TYPE)
+			 documentation = pattern.javadocProcessMethod.toString
+			 abstract = true
+			 for (parameter : pattern.parameters){
+			 	   it.parameters += parameter.toParameter(parameter.parameterName, parameter.calculateType)
+			 }
+		  ]
+		  processorClass.members += pattern.toMethod("process", null) [
+			 returnType = typeRef(Void::TYPE)
+			 annotations += annotationRef(typeof (Override))
+			 parameters += pattern.toParameter("match", typeRef(matchClassRef))
+			 body = '''
+				    process(«FOR p : pattern.parameters SEPARATOR ', '»match.«p.getterMethodName»()«ENDFOR»);
+			 '''
+		  ]
+		} catch (IllegalStateException ex) {
+            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
+                IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
+        }
   	}
 
 }
