@@ -839,7 +839,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
             String[] issueData = Iterables.toArray(typeNames, String.class);
             if (issueData.length > 0) {
-                warning("Type not defined for variable " + variable.getName(),
+                info("Type not defined for variable " + variable.getName(),
                         PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE, issueData);
             }
         }

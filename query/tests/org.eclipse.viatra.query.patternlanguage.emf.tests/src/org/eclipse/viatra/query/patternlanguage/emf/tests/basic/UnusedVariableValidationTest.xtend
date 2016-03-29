@@ -70,7 +70,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 				Pattern(p);
 			}'
 		)
-		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
 	}
 
 	@Test
@@ -104,7 +104,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -127,7 +127,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -151,7 +151,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
 			getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -173,7 +173,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(
 			getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -197,8 +197,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(
 			getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -216,7 +216,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertAll(
 			getWarningCode(IssueCodes::LOCAL_VARIABLE_REFERENCED_ONCE),
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -237,8 +237,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertAll(
 			getWarningCode(IssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE),
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -262,8 +262,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertAll(
 			getWarningCode(IssueCodes::LOCAL_VARIABLE_QUANTIFIED_REFERENCE),
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -281,7 +281,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -302,8 +302,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -327,8 +327,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 	@Test
@@ -347,7 +347,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			getErrorCode(IssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE),
 			getErrorCode(IssueCodes::ANONYM_VARIABLE_MULTIPLE_REFERENCE),
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 	@Test
@@ -365,7 +365,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::LOCAL_VARIABLE_READONLY),
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -392,9 +392,9 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE),
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -419,8 +419,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE),
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 
@@ -446,8 +446,8 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE),
 			getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 }

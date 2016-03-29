@@ -84,7 +84,7 @@ class TransitiveClosureTest extends AbstractValidatorTest {
 			}'''
 		)
 		tester.validate(model).assertAll(getErrorCode(IssueCodes::TRANSITIVE_PATTERNCALL_ARITY),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE));
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE));
 	}
 
 	@Test
