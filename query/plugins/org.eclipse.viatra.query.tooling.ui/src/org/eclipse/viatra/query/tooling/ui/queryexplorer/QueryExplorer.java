@@ -432,6 +432,10 @@ public class QueryExplorer extends ViewPart {
         return patternsTreeViewer;
     }
 
+    /**
+     * 
+     * @noreference This method is only intended to be used inside query explorer
+     */
     public FlyoutControlComposite getPatternsViewerFlyout() {
         return patternsViewerFlyout;
     }

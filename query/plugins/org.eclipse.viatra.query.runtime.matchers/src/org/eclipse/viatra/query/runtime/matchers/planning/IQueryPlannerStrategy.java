@@ -16,10 +16,10 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 
 /**
- * An algorithm that builds a query plan based on a PSystem representation of a body of constraints.
+ * An algorithm that builds a query plan based on a PSystem representation of a body of constraints. This interface is
+ * for internal use of the various query backends.
  * 
  * @author Gabor Bergmann
- * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IQueryPlannerStrategy {
     public SubPlan plan(PBody pSystem, Logger logger, IQueryMetaContext context) throws QueryProcessingException;
