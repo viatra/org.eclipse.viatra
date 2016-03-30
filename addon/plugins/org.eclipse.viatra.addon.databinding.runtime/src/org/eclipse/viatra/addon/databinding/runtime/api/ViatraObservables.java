@@ -25,8 +25,6 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.addon.databinding.runtime.adapter.DatabindingAdapter;
-import org.eclipse.viatra.addon.databinding.runtime.adapter.GenericDatabindingAdapter;
 import org.eclipse.viatra.addon.databinding.runtime.adapter.ObservableDefinition;
 import org.eclipse.viatra.addon.databinding.runtime.adapter.ObservableDefinition.ObservableType;
 import org.eclipse.viatra.addon.databinding.runtime.collection.ObservablePatternMatchCollectionBuilder;
@@ -283,16 +281,6 @@ public final class ViatraObservables {
             Object container) {
         ComputedValue value = new ObservableLabelFeature(match, expression, container);
         return value;
-    }
-
-    /**
-     * Returns a {@link DatabindingAdapter} that can be used to observe details of pattern matches.
-     * 
-     * @param query
-     */
-    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(IQuerySpecification<?> query) {
-        GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(query);
-        return adapter;
     }
 
     /**

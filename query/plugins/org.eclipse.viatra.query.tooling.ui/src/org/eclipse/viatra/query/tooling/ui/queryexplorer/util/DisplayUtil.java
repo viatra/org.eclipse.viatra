@@ -38,8 +38,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.viatra.addon.databinding.runtime.adapter.DatabindingAdapter;
-import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.GenericQuerySpecification;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
@@ -267,11 +265,7 @@ public class DisplayUtil {
      */
     public static String getMessage(IPatternMatch match)//, boolean generatedMatcher)
     {
-//        if (generatedMatcher) {
-//            return DatabindingUtil.getDatabindingMessageForGeneratedMatcher(match);
-//        } else {
-            return getMessageForMatch(match);
-//      }
+    	return getMessageForMatch(match);
     }
 
 
@@ -303,7 +297,6 @@ public class DisplayUtil {
                     if (i > 0) {
                         message.append(", ");
                     }
-                    // message += v.getName()+"=$"+v.getName()+"$";
                     message.append(String.format("%s=$%s$", v, v));
                     i++;
                 }
@@ -313,26 +306,6 @@ public class DisplayUtil {
 
         return null;
     }
-
-    /**
-     * Get the DatabindingAdapter generated for the pattern whose name is patternName
-     *
-     * @param patternName
-     *            the name of the pattern
-     * @return an instance of the DatabindingAdapter class generated for the pattern
-     * TODO move into {@link DatabindingUtil} once Pattern Registry refactoring is done
-     */
-    public static DatabindingAdapter<IPatternMatch> getDatabindingAdapter(String patternName)//, boolean generatedMatcher)
-    {
-        IQuerySpecification<?> pattern = QueryExplorerPatternRegistry.getInstance().getPatternByFqn(patternName);
-//        if (generatedMatcher) {
-//            return DatabindingUtil.getDatabindingAdapterForGeneratedMatcher(pattern);
-//        } else {
-            return ViatraObservables.getDatabindingAdapter(pattern);
-//        }
-    }
-
-
 
     public PatternModel extractPatternModelFromResource(Resource resource) {
     	if (resource != null) {

@@ -24,14 +24,11 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.viatra.addon.databinding.runtime.adapter.DatabindingAdapter;
-import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatchContent;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 
 import com.google.inject.Inject;
@@ -81,15 +78,8 @@ public class DetailsViewerUtil {
         viewer.setCellModifier(new DetailElementCellModifier());
         viewer.setComparator(new ViewerComparator(new DetailComparator(match.getPatternMatch().parameterNames())));
 
-        DatabindingAdapter<IPatternMatch> databindableMatcher = DisplayUtil.getDatabindingAdapter(match
-                .getPatternMatch().patternName());// , match.getParent().isGenerated());
-
-        if (databindableMatcher == null) {
-            viewer.setInput(null);
-        } else {
-            DetailObserver observer = new DetailObserver(databindableMatcher, match);
-            viewer.setInput(observer);
-        }
+        DetailObserver observer = new DetailObserver(match);
+        viewer.setInput(observer);
     }
 
     public void prepareFor(PatternMatcherContent observableMatcher, TableViewer viewer) {

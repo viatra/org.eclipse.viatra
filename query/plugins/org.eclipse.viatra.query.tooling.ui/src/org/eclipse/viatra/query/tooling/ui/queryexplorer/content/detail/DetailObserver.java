@@ -25,8 +25,7 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.viatra.addon.databinding.runtime.adapter.DatabindingAdapter;
-import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.addon.databinding.runtime.adapter.MatcherProperties;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatchContent;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
 
@@ -45,13 +44,13 @@ public class DetailObserver extends AbstractObservableList {
     private ValueChangeListener listener;
     private Map<IObservableValue, DetailElement> valueMap;
 
-    public DetailObserver(DatabindingAdapter<IPatternMatch> databindableMatcher, PatternMatchContent pm) {
+    public DetailObserver(PatternMatchContent pm) {
         this.patternMatch = pm;
         this.details = new ArrayList<DetailElement>();
         this.valueMap = new HashMap<IObservableValue, DetailElement>();
         this.listener = new ValueChangeListener();
-        for (String param : databindableMatcher.getParameterNames()) {
-            IObservableValue oval = databindableMatcher.getObservableParameter(patternMatch.getPatternMatch(), param);
+        for (String param : MatcherProperties.getPropertyNames(patternMatch.getPatternMatch().specification())) {
+            IObservableValue oval = MatcherProperties.getObservableValue(patternMatch.getPatternMatch().specification(), patternMatch.getPatternMatch(), param);
 
             if (oval != null) {
                 oval.addValueChangeListener(listener);
