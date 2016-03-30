@@ -97,7 +97,7 @@ class BatchTransformationRule<Match extends IPatternMatch,Matcher extends Viatra
 		    val querySpec = precondition
 		    val Job<Match> job = Jobs::newStatelessJob(CRUDActivationStateEnum::CREATED, action)
 		    
-		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, lifecycle, newHashSet(job))
+		    ruleSpec = Rules::newMatcherRuleSpecification(querySpec, lifecycle, newHashSet(job), name)
     	}
     	ruleSpec
     }

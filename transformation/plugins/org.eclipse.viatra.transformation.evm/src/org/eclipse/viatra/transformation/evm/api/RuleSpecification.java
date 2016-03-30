@@ -42,6 +42,7 @@ public class RuleSpecification<EventAtom> {
     private final Multimap<ActivationState, Job<EventAtom>> jobs;
     private final Set<ActivationState> enabledStates;
     private final EventSourceSpecification<EventAtom> sourceSpecification;
+    private String name;
 
     /**
      * Creates a specification with the given life-cycle and job set.
@@ -67,6 +68,19 @@ public class RuleSpecification<EventAtom> {
     }
     
     /**
+     * Creates a specification with a certain name based on the given life-cycle and job set.
+     * 
+     * @param lifeCycle
+     * @param jobs
+     * @param name
+     */
+    public RuleSpecification(final EventSourceSpecification<EventAtom> sourceSpecification, final ActivationLifeCycle lifeCycle,
+            final Set<Job<EventAtom>> jobs, String name) {
+        this(sourceSpecification, lifeCycle, jobs);
+        this.name = name;
+    }
+    
+    /**
      * Instantiates the rule on the given EventRealm with the given filter
      * .
      * @param eventRealm
@@ -89,9 +103,6 @@ public class RuleSpecification<EventAtom> {
         
     }
     
-    /**
-     * @return the sourceSpecification
-     */
     public EventSourceSpecification<EventAtom> getSourceSpecification() {
         return sourceSpecification;
     }
@@ -104,17 +115,11 @@ public class RuleSpecification<EventAtom> {
 //    public EventFilter<EventAtom> createFilter(EventAtom atom){
 //        return sourceSpecification.createFilter(atom);
 //    }
-    
-    /**
-     * @return the lifeCycle
-     */
+
     public ActivationLifeCycle getLifeCycle() {
         return lifeCycle;
     }
 
-    /**
-     * @return the enabledStates
-     */
     public Set<ActivationState> getEnabledStates() {
         return enabledStates;
     }
@@ -129,11 +134,13 @@ public class RuleSpecification<EventAtom> {
         return jobs.get(state);
     }
 
-    /**
-     * @return the jobs
-     */
+
     public Multimap<ActivationState, Job<EventAtom>> getJobs() {
         return jobs;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

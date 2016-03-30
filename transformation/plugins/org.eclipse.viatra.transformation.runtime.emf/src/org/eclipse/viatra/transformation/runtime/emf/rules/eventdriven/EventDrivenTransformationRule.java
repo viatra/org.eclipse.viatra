@@ -49,7 +49,7 @@ public class EventDrivenTransformationRule<Match extends IPatternMatch, Matcher 
 			jobs.add(Jobs.newStatelessJob(state, action));
 		}
 
-		ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle, jobs);
+		ruleSpecification = Rules.newMatcherRuleSpecification(precondition, lifeCycle, jobs, name);
 		this.filter = filter;
 	}
 
