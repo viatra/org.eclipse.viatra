@@ -23,7 +23,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -197,7 +196,15 @@ public class LocalSearchMatcher {
     public int countMatches(MatchingFrame initialFrame) throws LocalSearchException {
     	matchingStarted();
         PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);
-        int result = Iterators.size(it);
+        
+        MatchingTable results = new MatchingTable();
+        while (it.hasNext()) {
+            final MatchingFrame frame = it.next();
+            results.put(frame.getKey(), frame);
+        }
+        
+        int result = results.size();
+        
         matchingFinished();
 		return result;
     }
