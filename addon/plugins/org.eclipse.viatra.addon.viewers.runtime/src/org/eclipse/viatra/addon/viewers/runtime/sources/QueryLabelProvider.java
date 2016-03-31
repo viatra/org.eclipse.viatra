@@ -12,6 +12,7 @@ package org.eclipse.viatra.addon.viewers.runtime.sources;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.model.listeners.ViewerLabelListenerAdapter;
 import org.eclipse.viatra.addon.viewers.runtime.model.listeners.IViewerLabelListener;
@@ -27,21 +28,36 @@ public class QueryLabelProvider extends LabelProvider {
     private IViewerLabelListener labelListener = new ViewerLabelListenerAdapter() {
 
 		@Override
-		public void labelUpdated(Item item, String newLabel) {
-			fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, item));
+		public void labelUpdated(final Item item, String newLabel) {
+			display.asyncExec(new Runnable() {
+				
+				@Override
+				public void run() {
+					fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, item));
+				}
+			});
 		}
 
 		@Override
-		public void labelUpdated(Edge edge, String newLabel) {
-			fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, edge));			
+		public void labelUpdated(final Edge edge, String newLabel) {
+			display.asyncExec(new Runnable() {
+				
+				@Override
+				public void run() {
+					fireLabelProviderChanged(new LabelProviderChangedEvent(QueryLabelProvider.this, edge));			
+				}
+			});
 		}
     	
 	};
 	
-	private ViewerState state; 
+	private ViewerState state;
 
-	public QueryLabelProvider(ViewerState state) {
+	protected final Display display; 
+
+	public QueryLabelProvider(ViewerState state, Display display) {
 		this.state = state;
+		this.display = display;
 		state.addLabelListener(labelListener);
 	}
 	

@@ -47,12 +47,10 @@ import com.google.common.collect.Maps;
  */
 public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyleProvider, IConnectionStyleProvider {
 
-    private Display display;
     private Map<RGB, Color> colorMap = Maps.newHashMap();
 
     public ZestLabelProvider(ViewerState state, Display display) {
-    	super(state);
-        this.display = display;
+    	super(state, display);
 
     }
 
