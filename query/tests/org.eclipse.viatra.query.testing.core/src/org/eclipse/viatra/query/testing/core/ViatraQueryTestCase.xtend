@@ -49,17 +49,21 @@ class ViatraQueryTestCase {
 	    val nonIncrementals = modelProviders.filter[!updatedByModify]
 	    modelProviders.removeAll(nonIncrementals)
 	    nonIncrementals.forEach[dispose]
+	    val elementsToModify = <T>newLinkedList
 	    val iterator = resourceSet.allContents
 	    while(iterator.hasNext){
 	        val element = iterator.next
 	        if (clazz.isInstance(element)){
 	           val cast = clazz.cast(element)
                 if (condition.apply(cast)){
-	                operation.apply(clazz.cast(element))
+	                elementsToModify += clazz.cast(element)
 	           }
 	        }
 	    }
-	}
+        for(element : elementsToModify) {
+            operation.apply(element)
+        }
+    }
 
 	def addMatchSetModelProvider(IMatchSetModelProvider matchSetModelProvider) {
 		modelProviders.add(matchSetModelProvider);
