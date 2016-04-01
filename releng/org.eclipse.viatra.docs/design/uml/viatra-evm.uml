@@ -6,9 +6,14 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_4h0D0PJhEeWT4vUs8TSmBA" name="RuleEngine"/>
     <packagedElement xmi:type="uml:Class" xmi:id="_9Ot30PJhEeWT4vUs8TSmBA" name="Scheduler" isAbstract="true"/>
-    <packagedElement xmi:type="uml:Class" xmi:id="_-nV3oPJhEeWT4vUs8TSmBA" name="Executor"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_-nV3oPJhEeWT4vUs8TSmBA" name="AdaptableExecutor">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_t2I8gvgNEeWePsRvJyOKOQ" name="vm" type="_MxMxYPgMEeWePsRvJyOKOQ" association="_t2IVcPgNEeWePsRvJyOKOQ"/>
+      <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_d5iLUPgMEeWePsRvJyOKOQ" client="_-nV3oPJhEeWT4vUs8TSmBA" supplier="_S85eoPgMEeWePsRvJyOKOQ" contract="_S85eoPgMEeWePsRvJyOKOQ"/>
+    </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="__ur6MPJhEeWT4vUs8TSmBA" name="RuleBase"/>
-    <packagedElement xmi:type="uml:Class" xmi:id="_BKDsAPJiEeWT4vUs8TSmBA" name="Agenda"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_BKDsAPJiEeWT4vUs8TSmBA" name="Agenda">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_16eb0fgMEeWePsRvJyOKOQ" name="listener" type="_zUkJgPgMEeWePsRvJyOKOQ" aggregation="composite" association="_16dNsPgMEeWePsRvJyOKOQ"/>
+    </packagedElement>
     <packagedElement xmi:type="uml:Association" xmi:id="_SrXKIPJjEeWT4vUs8TSmBA" memberEnd="_SrfF8PJjEeWT4vUs8TSmBA _Srg7IPJjEeWT4vUs8TSmBA" navigableOwnedEnd="_SrfF8PJjEeWT4vUs8TSmBA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Sra0gPJjEeWT4vUs8TSmBA" source="org.eclipse.papyrus">
         <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Sra0gfJjEeWT4vUs8TSmBA" key="nature" value="UML_Nature"/>
@@ -29,21 +34,21 @@
         <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_teNhkPJjEeWT4vUs8TSmBA" key="nature" value="UML_Nature"/>
       </eAnnotations>
       <ownedEnd xmi:type="uml:Property" xmi:id="_teNhkvJjEeWT4vUs8TSmBA" name="scheduler" type="_9Ot30PJhEeWT4vUs8TSmBA" association="_teMTcPJjEeWT4vUs8TSmBA"/>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_teNhkfJjEeWT4vUs8TSmBA" name="executor" type="_-nV3oPJhEeWT4vUs8TSmBA" aggregation="composite" association="_teMTcPJjEeWT4vUs8TSmBA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_teNhkfJjEeWT4vUs8TSmBA" name="execution" type="_f--qUPgLEeWePsRvJyOKOQ" aggregation="composite" association="_teMTcPJjEeWT4vUs8TSmBA"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_0U5FgPJjEeWT4vUs8TSmBA" name="Context"/>
     <packagedElement xmi:type="uml:Association" xmi:id="_AwEMwPJkEeWT4vUs8TSmBA" memberEnd="_AwGB8fJkEeWT4vUs8TSmBA _AwGB8vJkEeWT4vUs8TSmBA" navigableOwnedEnd="_AwGB8fJkEeWT4vUs8TSmBA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_AwFa4PJkEeWT4vUs8TSmBA" source="org.eclipse.papyrus">
         <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_AwGB8PJkEeWT4vUs8TSmBA" key="nature" value="UML_Nature"/>
       </eAnnotations>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_AwGB8vJkEeWT4vUs8TSmBA" name="executor" type="_-nV3oPJhEeWT4vUs8TSmBA" association="_AwEMwPJkEeWT4vUs8TSmBA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_AwGB8vJkEeWT4vUs8TSmBA" name="executor" type="_S85eoPgMEeWePsRvJyOKOQ" association="_AwEMwPJkEeWT4vUs8TSmBA"/>
       <ownedEnd xmi:type="uml:Property" xmi:id="_AwGB8fJkEeWT4vUs8TSmBA" name="rulebase" type="__ur6MPJhEeWT4vUs8TSmBA" aggregation="shared" association="_AwEMwPJkEeWT4vUs8TSmBA"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Association" xmi:id="_Bfv9QPJkEeWT4vUs8TSmBA" memberEnd="_BfxLYfJkEeWT4vUs8TSmBA _BfyZgPJkEeWT4vUs8TSmBA" navigableOwnedEnd="_BfxLYfJkEeWT4vUs8TSmBA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_BfwkUPJkEeWT4vUs8TSmBA" source="org.eclipse.papyrus">
         <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_BfxLYPJkEeWT4vUs8TSmBA" key="nature" value="UML_Nature"/>
       </eAnnotations>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_BfyZgPJkEeWT4vUs8TSmBA" name="executor" type="_-nV3oPJhEeWT4vUs8TSmBA" association="_Bfv9QPJkEeWT4vUs8TSmBA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_BfyZgPJkEeWT4vUs8TSmBA" name="executor" type="_S85eoPgMEeWePsRvJyOKOQ" association="_Bfv9QPJkEeWT4vUs8TSmBA"/>
       <ownedEnd xmi:type="uml:Property" xmi:id="_BfxLYfJkEeWT4vUs8TSmBA" name="context" type="_0U5FgPJjEeWT4vUs8TSmBA" aggregation="composite" association="_Bfv9QPJkEeWT4vUs8TSmBA"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Interface" xmi:id="_RXU58PJkEeWT4vUs8TSmBA" name="EventRealm"/>
@@ -152,24 +157,98 @@
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2XrN4PJpEeWT4vUs8TSmBA" value="*"/>
       </ownedEnd>
     </packagedElement>
-    <packagedElement xmi:type="uml:Usage" xmi:id="_h6VVEPJrEeWT4vUs8TSmBA" client="__ur6MPJhEeWT4vUs8TSmBA" supplier="_BKDsAPJiEeWT4vUs8TSmBA"/>
     <packagedElement xmi:type="uml:Usage" xmi:id="_l2khIPJrEeWT4vUs8TSmBA" client="_0ctn8PJnEeWT4vUs8TSmBA" supplier="_ywQGIPJnEeWT4vUs8TSmBA"/>
-    <packagedElement xmi:type="uml:Usage" xmi:id="_oDRCMPJrEeWT4vUs8TSmBA" client="_-nV3oPJhEeWT4vUs8TSmBA" supplier="_0U5FgPJjEeWT4vUs8TSmBA"/>
-    <packagedElement xmi:type="uml:Usage" xmi:id="_GCCjEPJsEeWT4vUs8TSmBA" client="_-nV3oPJhEeWT4vUs8TSmBA" supplier="__ur6MPJhEeWT4vUs8TSmBA"/>
-    <packagedElement xmi:type="uml:Class" xmi:id="_6n0tEPJsEeWT4vUs8TSmBA" name="Logger"/>
-    <packagedElement xmi:type="uml:Association" xmi:id="_7rqvsPJsEeWT4vUs8TSmBA" memberEnd="_7rr90PJsEeWT4vUs8TSmBA _7rr90fJsEeWT4vUs8TSmBA" navigableOwnedEnd="_7rr90PJsEeWT4vUs8TSmBA">
-      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_7rqvsfJsEeWT4vUs8TSmBA" source="org.eclipse.papyrus">
-        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_7rqvsvJsEeWT4vUs8TSmBA" key="nature" value="UML_Nature"/>
-      </eAnnotations>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_7rr90fJsEeWT4vUs8TSmBA" name="rulebase" type="__ur6MPJhEeWT4vUs8TSmBA" association="_7rqvsPJsEeWT4vUs8TSmBA"/>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_7rr90PJsEeWT4vUs8TSmBA" name="logger" type="_6n0tEPJsEeWT4vUs8TSmBA" association="_7rqvsPJsEeWT4vUs8TSmBA"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_oDRCMPJrEeWT4vUs8TSmBA" client="_S85eoPgMEeWePsRvJyOKOQ" supplier="_0U5FgPJjEeWT4vUs8TSmBA"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_f--qUPgLEeWePsRvJyOKOQ" name="ScheduledExecution">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_7JSfgPgLEeWePsRvJyOKOQ" name="executor" type="_S85eoPgMEeWePsRvJyOKOQ" aggregation="composite" association="_7JQqUPgLEeWePsRvJyOKOQ"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Association" xmi:id="_8IiR4PJsEeWT4vUs8TSmBA" memberEnd="_8Ii48PJsEeWT4vUs8TSmBA _8Ii48fJsEeWT4vUs8TSmBA" navigableOwnedEnd="_8Ii48PJsEeWT4vUs8TSmBA">
-      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_8IiR4fJsEeWT4vUs8TSmBA" source="org.eclipse.papyrus">
-        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_8IiR4vJsEeWT4vUs8TSmBA" key="nature" value="UML_Nature"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_7JQqUPgLEeWePsRvJyOKOQ" memberEnd="_7JSfgPgLEeWePsRvJyOKOQ _7JSfgfgLEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_7JRRYPgLEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_7JRRYfgLEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
       </eAnnotations>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_8Ii48fJsEeWT4vUs8TSmBA" name="agenda" type="_BKDsAPJiEeWT4vUs8TSmBA" association="_8IiR4PJsEeWT4vUs8TSmBA"/>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_8Ii48PJsEeWT4vUs8TSmBA" name="logger" type="_6n0tEPJsEeWT4vUs8TSmBA" association="_8IiR4PJsEeWT4vUs8TSmBA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_7JSfgfgLEeWePsRvJyOKOQ" name="execution" type="_f--qUPgLEeWePsRvJyOKOQ" association="_7JQqUPgLEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_LGWZIPgMEeWePsRvJyOKOQ" name="AdaptableRulebase">
+      <generalization xmi:type="uml:Generalization" xmi:id="_h5_JAPgMEeWePsRvJyOKOQ" general="__ur6MPJhEeWT4vUs8TSmBA"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_joNI4PgNEeWePsRvJyOKOQ" name="vm" type="_MxMxYPgMEeWePsRvJyOKOQ" association="_joL6wPgNEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_MxMxYPgMEeWePsRvJyOKOQ" name="AdaptableEvm">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_WfvBUPgOEeWePsRvJyOKOQ" name="adapters" type="_QLLTAPgOEeWePsRvJyOKOQ" aggregation="composite" association="_WftzMPgOEeWePsRvJyOKOQ">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ar-YQPgOEeWePsRvJyOKOQ"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_asO28PgOEeWePsRvJyOKOQ" value="*"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_bTRo0fgOEeWePsRvJyOKOQ" name="listener" type="_Sn50IPgOEeWePsRvJyOKOQ" aggregation="composite" association="_bTRBwPgOEeWePsRvJyOKOQ">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_eeiq8PgOEeWePsRvJyOKOQ"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_eej5EPgOEeWePsRvJyOKOQ" value="*"/>
+      </ownedAttribute>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_S85eoPgMEeWePsRvJyOKOQ" name="IExecutor"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_mSR-8PgMEeWePsRvJyOKOQ" name="AdaptableConflictResolver">
+      <generalization xmi:type="uml:Generalization" xmi:id="_ppSXAPgMEeWePsRvJyOKOQ" general="_BRLq4PJmEeWT4vUs8TSmBA"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_XlCR8vgNEeWePsRvJyOKOQ" name="delegatedConflictResolver" type="_BRLq4PJmEeWT4vUs8TSmBA" association="_XlBD0PgNEeWePsRvJyOKOQ"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_rYBUQvgNEeWePsRvJyOKOQ" name="vm" type="_MxMxYPgMEeWePsRvJyOKOQ" association="_rYAtMPgNEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_zUkJgPgMEeWePsRvJyOKOQ" name="IActivationNotificationListener"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_16dNsPgMEeWePsRvJyOKOQ" memberEnd="_16eb0fgMEeWePsRvJyOKOQ _16fC4PgMEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_16d0wPgMEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_16eb0PgMEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_16fC4PgMEeWePsRvJyOKOQ" name="agenda" type="_BKDsAPJiEeWT4vUs8TSmBA" association="_16dNsPgMEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_6QKpsPgMEeWePsRvJyOKOQ" name="AdaptableActivationNotificationListener">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_EprbMPgNEeWePsRvJyOKOQ" name="delegatedListener" type="_zUkJgPgMEeWePsRvJyOKOQ" association="_EppmAPgNEeWePsRvJyOKOQ"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_3q_hwfgNEeWePsRvJyOKOQ" name="vm" type="_MxMxYPgMEeWePsRvJyOKOQ" association="_3q5bIPgNEeWePsRvJyOKOQ"/>
+      <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_BKYp0PgNEeWePsRvJyOKOQ" client="_6QKpsPgMEeWePsRvJyOKOQ" supplier="_zUkJgPgMEeWePsRvJyOKOQ" contract="_zUkJgPgMEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_EppmAPgNEeWePsRvJyOKOQ" memberEnd="_EprbMPgNEeWePsRvJyOKOQ _EpsCQPgNEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_Epq0IPgNEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_Epq0IfgNEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_EpsCQPgNEeWePsRvJyOKOQ" name="listener" type="_6QKpsPgMEeWePsRvJyOKOQ" association="_EppmAPgNEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_XlBD0PgNEeWePsRvJyOKOQ" memberEnd="_XlCR8vgNEeWePsRvJyOKOQ _XlC5APgNEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_XlCR8PgNEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_XlCR8fgNEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_XlC5APgNEeWePsRvJyOKOQ" name="conflictresolver" type="_mSR-8PgMEeWePsRvJyOKOQ" association="_XlBD0PgNEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_joL6wPgNEeWePsRvJyOKOQ" memberEnd="_joNI4PgNEeWePsRvJyOKOQ _joNI4fgNEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_joMh0PgNEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_joMh0fgNEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_joNI4fgNEeWePsRvJyOKOQ" name="ruleBase" type="_LGWZIPgMEeWePsRvJyOKOQ" association="_joL6wPgNEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_rYAtMPgNEeWePsRvJyOKOQ" memberEnd="_rYBUQvgNEeWePsRvJyOKOQ _rYDwgPgNEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_rYBUQPgNEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_rYBUQfgNEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_rYDwgPgNEeWePsRvJyOKOQ" name="resolver" type="_mSR-8PgMEeWePsRvJyOKOQ" association="_rYAtMPgNEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_t2IVcPgNEeWePsRvJyOKOQ" memberEnd="_t2I8gvgNEeWePsRvJyOKOQ _t2JjkPgNEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_t2I8gPgNEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_t2I8gfgNEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_t2JjkPgNEeWePsRvJyOKOQ" name="executor" type="_-nV3oPJhEeWT4vUs8TSmBA" association="_t2IVcPgNEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_3q5bIPgNEeWePsRvJyOKOQ" memberEnd="_3q_hwfgNEeWePsRvJyOKOQ _3rAv4PgNEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_3q9skPgNEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_3q_hwPgNEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_3rAv4PgNEeWePsRvJyOKOQ" name="listener" type="_6QKpsPgMEeWePsRvJyOKOQ" association="_3q5bIPgNEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_QLLTAPgOEeWePsRvJyOKOQ" name="IEVMAdapter"/>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_Sn50IPgOEeWePsRvJyOKOQ" name="IEVMListener"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_WftzMPgOEeWePsRvJyOKOQ" memberEnd="_WfvBUPgOEeWePsRvJyOKOQ _WfvBUfgOEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_WfuaQPgOEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_WfuaQfgOEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_WfvBUfgOEeWePsRvJyOKOQ" name="vm" type="_MxMxYPgMEeWePsRvJyOKOQ" association="_WftzMPgOEeWePsRvJyOKOQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_bTRBwPgOEeWePsRvJyOKOQ" memberEnd="_bTRo0fgOEeWePsRvJyOKOQ _bTSP4PgOEeWePsRvJyOKOQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_bTRBwfgOEeWePsRvJyOKOQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_bTRo0PgOEeWePsRvJyOKOQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_bTSP4PgOEeWePsRvJyOKOQ" name="vm" type="_MxMxYPgMEeWePsRvJyOKOQ" association="_bTRBwPgOEeWePsRvJyOKOQ"/>
     </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_mjupcPJoEeWT4vUs8TSmBA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_mjxFsPJoEeWT4vUs8TSmBA" source="http://www.eclipse.org/uml2/2.0.0/UML">
@@ -180,8 +259,6 @@
   </uml:Model>
   <standard:Instantiate xmi:id="_oqndcPJoEeWT4vUs8TSmBA" base_Usage="_gzfwMPJoEeWT4vUs8TSmBA"/>
   <standard:Instantiate xmi:id="_scd-cPJoEeWT4vUs8TSmBA" base_Usage="_ritr8PJoEeWT4vUs8TSmBA"/>
-  <standard:Instantiate xmi:id="_i36XoPJrEeWT4vUs8TSmBA" base_Usage="_h6VVEPJrEeWT4vUs8TSmBA"/>
   <standard:Instantiate xmi:id="_mkJY0PJrEeWT4vUs8TSmBA" base_Usage="_l2khIPJrEeWT4vUs8TSmBA"/>
   <standard:Instantiate xmi:id="_o_OUIPJrEeWT4vUs8TSmBA" base_Usage="_oDRCMPJrEeWT4vUs8TSmBA"/>
-  <standard:Instantiate xmi:id="_GunVMPJsEeWT4vUs8TSmBA" base_Usage="_GCCjEPJsEeWT4vUs8TSmBA"/>
 </xmi:XMI>
