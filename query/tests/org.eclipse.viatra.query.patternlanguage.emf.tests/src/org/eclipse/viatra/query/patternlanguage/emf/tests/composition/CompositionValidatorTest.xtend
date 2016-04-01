@@ -169,6 +169,26 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
+	@Test
+    def void testNegativeCallOnlySingleUseVariables() {
+        val model = parseHelper.parse(
+            'package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+
+            pattern calledPattern(p : Pattern) = {
+                Pattern(p);
+            }
+
+            pattern callerPattern(c) = {
+                Pattern(c);
+                neg find calledPattern(_);
+            }'
+        )
+        tester.validate(model).assertAll(
+            getWarningCode(IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
 	@Test @Ignore(value = "This call is unsafe because of a negative call circle. 
 						   p: Pattern is a positive reference.")
 	def void testNegativeCallCircle() {

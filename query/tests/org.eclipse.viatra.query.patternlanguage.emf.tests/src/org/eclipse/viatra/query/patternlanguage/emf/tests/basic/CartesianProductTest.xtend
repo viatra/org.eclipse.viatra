@@ -27,6 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics
 import org.junit.Assert
+import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -209,7 +210,7 @@ class CartesianProductTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOk
+		tester.validate(model).assertWarning(IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES)
 	}
 
 	@Test
