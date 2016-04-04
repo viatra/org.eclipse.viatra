@@ -13,7 +13,13 @@ package org.eclipse.viatra.query.runtime.internal.apiimpl;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 
 /**
- * Internal class for wrapping a query result providing backend.
+ * Internal class for wrapping a query result providing backend. It's only supported usage is by the
+ * {@link ViatraQueryEngineImpl} class.
+ * </p>
+ * 
+ * <strong>Important note</strong>: this class must not introduce any public method, as it will be visible through
+ * BaseMatcher as an API, although this class is not an API itself.
+ * 
  * @author Bergmann Gabor
  *
  */
