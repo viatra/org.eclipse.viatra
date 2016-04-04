@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.dom.SimpleName
 import org.eclipse.jdt.core.dom.SimpleType
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper
+import org.eclipse.swt.widgets.Display
 
 class JavaProjectMigrator extends JavaProjectMigratorData{
 	
@@ -76,24 +77,30 @@ class JavaProjectMigrator extends JavaProjectMigratorData{
 		 */
 		val bufferManager = FileBuffers::textFileBufferManager
 		for(unit : list){
-			val ast = parse(unit, m.newChild(1));
-			val rewrite = collectChanges(ast);
-			m.worked(1)
+		    Display.^default.syncExec(new Runnable() {
+        
+            override run() {
+    			val ast = parse(unit, m.newChild(1));
+                val rewrite = collectChanges(ast);
+                m.worked(1)
 			
-			val textEdit = rewrite.rewriteAST()
-			val path = unit.path
-			try{
-				bufferManager.connect(path, LocationKind::IFILE, null)
-				val textFileBuffer = bufferManager.getTextFileBuffer(path, LocationKind::IFILE)
-				val document = textFileBuffer.document
+                val textEdit = rewrite.rewriteAST()
+                val path = unit.path
+                try{
+				    bufferManager.connect(path, LocationKind::IFILE, null)
+				    val textFileBuffer = bufferManager.getTextFileBuffer(path, LocationKind::IFILE)
+				    val document = textFileBuffer.document
 			
-				textEdit.apply(document)
+				    textEdit.apply(document)
 				
-				textFileBuffer.commit(null, false)
-			}finally{
-				bufferManager.disconnect(path, LocationKind::IFILE, null)
-				m.worked(1)
-			}
+				    textFileBuffer.commit(null, false)
+                }finally{
+				    bufferManager.disconnect(path, LocationKind::IFILE, null)
+				    m.worked(1)
+                }
+            }
+		        
+		    })
 		}
 		
 		/*
