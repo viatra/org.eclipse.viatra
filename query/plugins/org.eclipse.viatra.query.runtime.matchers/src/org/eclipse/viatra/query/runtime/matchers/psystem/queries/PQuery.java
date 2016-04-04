@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 
 /**
  * Internal representation of a query / graph pattern (using a constraint system formalism), 
@@ -119,6 +120,16 @@ public interface PQuery extends PQueryHeader {
 	 */
 	public QueryEvaluationHint getEvaluationHints();
 
+	
+	/**
+	 * Type information, expressed on query parameters, that all matches of the query are guaranteed to respect. 
+	 * <p> At the very minimum, this should include the declared types of the parameters.
+	 * <p> The type judgement tuples shall contain the <i>parameter index</i>, NOT the {@link PParameter} object.
+	 * 
+	 * @return a non-null set of type judgements that the query guarantees for its matches
+	 */
+	public Set<TypeJudgement> getTypeGuarantees();
+	
 	/**
 	 * If the query definition is uninitialized, initializes it.
 	 * @throws QueryInitializationException if initialization of query specification fails

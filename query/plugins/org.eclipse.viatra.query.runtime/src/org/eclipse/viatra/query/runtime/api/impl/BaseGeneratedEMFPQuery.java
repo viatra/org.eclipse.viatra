@@ -50,6 +50,20 @@ public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
         			"Query refers to missing type in EPackage.", this);
         return literal;
     }
+    
+    /**
+     * For parameter type retrieval only.
+     * 
+     * <p>If parameter type declaration is erroneous, we still get a working parameter list (without the type declaration); 
+     *  theexception will be thrown again later when the body is processed.
+     */
+    protected EClassifier getClassifierLiteralSafe(String packageURI, String classifierName) {
+    	try {
+			return getClassifierLiteral(packageURI, classifierName);
+		} catch (QueryInitializationException e) {
+			return null;
+		}
+    }
 
     protected EStructuralFeature getFeatureLiteral(String packageUri, String className, String featureName) throws QueryInitializationException {
         EClassifier container = getClassifierLiteral(packageUri, className);

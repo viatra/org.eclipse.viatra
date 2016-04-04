@@ -11,10 +11,13 @@
 package org.eclipse.viatra.query.testing.core.base;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -130,6 +133,11 @@ public class DisjunctionBasedPQuery implements PQuery  {
 	@Override
 	public List<Object> publishedAs() {
 		return specificationTraces;
+	}
+
+	@Override
+	public Set<TypeJudgement> getTypeGuarantees() {
+		return Collections.emptySet();
 	}
 
 }

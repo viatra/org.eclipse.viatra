@@ -109,10 +109,11 @@ public class PatternBodyTransformer {
         acceptor.acceptExportedParameters(parameters);
     }
 
-    private IInputKey classifierToInputKey(EClassifier classifier) {
-        IInputKey key = classifier instanceof EClass ?
-                new EClassTransitiveInstancesKey((EClass) classifier) :
-                new EDataTypeInSlotsKey((EDataType) classifier);
+    public static IInputKey classifierToInputKey(EClassifier classifier) {
+        IInputKey key = classifier == null ? null :
+        		classifier instanceof EClass ?
+	                new EClassTransitiveInstancesKey((EClass) classifier) :
+	                new EDataTypeInSlotsKey((EDataType) classifier);
         return key;
     }
 

@@ -13,11 +13,20 @@ package org.eclipse.viatra.query.patternlanguage.emf.specification;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -116,7 +125,13 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
                     // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
                     String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
                             .getQualifiedName();
-                    return new PParameter(var.getName(), clazz);
+                    
+                    IInputKey unaryDeclaredType = null; 
+                    Type type = var.getType();
+					if (type instanceof ClassType) 
+                    	unaryDeclaredType = PatternBodyTransformer.classifierToInputKey(((ClassType) type).getClassname());
+                    
+					return new PParameter(var.getName(), clazz, unaryDeclaredType);
                 }
             }
 

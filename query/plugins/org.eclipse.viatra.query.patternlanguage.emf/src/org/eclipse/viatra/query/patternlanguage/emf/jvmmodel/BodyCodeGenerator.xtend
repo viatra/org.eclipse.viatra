@@ -147,49 +147,14 @@ class BodyCodeGenerator extends StringConcatenationClient {
             }
         
             override acceptTypeConstraint(List<String> variableNames, IInputKey key) {
-                switch key {
-                    EStructuralFeatureInstancesKey : {
-                        val literal = key.emfKey
-                        val container = literal.EContainingClass
-                        val packageNsUri = container.EPackage.nsURI
-                        target.append('''new ''')
-                        target.append(TypeConstraint)
-                        target.append('''(body, new ''')
-                        target.append(FlatTuple)
-                        target.append('''(«variableNames.output»), new ''')
-                        target.append(EStructuralFeatureInstancesKey)
-                        target.append('''(getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»")));
-                        ''')
-                    }
-                    EClassTransitiveInstancesKey : {
-                        val literal = key.emfKey
-                        val packageNsUri = literal.EPackage.nsURI
-                        target.append('''new ''')
-                        target.append(TypeConstraint)
-                        target.append('''(body, new ''')
-                        target.append(FlatTuple)
-                        target.append('''(«variableNames.output»), new ''')
-                        target.append(EClassTransitiveInstancesKey)
-                        target.append('''((''')
-                        target.append(EClass)
-                        target.append(''')getClassifierLiteral("«packageNsUri»", "«literal.name»")));
-                        ''')
-                    }
-                    EDataTypeInSlotsKey : {
-                        val literal = key.emfKey
-                        val packageNsUri = literal.EPackage.nsURI
-                        target.append('''new ''')
-                        target.append(TypeConstraint)
-                        target.append('''(body, new ''')
-                        target.append(FlatTuple)
-                        target.append('''(«variableNames.output»), new ''')
-                        target.append(EDataTypeInSlotsKey)
-                        target.append('''((''')
-                        target.append(EDataType)
-                        target.append(''')getClassifierLiteral("«packageNsUri»", "«literal.name»")));
-                        ''')
-                    }
-                }
+                target.append('''new ''')
+                target.append(TypeConstraint)
+                target.append('''(body, new ''')
+                target.append(FlatTuple)
+                target.append('''(«variableNames.output»), ''')
+                target.appendInputKey(key, false)
+                target.append(''');
+                ''')
             }
         
             private def output(List<String> variableNames) {
@@ -306,6 +271,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
         } // PatternModelAcceptor
         new PatternBodyTransformer(pattern).transform(body, acceptor)
     }
+        
 
     /**
      * Generates a {@link PVariable} declaration with the given name.

@@ -16,6 +16,8 @@ import com.google.common.base.Splitter
 import com.google.inject.Inject
 import java.util.regex.Matcher
 import org.apache.log4j.Logger
+import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFPatternTypeProvider
 import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider
@@ -25,7 +27,12 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
+import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
+import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
+import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.xtend2.lib.StringConcatenation
+import org.eclipse.xtend2.lib.StringConcatenationClient.TargetStringConcatenation
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
@@ -36,6 +43,7 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
+import org.eclipse.xtend2.lib.StringConcatenationClient
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -378,4 +386,63 @@ class EMFPatternLanguageJvmModelInferrerUtil {
         throw new RuntimeException("Expression not found in pattern")
     }
     
+    /**
+     * Output code is intended for generated query specification classes, 
+     *  since it depends on 'getFeatureLiteral()' / 'getClassifierLiteral()'
+     * 
+     * <p> the "safe" classifier lookup is used if the result is used for initializing a PParameter
+     */
+    public def StringConcatenationClient serializeInputKey(IInputKey key, boolean forParameter) {
+        return new StringConcatenationClient() {
+            override protected appendTo(TargetStringConcatenation target) {
+                target.appendInputKey(key, forParameter)
+            }
+        }
+    }
+    
+    /**
+     * Output code is intended for generated query specification classes, 
+     *  since it depends on 'getFeatureLiteral()' / 'getClassifierLiteral()'
+     * 
+     * <p> the "safe" classifier lookup is used if the result is used for initializing a PParameter
+     */
+    public def appendInputKey(TargetStringConcatenation target, IInputKey key, boolean forParameter) {
+        switch key {
+            EStructuralFeatureInstancesKey : {
+                val literal = key.emfKey
+                val container = literal.EContainingClass
+                val packageNsUri = container.EPackage.nsURI
+                target.append('''new ''')
+                target.append(EStructuralFeatureInstancesKey)
+                target.append('''(getFeatureLiteral("«packageNsUri»", "«container.name»", "«literal.name»"))''')
+            }
+            EClassTransitiveInstancesKey : {
+                val literal = key.emfKey
+                val packageNsUri = literal.EPackage.nsURI
+                target.append('''new ''')
+                target.append(EClassTransitiveInstancesKey)
+                target.append('''((''')
+                target.append(EClass)
+                target.append(''')«classifierGetterName(forParameter)»("«packageNsUri»", "«literal.name»"))''')
+            }
+            EDataTypeInSlotsKey : {
+                val literal = key.emfKey
+                val packageNsUri = literal.EPackage.nsURI
+                target.append('''new ''')
+                target.append(EDataTypeInSlotsKey)
+                target.append('''((''')
+                target.append(EDataType)
+                target.append(''')«classifierGetterName(forParameter)»("«packageNsUri»", "«literal.name»"))''')
+            }
+            case null : {
+                target.append('''null''')
+            }
+        }            
+    }
+    private def classifierGetterName(boolean forParameter) {
+        if (forParameter)
+            '''getClassifierLiteralSafe'''
+        else
+            '''getClassifierLiteral'''            
+    }
 }

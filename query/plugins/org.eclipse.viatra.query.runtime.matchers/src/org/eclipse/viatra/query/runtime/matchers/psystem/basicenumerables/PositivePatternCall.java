@@ -11,22 +11,28 @@
 
 package org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IQueryReference;
+import org.eclipse.viatra.query.runtime.matchers.psystem.ITypeInfoProviderConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.KeyedEnumerablePConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
  * @author Gabor Bergmann
  *
  */
-public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> implements IQueryReference {
+public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> implements IQueryReference, ITypeInfoProviderConstraint {
 
     public PositivePatternCall(PBody pBody, Tuple variablesTuple,
             PQuery pattern) {
@@ -48,5 +54,21 @@ public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> impl
     public PQuery getReferredQuery() {
         return supplierKey;
     }
+
+	@Override
+	public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
+		Set<TypeJudgement> result = new HashSet<TypeJudgement>();
+		for (TypeJudgement parameterJudgement : getReferredQuery().getTypeGuarantees()) {			
+			IInputKey inputKey = parameterJudgement.getInputKey();
+			Tuple judgementIndexTuple = parameterJudgement.getVariablesTuple();
+			
+			Object[] judgementVariables = new Object[judgementIndexTuple.getSize()];
+			for (int i=0; i<judgementVariables.length; ++i)
+				judgementVariables[i] = variablesTuple.get((int) judgementIndexTuple.get(i));
+			
+			result.add(new TypeJudgement(inputKey, new FlatTuple(judgementVariables))); 
+		}
+		return result;
+	}
 
 }

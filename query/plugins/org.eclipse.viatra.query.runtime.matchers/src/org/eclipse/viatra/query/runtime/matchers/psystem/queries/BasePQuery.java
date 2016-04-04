@@ -12,12 +12,16 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -146,6 +150,23 @@ public abstract class BasePQuery implements PQuery {
 	@Override
 	public List<Object> publishedAs() {
 		return wrappingQuerySpecifications;
+	}
+	
+	@Override
+	public Set<TypeJudgement> getTypeGuarantees() {
+	    ensureInitializedSneaky();
+		Set<TypeJudgement> result = new HashSet<TypeJudgement>();
+		
+		List<PParameter> parameters = getParameters();
+		for (int i=0; i<parameters.size(); ++i) {
+			PParameter parameter = parameters.get(i);
+			IInputKey declaredUnaryType = parameter.getDeclaredUnaryType();
+			if (declaredUnaryType != null) {
+				result.add(new TypeJudgement(declaredUnaryType, new FlatTuple(i)));
+			}
+		}
+		
+		return result;
 	}
 	
 	/**

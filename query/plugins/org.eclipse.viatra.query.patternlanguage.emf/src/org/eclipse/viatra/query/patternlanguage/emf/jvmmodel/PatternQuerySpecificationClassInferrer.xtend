@@ -46,6 +46,8 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
+import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -192,7 +194,10 @@ class PatternQuerySpecificationClassInferrer {
 			typeRef(typeof(List), typeRef(typeof(PParameter)))) [
 			visibility = JvmVisibility::PUBLIC
 			annotations += annotationRef(typeof(Override))
-			body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»«param.parameterInstantiation»«ENDFOR»);'''
+			body = '''return «Arrays».asList(
+			 «FOR param : pattern.parameters SEPARATOR ''',
+			 '''»«param.parameterInstantiation»«ENDFOR»
+			);'''
 		]
 		pQueryClass.members += pattern.toMethod("doGetContainedBodies",
 			typeRef(typeof(Set), typeRef(typeof(PBody)))) [
@@ -300,7 +305,7 @@ class PatternQuerySpecificationClassInferrer {
     	]
     }
 
-    def parameterInstantiation(Variable variable) {
+    def StringConcatenationClient parameterInstantiation(Variable variable) {
 		val ref = getVariableType(variable);
         // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
         val clazz = if (ref == null || ref instanceof JvmUnknownTypeReference) {
@@ -308,7 +313,9 @@ class PatternQuerySpecificationClassInferrer {
         } else {
 			ref.getType().getQualifiedName()
 		}
-		'''new PParameter("«variable.name»", "«clazz»")'''
+		val declaredClassifier = variable.type.classifierForType
+		val declaredInputKey = PatternBodyTransformer.classifierToInputKey(declaredClassifier)
+		'''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)»)'''
     }
 
     def StringConcatenationClient inferAnnotations(Pattern pattern) {
