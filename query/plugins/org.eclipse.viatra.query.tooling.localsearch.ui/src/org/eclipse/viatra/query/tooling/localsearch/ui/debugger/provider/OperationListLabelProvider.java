@@ -46,11 +46,11 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
     // TODO proper resource management
     private LocalResourceManager localResourceManager;
     
-    private static final Image notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+    private static Image notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
             LocalSearchToolingActivator.PLUGIN_ID, "/icons/help_contents.gif").createImage();
-    private static final Image appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+    private static Image appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
             LocalSearchToolingActivator.PLUGIN_ID, "/icons/complete_status.gif").createImage();
-    private static final Image currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+    private static Image currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
             LocalSearchToolingActivator.PLUGIN_ID, "icons/nav_go.gif").createImage();
 
 	private Map<Object, SearchPlanExecutor> dummyMatchOperationMappings = Maps.newHashMap();
@@ -68,6 +68,10 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 
 		switch (node.getOperationStatus()) {
 		case EXECUTED:
+		    if(appliedOperationImage.isDisposed()){
+		        appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+		                LocalSearchToolingActivator.PLUGIN_ID, "/icons/complete_status.gif").createImage();
+            }
 			cell.setImage(appliedOperationImage);
 			text.setStyle(0, text.length(), new Styler() {
 				public void applyStyles(TextStyle textStyle) {
@@ -77,6 +81,10 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 			});
 			break;
 		case CURRENT:
+		    if(currentOperationImage.isDisposed()){
+		        currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+		                LocalSearchToolingActivator.PLUGIN_ID, "icons/nav_go.gif").createImage();
+            }
 			cell.setImage(currentOperationImage);
 			text.setStyle(0, text.length(), new Styler() {
 				public void applyStyles(TextStyle textStyle) {
@@ -88,6 +96,10 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 			});
 			break;
 		case QUEUED:
+		    if(notAppliedOperationImage.isDisposed()){
+		        notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+		                LocalSearchToolingActivator.PLUGIN_ID, "/icons/help_contents.gif").createImage();
+		    }
 			cell.setImage(notAppliedOperationImage);
 			text.setStyle(0, text.length(), new Styler() {
 				public void applyStyles(TextStyle textStyle) {
