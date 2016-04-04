@@ -109,8 +109,8 @@ public class GlobalContext {
             }
 
             if (cloneModel) {
-                Notifier clonedModel = EMFHelper.clone(model);
-                domain = EMFHelper.createEditingDomain(clonedModel);
+                model = EMFHelper.clone(model);
+                domain = EMFHelper.createEditingDomain(model);
             }
 
             ThreadContext newThreadContext;
