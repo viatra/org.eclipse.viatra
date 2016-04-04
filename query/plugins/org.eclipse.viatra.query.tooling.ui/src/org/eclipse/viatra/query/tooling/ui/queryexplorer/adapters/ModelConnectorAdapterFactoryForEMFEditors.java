@@ -11,8 +11,10 @@
 package org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 
@@ -21,27 +23,34 @@ import com.google.inject.Inject;
 /**
  * Adapter factory for the default EMF generated model editors and our own VQL editor.
  */
-@SuppressWarnings("rawtypes")
 public class ModelConnectorAdapterFactoryForEMFEditors implements IAdapterFactory {
 
-    @Inject
-    private IResourceSetProvider resourceSetProvider;
+    @Inject IResourceSetProvider resourceSetProvider;
 
     @Override
     public Object getAdapter(Object adaptableObject, Class adapterType) {
-        if (adapterType == IModelConnector.class && adaptableObject instanceof IEditorPart) {
+        if (adapterType == IModelConnector.class && adaptableObject instanceof MultiPageEditorPart) {
+            IEditorPart editorPart = (IEditorPart) adaptableObject;
+            Object selectedPage = ((MultiPageEditorPart) editorPart).getSelectedPage();
+            if (selectedPage instanceof IEditorPart) {
+                Platform.getAdapterManager().loadAdapter((IEditorPart)selectedPage, adapterType.getName());
+                return Platform.getAdapterManager().getAdapter((IEditorPart)selectedPage, adapterType);
+            }
+        } if (adapterType == IModelConnector.class && adaptableObject instanceof IEditorPart) {
             IEditorPart editorPart = (IEditorPart) adaptableObject;
             if ("org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguage".equals(editorPart.getSite().getId())) {
                 return new VQLEditorModelConnector(editorPart, resourceSetProvider);
-            } else if (adaptableObject instanceof IEditingDomainProvider) {
+            } else if (editorPart instanceof IEditingDomainProvider) {
                 return new EMFModelConnector(editorPart);
+            } else {
+                return null;
             }
         }
         return null;
     }
 
     @Override
-    public Class[] getAdapterList() {
+    public Class<?>[] getAdapterList() {
         return new Class[] { IModelConnector.class };
     }
 

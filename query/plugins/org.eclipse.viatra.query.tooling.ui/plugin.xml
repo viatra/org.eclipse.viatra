@@ -606,6 +606,13 @@
                type="org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector">
          </adapter>
       </factory>
+      <factory
+            adaptableType="org.eclipse.ui.part.MultiPageEditorPart"
+            class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.ModelConnectorAdapterFactoryForEMFEditors">
+         <adapter
+               type="org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector">
+         </adapter>
+      </factory>
    </extension>
    <extension
          id="org.eclipse.viatra.query.tooling.ui.projectbuilder"
