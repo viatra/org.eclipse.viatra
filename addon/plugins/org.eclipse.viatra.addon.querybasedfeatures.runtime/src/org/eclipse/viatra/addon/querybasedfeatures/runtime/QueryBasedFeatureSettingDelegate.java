@@ -121,7 +121,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         }
         Object kindParam = annotation.getFirstValue("kind");
         if (kindParam != null && kindParam instanceof String) {
-            parameters.kind = QueryBasedFeatureKind.valueOf((String) kindParam);
+            parameters.kind = QueryBasedFeatureKind.parseKindString((String) kindParam);
         }
     }
 

@@ -29,6 +29,9 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.xtext.diagnostics.Severity
 
 /**
  * {@link IPatternMatch} implementation inferer.
@@ -41,24 +44,31 @@ class PatternMatchClassInferrer {
 	@Inject extension IQualifiedNameProvider
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil
 	@Inject TypeReferences typeReference
+	@Inject private IErrorFeedback feedback
 	@Extension private JvmTypeReferenceBuilder builder
 	@Extension private JvmAnnotationReferenceBuilder annBuilder
 	@Inject extension IJvmModelAssociator associator
 	@Inject extension JavadocInferrer
 	
 	def inferMatchClassElements(JvmDeclaredType it, Pattern pattern, JvmType querySpecificationClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder) {
-   		this.builder = builder
-   		this.annBuilder = annBuilder
+   		try {
+   		    
+   		   this.builder = builder
+   		   this.annBuilder = annBuilder
 	
-		documentation = pattern.javadocMatchClass.toString
-		abstract = true
-		//it.superTypes += pattern.newTypeRef(typeof (IPatternMatch))
-		inferMatchClassFields(pattern)
-		inferMatchClassConstructors(pattern)
-		inferMatchClassGetters(pattern)
-		inferMatchClassSetters(pattern)
-		inferMatchClassMethods(pattern, typeRef(querySpecificationClass))
-		inferMatchInnerClasses(pattern)	
+		   documentation = pattern.javadocMatchClass.toString
+	   	   abstract = true
+    		//it.superTypes += pattern.newTypeRef(typeof (IPatternMatch))
+		   inferMatchClassFields(pattern)
+		   inferMatchClassConstructors(pattern)
+		   inferMatchClassGetters(pattern)
+		   inferMatchClassSetters(pattern)
+		   inferMatchClassMethods(pattern, typeRef(querySpecificationClass))
+		   inferMatchInnerClasses(pattern)	
+        } catch (IllegalStateException ex) {
+            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
+                IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
+        }
 	}
 	
    	/**

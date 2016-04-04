@@ -34,6 +34,9 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
+import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.xtext.diagnostics.Severity
 
 /**
  * {@link ViatraQueryMatcher} implementation inferrer.
@@ -47,28 +50,35 @@ class PatternMatcherClassInferrer {
 	@Inject extension JavadocInferrer
 	@Extension private JvmTypeReferenceBuilder builder
 	@Extension private JvmAnnotationReferenceBuilder annBuilder
+	@Inject private IErrorFeedback feedback
 
 	def inferMatcherClassElements(JvmGenericType matcherClass, Pattern pattern, JvmDeclaredType specificationClass, JvmDeclaredType matchClass, JvmTypeReferenceBuilder builder, JvmAnnotationReferenceBuilder annBuilder) {
-		this.builder = builder
-		this.annBuilder = annBuilder
+		try {
+		  this.builder = builder
+		  this.annBuilder = annBuilder
 		
-		matcherClass.documentation = pattern.javadocMatcherClass.toString
-		matcherClass.inferStaticMethods(pattern)
-		matcherClass.inferFields(pattern)
-		matcherClass.inferConstructors(pattern)
-		matcherClass.inferMethods(pattern, matchClass)
+		  matcherClass.documentation = pattern.javadocMatcherClass.toString
+		  matcherClass.inferStaticMethods(pattern)
+		  matcherClass.inferFields(pattern)
+		  matcherClass.inferConstructors(pattern)
+		  matcherClass.inferMethods(pattern, matchClass)
 		
-		// add querySpecification() field to Matcher class
-		matcherClass.members += pattern.toMethod("querySpecification",
-			typeRef(typeof(IQuerySpecification), typeRef(matcherClass))) [
-			visibility = JvmVisibility::PUBLIC
-			static = true
-			documentation = pattern.javadocQuerySpecificationMethod.toString
-			exceptions += typeRef(typeof(ViatraQueryException))
-			body = '''
+		  // add querySpecification() field to Matcher class
+		  matcherClass.members += pattern.toMethod("querySpecification",
+			 typeRef(typeof(IQuerySpecification), typeRef(matcherClass))) [
+			 visibility = JvmVisibility::PUBLIC
+			 static = true
+			 documentation = pattern.javadocQuerySpecificationMethod.toString
+			 exceptions += typeRef(typeof(ViatraQueryException))
+			 body = '''
 					return «specificationClass.typeRef».instance();
-			'''
-		]
+			 '''
+		  ]
+		
+		} catch (IllegalStateException ex) {
+            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
+                IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
+        }
 	}
 
    	/**

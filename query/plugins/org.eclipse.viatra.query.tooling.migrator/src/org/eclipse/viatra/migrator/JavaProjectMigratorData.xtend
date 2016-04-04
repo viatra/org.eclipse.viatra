@@ -66,8 +66,8 @@ abstract class JavaProjectMigratorData {
 		"org.eclipse.incquery.validation.tooling" -> "org.eclipse.viatra.addon.validation.tooling",
 		"org.eclipse.incquery.viewers.runtime" -> "org.eclipse.viatra.addon.viewers.runtime",
 		"org.eclipse.incquery.viewers.runtime.zest" -> "org.eclipse.viatra.addon.viewers.runtime.zest",
-		"org.eclipse.incquery.viewers.tooling.ui" -> "org.eclipse.viatra.addon.viewers.tooling",
-		"org.eclipse.incquery.viewers.tooling.ui.zest" -> "org.eclipse.viatra.addon.viewers.tooling.zest",
+		"org.eclipse.incquery.viewers.tooling.ui" -> "org.eclipse.viatra.addon.viewers.tooling.ui",
+		"org.eclipse.incquery.viewers.tooling.ui.zest" -> "org.eclipse.viatra.addon.viewers.tooling.zest.ui",
 		"org.eclipse.incquery.viewmodel" -> "org.eclipse.viatra.transformation.views",
 		"org.eclipse.incquery.xcore" -> "org.eclipse.viatra.integration.xcore",
 		"org.eclipse.incquery.xcore.model" -> "org.eclipse.viatra.integration.xcore.model",
@@ -128,8 +128,8 @@ abstract class JavaProjectMigratorData {
 		"org.eclipse.viatra.addon.validation.tooling" -> stable,
 		"org.eclipse.viatra.addon.viewers.runtime" -> incubation,
 		"org.eclipse.viatra.addon.viewers.runtime.zest" -> incubation,
-		"org.eclipse.viatra.addon.viewers.tooling" -> incubation,
-		"org.eclipse.viatra.addon.viewers.tooling.zest" -> incubation,
+		"org.eclipse.viatra.addon.viewers.tooling.ui" -> incubation,
+		"org.eclipse.viatra.addon.viewers.tooling.ui.zest" -> incubation,
 		"org.eclipse.viatra.transformation.views" -> incubation,
 		"org.eclipse.viatra.integration.xcore" -> incubation,
 		"org.eclipse.viatra.integration.xcore.model" -> incubation,
@@ -208,7 +208,10 @@ abstract class JavaProjectMigratorData {
             "org.eclipse.incquery.viewers.runtime.extensions.IncQueryViewersPartSupport" -> "org.eclipse.viatra.addon.viewers.runtime.extensions.ViatraViewersPartSupport",
             "org.eclipse.incquery.viewers.runtime.zest.IncQueryGraphViewers" -> "org.eclipse.viatra.addon.viewers.runtime.zest.ViatraGraphViewers",
             "org.eclipse.incquery.viewers.runtime.model.IncQueryViewerDataModel" -> "org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel",
-            "org.eclipse.incquery.viewers.runtime.zest.extensions.IncQueryViewersZestViewSupport" -> "org.eclipse.viatra.addon.viewers.runtime.zest.extensions.ViatraViewersZestViewSupport"
+            "org.eclipse.incquery.viewers.runtime.zest.extensions.IncQueryViewersZestViewSupport" -> "org.eclipse.viatra.addon.viewers.runtime.zest.extensions.ViatraViewersZestViewSupport",
+            "org.eclipse.viatra.addon.viewers.runtime.model.Containment" -> "org.eclipse.viatra.addon.viewers.runtime.notation.Containment",
+            "org.eclipse.viatra.addon.viewers.runtime.model.Edge" -> "org.eclipse.viatra.addon.viewers.runtime.notation.Edge",
+            "org.eclipse.viatra.addon.viewers.runtime.model.Item" -> "org.eclipse.viatra.addon.viewers.runtime.notation.Item"
 		)
 		
 		/*

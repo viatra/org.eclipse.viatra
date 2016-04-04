@@ -48,7 +48,7 @@ public class ViatraViewerSupport {
 		}
 
 		viewer.setContentProvider(new ListContentProvider());
-		viewer.setLabelProvider(new QueryLabelProvider(state));
+		viewer.setLabelProvider(new QueryLabelProvider(state, viewer.getControl().getDisplay()));
 		viewer.setInput(state);			
 		viewer.refresh();
 	}
@@ -76,7 +76,7 @@ public class ViatraViewerSupport {
 		}
 				
 		viewer.setContentProvider(new TreeContentProvider());
-		viewer.setLabelProvider(new QueryLabelProvider(state));
+		viewer.setLabelProvider(new QueryLabelProvider(state, viewer.getControl().getDisplay()));
 		viewer.setInput(state);	
 		viewer.refresh();
 	}

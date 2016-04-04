@@ -44,6 +44,8 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -82,16 +84,26 @@ class PatternQuerySpecificationClassInferrer {
   	}
 
   	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder specBuilder) {
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, true)
-  		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, true, specBuilder)
-  		querySpecificationClass.inferExpressions(pattern)
+  	    try {
+  		    querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, true)
+  		    querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, true, specBuilder)
+  		    querySpecificationClass.inferExpressions(pattern)
+        } catch (IllegalStateException ex) {
+            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
+                IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
+        }
   	}
 
   	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder specBuilder) {
-  		querySpecificationClass.visibility = JvmVisibility::DEFAULT
-  		querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, false)
-  		querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, false, specBuilder)
-  		querySpecificationClass.inferExpressions(pattern)
+  	    try {
+            querySpecificationClass.visibility = JvmVisibility::DEFAULT
+            querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, false)
+            querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, false, specBuilder)
+            querySpecificationClass.inferExpressions(pattern)
+        } catch (IllegalStateException ex) {
+            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
+                IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
+        }
   	}
 
 	/**

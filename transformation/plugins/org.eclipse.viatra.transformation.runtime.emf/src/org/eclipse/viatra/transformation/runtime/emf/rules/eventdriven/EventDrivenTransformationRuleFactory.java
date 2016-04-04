@@ -82,10 +82,6 @@ public class EventDrivenTransformationRuleFactory {
 		return new EventDrivenTransformationBuilder<Match, Matcher>();
 	}
 	
-	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationBuilder<Match, Matcher> createRule(String name) {
-        return new EventDrivenTransformationBuilder<Match, Matcher>().name(name);
-    }
-
 	private <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationRule<Match, Matcher> createRule(
 			String name, IQuerySpecification<Matcher> precondition,
 			Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions, ActivationLifeCycle lifeCycle,

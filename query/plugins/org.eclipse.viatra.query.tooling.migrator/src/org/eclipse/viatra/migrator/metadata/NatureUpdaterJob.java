@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.viatra.migrator.MigratorConstants;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
@@ -181,8 +182,11 @@ class NatureUpdaterJob extends Job {
 			}
 			removeGlobalEiq(project);
 			renamePatternDefinitionFiles(project);
-			removeExpressionExtensions(project);
-			ProjectGenerationHelper.ensurePackageImports(project, ImmutableList.<String> of("org.apache.log4j"));
+			
+			if (PDE.hasPluginNature(project)) {
+			    removeExpressionExtensions(project);
+			    ProjectGenerationHelper.ensurePackageImports(project, ImmutableList.<String> of("org.apache.log4j"));
+			}
 			project.build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
 		} catch (CoreException e) {
 			return new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, "Error updating project natures", e);

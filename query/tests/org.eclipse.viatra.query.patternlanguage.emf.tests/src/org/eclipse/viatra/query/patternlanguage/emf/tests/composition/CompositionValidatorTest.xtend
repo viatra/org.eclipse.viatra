@@ -94,7 +94,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
 			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
-			getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}	
 	@Test
@@ -115,7 +115,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		tester.validate(model).assertAll(
 		    getErrorCode(IssueCodes::WRONG_NUMBER_PATTERNCALL_PARAMETER),
 		    getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-		    getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 	@Test
@@ -166,7 +166,7 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		)
 		tester.validate(model).assertAll(
 		    getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
-		    getWarningCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 	@Test @Ignore(value = "This call is unsafe because of a negative call circle. 

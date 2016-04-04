@@ -52,6 +52,20 @@ public final class Rules {
     }
     
     /**
+     * Creates a {@link RuleSpecification} with the given query specification, life-cycle and jobs and name.
+     * 
+     * For default life-cycle implementations, see {@link DefaultActivationLifeCycle}.
+     *        
+     * @param querySpecification
+     * @param lifecycle
+     * @param jobs
+     * @param name
+     */
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs, String name){
+        return new RuleSpecification<Match>(ViatraQueryEventRealm.createSourceSpecification(querySpecification), lifecycle, jobs, name);
+    }
+    
+    /**
      * Creates a {@link RuleSpecification} with the given query specification and jobs,
      *  using the {@link DefaultActivationLifeCycle#DEFAULT} life-cycle.
      * 
@@ -65,6 +79,11 @@ public final class Rules {
     public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(ViatraQueryMatcher<Match> matcher, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs){
         FavouredMatcherSourceSpecification<Match> sourceSpecification = new FavouredMatcherSourceSpecification<Match>(matcher);
         return new RuleSpecification<Match>(sourceSpecification, lifecycle, jobs);
+    }
+    
+    public static <Match extends IPatternMatch> RuleSpecification<Match> newMatcherRuleSpecification(ViatraQueryMatcher<Match> matcher, ActivationLifeCycle lifecycle, Set<Job<Match>> jobs, String name){
+        FavouredMatcherSourceSpecification<Match> sourceSpecification = new FavouredMatcherSourceSpecification<Match>(matcher);
+        return new RuleSpecification<Match>(sourceSpecification, lifecycle, jobs, name);
     }
 
     private static final class FavouredMatcherSourceSpecification<Match extends IPatternMatch> extends ViatraQueryEventSourceSpecification<Match>{
