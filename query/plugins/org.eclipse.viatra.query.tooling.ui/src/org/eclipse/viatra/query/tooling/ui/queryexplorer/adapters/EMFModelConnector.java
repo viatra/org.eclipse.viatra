@@ -15,6 +15,8 @@ package org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import org.eclipse.emf.common.ui.viewer.IViewerProvider;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -39,6 +42,9 @@ import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.ModelEditorPartListener;
+
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * Model connector implementation for the default EMF generated model editors.
@@ -178,4 +184,22 @@ public class EMFModelConnector implements IModelConnector {
 		return this.editorPart;
 	}
 
+    @Override
+    public Collection<EObject> getSelectedEObjects() {
+        return getSelectedEObjects(getCurrentSelection());
+    }
+
+    protected ISelection getCurrentSelection() {
+        ISelectionProvider selectionProvider = editorPart.getSite().getSelectionProvider();
+        return selectionProvider.getSelection();
+    }
+    
+    protected Collection<EObject> getSelectedEObjects(ISelection selection) {
+        if (selection instanceof IStructuredSelection) {
+            Iterator<EObject> selectionIterator = Iterators.filter((((IStructuredSelection) selection).iterator()), EObject.class);
+            return Lists.newArrayList(selectionIterator);
+        } else {
+            return Collections.emptyList();
+        }
+    }
 }

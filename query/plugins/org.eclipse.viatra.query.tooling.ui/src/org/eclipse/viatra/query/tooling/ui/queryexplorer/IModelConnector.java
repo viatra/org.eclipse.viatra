@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryexplorer;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 
@@ -51,4 +54,11 @@ public interface IModelConnector {
      */
     public IWorkbenchPart getOwner();
 
+    /**
+     * Returns the objects currently selected at the adapted model. If there are both domain and view model elements in
+     * the adapted model, it is expected that the domain model elements are returned.
+     * 
+     * @return a non-null, but possibly empty collection of model objects
+     */
+    public Collection<EObject> getSelectedEObjects();
 }

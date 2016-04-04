@@ -12,21 +12,30 @@
 package org.eclipse.viatra.integration.gmf;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
+import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramGraphicalViewer;
 import org.eclipse.gmf.runtime.diagram.ui.parts.IDiagramWorkbenchPart;
 import org.eclipse.gmf.runtime.diagram.ui.resources.editor.parts.DiagramDocumentEditor;
 import org.eclipse.gmf.runtime.notation.Diagram;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * Model connector implementation for the GMF editors.
@@ -112,5 +121,23 @@ public class GMFModelConnector extends EMFModelConnector {
             }
         }
     }
+
+    @Override
+    protected Collection<EObject> getSelectedEObjects(ISelection selection) {
+        if (selection instanceof IStructuredSelection) {
+            Iterator<IGraphicalEditPart> selectionIterator = Iterators.filter((((IStructuredSelection) selection).iterator()), IGraphicalEditPart.class);
+            return Lists.newArrayList(Iterators.filter(Iterators.transform(selectionIterator, new Function<IGraphicalEditPart, EObject>() {
+
+                @Override
+                public EObject apply(IGraphicalEditPart input) {
+                    return input.resolveSemanticElement();
+                }
+            }), Predicates.notNull()));
+        } else {
+            return super.getSelectedEObjects();
+        }
+    }
+
+    
 
 }
