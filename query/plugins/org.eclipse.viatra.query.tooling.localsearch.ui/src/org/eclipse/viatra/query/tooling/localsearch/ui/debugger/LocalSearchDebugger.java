@@ -32,6 +32,7 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.viewele
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.BreakPointListener;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
@@ -45,7 +46,7 @@ import com.google.common.collect.Queues;
 public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	public static volatile Object notifier = new Object();
-	private LocalSearchDebugView localSearchDebugView;
+	//private LocalSearchDebugView localSearchDebugView;
 	private Deque<LocalSearchMatcher> runningMatchers;
 	private Deque<SearchPlanExecutor> runningExecutors;
 	private boolean startHandlerCalled = false;
@@ -54,8 +55,13 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	private SearchPlanViewModel viewModel;
 
     
-	public LocalSearchDebugView getLocalSearchDebugView() {
-		return localSearchDebugView;
+	public LocalSearchDebugView getLocalSearchDebugView(){
+        try {
+            return (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
+        } catch (PartInitException e) {
+            e.printStackTrace();
+            return null;
+        }
 	}
 
 	public boolean isStartHandlerCalled() {
@@ -75,31 +81,23 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
-						BreakPointListener breakPointListener = new BreakPointListener(LocalSearchDebugger.this);
-						TreeViewer operationListViewer = localSearchDebugView.getOperationListViewer();
-						operationListViewer.addDoubleClickListener(breakPointListener);
-						localSearchDebugView.setDebugger(LocalSearchDebugger.this);
+					BreakPointListener breakPointListener = new BreakPointListener(LocalSearchDebugger.this);
+                    TreeViewer operationListViewer = getLocalSearchDebugView().getOperationListViewer();
+                    operationListViewer.addDoubleClickListener(breakPointListener);
+                    getLocalSearchDebugView().setDebugger(LocalSearchDebugger.this);
 
-						// TODO make sure that the initialization is done for every part so that restart is possible
+                    // TODO make sure that the initialization is done for every part so that restart is possible
 
-						runningMatchers = Queues.newArrayDeque();
-						runningExecutors = Queues.newArrayDeque();
+                    runningMatchers = Queues.newArrayDeque();
+                    runningExecutors = Queues.newArrayDeque();
 
-						String simpleQueryName = getSimpleQueryName(lsMatcher.getQuerySpecification());
-						TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
-						@SuppressWarnings("unchecked")
-						List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
-						storedFrames.clear();
-						
-						localSearchDebugView.refreshView();
-					} catch (PartInitException e) {
-                        ViatraQueryLoggingUtil.getDefaultLogger().log(
-                                Level.ERROR,
-                                "A part init exception occured while executing pattern matcher started handler"
-                                        + e.getMessage(), e);
-					}
+                    String simpleQueryName = getSimpleQueryName(lsMatcher.getQuerySpecification());
+                    TableViewer matchesViewer = getLocalSearchDebugView().getMatchesViewer(simpleQueryName);
+                    @SuppressWarnings("unchecked")
+                    List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
+                    storedFrames.clear();
+                    
+                    getLocalSearchDebugView().refreshView();
 				}
 			});
 		}
@@ -118,15 +116,15 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 				@Override
 				public void run() {
-					localSearchDebugView.getMatchesTabFolder().setSelection(0);
-					localSearchDebugView.getOperationListViewer().collapseAll();
+				    getLocalSearchDebugView().getMatchesTabFolder().setSelection(0);
+				    getLocalSearchDebugView().getOperationListViewer().collapseAll();
 				}
 			});
-			localSearchDebugView.refreshView();
+			getLocalSearchDebugView().refreshView();
 		} else {
 			// clear frame table
 			String simpleQueryName = getSimpleQueryName(removedMatcher.getQuerySpecification());
-			TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
+			TableViewer matchesViewer = getLocalSearchDebugView().getMatchesViewer(simpleQueryName);
 			@SuppressWarnings("unchecked")
 			List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
 			storedFrames.clear();
@@ -153,7 +151,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 				@Override
 				public void run() {
-					localSearchDebugView.getOperationListViewer().setInput(viewModel);
+				    getLocalSearchDebugView().getOperationListViewer().setInput(viewModel);
 				}
 			});
 		} else if(newPlanExecutor != null) {
@@ -164,7 +162,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		PQuery querySpecification = runningMatchers.peek().getQuerySpecification();
 		final int keySize = querySpecification.getParameters().size();
 		String queryName = getSimpleQueryName(querySpecification);
-		final TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(queryName);
+		final TableViewer matchesViewer = getLocalSearchDebugView().getMatchesViewer(queryName);
 		@SuppressWarnings("unchecked")
 		List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
 		if (!storedFrames.isEmpty()) {
@@ -179,7 +177,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 				for (int i = 0; i < variableMapping.size(); i++) {
 					columnNames.add(variableMapping.get(i).getName());
 				}
-				localSearchDebugView.recreateColumns(columnNames, keySize, matchesViewer);
+				getLocalSearchDebugView().recreateColumns(columnNames, keySize, matchesViewer);
 			}
 		});
 	}
@@ -189,7 +187,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	public void executorInitializing(SearchPlanExecutor searchPlanExecutor, MatchingFrame frame) {
 		// Add the new frame here to the list of frames. Its contents will change as matching advances
 		String simpleQueryName = getSimpleQueryName(runningMatchers.peek().getQuerySpecification());
-		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
+		TableViewer matchesViewer = getLocalSearchDebugView().getMatchesViewer(simpleQueryName);
 		@SuppressWarnings("unchecked")
 		List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
 		if (!storedFrames.contains(frame)) {
@@ -216,13 +214,13 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	public void operationExecuted(SearchPlanExecutor planExecutor, MatchingFrame frame) {
 //		viewModel.stepBack();
 		if (halted) {
-			localSearchDebugView.refreshView();
+		    getLocalSearchDebugView().refreshView();
 			if(shouldSelectOtherTab){
 				shouldSelectOtherTab = false;
 				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 					@Override
 					public void run() {
-						localSearchDebugView.getMatchesTabFolder().setSelection(runningMatchers.size()-1);
+					    getLocalSearchDebugView().getMatchesTabFolder().setSelection(runningMatchers.size()-1);
 					}
 				});
 			}
@@ -233,7 +231,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	public void matchFound(SearchPlanExecutor planExecutor, MatchingFrame frame) {
 		MatchingFrame frameToStore = frame.clone();
 		String simpleQueryName = getSimpleQueryName(runningMatchers.peek().getQuerySpecification());
-		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
+		TableViewer matchesViewer = getLocalSearchDebugView().getMatchesViewer(simpleQueryName);
 		@SuppressWarnings("unchecked")
 		List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
 		storedFrames.add(storedFrames.size() - 1, frameToStore);
@@ -284,20 +282,20 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	}
 
 	private void checkForBreakPoint() {
-		if (localSearchDebugView != null && halted) {
+		if (getLocalSearchDebugView() != null && halted) {
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 				@Override
 				public void run() {
 					if(shouldSelectOtherTab){
 						shouldSelectOtherTab = false;
-						localSearchDebugView.getMatchesTabFolder().setSelection(runningMatchers.size()-1);
+						getLocalSearchDebugView().getMatchesTabFolder().setSelection(runningMatchers.size()-1);
 					}
 					SearchOperationViewerNode lastSelected = viewModel.getLastSelected();
-					localSearchDebugView.getOperationListViewer().collapseAll();
-					localSearchDebugView.getOperationListViewer().expandToLevel(lastSelected, 0);
+					getLocalSearchDebugView().getOperationListViewer().collapseAll();
+					getLocalSearchDebugView().getOperationListViewer().expandToLevel(lastSelected, 0);
 				}
 			});
-			localSearchDebugView.refreshView();
+			getLocalSearchDebugView().refreshView();
 			synchronized (notifier) {
 				try {
 					// Breakpoint hit, wait for notify
