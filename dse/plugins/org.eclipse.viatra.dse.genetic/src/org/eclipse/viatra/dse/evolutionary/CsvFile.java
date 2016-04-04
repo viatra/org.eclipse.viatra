@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Andras Szabolcs Nagy and Daniel Varro
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * Contributors:
+ *   Andras Szabolcs Nagy - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary;
 
 import java.io.BufferedWriter;
@@ -18,11 +27,12 @@ public class CsvFile {
     protected String fileName;
     protected Character delimeter = ',';
 
+    private File csvFile;
+    private Path path;
+
     protected List<String> columnNamesInOrder = new ArrayList<>();
 
     protected List<Row> loadedRows;
-    private File csvFile;
-    private Path path;
 
     public String getHeaderString() {
         StringBuilder sb = new StringBuilder();
@@ -51,6 +61,7 @@ public class CsvFile {
         path = Paths.get(fileBasePath, fileName + ".csv");
         csvFile = new File(path.toUri());
         if (csvFile.exists()) {
+            Logger.getLogger(getClass()).warn("File " + fileName + ".csv already exists!");
             return false;
         }
 
@@ -69,12 +80,12 @@ public class CsvFile {
         }
         return false;
     }
-    
+
     public boolean appendRow(Row row) {
         if (csvFile == null) {
             throw new RuntimeException("Csv file is not created yet.");
         }
-        
+
         PrintWriter out = null;
 
         try {
@@ -89,6 +100,30 @@ public class CsvFile {
             }
         }
         return false;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileBasePath(String fileBasePath) {
+        this.fileBasePath = fileBasePath;
+    }
+
+    public String getFileBasePath() {
+        return fileBasePath;
+    }
+
+    public List<String> getColumnNamesInOrder() {
+        return columnNamesInOrder;
+    }
+
+    public void setColumnNamesInOrder(List<String> columnNamesInOrder) {
+        this.columnNamesInOrder = columnNamesInOrder;
     }
 
 }
