@@ -9,8 +9,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.crossovers;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.api.DSEException;
@@ -18,6 +16,7 @@ import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
+import org.eclipse.viatra.dse.genetic.core.GeneticHelper;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
@@ -54,16 +53,7 @@ public class CutAndSpliceCrossover implements ICrossover {
             dsm.fireActivation(parent1t[i]);
         }
         for (int i = index2; i < p2Size; i++) {
-            ITransition transitionToFire = parent2t[i];
-            Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
-            Iterator<? extends ITransition> iterator = transitions.iterator();
-            
-            while (iterator.hasNext()) {
-                ITransition t = iterator.next();
-                if (t.getId().equals(transitionToFire.getId())) {
-                    dsm.fireActivation(t);
-                }
-            }
+            GeneticHelper.tryFireRightTransition(dsm, parent2t[i]);
         }
 
         Fitness fitness = context.calculateFitness();
@@ -75,16 +65,7 @@ public class CutAndSpliceCrossover implements ICrossover {
             dsm.fireActivation(parent2t[i]);
         }
         for (int i = index1; i < p1Size; i++) {
-            ITransition transitionToFire = parent1t[i];
-            Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
-            Iterator<? extends ITransition> iterator = transitions.iterator();
-            
-            while (iterator.hasNext()) {
-                ITransition t = iterator.next();
-                if (t.getId().equals(transitionToFire.getId())) {
-                    dsm.fireActivation(t);
-                }
-            }
+            GeneticHelper.tryFireRightTransition(dsm, parent1t[i]);
         }
 
         fitness = context.calculateFitness();

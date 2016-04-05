@@ -27,7 +27,7 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
  * either trajectory is swapped between the two parent trajectories. The resulting trajectories are the children. <br/>
  * 
  */
-public class OnePointCrossover implements ICrossover {
+public class SwapTransitionCrossover implements ICrossover {
 
     private Random random = new Random();
 
@@ -46,14 +46,15 @@ public class OnePointCrossover implements ICrossover {
             throw new DSEException("Cannot crossover with empty or one long parent trajectories.");
         }
 
-        int minSize = Math.min(p1Size, p2Size);
-        int index = random.nextInt(minSize - 1) + 1;
+        int index1 = random.nextInt(p1Size);
+        int index2 = random.nextInt(p2Size);
 
-        for (int i = 0; i < index; i++) {
+        for (int i = 0; i < index1; i++) {
             dsm.fireActivation(parent1t[i]);
         }
-        for (int i = index; i < p2Size; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, parent2t[i]);
+        GeneticHelper.tryFireRightTransition(dsm, parent2t[index2]);
+        for (int i = index1 + 1; i < p1Size; i++) {
+            GeneticHelper.tryFireRightTransition(dsm, parent1t[i]);
         }
 
         Fitness fitness = context.calculateFitness();
@@ -61,11 +62,12 @@ public class OnePointCrossover implements ICrossover {
 
         dsm.undoUntilRoot();
 
-        for (int i = 0; i < index; i++) {
+        for (int i = 0; i < index2; i++) {
             dsm.fireActivation(parent2t[i]);
         }
-        for (int i = index; i < p1Size; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, parent1t[i]);
+        GeneticHelper.tryFireRightTransition(dsm, parent1t[index1]);
+        for (int i = index2 + 1; i < p2Size; i++) {
+            GeneticHelper.tryFireRightTransition(dsm, parent2t[i]);
         }
 
         fitness = context.calculateFitness();
@@ -75,4 +77,5 @@ public class OnePointCrossover implements ICrossover {
 
         return children;
     }
+
 }

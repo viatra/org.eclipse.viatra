@@ -9,14 +9,19 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.crossovers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.genetic.core.GeneticHelper;
+import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
@@ -27,7 +32,7 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
  * either trajectory is swapped between the two parent trajectories. The resulting trajectories are the children. <br/>
  * 
  */
-public class OnePointCrossover implements ICrossover {
+public class PermutationCrossover implements ICrossover {
 
     private Random random = new Random();
 
@@ -36,6 +41,7 @@ public class OnePointCrossover implements ICrossover {
 
         TrajectoryFitness[] children = new TrajectoryFitness[2];
         DesignSpaceManager dsm = context.getDesignSpaceManager();
+        TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
 
         ITransition[] parent1t = parent1.trajectory;
         ITransition[] parent2t = parent2.trajectory;
@@ -47,14 +53,12 @@ public class OnePointCrossover implements ICrossover {
         }
 
         int minSize = Math.min(p1Size, p2Size);
-        int index = random.nextInt(minSize - 1) + 1;
+        int index = random.nextInt(minSize);
 
         for (int i = 0; i < index; i++) {
             dsm.fireActivation(parent1t[i]);
         }
-        for (int i = index; i < p2Size; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, parent2t[i]);
-        }
+        addPermutation(dsm, trajectoryInfo, parent2t);
 
         Fitness fitness = context.calculateFitness();
         children[0] = new TrajectoryFitness(dsm.getTrajectoryInfo(), fitness);
@@ -64,9 +68,7 @@ public class OnePointCrossover implements ICrossover {
         for (int i = 0; i < index; i++) {
             dsm.fireActivation(parent2t[i]);
         }
-        for (int i = index; i < p1Size; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, parent1t[i]);
-        }
+        addPermutation(dsm, trajectoryInfo, parent1t);
 
         fitness = context.calculateFitness();
         children[1] = new TrajectoryFitness(dsm.getTrajectoryInfo(), fitness);
@@ -75,4 +77,21 @@ public class OnePointCrossover implements ICrossover {
 
         return children;
     }
+
+    private void addPermutation(DesignSpaceManager dsm, TrajectoryInfo trajectoryInfo, ITransition[] parent2t) {
+        outerLoop: for (ITransition transitionToAdd : parent2t) {
+
+            Object transitionToAddId = transitionToAdd.getId();
+
+            for (ITransition childTransition : trajectoryInfo.getFullTransitionTrajectory()) {
+                Object id = childTransition.getId();
+                if (transitionToAddId.equals(id)) {
+                    continue outerLoop;
+                }
+            }
+
+            GeneticHelper.tryFireRightTransition(dsm, transitionToAdd);
+        }
+    }
+
 }
