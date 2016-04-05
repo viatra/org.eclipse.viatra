@@ -89,9 +89,11 @@ class ModelLoadHelper {
 	 */
 	def loadPatternModelFromUri(String platformUri, Injector injector, String... additionalDependencyPlatformUris) {
 		val resourceSet = XmiModelUtil.prepareXtextResource(injector)
-		for (additionalUri : additionalDependencyPlatformUris)
-			resourceSet.loadAdditionalResourceFromUri(additionalUri)
-
+		if (additionalDependencyPlatformUris != null && additionalDependencyPlatformUris.size > 0) {
+    		for (additionalUri : additionalDependencyPlatformUris)
+    			resourceSet.loadAdditionalResourceFromUri(additionalUri)
+		}
+    
 		val resource = resourceSet.loadAdditionalResourceFromUri(platformUri)
 		if (resource.contents.size > 0) {
 			if (resource.contents.get(0) instanceof PatternModel) {
