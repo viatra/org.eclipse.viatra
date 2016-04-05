@@ -20,7 +20,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
-import org.eclipse.viatra.query.testing.core.internal.MatchSetRecordDiff
 import org.junit.Assume
 
 /** 

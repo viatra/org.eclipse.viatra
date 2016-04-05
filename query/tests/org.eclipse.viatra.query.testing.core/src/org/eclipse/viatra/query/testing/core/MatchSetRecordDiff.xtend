@@ -7,12 +7,13 @@
  * Contributors:
  * Grill Balázs - initial API and implementation
  */
-package org.eclipse.viatra.query.testing.core.internal
+package org.eclipse.viatra.query.testing.core
 
+import com.google.common.collect.Sets
 import java.util.Set
+import org.eclipse.viatra.query.testing.core.internal.MatchRecordEquvalence
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
-import com.google.common.collect.Sets
 
 /** 
  * Difference descriptor for {@link MatchSetRecord} elements.

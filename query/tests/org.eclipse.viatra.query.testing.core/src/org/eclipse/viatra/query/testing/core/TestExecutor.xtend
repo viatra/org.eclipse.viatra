@@ -18,13 +18,12 @@ import org.apache.log4j.Logger
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
-import org.eclipse.viatra.query.testing.core.internal.MatchSetRecordDiff
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 import static org.junit.Assert.*
-import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 /**
  * Primitive methods for executing a functional test for VIATRA Queries.
