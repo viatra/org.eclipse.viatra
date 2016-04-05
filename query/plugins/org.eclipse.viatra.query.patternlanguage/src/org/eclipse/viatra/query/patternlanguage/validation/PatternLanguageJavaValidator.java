@@ -63,6 +63,7 @@ import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PureWhiteli
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PurityChecker;
 import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.UnionFind;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.util.Primitives.Primitive;
@@ -891,6 +892,30 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                     + " extension point. The possible erroneous calls are the following: " + elementsWithWarnings + ".",
                     xExpression.eContainer(), feature, IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
         }
+    }
+
+    @Check(CheckType.NORMAL)
+    public void checkNegativeCallParameters(PatternCompositionConstraint constraint) {
+    	Predicate<ValueReference> isSingleUseVariable = new Predicate<ValueReference>() {
+
+			@Override
+			public boolean apply(ValueReference input) {
+				if (input instanceof VariableValue) {
+					VariableValue variableValue = (VariableValue) input;
+					return variableValue.getValue().getVar().startsWith("_");
+				} else {
+					return false;
+				}
+			}
+			
+		};
+		if (constraint.isNegative() && Iterables.all(constraint.getCall().getParameters(), isSingleUseVariable)) {
+    		warning("This negative pattern call is a global constraint: "
+					+ "it expresses that there are no matches of the called pattern at all. "
+    				+ "Make sure this is intentional!",
+    				PatternLanguagePackage.Literals.PATTERN_COMPOSITION_CONSTRAINT__CALL,
+    				IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES);
+    	}
     }
 
     @Override
