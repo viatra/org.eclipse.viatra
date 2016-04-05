@@ -57,7 +57,6 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
     Pair::of("iteration", QueryBasedFeatureKind::ITERATION)
   )
   
-  private ModelCodeBasedGenerator modelCodeBasedGenerator = new ModelCodeBasedGenerator(this)
   private SettingDelegateBasedGenerator delegateBasedGenerator = new SettingDelegateBasedGenerator(this)
   
   override getAdditionalBinIncludes() {
@@ -82,12 +81,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
   
   def private processAnnotations(Pattern pattern, boolean generate) {
     for(annotation : pattern.getAnnotationsByName(QueryBasedFeatures::ANNOTATION_LITERAL)) {
-      val useModelCode = annotation.getValueOfFirstBooleanAnnotationParameter("generateIntoModelCode", false)
-      if(useModelCode){
-        modelCodeBasedGenerator.processJavaFiles(pattern, annotation, generate)
-      } else {
         delegateBasedGenerator.updateAnnotations(pattern, annotation, generate)
-      }
     }
   }
   
