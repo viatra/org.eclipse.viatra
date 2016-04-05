@@ -20,6 +20,7 @@ import org.junit.Test
 import static org.junit.Assert.*
 import org.eclipse.viatra.integration.mwe2.initializer.MWE2IntegrationInitializer
 import com.google.common.collect.Lists
+import org.junit.Ignore
 
 /**
  * 
@@ -146,7 +147,9 @@ public class MWE2IntegrationTest {
 	
 	// Parallel with messages
 	
-	@Test def void ConditionalMessageParallel() {
+	@Test 
+	@Ignore("Parallel test cases are flaky on the build server")
+	def void ConditionalMessageParallel() {
 		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/ConditionalMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
@@ -155,7 +158,9 @@ public class MWE2IntegrationTest {
 			"exec_B")
 	}
 	
-	@Test def void DoWhileMessageParallel() {
+	@Test 
+	@Ignore("Parallel test cases are flaky on the build server")
+	def void DoWhileMessageParallel() {
 		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/DoWhileMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
@@ -168,7 +173,9 @@ public class MWE2IntegrationTest {
 			"exec_A")
 	}
 	
-	@Test def void ForeachMessageParallel() {
+	@Test 
+	@Ignore("Parallel test cases are flaky on the build server")
+	def void ForeachMessageParallel() {
 		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/ForeachMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicB",
@@ -178,7 +185,9 @@ public class MWE2IntegrationTest {
 			"exec_A")
 	}
 	
-	@Test def void ForMessageParallel() {
+	@Test 
+	@Ignore("Parallel test cases are flaky on the build server")
+	def void ForMessageParallel() {
 		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/ForMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
@@ -189,19 +198,25 @@ public class MWE2IntegrationTest {
 			"exec_A")
 	}
 	
-	@Test def void RootMessageParallel() {
+	@Test 
+	@Ignore("Parallel test cases are flaky on the build server")
+	def void RootMessageParallel() {
 		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/RootMessageParallel.mwe2", 
 			"exec_A",
 			"exec_B")
 	}
 	
-	@Test def void SequenceMessageParallel() {
+	@Test 
+	@Ignore("Parallel test cases are flaky on the build server")
+	def void SequenceMessageParallel() {
 		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/SequenceMessageParallel.mwe2", 
 			"exec_A",
 			"exec_B")
 	}
 	
-	@Test def void WhileMessageParallel() {
+	@Test 
+	@Ignore("Parallel test cases are flaky on the build server")
+	def void WhileMessageParallel() {
 		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/WhileMessageParallel.mwe2", 
 			"exec_A",
 			"message_ATestTopicA",
@@ -239,7 +254,9 @@ public class MWE2IntegrationTest {
 			"exec_A")
 	}
 	
-	@Test def void MultiMessageParallel() {
+	@Test 
+	@Ignore("Parallel test cases are flaky on the build server")
+	def void MultiMessageParallel() {
 		testWithParallel("src/org/eclipse/viatra/integration/mwe2/test/workflows/MultiMessageParallel.mwe2", 
 			"exec_B",
 			"exec_A",
