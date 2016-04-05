@@ -1,11 +1,11 @@
 /** 
- * Copyright (c) 2010-2015, Grill Bal�zs, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2015, Balázs Grill, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * Contributors:
- * Grill Bal�zs - initial API and implementation
+ * Balázs Grill - initial API and implementation
  */
 package org.eclipse.viatra.query.testing.core.api
 
@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions
 import com.google.inject.Injector
 import java.util.LinkedList
 import java.util.List
+import org.apache.log4j.Level
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
@@ -159,6 +160,36 @@ class ViatraQueryTest {
      */
     def assertEqualsThen(){
         assertEquals
+        this
+    }
+    
+    /**
+     * Assert that there were no log events with higher level than given severity during the execution 
+     */
+    def assertLogSeverityThreshold(Level severity){
+        testCase.assertLogSeverityThreshold(severity)
+    }
+    
+    /**
+     * Assert that the highest level of log events occurred during execution equals to the given severity
+     */
+    def assertLogSeverity(Level severity){
+        testCase.assertLogSeverity(severity)
+    }
+
+    /**
+     * Assert that there were no log events with higher level than given severity during the execution 
+     */
+    def assertLogSeverityThresholdThen(Level severity){
+        this.assertLogSeverityThreshold(severity)
+        this
+    }
+    
+    /**
+     * Assert that the highest level of log events occurred during execution equals to the given severity
+     */
+    def assertLogSeverityThen(Level severity){
+        this.assertLogSeverity(severity)
         this
     }
 

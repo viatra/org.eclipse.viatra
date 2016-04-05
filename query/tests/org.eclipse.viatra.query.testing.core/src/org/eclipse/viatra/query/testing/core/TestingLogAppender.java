@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
@@ -23,8 +24,9 @@ import org.apache.log4j.varia.LevelRangeFilter;
 
 /**
  * @author Abel Hegedus
- *
+ * @deprecated use {@link TestingSeverityAggregatorLogAppender} or {@link ConsoleAppender} instead
  */
+@Deprecated
 public class TestingLogAppender extends AppenderSkeleton implements Appender {
 
     private static final String FORMAT_LAYOUT = "%m%n";

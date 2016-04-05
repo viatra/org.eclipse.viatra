@@ -1,11 +1,11 @@
 /** 
- * Copyright (c) 2010-2015, Grill Balázs, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2015, Balázs Grill, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * Contributors:
- * Grill Balázs - initial API and implementation
+ * Balázs Grill - initial API and implementation
  */
 package org.eclipse.viatra.query.testing.core
 
@@ -19,14 +19,19 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.junit.Assume
+import org.apache.log4j.Level
+import org.junit.Assert
 
 /** 
  * @author Grill Balázs
  */
 class ViatraQueryTestCase {
-
+    
+    private static val String SEVERITY_AGGREGATOR_LOGAPPENDER_NAME = ViatraQueryTestCase.name+".severityAggregatorLogAppender";
 	public static val String UNEXPECTED_MATCH = "Unexpected match"
 	public static val String EXPECTED_NOT_FOUND = "Expected match not found"
 
@@ -35,13 +40,42 @@ class ViatraQueryTestCase {
 	final List<IMatchSetModelProvider> modelProviders
 	extension SnapshotHelper = new SnapshotHelper
 
+    val TestingSeverityAggregatorLogAppender appender
+
 	new() {
 		this.resourceSet = new ResourceSetImpl
 		this.modelProviders = new LinkedList
+		
+		val a = ViatraQueryLoggingUtil.getLogger(ViatraQueryEngine).getAppender(SEVERITY_AGGREGATOR_LOGAPPENDER_NAME)
+		this.appender = if (a instanceof TestingSeverityAggregatorLogAppender) {
+		    a.clear
+		    a
+		} else {
+		    val na = new TestingSeverityAggregatorLogAppender
+		    na.name = SEVERITY_AGGREGATOR_LOGAPPENDER_NAME
+		    ViatraQueryLoggingUtil.getLogger(ViatraQueryEngine).addAppender(na)
+		    na
+		}
 	}
+
+    def assertLogSeverityThreshold(Level severity){
+        if (appender.severity.toInt > severity.toInt){
+            Assert.fail(appender.severity.toString+" message on log: "+appender.event.renderedMessage);
+        }
+    }
+    
+    def assertLogSeverity(Level severity){
+        Assert.assertEquals(severity, appender.severity)
+    }
 
 	def loadModel(URI uri) {
 		resourceSet.getResource(uri, true)
+	}
+	
+	def void dispose(){
+	    modelProviders.forEach[dispose]
+	    modelProviders.clear
+	    resourceSet.resources.forEach[unload]
 	}
 	
 	def <T extends EObject> modifyModel(Class<T> clazz, (T)=>boolean condition, (T)=>void operation){
@@ -62,6 +96,7 @@ class ViatraQueryTestCase {
         for(element : elementsToModify) {
             operation.apply(element)
         }
+        appender.clear
     }
 
 	def addMatchSetModelProvider(IMatchSetModelProvider matchSetModelProvider) {
