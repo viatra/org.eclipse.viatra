@@ -29,6 +29,7 @@ public class QueryBasedFeatures {
 
 	public static final String ANNOTATION_LITERAL  		= "QueryBasedFeature";
 	public static final String ANNOTATION_SOURCE 		= "org.eclipse.viatra.query.querybasedfeature";
+	public static final String LEGACY_ANNOTATION_SOURCE = "org.eclipse.incquery.querybasedfeature";
     public static final String PATTERN_FQN_KEY 			= "patternFQN";
     public static final String ECORE_ANNOTATION     	= "http://www.eclipse.org/emf/2002/Ecore";
     public static final String SETTING_DELEGATES_KEY  	= "settingDelegates";

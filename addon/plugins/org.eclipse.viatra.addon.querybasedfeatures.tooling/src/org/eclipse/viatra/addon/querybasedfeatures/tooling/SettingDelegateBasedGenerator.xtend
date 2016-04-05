@@ -12,11 +12,10 @@ package org.eclipse.viatra.addon.querybasedfeatures.tooling
 
 import java.io.IOException
 import java.util.ArrayList
-import java.util.StringTokenizer
 import org.eclipse.emf.ecore.EcoreFactory
+import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures
 
 import static extension org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper.*
 
@@ -73,14 +72,7 @@ class SettingDelegateBasedGenerator {
         // add entry ("patternFQN", pattern.fullyQualifiedName)
         ecoreAnnotation.details.put(QueryBasedFeatures::SETTING_DELEGATES_KEY, QueryBasedFeatures::ANNOTATION_SOURCE)
       } else {
-        val delegates = new StringTokenizer(entry.value)
-        while(delegates.hasMoreTokens){
-          val delegate = delegates.nextToken
-          if(delegate == QueryBasedFeatures::ANNOTATION_SOURCE){
-            return
-          }
-        }
-        entry.value = entry.value + " " + QueryBasedFeatures::ANNOTATION_SOURCE
+        entry.value = QueryBasedFeatures::ANNOTATION_SOURCE
       }
     } catch(Exception e){
       logger.warn(String.format("Error happened when trying to add QBF annotation to package %s in Ecore!",parameters.ePackage.name), e)
@@ -92,7 +84,7 @@ class SettingDelegateBasedGenerator {
       val feat = parameters.feature
       val annotations = new ArrayList(feat.EAnnotations)
       annotations.forEach[
-        if(it.source == QueryBasedFeatures::ANNOTATION_SOURCE) {
+        if(it.source == QueryBasedFeatures::ANNOTATION_SOURCE || it.source == QueryBasedFeatures::LEGACY_ANNOTATION_SOURCE) {
           feat.EAnnotations.remove(it)
         }
       ]
@@ -111,7 +103,7 @@ class SettingDelegateBasedGenerator {
       val feat = parameters.feature
       val annotations = new ArrayList(feat.EAnnotations)
       annotations.forEach[
-        if(it.source == QueryBasedFeatures::ANNOTATION_SOURCE){
+        if(it.source == QueryBasedFeatures::ANNOTATION_SOURCE || it.source == QueryBasedFeatures::LEGACY_ANNOTATION_SOURCE){
           feat.EAnnotations.remove(it)
         }
       ]
