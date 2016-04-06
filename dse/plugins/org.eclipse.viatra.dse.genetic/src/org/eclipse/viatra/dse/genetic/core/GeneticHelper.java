@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 
 public class GeneticHelper {
@@ -62,6 +63,16 @@ public class GeneticHelper {
             }
         }
         throw new IndexOutOfBoundsException("size: " + i + ", index: " + index);
+    }
+    
+    public static boolean tryFireRightTransition(DesignSpaceManager dsm, ITransition transition) {
+        Object id = transition.getId();
+        for (ITransition t : dsm.getTransitionsFromCurrentState()) {
+            if (t.getId().equals(id)) {
+                return dsm.tryFireActivation(t);
+            }
+        }
+        return false;
     }
 
 }

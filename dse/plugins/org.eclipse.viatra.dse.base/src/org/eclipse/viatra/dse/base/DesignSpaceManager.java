@@ -36,7 +36,6 @@ import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.designspace.api.TransitionMetaData;
 import org.eclipse.viatra.dse.guidance.IRuleApplicationChanger;
 import org.eclipse.viatra.dse.guidance.IRuleApplicationNumberChanged;
-import org.eclipse.viatra.dse.monitor.PerformanceMonitorManager;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
@@ -116,10 +115,44 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
     @Override
     public void fireActivation(final ITransition transition) {
+        if (fireActivationSilent(transition)) {
+            return;
+        }
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("A retrieved Transition SHOULD have a matching Activation. Possible causes: the state serializer is faulty; the algorithm choosed a wrong Transition.");
+        sb.append("\nSought transition: ");
+        sb.append(transition.getId());
+        Object firedFromId = transition.getFiredFrom().getId();
+        sb.append("\nTransition's source: ");
+        sb.append(firedFromId);
+        Object currentStateId = getCurrentState().getId();
+        sb.append("\nCurrent known state: " + (currentStateId.equals(firedFromId) ? "same" : currentStateId));
+        Object actualStateId = stateCoder.createStateCode();
+        sb.append("\nActual state: " + (actualStateId.equals(currentStateId) ? "same as current" : actualStateId));
+        sb.append("\n" + trajectory);
+        sb.append("\nAvailable transitions:");
+        for (Activation<?> act : ruleEngine.getConflictingActivations()) {
+            IPatternMatch match = (IPatternMatch) act.getAtom();
+            Object code = generateMatchCode(match);
+            sb.append("\n\t");
+            sb.append(code);
+        }
+
+        throw new DSEException(sb.toString());
+    }
+
+    public boolean tryFireActivation(final ITransition transition) {
+        return fireActivationSilent(transition);
+    }
+
+    private boolean fireActivationSilent(final ITransition transition) {
         final Activation<?> activation = getActivationByTransitionId(transition);
 
-        // assemble the new RecordingCommand to fire the Transition
+        if (activation == null) {
+            return false;
+        }
+
         ChangeCommand rc = new ChangeCommand(model) {
             @Override
             protected void doExecute() {
@@ -129,10 +162,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
         IState previousState = trajectory.getCurrentState();
 
-        // execute the command
-        PerformanceMonitorManager.startTimer(EXECUTE);
         domain.getCommandStack().execute(rc);
-        PerformanceMonitorManager.endTimer(EXECUTE);
 
         Object newStateId = stateCoder.createStateCode();
 
@@ -165,6 +195,8 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
         logger.debug("Fired Transition (" + transition.getId() + ") from " + previousState.getId() + " to "
                 + newStateId);
+        
+        return true;
     }
 
     public ITransition getTransitionByActivation(Activation<?> activation) {
@@ -186,25 +218,7 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
                 return act;
             }
         }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("A retrieved Transition SHOULD have a matching Activation. Possible causes: the state serializer is faulty; the algorithm choosed a wrong Transition.");
-        sb.append("\nSought transition: ");
-        sb.append(transition.getId());
-        Object firedFromId = transition.getFiredFrom().getId();
-        sb.append("\nTransition's source: ");
-        sb.append(firedFromId);
-        Object currentStateId = getCurrentState().getId();
-        sb.append("\nCurrent state: " + (currentStateId.equals(firedFromId) ? "same" : currentStateId));
-        sb.append("\nAvailable transitions:");
-        for (Activation<?> act : ruleEngine.getConflictingActivations()) {
-            IPatternMatch match = (IPatternMatch) act.getAtom();
-            Object code = generateMatchCode(match);
-            sb.append("\n\t");
-            sb.append(code);
-        }
-
-        throw new DSEException(sb.toString());
+        return null;
     }
 
     /**
@@ -286,7 +300,6 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
         // we move the model by executing undo on the command stack
         domain.getCommandStack().undo();
-
         // save transition id
         ITransition lastTransition = trajectory.getLastTransition();
 
@@ -307,6 +320,10 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
         // return with true, indicating that we indeed executed a step back.
         return true;
+    }
+
+    public void undoUntilRoot() {
+        while(undoLastTransformation());
     }
 
     private Object generateMatchCode(IPatternMatch match) {

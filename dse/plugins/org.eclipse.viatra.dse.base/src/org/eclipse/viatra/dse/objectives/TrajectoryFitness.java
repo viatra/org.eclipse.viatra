@@ -29,6 +29,8 @@ public class TrajectoryFitness {
     public double crowdingDistance;
 
     private int hash;
+    
+    public int survive;
 
     /**
      * Creates a {@link TrajectoryFitness} with the full trajectory.
