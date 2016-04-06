@@ -37,8 +37,8 @@ import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 public class EvolutionaryStrategy implements IStrategy {
 
     // configs
-    protected int populationSize;
-    protected int childPopulationSize;
+    protected int initialPopulationSize = -1;
+    protected int childPopulationSize = -1;
     protected IInitialPopulationSelector initialPopulationSelector;
     protected IEvaluationStrategy evaluationStrategy;
     protected ISurvivalStrategy survivalStrategy;
@@ -83,7 +83,7 @@ public class EvolutionaryStrategy implements IStrategy {
     public void explore() {
 
         // initial population selection
-        initialPopulationSelector.setPopulationSize(populationSize);
+        initialPopulationSelector.setPopulationSize(initialPopulationSize);
         initialPopulationSelector.initStrategy(context);
         initialPopulationSelector.explore();
         List<TrajectoryFitness> currentPopulation = initialPopulationSelector.getInitialPopulation();
@@ -136,7 +136,7 @@ public class EvolutionaryStrategy implements IStrategy {
                 childPopulation.add(trajectoryFitness);
             }
             // implicit duplication check - same if very same trajectory 
-            while (childPopulationSize > childPopulation.size() - survivedPopulation.size()) {
+            while (childPopulationSize > childPopulation.size()) {
 
                 if (childPopulation.size() == childPopulationSize - 1 || random.nextDouble() < mutationChance) {
                     int index = random.nextInt(mutations.size());

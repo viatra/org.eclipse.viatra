@@ -49,7 +49,7 @@ public class ModifyRandomTransitionMutation implements IMutation {
         dsm.fireActivation(transition);
 
         for (int i = index + 1; i < trajectorySize; i++) {
-            dsm.fireActivation(trajectory[i]);
+            GeneticHelper.tryFireRightTransition(dsm, trajectory[i]);
         }
 
         Fitness calculateFitness = context.calculateFitness();

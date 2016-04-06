@@ -14,15 +14,15 @@ import java.util.Collection;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutationRate;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
-public class BasicMutationRate implements IMutationRate {
+public class SimpleMutationRate implements IMutationRate {
 
     private double mutationChance;
 
-    public BasicMutationRate() {
+    public SimpleMutationRate() {
         this(0.5d);
     }
 
-    public BasicMutationRate(double mutationChance) {
+    public SimpleMutationRate(double mutationChance) {
         this.mutationChance = mutationChance;
     }
 

@@ -22,6 +22,7 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
+import org.eclipse.viatra.dse.genetic.core.GeneticHelper;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
@@ -71,7 +72,7 @@ public class ModifyTransitionByPriorityMutation implements IMutation {
         dsm.fireActivation(transition);
 
         for (int i = index + 1; i < trajectorySize; i++) {
-            dsm.fireActivation(trajectory[i]);
+            GeneticHelper.tryFireRightTransition(dsm, trajectory[i]);
         }
 
         Fitness calculateFitness = context.calculateFitness();
