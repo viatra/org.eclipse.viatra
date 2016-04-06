@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;

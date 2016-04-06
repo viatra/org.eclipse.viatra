@@ -12,7 +12,7 @@ package org.eclipse.viatra.addon.databinding.runtime.collection;
 
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
 /**
  * Match processor that can be parameterized with a {@link Direction} and an {@link IObservablePatternMatchCollectionUpdate}.

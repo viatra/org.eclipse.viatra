@@ -8,7 +8,7 @@
  * Contributors:
  *   Tamas Szabo - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.base.itc.alg.incscc;
+package org.eclipse.viatra.query.runtime.matchers.util;
 
 /**
  * @author Tamas Szabo
