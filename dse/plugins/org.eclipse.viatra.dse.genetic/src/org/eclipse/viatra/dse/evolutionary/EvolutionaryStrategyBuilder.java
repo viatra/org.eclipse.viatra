@@ -27,10 +27,12 @@ import org.eclipse.viatra.dse.evolutionary.mutationrate.SimpleMutationRate;
 import org.eclipse.viatra.dse.evolutionary.mutations.AddRandomTransitionMutation;
 import org.eclipse.viatra.dse.evolutionary.mutations.ModifyRandomTransitionMutation;
 import org.eclipse.viatra.dse.evolutionary.parentselectors.CrowdedTournementParentSelector;
+import org.eclipse.viatra.dse.evolutionary.parentselectors.RandomParentSelector;
 import org.eclipse.viatra.dse.evolutionary.reproduction.SimpleReproductionStrategy;
 import org.eclipse.viatra.dse.evolutionary.reproduction.SimpleReproductionStrategy.ReproductionStrategyType;
 import org.eclipse.viatra.dse.evolutionary.stopconditions.ConstantParetoFrontStopCondition;
 import org.eclipse.viatra.dse.evolutionary.survival.FirstNSolutionsSurvivalStrategy;
+import org.eclipse.viatra.dse.evolutionary.survival.ParetoSurvivalStrategy;
 
 import com.google.common.base.Preconditions;
 
@@ -45,7 +47,7 @@ public class EvolutionaryStrategyBuilder {
         return new EvolutionaryStrategyBuilder();
     }
 
-    public static EvolutionaryStrategyBuilder createNsgaBuilder(int populationSize) {
+    public static EvolutionaryStrategyBuilder createNsga2Builder(int populationSize) {
         EvolutionaryStrategyBuilder builder = new EvolutionaryStrategyBuilder();
         builder.setInitialPopulationSize(populationSize * 2);
         builder.setChildPopulationSize(populationSize * 2);
@@ -56,8 +58,8 @@ public class EvolutionaryStrategyBuilder {
         return builder;
     }
 
-    public static EvolutionaryStrategyBuilder createNsgaBuilderFull(int populationSize) {
-        EvolutionaryStrategyBuilder builder = createNsgaBuilder(populationSize);
+    public static EvolutionaryStrategyBuilder createNsga2BuilderFull(int populationSize) {
+        EvolutionaryStrategyBuilder builder = createNsga2Builder(populationSize);
         builder.setInitialPopulationSelector(new BfsInitialSelector(0.18f, 2));
         builder.setStopCondition(new ConstantParetoFrontStopCondition(20));
         builder.setMutationRate(new SimpleMutationRate(0.8));
@@ -68,8 +70,33 @@ public class EvolutionaryStrategyBuilder {
         return builder;
     }
 
-    public static EvolutionaryStrategy createNsgaStrategy(int populationSize) {
-        return createNsgaBuilderFull(populationSize).build();
+    public static EvolutionaryStrategy createNsga2Strategy(int populationSize) {
+        return createNsga2BuilderFull(populationSize).build();
+    }
+
+    public static EvolutionaryStrategyBuilder createPesaBuilder(int populationSize) {
+        EvolutionaryStrategyBuilder builder = new EvolutionaryStrategyBuilder();
+        builder.setInitialPopulationSize(populationSize * 2);
+        builder.setChildPopulationSize(populationSize * 2);
+        builder.setEvaluationStrategy(new FrontsAndCrowdingDistanceEvaluationStrategy());
+        builder.setParentSelectionStrategy(new RandomParentSelector());
+        builder.setSurvivalStrategy(new ParetoSurvivalStrategy(populationSize));
+        builder.setReproductionStrategy(new SimpleReproductionStrategy(ReproductionStrategyType.SURVIVED_POPULATION));
+        return builder;
+    }
+
+    public static EvolutionaryStrategyBuilder createPesaBuilderFull(int populationSize) {
+        EvolutionaryStrategyBuilder builder = createNsga2Builder(populationSize);
+        builder.setInitialPopulationSelector(new BfsInitialSelector(0.18f, 2));
+        builder.setStopCondition(new ConstantParetoFrontStopCondition(20));
+        builder.setMutationRate(new SimpleMutationRate(1.001));
+        builder.addMutation(new AddRandomTransitionMutation(), 3);
+        builder.addMutation(new ModifyRandomTransitionMutation());
+        return builder;
+    }
+
+    public static EvolutionaryStrategy createPesaStrategy(int populationSize) {
+        return createPesaBuilderFull(populationSize).build();
     }
 
     public EvolutionaryStrategy build() {
@@ -80,7 +107,7 @@ public class EvolutionaryStrategyBuilder {
         Preconditions.checkNotNull(strategy.parentSelectionStrategy, "Parent selection strategy is not set!");
         Preconditions.checkNotNull(strategy.stopCondition, "Stop condition is not set!");
         Preconditions.checkNotNull(strategy.mutationRate, "Mutation rate is not set!");
-        Preconditions.checkArgument(!strategy.mutations.isEmpty() && !strategy.crossovers.isEmpty(),
+        Preconditions.checkArgument(!(strategy.mutations.isEmpty() && strategy.crossovers.isEmpty()),
                 "No mutation nor crossover operations added!");
         Preconditions.checkArgument(strategy.initialPopulationSize > 0,
                 "Initial population size is not set correctly!");

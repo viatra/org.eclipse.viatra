@@ -17,6 +17,16 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public class ParetoSurvivalStrategy implements ISurvivalStrategy {
 
+    private int maxSurvivals;
+
+    public ParetoSurvivalStrategy(int maxSurvivals) {
+        this.maxSurvivals = maxSurvivals;
+    }
+
+    public ParetoSurvivalStrategy() {
+        this(-1);
+    }
+
     @Override
     public void init(ThreadContext context) {
     }
@@ -24,7 +34,12 @@ public class ParetoSurvivalStrategy implements ISurvivalStrategy {
     @Override
     public List<TrajectoryFitness> selectSurvivedPopulation(
             List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation) {
-        return frontsOfCurrentPopulation.get(0);
+        
+        List<TrajectoryFitness> paretoFront = frontsOfCurrentPopulation.get(0);
+        if (maxSurvivals > 0 && paretoFront.size() > maxSurvivals) {
+            return paretoFront.subList(0, maxSurvivals);
+        }
+        return paretoFront;
     }
 
 }
