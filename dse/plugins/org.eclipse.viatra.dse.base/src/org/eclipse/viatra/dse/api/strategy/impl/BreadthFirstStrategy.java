@@ -111,12 +111,14 @@ public class BreadthFirstStrategy implements IStrategy {
             boolean globalConstraintsAreSatisfied = context.checkGlobalConstraints();
             if (!globalConstraintsAreSatisfied) {
                 logger.info("Global contraint is not satisifed in the first state. Terminate.");
+                return;
             }
 
             Fitness fitness = context.calculateFitness();
             if (fitness.isSatisifiesHardObjectives()) {
                 solutionStore.newSolution(context);
                 logger.info("First state is a solution. Terminate.");
+                return;
             }
 
             List<ITransition> currentTrajectory = dsm.getTrajectoryInfo().getFullTransitionTrajectory();
