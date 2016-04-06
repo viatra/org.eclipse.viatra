@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.Direction;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
 /**
  * @author Abel Hegedus

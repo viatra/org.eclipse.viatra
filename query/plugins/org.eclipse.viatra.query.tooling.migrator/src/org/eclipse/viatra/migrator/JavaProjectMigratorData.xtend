@@ -211,7 +211,10 @@ abstract class JavaProjectMigratorData {
             "org.eclipse.incquery.viewers.runtime.zest.extensions.IncQueryViewersZestViewSupport" -> "org.eclipse.viatra.addon.viewers.runtime.zest.extensions.ViatraViewersZestViewSupport",
             "org.eclipse.viatra.addon.viewers.runtime.model.Containment" -> "org.eclipse.viatra.addon.viewers.runtime.notation.Containment",
             "org.eclipse.viatra.addon.viewers.runtime.model.Edge" -> "org.eclipse.viatra.addon.viewers.runtime.notation.Edge",
-            "org.eclipse.viatra.addon.viewers.runtime.model.Item" -> "org.eclipse.viatra.addon.viewers.runtime.notation.Item"
+            "org.eclipse.viatra.addon.viewers.runtime.model.Item" -> "org.eclipse.viatra.addon.viewers.runtime.notation.Item",
+            //Bug 488205
+            "org.eclipse.viatra.query.runtime.base.itc.alg.incscc.Direction" -> "org.eclipse.viatra.query.runtime.matchers.util.Direction",
+            "org.eclipse.viatra.query.runtime.base.itc.alg.incscc.UnionFind" -> "org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind"
 		)
 		
 		/*

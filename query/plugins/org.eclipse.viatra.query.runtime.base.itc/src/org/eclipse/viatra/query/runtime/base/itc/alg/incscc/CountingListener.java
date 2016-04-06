@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.base.itc.alg.incscc;
 
 import org.eclipse.viatra.query.runtime.base.itc.igraph.ITcObserver;
+import org.eclipse.viatra.query.runtime.matchers.util.Direction;
 
 /**
  * @author Tamas Szabo
@@ -26,12 +27,12 @@ public class CountingListener<V> implements ITcObserver<V> {
 
     @Override
     public void tupleInserted(V source, V target) {
-        alg.notifyTcObservers(alg.sccs.setMap.get(source), alg.sccs.setMap.get(target), Direction.INSERT);
+        alg.notifyTcObservers(alg.sccs.getPartition(source), alg.sccs.getPartition(target), Direction.INSERT);
     }
 
     @Override
     public void tupleDeleted(V source, V target) {
-        alg.notifyTcObservers(alg.sccs.setMap.get(source), alg.sccs.setMap.get(target), Direction.DELETE);
+        alg.notifyTcObservers(alg.sccs.getPartition(source), alg.sccs.getPartition(target), Direction.DELETE);
     }
 
 }
