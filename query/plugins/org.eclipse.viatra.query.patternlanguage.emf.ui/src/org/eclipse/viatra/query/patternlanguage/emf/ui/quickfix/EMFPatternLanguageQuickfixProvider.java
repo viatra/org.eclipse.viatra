@@ -54,7 +54,12 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     @Fix(EMFIssueCodes.MISSING_PARAMETER_TYPE)
     public void inferMissingParameterType(final Issue issue, IssueResolutionAcceptor acceptor) {
         for (final String data : issue.getData()) {
-            acceptor.accept(issue, "Insert type '" + data + "'", "Declares the inferred type " + data + " for the variable", null, new IModification() {
+            acceptor.accept(issue, "Insert type '" + data + "'", 
+                    "Declares the inferred type " + data + " for the variable. \n\n" +
+                    "Warning! When not matching the entire ResourceSet, \n" + 
+                    "this might slightly change the results of the pattern; \n" + 
+                    "look at the documentation of Query Scopes for details.", 
+                    null, new IModification() {
 
                 @Override
                 public void apply(IModificationContext context) throws Exception {
