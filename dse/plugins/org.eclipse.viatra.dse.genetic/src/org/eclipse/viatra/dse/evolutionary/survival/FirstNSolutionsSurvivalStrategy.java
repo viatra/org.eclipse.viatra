@@ -11,7 +11,6 @@ package org.eclipse.viatra.dse.evolutionary.survival;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,13 +25,13 @@ public class FirstNSolutionsSurvivalStrategy implements ISurvivalStrategy {
     private int numberOfSelectedInstances = -1;
 
     public FirstNSolutionsSurvivalStrategy() {
-        
+
     }
 
     public FirstNSolutionsSurvivalStrategy(int numberOfSelectedInstances) {
         this.numberOfSelectedInstances = numberOfSelectedInstances;
     }
-    
+
     public void setNumberOfSelectedInstances(int numberOfSelectedInstances) {
         this.numberOfSelectedInstances = numberOfSelectedInstances;
     }
@@ -43,7 +42,8 @@ public class FirstNSolutionsSurvivalStrategy implements ISurvivalStrategy {
     }
 
     @Override
-    public List<TrajectoryFitness> selectSurvivedPopulation(List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation) {
+    public List<TrajectoryFitness> selectSurvivedPopulation(
+            List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation) {
 
         List<TrajectoryFitness> survivedPopulation = new ArrayList<>();
 

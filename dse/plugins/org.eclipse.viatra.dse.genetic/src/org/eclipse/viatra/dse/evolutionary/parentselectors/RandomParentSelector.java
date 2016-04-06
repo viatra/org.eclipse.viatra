@@ -15,7 +15,7 @@ import java.util.Random;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IParentSelectionStrategy;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
-public class CrowdedTournementParentSelector implements IParentSelectionStrategy {
+public class RandomParentSelector implements IParentSelectionStrategy {
 
     private Random rnd = new Random();
     private List<TrajectoryFitness> parentPopulation;
@@ -27,25 +27,8 @@ public class CrowdedTournementParentSelector implements IParentSelectionStrategy
 
     @Override
     public TrajectoryFitness getNextParent() {
-
-        int index1 = rnd.nextInt(parentPopulation.size());
-        int index2 = rnd.nextInt(parentPopulation.size());
-        while (index2 == index1)
-            index2 = rnd.nextInt(parentPopulation.size());
-        TrajectoryFitness parentCandidate1 = parentPopulation.get(index1);
-        TrajectoryFitness parentCandidate2 = parentPopulation.get(index2);
-
-        if (parentCandidate1.rank < parentCandidate2.rank) {
-            return parentCandidate1;
-        } else if (parentCandidate1.rank > parentCandidate2.rank) {
-            return parentCandidate2;
-        } else {
-            if (parentCandidate2.crowdingDistance > parentCandidate1.crowdingDistance) {
-                return parentCandidate2;
-            } else {
-                return parentCandidate1;
-            }
-        }
+        int index = rnd.nextInt(parentPopulation.size());
+        return parentPopulation.get(index);
     }
 
 }

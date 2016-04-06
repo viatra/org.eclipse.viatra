@@ -33,7 +33,6 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
 
     private int minDepthOfFirstPopulation;
     private int populationSize;
-    private int foundInstances = 0;
     private float chanceOfSelection = 1;
 
     private List<TrajectoryFitness> initialPopulation;
@@ -92,7 +91,7 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
                 }
                 dsm.undoLastTransformation();
             }
-            
+
             dsm.undoUntilRoot();
             ITransition[] nextTrajectory = queue.poll();
             for (ITransition iTransition : nextTrajectory) {
