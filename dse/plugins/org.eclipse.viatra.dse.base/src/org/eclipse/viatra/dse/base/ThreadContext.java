@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
@@ -189,6 +188,8 @@ public class ThreadContext {
         for (IGlobalConstraint globalConstraint : globalConstraints) {
             globalConstraint.init(this);
         }
+
+        DseIdPoolHelper.INSTANCE.registerRules(this);
 
         globalContext.initVisualizersForThread(this);
 

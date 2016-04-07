@@ -81,7 +81,7 @@ public class ExplorerThread implements Runnable {
      */
     public void dispose() {
         threadContext.getRuleEngine().dispose();
-        // threadContext.getQueryEngine().dispose();
+        DseIdPoolHelper.INSTANCE.disposeByThread();
     }
 
     /**
