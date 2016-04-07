@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
@@ -59,6 +61,14 @@ public class SolutionStore {
             if (solutionsToFind == 0) {
                 enoughSolutions.set(true);
             }
+        }
+    }
+
+    public static class LogSolutionHandler implements ISolutionFoundHandler {
+
+        @Override
+        public void solutionFound(ThreadContext context, SolutionTrajectory trajectory) {
+            Logger.getLogger(getClass()).info(trajectory.toPrettyString());
         }
     }
 
@@ -138,6 +148,11 @@ public class SolutionStore {
             solutionFoundHandlers = new ArrayList<ISolutionFoundHandler>(1);
         }
         solutionFoundHandlers.add(handler);
+    }
+
+    public void logSolutionsWhenFound() {
+        registerSolutionFoundHandler(new LogSolutionHandler());
+        Logger.getLogger(LogSolutionHandler.class).setLevel(Level.INFO);
     }
 
 }
