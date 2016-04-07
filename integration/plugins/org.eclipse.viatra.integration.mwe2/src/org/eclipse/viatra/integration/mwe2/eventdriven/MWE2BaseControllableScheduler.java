@@ -8,11 +8,8 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.integration.mwe2.eventdriven.mwe2impl;
+package org.eclipse.viatra.integration.mwe2.eventdriven;
 
-import org.eclipse.viatra.integration.mwe2.eventdriven.IController;
-import org.eclipse.viatra.integration.mwe2.eventdriven.ISchedulerController;
-import org.eclipse.viatra.transformation.evm.api.Executor;
 import org.eclipse.viatra.transformation.evm.api.ScheduledExecution;
 import org.eclipse.viatra.transformation.evm.api.Scheduler;
 

@@ -19,7 +19,6 @@ Require-Bundle: org.eclipse.emf.mwe2.runtime,
 Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.integration.mwe2,
  org.eclipse.viatra.integration.mwe2.eventdriven,
- org.eclipse.viatra.integration.mwe2.eventdriven.mwe2impl,
  org.eclipse.viatra.integration.mwe2.initializer,
  org.eclipse.viatra.integration.mwe2.mwe2impl,
  org.eclipse.viatra.integration.mwe2.mwe2impl.exceptions,
