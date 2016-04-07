@@ -12,7 +12,7 @@ package org.eclipse.viatra.transformation.debug;
 
 import org.eclipse.viatra.transformation.debug.controller.IDebugController;
 import org.eclipse.viatra.transformation.evm.api.Activation;
-import org.eclipse.viatra.transformation.evm.api.adapter.AbstractTransformationListener;
+import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMListener;
 
 /**
  * Listener implementation that displays the transformation context using a
@@ -21,7 +21,7 @@ import org.eclipse.viatra.transformation.evm.api.adapter.AbstractTransformationL
  * @author Peter Lunk
  *
  */
-public class TransformationDebugListener extends AbstractTransformationListener{
+public class TransformationDebugListener extends AbstractEVMListener{
     private IDebugController ui;
     
     public TransformationDebugListener(IDebugController usedUI) {

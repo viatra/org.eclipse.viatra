@@ -18,7 +18,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.ConflictSetIterator;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
-import org.eclipse.viatra.transformation.evm.api.adapter.AbstractTransformationAdapter;
+import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMAdapter;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.tracer.activationcoder.IActivationCoder;
@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
  * @author Peter Lunk
  *
  */
-public class TraceExecutor extends AbstractTransformationAdapter {
+public class TraceExecutor extends AbstractEVMAdapter {
     TransformationTrace trace;
     IActivationCoder activationCoder;
     ITraceModelSerializer serializer;

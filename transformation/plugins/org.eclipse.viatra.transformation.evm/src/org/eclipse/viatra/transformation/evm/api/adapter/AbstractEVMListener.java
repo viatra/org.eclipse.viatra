@@ -21,7 +21,7 @@ import org.eclipse.viatra.transformation.evm.api.event.EventType;
  * @author Peter Lunk
  *
  */
-public class AbstractTransformationListener implements IEVMListener {
+public class AbstractEVMListener implements IEVMListener {
 
     @Override
     public void initializeListener() {

@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eclipse.viatra.transformation.debug.controller.IDebugController;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.ConflictSetIterator;
-import org.eclipse.viatra.transformation.evm.api.adapter.AbstractTransformationAdapter;
+import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMAdapter;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 
@@ -28,7 +28,7 @@ import com.google.common.collect.Sets;
  * @author Peter Lunk
  *
  */
-public class ManualConflictResolver extends AbstractTransformationAdapter{
+public class ManualConflictResolver extends AbstractEVMAdapter{
     private IDebugController ui;
     
     public ManualConflictResolver(IDebugController usedUI){

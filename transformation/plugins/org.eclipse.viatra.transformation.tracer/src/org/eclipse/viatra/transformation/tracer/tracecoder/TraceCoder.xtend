@@ -12,13 +12,13 @@ package org.eclipse.viatra.transformation.tracer.tracecoder
 
 import org.eclipse.emf.common.util.URI
 import org.eclipse.viatra.transformation.evm.api.Activation
-import org.eclipse.viatra.transformation.evm.api.adapter.AbstractTransformationListener
 import org.eclipse.viatra.transformation.tracer.activationcoder.IActivationCoder
 import org.eclipse.viatra.transformation.tracer.activationcoder.impl.DefaultActivationCoder
 import org.eclipse.viatra.transformation.tracer.tracemodelserializer.ITraceModelSerializer
 import org.eclipse.viatra.transformation.tracer.tracemodelserializer.impl.DefaultTraceModelSerializer
 import org.eclipse.viatra.transformation.tracer.transformationtrace.TransformationTrace
 import org.eclipse.viatra.transformation.tracer.transformationtrace.TransformationtraceFactory
+import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMListener
 
 /**
  * Adapter implementation that creates transformation traces based on the ongoing transformation.
@@ -26,7 +26,7 @@ import org.eclipse.viatra.transformation.tracer.transformationtrace.Transformati
  *  @author Peter Lunk
  * 
  */
-class TraceCoder extends AbstractTransformationListener {
+class TraceCoder extends AbstractEVMListener {
     extension TransformationtraceFactory factory = TransformationtraceFactory.eINSTANCE
     extension IActivationCoder activationCoder
     TransformationTrace trace

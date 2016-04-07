@@ -19,7 +19,7 @@ import org.eclipse.viatra.transformation.debug.breakpoints.impl.TransformationBr
 import org.eclipse.viatra.transformation.debug.controller.IDebugController;
 import org.eclipse.viatra.transformation.debug.controller.impl.ConsoleDebugger;
 import org.eclipse.viatra.transformation.evm.api.Activation;
-import org.eclipse.viatra.transformation.evm.api.adapter.AbstractTransformationAdapter;
+import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMAdapter;
 
 import com.google.common.collect.Lists;
 
@@ -31,7 +31,7 @@ import com.google.common.collect.Lists;
  * @author Peter Lunk
  *
  */
-public class TransformationDebugAdapter extends AbstractTransformationAdapter {
+public class TransformationDebugAdapter extends AbstractEVMAdapter {
     private IDebugController ui;
     protected List<ITransformationBreakpoint> breakPoints;
     protected DebuggerActions action = DebuggerActions.Continue;

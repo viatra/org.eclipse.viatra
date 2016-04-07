@@ -21,7 +21,7 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
  * @author Peter Lunk
  *
  */
-public class AbstractTransformationAdapter implements IEVMAdapter {
+public class AbstractEVMAdapter implements IEVMAdapter {
 
     @Override
     public Iterator<Activation<?>> getExecutableActivations(Iterator<Activation<?>> iterator) {
