@@ -158,6 +158,12 @@
 		<url>${eclipse.bugzillaUrl}</url>
 		<system>Bugzilla</system>
 	</issueManagement>
+	<pluginRepositories>
+	   <pluginRepository>
+	       <id>cbi-releases</id>
+	       <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+	   </pluginRepository>
+	</pluginRepositories>
 	<profiles>
 	   <profile>
             <id>sign_milestone</id>
