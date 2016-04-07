@@ -106,7 +106,8 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 		// TreeViewer for the plan
 		createTreeViewer(planSashForm);
 
-        matchesTabFolder = new CTabFolder(planSashForm, SWT.MULTI | SWT.CLOSE);
+        matchesTabFolder = new CTabFolder(planSashForm, SWT.MULTI);
+        
         
         // Zest viewer
         createZestViewer(sashForm);
