@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA Transformation UI
+Bundle-SymbolicName: org.eclipse.viatra.transformation.ui;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-Vendor: Eclipse VIATRA Project
+Require-Bundle: org.eclipse.jdt.ui,
+ org.eclipse.viatra.query.tooling.core,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.ide,
+ org.eclipse.xtext.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.jdt.core
+

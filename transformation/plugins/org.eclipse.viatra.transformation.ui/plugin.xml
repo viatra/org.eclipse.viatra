@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.eclipse.viatra.query.tooling.ui.category"
+            icon="icons/rsz_viatra_logo.png"
+            id="org.eclipse.viatra.transformation.ui.wizards.transformation"
+            name="Model Transformation">
+            <class
+                  class="org.eclipse.viatra.transformation.ui.util.XtendExecutableExtensionFactory">
+               <parameter
+                     name="javatype"
+                     value="true">
+               </parameter>
+               <parameter
+                     name="guicekey"
+                     value="org.eclipse.viatra.transformation.ui.wizards.NewTransformationWizard">
+               </parameter>
+            </class>
+      </wizard>
+   </extension>
+
+</plugin>

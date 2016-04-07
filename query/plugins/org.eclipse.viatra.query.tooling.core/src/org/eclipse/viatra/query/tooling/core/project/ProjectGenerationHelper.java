@@ -436,28 +436,31 @@ public abstract class ProjectGenerationHelper {
      */
     static void ensureBundleDependencies(IBundleProjectService service, IBundleProjectDescription bundleDesc,
             final List<String> dependencyNames) {
+        
         IRequiredBundleDescription[] existingDependencies = bundleDesc.getRequiredBundles();
         if (existingDependencies == null) {
-            return;
-        }
-
-        List<String> missingDependencyNames = new ArrayList<String>(dependencyNames);
-        for (IRequiredBundleDescription bundle : existingDependencies) {
-            if (missingDependencyNames.contains(bundle.getName())) {
-                missingDependencyNames.remove(bundle.getName());
+            List<IRequiredBundleDescription> missingDependencies = Lists.transform(dependencyNames, new IDToRequireBundleTransformer(service));
+            bundleDesc.setRequiredBundles(Iterables.toArray(missingDependencies, IRequiredBundleDescription.class));
+            
+        } else {
+            List<String> missingDependencyNames = new ArrayList<String>(dependencyNames);
+            for (IRequiredBundleDescription bundle : existingDependencies) {
+                if (missingDependencyNames.contains(bundle.getName())) {
+                    missingDependencyNames.remove(bundle.getName());
+                }
             }
+            List<IRequiredBundleDescription> missingDependencies = Lists.transform(missingDependencyNames, new IDToRequireBundleTransformer(service));
+
+            // XXX for compatibility two different versions are needed
+            Iterable<IRequiredBundleDescription> dependenciesToSet =
+                isBeforeKepler() ?
+                // Before Kepler setRequiredBundles only adds dependencies, does not remove
+                missingDependencies :
+                // Since Kepler setRequiredBundles overwrites existing dependencies
+                Iterables.concat(missingDependencies, Arrays.asList(existingDependencies));
+
+            bundleDesc.setRequiredBundles(Iterables.toArray(dependenciesToSet, IRequiredBundleDescription.class));
         }
-        List<IRequiredBundleDescription> missingDependencies = Lists.transform(missingDependencyNames, new IDToRequireBundleTransformer(service));
-
-        // XXX for compatibility two different versions are needed
-        Iterable<IRequiredBundleDescription> dependenciesToSet =
-            isBeforeKepler() ?
-            // Before Kepler setRequiredBundles only adds dependencies, does not remove
-            missingDependencies :
-            // Since Kepler setRequiredBundles overwrites existing dependencies
-            Iterables.concat(missingDependencies, Arrays.asList(existingDependencies));
-
-        bundleDesc.setRequiredBundles(Iterables.toArray(dependenciesToSet, IRequiredBundleDescription.class));
     }
     
     private static Boolean isBeforeKeplerValue = null;

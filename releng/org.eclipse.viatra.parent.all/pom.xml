@@ -37,6 +37,7 @@
 		<module>../../query/features/org.eclipse.viatra.query.sdk.feature</module>
 
 		<!-- Transformations -->
+		<module>../../transformation/plugins/org.eclipse.viatra.transformation.ui</module>
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.evm.transactions</module>
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.views</module>
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.debug</module>
@@ -44,6 +45,7 @@
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.tracer</module>
 		<module>../../transformation/features/org.eclipse.viatra.transformation.evm.transactions.feature</module>
 		<module>../../transformation/features/org.eclipse.viatra.transformation.debug.feature</module>
+		
 
 		<!-- CEP -->
 		<module>../../cep/plugins/org.eclipse.viatra.cep.core</module>
