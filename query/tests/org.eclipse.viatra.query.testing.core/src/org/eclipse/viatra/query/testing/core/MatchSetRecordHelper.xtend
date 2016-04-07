@@ -10,7 +10,6 @@
  */
 package org.eclipse.viatra.query.testing.core
 
-import org.eclipse.viatra.query.testing.core.internal.MatchSetRecordDiff
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 
 class MatchSetRecordHelper {
