@@ -154,6 +154,21 @@ public class ConstraintsObjective extends BaseObjective {
     }
 
     /**
+     * Adds a new hard constraint with the default {@link ModelQueryType#MUST_HAVE_MATCH}.
+     * 
+     * @param name
+     *            A name for the hard constraint.
+     * @param softConstraint
+     *            A VIATRA Query pattern specification.
+     * @return The actual instance to enable builder pattern like usage.
+     */
+    public ConstraintsObjective withHardConstraint(String name,
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> hardConstraint) {
+        hardConstraints.add(new QueryConstraint(name, hardConstraint, ModelQueryType.MUST_HAVE_MATCH));
+        return this;
+    }
+
+    /**
      * Adds a new hard constraint with the name of the query specification's fully qualified name and the default
      * {@link ModelQueryType#MUST_HAVE_MATCH}.
      * 
