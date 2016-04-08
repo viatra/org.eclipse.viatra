@@ -41,10 +41,10 @@ public class ResetUIHandler extends AbstractHandler {
                 }
             }
             
-            // select all of the generated patterns
-            queryExplorer.getPatternsViewerRoot().getGeneratedPatternsRoot().setCheckedState(true);
+            // remove selection from the root of the plug-in contents
+            queryExplorer.getPatternsViewerRoot().getGeneratedPatternsRoot().setCheckedState(false);
             
-            // remove selection from the root of the generic contents
+            // remove selection from the root of the runtime contents
             queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().clear();
             queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().setCheckedState(false);
             
