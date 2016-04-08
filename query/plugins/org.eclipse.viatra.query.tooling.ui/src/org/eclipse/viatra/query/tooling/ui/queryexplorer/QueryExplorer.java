@@ -423,6 +423,16 @@ public class QueryExplorer extends ViewPart {
         patternsViewerInput.getGeneratedPatternsRoot().updateHasChildren();
         patternsViewerInput.getGenericPatternsRoot().setCheckedState(false);
     }
+    
+    /**
+     * Calls refresh on the patterns tree viewer and ensures that "has children" state 
+     * on the root elements are correct. 
+     */
+    public void refreshPatternsViewer() {
+    	patternsTreeViewer.refresh();
+        patternsViewerInput.getGeneratedPatternsRoot().updateHasChildren();
+        patternsViewerInput.getGenericPatternsRoot().updateHasChildren();
+    }
 
     public PatternsViewerInput getPatternsViewerRoot() {
         return patternsViewerInput;

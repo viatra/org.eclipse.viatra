@@ -48,7 +48,7 @@ public class ResetUIHandler extends AbstractHandler {
             queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().clear();
             queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().setCheckedState(false);
             
-            queryExplorer.getPatternsViewer().refresh();
+            queryExplorer.refreshPatternsViewer();
         }
         return null;
     }

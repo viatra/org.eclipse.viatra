@@ -76,9 +76,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
                 Set<IQuerySpecification<?>> newPatterns = registerPatternsFromPatternModel(vr, queryExplorer.getHints());
                 setCheckedStatesOnNewPatterns(queryExplorer, viewerInput, newPatterns);
                 
-                queryExplorer.getPatternsViewer().refresh();
-                queryExplorer.getPatternsViewerRoot().getGeneratedPatternsRoot().updateHasChildren();
-                queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().updateHasChildren();
+                queryExplorer.refreshPatternsViewer();
             } catch (ViatraQueryException e) {
                 throw new RuntimeException(e);
             }
