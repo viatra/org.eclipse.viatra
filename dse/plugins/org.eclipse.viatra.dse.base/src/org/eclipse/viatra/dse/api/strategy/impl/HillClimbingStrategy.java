@@ -118,7 +118,7 @@ public class HillClimbingStrategy implements IStrategy {
 
             int compare = objectiveComparatorHelper.compare(previousFitness, randomBestFitness.fitness);
 
-            if (compare >= 0) {
+            if (compare > 0) {
                 saveSolutionAndBacktrack();
                 continue;
             } else {
@@ -127,12 +127,7 @@ public class HillClimbingStrategy implements IStrategy {
                 dsm.fireActivation(transition);
             }
 
-            if (isInterrupted.get()) {
-                logger.info("Interrupted, stop exploration.");
-                break;
-            }
-
-        } while (true);
+        } while (!isInterrupted.get());
 
         logger.info("Terminated.");
     }
