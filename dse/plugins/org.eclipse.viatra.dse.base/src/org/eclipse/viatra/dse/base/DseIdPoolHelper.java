@@ -11,6 +11,7 @@ package org.eclipse.viatra.dse.base;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
@@ -42,11 +43,15 @@ public enum DseIdPoolHelper {
 
     }
 
-    private ConcurrentHashMap<Thread, IdProvider> idProviders = new ConcurrentHashMap<Thread, DseIdPoolHelper.IdProvider>();
+    private ConcurrentHashMap<Thread, IdProvider> idProviders = new ConcurrentHashMap<>();
+    private AtomicInteger fallBackId = new AtomicInteger();
 
     public int getId(DSETransformationRule<?, ?> rule) {
         Thread currentThread = Thread.currentThread();
         IdProvider idProvider = idProviders.get(currentThread);
+        if (idProvider == null) {
+            return fallBackId.getAndIncrement();
+        }
         return idProvider.getId();
     }
 
@@ -63,4 +68,7 @@ public enum DseIdPoolHelper {
         idProviders.remove(currentThread);
     }
 
+    public void resetFallBackId() {
+        fallBackId.set(0);
+    }
 }
