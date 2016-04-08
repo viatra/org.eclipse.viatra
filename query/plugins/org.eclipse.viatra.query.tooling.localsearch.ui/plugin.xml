@@ -38,18 +38,64 @@
       <handler
             class="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.handlers.StartLocalSearchHandler"
             commandId="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.start">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <instanceof
+                        value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.handlers.StepLocalSearchHandler"
             commandId="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.step">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView">
+               </instanceof>
+               <test
+                     property="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.operational">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>      
       <handler
             class="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.handlers.RunLocalSearchHandler"
             commandId="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.run">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView">
+               </instanceof>
+               <test
+                     property="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.operational">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.handlers.CreateBreakPointHandler"
             commandId="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.placebreakpoint">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView">
+               </instanceof>
+               <test
+                     property="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.operational">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
  </extension>
    <extension
@@ -100,6 +146,16 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="F8">
       </key>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.LocalSearchDebuggerPropertyTester"
+            id="org.eclipse.viatra.query.tooling.localsearch.ui.debugger"
+            namespace="org.eclipse.viatra.query.tooling.localsearch.ui.debugger"
+            properties="operational"
+            type="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView">
+      </propertyTester>
    </extension>
 
 </plugin>
