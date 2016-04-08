@@ -29,7 +29,9 @@ public class RunLocalSearchHandler extends AbstractHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
         try {
             LocalSearchDebugView localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
-            localSearchDebugView.getDebugger().setHalted(false);
+            if (localSearchDebugView != null && localSearchDebugView.getDebugger() != null) {
+                localSearchDebugView.getDebugger().setHalted(false);
+            }
         } catch (PartInitException e) {
             throw new RuntimeException(e);
         }

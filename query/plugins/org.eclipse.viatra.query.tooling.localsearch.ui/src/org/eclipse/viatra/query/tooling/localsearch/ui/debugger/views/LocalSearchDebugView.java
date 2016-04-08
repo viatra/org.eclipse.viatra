@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.FrameViewerContentProvider;
@@ -87,6 +88,8 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     
 	public void setDebugger(LocalSearchDebugger localSearchDebugger) {
 		this.debugger = localSearchDebugger;
+		IEvaluationService service = getSite().getService(IEvaluationService.class);
+		service.requestEvaluation("org.eclipse.viatra.query.tooling.localsearch.ui.debugger.operational");
 	}
 	public LocalSearchDebugger getDebugger() {
 		return this.debugger;
