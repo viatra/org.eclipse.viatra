@@ -88,7 +88,8 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     
 	public void setDebugger(LocalSearchDebugger localSearchDebugger) {
 		this.debugger = localSearchDebugger;
-		IEvaluationService service = getSite().getService(IEvaluationService.class);
+		//Casting is required for backward compatibility with old platform versions
+		IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
 		service.requestEvaluation("org.eclipse.viatra.query.tooling.localsearch.ui.debugger.operational");
 	}
 	public LocalSearchDebugger getDebugger() {
