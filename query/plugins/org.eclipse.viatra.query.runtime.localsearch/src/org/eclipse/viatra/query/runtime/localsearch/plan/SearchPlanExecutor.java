@@ -13,6 +13,7 @@
  package org.eclipse.viatra.query.runtime.localsearch.plan;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdaptable;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
@@ -30,12 +32,13 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
  * A search plan executor is used to execute {@link SearchPlan} instances.
  */
-public class SearchPlanExecutor {
+public class SearchPlanExecutor implements ILocalSearchAdaptable{
 
     private int currentOperation;
     SearchPlan plan;
@@ -56,12 +59,20 @@ public class SearchPlanExecutor {
         return plan;
     }
     
-    public void addAdapters(List<ILocalSearchAdapter> adapter) {
-        this.adapters.addAll(adapter);
+    @Override
+    public void addAdapters(List<ILocalSearchAdapter> adapters) {
+        this.adapters.addAll(adapters);
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.adapterRegistered(this);
+        }
     }
 
-    public void removeAdapters(List<ILocalSearchAdapter> adapter) {
-        this.adapters.removeAll(adapter);
+    @Override
+    public void removeAdapters(List<ILocalSearchAdapter> adapters) {
+        this.adapters.removeAll(adapters);
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.adapterUnregistered(this);
+        }
     }
 
     public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping) {
@@ -182,5 +193,20 @@ public class SearchPlanExecutor {
 	public ISearchContext getContext() {
 		return context;
 	}
+
+    @Override
+    public List<ILocalSearchAdapter> getAdapters() {
+        return new ArrayList<>(this.adapters);
+    }
+
+    @Override
+    public void addAdapter(ILocalSearchAdapter adapter) {
+        addAdapters(Lists.newArrayList(adapter));
+    }
+
+    @Override
+    public void removeAdapter(ILocalSearchAdapter adapter) {
+        removeAdapters(Lists.newArrayList(adapter));
+    }
 
 }

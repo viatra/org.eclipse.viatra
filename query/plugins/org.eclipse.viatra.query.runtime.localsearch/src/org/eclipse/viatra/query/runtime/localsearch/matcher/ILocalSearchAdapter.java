@@ -21,6 +21,17 @@ import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 public interface ILocalSearchAdapter {
 
     /**
+     * 
+     * @since 1.2
+     */
+    void adapterRegistered(ILocalSearchAdaptable adaptable);
+    /**
+     * 
+     * @since 1.2
+     */
+    void adapterUnregistered(ILocalSearchAdaptable adaptable);
+    
+    /**
      * Callback method to indicate the start of a matching process
 	 *
      * @param lsMatcher the local search matcher that starts the matching

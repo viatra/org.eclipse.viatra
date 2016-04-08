@@ -345,9 +345,13 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     	
 	}
 
-	
-
-
-
+    @Override
+    public void dispose() {
+        if (debugger != null) {
+            debugger.dispose();
+            debugger = null;
+        }
+        super.dispose();
+    }
 
 }

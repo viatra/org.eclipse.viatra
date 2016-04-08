@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdaptable;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
@@ -48,7 +49,9 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	private LocalSearchDebugView localSearchDebugView;
 	private Deque<LocalSearchMatcher> runningMatchers;
 	private Deque<SearchPlanExecutor> runningExecutors;
+	private List<ILocalSearchAdaptable> adaptedElements = Lists.newArrayList();
 	private boolean startHandlerCalled = false;
+	private boolean isDisposed = false;
 
     private boolean halted = true;
 	private SearchPlanViewModel viewModel;
@@ -68,7 +71,10 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	@Override
 	public void patternMatchingStarted(final LocalSearchMatcher lsMatcher) {
-		// If a new debug session is starting, obtain the view
+        if (isDisposed) {
+            return;
+        }
+	    // If a new debug session is starting, obtain the view
 		if (startHandlerCalled) {
 			startHandlerCalled = false;
 			// Syncexec is assumed to be needed because of the showView call
@@ -110,7 +116,10 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	
 	@Override
 	public void patternMatchingFinished(LocalSearchMatcher matcher) {
-		LocalSearchMatcher removedMatcher = runningMatchers.pop();
+        if (isDisposed) {
+            return;
+        }
+	    LocalSearchMatcher removedMatcher = runningMatchers.pop();
 		if (runningMatchers.size() == 0) {
 			// After all the matching process finished set to halted in order to
 			// be able to start a new debug session
@@ -136,8 +145,10 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	@Override
 	public void planChanged(SearchPlanExecutor oldPlanExecutor, final SearchPlanExecutor newPlanExecutor) {
-
-		if (oldPlanExecutor != null) {
+        if (isDisposed) {
+            return;
+        }
+	    if (oldPlanExecutor != null) {
 			runningExecutors.pop();
 		}
 		if (newPlanExecutor != null) {
@@ -187,7 +198,10 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	@Override
 	public void executorInitializing(SearchPlanExecutor searchPlanExecutor, MatchingFrame frame) {
-		// Add the new frame here to the list of frames. Its contents will change as matching advances
+        if (isDisposed) {
+            return;
+        }
+	    // Add the new frame here to the list of frames. Its contents will change as matching advances
 		String simpleQueryName = getSimpleQueryName(runningMatchers.peek().getQuerySpecification());
 		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
 		@SuppressWarnings("unchecked")
@@ -199,7 +213,9 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	@Override
 	public void operationSelected(final SearchPlanExecutor planExecutor, final MatchingFrame frame) {
-
+        if (isDisposed) {
+            return;
+        }
 		viewModel.stepInto();
 
 		LocalSearchMatcher matcher = null;
@@ -214,6 +230,9 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	@Override
 	public void operationExecuted(SearchPlanExecutor planExecutor, MatchingFrame frame) {
+        if (isDisposed) {
+            return;
+        }
 //		viewModel.stepBack();
 		if (halted) {
 			localSearchDebugView.refreshView();
@@ -231,6 +250,9 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 	@Override
 	public void matchFound(SearchPlanExecutor planExecutor, MatchingFrame frame) {
+        if (isDisposed) {
+            return;
+        }
 		MatchingFrame frameToStore = frame.clone();
 		String simpleQueryName = getSimpleQueryName(runningMatchers.peek().getQuerySpecification());
 		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
@@ -308,4 +330,27 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 			}
 		}
 	}
+
+    @Override
+    public void adapterRegistered(ILocalSearchAdaptable adaptable) {
+        if (isDisposed) {
+            return;
+        }
+        adaptedElements.add(adaptable);
+    }
+
+    @Override
+    public void adapterUnregistered(ILocalSearchAdaptable adaptable) {
+        if (isDisposed) {
+            return;
+        }
+        adaptedElements.remove(adaptable);
+    }
+    
+    public void dispose() {
+        isDisposed = true;
+        for (ILocalSearchAdaptable adaptable : adaptedElements) {
+            adaptable.removeAdapter(this);
+        }
+    }
 }

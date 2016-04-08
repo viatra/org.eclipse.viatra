@@ -30,7 +30,7 @@ import com.google.common.collect.UnmodifiableIterator;
  * @author Zoltan Ujhelyi
  *
  */
-public class LocalSearchMatcher {
+public class LocalSearchMatcher implements ILocalSearchAdaptable {
 
     private ImmutableList<SearchPlanExecutor> plan;
     private int frameSize;
@@ -50,21 +50,19 @@ public class LocalSearchMatcher {
         return keySize;
     }
     
+    @Override
     public List<ILocalSearchAdapter> getAdapters() {
-        return adapters;
+        return Lists.newArrayList(adapters);
     }
     
-    private static class PlanExecutionIterator extends UnmodifiableIterator<MatchingFrame> {
+    private class PlanExecutionIterator extends UnmodifiableIterator<MatchingFrame> {
 
         private UnmodifiableIterator<SearchPlanExecutor> iterator;
         private SearchPlanExecutor currentPlan;
         private MatchingFrame frame;
         private boolean frameReturned;
-        private List<ILocalSearchAdapter> adapters = Lists.newLinkedList();
         
-        public PlanExecutionIterator(final ImmutableList<SearchPlanExecutor> plan, MatchingFrame initialFrame,
-                List<ILocalSearchAdapter> adapters) {
-            this.adapters = adapters;
+        public PlanExecutionIterator(final ImmutableList<SearchPlanExecutor> plan, MatchingFrame initialFrame) {
             this.frame = initialFrame.clone();
             Preconditions.checkArgument(plan.size() > 0);
             iterator = plan.iterator();
@@ -147,12 +145,30 @@ public class LocalSearchMatcher {
         this.adapters = Lists.newLinkedList(adapters);
     }
     
+    @Override
     public void addAdapter(ILocalSearchAdapter adapter) {
-        this.adapters.add(adapter);
+        addAdapters(Lists.newArrayList(adapter));
     }
 
+    @Override
     public void removeAdapter(ILocalSearchAdapter adapter) {
-    	this.adapters.remove(adapter);
+    	addAdapters(Lists.newArrayList(adapter));
+    }
+    
+    @Override
+    public void addAdapters(List<ILocalSearchAdapter> adapters) {
+        this.adapters.addAll(adapters);
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.adapterRegistered(this);
+        }
+    }
+
+    @Override
+    public void removeAdapters(List<ILocalSearchAdapter> adapters) {
+        this.adapters.removeAll(adapters);
+        for (ILocalSearchAdapter adapter : adapters) {
+            adapter.adapterUnregistered(this);
+        }
     }
     
     protected void setPlan(SearchPlanExecutor plan) {
@@ -182,7 +198,7 @@ public class LocalSearchMatcher {
 
     public boolean hasMatch(final MatchingFrame initialFrame) throws LocalSearchException {
     	matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);
+        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
         boolean hasMatch = it.hasNext();
         matchingFinished();
 		return hasMatch;
@@ -195,7 +211,7 @@ public class LocalSearchMatcher {
 
     public int countMatches(MatchingFrame initialFrame) throws LocalSearchException {
     	matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);
+        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
         
         MatchingTable results = new MatchingTable();
         while (it.hasNext()) {
@@ -216,7 +232,7 @@ public class LocalSearchMatcher {
 
     public MatchingFrame getOneArbitraryMatch(final MatchingFrame initialFrame) throws LocalSearchException {
     	matchingStarted();
-        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);
+        PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);
         MatchingFrame returnValue = null;
         if (it.hasNext()) {
 			returnValue = it.next();
@@ -244,7 +260,7 @@ public class LocalSearchMatcher {
 
 	public Collection<MatchingFrame> getAllMatches(final MatchingFrame initialFrame) throws LocalSearchException {
         matchingStarted();
-		PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame, adapters);        
+		PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);        
         
         MatchingTable results = new MatchingTable();
         while (it.hasNext()) {
