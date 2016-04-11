@@ -91,7 +91,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
             components.add(component);
         }
         // note that after insertion a refresh is necessary otherwise setting check state will not work
-        queryExplorerInstance.getPatternsViewer().refresh();
+        queryExplorerInstance.refreshPatternsViewer();
 
         for (final PatternComponent component : components) {
             component.setCheckedState(true);
@@ -107,7 +107,7 @@ public class RuntimeMatcherRegistrator implements Runnable {
         }
 
         queryExplorerInstance.getPatternsViewerRoot().getGenericPatternsRoot().purge();
-        queryExplorerInstance.getPatternsViewer().refresh();
+        queryExplorerInstance.refreshPatternsViewer();
     }
 
     private Set<IQuerySpecification<?>> registerPatternsFromPatternModel(final RootContent vr, QueryEvaluationHint hint) throws ViatraQueryException {

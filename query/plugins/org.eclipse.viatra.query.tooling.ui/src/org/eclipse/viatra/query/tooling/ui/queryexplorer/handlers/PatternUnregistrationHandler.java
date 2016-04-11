@@ -56,7 +56,7 @@ public class PatternUnregistrationHandler extends AbstractHandler {
         }
 
         queryExplorer.getPatternsViewerRoot().getGenericPatternsRoot().purge();
-        queryExplorer.getPatternsViewer().refresh();
+        queryExplorer.refreshPatternsViewer();
         return null;
     }
 
