@@ -25,6 +25,11 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.junit.Assume
 import org.apache.log4j.Level
 import org.junit.Assert
+import org.junit.ComparisonFailure
+import java.util.Collections
+import com.google.common.collect.Collections2
+import com.google.common.collect.Iterables
+import com.google.common.base.Joiner
 
 /** 
  * @author Grill Balázs
@@ -125,9 +130,16 @@ class ViatraQueryTestCase {
 		val reference = modelProviders.head
 
 		modelProviders.tail.forEach [
-			val diff = compareMatchSets(querySpecification, reference, it)
-			if (!diff.empty) {
-				throw new AssertionFailedError(diff.toString)
+			val matchDiff = getMatchSetDiff(querySpecification, reference, it)
+			
+			if (!matchDiff.empty) {
+			    val joiner = Joiner.on("\n")
+				throw new ComparisonFailure(
+				    matchDiff.toString, 
+				    joiner.join(matchDiff.additions.map[prettyPrint]), 
+				    joiner.join(matchDiff.removals.map[prettyPrint])
+				) 
+				//new AssertionFailedError(diff.toString)
 			}
 		]
 	}

@@ -300,20 +300,17 @@ class SnapshotHelper {
 	/**
 	 * Retrieve a human-readable string denoting the given record
 	 */
-	def String prettyPrint(MatchRecord record){
-		val sb = new StringBuilder()
-		var first = true
-		for(substitution : record.substitutions){
-		    if (first){
-                first= false;
-            }else{
-                sb.append(", ");
-            }
-            sb.append(substitution.parameterName)
-            sb.append(" = ");
-            sb.append(substitution.derivedValue)
-		}
-		return sb.toString
+	def dispatch String prettyPrint(MatchRecord record){
+		'''«FOR substitution : record.substitutions SEPARATOR ", "»«substitution.parameterName» = «substitution.derivedValue?.prettyPrint»«ENDFOR»'''
+	}
+	
+	def dispatch String prettyPrint(EObject obj) {
+	    val eClass = obj.eClass
+	    '''«eClass.name» («FOR attr : eClass.EAllAttributes» «attr.name» = «obj.eGet(attr)?.prettyPrint» «ENDFOR»)'''
+	}
+	
+	def dispatch String prettyPrint(Object obj) {
+	    return obj.toString
 	}
 
 }
