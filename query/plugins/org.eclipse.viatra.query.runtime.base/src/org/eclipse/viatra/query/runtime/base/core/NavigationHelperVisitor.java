@@ -52,17 +52,18 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
         @Override
         protected boolean observesClass(Object eClass) {
-            return wildcardMode || allObservedClasses.contains(eClass) || isSampledClassInternal(eClass);
+            return wildcardMode || allObservedClasses.contains(eClass) || registerSampledClass(eClass);
         }
 
-        private boolean isSampledClassInternal(Object eClass) {
+        private boolean registerSampledClass(Object eClass) {
             Boolean classAlreadyChecked = sampledClasses.get(eClass);
             if (classAlreadyChecked != null) {
                 return classAlreadyChecked;
             }
             boolean isSampledClass = isSampledClass(eClass);
             sampledClasses.put(eClass, isSampledClass);
-            return isSampledClass;
+            // do not modify observation configuration during traversal
+            return false;
         }
 
         @Override
@@ -86,6 +87,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         Set<Object> oldClasses; // if decends from an old class, no need to add!
         Map<Object, Boolean> classObservationMap; // true for a class even if only a supertype is included in classes;
         Set<Object> dataTypes;
+        private final Map<Object, Boolean> sampledClasses;
 
         public TraversingVisitor(NavigationHelperImpl navigationHelper, Set<Object> features, Set<Object> newClasses,
                 Set<Object> oldClasses, Set<Object> dataTypes) {
@@ -96,6 +98,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             this.oldClasses = oldClasses;
             this.classObservationMap = new HashMap<Object, Boolean>();
             this.dataTypes = dataTypes;
+            this.sampledClasses = new HashMap<Object, Boolean>();
         }
 
         @Override
@@ -114,11 +117,20 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                         && !oldClasses.contains(super.store.getEObjectClassKey())
                         && Collections.disjoint(theSuperTypes, oldClasses);
                 if (!observed) {
-                    observed = isSampledClass(eClass);
+                    registerSampledClass(eClass);
                 }
                 classObservationMap.put(eClass, observed);
             }
             return observed;
+        }
+        
+        private void registerSampledClass(Object eClass) {
+            Boolean classAlreadyChecked = this.sampledClasses.get(eClass);
+            if (classAlreadyChecked != null) {
+                return;
+            }
+            boolean isSampledClass = isSampledClass(eClass);
+            this.sampledClasses.put(eClass, isSampledClass);
         }
 
         @Override

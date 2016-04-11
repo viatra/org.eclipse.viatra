@@ -108,7 +108,9 @@ public final class BooksWithMultipleAuthorsQuerySpecification extends BaseGenera
     
     @Override
     public List<PParameter> getParameters() {
-      return Arrays.asList(new PParameter("book", "org.eclipse.viatra.examples.library.Book"));
+      return Arrays.asList(
+      			 new PParameter("book", "org.eclipse.viatra.examples.library.Book", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.eclipse.org/viatra/examples/library/1.0", "Book")))
+      			);
     }
     
     @Override

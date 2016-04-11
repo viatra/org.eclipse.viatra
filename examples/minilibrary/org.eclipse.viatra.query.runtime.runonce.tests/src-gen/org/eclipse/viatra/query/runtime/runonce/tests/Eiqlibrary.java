@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.runtime.runonce.tests.util.SumOfPagesInLibraryQu
  * A pattern group formed of all patterns defined in eiqlibrary.vql.
  * 
  * <p>Use the static instance as any {@link org.eclipse.viatra.query.runtime.api.IPatternGroup}, to conveniently prepare
- * an VIATRA Query engine for matching all patterns originally defined in file eiqlibrary.vql,
+ * a VIATRA Query engine for matching all patterns originally defined in file eiqlibrary.vql,
  * in order to achieve better performance than one-by-one on-demand matcher initialization.
  * 
  * <p> From package org.eclipse.viatra.query.runtime.runonce.tests, the group contains the definition of the following patterns: <ul>

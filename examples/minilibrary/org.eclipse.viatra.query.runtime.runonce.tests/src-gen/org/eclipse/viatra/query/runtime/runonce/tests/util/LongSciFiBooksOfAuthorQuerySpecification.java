@@ -107,7 +107,10 @@ public final class LongSciFiBooksOfAuthorQuerySpecification extends BaseGenerate
     
     @Override
     public List<PParameter> getParameters() {
-      return Arrays.asList(new PParameter("author", "org.eclipse.viatra.examples.library.Writer"),new PParameter("book", "org.eclipse.viatra.examples.library.Book"));
+      return Arrays.asList(
+      			 new PParameter("author", "org.eclipse.viatra.examples.library.Writer", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.eclipse.org/viatra/examples/library/1.0", "Writer"))),
+      			 new PParameter("book", "org.eclipse.viatra.examples.library.Book", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.eclipse.org/viatra/examples/library/1.0", "Book")))
+      			);
     }
     
     @Override

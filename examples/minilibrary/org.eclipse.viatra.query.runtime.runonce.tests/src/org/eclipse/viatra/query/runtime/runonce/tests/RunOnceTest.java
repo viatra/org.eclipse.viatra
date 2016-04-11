@@ -187,7 +187,7 @@ public class RunOnceTest {
         
         try {
             WellbehavingDerivedFeatureRegistry.registerWellbehavingDerivedPackage(LibraryPackage.eINSTANCE);
-            AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(rs);
+            AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(rs));
             // this is to allow the normal engine to traverse feature
             LongSciFiBooksOfAuthorMatcher matcher = engine.getMatcher(LongSciFiBooksOfAuthorMatcher.querySpecification());
             Collection<LongSciFiBooksOfAuthorMatch> allMatches = matcher.getAllMatches();
@@ -234,7 +234,7 @@ public class RunOnceTest {
         
         try {
             RunOnceQueryEngine roengine = new RunOnceQueryEngine(rs);
-            AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(rs,roengine.getBaseIndexOptions());
+            AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(rs,roengine.getBaseIndexOptions()));
             // TODO remove this once such EClasses are automatically identified
             //engine.getBaseIndex().registerEClasses(Sets.newHashSet(EIQLibraryPackage.eINSTANCE.getBook(), EIQLibraryPackage.eINSTANCE.getWriter()));
             runModelModification(library, roengine, engine);
@@ -253,8 +253,8 @@ public class RunOnceTest {
         try {
             RunOnceQueryEngine roengine = new RunOnceQueryEngine(rs);
             BaseIndexOptions baseIndexOptions = roengine.getBaseIndexOptions();
-            baseIndexOptions.setWildcardMode(true); // ensure all types are indexed
-            AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(rs,baseIndexOptions);
+            baseIndexOptions.withWildcardMode(true); // ensure all types are indexed
+            AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(rs,baseIndexOptions));
             runModelModification(library, roengine, engine);
             
         } catch (ViatraQueryException e) {
@@ -313,7 +313,7 @@ public class RunOnceTest {
         
         try {
             RunOnceQueryEngine roengine = new RunOnceQueryEngine(library);
-            AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(library,roengine.getBaseIndexOptions());
+            AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(library,roengine.getBaseIndexOptions()));
 
             LongSciFiBooksOfAuthorMatcher matcher = engine.getMatcher(LongSciFiBooksOfAuthorMatcher.querySpecification());
             Collection<LongSciFiBooksOfAuthorMatch> allMatches = matcher.getAllMatches();

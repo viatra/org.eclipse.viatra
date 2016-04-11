@@ -104,7 +104,10 @@ public final class BookAuthorsQuerySpecification extends BaseGeneratedEMFQuerySp
     
     @Override
     public List<PParameter> getParameters() {
-      return Arrays.asList(new PParameter("book", "org.eclipse.viatra.examples.library.Book"),new PParameter("author", "org.eclipse.viatra.examples.library.Writer"));
+      return Arrays.asList(
+      			 new PParameter("book", "org.eclipse.viatra.examples.library.Book", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.eclipse.org/viatra/examples/library/1.0", "Book"))),
+      			 new PParameter("author", "org.eclipse.viatra.examples.library.Writer", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.eclipse.org/viatra/examples/library/1.0", "Writer")))
+      			);
     }
     
     @Override
@@ -116,6 +119,7 @@ public final class BookAuthorsQuerySpecification extends BaseGeneratedEMFQuerySp
       		PVariable var_book = body.getOrCreateVariableByName("book");
       		PVariable var_author = body.getOrCreateVariableByName("author");
       		new TypeConstraint(body, new FlatTuple(var_book), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.eclipse.org/viatra/examples/library/1.0", "Book")));
+      		new TypeConstraint(body, new FlatTuple(var_author), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.eclipse.org/viatra/examples/library/1.0", "Writer")));
       		body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
       		   new ExportedParameter(body, var_book, "book"),
       		   new ExportedParameter(body, var_author, "author")

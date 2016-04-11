@@ -2,7 +2,7 @@ package org.eclipse.viatra.query.runtime.runonce.tests
 
 import "http://www.eclipse.org/viatra/examples/library/1.0"
 
-pattern bookAuthors(book : Book, author) {
+pattern bookAuthors(book : Book, author : Writer) {
 	Book.authors(book, author);
 }
 

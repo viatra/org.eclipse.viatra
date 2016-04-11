@@ -104,7 +104,10 @@ public final class SumOfPagesInLibraryQuerySpecification extends BaseGeneratedEM
     
     @Override
     public List<PParameter> getParameters() {
-      return Arrays.asList(new PParameter("library", "org.eclipse.viatra.examples.library.Library"),new PParameter("sumOfPages", "java.lang.Integer"));
+      return Arrays.asList(
+      			 new PParameter("library", "org.eclipse.viatra.examples.library.Library", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.eclipse.org/viatra/examples/library/1.0", "Library"))),
+      			 new PParameter("sumOfPages", "java.lang.Integer", null)
+      			);
     }
     
     @Override
