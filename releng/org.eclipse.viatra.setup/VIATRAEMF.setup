@@ -107,7 +107,7 @@
   </setupTask>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
-      predecessor="//@setupTasks.10"
+      predecessor="//@setupTasks.9"
       successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
     <targlet
         name="${scope.project.label}"
@@ -192,32 +192,6 @@
     <description>${scope.project.label}</description>
   </setupTask>
   <setupTask
-      xsi:type="setup.workingsets:WorkingSetTask">
-    <workingSet
-        name="VIATRA Releng"
-        id="">
-      <predicate
-          xsi:type="predicates:AndPredicate">
-        <operand
-            xsi:type="predicates:OrPredicate">
-          <operand
-              xsi:type="predicates:LocationPredicate"
-              pattern=".*/releng/.*"/>
-          <operand
-              xsi:type="predicates:LocationPredicate"
-              pattern=".*/setup/.*"/>
-          <operand
-              xsi:type="predicates:NaturePredicate"
-              nature="org.eclipse.pde.FeatureNature"/>
-        </operand>
-        <operand
-            xsi:type="predicates:RepositoryPredicate"
-            project="org.eclipse.viatra.setup"/>
-      </predicate>
-    </workingSet>
-    <description>The dynamic working sets for ${scope.project.label}</description>
-  </setupTask>
-  <setupTask
       xsi:type="projects:ProjectsImportTask"
       predecessor="git.clone.viatra">
     <sourceLocator
@@ -250,7 +224,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.9"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -308,7 +282,7 @@
       <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.pregen"
-          predecessor="//@setupTasks.10 //@setupTasks.7"
+          predecessor="//@setupTasks.9 //@setupTasks.7"
           onlyNewProjects="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
@@ -449,7 +423,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.9"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}">
@@ -557,7 +531,7 @@
       label="Xcore Integration">
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.9"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -621,7 +595,34 @@
         name="master"/>
     <description></description>
   </project>
-  <stream name="master"/>
+  <stream name="master">
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="VIATRA Releng"
+          id="">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:OrPredicate">
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/releng/.*"/>
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/setup/.*"/>
+            <operand
+                xsi:type="predicates:NaturePredicate"
+                nature="org.eclipse.pde.FeatureNature"/>
+          </operand>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+        </predicate>
+      </workingSet>
+      <description>The dynamic working sets for ${scope.project.label}</description>
+    </setupTask>
+  </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
       href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']"/>
