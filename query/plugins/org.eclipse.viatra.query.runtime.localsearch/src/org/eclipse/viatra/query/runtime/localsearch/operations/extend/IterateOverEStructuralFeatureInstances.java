@@ -35,7 +35,7 @@ import com.google.common.collect.Maps;
 public class IterateOverEStructuralFeatureInstances implements ISearchOperation {
 
     private EStructuralFeature feature;
-    private Integer sourcePosition, targetPosition;
+    private int sourcePosition, targetPosition;
     protected Iterator<Entry<EObject, Object>> it;
     
     public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature) {

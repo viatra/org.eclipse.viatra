@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -30,8 +32,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormaliz
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PQueryFlattener;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -45,7 +47,7 @@ public class LocalSearchPlanner {
     // Internal data
     private PDisjunction flatDisjunction;
     private PDisjunction normalizedDisjunction;
-    private List<SubPlan> plansForBodies;
+    private List<SearchPlanForBody> plansForBodies;
 
     public PDisjunction getFlatDisjunction() {
         return flatDisjunction;
@@ -56,7 +58,13 @@ public class LocalSearchPlanner {
     }
 
     public List<SubPlan> getPlansForBodies() {
-        return plansForBodies;
+        return Lists.transform(plansForBodies, new Function<SearchPlanForBody, SubPlan>() {
+
+            @Override
+            public SubPlan apply(SearchPlanForBody input) {
+                return input.getPlan();
+            }
+        });
     }
 
     // Externally set tools for planning
@@ -93,33 +101,30 @@ public class LocalSearchPlanner {
      *         list of ISearchOperations
      * @throws QueryProcessingException
      */
-    public Map<List<ISearchOperation>, Map<PVariable, Integer>> plan(PQuery querySpec, Set<Integer> boundVarIndices)
+    public Collection<SearchPlanForBody> plan(PQuery querySpec, Set<Integer> boundVarIndices)
             throws QueryProcessingException {
 
         // 1. Preparation
         Set<PBody> normalizedBodies = prepareNormalizedBodies(querySpec);
 
-        // 2. Plan creation
-        // Context has matchers for the referred Queries (IQuerySpecifications)
-        plansForBodies = Lists.newArrayList();
+        plansForBodies = Lists.newArrayListWithExpectedSize(normalizedBodies.size());
 
         for (PBody normalizedBody : normalizedBodies) {
+            // 2. Plan creation
+            // Context has matchers for the referred Queries (IQuerySpecifications)
             Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundVarIndices, normalizedBody);
             SubPlan plan = plannerStrategy.plan(normalizedBody, logger, boundVariables, metaContext, runtimeContext, hints);
-            plansForBodies.add(plan);
-        }
-
-        // 3. PConstraint -> POperation compilation step
-        Map<List<ISearchOperation>, Map<PVariable, Integer>> compiledSubPlans = Maps.newHashMap();
-        // TODO finish (revisit?) the implementation of the compile function
-        // * Pay extra caution to extend operations, when more than one variables are unbound
-        for (SubPlan subPlan : plansForBodies) {
-            List<ISearchOperation> compiledOperations = operationCompiler.compile(subPlan, boundVarIndices);
+            // 3. PConstraint -> POperation compilation step
+            // TODO finish (revisit?) the implementation of the compile function
+            // * Pay extra caution to extend operations, when more than one variables are unbound
+            List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundVarIndices);
             // Store the variable mappings for the plans for debug purposes (traceability information)
-            compiledSubPlans.put(compiledOperations, operationCompiler.getVariableMappings());
+            SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody, operationCompiler.getVariableMappings(), plan, compiledOperations);
+            
+            plansForBodies.add(compiledPlan);
         }
 
-        return compiledSubPlans;
+        return plansForBodies;
     }
 
     private Set<PBody> prepareNormalizedBodies(PQuery querySpec) throws RewriterException {

@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
@@ -25,7 +26,7 @@ import com.google.common.collect.Lists;
  */
 public class StructuralFeatureCheck extends CheckOperation {
 
-    Integer sourcePosition, targetPosition;
+    int sourcePosition, targetPosition;
     EStructuralFeature feature;
 
     public StructuralFeatureCheck(int sourcePosition, int targetPosition, EStructuralFeature feature) {
@@ -37,6 +38,8 @@ public class StructuralFeatureCheck extends CheckOperation {
 
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
+        Preconditions.checkNotNull(frame.getValue(sourcePosition), "Invalid plan, variable %s unbound", sourcePosition);
+        Preconditions.checkNotNull(frame.getValue(targetPosition), "Invalid plan, variable %s unbound", targetPosition);
         try {
             EObject source = (EObject) frame.getValue(sourcePosition);
             Object target = frame.getValue(targetPosition);

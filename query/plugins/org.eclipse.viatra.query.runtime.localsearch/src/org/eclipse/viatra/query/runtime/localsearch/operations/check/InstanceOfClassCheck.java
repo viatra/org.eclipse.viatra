@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
  */
 public class InstanceOfClassCheck extends CheckOperation {
 
-    private Integer position;
+    private int position;
     private EClass clazz;
 
     public InstanceOfClassCheck(int position, EClass clazz) {

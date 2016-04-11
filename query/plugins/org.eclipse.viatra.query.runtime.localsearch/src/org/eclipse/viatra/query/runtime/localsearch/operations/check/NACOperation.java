@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -39,6 +40,8 @@ public class NACOperation extends CheckOperation implements IMatcherBasedOperati
 	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
 		Set<Integer> adornment = Sets.newHashSet();
 		for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+		    Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
+            Preconditions.checkNotNull(mapping.getValue(), "Mapping frame must not contain null values");
 			Integer source = mapping.getKey();
 			if (frame.get(source) != null) {
 				adornment.add(mapping.getValue());
@@ -74,9 +77,11 @@ public class NACOperation extends CheckOperation implements IMatcherBasedOperati
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
         final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
+        Object[] parameterValues = new Object[matcher.getParameterCount()];
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
-            mappedFrame.setValue(entry.getValue(), frame.getValue(entry.getKey()));
+            parameterValues[entry.getValue()] = frame.getValue(entry.getKey());
         }
+        mappedFrame.setParameterValues(parameterValues);
         return !matcher.hasMatch(mappedFrame);
     }
     

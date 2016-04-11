@@ -30,7 +30,7 @@ import com.google.common.collect.Lists;
  */
 public class ScopeCheck extends CheckOperation {
 
-    private Integer position;
+    private int position;
     private EMFScope scope;
 
     public ScopeCheck(int position, EMFScope scope) {

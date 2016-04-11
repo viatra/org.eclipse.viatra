@@ -12,9 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
 import java.util.List;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 
 import com.google.common.base.Preconditions;
@@ -26,7 +24,7 @@ import com.google.common.collect.Lists;
  */
 public class InstanceOfDataTypeCheck extends CheckOperation {
 
-    private Integer position;
+    private int position;
     private EDataType dataType;
 
     public InstanceOfDataTypeCheck(int position, EDataType dataType) {

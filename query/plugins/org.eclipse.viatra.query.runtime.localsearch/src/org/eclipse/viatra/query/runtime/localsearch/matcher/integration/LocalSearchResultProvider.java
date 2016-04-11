@@ -12,9 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -38,6 +36,7 @@ import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner;
 import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy;
 import org.eclipse.viatra.query.runtime.localsearch.planner.POperationCompiler;
+import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
@@ -47,8 +46,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
-import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.DefaultFlattenCallPredicate;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
@@ -58,7 +55,6 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -76,7 +72,8 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     private static class Planner {
 
-        Map<List<ISearchOperation>, Map<PVariable, Integer>> operationListsWithVarMappings;
+//        Map<List<ISearchOperation>, Map<PVariable, Integer>> operationListsWithVarMappings;
+        Collection<SearchPlanForBody> compiledPlans;
         private POperationCompiler compiler;
         private IQueryBackend backend;
         private IQueryBackendHintProvider hintProvider;
@@ -105,17 +102,19 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
             LocalSearchPlanner planner = new LocalSearchPlanner();
             planner.initializePlanner(flattener, logger, metaContext, runtimeContext, normalizer, strategy, compiler, hints);
-            operationListsWithVarMappings = planner.plan(key.getQuery(), key.getAdornment());
+            
+            
+            compiledPlans = planner.plan(key.getQuery(), key.getAdornment());
 
-            Collection<SearchPlanExecutor> executors = Collections2.transform(operationListsWithVarMappings.entrySet(),
-                    new Function<Entry<List<ISearchOperation>, Map<PVariable, Integer>>, SearchPlanExecutor>() {
+            Collection<SearchPlanExecutor> executors = Collections2.transform(compiledPlans,
+                    new Function<SearchPlanForBody, SearchPlanExecutor>() {
 
                         @Override
-                        public SearchPlanExecutor apply(Entry<List<ISearchOperation>, Map<PVariable, Integer>> input) {
+                        public SearchPlanExecutor apply(SearchPlanForBody input) {
                             final SearchPlan plan = new SearchPlan();
-                            plan.addOperations(input.getKey());
+                            plan.addOperations(input.getCompiledOperations());
 
-                            return new SearchPlanExecutor(plan, searchContext, input.getValue());
+                            return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys(), input.getParameterKeys());
                         }
                     });
 
@@ -124,39 +123,19 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
                 @Override
                 public Integer apply(PBody input) {
-                    Set<PVariable> uniqueVariables = input.getUniqueVariables();
-                    
-                    // Calculate the equal pairs in the parameter list of the pattern, because they 
-                    // should be present multiple times at the beginning of the matching frame, and the 
-                    // matching frame should be large enough
-                    List<ExportedParameter> symbolicParameters = Lists.newArrayList(input.getSymbolicParameters());
-                    
-                    int numberOfEqualParameterPairs = 0;
-                    
-                    for (int i = 0; i < symbolicParameters.size(); i++) {
-                        for (int j = i+1; j < symbolicParameters.size(); j++) {
-                            ExportedParameter exportedParameter1 = symbolicParameters.get(i);
-                            ExportedParameter exportedParameter2 = symbolicParameters.get(j);
-                            boolean toStringNotEquals = ! (exportedParameter1.toString().equals(exportedParameter2.toString()));
-                            boolean parameterEquals = exportedParameter1.getParameterVariable().equals(exportedParameter2.getParameterVariable());
-                            if(toStringNotEquals && parameterEquals){
-                                numberOfEqualParameterPairs++;
-                            }
-                        }
-                    }
-                    return uniqueVariables.size() + numberOfEqualParameterPairs;
+                    return input.getUniqueVariables().size();
+//                    return Math.max(input.getSymbolicParameters().size(), input.getUniqueVariables().size());
                 }
             });
 
-            int keySize = key.getQuery().getParameters().size();
-            final LocalSearchMatcher matcher = new LocalSearchMatcher(key.getQuery(), executors, keySize, Collections.max(parameterSizes));
+            final LocalSearchMatcher matcher = new LocalSearchMatcher(key.getQuery(), executors, Collections.max(parameterSizes));
             searchContext.loadMatcher(key, matcher);
         }
 
         public void collectElementsToIndex(Set<EClass> classesToIndex, Set<EStructuralFeature> featuresToIndex,
                 Set<EDataType> dataTypesToIndex) {
-            for (List<ISearchOperation> plan : operationListsWithVarMappings.keySet()) {
-                for (ISearchOperation operation : plan) {
+            for (SearchPlanForBody plan : compiledPlans) {
+                for (ISearchOperation operation : plan.getCompiledOperations()) {
                     if (operation instanceof ExtendToEStructuralFeatureSource) {
                         featuresToIndex.add(((ExtendToEStructuralFeatureSource) operation).getFeature());
                     } else if (operation instanceof IterateOverEClassInstances) {
@@ -244,9 +223,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         try {
             final LocalSearchMatcher matcher = initializeMatcher(parameters);
             final MatchingFrame frame = matcher.editableMatchingFrame();
-            for (int i = 0; i < parameters.length; i++) {
-                frame.setValue(i, parameters[i]);
-            }
+            frame.setParameterValues(parameters);
             return matcher.getOneArbitraryMatch(frame);
         } catch (LocalSearchException e) {
             throw new RuntimeException(e);
@@ -258,9 +235,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         try {
             final LocalSearchMatcher matcher = initializeMatcher(parameters);
             final MatchingFrame frame = matcher.editableMatchingFrame();
-            for (int i = 0; i < parameters.length; i++) {
-                frame.setValue(i, parameters[i]);
-            }
+            frame.setParameterValues(parameters);
             return matcher.countMatches(frame);
         } catch (LocalSearchException e) {
             throw new RuntimeException(e);
@@ -272,9 +247,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         try {
             final LocalSearchMatcher matcher = initializeMatcher(parameters);
             final MatchingFrame frame = matcher.editableMatchingFrame();
-            for (int i = 0; i < parameters.length; i++) {
-                frame.setValue(i, parameters[i]);
-            }
+            frame.setParameterValues(parameters);
             return matcher.getAllMatches(frame);
         } catch (LocalSearchException e) {
             throw new RuntimeException(e);

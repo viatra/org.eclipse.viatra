@@ -12,12 +12,10 @@ package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.base.api.IEStructuralFeatureProcessor;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
@@ -25,7 +23,6 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Iterates all available {@link EStructuralFeature} elements without using an {@link NavigationHelper VIATRA Base
@@ -35,7 +32,7 @@ import com.google.common.collect.Maps;
 public class IterateOverEStructuralFeatureInstances implements ISearchOperation {
 
     private EStructuralFeature feature;
-    private Integer sourcePosition, targetPosition;
+    private int sourcePosition, targetPosition;
     protected Iterator<Entry<EObject, Object>> it;
     
     public IterateOverEStructuralFeatureInstances(int sourcePosition, int targetPosition, EStructuralFeature feature) {

@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
  */
 public abstract class ExtendOperation<T> implements ISearchOperation {
 
-    protected Integer position;
+    protected int position;
     protected Iterator<T> it;
 
     /**

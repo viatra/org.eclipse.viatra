@@ -42,7 +42,9 @@ public class CompilerHelper {
         // This is the expected and normal behavior
         List<PVariable> symbolicParameterVariables = plan.getBody().getSymbolicParameterVariables();
         for (PVariable pVariable : symbolicParameterVariables) {
-            variableMapping.put(pVariable, variableNumber++);
+            if (!variableMapping.containsKey(pVariable)) {
+                variableMapping.put(pVariable, variableNumber++);
+            }
         }
 
         // Reason for complexity here: not all variables were given back for call plan.getAllDeducedVariables();

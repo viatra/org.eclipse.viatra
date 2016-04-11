@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -43,6 +44,8 @@ public class CountOperation extends ExtendOperation<Integer> implements IMatcher
 	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
 		Set<Integer> adornment = Sets.newHashSet();
 		for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+		    Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
+            Preconditions.checkNotNull(mapping.getValue(), "Mapping frame must not contain null values");
 			Integer source = mapping.getKey();
 			if (frame.get(source) != null) {
 				adornment.add(mapping.getValue());
@@ -67,9 +70,11 @@ public class CountOperation extends ExtendOperation<Integer> implements IMatcher
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         getAndPrepareCalledMatcher(frame, context);
         final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
+        Object[] parameterValues = new Object[matcher.getParameterCount()];
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
-            mappedFrame.setValue(entry.getValue(), frame.getValue(entry.getKey()));
+            parameterValues[entry.getValue()] = frame.getValue(entry.getKey());
         }
+        mappedFrame.setParameterValues(parameterValues);
         it = Iterators.singletonIterator(matcher.countMatches(mappedFrame));
         
     }

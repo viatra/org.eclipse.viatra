@@ -20,6 +20,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -87,8 +88,8 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IMat
             sourcesToEvaluate.remove(currentValue);
             sourceEvaluated.add(currentValue);
             final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
-            mappedFrame.setValue(0, currentValue);
-            for (MatchingFrame match : matcher.getAllMatches(mappedFrame)) {
+            mappedFrame.setParameterValues(new Object[]{currentValue, null});
+            for (Tuple match : matcher.getAllMatches(mappedFrame)) {
                 Object foundTarget = match.get(1);
                 if (targetValue.equals(foundTarget)) {
                     return true;

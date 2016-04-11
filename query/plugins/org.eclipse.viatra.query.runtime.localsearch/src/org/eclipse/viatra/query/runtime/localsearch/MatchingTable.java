@@ -18,51 +18,31 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
+
+import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 
 
-public class MatchingTable extends AbstractCollection<MatchingFrame> {
+public class MatchingTable extends AbstractCollection<Tuple> {
     private Map<MatchingKey,Collection<MatchingFrame>> matchings;
-    
-    private final class MatchingIterator implements Iterator<MatchingFrame> {
-        Iterator<Entry<MatchingKey, Collection<MatchingFrame>>> iterator;
-        
-        private MatchingIterator() {
-            iterator = matchings.entrySet().iterator();
-        }
-
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        public MatchingFrame next() {
-            if (hasNext()) {
-                final Collection<MatchingFrame> frames = iterator.next().getValue();
-                Iterator<MatchingFrame> frameIterator = frames.iterator();
-                if (frameIterator.hasNext()) {
-                    return frameIterator.next();
-                } else {
-                    throw new NoSuchElementException();
-                }
-            } else {
-                throw new NoSuchElementException();
-            }
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
 
     public MatchingTable() {
         matchings = new HashMap<MatchingKey, Collection<MatchingFrame>>();
     }
     
     @Override
-    public Iterator<MatchingFrame> iterator() {
-        return new MatchingIterator();
+    public Iterator<Tuple> iterator() {
+        return Iterables.transform(matchings.keySet(), new Function<MatchingKey, Tuple>() {
+
+            @Override
+            public Tuple apply(MatchingKey input) {
+                return new FlatTuple(input.keys);
+            }
+        }).iterator();
     }
 
     @Override

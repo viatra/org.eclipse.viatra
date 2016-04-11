@@ -14,6 +14,8 @@ package org.eclipse.viatra.query.runtime.localsearch;
 
 import java.util.Arrays;
 
+import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Preconditions;
@@ -41,13 +43,38 @@ public class MatchingFrame extends Tuple implements Cloneable {
 	 */
     private Object[] frame;
 
-    private int keySize;
+    private int[] keys;
+    private Object[] parameterValues;
 
-    public MatchingFrame(Object pattern, int keySize, int frameSize) {
+    public MatchingFrame(Object pattern, int frameSize) {
+        this(pattern, null, frameSize);
+    }
+    
+    private MatchingFrame(Object pattern, int[] keyMap, int frameSize) {
         this.pattern = pattern;
-        this.keySize = keySize;
+        this.keys = keyMap;
         this.frame = new Object[frameSize];
     }
+
+    /**
+     * The keys describes which elements of the frame corresponds to the parameters. The parameters are identified by
+     * the index, and a value might be added to multiple indexes in case of parameters made equal with a == constraint.
+     * As this array is different for each body instance, this method is called by the {@link SearchPlanExecutor} class
+     * later than initialization (done by the {@link LocalSearchMatcher}.
+     * 
+     * @param keys
+     * @see {@linkplain #setParameterValues(Object[])} for setting the initial parameter
+     */
+    public void setKeys(int[] keys) {
+        this.keys = keys;
+        if (parameterValues != null) {
+            for (int i=0; i<parameterValues.length; i++) {
+                frame[keys[i]] = parameterValues[i];
+            }
+        }
+    }
+
+
 
     /**
      * Returns the value stored inside the matching frame.
@@ -59,23 +86,35 @@ public class MatchingFrame extends Tuple implements Cloneable {
      * @throws IllegalArgumentException
      *             if the position is larger then the length of the frame
      */
-	public Object getValue(Integer position) {
+	public Object getValue(int position) {
         Preconditions.checkElementIndex(position, frame.length);
         return frame[position];
 	}
     
     /**
-     * Sets the value of the variable at the given position
+     * Sets the value of the variable at the given position. For internal use in LS matching only.
      * 
      * @param position the position of the variable within the frame
      * @param value the value to be set for the variable
      */
-    public void setValue(Integer position, Object value) {
+    public void setValue(int position, Object value) {
         Preconditions.checkElementIndex(position, frame.length);
         frame[position] = value;
     }
     
+    /**
+     * Call for setting the parameter values (or null if a value is unspecified). The values will only be visible in the
+     * MatchingFrame instance after {@link #setKeys(int[])} is called.
+     * 
+     * @param parameterValues a non-null array of values; a value might be null if it is not specified early
+     */
+    public void setParameterValues(Object[] parameterValues) {
+        //Cannot write precondition checking here, as required information is not always available
+        this.parameterValues = Arrays.copyOf(parameterValues, parameterValues.length);
+    }
+    
     public boolean testAndSetValue(Integer position, Object value) {
+        Preconditions.checkElementIndex(position, frame.length);
         if (frame[position] == null) {
             frame[position] = value;
             return true;
@@ -92,12 +131,17 @@ public class MatchingFrame extends Tuple implements Cloneable {
     }
     
     public MatchingKey getKey() {
-        return new MatchingKey(Arrays.copyOfRange(frame, 0, keySize));
+        Object[] key = new Object[keys.length];
+        for (int i=0; i < keys.length; i++) {
+            key[i] = frame[keys[i]];
+        }
+        return new MatchingKey(key);
     }
 
     public MatchingFrame clone() {
-        MatchingFrame clone = new MatchingFrame(pattern, keySize, frame.length);
+        MatchingFrame clone = new MatchingFrame(pattern, keys, frame.length);
         clone.frame = Arrays.copyOf(frame, frame.length);
+        clone.parameterValues = this.parameterValues;
         return clone;
     }
     
@@ -122,9 +166,9 @@ public class MatchingFrame extends Tuple implements Cloneable {
     @Override
     public Object[] getElements() {
         //Redefining to trim the results to keySize
-        Object[] allElements = new Object[keySize];
-        for (int i = 0; i < keySize; ++i)
-            allElements[i] = get(i);
+        Object[] allElements = new Object[keys.length];
+        for (int i = 0; i < keys.length; ++i)
+            allElements[i] = get(keys[i]);
         return allElements;
     }
 }

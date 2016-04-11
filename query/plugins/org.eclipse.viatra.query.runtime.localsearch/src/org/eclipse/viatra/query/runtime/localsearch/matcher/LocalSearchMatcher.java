@@ -20,6 +20,7 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingTable;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -34,7 +35,6 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
 
     private ImmutableList<SearchPlanExecutor> plan;
     private int frameSize;
-    private int keySize;
     private PQuery query;
     private List<ILocalSearchAdapter> adapters = Lists.newLinkedList();
 
@@ -44,10 +44,6 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     
     public int getFrameSize() {
         return frameSize;
-    }
-    
-    public int getKeySize() {
-        return keySize;
     }
     
     @Override
@@ -125,21 +121,20 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         this.query = query;
     }
 
-    public LocalSearchMatcher(PQuery query, SearchPlanExecutor plan, int keySize, int frameSize) {
-        this(query,ImmutableList.of(plan),keySize,frameSize);
+    public LocalSearchMatcher(PQuery query, SearchPlanExecutor plan, int frameSize) {
+        this(query, ImmutableList.of(plan), frameSize);
     }
     
-    public LocalSearchMatcher(PQuery query, SearchPlanExecutor[] plan, int keySize, int frameSize) {
-        this(query,ImmutableList.copyOf(plan),keySize,frameSize);
+    public LocalSearchMatcher(PQuery query, SearchPlanExecutor[] plan, int frameSize) {
+        this(query, ImmutableList.copyOf(plan), frameSize);
     }
     
-    public LocalSearchMatcher(PQuery query, Collection<SearchPlanExecutor> plan, int keySize, int frameSize) {
-        this(query, ImmutableList.copyOf(plan), keySize, frameSize);
+    public LocalSearchMatcher(PQuery query, Collection<SearchPlanExecutor> plan, int frameSize) {
+        this(query, ImmutableList.copyOf(plan), frameSize);
     }
     
-    protected LocalSearchMatcher(PQuery query, ImmutableList<SearchPlanExecutor> plan, int keySize, int frameSize) {
+    protected LocalSearchMatcher(PQuery query, ImmutableList<SearchPlanExecutor> plan, int frameSize) {
         this(query);
-        this.keySize = keySize;
         this.plan = plan;
         this.frameSize = frameSize;
         this.adapters = Lists.newLinkedList(adapters);
@@ -183,12 +178,8 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         this.frameSize = frameSize;
     }
 
-    protected void setKeysize(int keySize) {
-        this.keySize = keySize;
-    }
-
     public MatchingFrame editableMatchingFrame() {
-        return new MatchingFrame(null, keySize, frameSize);
+        return new MatchingFrame(null, frameSize);
     }
 
     public boolean hasMatch() throws LocalSearchException {
@@ -224,6 +215,10 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         matchingFinished();
 		return result;
     }
+    
+    public int getParameterCount() {
+        return query.getParameters().size();
+    }
 
     public MatchingFrame getOneArbitraryMatch() throws LocalSearchException {
         MatchingFrame oneArbitraryMatch = getOneArbitraryMatch(editableMatchingFrame());
@@ -241,8 +236,8 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
         return returnValue;
     }
 
-    public Collection<MatchingFrame> getAllMatches() throws LocalSearchException {
-        Collection<MatchingFrame> allMatches = getAllMatches(editableMatchingFrame());
+    public Collection<Tuple> getAllMatches() throws LocalSearchException {
+        Collection<Tuple> allMatches = getAllMatches(editableMatchingFrame());
 		return allMatches;
     }
 
@@ -258,7 +253,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
 		}		
 	}
 
-	public Collection<MatchingFrame> getAllMatches(final MatchingFrame initialFrame) throws LocalSearchException {
+	public Collection<Tuple> getAllMatches(final MatchingFrame initialFrame) throws LocalSearchException {
         matchingStarted();
 		PlanExecutionIterator it = new PlanExecutionIterator(plan, initialFrame);        
         

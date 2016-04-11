@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
  */
 public class InequalityCheck extends CheckOperation {
 
-    Integer sourceLocation, targetLocation;
+    int sourceLocation, targetLocation;
 
     public InequalityCheck(int sourceLocation, int targetLocation) {
         super();
