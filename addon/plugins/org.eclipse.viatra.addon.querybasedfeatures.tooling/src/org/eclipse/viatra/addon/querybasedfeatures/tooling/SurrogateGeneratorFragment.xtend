@@ -41,7 +41,6 @@ class SurrogateGeneratorFragment implements IGenerationFragment {
     @Inject protected Logger logger
     @Inject protected IErrorFeedback errorFeedback
     @Inject protected extension ExtensionGenerator exGen
-    @Inject protected extension DerivedFeatureSourceCodeUtil codeGen
     @Inject protected extension EMFPatternLanguageJvmModelInferrerUtil inferrerUtil
     
     protected static String SURROGATE_ERROR_CODE        = "org.eclipse.viatra.query.runtime.surrogatequeryemf.error"

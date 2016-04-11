@@ -48,7 +48,7 @@ public class QueryBasedFeatures {
  
     public static boolean checkEcoreAnnotation(EPackage pckg, EStructuralFeature feature, String patternFQN, boolean useModelCode) {
     	boolean annotationsOK = true;
-    	if(useModelCode){
+    	if(!useModelCode){
     		annotationsOK = QueryBasedFeatures.checkEcorePackageAnnotation(pckg);
     	}
     	annotationsOK &= QueryBasedFeatures.checkFeatureAnnotation(feature, patternFQN);

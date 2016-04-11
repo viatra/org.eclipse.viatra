@@ -34,6 +34,9 @@ class SettingDelegateBasedGenerator {
   def protected void updateAnnotations(Pattern pattern, Annotation annotation, boolean generate) {
     try{
       val parameters = pattern.processDerivedFeatureAnnotation(annotation, generate)
+      if(!parameters.resourceWritable){
+          return
+      }
       if(generate){
         updateEcorePackage(parameters)
         updateFeatureAnnotation(parameters)

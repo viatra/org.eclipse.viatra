@@ -44,7 +44,6 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
   @Inject protected Logger logger
   @Inject protected IErrorFeedback errorFeedback
   @Inject protected extension ExtensionGenerator exGen
-  @Inject protected extension DerivedFeatureSourceCodeUtil codeGen
   
   protected static String DERIVED_EXTENSION_POINT   = "org.eclipse.viatra.query.runtime.base.wellbehaving.derived.features"
   protected static String DERIVED_ERROR_CODE        = "org.eclipse.viatra.query.runtime.querybasedfeature.error"
@@ -224,6 +223,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
         val uri = resource.getURI();
         // only file and platform resource URIs are considered safely writable
         if (!(uri.isFile() || uri.isPlatformResource())) {
+          parameters.resourceWritable = false
           val useModelCodeRef = annotation.getFirstAnnotationParameter("generateIntoModelCode");
           var useModelCode = false;
           if(useModelCodeRef != null){
@@ -240,7 +240,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
                 IErrorFeedback::FRAGMENT_ERROR_TYPE);
               throw new IllegalArgumentException(
                 "Query-based feature pattern " + pattern.fullyQualifiedName + ": " + message)
-          }  
+          }
         }   
     }
     
@@ -292,5 +292,7 @@ class QueryBasedFeatureParameters{
   public QueryBasedFeatureKind kind
   public boolean keepCache
   public boolean useAsSurrogate
+  
+  public boolean resourceWritable = true
   
 }
