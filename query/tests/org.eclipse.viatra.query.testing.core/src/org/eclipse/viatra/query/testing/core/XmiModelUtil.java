@@ -78,7 +78,7 @@ public class XmiModelUtil {
         if (uri != null) {
             return uri;
         }
-        return null;
+        throw new RuntimeException("Error while opening platform resource " + platformURI + ": Resource not found.");
     }
 
     private static URI resolvePlatformResourceURI(XmiModelUtilRunningOptionEnum optionEnum, String platformURI) {
