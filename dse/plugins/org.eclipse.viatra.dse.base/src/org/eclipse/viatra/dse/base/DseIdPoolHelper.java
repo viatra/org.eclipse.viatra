@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.base;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,24 +44,27 @@ public enum DseIdPoolHelper {
 
     }
 
-    private ConcurrentHashMap<Thread, IdProvider> idProviders = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Thread, HashMap<DSETransformationRule<?, ?>, IdProvider>> idProviders = new ConcurrentHashMap<>();
     private AtomicInteger fallBackId = new AtomicInteger();
 
     public int getId(DSETransformationRule<?, ?> rule) {
         Thread currentThread = Thread.currentThread();
-        IdProvider idProvider = idProviders.get(currentThread);
-        if (idProvider == null) {
+        HashMap<DSETransformationRule<?, ?>, IdProvider> ruleMap = idProviders.get(currentThread);
+        if (ruleMap == null) {
             return fallBackId.getAndIncrement();
         }
+        IdProvider idProvider = ruleMap.get(rule);
         return idProvider.getId();
     }
 
     public void registerRules(ThreadContext context) {
         Thread currentThread = Thread.currentThread();
+        HashMap<DSETransformationRule<?, ?>, IdProvider> ruleMap = new HashMap<>();
         for (DSETransformationRule<?, ?> rule : context.getGlobalContext().getTransformations()) {
             IdProvider idProvider = new IdProvider(context, rule);
-            idProviders.put(currentThread, idProvider);
+            ruleMap.put(rule, idProvider);
         }
+        idProviders.put(currentThread, ruleMap);
     }
 
     public void disposeByThread() {
