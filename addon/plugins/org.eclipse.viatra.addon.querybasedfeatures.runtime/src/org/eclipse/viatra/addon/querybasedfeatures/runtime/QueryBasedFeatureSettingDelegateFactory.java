@@ -11,7 +11,6 @@
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -39,7 +38,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
 
 /**
  * @author Abel Hegedus
