@@ -11,6 +11,7 @@
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -35,7 +36,10 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
 
 /**
  * @author Abel Hegedus
@@ -48,12 +52,15 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
     
     private final Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specificationMap;
     
+    private final ListMultimap<ViatraQueryEngine, QueryBasedFeature> delayedFeatures;
+    
     /**
      * 
      */
     public QueryBasedFeatureSettingDelegateFactory() {
         engineMap = new WeakHashMap<Notifier, WeakReference<AdvancedViatraQueryEngine>>();
         specificationMap = Maps.newHashMap();
+        delayedFeatures = ArrayListMultimap.create();
     }
     
     /**
@@ -62,6 +69,10 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
     public Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getSpecificationMap() {
         return specificationMap;
     }
+    
+    protected ListMultimap<ViatraQueryEngine,QueryBasedFeature> getDelayedFeatures() {
+		return delayedFeatures;
+	}
     
     protected AdvancedViatraQueryEngine getEngineForNotifier(Notifier notifier, boolean dynamicEMFMode) throws ViatraQueryException {
         if(dynamicEMFMode) {

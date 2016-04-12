@@ -11,6 +11,8 @@
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -28,8 +30,9 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
+import com.google.common.collect.Lists;
+
 /**
- * TODO process pattern annotation for specific settings when initializing (e.g. source, target, keepCache, etc)
  * 
  * @author Abel Hegedus
  *
@@ -155,22 +158,47 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         }
         
         if (!queryBasedFeature.isInitialized()) {
-
-            try {
-                @SuppressWarnings("unchecked")
-                ViatraQueryMatcher<IPatternMatch> matcher = (ViatraQueryMatcher<IPatternMatch>) this.querySpecification
-                        .getMatcher(engine);
-                if (!queryBasedFeature.isInitialized()) {
-                    queryBasedFeature.initialize(matcher, parameters.sourceVar, parameters.targetVar);
-                    queryBasedFeature.startMonitoring();
-                }
-            } catch (ViatraQueryException e) {
-                ViatraQueryLoggingUtil.getLogger(getClass()).error("Handler initialization failed", e);
-            }
+            initializeQueryBasedFeature(engine, queryBasedFeature);
         }
 
         return queryBasedFeature.getValue(owner);
     }
+
+	private void initializeQueryBasedFeature(AdvancedViatraQueryEngine engine, QueryBasedFeature queryBasedFeature) {
+		try {
+			List<QueryBasedFeature> delayedFeatures = delegateFactory.getDelayedFeatures().get(engine);
+			// query-based feature initialization is delayed, but list is used as ordered set
+			if(!delayedFeatures.contains(queryBasedFeature)){
+				delayedFeatures.add(queryBasedFeature);
+				@SuppressWarnings("unchecked")
+				ViatraQueryMatcher<IPatternMatch> matcher = (ViatraQueryMatcher<IPatternMatch>) this.querySpecification
+				.getMatcher(engine);
+				if (!queryBasedFeature.isInitialized()) {
+					queryBasedFeature.setMatcher(matcher);
+					queryBasedFeature.setSourceParamName(parameters.sourceVar);
+					queryBasedFeature.setTargetParamName(parameters.targetVar);
+					// the first feature in the list can initialize the rest
+					Iterator<QueryBasedFeature> iterator = delayedFeatures.iterator();
+					if(iterator.hasNext() && iterator.next().equals(queryBasedFeature)){
+						initializeDelayedFeature(queryBasedFeature, delayedFeatures);
+						// delayed query-based features are initialized 
+						ArrayList<QueryBasedFeature> delayedFeatureList = Lists.newArrayList(delayedFeatures);
+						for (QueryBasedFeature delayedFeature : delayedFeatureList) {
+							initializeDelayedFeature(delayedFeature, delayedFeatures);
+						}
+					}
+				}
+			}
+		} catch (ViatraQueryException e) {
+		    ViatraQueryLoggingUtil.getLogger(getClass()).error("Handler initialization failed", e);
+		}
+	}
+
+	private void initializeDelayedFeature(QueryBasedFeature queryBasedFeature, List<QueryBasedFeature> delayedFeatures) {
+		queryBasedFeature.initialize(queryBasedFeature.getMatcher(), queryBasedFeature.getSourceParamName(), queryBasedFeature.getTargetParamName());
+		queryBasedFeature.startMonitoring();
+		delayedFeatures.remove(queryBasedFeature);
+	}
 
     @Override
     protected boolean isSet(InternalEObject owner) {

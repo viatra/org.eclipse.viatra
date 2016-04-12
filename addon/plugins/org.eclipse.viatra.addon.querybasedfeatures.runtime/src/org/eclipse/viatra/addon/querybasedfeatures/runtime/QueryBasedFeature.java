@@ -164,59 +164,47 @@ public abstract class QueryBasedFeature {
         }
     }
 
-    /**
-	 * 
-	 */
     public QueryBasedFeature(EStructuralFeature feature, boolean keepCache) {
         this.feature = feature;
         this.keepCache = keepCache;
     }
 
-    /**
-     * @return the matcher
-     */
     protected ViatraQueryMatcher<IPatternMatch> getMatcher() {
         return matcher;
     }
+    
+    protected void setMatcher(ViatraQueryMatcher<IPatternMatch> matcher) {
+		this.matcher = matcher;
+	}
 
-    /**
-     * @return the feature
-     */
     protected EStructuralFeature getFeature() {
         return feature;
     }
 
-    /**
-     * @return the sourceParamName
-     */
     protected String getSourceParamName() {
         return sourceParamName;
     }
+    
+    protected void setSourceParamName(String sourceParamName) {
+		this.sourceParamName = sourceParamName;
+	}
 
-    /**
-     * @return the targetParamName
-     */
     protected String getTargetParamName() {
         return targetParamName;
     }
+    
+    protected void setTargetParamName(String targetParamName) {
+		this.targetParamName = targetParamName;
+	}
 
-    /**
-     * @return the keepCache
-     */
     protected boolean isCached() {
         return keepCache;
     }
 
-    /**
-     * @return the initialized
-     */
     protected boolean isInitialized() {
         return initialized;
     }
 
-    /**
-     * @return the kind
-     */
     public abstract QueryBasedFeatureKind getKind();
 
     protected abstract void afterUpdate();
