@@ -12,14 +12,10 @@ package org.eclipse.viatra.transformation.debug.configuration
 
 import com.google.common.collect.Lists
 import java.util.List
-import org.eclipse.viatra.transformation.debug.breakpoints.ITransformationBreakpoint
-import org.eclipse.viatra.transformation.debug.controller.IDebugController
-import org.eclipse.viatra.transformation.debug.controller.impl.ConsoleDebugger
+import org.eclipse.viatra.transformation.debug.TransformationDebugger
 import org.eclipse.viatra.transformation.evm.api.adapter.IAdapterConfiguration
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMListener
-import org.eclipse.viatra.transformation.debug.TransformationDebugListener
-import org.eclipse.viatra.transformation.debug.TransformationDebugAdapter
 
 /**
  * Configuration class that defines the debugger.
@@ -30,19 +26,13 @@ class TransformationDebuggerConfiguration implements IAdapterConfiguration {
     List<IEVMAdapter> adapters
     List<IEVMListener> listeners
 
-    new(IDebugController usedController, ITransformationBreakpoint ... breakpoints) {
+    new() {
+        val id = "Transformation_"+System.nanoTime.toString;
         adapters = Lists.newArrayList
         listeners = Lists.newArrayList
-        listeners.add(new TransformationDebugListener(usedController))
-        adapters.add(new TransformationDebugAdapter(usedController, breakpoints))
-    }
-
-    new(ITransformationBreakpoint ... breakpoints) {
-        val usedUI = new ConsoleDebugger
-        adapters = Lists.newArrayList
-        listeners = Lists.newArrayList
-        listeners.add(new TransformationDebugListener(usedUI))
-        adapters.add(new TransformationDebugAdapter(usedUI, breakpoints))
+        val debugger = new TransformationDebugger(id)
+        listeners.add(debugger)
+        adapters.add(debugger)
     }
 
     override getAdapters() {

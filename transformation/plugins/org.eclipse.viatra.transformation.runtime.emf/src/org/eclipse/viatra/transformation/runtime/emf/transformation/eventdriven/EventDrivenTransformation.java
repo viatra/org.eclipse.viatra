@@ -24,6 +24,7 @@ import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
+import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVMFactory;
 import org.eclipse.viatra.transformation.evm.api.adapter.IAdapterConfiguration;
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter;
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMListener;
@@ -114,14 +115,14 @@ public class EventDrivenTransformation {
                 conflictResolver = new ArbitraryOrderConflictResolver();
             }
 
-            AdaptableEVM vm = new AdaptableEVM();
+            AdaptableEVM vm = AdaptableEVMFactory.INSTANCE.createAdaptableEVM();
             vm.addAdapters(adapters);
             vm.addListeners(listeners);
 
             ExecutionSchema schema = (adapters.size() > 0 || listeners.size() > 0)
                     ? vm.createAdaptableExecutionSchema(engine, schedulerFactory, conflictResolver)
                     : ExecutionSchemas.createViatraQueryExecutionSchema(engine, schedulerFactory, conflictResolver);
-
+            
             Iterable<IQuerySpecification<?>> preconditions = collectPreconditions();
             GenericQueryGroup.of(Sets.newHashSet(preconditions)).prepare(engine);
             for (EventDrivenTransformationRule<?, ?> rule : rules) {
@@ -130,6 +131,7 @@ public class EventDrivenTransformation {
             }
             EventDrivenTransformation transformation = new EventDrivenTransformation(schema, engine);
             transformation.setRules(rulesToAdd);
+            vm.initialize(engine);
             return transformation;
         }
 

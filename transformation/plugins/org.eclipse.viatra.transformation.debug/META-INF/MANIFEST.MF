@@ -1,20 +1,28 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA Transformation Debugger (Incubation)
-Bundle-SymbolicName: org.eclipse.viatra.transformation.debug
-Bundle-Version: 0.12.0.qualifier
-Bundle-Vendor: Eclipse VIATRA Project
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.viatra.transformation.debug;singleton:=true
+Bundle-Version: 0.13.0.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.3.0,1.4.0)",
  org.eclipse.viatra.transformation.evm;bundle-version="[1.3.0,1.4.0)",
  org.eclipse.xtext.xbase.lib;bundle-version="[2.8.0,3.0.0)",
  org.eclipse.xtend.lib;bundle-version="[2.8.0,3.0.0)",
  org.eclipse.emf.edit;bundle-version="2.9.0";resolution:=optional,
- com.google.inject;bundle-version="3.0.0"
+ com.google.inject;bundle-version="3.0.0",
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.viatra.transformation.debug.transformationtrace;bundle-version="0.13.0",
+ org.eclipse.debug.core,
+ org.eclipse.jdt.core,
+ org.eclipse.emf.edit.ui
+Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.transformation.debug,
- org.eclipse.viatra.transformation.debug.breakpoints,
- org.eclipse.viatra.transformation.debug.breakpoints.impl,
+ org.eclipse.viatra.transformation.debug.activationcoder,
  org.eclipse.viatra.transformation.debug.configuration,
- org.eclipse.viatra.transformation.debug.controller,
- org.eclipse.viatra.transformation.debug.controller.impl
+ org.eclipse.viatra.transformation.debug.launch,
+ org.eclipse.viatra.transformation.debug.model
 Import-Package: org.apache.log4j;version="1.2.15"
