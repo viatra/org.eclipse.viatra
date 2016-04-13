@@ -16,7 +16,6 @@
 	<properties>
 	    <!-- Sonar -->
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPath>${jacoco.targetdir}/jacoco.exec</sonar.jacoco.reportPath>
 	</properties>
 	<modules>

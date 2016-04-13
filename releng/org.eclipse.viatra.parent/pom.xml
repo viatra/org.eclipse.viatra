@@ -16,7 +16,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
 		<jacoco.version>0.7.6.201602180812</jacoco.version>
-		<jacoco.targetdir>${project.basedir}/../../../jacoco</jacoco.targetdir>
+		<jacoco.targetdir>${project.basedir}/../../jacoco</jacoco.targetdir>
 		<xtend.compiler.version>2.9.0</xtend.compiler.version>
 		<java.version>1.7</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
