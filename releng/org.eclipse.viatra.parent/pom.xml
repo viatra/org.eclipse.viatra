@@ -15,12 +15,12 @@
 		<eclipse.bugzillaUrl>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=viatra</eclipse.bugzillaUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.showWarnings>true</maven.compiler.showWarnings>
-		<jacoco.version>0.6.3.201306030806</jacoco.version>
-		<jacoco.targetdir>${project.basedir}/../../target</jacoco.targetdir>
+		<jacoco.version>0.7.6.201602180812</jacoco.version>
+		<jacoco.targetdir>${project.basedir}/../../../jacoco</jacoco.targetdir>
 		<xtend.compiler.version>2.9.0</xtend.compiler.version>
 		<java.version>1.7</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<viatra.main.version>1.2.0-SNAPSHOT</viatra.main.version>
 		<viatra.incubation.version>0.12.0-SNAPSHOT</viatra.incubation.version>
 		<cbi.jarsigner.version>1.1.3</cbi.jarsigner.version>
@@ -131,6 +131,22 @@
 						<outputDirectory>${basedir}/xtend-gen</outputDirectory>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.version}</version>
+					<configuration>
+						<destFile>${jacoco.targetdir}/jacoco.exec</destFile>
+                        <append>true</append>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -159,67 +175,67 @@
 		<system>Bugzilla</system>
 	</issueManagement>
 	<pluginRepositories>
-	   <pluginRepository>
-	       <id>cbi-releases</id>
-	       <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-	   </pluginRepository>
+		<pluginRepository>
+			<id>cbi-releases</id>
+			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+		</pluginRepository>
 	</pluginRepositories>
 	<profiles>
-	   <profile>
-            <id>sign_milestone</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>BUILD_TYPE</name>
-                    <value>milestone</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.eclipse.cbi.maven.plugins</groupId>
-                        <artifactId>eclipse-jarsigner-plugin</artifactId>
-                        <version>${cbi.jarsigner.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign</id>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <phase>verify</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>sign_release</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <name>BUILD_TYPE</name>
-                    <value>release</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.eclipse.cbi.maven.plugins</groupId>
-                        <artifactId>eclipse-jarsigner-plugin</artifactId>
-                        <version>${cbi.jarsigner.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign</id>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <phase>verify</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+		<profile>
+			<id>sign_milestone</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>BUILD_TYPE</name>
+					<value>milestone</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.cbi.maven.plugins</groupId>
+						<artifactId>eclipse-jarsigner-plugin</artifactId>
+						<version>${cbi.jarsigner.version}</version>
+						<executions>
+							<execution>
+								<id>sign</id>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<phase>verify</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>sign_release</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<property>
+					<name>BUILD_TYPE</name>
+					<value>release</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.cbi.maven.plugins</groupId>
+						<artifactId>eclipse-jarsigner-plugin</artifactId>
+						<version>${cbi.jarsigner.version}</version>
+						<executions>
+							<execution>
+								<id>sign</id>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<phase>verify</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
