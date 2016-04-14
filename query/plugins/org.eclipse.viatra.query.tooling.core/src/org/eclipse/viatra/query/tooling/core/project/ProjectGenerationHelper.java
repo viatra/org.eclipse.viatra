@@ -69,6 +69,7 @@ import com.google.common.collect.Lists;
 public abstract class ProjectGenerationHelper {
 
     private static final String INVALID_PROJECT_MESSAGE = "Invalid project %s. Only existing, open plug-in projects are supported by the generator.";
+    private static final String UTF8_ENCODING = "UTF-8";
 
     private static final class IDToPackageImportTransformer implements Function<String, IPackageImportDescription> {
         private final IBundleProjectService service;
@@ -151,6 +152,8 @@ public abstract class ProjectGenerationHelper {
             IPath[] additionalBinIncludes = new IPath[] { new Path("plugin.xml")};
             ProjectGenerationHelper.fillProjectMetadata(proj, dependencies, importPackages, service, bundleDesc, additionalBinIncludes);
             bundleDesc.apply(monitor);
+            //Ensure UTF-8 encoding
+            proj.setDefaultCharset(UTF8_ENCODING, monitor);
             // Adding VIATRA Query-specific natures
             ProjectGenerationHelper.updateNatures(proj,
                     ImmutableList.of(ViatraQueryNature.XTEXT_NATURE_ID, ViatraQueryNature.NATURE_ID),
