@@ -28,45 +28,61 @@ import com.google.common.collect.Multimap;
 
 public class EventDrivenTransformationRuleFactory {
 
-	public class EventDrivenTransformationBuilder<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> {
+	public class EventDrivenTransformationRuleBuilder<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> {
 		private String name = "";
 		private IQuerySpecification<Matcher> precondition;
 		private Multimap<CRUDActivationStateEnum, IMatchProcessor<Match>> stateActions = HashMultimap.create();
-		private ActivationLifeCycle lifeCycle = Lifecycles.getDefault(false, false);
 		private EventFilter<? super Match> filter;
-
-		public EventDrivenTransformationBuilder<Match, Matcher> name(String name) {
+		private boolean isUpdateJobAdded = false;
+		private boolean isDeleteJobAdded = false;
+		private ActivationLifeCycle lifeCycle = null;
+		
+		
+		public EventDrivenTransformationRuleBuilder<Match, Matcher> name(String name) {
 			this.name = name;
 			return this;
 		}
 
-		public EventDrivenTransformationBuilder<Match, Matcher> precondition(
+		public EventDrivenTransformationRuleBuilder<Match, Matcher> precondition(
 				IQuerySpecification<Matcher> precondition) {
 			this.precondition = precondition;
 			return this;
 		}
 
-		public EventDrivenTransformationBuilder<Match, Matcher> action(IMatchProcessor<Match> action) {
+		public EventDrivenTransformationRuleBuilder<Match, Matcher> action(IMatchProcessor<Match> action) {
 			return action(CRUDActivationStateEnum.CREATED, action);
 		}
 
-		public EventDrivenTransformationBuilder<Match, Matcher> action(CRUDActivationStateEnum state,
+		public EventDrivenTransformationRuleBuilder<Match, Matcher> action(CRUDActivationStateEnum state,
 				IMatchProcessor<Match> action) {
+		    switch(state) {
+		    case CREATED:
+		        break;
+		    case UPDATED:
+		        isUpdateJobAdded = true;
+		        break;
+		    case DELETED:
+		        isDeleteJobAdded = true;
+		        break;
+		    default:
+		        throw new IllegalArgumentException("Unsupported activation state for action");
+		    }
+		    
 			stateActions.put(state, action);
 			return this;
 		}
 
-		public EventDrivenTransformationBuilder<Match, Matcher> addLifeCycle(ActivationLifeCycle lifeCycle)
+		public EventDrivenTransformationRuleBuilder<Match, Matcher> addLifeCycle(ActivationLifeCycle lifeCycle)
 				throws InconsistentEventSemanticsException {
 			this.lifeCycle = lifeCycle;
 			return this;
 		}
 
-		public EventDrivenTransformationBuilder<Match, Matcher> filter(Pair<String, Object>... parameters) {
+		public EventDrivenTransformationRuleBuilder<Match, Matcher> filter(Pair<String, Object>... parameters) {
 			return this.filter(new MatchParameterFilter(parameters));
 		}
 
-		public EventDrivenTransformationBuilder<Match, Matcher> filter(EventFilter<? super Match> filter) {
+		public EventDrivenTransformationRuleBuilder<Match, Matcher> filter(EventFilter<? super Match> filter) {
 			Preconditions.checkState(this.filter == null, "Filter was already set previously.");
 			this.filter = filter;
 			return this;
@@ -74,12 +90,15 @@ public class EventDrivenTransformationRuleFactory {
 
 		public EventDrivenTransformationRule<Match, Matcher> build() {
 			Preconditions.checkState(!stateActions.isEmpty(), "The rule has no actions added.");
+			if (lifeCycle == null) {
+			    lifeCycle = Lifecycles.getDefault(isUpdateJobAdded, isDeleteJobAdded);
+			}
 			return createRule(name, precondition, stateActions, lifeCycle, filter);
 		}
 	}
 
-	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationBuilder<Match, Matcher> createRule() {
-		return new EventDrivenTransformationBuilder<Match, Matcher>();
+	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationRuleBuilder<Match, Matcher> createRule() {
+		return new EventDrivenTransformationRuleBuilder<Match, Matcher>();
 	}
 	
 	private <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationRule<Match, Matcher> createRule(

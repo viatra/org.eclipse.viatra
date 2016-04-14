@@ -28,7 +28,6 @@ import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeType
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameter
 import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRule
 import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory
-import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationBuilder
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.EventDrivenTransformation
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException
 import org.eclipse.xtext.common.types.JvmVisibility
@@ -38,6 +37,7 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum
+import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationRuleBuilder
 
 @SuppressWarnings("restriction", "discouraged")
 class IQGenerator {
@@ -135,7 +135,7 @@ class IQGenerator {
 							append('''try{''').increaseIndentation
 							newLine
 							append(
-								'''«referClass(it, typeRefBuilder, p, EventDrivenTransformationBuilder,
+								'''«referClass(it, typeRefBuilder, p, EventDrivenTransformationRuleBuilder,
 									typeRefBuilder.typeRef(match), typeRefBuilder.typeRef(matcher))»''')
 							append(''' builder = new ''')
 							append('''«referClass(it, typeRefBuilder, p, EventDrivenTransformationRuleFactory)»''')
