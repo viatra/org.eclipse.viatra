@@ -41,7 +41,7 @@ class OptimizationRules extends MappingRules {
 	/**
 	 * Transformation rule to merge {@link State}s connected by an {@link EpsilonTransition}.
 	 */
-	val mergeUponEpsilonTransitionRule = createRule(EpsilonTransitionMatcher::querySpecification)[
+	val mergeUponEpsilonTransitionRule = createRule.precondition(EpsilonTransitionMatcher::querySpecification).action[
 		if(preState instanceof InitState){
 			mergeStates((preState as InitState), postState, transition)
 		} else if(postState instanceof FinalState){
@@ -49,20 +49,20 @@ class OptimizationRules extends MappingRules {
 		} else{
 			mergeStates(preState, postState, transition)
 		}
-	]
+	].build
 
 	/**
 	 * Transformation rule to merge equivalent {@link Transition}s.
 	 */
-	val mergeEquivalentTransitionsRule = createRule(EquivalentTransitionsMatcher::querySpecification) [
+	val mergeEquivalentTransitionsRule = createRule.precondition(EquivalentTransitionsMatcher::querySpecification).action [
 		transition2.parameters += transition1.parameters
 		removeTransition(transition1)
-	]
+	].build
 
 	/**
 	 * Transformation rule to merge equivalent {@link State}s.
 	 */
-	val mergeEquivalentStatesRule = createRule(EquivalentStatesMatcher::querySpecification) [
+	val mergeEquivalentStatesRule = createRule.precondition(EquivalentStatesMatcher::querySpecification).action [
 		Preconditions::checkArgument(!((postState1 instanceof InitState) && (postState2 instanceof FinalState)))
 		Preconditions::checkArgument(!((postState1 instanceof FinalState) && (postState2 instanceof InitState)))
 
@@ -78,7 +78,7 @@ class OptimizationRules extends MappingRules {
 					default: mergeStates(postState1, postState2, transition1, transition2)
 				}
 		}
-	]
+	].build
 
 	/**
 	 * Merge a {@link State} into an {@link InitState} through a {@link Transition}.

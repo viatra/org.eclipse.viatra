@@ -49,42 +49,18 @@ public class BatchTransformationRuleFactory {
 
 
 		public BatchTransformationRule<Match, Matcher> build() {
-			return createRule(fName, fPrecondition, fAction);
+		    return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+	                BatchTransformationRule.STATELESS_RULE_LIFECYCLE, fAction);
 		}
 		
 		public BatchTransformationRule<Match, Matcher> buildStateful() {
-			return createStatefulRule(fName, fPrecondition, fAction);
+		    return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+	                BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, fAction);
 		}
 	}
 	
 	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRuleBuilder<Match, Matcher> createRule() {
 		return new BatchTransformationRuleBuilder<Match, Matcher>();
 	}
-	
-	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createRule(
-			IQuerySpecification<Matcher> precondition,
-			IMatchProcessor<Match> action) {
-		return createRule("", precondition, action);
-	}
 
-	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createRule(
-			String name, IQuerySpecification<Matcher> precondition,
-			IMatchProcessor<Match> action) {
-		return new BatchTransformationRule<Match, Matcher>(name, precondition,
-				BatchTransformationRule.STATELESS_RULE_LIFECYCLE, action);
-	}
-
-	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createStatefulRule(
-			IQuerySpecification<Matcher> precondition,
-			IMatchProcessor<Match> action) {
-		return createStatefulRule("", precondition, action);
-	}
-
-	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRule<Match, Matcher> createStatefulRule(
-			String name, IQuerySpecification<Matcher> precondition,
-			IMatchProcessor<Match> action) {
-		return new BatchTransformationRule<Match, Matcher>(name, precondition,
-				BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, action);
-	}
-	
 }

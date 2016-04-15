@@ -62,7 +62,7 @@ class ComplexMappingRules extends MappingRules {
 	/**
 	 * Transformation rule to compile {@link ComplexEventPattern}s with a {@link FOLLOWS} operator to {@link Automaton}.
 	 */
-	val followsPattern2AutomatonRule = createRule(FollowsPatternMatcher::querySpecification) [
+	val followsPattern2AutomatonRule = createRule.precondition(FollowsPatternMatcher::querySpecification).action [
 		val mappedAutomaton = checkForMappedAutomaton(eventPattern)
 		if (mappedAutomaton != null) {
 			createTrace(eventPattern, mappedAutomaton)
@@ -76,24 +76,24 @@ class ComplexMappingRules extends MappingRules {
 		automaton.buildFollowsPath(eventPattern, automaton.initialState, finalState)
 
 		createTrace(eventPattern, automaton)
-	]
+	].build
 
 	/**
 	 * Transformation rule to unfold {@link Transition}s in an {@link Automaton} guarded by a
 	 * {@link ComplexEventPattern} with a {@link FOLLOWS} operator as a type.
 	 */
-	val followUnfoldRule = createRule(ComplexFollowsTransitionMatcher::querySpecification) [
+	val followUnfoldRule = createRule.precondition(ComplexFollowsTransitionMatcher::querySpecification).action [
 		val referredEventPattern = transition.guards.head.eventType as ComplexEventPattern
 
 		automaton.unfoldFollowsPath(referredEventPattern, transition)
 
 		removeTransition(transition)
-	]
+	].build
 
 	/**
 	 * Transformation rule to compile {@link ComplexEventPattern}s with an {@link OR} operator to {@link Automaton}.
 	 */
-	val orPattern2AutomatonRule = createRule(OrPatternMatcher::querySpecification) [
+	val orPattern2AutomatonRule = createRule.precondition(OrPatternMatcher::querySpecification).action [
 		val mappedAutomaton = checkForMappedAutomaton(eventPattern)
 		if (mappedAutomaton != null) {
 			createTrace(eventPattern, mappedAutomaton)
@@ -107,24 +107,24 @@ class ComplexMappingRules extends MappingRules {
 		automaton.buildOrPath(eventPattern, automaton.initialState, finalState)
 
 		createTrace(eventPattern, automaton)
-	]
+	].build
 
 	/**
 	 * Transformation rule to unfold {@link Transition}s in an {@link Automaton} guarded by a
 	 * {@link ComplexEventPattern} with an {@link OR} operator as a type.
 	 */
-	val orUnfoldRule = createRule(ComplexOrTransitionMatcher::querySpecification) [
+	val orUnfoldRule = createRule.precondition(ComplexOrTransitionMatcher::querySpecification).action [
 		val referredEventPattern = transition.guards.head.eventType as ComplexEventPattern
 
 		automaton.unfoldOrPath(referredEventPattern, transition)
 
 		removeTransition(transition)
-	]
+	].build
 
 	/**
 	 * Transformation rule to compile {@link ComplexEventPattern}s with an {@link AND} operator to {@link Automaton}.
 	 */
-	val andPattern2AutomatonRule = createRule(AndPatternMatcher::querySpecification) [
+	val andPattern2AutomatonRule = createRule.precondition(AndPatternMatcher::querySpecification).action [
 		val mappedAutomaton = checkForMappedAutomaton(eventPattern)
 		if (mappedAutomaton != null) {
 			createTrace(eventPattern, mappedAutomaton)
@@ -138,24 +138,24 @@ class ComplexMappingRules extends MappingRules {
 		automaton.buildAndPath(eventPattern, automaton.initialState, finalState)
 
 		createTrace(eventPattern, automaton)
-	]
+	].build
 
 	/**
 	 * Transformation rule to unfold {@link Transition}s in an {@link Automaton} guarded by a
 	 * {@link ComplexEventPattern} with an {@link AND} operator as a type.
 	 */
-	val andUnfoldRule = createRule(ComplexAndTransitionMatcher::querySpecification) [
+	val andUnfoldRule = createRule.precondition(ComplexAndTransitionMatcher::querySpecification).action [
 		val referredEventPattern = transition.guards.head.eventType as ComplexEventPattern
 
 		automaton.unfoldAndPath(referredEventPattern, transition)
 
 		removeTransition(transition)
-	]
+	].build
 
 	/**
 	 * Transformation rule to compile {@link ComplexEventPattern}s with a {@link NOT} operator to {@link Automaton}.
 	 */
-	val notPattern2AutomatonRule = createRule(NotPatternMatcher::querySpecification) [
+	val notPattern2AutomatonRule = createRule.precondition(NotPatternMatcher::querySpecification).action [
 		val mappedAutomaton = checkForMappedAutomaton(eventPattern)
 		if (mappedAutomaton != null) {
 			createTrace(eventPattern, mappedAutomaton)
@@ -172,13 +172,13 @@ class ComplexMappingRules extends MappingRules {
 			finalState)
 
 		createTrace(eventPattern, automaton)
-	]
+	].build
 
 	/**
 	 * Transformation rule to unfold {@link TypedTransition}s in an {@link Automaton} guarded with a {@link NOT}
 	 * operator.
 	 */
-	val notUnfoldRule = createRule(NonUnfoldedNotTransitionMatcher::querySpecification) [
+	val notUnfoldRule = createRule.precondition(NonUnfoldedNotTransitionMatcher::querySpecification).action [
 		Preconditions::checkArgument(eventPattern.containedEventPatterns.size == 1)
 
 		automaton.buildNotPath(
@@ -188,15 +188,15 @@ class ComplexMappingRules extends MappingRules {
 		)
 
 		removeTransition(transition)
-	]
+	].build
 
 	/**
 	 * Transformation rule to unfold {@link NegativeTransition}s in an {@link Automaton} guarded by a
 	 * {@link ComplexEventPattern}.
 	 */
-	val negativeTransitionUnfoldRule = createRule(ComplexNotTransitionMatcher::querySpecification) [
+	val negativeTransitionUnfoldRule = createRule.precondition(ComplexNotTransitionMatcher::querySpecification).action [
 		automaton.unfoldNotPath(eventPattern, transition as NegativeTransition)
 
 		removeTransition(transition)
-	]
+	].build
 }

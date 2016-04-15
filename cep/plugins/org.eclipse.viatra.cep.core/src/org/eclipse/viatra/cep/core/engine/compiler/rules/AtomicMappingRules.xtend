@@ -30,7 +30,7 @@ class AtomicMappingRules extends MappingRules {
 	/**
 	 * Transformation rule to compile {@link AtomicEventPattern}s to {@link Automaton}.
 	 */
-	val atomicPattern2AutomatonRule = createRule(AtomicEventPatternMatcher::querySpecification) [
+	val atomicPattern2AutomatonRule = createRule.precondition(AtomicEventPatternMatcher::querySpecification).action [
 		val mappedAutomaton = checkForMappedAutomaton(eventPattern)
 		if (mappedAutomaton != null) {
 			createTrace(eventPattern, mappedAutomaton)
@@ -50,6 +50,6 @@ class AtomicMappingRules extends MappingRules {
 		transition.postState = finalState
 
 		createTrace(eventPattern, automaton)
-	]
+	].build
 
 }

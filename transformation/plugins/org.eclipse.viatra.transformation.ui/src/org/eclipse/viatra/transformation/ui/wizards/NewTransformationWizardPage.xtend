@@ -158,9 +158,9 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
                 }
                 
             //  private def getExampleRule() {
-            //      return createRule("ExampleRule", ExampleMatcher.querySpecification) «"["»
+            //      return createRule.name("ExampleRule").precondition(ExampleMatcher.querySpecification).action [
             //          Do Rule Actions here
-            //      ]
+            //      ].build
             //  }
             
                 def dispose() {

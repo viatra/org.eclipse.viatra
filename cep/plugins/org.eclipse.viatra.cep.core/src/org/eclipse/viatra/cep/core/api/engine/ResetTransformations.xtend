@@ -36,7 +36,7 @@ class ResetTransformations {
 		deleteTokensDuringReset.fireWhilePossible
 	}
 
-	val deleteTokensDuringReset = createRule(ResettableEventTokenMatcher::querySpecification)[
+	val deleteTokensDuringReset = createRule.precondition(ResettableEventTokenMatcher::querySpecification).action[
 			automaton.eventTokens.remove(eventToken)
-		]
+		].build
 }
