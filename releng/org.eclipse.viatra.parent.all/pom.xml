@@ -88,7 +88,7 @@
 		<module>../../addon/features/org.eclipse.viatra.addon.validation.runtime.feature</module>
 		<module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.feature</module>
 		<module>../../addon/features/org.eclipse.viatra.addon.viewers.runtime.zest.feature</module>
-		<module>../../addon/features/org.eclipse.viatra.addon.viewers.tooling.zest.feature</module>
+		<module>../../addon/features/org.eclipse.viatra.addon.viewers.tooling.feature</module>
 
 		<!-- Integration -->
 		<module>../../integration/plugins/org.eclipse.viatra.integration.graphiti</module>

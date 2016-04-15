@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.viatra.addon.viewers.tooling.zest.feature"
-      label="VIATRA Viewers Tooling - GEF4 Zest Support (Incubation)"
+      id="org.eclipse.viatra.addon.viewers.tooling.feature"
+      label="VIATRA Viewers Tooling (Incubation)"
       version="0.12.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
@@ -29,6 +29,13 @@
 
    <plugin
          id="org.eclipse.viatra.addon.viewers.tooling.ui.zest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.addon.viewers.tooling.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
