@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2013, Denes Harmath, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,16 @@
  *
  * Contributors:
  *   Denes Harmath - initial API and implementation
+ *   Abel Hegedus - refactored version
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.retevis.views;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -35,100 +36,205 @@ import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
+import org.eclipse.viatra.query.runtime.rete.recipes.AggregatorRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.BetaRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.MultiParentNodeRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
-import org.eclipse.viatra.query.runtime.rete.traceability.ActiveNodeConflictTrace;
-import org.eclipse.viatra.query.runtime.rete.traceability.PatternTraceInfo;
+import org.eclipse.viatra.query.runtime.rete.recipes.SingleParentNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
-import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
+import org.eclipse.viatra.query.tooling.ui.retevis.preference.ReteVisualizationPreferenceConstants;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
+/**
+ * 
+ * @author Denes Harmath
+ *
+ */
 public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
 
-	public ReteVisualizationViewSupport(
-			IViewPart _owner,
-			ViewersComponentConfiguration _config,
-			GraphViewer _graphViewer) {
-		super(_owner, _config, IModelConnectorTypeEnum.RESOURCESET, _graphViewer);
-	}
-
-	@Override
-	protected void init() {
-		super.init();
-		getGraphViewer().setLayoutAlgorithm(new SpringLayoutAlgorithm());
-	}
-
-	private Map<ReteNodeRecipe, Node> nodeTrace; // XXX NOOO mutable state
-	
-	@Override
-    protected Notifier extractModelSource(List<Object> objects) {
-        nodeTrace = computeNodeTrace(objects);
-        return createRecipeModel(nodeTrace);
+    public ReteVisualizationViewSupport(IViewPart _owner, ViewersComponentConfiguration _config,
+            GraphViewer _graphViewer) {
+        super(_owner, _config, IModelConnectorTypeEnum.RESOURCESET, _graphViewer);
     }
 
-    private Map<ReteNodeRecipe, Node> computeNodeTrace(List<Object> objects) {
-        Map<ReteNodeRecipe, Node> nodeTrace = Maps.newHashMap();
-        for (Object object : objects) {
-            if (object instanceof PatternMatcherContent) {
-                PatternMatcherContent patternMatcherContent = (PatternMatcherContent) object;
-                try {
-                    ViatraQueryMatcher<IPatternMatch> matcher = patternMatcherContent.getMatcher();
-                    if (matcher == null) continue;
-					final IQueryBackend reteEngine = ((AdvancedViatraQueryEngine) matcher
-                            .getEngine()).getQueryBackend(new ReteBackendFactory());
-                    final Collection<Node> allNodes = ((ReteEngine) reteEngine).getReteNet().getHeadContainer()
-                            .getAllNodes();
-                    for (Node node : allNodes) {
-                        for (TraceInfo traceInfo : node.getTraceInfos()) {
-                            if (traceInfo instanceof RecipeTraceInfo) {
-                                RecipeTraceInfo recipeTraceInfo = (RecipeTraceInfo) traceInfo;
-                                if (patternMatcherContent.getPatternName().equals(getPatternName(recipeTraceInfo))) { 
-                                	ReteNodeRecipe recipe = recipeTraceInfo.getRecipe();
-                                	nodeTrace.put(recipe, node);                                    	
-                                	
-                                    ReteNodeRecipe shadowedRecipe = recipeTraceInfo.getShadowedRecipe();
-                                    if (shadowedRecipe != null) {
-                                    	nodeTrace.put(shadowedRecipe, node);
-                                    } 
-                                }
-                            }
-                        }
-                    }
-                } catch (ViatraQueryException e) {
-                    throw new RuntimeException("Failed to get query backend", e);
+    @Override
+    protected void init() {
+        super.init();
+        getGraphViewer().setLayoutAlgorithm(new SpringLayoutAlgorithm());
+    }
+
+    
+    // XXX NOOO mutable state
+    private Map<ReteNodeRecipe, Node> nodeTrace = Maps.newHashMap();
+    
+    @Override
+    protected EMFScope extractModelSource(List<Object> objects) throws ViatraQueryException {
+        Map<ReteNodeRecipe, Node> recipeToReteMap = Maps.newHashMap();
+        // compute full Rete to Recipe map
+        // compute recipe node set to display
+        Set<ReteNodeRecipe> recipeSet = computeRecipeSet(objects, recipeToReteMap);
+        nodeTrace = recipeToReteMap;
+
+        // create temporary recipe model
+        return createRecipeModel(recipeSet);
+    }
+
+    /**
+     * Iterate on the objects and return the set of recipes that should be visualized for all matchers among the
+     * objects. In addition, if at least one of the objects is a matcher, the input recipeToReteMap will be filled up
+     * based on the Rete engine.
+     */
+    private Set<ReteNodeRecipe> computeRecipeSet(List<Object> objects, Map<ReteNodeRecipe, Node> recipeToReteMap) {
+
+        Set<ReteNodeRecipe> recipeSet = Sets.newHashSet();
+        
+        for (PatternMatcherContent patternMatcherContent : Iterables.filter(objects, PatternMatcherContent.class)) {
+            try {
+                ViatraQueryMatcher<IPatternMatch> matcher = patternMatcherContent.getMatcher();
+                if (matcher == null)
+                    continue;
+                final ReteEngine reteEngine = (ReteEngine) ((AdvancedViatraQueryEngine) matcher.getEngine())
+                        .getQueryBackend(new ReteBackendFactory());
+
+                // compute RecipeNode to ReteNode map once
+                if (recipeToReteMap.isEmpty()) {
+                    Map<ReteNodeRecipe, Node> computeNodeTrace = computeNodeTrace(reteEngine);
+                    recipeToReteMap.putAll(computeNodeTrace);
                 }
+
+                PQuery pQuery = matcher.getSpecification().getInternalQueryRepresentation();
+                // get root trace info from matcher
+                RecipeTraceInfo traceInfo = reteEngine.getBoundary().accessProductionTrace(pQuery);
+
+                // collect recipe nodes for pattern
+                ReteNodeRecipe recipe = traceInfo.getRecipe();
+                Set<ReteNodeRecipe> parents = getRecipeNodeParents(recipe);
+                parents.add(recipe);
+
+                // multiple patterns are selected
+                recipeSet.addAll(parents);
+            } catch (ViatraQueryException | QueryProcessingException e) {
+                throw new RuntimeException("Failed to get query backend", e);
             }
         }
-        return nodeTrace;
+        return recipeSet;
     }
-	
-	private String getPatternName(RecipeTraceInfo recipeTraceInfo) {
-        if (recipeTraceInfo instanceof PatternTraceInfo) {
-            PatternTraceInfo patternTraceInfo = (PatternTraceInfo) recipeTraceInfo;
-            return patternTraceInfo.getPatternName();
-        } else if (recipeTraceInfo instanceof ActiveNodeConflictTrace) {
-            ActiveNodeConflictTrace activeNodeConflictTrace = (ActiveNodeConflictTrace) recipeTraceInfo;
-            return getPatternName(activeNodeConflictTrace.getInactiveRecipeTrace());
-        } else {
+
+    /**
+     * This method prepares a full map between all Recipe objects and corresponding Rete nodes, including shadowed
+     * recipes.
+     */
+    private Map<ReteNodeRecipe, Node> computeNodeTrace(final ReteEngine reteEngine) {
+        Map<ReteNodeRecipe, Node> recipeToNodeMap = Maps.newHashMap();
+        Set<RecipeTraceInfo> recipeTraces = reteEngine.getReteNet().getRecipeTraces();
+        for (RecipeTraceInfo info : recipeTraces) {
+            Node node = info.getNode();
+            ReteNodeRecipe recipe = info.getRecipe();
+            ReteNodeRecipe shadowedRecipe = info.getShadowedRecipe();
+            recipeToNodeMap.put(recipe, node);
+            if (shadowedRecipe != null) {
+                recipeToNodeMap.put(shadowedRecipe, node);
+            }
+        }
+        return recipeToNodeMap;
+    }
+
+    /**
+     * Create a temporary resource and put in all root containers of the recipes collected for visualization.
+     */
+    private EMFScope createRecipeModel(Set<ReteNodeRecipe> recipeSet) throws ViatraQueryException {
+        if (recipeSet.isEmpty()) {
             return null;
+        }
+        ResourceSet resourceSet = new ResourceSetImpl();
+        Resource resource = resourceSet.createResource(URI.createURI("temp"));
+        Iterable<EObject> roots = Iterables.transform(recipeSet, new Function<ReteNodeRecipe, EObject>() {
+
+            @Override
+            public EObject apply(ReteNodeRecipe input) {
+                // Do not mess up containment hierarchy
+                return EcoreUtil.getRootContainer(input);
+            }
+        });
+        resource.getContents().addAll(Sets.newHashSet(roots));
+        return new EMFScope(resourceSet, new BaseIndexOptions());
+    }
+
+    /**
+     * Collect the set of recipes that are the parents of the input recipe. Parents of a recipe are recipes that are
+     * required to prepare it.
+     * 
+     */
+    private Set<ReteNodeRecipe> getRecipeNodeParents(ReteNodeRecipe recipe) {
+        Set<ReteNodeRecipe> parents = Sets.newHashSet();
+        collectRecipeNodeParents(recipe, parents, true);
+        return parents;
+    }
+
+    /**
+     * Collects the parents of the given recipe into the given set.
+     * 
+     * @param recipe
+     *            the recipe whose parents will be returned
+     * @param parents
+     *            the results are added to this set
+     * @param isRootRecipe
+     *            whether the recipe is a root to indicate that it has to be traversed even if it is a production recipe
+     */
+    private void collectRecipeNodeParents(ReteNodeRecipe recipe, Set<ReteNodeRecipe> parents, boolean isRootRecipe) {
+        Set<ReteNodeRecipe> nextParentsToCollect = getImmediateParentsOfRecipe(recipe, isRootRecipe);
+        for (ReteNodeRecipe reteNodeRecipe : nextParentsToCollect) {
+            boolean added = parents.add(reteNodeRecipe);
+            // avoid infinite recursion
+            if (added) {
+                collectRecipeNodeParents(reteNodeRecipe, parents, false);
+            }
         }
     }
 
-    private Notifier createRecipeModel(Map<ReteNodeRecipe, Node> nodeTrace) {
-        ResourceSet resourceSet = new ResourceSetImpl();
-        Resource resource = resourceSet.createResource(URI.createURI("temp"));
-        for (ReteNodeRecipe recipe : nodeTrace.keySet()) {
-            EObject rootContainer = EcoreUtil.getRootContainer(recipe); // to avoid messing up containment hierarchy
-            resource.getContents().add(rootContainer);
+    /**
+     * Based on the recipe metamodel, return the immediate parents of a given recipe
+     */
+    private Set<ReteNodeRecipe> getImmediateParentsOfRecipe(ReteNodeRecipe recipe, boolean isRootRecipe) {
+        Set<ReteNodeRecipe> nextParentsToCollect = Sets.newHashSet();
+        if (recipe instanceof AggregatorRecipe) {
+            ReteNodeRecipe aggregatorParent = ((AggregatorRecipe) recipe).getParent();
+            nextParentsToCollect.add(aggregatorParent);
+        } else if (recipe instanceof BetaRecipe) {
+            ReteNodeRecipe leftParent = ((BetaRecipe) recipe).getLeftParent();
+            nextParentsToCollect.add(leftParent);
+            ReteNodeRecipe rightParent = ((BetaRecipe) recipe).getRightParent();
+            nextParentsToCollect.add(rightParent);
+        } else if (recipe instanceof MultiParentNodeRecipe) {
+            boolean isProductionRecipe = recipe instanceof ProductionRecipe;
+            boolean traverseSubpatternCallMode = ViatraQueryGUIPlugin.getDefault().getPreferenceStore()
+                    .getBoolean(ReteVisualizationPreferenceConstants.DISPLAY_CALLED_NETWORKS_MODE);
+            boolean traverseProductionRecipe = isRootRecipe || traverseSubpatternCallMode;
+            if (!isProductionRecipe || traverseProductionRecipe) {
+                EList<ReteNodeRecipe> multiParentNodeParents = ((MultiParentNodeRecipe) recipe).getParents();
+                nextParentsToCollect.addAll(multiParentNodeParents);
+            }
+        } else if (recipe instanceof SingleParentNodeRecipe) {
+            ReteNodeRecipe reteNodeRecipeParent = ((SingleParentNodeRecipe) recipe).getParent();
+            nextParentsToCollect.add(reteNodeRecipeParent);
         }
-        return resourceSet;
+        return nextParentsToCollect;
     }
 
     @Override
@@ -146,10 +252,10 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
                     ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
             GraphViewer viewer = (GraphViewer) jfaceViewer;
             viewer.setContentProvider(new ZestContentWithIsolatedNodesProvider());
-            viewer.setLabelProvider(new ReteVisualizationLabelProvider(state, nodeTrace, viewer.getControl()
-                    .getDisplay()));
+            viewer.setLabelProvider(
+                    new ReteVisualizationLabelProvider(state, nodeTrace, viewer.getControl().getDisplay()));
             viewer.setInput(state);
         }
     }
-	
+
 }

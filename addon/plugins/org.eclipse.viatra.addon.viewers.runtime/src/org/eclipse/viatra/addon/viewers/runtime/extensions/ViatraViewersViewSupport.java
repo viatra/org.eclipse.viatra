@@ -1,16 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013, istvanrath, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2013, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   istvanrath - initial API and implementation
+ *   Istvan Rath - initial API and implementation
+ *   Abel Hegedus - migrate to EMF scope
+ *   
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.extensions;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Status;
@@ -28,135 +31,140 @@ import org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Utility class to serve as an extension for {@link ViewPart}s wishing to use
- * VIATRA Viewers.
+ * Utility class to serve as an extension for {@link ViewPart}s wishing to use VIATRA Viewers.
  * 
- * @author istvanrath
+ * @author Istvan Rath
  *
  */
 public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport {
 
     /**
-     * Defines the matching scope for the underlying {@link ViatraQueryEngine}.
-     * TODO is {@link IModelConnectorTypeEnum} the proper choice for this?
+     * Defines the matching scope for the underlying {@link ViatraQueryEngine}. TODO is {@link IModelConnectorTypeEnum}
+     * the proper choice for this?
      */
-	protected IModelConnectorTypeEnum connectorType = IModelConnectorTypeEnum.RESOURCESET;
-	
-	/**
-	 * The {@link ViewerState} that represents the stateful model behind the contents shown by the owner.
-	 */
-	protected ViewerState state;
-	
-	/**
-	 * Constructs a new View support instance.
-	 */
-	public ViatraViewersViewSupport(IViewPart _owner, ViewersComponentConfiguration _config, IModelConnectorTypeEnum _scope) {
-		super(_owner, _config);
-		this.connectorType = _scope;
-	}
-	
-	protected IViewPart getOwner() {
-		return (IViewPart)owner;
-	}
-    
-	@Override
-	public void dispose() {
-		unbindModel();
-		super.dispose();
-	}
-	
+    protected IModelConnectorTypeEnum connectorType = IModelConnectorTypeEnum.RESOURCESET;
+
+    /**
+     * The {@link ViewerState} that represents the stateful model behind the contents shown by the owner.
+     */
+    protected ViewerState state;
+
+    /**
+     * Constructs a new View support instance.
+     */
+    public ViatraViewersViewSupport(IViewPart _owner, ViewersComponentConfiguration _config,
+            IModelConnectorTypeEnum _scope) {
+        super(_owner, _config);
+        this.connectorType = _scope;
+    }
+
+    protected IViewPart getOwner() {
+        return (IViewPart) owner;
+    }
+
+    @Override
+    public void dispose() {
+        unbindModel();
+        super.dispose();
+    }
+
     @Override
     protected void onSelectionChanged(List<Object> objects) {
-    	// extract model source
-    	Notifier target = extractModelSource(objects);
-    	if (target!=null && !target.equals(this.modelSource)) {
-    		// we have found a new target
-    		unsetModelSource();
-    		setModelSource(target);
-    	}
+        // extract model source
+        try {
+            EMFScope target = extractModelSource(objects);
+            if (target != null && !target.equals(this.modelSource)) {
+                // we have found a new target
+                unsetModelSource();
+                setModelSource(target);
+            }
+        } catch (ViatraQueryException e) {
+            throw new RuntimeException("Failed to extract model source", e);
+        }
     }
-    
 
-    
-    protected Notifier extractModelSource(List<Object> objects) {
-        List<Notifier> notifiers = ImmutableList.copyOf(Iterables.filter(objects, Notifier.class));
-    	// extract logic
-    	switch (connectorType) {
-    	default:
-    	case RESOURCESET:
-	    	for (Notifier n : notifiers) {
-	    		if (n instanceof ResourceSet) {
-	    			return n;
-	    		}
-	    		else if (n instanceof Resource) {
-	    			return ((Resource)n).getResourceSet();
-	    		}
-	    		else {
-	    			EObject eO = (EObject)n;
-	    			return eO.eResource().getResourceSet();
-	    		}
-	    	}
-    	case RESOURCE:
-    		for (Notifier n : notifiers) {
-	    		if (n instanceof ResourceSet) {
-	    			continue; // we cannot extract a resource from a resourceset reliably
-	    		}
-	    		else if (n instanceof Resource) {
-	    			return ((Resource)n);
-	    		}
-	    		else {
-	    			EObject eO = (EObject)n;
-	    			return eO.eResource();
-	    		}
-	    	}
-    	}
-    	return null;
+    protected EMFScope extractModelSource(List<Object> objects) throws ViatraQueryException {
+        Set<Notifier> notifiers = ImmutableSet.copyOf(Iterables.filter(objects, Notifier.class));
+        // extract logic
+        switch (connectorType) {
+        default:
+        case RESOURCESET:
+            for (Notifier n : notifiers) {
+                if (n instanceof ResourceSet) {
+                    return new EMFScope(n);
+                } else if (n instanceof Resource) {
+                    return new EMFScope(((Resource) n).getResourceSet());
+                } else {
+                    EObject eO = (EObject) n;
+                    return new EMFScope(eO.eResource().getResourceSet());
+                }
+            }
+        case RESOURCE:
+            for (Notifier n : notifiers) {
+                if (n instanceof ResourceSet) {
+                    continue; // we cannot extract a resource from a resourceset reliably
+                } else if (n instanceof Resource) {
+                    return new EMFScope(((Resource) n));
+                } else {
+                    EObject eO = (EObject) n;
+                    return new EMFScope(eO.eResource());
+                }
+            }
+        }
+
+        return new EMFScope(notifiers, new BaseIndexOptions());
     }
-    
-    protected Notifier modelSource;
-    
-    private void setModelSource(Notifier p) {
-    	this.modelSource = p;
-    	// TODO propertySheetPage setCurrent
-    	bindModel();
-    	showView();
+
+    protected EMFScope modelSource;
+
+    private void setModelSource(EMFScope p) {
+        this.modelSource = p;
+        // TODO propertySheetPage setCurrent
+        bindModel();
+        showView();
     }
-    
+
     private void unsetModelSource() {
-    	hideView();
-    	unbindModel();
-    	// proppage setCurrentEditor null
-    	this.modelSource = null;
+        hideView();
+        unbindModel();
+        // proppage setCurrentEditor null
+        this.modelSource = null;
     }
-    
+
     protected ViatraQueryEngine getEngine() {
-    	Assert.isNotNull(this.modelSource);
-    	try {
-			return ViatraQueryEngine.on(new EMFScope(this.modelSource));
-		} catch (ViatraQueryException e) {
-			ViewersRuntimePlugin.getDefault().getLog().log(new Status(Status.ERROR, ViewersRuntimePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));;
-		}
-    	return null;
+        Assert.isNotNull(this.modelSource);
+        try {
+            return ViatraQueryEngine.on(this.modelSource);
+        } catch (ViatraQueryException e) {
+            ViewersRuntimePlugin.getDefault().getLog()
+                    .log(new Status(Status.ERROR, ViewersRuntimePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
+        }
+        return null;
     }
-    
+
     // ***************** layout stuff ***************** //
-    
-    private Composite parent, cover; 
+
+    private Composite parent, cover;
     private Control contents;
 
     private StackLayout layout;
 
     /**
      * Create the SWT UI for the owner.
-     * @param _parent the SWT part received by the owner in its createPartControl method
-     * @param _contents the SWT UI to be displayed for actual contents
+     * 
+     * @param _parent
+     *            the SWT part received by the owner in its createPartControl method
+     * @param _contents
+     *            the SWT UI to be displayed for actual contents
      */
     public void createPartControl(Composite _parent, Control _contents) {
         parent = _parent;
@@ -168,7 +176,7 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
         // init
         init();
     }
-    
+
     private void showView() {
         layout.topControl = contents;
         parent.layout();
@@ -178,7 +186,7 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
         layout.topControl = cover;
         parent.layout();
     }
-    
+
     /**
      * Subclasses bind their viewer models here.
      */
@@ -188,8 +196,6 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
      * Subclasses unbind their viewer models here.
      */
     protected abstract void unbindModel();
-    
-    
-    
+
     // ******************** TODO propertysheetpage support
 }

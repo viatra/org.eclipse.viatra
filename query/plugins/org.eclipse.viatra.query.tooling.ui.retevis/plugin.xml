@@ -5,4 +5,16 @@
   <extension id="org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization" point="org.eclipse.viatra.query.runtime.queryspecification">
     <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization" id="org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization"/>
   </extension>
+  <extension
+        point="org.eclipse.ui.preferencePages">
+     <page
+           category="org.eclipse.viatra.query.tooling.ui.viatra"
+           class="org.eclipse.viatra.query.tooling.ui.retevis.preference.ReteVisualizationPreferencePage"
+           id="org.eclipse.viatra.query.tooling.ui.retevis"
+           name="Rete Visualization">
+        <keywordReference
+              id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage">
+        </keywordReference>
+     </page>
+  </extension>
 </plugin>
