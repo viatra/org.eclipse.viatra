@@ -20,7 +20,6 @@ import org.eclipse.xtend.ide.wizards.FieldInitializerUtil
 import org.eclipse.xtend.ide.wizards.Messages
 import org.eclipse.xtend.ide.wizards.XtendTypeCreatorUtil
 
-
 /**
  * New transformation wizard page that enables the user to define the required properties of a newly created VIATRA transformation.
  * Details:
@@ -96,6 +95,7 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
             import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations
             import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.SimpleModelManipulations
             import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRuleFactory
+            import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule
             import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
             import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
             «IF withDebugger»import org.eclipse.viatra.transformation.debug.breakpoints.impl.TransformationBreakpoint
@@ -116,6 +116,7 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
             
                 protected ViatraQueryEngine engine
                 protected Resource resource
+                //protected BatchTransformationRule<?,?> exampleRule
             
                 new(Resource resource) {
                     this.resource = resource
@@ -158,9 +159,12 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
                 }
                 
             //  private def getExampleRule() {
-            //      return createRule.name("ExampleRule").precondition(ExampleMatcher.querySpecification).action [
-            //          Do Rule Actions here
-            //      ].build
+            //      if(exampleRule == null){
+            //          exampleRule = createRule.name("ExampleRule").precondition(ExampleMatcher.querySpecification).action [
+            //              Do Rule Actions here
+            //          ].build
+            //      }
+            //      return exampleRule
             //  }
             
                 def dispose() {
@@ -184,6 +188,7 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
             import org.eclipse.viatra.transformation.debug.controller.impl.ConsoleDebugger«ENDIF»
             import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations
             import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory
+            import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRule
             import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.EventDrivenTransformation
             import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.SimpleModelManipulations
             import org.eclipse.emf.ecore.resource.Resource
@@ -200,6 +205,7 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
             
                 protected ViatraQueryEngine engine
                 protected Resource resource
+                //protected EventDrivenTransformationRule<?,?> exampleRule
             
                 new(Resource resource) {
                     this.resource = resource
@@ -240,16 +246,19 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
                 }
                 
             //  private def getExampleRule() {
-            //      return createRule.name("Host_Rule").precondition(ExampleMatcher.querySpecification).action(
-            //          CRUDActivationStateEnum.CREATED) «"["»
-            //          *** Actions related to match appearance ***
-            //      ].action(
-            //          CRUDActivationStateEnum.UPDATED) «"["»
-            //          *** Actions related to match update ***
-            //      ].action(
-            //          CRUDActivationStateEnum.DELETED) «"["»
-            //          *** Actions related to match disappearance ***
-            //      ].addLifeCycle(Lifecycles.getDefault(true, true)).build
+            //      if(exampleRule == null){
+            //        exampleRule = createRule.name("Host_Rule").precondition(ExampleMatcher.querySpecification).action(
+            //            CRUDActivationStateEnum.CREATED) «"["»
+            //            *** Actions related to match appearance ***
+            //       ].action(
+            //            CRUDActivationStateEnum.UPDATED) «"["»
+            //            *** Actions related to match update ***
+            //        ].action(
+            //            CRUDActivationStateEnum.DELETED) «"["»
+            //           *** Actions related to match disappearance ***
+            //        ].addLifeCycle(Lifecycles.getDefault(true, true)).build
+            //      }
+            //      return exampleRule
             //  }
             
             
