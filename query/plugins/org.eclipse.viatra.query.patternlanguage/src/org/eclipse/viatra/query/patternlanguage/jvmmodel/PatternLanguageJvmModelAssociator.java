@@ -21,11 +21,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
@@ -58,15 +60,11 @@ public class PatternLanguageJvmModelAssociator extends JvmModelAssociator {
                     for (AnnotationParameter parameter : annotation.getParameters()) {
                         if ((parameter.getValue()) instanceof VariableValue) {
                             final VariableReference reference = ((VariableValue) parameter.getValue()).getValue();
-                            Variable declaration = Iterables.find(pattern.getParameters(), new Predicate<Variable>() {
-    
-                                @Override
-                                public boolean apply(Variable variable) {
-                                    return Objects.equals(variable.getName(), reference.getVar());
-                                }
-                            }, null);
-                            if (declaration != null) {
-                                reference.setVariable(declaration);
+                            setDeclaredParameter(pattern, reference);
+                        } else if ((parameter.getValue()) instanceof ListValue) {
+                            ListValue listValue = (ListValue) (parameter.getValue());
+                            for (VariableValue value : Iterables.filter(listValue.getValues(), VariableValue.class)) {
+                                setDeclaredParameter(pattern, value.getValue());
                             }
                         }
                     }
@@ -74,6 +72,19 @@ public class PatternLanguageJvmModelAssociator extends JvmModelAssociator {
                 it.prune();
                 
             }
+        }
+    }
+
+    private void setDeclaredParameter(Pattern pattern, final VariableReference reference) {
+        Variable declaration = Iterables.find(pattern.getParameters(), new Predicate<Variable>() {
+   
+            @Override
+            public boolean apply(Variable variable) {
+                return Objects.equals(variable.getName(), reference.getVar());
+            }
+        }, null);
+        if (declaration != null) {
+            reference.setVariable(declaration);
         }
     }
 
