@@ -143,15 +143,21 @@ public class EvolutionaryStrategy implements IStrategy {
                     IMutation mutation = mutations.get(index);
                     TrajectoryFitness parent = parentSelectionStrategy.getNextParent();
                     TrajectoryFitness child = mutation.mutate(parent, context);
-                    childPopulation.add(child);
+                    if (child != null) {
+                        childPopulation.add(child);
+                    }
                 } else {
                     int index = random.nextInt(crossovers.size());
                     ICrossover crossover = crossovers.get(index);
                     TrajectoryFitness parent1 = parentSelectionStrategy.getNextParent();
                     TrajectoryFitness parent2 = parentSelectionStrategy.getNextParent();
                     TrajectoryFitness[] children = crossover.mutate(parent1, parent2, context);
-                    childPopulation.add(children[0]);
-                    childPopulation.add(children[1]);
+                    if (children[0] != null) {
+                        childPopulation.add(children[0]);
+                    }
+                    if (children[1] != null) {
+                        childPopulation.add(children[1]);
+                    }
                 }
             }
             

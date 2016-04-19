@@ -43,7 +43,8 @@ public class SwapTransitionCrossover implements ICrossover {
         int p2Size = parent2t.length;
 
         if (p1Size < 2 || p2Size < 2) {
-            throw new DSEException("Cannot crossover with empty or one long parent trajectories.");
+            dsm.undoUntilRoot();
+            return null;
         }
 
         int index1 = random.nextInt(p1Size);

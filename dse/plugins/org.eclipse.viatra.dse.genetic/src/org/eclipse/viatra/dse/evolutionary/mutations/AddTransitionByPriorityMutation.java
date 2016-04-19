@@ -46,7 +46,8 @@ public class AddTransitionByPriorityMutation implements IMutation {
         Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
         int size = transitions.size();
         if (size == 0) {
-            throw new DSEException("No transition is found for mutation.");
+            dsm.undoUntilRoot();
+            return null;
         }
 
         int bestPriority = Integer.MIN_VALUE;

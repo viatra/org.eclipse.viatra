@@ -49,7 +49,8 @@ public class PermutationCrossover implements ICrossover {
         int p2Size = parent2t.length;
 
         if (p1Size < 2 || p2Size < 2) {
-            throw new DSEException("Cannot crossover with empty or one long parent trajectories.");
+            dsm.undoUntilRoot();
+            return null;
         }
 
         int minSize = Math.min(p1Size, p2Size);

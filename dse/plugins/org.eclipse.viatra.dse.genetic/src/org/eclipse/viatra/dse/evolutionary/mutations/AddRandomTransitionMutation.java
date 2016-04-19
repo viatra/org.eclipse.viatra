@@ -38,7 +38,8 @@ public class AddRandomTransitionMutation implements IMutation {
         Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
         int size = transitions.size();
         if (size == 0) {
-            throw new DSEException("No transition is found for mutation.");
+            dsm.undoUntilRoot();
+            return null;
         }
         int index = rnd.nextInt(size);
         ITransition transition = GeneticHelper.getByIndex(transitions, index);
