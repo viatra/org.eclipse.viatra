@@ -26,6 +26,7 @@ public class EvolutionaryStrategyLogAdapter implements IEvolutionaryStrategyAdap
     public EvolutionaryStrategyLogAdapter() {
         csv = new CsvFile();
         csv.columnNamesInOrder = DseCsvConstants.resultConstants;
+        csv.fileName = "evolutionary-log";
     }
 
     private int configId = -1;
