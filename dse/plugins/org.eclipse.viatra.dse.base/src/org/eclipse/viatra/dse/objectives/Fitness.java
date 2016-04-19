@@ -24,4 +24,8 @@ public class Fitness extends HashMap<String, Double>{
         this.satisifiesHardObjectives = satisifiesHardObjectives;
     }
     
+    @Override
+    public String toString() {
+        return super.toString() + " hardObjectives=" + satisifiesHardObjectives;
+    }
 }
