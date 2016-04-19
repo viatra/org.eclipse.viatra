@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
 
@@ -48,6 +49,9 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
 
     private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.query.livevalidation.";
     public static final String SEVERITY_ISSUE_CODE = VALIDATOR_BASE_CODE + "severity";
+    public static final String INVALID_SYMMETRIC_PARAMETERS = VALIDATOR_BASE_CODE + "symmetric";
+    public static final String INVALID_KEY_PARAMETERS = VALIDATOR_BASE_CODE + "key";
+    
     @Inject
     private AnnotationExpressionValidator expressionValidator;
 
@@ -56,76 +60,53 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
         Pattern pattern = (Pattern) annotation.eContainer();
         validateMessage(annotation, validator, pattern);
         validateSeverity(annotation, validator);
-        List<String> keyList = validateKeys(annotation, validator, pattern);
+        List<Variable> keyList = validateKeys(annotation, validator, pattern);
         validateSymmetry(annotation, validator, pattern, keyList);
     }
 
-    private void validateSymmetry(Annotation annotation, IIssueCallback validator, Pattern pattern, List<String> keyList) {
+    private void validateSymmetry(Annotation annotation, IIssueCallback validator, Pattern pattern, List<Variable> keyList) {
         Collection<ValueReference> symmetricLists = CorePatternLanguageHelper.getAnnotationParameters(annotation,
                 "symmetric");
         for (ValueReference symmetry : symmetricLists) {
-            Iterable<String> symmetryParameters = transformStringList(symmetry);
+            List<Variable> symmetryList = Lists.newArrayList();
+            if (symmetry instanceof ListValue) {
+                symmetryList = computeVariableListFromListValue(validator, pattern, symmetry, INVALID_SYMMETRIC_PARAMETERS);
+            }
+            List<String> symmetricParameters = Lists.newArrayList();
             List<String> symmetricKeys = Lists.newArrayList();
             List<String> symmetricProperties = Lists.newArrayList();
-            List<String> invalidSymmetries = Lists.newArrayList();
-            for (String key : symmetryParameters) {
-                Variable parameterByName = CorePatternLanguageHelper.getParameterByName(pattern, key);
-                if (keyList.contains(key)) {
-                    symmetricKeys.add(key);
-                } else if (parameterByName != null) {
-                    symmetricProperties.add(key);
+            for (Variable symmetricVariable : symmetryList) {
+                String variableName = symmetricVariable.getName();
+                symmetricParameters.add(variableName);
+                if (keyList.contains(symmetricVariable)) {
+                    symmetricKeys.add(variableName);
                 } else {
-                    invalidSymmetries.add(key);
+                    symmetricProperties.add(variableName);
                 }
             }
-            if (!invalidSymmetries.isEmpty()) {
-                validator.error(
-                        "Symmetric parameters " + invalidSymmetries.toString() + " are not pattern parameters!",
-                        symmetry, null, SEVERITY_ISSUE_CODE);
-            }
             if (!symmetricKeys.isEmpty() && !symmetricProperties.isEmpty()) {
-                validator.error("Symmetric parameters " + symmetryParameters.toString()
-                        + " contains both key and non-key parameters!", symmetry, null, SEVERITY_ISSUE_CODE);
+                validator.error("Symmetric parameters " + symmetricParameters.toString()
+                        + " contains both key and non-key parameters!", symmetry, null, INVALID_SYMMETRIC_PARAMETERS);
+            }
+            if(symmetricParameters.size() < 2){
+                validator.error("Symmetric parameters must have at least two values!", symmetry, null, INVALID_SYMMETRIC_PARAMETERS);
             }
         }
     }
 
-    private List<String> validateKeys(Annotation annotation, IIssueCallback validator, final Pattern pattern) {
-        List<String> keyList = Lists.newArrayList();
-        ValueReference locationRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "location");
+    private List<Variable> validateKeys(Annotation annotation, IIssueCallback validator, final Pattern pattern) {
+        List<Variable> keyList = Lists.newArrayList();
         ValueReference keyRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "key");
-        if (locationRef != null && keyRef != null) {
-            validator.error("Cannot use both location and key!", keyRef, null, SEVERITY_ISSUE_CODE);
-        }
-        if (locationRef instanceof VariableValue) {
-            String locationVarName = ((VariableValue) locationRef).getValue().getVariable().getName();
-            keyList.add(locationVarName);
-        }
         if (keyRef instanceof ListValue) {
-            Iterable<String> keyParamList = transformStringList(keyRef);
-
-            List<String> invalidKeys = Lists.newArrayList();
-            for (String key : keyParamList) {
-                Variable parameterByName = CorePatternLanguageHelper.getParameterByName(pattern, key);
-                if (parameterByName == null) {
-                    invalidKeys.add(key);
-                } else {
-                    keyList.add(key);
-                }
-            }
-            if (!invalidKeys.isEmpty()) {
-                validator.error("Keys " + invalidKeys.toString() + " are not pattern parameters!", keyRef, null,
-                        SEVERITY_ISSUE_CODE);
-            }
+            keyList = computeVariableListFromListValue(validator, pattern, keyRef, INVALID_KEY_PARAMETERS);
         }
         if (keyList.isEmpty()) {
-            validator.error("No key defined!", keyRef, null, SEVERITY_ISSUE_CODE);
+            validator.error("No key defined!", keyRef, null, INVALID_KEY_PARAMETERS);
         } else {
-            boolean atLeastOneEClassKey = Iterables.any(keyList, new Predicate<String>() {
+            boolean atLeastOneEClassKey = Iterables.any(keyList, new Predicate<Variable>() {
                 @Override
-                public boolean apply(String key) {
-                    Variable firstKeyParameter = CorePatternLanguageHelper.getParameterByName(pattern, key);
-                    Type sourceType = firstKeyParameter.getType();
+                public boolean apply(Variable key) {
+                    Type sourceType = key.getType();
                     if (!(sourceType instanceof ClassType)
                             || !(((ClassType) sourceType).getClassname() instanceof EClass)) {
                         return false;
@@ -136,19 +117,51 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
             });
             if (!atLeastOneEClassKey) {
                 validator.warning("At least one key should be EClass to make location possible!", keyRef, null,
-                        SEVERITY_ISSUE_CODE);
+                        INVALID_KEY_PARAMETERS);
             }
         }
         return keyList;
     }
 
-    private Iterable<String> transformStringList(ValueReference listParameter) {
+    private List<Variable> computeVariableListFromListValue(IIssueCallback validator, final Pattern pattern, ValueReference listValue, String issueCode) {
+        List<Variable> variables = Lists.newArrayList();
+        Iterable<VariableReference> variableReferenceList = transformVariableReferenceList(listValue);
+        Iterable<StringValue> stringValueList = transformStringList(listValue);
+        
+        if(!Iterables.isEmpty(variableReferenceList) && !Iterables.isEmpty(stringValueList)){
+            validator.error("Must not mix string and variable values!", listValue, null, issueCode);
+        }
+        
+        for (StringValue key : stringValueList) {
+            Variable parameterByName = CorePatternLanguageHelper.getParameterByName(pattern, key.getValue());
+            if (parameterByName == null) {
+                validator.error(key.getValue() + " is not a pattern parameter!", key, null, issueCode);
+            } else {
+                variables.add(parameterByName);
+                validator.warning("Deprecated: remove quotes to use variable reference instead!", key, null, issueCode);
+            }
+        }
+        for (VariableReference key : variableReferenceList) {
+            if(key.getVariable() != null){
+                variables.add(key.getVariable());
+            }
+        }
+        return variables;
+    }
+
+    private Iterable<StringValue> transformStringList(ValueReference listParameter) {
         EList<ValueReference> listValues = ((ListValue) listParameter).getValues();
         Iterable<StringValue> keyStringValues = Iterables.filter(listValues, StringValue.class);
-        Iterable<String> keyParamList = Iterables.transform(keyStringValues, new Function<StringValue, String>() {
+        return keyStringValues;
+    }
+
+    private Iterable<VariableReference> transformVariableReferenceList(ValueReference listParameter) {
+        EList<ValueReference> listValues = ((ListValue) listParameter).getValues();
+        Iterable<VariableValue> keyStringValues = Iterables.filter(listValues, VariableValue.class);
+        Iterable<VariableReference> keyParamList = Iterables.transform(keyStringValues, new Function<VariableValue, VariableReference>() {
             @Override
-            public String apply(StringValue ref) {
-                return ((StringValue) ref).getValue();
+            public VariableReference apply(VariableValue ref) {
+                return ref.getValue();
             }
         });
         return keyParamList;
