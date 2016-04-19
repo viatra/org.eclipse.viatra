@@ -329,6 +329,14 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                                 PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__VALUE, annotation.getParameters()
                                         .indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
                     }
+                } else if (parameter.getValue() instanceof ListValue) {
+                    ListValue listValue = (ListValue) (parameter.getValue());
+                    for (VariableValue value : Iterables.filter(listValue.getValues(), VariableValue.class)) {
+                        if (value.getValue().getVariable() == null) {
+                            error(String.format("Unknown variable %s", value.getValue().getVar()), listValue,
+                                    PatternLanguagePackage.Literals.LIST_VALUE__VALUES, listValue.getValues().indexOf(value), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                        }
+                    }
                 }
             }
             // Execute extra validation
