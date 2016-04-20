@@ -23,6 +23,7 @@ import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
 /**
@@ -38,6 +39,7 @@ public class SolutionStore {
 
     public interface ISolutionFoundHandler {
         void solutionFound(ThreadContext context, SolutionTrajectory trajectory);
+        void solutionTriedToSave(ThreadContext context, SolutionTrajectory trajectory);
     }
 
     public static class ANumberOfEnoughSolutions implements IEnoughSolutions {
@@ -62,16 +64,26 @@ public class SolutionStore {
                 enoughSolutions.set(true);
             }
         }
+
+        @Override
+        public void solutionTriedToSave(ThreadContext context, SolutionTrajectory trajectory) {
+        }
     }
 
     public static class LogSolutionHandler implements ISolutionFoundHandler {
 
         @Override
         public void solutionFound(ThreadContext context, SolutionTrajectory trajectory) {
-            Logger.getLogger(getClass()).info(trajectory.toPrettyString());
+            Logger.getLogger("Solution registered: " + getClass()).info(trajectory.toPrettyString());
+        }
+
+        @Override
+        public void solutionTriedToSave(ThreadContext context, SolutionTrajectory trajectory) {
+            Logger.getLogger("Not good enough solution: " + getClass()).info(trajectory.toPrettyString());
         }
     }
 
+    private boolean acceptOnlyGoalSolutions = true;
     private final Map<Object, Solution> solutions = new HashMap<Object, Solution>();
     private List<ISolutionFoundHandler> solutionFoundHandlers;
 
@@ -86,6 +98,10 @@ public class SolutionStore {
             @Override
             public boolean enoughSolutions() {
                 return false;
+            }
+
+            @Override
+            public void solutionTriedToSave(ThreadContext context, SolutionTrajectory trajectory) {
             }
         });
     }
@@ -105,11 +121,17 @@ public class SolutionStore {
      */
     public synchronized boolean newSolution(ThreadContext context) {
 
+        Fitness fitness = context.getLastFitness();
+
+        if (acceptOnlyGoalSolutions && !fitness.isSatisifiesHardObjectives()) {
+            return false;
+        }
+
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         Object id = dsm.getCurrentState().getId();
         IStateCoderFactory stateCoderFactory = context.getGlobalContext().getStateCoderFactory();
         SolutionTrajectory solutionTrajectory = dsm.getTrajectoryInfo().createSolutionTrajectory(stateCoderFactory);
-        solutionTrajectory.setFitness(context.getLastFitness());
+        solutionTrajectory.setFitness(fitness);
 
         Solution solution = solutions.get(id);
 
@@ -135,7 +157,7 @@ public class SolutionStore {
         if (enoughSolutions.enoughSolutions()) {
             context.getGlobalContext().stopAllThreads();
         }
-        
+
         return true;
     }
 
@@ -155,4 +177,11 @@ public class SolutionStore {
         Logger.getLogger(LogSolutionHandler.class).setLevel(Level.INFO);
     }
 
+    public void acceptGoalSolutionsOnly() {
+        acceptOnlyGoalSolutions = true;
+    }
+
+    public void acceptAnySolutions() {
+        acceptOnlyGoalSolutions = false;
+    }
 }
