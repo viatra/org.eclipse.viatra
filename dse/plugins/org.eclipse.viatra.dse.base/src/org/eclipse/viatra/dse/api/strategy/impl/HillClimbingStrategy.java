@@ -68,6 +68,8 @@ public class HillClimbingStrategy implements IStrategy {
 
         mainloop: do {
 
+            logger.debug("Current depth: " + dsm.getTrajectoryFromRoot().size());
+
             Fitness previousFitness = context.calculateFitness();
 
             Collection<? extends ITransition> transitionsFromCurrentState = dsm.getTransitionsFromCurrentState();
