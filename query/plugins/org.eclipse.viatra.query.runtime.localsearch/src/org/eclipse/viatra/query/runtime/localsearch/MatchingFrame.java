@@ -52,7 +52,7 @@ public class MatchingFrame extends Tuple implements Cloneable {
     
     private MatchingFrame(Object pattern, int[] keyMap, int frameSize) {
         this.pattern = pattern;
-        this.keys = keyMap;
+        this.keys = Arrays.copyOf(keyMap, keyMap.length);
         this.frame = new Object[frameSize];
     }
 
@@ -66,7 +66,7 @@ public class MatchingFrame extends Tuple implements Cloneable {
      * @see {@linkplain #setParameterValues(Object[])} for setting the initial parameter
      */
     public void setKeys(int[] keys) {
-        this.keys = keys;
+        this.keys = Arrays.copyOf(keys, keys.length);
         if (parameterValues != null) {
             for (int i=0; i<parameterValues.length; i++) {
                 frame[keys[i]] = parameterValues[i];

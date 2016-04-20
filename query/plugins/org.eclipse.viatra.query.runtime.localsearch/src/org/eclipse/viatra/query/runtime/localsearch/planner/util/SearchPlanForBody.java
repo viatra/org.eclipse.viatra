@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner.util;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class SearchPlanForBody {
     }
 
     public int[] getParameterKeys() {
-        return parameterKeys;
+        return Arrays.copyOf(parameterKeys, parameterKeys.length);
     }
 
     public List<ISearchOperation> getCompiledOperations() {
