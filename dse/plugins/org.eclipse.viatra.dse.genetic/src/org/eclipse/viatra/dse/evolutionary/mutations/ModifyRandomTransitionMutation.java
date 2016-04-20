@@ -12,11 +12,11 @@ package org.eclipse.viatra.dse.evolutionary.mutations;
 import java.util.Collection;
 import java.util.Random;
 
-import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
+import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
 import org.eclipse.viatra.dse.genetic.core.GeneticHelper;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -55,7 +55,7 @@ public class ModifyRandomTransitionMutation implements IMutation {
 
         Fitness calculateFitness = context.calculateFitness();
         TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
-        TrajectoryFitness child = new TrajectoryFitness(trajectoryInfo, calculateFitness);
+        TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
 
         dsm.undoUntilRoot();
 

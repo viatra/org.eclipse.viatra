@@ -9,19 +9,15 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.crossovers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
-import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
+import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.genetic.core.GeneticHelper;
-import org.eclipse.viatra.dse.genetic.core.InstanceData;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
@@ -39,7 +35,7 @@ public class PermutationCrossover implements ICrossover {
     @Override
     public TrajectoryFitness[] mutate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
 
-        TrajectoryFitness[] children = new TrajectoryFitness[2];
+        TrajectoryWithStateFitness[] children = new TrajectoryWithStateFitness[2];
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
 
@@ -62,7 +58,7 @@ public class PermutationCrossover implements ICrossover {
         addPermutation(dsm, trajectoryInfo, parent2t);
 
         Fitness fitness = context.calculateFitness();
-        children[0] = new TrajectoryFitness(dsm.getTrajectoryInfo(), fitness);
+        children[0] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);
 
         dsm.undoUntilRoot();
 
@@ -72,7 +68,7 @@ public class PermutationCrossover implements ICrossover {
         addPermutation(dsm, trajectoryInfo, parent1t);
 
         fitness = context.calculateFitness();
-        children[1] = new TrajectoryFitness(dsm.getTrajectoryInfo(), fitness);
+        children[1] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);
 
         dsm.undoUntilRoot();
 

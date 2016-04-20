@@ -11,10 +11,10 @@ package org.eclipse.viatra.dse.evolutionary.crossovers;
 
 import java.util.Random;
 
-import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.genetic.core.GeneticHelper;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -34,7 +34,7 @@ public class SwapTransitionCrossover implements ICrossover {
     @Override
     public TrajectoryFitness[] mutate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
 
-        TrajectoryFitness[] children = new TrajectoryFitness[2];
+        TrajectoryWithStateFitness[] children = new TrajectoryWithStateFitness[2];
         DesignSpaceManager dsm = context.getDesignSpaceManager();
 
         ITransition[] parent1t = parent1.trajectory;
@@ -59,7 +59,7 @@ public class SwapTransitionCrossover implements ICrossover {
         }
 
         Fitness fitness = context.calculateFitness();
-        children[0] = new TrajectoryFitness(dsm.getTrajectoryInfo(), fitness);
+        children[0] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);
 
         dsm.undoUntilRoot();
 
@@ -72,7 +72,7 @@ public class SwapTransitionCrossover implements ICrossover {
         }
 
         fitness = context.calculateFitness();
-        children[1] = new TrajectoryFitness(dsm.getTrajectoryInfo(), fitness);
+        children[1] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);
 
         dsm.undoUntilRoot();
 

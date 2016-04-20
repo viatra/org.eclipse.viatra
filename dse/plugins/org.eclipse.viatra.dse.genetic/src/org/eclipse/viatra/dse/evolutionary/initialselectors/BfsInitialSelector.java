@@ -21,6 +21,7 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IGetCertainTransitions.FilterOptions;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
+import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
@@ -82,7 +83,7 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
                     queue.add(trajectory);
                     if (minDepthOfFirstPopulation <= trajectory.length && random.nextFloat() < chanceOfSelection) {
                         Fitness fitness = context.calculateFitness();
-                        initialPopulation.add(new TrajectoryFitness(trajectory, fitness));
+                        initialPopulation.add(new TrajectoryWithStateFitness(trajectoryInfo, fitness));
                         if (populationSize <= initialPopulation.size()) {
                             dsm.undoUntilRoot();
                             return;

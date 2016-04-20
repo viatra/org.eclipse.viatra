@@ -18,6 +18,7 @@ import java.util.Random;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
@@ -81,7 +82,7 @@ public class RandomInitalSelector implements IInitialPopulationSelector {
             }
 
             foundInstances++;
-            initialPopulation.add(new TrajectoryFitness(dsm.getTrajectoryInfo(), context.calculateFitness()));
+            initialPopulation.add(new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), context.calculateFitness()));
             dsm.undoUntilRoot();
             lengthRemaining = newLength();
         }
