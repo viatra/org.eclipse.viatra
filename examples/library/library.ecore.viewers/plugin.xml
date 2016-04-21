@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><plugin>
-  <extension id="library.viewers.livedemo.ViewersQueries" point="org.eclipse.viatra.query.runtime.queryspecification">
-    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:library.viewers.livedemo.ViewersQueries" id="library.viewers.livedemo.ViewersQueries"/>
-  </extension>
-</plugin>
