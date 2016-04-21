@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA DSE framework Monitor (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.dse.monitor
-Bundle-Version: 0.12.0.qualifier
+Bundle-Version: 0.13.0.qualifier
 Export-Package: org.eclipse.viatra.dse.monitor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: com.google.guava
