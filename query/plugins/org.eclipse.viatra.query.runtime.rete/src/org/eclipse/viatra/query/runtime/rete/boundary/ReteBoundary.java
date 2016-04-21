@@ -12,7 +12,6 @@
 package org.eclipse.viatra.query.runtime.rete.boundary;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +23,6 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Network;
-import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.Production;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;

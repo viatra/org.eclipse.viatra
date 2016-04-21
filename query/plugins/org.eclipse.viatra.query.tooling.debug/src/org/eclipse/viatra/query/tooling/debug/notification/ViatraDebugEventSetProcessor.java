@@ -19,7 +19,6 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.internal.debug.core.model.JDIStackFrame;
 import org.eclipse.jdt.internal.debug.core.model.JDIThread;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-import org.eclipse.viatra.query.tooling.debug.variables.values.MatchValue;
 
 /**
  * A {@link IDebugEventSetListener} implementation which only listens for 

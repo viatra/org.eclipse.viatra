@@ -20,7 +20,6 @@ import org.eclipse.core.databinding.property.value.ValueProperty;
 import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 
 import com.google.common.base.Preconditions;
 

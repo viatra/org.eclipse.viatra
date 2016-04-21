@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -39,7 +38,6 @@ import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
 import org.eclipse.viatra.query.runtime.api.scope.IEngineContext;
 import org.eclipse.viatra.query.runtime.api.scope.IIndexingErrorListener;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
-import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.internal.engine.LifecycleProvider;

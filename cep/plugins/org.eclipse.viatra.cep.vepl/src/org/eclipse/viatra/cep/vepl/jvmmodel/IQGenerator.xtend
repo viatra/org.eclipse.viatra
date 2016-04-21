@@ -16,18 +16,21 @@ import com.google.inject.Inject
 import java.util.List
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.runtime.api.IMatchProcessor
-import org.eclipse.viatra.query.runtime.emf.EMFScope
-import org.eclipse.viatra.transformation.evm.specific.Lifecycles
 import org.eclipse.viatra.cep.core.streams.EventStream
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
 import org.eclipse.viatra.cep.vepl.vepl.QueryImport
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeType
 import org.eclipse.viatra.cep.vepl.vepl.TypedParameter
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
+import org.eclipse.viatra.query.runtime.api.IMatchProcessor
+import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.transformation.evm.specific.Lifecycles
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum
 import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRule
 import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory
+import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationRuleBuilder
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.EventDrivenTransformation
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.InconsistentEventSemanticsException
 import org.eclipse.xtext.common.types.JvmVisibility
@@ -35,9 +38,6 @@ import org.eclipse.xtext.xbase.compiler.output.ITreeAppendable
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
-import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum
-import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory.EventDrivenTransformationRuleBuilder
 
 @SuppressWarnings("restriction", "discouraged")
 class IQGenerator {

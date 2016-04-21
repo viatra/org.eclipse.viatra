@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
-import org.eclipse.xtext.builder.impl.XtextBuilder;
 
 import com.google.inject.Inject;
 
@@ -34,7 +33,6 @@ import com.google.inject.Inject;
  * @author Zoltan Ujhelyi
  *
  */
-@SuppressWarnings("restriction")
 public class ViatraQueryProjectBuilder extends IncrementalProjectBuilder {
 
     /**

@@ -27,14 +27,12 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.xtext.resource.DerivedStateAwareResource;
 import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 

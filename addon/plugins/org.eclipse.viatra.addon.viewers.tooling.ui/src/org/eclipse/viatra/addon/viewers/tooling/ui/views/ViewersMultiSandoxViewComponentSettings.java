@@ -32,7 +32,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.viatra.addon.viewers.runtime.ViewersRuntimePlugin;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewersRuntimeModelUtil;
 import org.eclipse.viatra.addon.viewers.tooling.ui.ViewersToolingPlugin;

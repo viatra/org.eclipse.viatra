@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.api;
 
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
-import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;

@@ -12,6 +12,7 @@ package org.eclipse.viatra.cep.vepl.jvmmodel
 
 import com.google.inject.Inject
 import org.eclipse.viatra.cep.core.api.events.ParameterizableEventInstance
+import org.eclipse.viatra.cep.core.api.events.ParameterizableViatraQueryPatternEventInstance
 import org.eclipse.viatra.cep.core.metamodels.events.EventSource
 import org.eclipse.viatra.cep.core.metamodels.events.impl.AtomicEventPatternImpl
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
@@ -20,7 +21,6 @@ import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.viatra.cep.core.api.events.ParameterizableViatraQueryPatternEventInstance
 
 class AtomicGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder

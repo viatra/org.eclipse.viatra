@@ -14,12 +14,13 @@ import com.google.inject.Inject
 import org.eclipse.viatra.cep.vepl.vepl.AtomicEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.ComplexEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.EventModel
+import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
 import org.eclipse.viatra.cep.vepl.vepl.Rule
+import org.eclipse.viatra.cep.vepl.vepl.Trait
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
-import org.eclipse.viatra.cep.vepl.vepl.QueryResultChangeEventPattern
-import org.eclipse.viatra.cep.vepl.vepl.Trait
+import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor.IPostIndexingInitializing
 
 /**
  * <p>Infers a JVM model from the source model.</p> 

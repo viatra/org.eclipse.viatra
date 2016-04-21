@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.igraph;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.IGraphPathFinder;

@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.runtime.api;
 
 import java.util.Set;
 
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**

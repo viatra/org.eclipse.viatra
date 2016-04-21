@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.addon.validation.core.api.ConstraintSpecification;
 import org.eclipse.viatra.addon.validation.core.api.IConstraint;
 import org.eclipse.viatra.addon.validation.core.api.IConstraintSpecification;
@@ -30,8 +29,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
-import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
 import org.eclipse.viatra.transformation.evm.api.Job;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;

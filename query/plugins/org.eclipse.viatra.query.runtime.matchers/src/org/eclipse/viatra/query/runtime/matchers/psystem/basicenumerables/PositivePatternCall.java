@@ -11,7 +11,6 @@
 
 package org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

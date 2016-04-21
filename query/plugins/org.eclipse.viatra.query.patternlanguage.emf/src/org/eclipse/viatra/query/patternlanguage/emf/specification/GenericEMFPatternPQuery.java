@@ -13,9 +13,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.specification;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer;
@@ -24,8 +21,6 @@ import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
-import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
-import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;

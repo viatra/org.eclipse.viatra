@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;

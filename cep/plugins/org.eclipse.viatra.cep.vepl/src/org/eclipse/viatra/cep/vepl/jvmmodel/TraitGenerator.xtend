@@ -13,10 +13,10 @@ package org.eclipse.viatra.cep.vepl.jvmmodel
 import com.google.inject.Inject
 import org.eclipse.viatra.cep.vepl.vepl.ModelElement
 import org.eclipse.viatra.cep.vepl.vepl.Trait
+import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.xtext.common.types.JvmVisibility
 
 class TraitGenerator {
 	@Inject extension JvmTypesBuilder jvmTypesBuilder
