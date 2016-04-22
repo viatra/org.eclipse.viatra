@@ -29,7 +29,6 @@ import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
@@ -38,7 +37,6 @@ import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.guidance.Predicate;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
-import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
@@ -274,28 +272,13 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Sets the solution store. Please see the {@link ISolutionStore} interface and its implementations for details.
-     * 
-     * @param solutionStore
-     *            The {@link ISolutionStore} implementation.
-     * 
-     * @deprecated This method is only used by the strategies implementing the deprecated
-     *             {@link LocalSearchStrategyBase} abstract class. Use
-     *             {@link DesignSpaceExplorer#setSolutionStore(SolutionStore)} instead.
-     */
-    @Deprecated
-    public void setSolutionStore(ISolutionStore solutionStore) {
-        globalContext.setSolutionStore(solutionStore);
-    }
-
-    /**
      * Sets the solution store for strategies using the new strategy API. Please see the {@link SolutionStore} for details.
      * 
      * @param solutionStore
      *            The parameterized {@link SolutionStore} implementation.
      */
     public void setSolutionStore(SolutionStore solutionStore) {
-        globalContext.setSolutionStore2(solutionStore);
+        globalContext.setSolutionStore(solutionStore);
     }
 
     /**
@@ -452,12 +435,7 @@ public class DesignSpaceExplorer {
      * @return The found solutions.
      */
     public Collection<Solution> getSolutions() {
-        Collection<Solution> result = globalContext.getSolutionStore().getSolutions();
-        if (result.isEmpty()) {
-            return globalContext.getSolutionStore2().getSolutions();
-        } else {
-            return result;
-        }
+        return globalContext.getSolutionStore().getSolutions();
     }
 
     /**

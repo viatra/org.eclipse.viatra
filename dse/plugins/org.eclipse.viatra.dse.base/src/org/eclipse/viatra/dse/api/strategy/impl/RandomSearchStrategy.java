@@ -66,7 +66,7 @@ public class RandomSearchStrategy implements IStrategy {
         dsm = context.getDesignSpaceManager();
         trajectoryInfo = dsm.getTrajectoryInfo();
         gc = context.getGlobalContext();
-        solutionStore = gc.getSolutionStore2();
+        solutionStore = gc.getSolutionStore();
 
         Object sharedObject = gc.getSharedObject();
         if (sharedObject == null) {

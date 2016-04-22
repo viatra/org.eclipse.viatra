@@ -12,7 +12,6 @@ package org.eclipse.viatra.dse.evolutionary.interfaces;
 import java.util.List;
 
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.genetic.interfaces.IStoreChild;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public interface IInitialPopulationSelector extends IStrategy {

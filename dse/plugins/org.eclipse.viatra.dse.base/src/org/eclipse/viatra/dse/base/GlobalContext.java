@@ -25,15 +25,12 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.api.strategy.interfaces.LocalSearchStrategyBase;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.LeveledObjectivesHelper;
-import org.eclipse.viatra.dse.solutionstore.ISolutionStore;
-import org.eclipse.viatra.dse.solutionstore.SimpleSolutionStore;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
@@ -159,10 +156,6 @@ public class GlobalContext {
         return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategy());
     }
 
-    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, LocalSearchStrategyBase strategyBase) {
-        return tryStartNewThread(originalThreadContext, null, true, strategyBase);
-    }
-
     public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, boolean cloneModel) {
         return tryStartNewThread(originalThreadContext, null, cloneModel, originalThreadContext.getStrategy());
     }
@@ -221,8 +214,7 @@ public class GlobalContext {
     private List<IGlobalConstraint> globalConstraints = new ArrayList<IGlobalConstraint>();
     private Set<DSETransformationRule<?, ?>> transformations = new HashSet<DSETransformationRule<?, ?>>();
     private IStateCoderFactory stateCoderFactory;
-    private ISolutionStore solutionStore = new SimpleSolutionStore();
-    private SolutionStore solutionStore2 = new SolutionStore();
+    private SolutionStore solutionStore = new SolutionStore();
     private Object SharedObject;
     private List<IDesignSpaceVisualizer> visualizers;
 
@@ -323,14 +315,6 @@ public class GlobalContext {
         SharedObject = sharedObject;
     }
 
-    public ISolutionStore getSolutionStore() {
-        return solutionStore;
-    }
-
-    public void setSolutionStore(ISolutionStore solutionStore) {
-        this.solutionStore = solutionStore;
-    }
-
     public ExplorationProcessState getState() {
         return state;
     }
@@ -363,12 +347,12 @@ public class GlobalContext {
         return leveledObjectives;
     }
 
-    public void setSolutionStore2(SolutionStore solutionStore2) {
-        this.solutionStore2 = solutionStore2;
+    public void setSolutionStore(SolutionStore solutionStore) {
+        this.solutionStore = solutionStore;
     }
 
-    public SolutionStore getSolutionStore2() {
-        return solutionStore2;
+    public SolutionStore getSolutionStore() {
+        return solutionStore;
     }
 
 }

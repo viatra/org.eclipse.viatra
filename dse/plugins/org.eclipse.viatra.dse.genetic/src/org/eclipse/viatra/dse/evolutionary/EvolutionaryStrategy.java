@@ -65,7 +65,7 @@ public class EvolutionaryStrategy implements IStrategy {
         this.context = context;
         gc = context.getGlobalContext();
         dsm = context.getDesignSpaceManager();
-        solutionStore = gc.getSolutionStore2();
+        solutionStore = gc.getSolutionStore();
         childPopulation = new HashSet<>(childPopulationSize);
         
         evaluationStrategy.init(context);

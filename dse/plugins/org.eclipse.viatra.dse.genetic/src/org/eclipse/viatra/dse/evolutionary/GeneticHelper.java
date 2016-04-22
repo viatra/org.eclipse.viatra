@@ -8,7 +8,7 @@
  *   Miklos Foldenyi - initial API and implementation
  *   Andras Szabolcs Nagy - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.dse.genetic.core;
+package org.eclipse.viatra.dse.evolutionary;
 
 import java.util.Collection;
 import java.util.Iterator;

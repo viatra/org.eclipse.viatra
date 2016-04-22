@@ -60,7 +60,7 @@ public class DepthFirstStrategy implements IStrategy {
         
         this.context = context;
         dsm = context.getDesignSpaceManager();
-        solutionStore = context.getGlobalContext().getSolutionStore2();
+        solutionStore = context.getGlobalContext().getSolutionStore();
         
         logger.info("Initied");
     }

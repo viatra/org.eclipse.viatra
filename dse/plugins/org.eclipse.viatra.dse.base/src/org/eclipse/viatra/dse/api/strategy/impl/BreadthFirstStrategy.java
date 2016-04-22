@@ -91,7 +91,7 @@ public class BreadthFirstStrategy implements IStrategy {
     public void initStrategy(ThreadContext context) {
         this.context = context;
         this.dsm = context.getDesignSpaceManager();
-        this.solutionStore = context.getGlobalContext().getSolutionStore2();
+        this.solutionStore = context.getGlobalContext().getSolutionStore();
 
         GlobalContext globalContext = context.getGlobalContext();
         if (globalContext.getSharedObject() == null) {

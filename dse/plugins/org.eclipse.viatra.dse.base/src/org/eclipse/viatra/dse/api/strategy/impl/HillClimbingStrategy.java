@@ -49,7 +49,7 @@ public class HillClimbingStrategy implements IStrategy {
     public void initStrategy(ThreadContext context) {
         this.context = context;
         dsm = context.getDesignSpaceManager();
-        solutionStore = context.getGlobalContext().getSolutionStore2();
+        solutionStore = context.getGlobalContext().getSolutionStore();
         objectiveComparatorHelper = context.getObjectiveComparatorHelper();
         logger.info("Initied");
     }

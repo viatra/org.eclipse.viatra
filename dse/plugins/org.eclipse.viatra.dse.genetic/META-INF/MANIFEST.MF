@@ -21,15 +21,6 @@ Export-Package: org.eclipse.viatra.dse.evolutionary,
  org.eclipse.viatra.dse.evolutionary.parentselectors,
  org.eclipse.viatra.dse.evolutionary.reproduction,
  org.eclipse.viatra.dse.evolutionary.stopconditions,
- org.eclipse.viatra.dse.evolutionary.survival,
- org.eclipse.viatra.dse.genetic.api,
- org.eclipse.viatra.dse.genetic.core,
- org.eclipse.viatra.dse.genetic.crossovers,
- org.eclipse.viatra.dse.genetic.debug,
- org.eclipse.viatra.dse.genetic.initialselectors,
- org.eclipse.viatra.dse.genetic.interfaces,
- org.eclipse.viatra.dse.genetic.mutations,
- org.eclipse.viatra.dse.genetic.parentselectors,
- org.eclipse.viatra.dse.genetic.selectors
+ org.eclipse.viatra.dse.evolutionary.survival
 Import-Package: org.apache.log4j;version="1.2.15"
 Bundle-Vendor: Eclipse VIATRA Project
