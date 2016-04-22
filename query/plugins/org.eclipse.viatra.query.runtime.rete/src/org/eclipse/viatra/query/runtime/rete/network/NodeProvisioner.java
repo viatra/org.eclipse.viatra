@@ -96,7 +96,11 @@ public class NodeProvisioner {
 	        			getNodesByRecipe().put(recipe, result);
 	                	if (getRecipeTraces().add(recipeTrace))
 	                		result.getNodeCache().assignTraceInfo(recipeTrace);
-	        			break;
+	        			// Bug 491922: ensure that recipe shadowing propagates to parent traces 
+	                	//   note that if equivalentRecipes() becomes more sophisticated
+	                	//    and considers recipes with different parents, this might have to be changed
+	                	ensureParents(recipeTrace);
+	                	break;
         			}
         		}
         	}
