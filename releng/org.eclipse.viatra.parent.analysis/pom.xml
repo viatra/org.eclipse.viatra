@@ -21,6 +21,5 @@
 	<modules>
         <module>../../releng/org.eclipse.viatra.parent.core</module>
         <module>../../releng/org.eclipse.viatra.parent.all</module>
-        <module>../../examples/bpm/org.eclipse.viatra.examples.bpm.parent</module>
     </modules>
 </project>
