@@ -23,8 +23,6 @@ import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
-import org.eclipse.viatra.dse.guidance.ApplicationVectorUpdater;
-import org.eclipse.viatra.dse.guidance.Guidance;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
@@ -65,7 +63,6 @@ public class ThreadContext {
 
     private final TrajectoryInfo trajectoryInfo;
 
-    private Guidance guidance;
     private boolean isFirstThread = false;
     private IObjective[][] leveledObjectives;
     private boolean isThereHardObjective;
@@ -80,7 +77,7 @@ public class ThreadContext {
      * @param parentGuidance
      */
     public ThreadContext(final GlobalContext globalContext, IStrategy strategy, Notifier model,
-            TrajectoryInfo trajectoryInfoToClone, Guidance parentGuidance) {
+            TrajectoryInfo trajectoryInfoToClone) {
         checkArgument(model != null, "Cannot initialize ThreadContext on a null model.");
         this.globalContext = globalContext;
         this.strategy = strategy;
@@ -90,9 +87,6 @@ public class ThreadContext {
         // clone if it is not null
         this.trajectoryInfo = trajectoryInfoToClone == null ? null : trajectoryInfoToClone.clone();
 
-        if (parentGuidance != null) {
-            guidance = parentGuidance.clone();
-        }
     }
 
     /**
@@ -172,13 +166,6 @@ public class ThreadContext {
         designSpaceManager = new DesignSpaceManager(this, model, domain, globalContext.getStateCoderFactory(),
                 globalContext.getDesignSpace(), trajectoryInfo, ruleEngine, queryEngine);
 
-        // if there is a guidance registered, hook this thread's
-        // ApplicationVectorUpdater
-        if (guidance != null) {
-            guidance.resetActivations(ruleEngine);
-            designSpaceManager.setiRuleApplicationNumberChanged(new ApplicationVectorUpdater(guidance));
-        }
-
         for (IObjective objective : objectives) {
             objective.init(this);
             if (objective.isHardObjective()) {
@@ -255,14 +242,6 @@ public class ThreadContext {
 
     public ViatraQueryEngine getQueryEngine() {
         return queryEngine;
-    }
-
-    public Guidance getGuidance() {
-        return guidance;
-    }
-
-    public void setGuidance(Guidance guidance) {
-        this.guidance = guidance;
     }
 
     public IStrategy getStrategy() {

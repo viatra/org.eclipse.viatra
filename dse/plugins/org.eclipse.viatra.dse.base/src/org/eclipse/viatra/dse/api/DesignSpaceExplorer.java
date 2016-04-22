@@ -13,11 +13,8 @@ package org.eclipse.viatra.dse.api;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,7 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
@@ -33,17 +29,13 @@ import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.impl.pojo.ConcurrentDesignSpace;
-import org.eclipse.viatra.dse.guidance.Guidance;
-import org.eclipse.viatra.dse.guidance.Predicate;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
-import org.eclipse.viatra.dse.statecode.graph.impl.GraphHash;
 import org.eclipse.viatra.dse.statecoding.simple.SimpleStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
-import org.eclipse.viatra.dse.util.EMFHelper.MetaModelElements;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 
 /**
@@ -91,15 +83,11 @@ public class DesignSpaceExplorer {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
-    private List<Predicate> predicates;
-
     private Set<EPackage> metaModelPackages = new HashSet<EPackage>();
 
     private static final String MODEL_NOT_YET_GIVEN = "The starting model is not given yet. Please call the setInitialModel method first.";
 
     private static final long SLEEP_INTERVAL = 1000;
-
-    private Guidance guidance;
 
     /**
      * <p>
@@ -236,16 +224,6 @@ public class DesignSpaceExplorer {
      */
     public final void setStateCoderFactory(IStateCoderFactory stateCoderFactory) {
         globalContext.setStateCoderFactory(stateCoderFactory);
-    }
-
-    @Deprecated
-    public void setGuidance(Guidance guidance) {
-        this.guidance = guidance;
-    }
-
-    @Deprecated
-    public void setPredicatesForOcVectorResolving(List<Predicate> predicates) {
-        this.predicates = predicates;
     }
 
     /**
@@ -397,31 +375,10 @@ public class DesignSpaceExplorer {
             globalContext.setStateCoderFactory(new SimpleStateCoderFactory(getMetaModelPackages()));
         }
 
-        if (guidance != null) {
-
-            guidance.setRules(globalContext.getTransformations());
-            // guidance.setConstraints(globalContext.getConstraints());
-            // guidance.setGoalPatterns(globalContext.getGoalPatterns());
-
-            // create rule dependency graph
-            guidance.resolveDependencyGraph();
-
-            if (guidance.getOccuranceVectorResolver() != null) {
-                MetaModelElements metaModelElements = EMFHelper.getAllMetaModelElements(metaModelPackages);
-                List<EModelElement> classesAndReferences = new ArrayList<EModelElement>(metaModelElements.attributes);
-                classesAndReferences.addAll(metaModelElements.references);
-                Map<EModelElement, Integer> initialMarking = Guidance
-                        .getInitialMarking(model, classesAndReferences);
-                guidance.resolveOccurrenceVector(classesAndReferences, initialMarking, predicates);
-            }
-        }
-
         logger.debug("DesignSpaceExplorer started exploration.");
 
         // Create main thread with given model, without cloning.
-        ThreadContext threadContext = new ThreadContext(globalContext, strategy,
-                model, null, null);
-        threadContext.setGuidance(guidance);
+        ThreadContext threadContext = new ThreadContext(globalContext, strategy, model, null);
 
         globalContext.tryStartNewThread(threadContext, false);
     }

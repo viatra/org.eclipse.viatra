@@ -30,13 +30,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra.dse.dependencygraph"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.viatra.dse.designspace"
          download-size="0"
          install-size="0"
@@ -44,21 +37,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra.dse.designspace.pathfinding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.viatra.dse.genetic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra.dse.monitor"
          download-size="0"
          install-size="0"
          version="0.0.0"

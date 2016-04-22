@@ -34,8 +34,6 @@ import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.designspace.api.TransitionMetaData;
-import org.eclipse.viatra.dse.guidance.IRuleApplicationChanger;
-import org.eclipse.viatra.dse.guidance.IRuleApplicationNumberChanged;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
@@ -47,9 +45,8 @@ import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 
-public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplicationChanger {
+public class DesignSpaceManager implements IDesignSpaceManager {
 
-    private static final String EXECUTE = "execute";
     // ***** essential fields **********
     // the state serializer instance used to generate state and transition IDs
     private final IStateCoder stateCoder;
@@ -68,7 +65,6 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
     private final TrajectoryInfo trajectory;
 
     // the occurence vector callback
-    private IRuleApplicationNumberChanged iRuleApplicationNumberChanged;
     private List<IExploreEventHandler> handlers;
 
     // Dummy context for evm
@@ -183,10 +179,6 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
         trajectory.addStep(transition);
 
-        // maintain rule application number
-        if (iRuleApplicationNumberChanged != null) {
-            iRuleApplicationNumberChanged.increment(transition.getTransitionMetaData().rule, ruleEngine);
-        }
         if (handlers != null) {
             for (IExploreEventHandler iExploreEventHandler : handlers) {
                 iExploreEventHandler.transitionFired(transition);
@@ -305,10 +297,6 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
 
         trajectory.stepBack();
 
-        // maintain rule application number
-        if (iRuleApplicationNumberChanged != null) {
-            iRuleApplicationNumberChanged.decrement(lastTransition.getTransitionMetaData().rule, ruleEngine);
-        }
         if (handlers != null) {
             for (IExploreEventHandler iExploreEventHandler : handlers) {
                 iExploreEventHandler.undo(lastTransition);
@@ -333,11 +321,6 @@ public class DesignSpaceManager implements IDesignSpaceManager, IRuleApplication
     @Override
     public IState getCurrentState() {
         return trajectory.getCurrentState();
-    }
-
-    @Override
-    public void setiRuleApplicationNumberChanged(IRuleApplicationNumberChanged iRuleApplicationNumberChanged) {
-        this.iRuleApplicationNumberChanged = iRuleApplicationNumberChanged;
     }
 
     private Map<Object, TransitionMetaData> generateTransitions() {

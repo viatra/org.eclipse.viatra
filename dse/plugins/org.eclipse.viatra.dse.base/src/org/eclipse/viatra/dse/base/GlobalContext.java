@@ -113,8 +113,7 @@ public class GlobalContext {
             ThreadContext newThreadContext;
             if (cloneModel) {
                 TrajectoryInfo trajectoryInfo = originalThreadContext.getDesignSpaceManager().getTrajectoryInfo();
-                newThreadContext = new ThreadContext(this, strategy, model, model != null ? null : trajectoryInfo,
-                        originalThreadContext.getGuidance());
+                newThreadContext = new ThreadContext(this, strategy, model, model != null ? null : trajectoryInfo);
             } else {
                 // TODO This is only appropriate if this is the first thread
                 // There can be circumstances, when cloneModel is false, but this is not first thread!

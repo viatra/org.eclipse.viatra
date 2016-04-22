@@ -40,9 +40,6 @@ public class DSETransformationRule<Match extends IPatternMatch, Matcher extends 
         public Map<String, Double> process(Match match);
     }
     
-    private RuleMetaData metaData;
-
-    
     public DSETransformationRule(String name, IQuerySpecification<Matcher> querySpec,
             IMatchProcessor<Match> action) {
         super(name, querySpec, BatchTransformationRule.STATELESS_RULE_LIFECYCLE, action);
@@ -56,10 +53,6 @@ public class DSETransformationRule<Match extends IPatternMatch, Matcher extends 
     public DSETransformationRule(IQuerySpecification<Matcher> querySpec,
             IMatchProcessor<Match> action) {
         this(querySpec.getFullyQualifiedName(), querySpec, action);
-    }
-
-    public RuleMetaData getMetaData() {
-        return metaData;
     }
 
     @Override
@@ -78,10 +71,6 @@ public class DSETransformationRule<Match extends IPatternMatch, Matcher extends 
         } else {
             return false;
         }
-    }
-
-    public void setMetaData(RuleMetaData metaData) {
-        this.metaData = metaData;
     }
 
 }
