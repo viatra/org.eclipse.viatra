@@ -27,8 +27,8 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
+import org.eclipse.viatra.dse.designspace.api.FilterOptions;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
-import org.eclipse.viatra.dse.designspace.api.IDesignSpaceManager;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
@@ -45,7 +45,7 @@ import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 
-public class DesignSpaceManager implements IDesignSpaceManager {
+public class DesignSpaceManager {
 
     // ***** essential fields **********
     // the state serializer instance used to generate state and transition IDs
@@ -109,7 +109,6 @@ public class DesignSpaceManager implements IDesignSpaceManager {
         logger.debug("DesignSpaceManager initialized with root (" + rootState.getId() + ")");
     }
 
-    @Override
     public void fireActivation(final ITransition transition) {
         if (fireActivationSilent(transition)) {
             return;
@@ -217,34 +216,18 @@ public class DesignSpaceManager implements IDesignSpaceManager {
      * Returns true if the given state is not owned by this crawler.
      * 
      **/
-    @Override
     public boolean isNewModelStateAlreadyTraversed() {
         return !isNewState;
     }
 
-    @Override
     public List<Object> getTrajectoryFromRoot() {
         return trajectory.getFullTransitionIdTrajectory();
     }
 
-    @Override
-    public List<Object> getTrajectoryFromRootAcyclic() {
-        // TODO implement
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<Object> getTrajectoryFromRootAcyclicShortest() {
-        // TODO implement
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Collection<? extends ITransition> getTransitionsFromCurrentState() {
         return trajectory.getCurrentState().getOutgoingTransitions();
     }
 
-    @Override
     public Collection<? extends ITransition> getTransitionsFromCurrentState(FilterOptions filter) {
         if ((filter.nothingIfCut && trajectory.getCurrentState().getTraversalState() == TraversalStateType.CUT)
                 || (filter.nothingIfGoal && trajectory.getCurrentState().getTraversalState() == TraversalStateType.GOAL)) {
@@ -268,19 +251,6 @@ public class DesignSpaceManager implements IDesignSpaceManager {
 
     }
 
-    @Override
-    public List<? extends ITransition> getUntraversedTransitionsOnBackWay(int numOfStatesBack) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<? extends ITransition> getUntraversedTransitionsWithMaximumDistanceOf(int distance) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean undoLastTransformation() {
         // check if it is valid to step back from here (you can't step back from
         // the crawler root)
@@ -318,7 +288,6 @@ public class DesignSpaceManager implements IDesignSpaceManager {
         return stateCoder.createActivationCode(match);
     }
 
-    @Override
     public IState getCurrentState() {
         return trajectory.getCurrentState();
     }
@@ -369,17 +338,14 @@ public class DesignSpaceManager implements IDesignSpaceManager {
         return transitions;
     }
 
-    @Override
     public SolutionTrajectory createSolutionTrajectroy() {
         return trajectory.createSolutionTrajectory(serializerFactory);
     }
 
-    @Override
     public TrajectoryInfo getTrajectoryInfo() {
         return trajectory;
     }
 
-    @Override
     public void saveDesignSpace() {
         try {
             designSpace.saveDesignSpace("designSpace.txt");
