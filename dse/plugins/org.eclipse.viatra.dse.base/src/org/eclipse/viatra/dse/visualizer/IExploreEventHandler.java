@@ -11,7 +11,6 @@
 package org.eclipse.viatra.dse.visualizer;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 
 /**
  * An implementation of this interface is notified about every move in the design space (firing a rule activation or
@@ -30,7 +29,7 @@ public interface IExploreEventHandler {
      * 
      * @param transition The fired transition.
      */
-    void transitionFired(ITransition transition);
+    void transitionFired(Object transition);
 
     /**
      * Called by the {@link DesignSpaceManager}, after undoing the previously fired rule activation (transition).
@@ -38,6 +37,6 @@ public interface IExploreEventHandler {
      * 
      * @param transition The undone transition.
      */
-    void undo(ITransition transition);
+    void undo(Object transition);
 
 }

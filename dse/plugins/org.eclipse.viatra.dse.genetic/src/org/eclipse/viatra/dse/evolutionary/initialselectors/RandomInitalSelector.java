@@ -17,7 +17,6 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IInitialPopulationSelector;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
@@ -67,9 +66,9 @@ public class RandomInitalSelector implements IInitialPopulationSelector {
             while (lengthRemaining > 0) {
                 lengthRemaining--;
 
-                Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
+                Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
                 int index = random.nextInt(transitions.size());
-                ITransition transition = getByIndex(transitions, index);
+                Object transition = getByIndex(transitions, index);
                 dsm.fireActivation(transition);
 
                 boolean gcSatisfied = context.checkGlobalConstraints();
@@ -93,11 +92,11 @@ public class RandomInitalSelector implements IInitialPopulationSelector {
         isInterrupted = true;
     }
 
-    private static ITransition getByIndex(Collection<? extends ITransition> availableTransitions, int index) {
+    private static Object getByIndex(Collection<Object> availableTransitions, int index) {
         int i = 0;
-        Iterator<? extends ITransition> iterator = availableTransitions.iterator();
+        Iterator<Object> iterator = availableTransitions.iterator();
         while (iterator.hasNext()) {
-            ITransition transition = iterator.next();
+            Object transition = iterator.next();
             if (i == index) {
                 return transition;
             } else {

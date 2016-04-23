@@ -13,7 +13,6 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
@@ -39,8 +38,8 @@ public class PermutationCrossover implements ICrossover {
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
 
-        ITransition[] parent1t = parent1.trajectory;
-        ITransition[] parent2t = parent2.trajectory;
+        Object[] parent1t = parent1.trajectory;
+        Object[] parent2t = parent2.trajectory;
         int p1Size = parent1t.length;
         int p2Size = parent2t.length;
 
@@ -75,19 +74,17 @@ public class PermutationCrossover implements ICrossover {
         return children;
     }
 
-    private void addPermutation(DesignSpaceManager dsm, TrajectoryInfo trajectoryInfo, ITransition[] parent2t) {
-        outerLoop: for (ITransition transitionToAdd : parent2t) {
+    private void addPermutation(DesignSpaceManager dsm, TrajectoryInfo trajectoryInfo, Object[] parent2t) {
+        outerLoop: for (Object transitionToAddId : parent2t) {
 
-            Object transitionToAddId = transitionToAdd.getId();
-
-            for (ITransition childTransition : trajectoryInfo.getFullTransitionTrajectory()) {
-                Object id = childTransition.getId();
+            for (Object childTransition : trajectoryInfo.getTrajectory()) {
+                Object id = childTransition;
                 if (transitionToAddId.equals(id)) {
                     continue outerLoop;
                 }
             }
 
-            GeneticHelper.tryFireRightTransition(dsm, transitionToAdd);
+            GeneticHelper.tryFireRightTransition(dsm, transitionToAddId);
         }
     }
 

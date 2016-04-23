@@ -10,26 +10,25 @@
 package org.eclipse.viatra.dse.evolutionary;
 
 import org.eclipse.viatra.dse.designspace.api.IState;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public class TrajectoryWithStateFitness extends TrajectoryFitness {
 
-    public IState state;
+    public Object state;
 
-    public TrajectoryWithStateFitness(ITransition[] trajectory, IState state, Fitness fitness) {
+    public TrajectoryWithStateFitness(Object[] trajectory, IState state, Fitness fitness) {
         super(trajectory, fitness);
         this.state = state;
     }
 
     public TrajectoryWithStateFitness(TrajectoryInfo trajectoryInfo, Fitness fitness) {
         super(trajectoryInfo, fitness);
-        state = trajectoryInfo.getCurrentState();
+        state = trajectoryInfo.getCurrentStateId();
     }
 
-    public TrajectoryWithStateFitness(ITransition transition, IState state, Fitness fitness) {
+    public TrajectoryWithStateFitness(Object transition, Object state, Fitness fitness) {
         super(transition, fitness);
         this.state = state;
     }
@@ -44,6 +43,6 @@ public class TrajectoryWithStateFitness extends TrajectoryFitness {
 
     @Override
     public int hashCode() {
-        return state.getId().hashCode();
+        return state.hashCode();
     }
 }

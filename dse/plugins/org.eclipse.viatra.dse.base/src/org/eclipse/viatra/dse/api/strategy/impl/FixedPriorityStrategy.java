@@ -22,8 +22,6 @@ import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.IState;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
@@ -41,7 +39,7 @@ public class FixedPriorityStrategy implements IStrategy {
     private Map<DSETransformationRule<?, ?>, Integer> priorities = new HashMap<DSETransformationRule<?, ?>, Integer>();
 
     private Random random = new Random();
-    private Map<Object, List<ITransition>> bestPriorityInState = new HashMap<>();
+    private Map<Object, List<Object>> bestPriorityInState = new HashMap<>();
 
     /**
      * Adds a depth limit to the strategy.
@@ -116,7 +114,7 @@ public class FixedPriorityStrategy implements IStrategy {
                 }
             }
 
-            if (dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() >= maxDepth) {
+            if (dsm.getTrajectoryInfo().getDepth() >= maxDepth) {
                 boolean isSuccessfulUndo = dsm.undoLastTransformation();
                 if (!isSuccessfulUndo) {
                     logger.info("Reached max depth but cannot bactrack.");
@@ -132,21 +130,21 @@ public class FixedPriorityStrategy implements IStrategy {
                 break;
             }
 
-            List<ITransition> transitions;
+            List<Object> transitions;
 
             do {
 
-                transitions = bestPriorityInState.get(dsm.getCurrentState().getId());
+                transitions = bestPriorityInState.get(dsm.getCurrentState());
 
                 if (transitions == null) {
                     Integer bestPriority = getBestPriority(dsm.getTransitionsFromCurrentState());
                     transitions = Lists.newArrayList();
-                    for (ITransition iTransition : dsm.getTransitionsFromCurrentState()) {
-                        if (priorities.get(iTransition.getTransitionMetaData().rule).equals(bestPriority)) {
+                    for (Object iTransition : dsm.getTransitionsFromCurrentState()) {
+                        if (priorities.get(dsm.getRuleByActivationId(iTransition)).equals(bestPriority)) {
                             transitions.add(iTransition);
                         }
                     }
-                    bestPriorityInState.put(dsm.getCurrentState().getId(), transitions);
+                    bestPriorityInState.put(dsm.getCurrentState(), transitions);
                 }
 
                 if (transitions.isEmpty()) {
@@ -162,14 +160,14 @@ public class FixedPriorityStrategy implements IStrategy {
             } while (transitions.isEmpty());
 
             int index = random.nextInt(transitions.size());
-            ITransition transition = transitions.remove(index);
+            Object transition = transitions.remove(index);
 
-            IState prevState = dsm.getCurrentState();
+            Object prevState = dsm.getCurrentState();
             dsm.fireActivation(transition);
 
             if (logger.isDebugEnabled()) {
-                logger.debug("Transition " + transition.getId() + " fired from: " + prevState.getId() + " and reached: "
-                        + dsm.getCurrentState().getId());
+                logger.debug("Transition " + transition + " fired from: " + prevState + " and reached: "
+                        + dsm.getCurrentState());
             }
 
             boolean loopInTrajectory = dsm.isCurentStateInTrajectory();
@@ -193,10 +191,10 @@ public class FixedPriorityStrategy implements IStrategy {
         isInterrupted.set(true);
     }
 
-    private Integer getBestPriority(Collection<? extends ITransition> transitions) {
+    private Integer getBestPriority(Collection<? extends Object> transitions) {
         Integer bestPriority = Integer.MIN_VALUE;
-        for (ITransition iTransition : transitions) {
-            Integer priority = priorities.get(iTransition.getTransitionMetaData().rule);
+        for (Object iTransition : transitions) {
+            Integer priority = priorities.get(dsm.getRuleByActivationId(iTransition));
             if (priority > bestPriority) {
                 bestPriority = priority;
             }

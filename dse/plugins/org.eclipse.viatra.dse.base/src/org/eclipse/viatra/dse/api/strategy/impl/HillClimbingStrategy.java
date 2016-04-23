@@ -18,7 +18,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
@@ -68,11 +67,11 @@ public class HillClimbingStrategy implements IStrategy {
 
         mainloop: do {
 
-            logger.debug("Current depth: " + dsm.getTrajectoryFromRoot().size());
-
             Fitness previousFitness = context.calculateFitness();
 
-            Collection<? extends ITransition> transitionsFromCurrentState = dsm.getTransitionsFromCurrentState();
+            logger.debug("Current depth: " + dsm.getTrajectoryFromRoot().size() + " Fitness: " + previousFitness);
+
+            Collection<Object> transitionsFromCurrentState = dsm.getTransitionsFromCurrentState();
 
             while (transitionsFromCurrentState.isEmpty()) {
                 logger.debug("No transitions from current state: considered as a solution.");
@@ -80,15 +79,15 @@ public class HillClimbingStrategy implements IStrategy {
                 continue mainloop;
             }
 
-            ArrayList<ITransition> transitionsToTry = new ArrayList<>(transitionsFromCurrentState.size());
-            for (ITransition transition : transitionsFromCurrentState) {
+            ArrayList<Object> transitionsToTry = new ArrayList<>(transitionsFromCurrentState.size());
+            for (Object transition : transitionsFromCurrentState) {
                 transitionsToTry.add(transition);
             }
             double numberOfTransitionsToTry = transitionsToTry.size() * percentOfOpenedStates;
 
             for (; numberOfTransitionsToTry > 0 && transitionsToTry.size() > 0; numberOfTransitionsToTry--) {
                 int index = random.nextInt(transitionsToTry.size());
-                ITransition transition = transitionsToTry.remove(index);
+                Object transition = transitionsToTry.remove(index);
 
                 dsm.fireActivation(transition);
 
@@ -105,7 +104,7 @@ public class HillClimbingStrategy implements IStrategy {
 
                 Fitness fitness = context.calculateFitness();
                 objectiveComparatorHelper.addTrajectoryFitness(
-                        new TrajectoryFitness(dsm.getTrajectoryInfo().getLastTransition(), fitness));
+                        new TrajectoryFitness(dsm.getTrajectoryInfo().getLastActivationId(), fitness));
                 dsm.undoLastTransformation();
             }
 
@@ -125,7 +124,7 @@ public class HillClimbingStrategy implements IStrategy {
                 continue;
             } else {
                 previousFitness = randomBestFitness.fitness;
-                ITransition transition = randomBestFitness.trajectory[randomBestFitness.trajectory.length - 1];
+                Object transition = randomBestFitness.trajectory[randomBestFitness.trajectory.length - 1];
                 dsm.fireActivation(transition);
             }
 

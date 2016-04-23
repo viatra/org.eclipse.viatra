@@ -12,8 +12,10 @@ package org.eclipse.viatra.dse.base;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,12 +23,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
-import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
@@ -35,6 +35,7 @@ import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
+import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 
 import com.google.common.collect.ImmutableList;
 
@@ -67,6 +68,8 @@ public class GlobalContext {
     private AtomicBoolean firstThreadContextInited = new AtomicBoolean(false);
     private AtomicBoolean firstThreadContextIniting = new AtomicBoolean(false);
 
+    private Map<RuleSpecification<?>, DSETransformationRule<?,?>> specificationRuleMap;
+
     /**
      * The DesignSpaceExplorer's thread.
      */
@@ -92,10 +95,13 @@ public class GlobalContext {
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
 
-            // clone the parent's thread model. it should be done in the
-            // parent's thread so the model won't be changed during cloning
-            EditingDomain domain = originalThreadContext.getEditingDomain();
-            
+            if (specificationRuleMap == null) {
+                specificationRuleMap = new HashMap<>();
+                for (DSETransformationRule<?,?> rule : transformations) {
+                    specificationRuleMap.put(rule.getRuleSpecification(), rule);
+                }
+            }
+
             if (model == null) {
                 if (cloneModel) {
                     throw new DSEException(
@@ -107,13 +113,12 @@ public class GlobalContext {
 
             if (cloneModel) {
                 model = EMFHelper.clone(model);
-                domain = EMFHelper.createEditingDomain(model);
+                EMFHelper.createEditingDomain(model);
             }
 
             ThreadContext newThreadContext;
             if (cloneModel) {
-                TrajectoryInfo trajectoryInfo = originalThreadContext.getDesignSpaceManager().getTrajectoryInfo();
-                newThreadContext = new ThreadContext(this, strategy, model, model != null ? null : trajectoryInfo);
+                newThreadContext = new ThreadContext(this, strategy, model);
             } else {
                 // TODO This is only appropriate if this is the first thread
                 // There can be circumstances, when cloneModel is false, but this is not first thread!
@@ -354,4 +359,7 @@ public class GlobalContext {
         return solutionStore;
     }
 
+    public Map<RuleSpecification<?>, DSETransformationRule<?, ?>> getSpecificationRuleMap() {
+        return specificationRuleMap;
+    }
 }

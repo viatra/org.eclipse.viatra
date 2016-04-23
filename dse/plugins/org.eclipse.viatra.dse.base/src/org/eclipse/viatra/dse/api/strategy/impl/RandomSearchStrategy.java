@@ -22,7 +22,6 @@ import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ExplorerThread;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
@@ -112,11 +111,11 @@ public class RandomSearchStrategy implements IStrategy {
                 }
             }
 
-            if (trajectoryInfo.getDepthFromRoot() < maxDepth) {
+            if (trajectoryInfo.getDepth() < maxDepth) {
 
-                Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
+                Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
                 int index = rnd.nextInt(transitions.size());
-                ITransition transition = getByIndex(transitions, index);
+                Object transition = getByIndex(transitions, index);
                 dsm.fireActivation(transition);
 
             } else {
@@ -159,11 +158,11 @@ public class RandomSearchStrategy implements IStrategy {
         return gc.tryStartNewThread(context, context.getModel(), true, new RandomSearchStrategy());
     }
 
-    private static ITransition getByIndex(Collection<? extends ITransition> availableTransitions, int index) {
+    private static Object getByIndex(Collection<Object> availableTransitions, int index) {
         int i = 0;
-        Iterator<? extends ITransition> iterator = availableTransitions.iterator();
+        Iterator<Object> iterator = availableTransitions.iterator();
         while (iterator.hasNext()) {
-            ITransition transition = iterator.next();
+            Object transition = iterator.next();
             if (i == index) {
                 return transition;
             } else {

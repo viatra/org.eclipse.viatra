@@ -12,10 +12,8 @@ package org.eclipse.viatra.dse.base;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +25,9 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
-import org.eclipse.viatra.dse.designspace.api.FilterOptions;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
-import org.eclipse.viatra.dse.designspace.api.IState;
-import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
-import org.eclipse.viatra.dse.designspace.api.TransitionMetaData;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
@@ -43,24 +37,19 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
-import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 public class DesignSpaceManager {
 
-    // ***** essential fields **********
-    // the state serializer instance used to generate state and transition IDs
     private final IStateCoder stateCoder;
     private final IStateCoderFactory serializerFactory;
-
     private final RuleEngine ruleEngine;
-
-    // the editing domain encapsulating the working model
     private final EditingDomain domain;
     private Notifier model;
 
     private final IDesignSpace designSpace;
-
-    // **** other fields
 
     private final TrajectoryInfo trajectory;
 
@@ -77,10 +66,11 @@ public class DesignSpaceManager {
     private Map<DSETransformationRule<?, ?>, String> activationFitnessProcessorNames;
     private ThreadContext context;
 
-    private static final long SLEEP_INTERVAL = 1;
+    private BiMap<Activation<?>, Object> activationIds;
+    private boolean useDesignSpace = true;
 
     public DesignSpaceManager(ThreadContext context, Notifier model, EditingDomain domain, IStateCoderFactory factory,
-            IDesignSpace designSpace, TrajectoryInfo trajectory, RuleEngine ruleEngine, ViatraQueryEngine engine) {
+            IDesignSpace designSpace, RuleEngine ruleEngine, ViatraQueryEngine engine) {
         checkNotNull(designSpace, "Cannot initialize crawler on a null design space!");
         checkNotNull(domain, "Cannot initialize crawler on a null editing domain!");
         checkNotNull(factory, "Cannot initialize crawler without a serializer factory!");
@@ -91,25 +81,22 @@ public class DesignSpaceManager {
         this.designSpace = designSpace;
         this.domain = domain;
         this.serializerFactory = factory;
+        activationIds = HashBiMap.create();
 
         // init serializer
         stateCoder = factory.createStateCoder();
         stateCoder.init(model);
 
         Object initialStateId = stateCoder.createStateCode();
-        isNewState = designSpace.addState(null, initialStateId, generateTransitions());
-        IState rootState = designSpace.getStateById(initialStateId);
+        generateTransitions();
+        designSpace.addState(null, null, initialStateId);
 
-        if (rootState == null) {
-            throw new DSEException("The root state should not be null under any condition!");
-        }
+        this.trajectory = new TrajectoryInfo(initialStateId);
 
-        this.trajectory = new TrajectoryInfo(rootState, trajectory);
-
-        logger.debug("DesignSpaceManager initialized with root (" + rootState.getId() + ")");
+        logger.debug("DesignSpaceManager initialized with root (" + initialStateId + ")");
     }
 
-    public void fireActivation(final ITransition transition) {
+    public void fireActivation(final Object transition) {
         if (fireActivationSilent(transition)) {
             return;
         }
@@ -117,12 +104,9 @@ public class DesignSpaceManager {
         StringBuilder sb = new StringBuilder();
         sb.append("A retrieved Transition SHOULD have a matching Activation. Possible causes: the state serializer is faulty; the algorithm choosed a wrong Transition.");
         sb.append("\nSought transition: ");
-        sb.append(transition.getId());
-        Object firedFromId = transition.getFiredFrom().getId();
-        sb.append("\nTransition's source: ");
-        sb.append(firedFromId);
-        Object currentStateId = getCurrentState().getId();
-        sb.append("\nCurrent known state: " + (currentStateId.equals(firedFromId) ? "same" : currentStateId));
+        sb.append(transition);
+        Object currentStateId = getCurrentState();
+        sb.append("\nCurrent known state: " + currentStateId);
         Object actualStateId = stateCoder.createStateCode();
         sb.append("\nActual state: " + (actualStateId.equals(currentStateId) ? "same as current" : actualStateId));
         sb.append("\n" + trajectory);
@@ -137,15 +121,28 @@ public class DesignSpaceManager {
         throw new DSEException(sb.toString());
     }
 
-    public boolean tryFireActivation(final ITransition transition) {
+    public boolean tryFireActivation(final Object transition) {
         return fireActivationSilent(transition);
     }
 
-    private boolean fireActivationSilent(final ITransition transition) {
-        final Activation<?> activation = getActivationByTransitionId(transition);
+    private boolean fireActivationSilent(final Object transition) {
+        final Activation<?> activation = getActivationById(transition);
 
         if (activation == null) {
             return false;
+        }
+
+        DSETransformationRule<?, ?> rule = getRuleByActivation(activation);
+
+        Map<String, Double> measureCosts = null;
+        if (activationFitnessProcessors != null && activationFitnessProcessors.containsKey(rule)) {
+            IPatternMatch match = (IPatternMatch) activation.getAtom();
+            ActivationFitnessProcessor processor = activationFitnessProcessors.get(rule);
+            double fitness = processor.process(match);
+            if (measureCosts == null) {
+                measureCosts = new HashMap<String, Double>();
+            }
+            measureCosts.put(activationFitnessProcessorNames.get(rule), fitness);
         }
 
         ChangeCommand rc = new ChangeCommand(model) {
@@ -155,28 +152,20 @@ public class DesignSpaceManager {
             }
         };
 
-        IState previousState = trajectory.getCurrentState();
+        Object previousState = trajectory.getCurrentStateId();
 
         domain.getCommandStack().execute(rc);
 
         Object newStateId = stateCoder.createStateCode();
+        generateTransitions();
 
-        isNewState = designSpace.addState(transition, newStateId, generateTransitions());
-        IState newState = designSpace.getStateById(newStateId);
+        isNewState = !designSpace.isTraversed(newStateId);
 
-        if (!isNewState) {
-            if (newState == null) {
-                throw new DSEException("It should not be possible that isNewState is false while newState is null!");
-            }
-            while (!newState.isProcessed()) {
-                try {
-                    Thread.sleep(SLEEP_INTERVAL);
-                } catch (InterruptedException e) {
-                }
-            }
+        if (useDesignSpace) {
+            designSpace.addState(previousState, transition, newStateId);
         }
 
-        trajectory.addStep(transition);
+        trajectory.addStep(transition, rule, newStateId, measureCosts);
 
         if (handlers != null) {
             for (IExploreEventHandler iExploreEventHandler : handlers) {
@@ -184,23 +173,32 @@ public class DesignSpaceManager {
             }
         }
 
-        logger.debug("Fired Transition (" + transition.getId() + ") from " + previousState.getId() + " to "
+        logger.debug("Fired Transition (" + transition + ") from " + previousState + " to "
                 + newStateId);
         
         return true;
     }
 
-    public ITransition getTransitionByActivation(Activation<?> activation) {
-        IPatternMatch match = (IPatternMatch) activation.getAtom();
-        Object code = generateMatchCode(match);
-        for (ITransition transition : trajectory.getCurrentState().getOutgoingTransitions()) {
-            if (transition.getId().equals(code)) {
-                return transition;
-            }
-        }
-        return null;
+    public Object getTransitionByActivation(Activation<?> activation) {
+        return activationIds.get(activation);
     }
 
+    public Activation<?> getActivationById(Object activationId) {
+        Activation<?> activation = activationIds.inverse().get(activationId);
+        if (activation == null) {
+            System.out.println();
+        }
+        return activation;
+    }
+    
+    public DSETransformationRule<?, ?> getRuleByActivation(Activation<?> activation) {
+        return context.getGlobalContext().getSpecificationRuleMap().get(activation.getInstance().getSpecification());
+    }
+
+    public DSETransformationRule<?, ?> getRuleByActivationId(Object activationId) {
+        return getRuleByActivation(getActivationById(activationId));
+    }
+    
     public Activation<?> getActivationByTransitionId(ITransition transition) {
         for (Activation<?> act : ruleEngine.getConflictingActivations()) {
             IPatternMatch match = (IPatternMatch) act.getAtom();
@@ -221,62 +219,53 @@ public class DesignSpaceManager {
     }
 
     public List<Object> getTrajectoryFromRoot() {
-        return trajectory.getFullTransitionIdTrajectory();
+        return trajectory.getTrajectory();
     }
 
-    public Collection<? extends ITransition> getTransitionsFromCurrentState() {
-        return trajectory.getCurrentState().getOutgoingTransitions();
+    public Collection<Object> getTransitionsFromCurrentState() {
+        return activationIds.values();
     }
 
-    public Collection<? extends ITransition> getTransitionsFromCurrentState(FilterOptions filter) {
-        if ((filter.nothingIfCut && trajectory.getCurrentState().getTraversalState() == TraversalStateType.CUT)
-                || (filter.nothingIfGoal && trajectory.getCurrentState().getTraversalState() == TraversalStateType.GOAL)) {
-            return Collections.emptyList();
+    public Collection<Object> getUntraversedTransitionsFromCurrentState() {
+        if (!useDesignSpace) {
+            throw new DSEException("Unsopperted without a design space");
         }
+        Object currentState = trajectory.getCurrentStateId();
+        Collection<Object> traversedIds = designSpace.getActivationIds(currentState);
 
-        if (filter.untraversedOnly) {
-            IState currentState = trajectory.getCurrentState();
-
-            List<ITransition> transitions = new ArrayList<ITransition>();
-            for (ITransition transition : currentState.getOutgoingTransitions()) {
-                if (!transition.isAssignedToFire() && filter.containsRule(transition.getTransitionMetaData().rule)) {
-                    transitions.add(transition);
-                }
+        List<Object> untraversedTransitions = new ArrayList<>();
+        for (Object activationId : activationIds.values()) {
+            if (!traversedIds.contains(activationId)) {
+                untraversedTransitions.add(activationId);
             }
-
-            return transitions;
         }
 
-        return trajectory.getCurrentState().getOutgoingTransitions();
-
+        return untraversedTransitions;
     }
 
     public boolean undoLastTransformation() {
-        // check if it is valid to step back from here (you can't step back from
-        // the crawler root)
+
         if (!trajectory.canStepBack()) {
-            // return false indicating that the undo was not executed
-            logger.debug("Failed undo request. Cannot undo.");
             return false;
         }
 
-        // we move the model by executing undo on the command stack
         domain.getCommandStack().undo();
-        // save transition id
-        ITransition lastTransition = trajectory.getLastTransition();
 
-        trajectory.stepBack();
+        generateTransitions();
+        Object lastActivationId = trajectory.getLastActivationId();
+        Object lastStateId = trajectory.getLastStateId();
+
+        trajectory.backtrack();
 
         if (handlers != null) {
             for (IExploreEventHandler iExploreEventHandler : handlers) {
-                iExploreEventHandler.undo(lastTransition);
+                iExploreEventHandler.undo(lastActivationId);
             }
         }
 
-        logger.debug("Successul undo from " + lastTransition.getResultsIn().getId() + " transition "
-                + lastTransition.getId() + " to " + lastTransition.getFiredFrom().getId());
+        logger.debug("Successul undo from " + lastStateId + " transition "
+                + lastActivationId + " to " + trajectory.getLastStateId());
 
-        // return with true, indicating that we indeed executed a step back.
         return true;
     }
 
@@ -288,54 +277,27 @@ public class DesignSpaceManager {
         return stateCoder.createActivationCode(match);
     }
 
-    public IState getCurrentState() {
-        return trajectory.getCurrentState();
+    public Object getCurrentState() {
+        return trajectory.getCurrentStateId();
     }
 
-    private Map<Object, TransitionMetaData> generateTransitions() {
-        Map<Object, TransitionMetaData> transitions = new HashMap<Object, TransitionMetaData>();
+    private void generateTransitions() {
+
+        activationIds.clear();
 
         for (Activation<?> activation : ruleEngine.getConflictingActivations()) {
 
             // we ignore not fireable Activations. These shouldn't be here
-            // anyway
+            // anyway TODO check if this code makes sense
             if (!activation.isEnabled()) {
                 continue;
             }
 
             IPatternMatch match = (IPatternMatch) activation.getAtom();
-            Object matchHash = generateMatchCode(match);
+            Object activationId = stateCoder.createActivationCode(match);
 
-            RuleSpecification<?> ruleSpec = activation.getInstance().getSpecification();
-            DSETransformationRule<?, ?> specification = null; 
-            for (DSETransformationRule<?, ?> t : context.getGlobalContext().getTransformations()) {
-                if (t.getRuleSpecification().equals(ruleSpec)) {
-                    specification = t;
-                }
-            }
-            if (specification == null) {
-                throw new DSEException("spec is null");
-            }
-
-            Map<String, Double> measureCosts = null;
-
-            if (activationFitnessProcessors != null && activationFitnessProcessors.containsKey(specification)) {
-                ActivationFitnessProcessor processor = activationFitnessProcessors.get(specification);
-                double fitness = processor.process(match);
-                if (measureCosts == null) {
-                    measureCosts = new HashMap<String, Double>();
-                }
-                measureCosts.put(activationFitnessProcessorNames.get(specification), fitness);
-            }
-
-            TransitionMetaData transitionMetaData = new TransitionMetaData();
-            transitionMetaData.rule = specification;
-            transitionMetaData.costs = measureCosts;
-
-            transitions.put(matchHash, transitionMetaData);
+            activationIds.put(activation, activationId);
         }
-
-        return transitions;
     }
 
     public SolutionTrajectory createSolutionTrajectroy() {
@@ -346,12 +308,12 @@ public class DesignSpaceManager {
         return trajectory;
     }
 
-    public void saveDesignSpace() {
-        try {
-            designSpace.saveDesignSpace("designSpace.txt");
-        } catch (IOException e) {
-            logger.error("Saving designspace failed", e);
-        }
+    public void setUseDesignSpace(boolean useDesignSpace) {
+        this.useDesignSpace = useDesignSpace;
+    }
+
+    public boolean isUseDesignSpace() {
+        return useDesignSpace;
     }
 
     public void registerExploreEventHandler(IExploreEventHandler handler) {
@@ -384,9 +346,12 @@ public class DesignSpaceManager {
     }
 
     public boolean isCurentStateInTrajectory() {
-        Object currentStateId = trajectory.getCurrentState().getId();
-        for (ITransition transition : trajectory.getFullTransitionTrajectory()) {
-            if (transition.getFiredFrom().getId().equals(currentStateId)) {
+        Object currentStateId = trajectory.getCurrentStateId();
+        List<Object> stateTrajectory = trajectory.getStateTrajectory();
+        int size = stateTrajectory.size();
+        for (int i = 0; i < size - 1; i++) {
+            Object stateId = stateTrajectory.get(i);
+            if (currentStateId.equals(stateId)) {
                 return true;
             }
         }

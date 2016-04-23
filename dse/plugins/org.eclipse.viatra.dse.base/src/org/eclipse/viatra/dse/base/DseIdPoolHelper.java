@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.viatra.dse.api.DSETransformationRule;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 
 public enum DseIdPoolHelper {
 
@@ -24,18 +23,18 @@ public enum DseIdPoolHelper {
     public static class IdProvider {
 
         private final DSETransformationRule<?, ?> rule;
-        private List<ITransition> trajectory;
+        private List<DSETransformationRule<?, ?>> rulesTrajectory;
 
         public IdProvider(ThreadContext context, DSETransformationRule<?, ?> rule) {
             this.rule = rule;
 
-            trajectory = context.getDesignSpaceManager().getTrajectoryInfo().getTransitionTrajectory();
+            rulesTrajectory = context.getDesignSpaceManager().getTrajectoryInfo().getRules();
         }
 
         public int getId() {
             int nextId = 0;
-            for (ITransition t : trajectory) {
-                if (t.getTransitionMetaData().rule.equals(this.rule)) {
+            for (DSETransformationRule<?, ?> r : rulesTrajectory) {
+                if (r.equals(this.rule)) {
                     nextId++;
                 }
             }

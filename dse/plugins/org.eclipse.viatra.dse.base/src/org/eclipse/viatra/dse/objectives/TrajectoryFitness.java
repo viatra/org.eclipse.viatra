@@ -22,7 +22,7 @@ import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
  */
 public class TrajectoryFitness {
 
-    public ITransition[] trajectory;
+    public Object[] trajectory;
     public Fitness fitness;
 
     public int rank;
@@ -37,7 +37,7 @@ public class TrajectoryFitness {
      * @param trajectory The trajectory.
      * @param fitness The fitness.
      */
-    public TrajectoryFitness(ITransition[] trajectory, Fitness fitness) {
+    public TrajectoryFitness(Object[] trajectory, Fitness fitness) {
         this.fitness = fitness;
         this.trajectory = trajectory;
     }
@@ -49,8 +49,8 @@ public class TrajectoryFitness {
      */
     public TrajectoryFitness(TrajectoryInfo trajectoryInfo, Fitness fitness) {
         this.fitness = fitness;
-        List<ITransition> fullTraj = trajectoryInfo.getFullTransitionTrajectory();
-        trajectory = fullTraj.toArray(new ITransition[fullTraj.size()]);
+        List<Object> fullTraj = trajectoryInfo.getTrajectory();
+        trajectory = fullTraj.toArray(new Object[fullTraj.size()]);
     }
 
     /**
@@ -58,9 +58,9 @@ public class TrajectoryFitness {
      * @param transition The transition.
      * @param fitness The fitness.
      */
-    public TrajectoryFitness(ITransition transition, Fitness fitness) {
+    public TrajectoryFitness(Object transition, Fitness fitness) {
         this.fitness = fitness;
-        trajectory = new ITransition[] {transition};
+        trajectory = new Object[] {transition};
     }
 
     @Override

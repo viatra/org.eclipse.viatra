@@ -18,7 +18,6 @@ import java.util.Random;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
@@ -39,11 +38,11 @@ public class AddTransitionByPriorityMutation implements IMutation {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
 
-        for (ITransition t : parent.trajectory) {
+        for (Object t : parent.trajectory) {
             dsm.fireActivation(t);
         }
 
-        Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
+        Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int size = transitions.size();
         if (size == 0) {
             dsm.undoUntilRoot();
@@ -51,20 +50,20 @@ public class AddTransitionByPriorityMutation implements IMutation {
         }
 
         int bestPriority = Integer.MIN_VALUE;
-        for (ITransition iTransition : transitions) {
-            int priority = priorities.get(iTransition.getTransitionMetaData().rule).intValue();
+        for (Object iTransition : transitions) {
+            int priority = priorities.get(dsm.getRuleByActivationId(iTransition)).intValue();
             if (priority > bestPriority) {
                 bestPriority = priority;
             }
         }
-        List<ITransition> bestTrasitions = new ArrayList<ITransition>();
-        for (ITransition iTransition : transitions) {
-            if (priorities.get(iTransition.getTransitionMetaData().rule).intValue() == bestPriority) {
+        List<Object> bestTrasitions = new ArrayList<>();
+        for (Object iTransition : transitions) {
+            if (priorities.get(dsm.getRuleByActivationId(iTransition)).intValue() == bestPriority) {
                 bestTrasitions.add(iTransition);
             }
         }
         int index = rnd.nextInt(bestTrasitions.size());
-        ITransition transition = bestTrasitions.get(index);
+        Object transition = bestTrasitions.get(index);
 
         dsm.fireActivation(transition);
 

@@ -24,14 +24,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpaceChangeHandler;
 import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.IState.TraversalStateType;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TransitionMetaData;
 
-public class ConcurrentDesignSpace implements IDesignSpace {
+public class ConcurrentDesignSpace {
 
     private final ConcurrentHashMap<Object, State> objectToStateMap = new ConcurrentHashMap<Object, State>(64, 0.75f, 1);
     private final AtomicReference<State> rootState = new AtomicReference<State>();
@@ -42,13 +41,11 @@ public class ConcurrentDesignSpace implements IDesignSpace {
 
     private final Logger logger = Logger.getLogger(this.getClass());
 
-    @Override
     public IState[] getRoot() {
         IState[] result = new IState[rootStates.size()];
         return rootStates.toArray(result);
     }
 
-    @Override
     public void addRoot(final IState root) {
         rootStates.add((State) root);
         State newRoot = (State) root;
@@ -56,7 +53,6 @@ public class ConcurrentDesignSpace implements IDesignSpace {
         fireNewRootAddedEvent(newRoot);
     }
 
-    @Override
     public boolean addState(ITransition sourceTransition, Object newStateId,
             Map<Object, TransitionMetaData> outgoingTransitionIds) {
 
@@ -133,7 +129,6 @@ public class ConcurrentDesignSpace implements IDesignSpace {
         return result;
     }
 
-    @Override
     public State getStateById(final Object id) {
         return objectToStateMap.get(id);
     }
@@ -144,7 +139,6 @@ public class ConcurrentDesignSpace implements IDesignSpace {
      * If the {@code fileName} ends with .dgml or .gml, it will save the design space in a correct format, otherwise it
      * will use a simple xml format.
      */
-    @Override
     public void saveDesignSpace(String fileName) throws IOException {
 
         StringBuilder sb = new StringBuilder();
@@ -252,24 +246,20 @@ public class ConcurrentDesignSpace implements IDesignSpace {
         fw.close();
     }
 
-    @Override
     public long getNumberOfStates() {
         return objectToStateMap.size();
     }
 
-    @Override
     public long getNumberOfTransitions() {
         return numberOfTransitions.get();
     }
 
-    @Override
     public void addDesignSpaceChangedListener(IDesignSpaceChangeHandler changeEventHandler) {
         if (!changeHandlers.contains(changeEventHandler)) {
             changeHandlers.add(changeEventHandler);
         }
     }
 
-    @Override
     public void removeDesignSpaceChangedListener(IDesignSpaceChangeHandler changeEventHandler) {
         if (changeHandlers.contains(changeEventHandler)) {
             changeHandlers.remove(changeEventHandler);

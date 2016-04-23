@@ -58,7 +58,7 @@ public class ExplorerThread implements Runnable {
 
             strategy.initStrategy(threadContext);
 
-            logger.debug("Strategy started with state: " + dsm.getCurrentState().getId());
+            logger.debug("Strategy started with state: " + dsm.getCurrentState());
 
             strategy.explore();
 

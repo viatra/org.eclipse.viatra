@@ -20,7 +20,6 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IEvaluationStrategy;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IEvolutionaryStrategyAdapter;
@@ -88,6 +87,7 @@ public class EvolutionaryStrategy implements IStrategy {
         initialPopulationSelector.explore();
         List<TrajectoryFitness> currentPopulation = initialPopulationSelector.getInitialPopulation();
 
+        dsm.setUseDesignSpace(false);
         // TODO start instance workers
         
         while (!isInterrupted.get()) {
@@ -112,7 +112,7 @@ public class EvolutionaryStrategy implements IStrategy {
                 for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
                     if (trajectoryFitness.rank == 1) {
                         while(dsm.undoLastTransformation());
-                        for (ITransition transition : trajectoryFitness.trajectory) {
+                        for (Object transition : trajectoryFitness.trajectory) {
                             dsm.fireActivation(transition);
                         }
                         context.calculateFitness();

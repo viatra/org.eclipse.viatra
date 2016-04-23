@@ -18,7 +18,6 @@ import java.util.Random;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
@@ -39,7 +38,7 @@ public class ModifyTransitionByPriorityMutation implements IMutation {
     public TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context) {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
-        ITransition[] trajectory = parent.trajectory;
+        Object[] trajectory = parent.trajectory;
 
         int trajectorySize = trajectory.length;
         int index = rnd.nextInt(trajectorySize);
@@ -47,7 +46,7 @@ public class ModifyTransitionByPriorityMutation implements IMutation {
             dsm.fireActivation(trajectory[i]);
         }
 
-        Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
+        Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int transitionsSize = transitions.size();
         if (transitionsSize == 0) {
             dsm.undoUntilRoot();
@@ -55,20 +54,20 @@ public class ModifyTransitionByPriorityMutation implements IMutation {
         }
 
         int bestPriority = Integer.MIN_VALUE;
-        for (ITransition iTransition : transitions) {
-            int priority = priorities.get(iTransition.getTransitionMetaData().rule).intValue();
+        for (Object iTransition : transitions) {
+            int priority = priorities.get(dsm.getRuleByActivationId(iTransition)).intValue();
             if (priority > bestPriority) {
                 bestPriority = priority;
             }
         }
-        List<ITransition> bestTrasitions = new ArrayList<ITransition>();
-        for (ITransition iTransition : transitions) {
-            if (priorities.get(iTransition.getTransitionMetaData().rule).intValue() == bestPriority) {
+        List<Object> bestTrasitions = new ArrayList<>();
+        for (Object iTransition : transitions) {
+            if (priorities.get(dsm.getRuleByActivationId(iTransition)).intValue() == bestPriority) {
                 bestTrasitions.add(iTransition);
             }
         }
         index = rnd.nextInt(bestTrasitions.size());
-        ITransition transition = bestTrasitions.get(index);
+        Object transition = bestTrasitions.get(index);
 
         dsm.fireActivation(transition);
 

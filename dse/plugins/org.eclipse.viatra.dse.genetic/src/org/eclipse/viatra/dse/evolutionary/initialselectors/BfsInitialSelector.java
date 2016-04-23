@@ -11,15 +11,12 @@ package org.eclipse.viatra.dse.evolutionary.initialselectors;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.FilterOptions;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IInitialPopulationSelector;
@@ -30,7 +27,7 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
 
     private DesignSpaceManager dsm;
 
-    private Queue<ITransition[]> queue = new ArrayDeque<ITransition[]>();
+    private Queue<Object[]> queue = new ArrayDeque<>();
 
     private int minDepthOfFirstPopulation;
     private int populationSize;
@@ -41,8 +38,6 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
     private Random random = new Random();
 
     private boolean isInterrupted = false;
-
-    private FilterOptions filterOptions;
 
     private ThreadContext context;
 
@@ -59,7 +54,6 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
     public BfsInitialSelector(float chanceOfSelection, int minDepthOfFirstPopulation) {
         this.minDepthOfFirstPopulation = minDepthOfFirstPopulation;
         this.chanceOfSelection = chanceOfSelection;
-        filterOptions = new FilterOptions().nothingIfCut().nothingIfGoal().untraversedOnly();
     }
 
     @Override
@@ -74,12 +68,12 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
     public void explore() {
 
         while (!(isInterrupted || initialPopulation.size() >= populationSize)) {
-            Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState(filterOptions);
+            Object[] transitions = dsm.getTransitionsFromCurrentState().toArray();
 
-            for (ITransition iTransition : transitions) {
+            for (Object iTransition : transitions) {
                 dsm.fireActivation(iTransition);
                 if (!dsm.isNewModelStateAlreadyTraversed()) {
-                    ITransition[] trajectory = trajectoryInfo.getTransitionTrajectory().toArray(new ITransition[0]);
+                    Object[] trajectory = trajectoryInfo.getTrajectory().toArray(new Object[0]);
                     queue.add(trajectory);
                     if (minDepthOfFirstPopulation <= trajectory.length && random.nextFloat() < chanceOfSelection) {
                         Fitness fitness = context.calculateFitness();
@@ -94,8 +88,8 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
             }
 
             dsm.undoUntilRoot();
-            ITransition[] nextTrajectory = queue.poll();
-            for (ITransition iTransition : nextTrajectory) {
+            Object[] nextTrajectory = queue.poll();
+            for (Object iTransition : nextTrajectory) {
                 dsm.fireActivation(iTransition);
             }
         }

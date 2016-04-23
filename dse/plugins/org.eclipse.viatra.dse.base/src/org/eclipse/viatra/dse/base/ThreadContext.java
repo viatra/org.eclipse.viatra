@@ -22,7 +22,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
@@ -61,8 +60,6 @@ public class ThreadContext {
      */
     private AtomicBoolean inited = new AtomicBoolean(false);
 
-    private final TrajectoryInfo trajectoryInfo;
-
     private boolean isFirstThread = false;
     private IObjective[][] leveledObjectives;
     private boolean isThereHardObjective;
@@ -76,17 +73,12 @@ public class ThreadContext {
      * @param trajectoryInfoToClone
      * @param parentGuidance
      */
-    public ThreadContext(final GlobalContext globalContext, IStrategy strategy, Notifier model,
-            TrajectoryInfo trajectoryInfoToClone) {
+    public ThreadContext(final GlobalContext globalContext, IStrategy strategy, Notifier model) {
         checkArgument(model != null, "Cannot initialize ThreadContext on a null model.");
         this.globalContext = globalContext;
         this.strategy = strategy;
         this.model = model;
         this.domain = EMFHelper.createEditingDomain(model);
-
-        // clone if it is not null
-        this.trajectoryInfo = trajectoryInfoToClone == null ? null : trajectoryInfoToClone.clone();
-
     }
 
     /**
@@ -164,7 +156,7 @@ public class ThreadContext {
         }
         // create the thread specific DesignSpaceManager
         designSpaceManager = new DesignSpaceManager(this, model, domain, globalContext.getStateCoderFactory(),
-                globalContext.getDesignSpace(), trajectoryInfo, ruleEngine, queryEngine);
+                globalContext.getDesignSpace(), ruleEngine, queryEngine);
 
         for (IObjective objective : objectives) {
             objective.init(this);

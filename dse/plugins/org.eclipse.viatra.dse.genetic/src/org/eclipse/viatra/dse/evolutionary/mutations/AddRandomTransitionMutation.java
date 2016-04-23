@@ -14,7 +14,6 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
@@ -31,18 +30,18 @@ public class AddRandomTransitionMutation implements IMutation {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
 
-        for (ITransition t : parent.trajectory) {
+        for (Object t : parent.trajectory) {
             dsm.fireActivation(t);
         }
 
-        Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
+        Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int size = transitions.size();
         if (size == 0) {
             dsm.undoUntilRoot();
             return null;
         }
         int index = rnd.nextInt(size);
-        ITransition transition = GeneticHelper.getByIndex(transitions, index);
+        Object transition = GeneticHelper.getByIndex(transitions, index);
 
         dsm.fireActivation(transition);
 

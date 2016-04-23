@@ -20,9 +20,6 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.FilterOptions;
-import org.eclipse.viatra.dse.designspace.api.IState;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
@@ -35,7 +32,6 @@ public class DepthFirstStrategy implements IStrategy {
     private SolutionStore solutionStore;
     
     private Logger logger = Logger.getLogger(getClass());
-    private FilterOptions filter = new FilterOptions().untraversedOnly();
 
     private Random random = new Random(); 
     
@@ -95,7 +91,7 @@ public class DepthFirstStrategy implements IStrategy {
                 }
             }
 
-            if (dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() >= maxDepth) {
+            if (dsm.getTrajectoryInfo().getDepth() >= maxDepth) {
                 boolean isSuccessfulUndo = dsm.undoLastTransformation();
                 if (!isSuccessfulUndo) {
                     logger.info("Reached max depth but cannot bactrack.");
@@ -111,44 +107,41 @@ public class DepthFirstStrategy implements IStrategy {
                 break;
             }
 
-            ITransition transition = null;
+            Object transition = null;
+            Collection<Object> transitions;
+
             do {
-                Collection<? extends ITransition> transitions;
+                transitions = dsm.getUntraversedTransitionsFromCurrentState();
+                if (transitions.isEmpty()) {
+                    boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                    if (!isSuccessfulUndo) {
+                        logger.info("No more transitions from current state and cannot backtrack.");
+                        break mainloop;
+                    } else {
+                        logger.debug("No more transitions from current state, backtrack.");
+                        continue;
+                    }
+                } 
+            } while (transitions.isEmpty());
 
-                do {
-                    transitions = dsm.getTransitionsFromCurrentState(filter);
-                    if (transitions.isEmpty()) {
-                        boolean isSuccessfulUndo = dsm.undoLastTransformation();
-                        if (!isSuccessfulUndo) {
-                            logger.info("No more transitions from current state and cannot backtrack.");
-                            break mainloop;
-                        } else {
-                            logger.debug("No more transitions from current state, backtrack.");
-                            continue;
-                        }
-                    } 
-                } while (transitions.isEmpty());
-
-                int index = random.nextInt(transitions.size());
+            int index = random.nextInt(transitions.size());
+            
+            Iterator<Object> iterator = transitions.iterator();
+            while (index-- > 0) {
+                iterator.next();
+            }
+            transition = iterator.next();
                 
-                Iterator<? extends ITransition> iterator = transitions.iterator();
-                while (index-- > 0) {
-                    iterator.next();
-                }
-                transition = iterator.next();
-                
-            } while (!transition.tryToLock());
-
-            IState prevState = dsm.getCurrentState();
+            Object prevState = dsm.getCurrentState();
             dsm.fireActivation(transition);
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Transition "
-                        + transition.getId()
+                        + transition
                         + " fired from: "
-                        + prevState.getId()
+                        + prevState
                         + " and reached: "
-                        + dsm.getCurrentState().getId());
+                        + dsm.getCurrentState());
             }
             
             boolean loopInTrajectory = dsm.isCurentStateInTrajectory();

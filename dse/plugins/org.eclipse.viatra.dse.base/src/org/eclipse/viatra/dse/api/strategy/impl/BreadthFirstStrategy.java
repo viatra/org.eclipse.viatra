@@ -11,7 +11,6 @@ package org.eclipse.viatra.dse.api.strategy.impl;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CyclicBarrier;
@@ -22,15 +21,14 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
 public class BreadthFirstStrategy implements IStrategy {
 
     private static final class BfsSharedObject {
-        private final ConcurrentLinkedQueue<List<ITransition>> trajectoryQueue1 = new ConcurrentLinkedQueue<>();
-        private final ConcurrentLinkedQueue<List<ITransition>> trajectoryQueue2 = new ConcurrentLinkedQueue<>();
+        private final ConcurrentLinkedQueue<Object[]> trajectoryQueue1 = new ConcurrentLinkedQueue<>();
+        private final ConcurrentLinkedQueue<Object[]> trajectoryQueue2 = new ConcurrentLinkedQueue<>();
 
         private final AtomicBoolean pushToQueue1 = new AtomicBoolean(false);
         private final AtomicBoolean designSpaceTraversed = new AtomicBoolean(false);
@@ -50,7 +48,7 @@ public class BreadthFirstStrategy implements IStrategy {
             });
         }
 
-        public List<ITransition> poll() {
+        public Object[] poll() {
             if (pushToQueue1.get()) {
                 return trajectoryQueue2.poll();
             } else {
@@ -58,7 +56,7 @@ public class BreadthFirstStrategy implements IStrategy {
             }
         }
 
-        public void push(List<ITransition> trajectory) {
+        public void push(Object[] trajectory) {
             if (pushToQueue1.get()) {
                 trajectoryQueue1.add(trajectory);
             } else {
@@ -121,7 +119,7 @@ public class BreadthFirstStrategy implements IStrategy {
                 return;
             }
 
-            List<ITransition> currentTrajectory = dsm.getTrajectoryInfo().getFullTransitionTrajectory();
+            Object[] currentTrajectory = dsm.getTrajectoryInfo().getTrajectory().toArray(new Object[0]);
 
             shared.push(currentTrajectory);
 
@@ -138,7 +136,7 @@ public class BreadthFirstStrategy implements IStrategy {
 
         mainLoop: while (!isInterrupted && !shared.isDesignSpaceTraversed()) {
 
-            List<ITransition> next = shared.poll();
+            Object[] next = shared.poll();
             while (next == null) {
                 try {
                     logger.debug("Reached barrier.");
@@ -151,24 +149,24 @@ public class BreadthFirstStrategy implements IStrategy {
                 next = shared.poll();
             }
 
-            while (dsm.undoLastTransformation())
-                ;
-            for (ITransition t : next) {
+            dsm.undoUntilRoot();
+
+            for (Object t : next) {
                 dsm.fireActivation(t);
             }
 
-            Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
+            Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
             int i = transitions.size() - 1;
 
             while (!isInterrupted && i >= 0) {
 
-                Iterator<? extends ITransition> iterator = transitions.iterator();
+                Iterator<Object> iterator = transitions.iterator();
                 int index = i--;
                 while (iterator.hasNext() && index > 0) {
                     index--;
                     iterator.next();
                 }
-                ITransition transitionToTry = iterator.next();
+                Object transitionToTry = iterator.next();
 
                 dsm.fireActivation(transitionToTry);
 
@@ -179,10 +177,10 @@ public class BreadthFirstStrategy implements IStrategy {
                 } else if (context.calculateFitness().isSatisifiesHardObjectives()) {
                     solutionStore.newSolution(context);
                     logger.debug("Found a solution.");
-                } else if (maxDepth > 0 && dsm.getTrajectoryInfo().getDepthFromCrawlerRoot() >= maxDepth) {
+                } else if (maxDepth > 0 && dsm.getTrajectoryInfo().getDepth() >= maxDepth) {
                     logger.debug("Reached max depth.");
                 } else {
-                    List<ITransition> currentTrajectory = dsm.getTrajectoryInfo().getFullTransitionTrajectory();
+                    Object[] currentTrajectory = dsm.getTrajectoryInfo().getTrajectory().toArray(new Object[0]);
                     shared.push(currentTrajectory);
                 }
 

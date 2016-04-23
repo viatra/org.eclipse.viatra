@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
+import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
@@ -101,20 +101,22 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
     @Override
     public Double getFitness(ThreadContext context) {
 
-        List<ITransition> trajectory = context.getDesignSpaceManager().getTrajectoryInfo()
-                .getFullTransitionTrajectory();
+        DesignSpaceManager dsm = context.getDesignSpaceManager();
+        TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
+        List<Object> trajectory = trajectoryInfo.getTrajectory();
+        List<DSETransformationRule<?, ?>> rules = trajectoryInfo.getRules();
 
         double result = 0;
 
-        for (ITransition transition : trajectory) {
-            DSETransformationRule<?, ?> rule = transition.getTransitionMetaData().rule;
+        for (int i = 0; i < trajectory.size(); i++) {
+            DSETransformationRule<?, ?> rule = rules.get(i);
 
             Double cost = fixCosts.get(rule);
             if (cost != null) {
                 result += cost;
             }
 
-            Map<String, Double> costs = transition.getTransitionMetaData().costs;
+            Map<String, Double> costs = trajectoryInfo.getMeasuredCosts().get(i);
             if (costs != null) {
                 cost = costs.get(name);
                 if (cost != null) {

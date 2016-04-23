@@ -11,185 +11,132 @@
 package org.eclipse.viatra.dse.designspace.api;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.api.DSETransformationRule;
+import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
 import com.google.common.base.Preconditions;
 
 public class TrajectoryInfo implements Cloneable {
 
-    // the ID of the state that this particular crawler has been initialized
-    private final IState initialState;
+    private final List<Object> trajectory;
+    private final List<Object> trajectoryView;
+    private final List<DSETransformationRule<?, ?>> rules;
+    private final List<DSETransformationRule<?, ?>> rulesView;
+    private final List<Object> stateIds;
+    private final List<Object> stateIdsView;
+    private final List<Map<String, Double>> measuredCosts;
 
-    private IState currentState;
+    public TrajectoryInfo(Object initialStateId) {
+        Preconditions.checkNotNull(initialStateId);
 
-    // the list of transitions from the original root that led to the state
-    // where this crawler has been initialized. It can be null, if this crawler
-    // was initialized in the original root.
-    private final TrajectoryInfo trajectoryUntilInitState;
+        stateIds = new ArrayList<>();
+        stateIds.add(initialStateId);
 
-    private final LinkedList<ITransition> transitionTrajectory = new LinkedList<ITransition>();
+        trajectory = new ArrayList<>();
+        rules = new ArrayList<>();
+        measuredCosts = new ArrayList<>();
 
-    public TrajectoryInfo(IState initialState, TrajectoryInfo initialTrajectory) {
-        Preconditions.checkNotNull(initialState);
-
-        this.initialState = initialState;
-        this.currentState = initialState;
-
-        if (initialTrajectory != null) {
-            trajectoryUntilInitState = initialTrajectory.clone();
-        } else {
-            trajectoryUntilInitState = null;
-        }
+        trajectoryView = Collections.unmodifiableList(trajectory);
+        stateIdsView = Collections.unmodifiableList(stateIds);
+        rulesView = Collections.unmodifiableList(rules);
     }
 
-    public void addStep(ITransition transition) {
-        IState target = transition.getResultsIn();
-        if (target == null) {
-            throw new DSEException("addStep was callled with a Transition that has no target.");
-        }
+    protected TrajectoryInfo(List<Object> stateIds, List<Object> trajectory, List<DSETransformationRule<?, ?>> rules, List<Map<String, Double>> measuredCosts) {
 
-        currentState = target;
-        transitionTrajectory.add(transition);
+        this.stateIds = new ArrayList<>(stateIds);
+        this.trajectory = new ArrayList<>(trajectory);
+        this.rules = new ArrayList<>(rules);
+        trajectoryView = Collections.unmodifiableList(trajectory);
+        stateIdsView = Collections.unmodifiableList(stateIds);
+        rulesView = Collections.unmodifiableList(rules);
+        this.measuredCosts = new ArrayList<>(measuredCosts);
     }
 
-    public void stepBack() {
-        ITransition lastTransition = transitionTrajectory.pollLast();
+    public void addStep(Object activationId, DSETransformationRule<?, ?> rule, Object newStateId, Map<String, Double> measuredCosts) {
+        stateIds.add(newStateId);
+        trajectory.add(activationId);
+        rules.add(rule);
+        this.measuredCosts.add(measuredCosts);
+    }
 
-        if (lastTransition == null) {
+    public void backtrack() {
+        int size = trajectory.size();
+
+        if (size == 0) {
             throw new DSEException("Cannot step back any further!");
         }
 
-        currentState = lastTransition.getFiredFrom();
+        trajectory.remove(size - 1);
+        rules.remove(size - 1);
+        stateIds.remove(size);
+        measuredCosts.remove(size - 1);
     }
 
     public Object getInitialStateId() {
-        return initialState;
+        return stateIds.get(0);
     }
 
-    public IState getCurrentState() {
-        return currentState;
+    public Object getCurrentStateId() {
+        return stateIds.get(stateIds.size() - 1);
     }
 
-    public ITransition getLastTransition() {
-        return transitionTrajectory.peekLast();
+    public Object getLastActivationId() {
+        return trajectory.get(trajectory.size() - 1);
     }
 
-    public List<Object> getFullTransitionIdTrajectory() {
-        List<Object> result;
-
-        if (trajectoryUntilInitState != null) {
-            result = trajectoryUntilInitState.getFullTransitionIdTrajectory();
-        } else {
-            result = new ArrayList<Object>();
-        }
-
-        for (ITransition object : transitionTrajectory) {
-            result.add(object.getId());
-        }
-
-        return result;
+    public Object getLastStateId() {
+        return stateIds.get(stateIds.size() - 1);
     }
 
-    public List<ITransition> getFullTransitionTrajectory() {
-        List<ITransition> result;
-
-        if (trajectoryUntilInitState != null) {
-            result = trajectoryUntilInitState.getFullTransitionTrajectory();
-        } else {
-            result = new ArrayList<ITransition>();
-        }
-
-        for (ITransition object : transitionTrajectory) {
-            result.add(object);
-        }
-
-        return result;
+    public List<Object> getTrajectory() {
+        return trajectoryView;
     }
 
-    /**
-     * Returns the distance from the Designspace root. It returns the number of transitions, so calling while in the
-     * root will result in a value of 0.
-     * 
-     * @return the number of transitions of the shortest trajectory from root to the current state.
-     */
-    public int getDepthFromRoot() {
-        int depth = 0;
-        if (trajectoryUntilInitState != null) {
-            depth += trajectoryUntilInitState.getDepthFromRoot();
-        }
-        return depth + getDepthFromCrawlerRoot();
+    public List<Object> getStateTrajectory() {
+        return stateIdsView;
     }
 
-    public int getDepthFromCrawlerRoot() {
-        return transitionTrajectory.size();
+    public List<DSETransformationRule<?, ?>> getRules() {
+        return rulesView;
+    }
+
+    public int getDepth() {
+        return trajectory.size();
+    }
+
+    public List<Map<String, Double>> getMeasuredCosts() {
+        return measuredCosts;
     }
 
     public SolutionTrajectory createSolutionTrajectory(final IStateCoderFactory stateCoderFactory) {
 
-        List<Object> activationIds;
-        List<DSETransformationRule<?, ?>> rules;
+        List<Object> activationIds = new ArrayList<>(trajectory);
+        List<DSETransformationRule<?, ?>> rules = new ArrayList<>(this.rules);
 
-        // Recursion
-        if (trajectoryUntilInitState != null) {
-            SolutionTrajectory solutionTrajectory = trajectoryUntilInitState
-                    .createSolutionTrajectory(stateCoderFactory);
-            activationIds = solutionTrajectory.getActivationCodes();
-            rules = solutionTrajectory.getTransformationRules();
-        } else {
-            activationIds = new ArrayList<Object>();
-            rules = new ArrayList<DSETransformationRule<?, ?>>();
-        }
-
-        // Putting together the list of rules
-        Iterator<ITransition> transitionIterator = transitionTrajectory.iterator();
-
-        if (transitionIterator.hasNext()) {
-            ITransition transition = transitionIterator.next();
-            activationIds.add(transition.getId());
-            rules.add(transition.getTransitionMetaData().rule);
-        }
-        while (transitionIterator.hasNext()) {
-            ITransition transition = transitionIterator.next();
-            activationIds.add(transition.getId());
-            rules.add(transition.getTransitionMetaData().rule);
-        }
-
-        return new SolutionTrajectory(getFullTransitionIdTrajectory(), rules, stateCoderFactory);
+        return new SolutionTrajectory(activationIds, rules, stateCoderFactory);
     }
 
     public boolean canStepBack() {
-        return !transitionTrajectory.isEmpty();
-    }
-
-    public LinkedList<ITransition> getTransitionTrajectory() {
-        return transitionTrajectory;
+        return !trajectory.isEmpty();
     }
 
     @Override
     public TrajectoryInfo clone() {
-        TrajectoryInfo clone = new TrajectoryInfo(initialState, trajectoryUntilInitState == null ? null
-                : trajectoryUntilInitState.clone());
-
-        Iterator<ITransition> transitionIterator = transitionTrajectory.iterator();
-        while (transitionIterator.hasNext()) {
-            clone.addStep(transitionIterator.next());
-        }
-
+        TrajectoryInfo clone = new TrajectoryInfo(stateIds, trajectory, rules, measuredCosts);
         return clone;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Trajectory:\n");
-        for (ITransition transition : transitionTrajectory) {
-            sb.append(transition);
+        for (Object activationId : trajectory) {
+            sb.append(activationId);
             sb.append("\n");
         }
         return sb.toString();

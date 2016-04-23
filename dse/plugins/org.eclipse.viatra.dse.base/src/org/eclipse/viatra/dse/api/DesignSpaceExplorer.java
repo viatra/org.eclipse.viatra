@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.designspace.api.DesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.impl.pojo.ConcurrentDesignSpace;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
@@ -107,7 +108,7 @@ public class DesignSpaceExplorer {
      * 
      */
     public DesignSpaceExplorer() {
-        setDesignspace(new ConcurrentDesignSpace());
+        setDesignspace(new DesignSpace());
     }
 
     /**
@@ -378,7 +379,7 @@ public class DesignSpaceExplorer {
         logger.debug("DesignSpaceExplorer started exploration.");
 
         // Create main thread with given model, without cloning.
-        ThreadContext threadContext = new ThreadContext(globalContext, strategy, model, null);
+        ThreadContext threadContext = new ThreadContext(globalContext, strategy, model);
 
         globalContext.tryStartNewThread(threadContext, false);
     }

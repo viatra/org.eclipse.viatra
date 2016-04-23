@@ -50,11 +50,11 @@ public class GeneticHelper {
         return true;
     }
 
-    public static ITransition getByIndex(Collection<? extends ITransition> availableTransitions, int index) {
+    public static Object getByIndex(Collection<Object> availableTransitions, int index) {
         int i = 0;
-        Iterator<? extends ITransition> iterator = availableTransitions.iterator();
+        Iterator<Object> iterator = availableTransitions.iterator();
         while (iterator.hasNext()) {
-            ITransition transition = iterator.next();
+            Object transition = iterator.next();
             if (i == index) {
                 // TODO check global constraint?
                 return transition;
@@ -65,10 +65,9 @@ public class GeneticHelper {
         throw new IndexOutOfBoundsException("size: " + i + ", index: " + index);
     }
     
-    public static boolean tryFireRightTransition(DesignSpaceManager dsm, ITransition transition) {
-        Object id = transition.getId();
-        for (ITransition t : dsm.getTransitionsFromCurrentState()) {
-            if (t.getId().equals(id)) {
+    public static boolean tryFireRightTransition(DesignSpaceManager dsm, Object transition) {
+        for (Object t : dsm.getTransitionsFromCurrentState()) {
+            if (t.equals(transition)) {
                 return dsm.tryFireActivation(t);
             }
         }

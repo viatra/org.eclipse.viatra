@@ -128,7 +128,7 @@ public class SolutionStore {
         }
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
-        Object id = dsm.getCurrentState().getId();
+        Object id = dsm.getCurrentState();
         IStateCoderFactory stateCoderFactory = context.getGlobalContext().getStateCoderFactory();
         SolutionTrajectory solutionTrajectory = dsm.getTrajectoryInfo().createSolutionTrajectory(stateCoderFactory);
         solutionTrajectory.setFitness(fitness);

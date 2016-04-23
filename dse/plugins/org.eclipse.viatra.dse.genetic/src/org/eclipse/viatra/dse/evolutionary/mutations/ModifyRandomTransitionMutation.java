@@ -14,7 +14,6 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
@@ -30,7 +29,7 @@ public class ModifyRandomTransitionMutation implements IMutation {
     public TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context) {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
-        ITransition[] trajectory = parent.trajectory;
+        Object[] trajectory = parent.trajectory;
 
         int trajectorySize = trajectory.length;
         int index = rnd.nextInt(trajectorySize);
@@ -38,14 +37,14 @@ public class ModifyRandomTransitionMutation implements IMutation {
             dsm.fireActivation(trajectory[i]);
         }
 
-        Collection<? extends ITransition> transitions = dsm.getTransitionsFromCurrentState();
+        Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int transitionsSize = transitions.size();
         if (transitionsSize == 0) {
             dsm.undoUntilRoot();
             return null;
         }
         index = rnd.nextInt(transitionsSize);
-        ITransition transition = GeneticHelper.getByIndex(transitions, index);
+        Object transition = GeneticHelper.getByIndex(transitions, index);
 
         dsm.fireActivation(transition);
 

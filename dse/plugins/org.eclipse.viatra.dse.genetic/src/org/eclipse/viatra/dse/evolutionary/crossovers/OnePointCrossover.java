@@ -13,7 +13,6 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
@@ -37,8 +36,8 @@ public class OnePointCrossover implements ICrossover {
         TrajectoryWithStateFitness[] children = new TrajectoryWithStateFitness[2];
         DesignSpaceManager dsm = context.getDesignSpaceManager();
 
-        ITransition[] parent1t = parent1.trajectory;
-        ITransition[] parent2t = parent2.trajectory;
+        Object[] parent1t = parent1.trajectory;
+        Object[] parent2t = parent2.trajectory;
         int p1Size = parent1t.length;
         int p2Size = parent2t.length;
 
