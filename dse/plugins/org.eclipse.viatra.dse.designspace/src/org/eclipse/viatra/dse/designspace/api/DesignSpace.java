@@ -50,12 +50,17 @@ public class DesignSpace implements IDesignSpace {
 
     @Override
     public synchronized void addState(Object sourceStateId, Object firedActivationId, Object newStateId) {
-        List<Object> activtionIds = new ArrayList<Object>();
-        statesAndActivations.put(newStateId, activtionIds);
 
-        if (sourceStateId == null) {
-            rootStates.add(newStateId);
-            return;
+        List<Object> activtionIds = statesAndActivations.get(newStateId);
+
+        if (activtionIds == null) {
+            activtionIds = new ArrayList<Object>();
+            statesAndActivations.put(newStateId, activtionIds);
+
+            if (sourceStateId == null) {
+                rootStates.add(newStateId);
+                return;
+            }
         }
 
         activtionIds = statesAndActivations.get(sourceStateId);
