@@ -16,9 +16,11 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
+import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
@@ -55,6 +57,9 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
     @Inject
     private AnnotationExpressionValidator expressionValidator;
 
+    @Inject
+    private IEMFTypeProvider typeProvider;
+    
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
         Pattern pattern = (Pattern) annotation.eContainer();
@@ -106,9 +111,8 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
             boolean atLeastOneEClassKey = Iterables.any(keyList, new Predicate<Variable>() {
                 @Override
                 public boolean apply(Variable key) {
-                    Type sourceType = key.getType();
-                    if (!(sourceType instanceof ClassType)
-                            || !(((ClassType) sourceType).getClassname() instanceof EClass)) {
+                    EClassifier classifier = typeProvider.getClassifierForVariable(key);
+                    if (!(classifier instanceof EClass)) {
                         return false;
                     } else {
                         return true;
