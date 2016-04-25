@@ -74,6 +74,7 @@ public class TypeFilterConstraint extends VariableDeferredPConstraint implements
     @Override
     protected void doReplaceVariable(PVariable obsolete, PVariable replacement) {
     	variablesTuple = variablesTuple.replaceAll(obsolete, replacement);
+        this.equivalentJudgement = new TypeJudgement(inputKey, variablesTuple);
     }
 
 	@Override

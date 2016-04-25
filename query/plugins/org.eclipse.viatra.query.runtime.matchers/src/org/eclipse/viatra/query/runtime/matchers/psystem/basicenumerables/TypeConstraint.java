@@ -73,5 +73,9 @@ public class TypeConstraint extends KeyedEnumerablePConstraint<IInputKey> implem
 		return TypeConstraintUtil.getFunctionalDependencies(context, supplierKey, variablesTuple);
     }
 
-
+	@Override
+	public void doReplaceVariable(PVariable obsolete, PVariable replacement) {
+		super.doReplaceVariable(obsolete, replacement);
+        this.equivalentJudgement = new TypeJudgement(getSupplierKey(), variablesTuple);
+	}
 }

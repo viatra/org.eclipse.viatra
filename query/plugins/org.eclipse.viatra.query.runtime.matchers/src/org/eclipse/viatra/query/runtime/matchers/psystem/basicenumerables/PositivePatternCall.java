@@ -56,14 +56,18 @@ public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> impl
 
 	@Override
 	public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
+		return getTypesImpliedByCall(supplierKey, variablesTuple);
+	}
+
+	public static Set<TypeJudgement> getTypesImpliedByCall(PQuery calledQuery, Tuple actualParametersTuple) {
 		Set<TypeJudgement> result = new HashSet<TypeJudgement>();
-		for (TypeJudgement parameterJudgement : getReferredQuery().getTypeGuarantees()) {			
+		for (TypeJudgement parameterJudgement : calledQuery.getTypeGuarantees()) {			
 			IInputKey inputKey = parameterJudgement.getInputKey();
 			Tuple judgementIndexTuple = parameterJudgement.getVariablesTuple();
 			
 			Object[] judgementVariables = new Object[judgementIndexTuple.getSize()];
 			for (int i=0; i<judgementVariables.length; ++i)
-				judgementVariables[i] = variablesTuple.get((int) judgementIndexTuple.get(i));
+				judgementVariables[i] = actualParametersTuple.get((int) judgementIndexTuple.get(i));
 			
 			result.add(new TypeJudgement(inputKey, new FlatTuple(judgementVariables))); 
 		}

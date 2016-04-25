@@ -100,5 +100,8 @@ public class TypeJudgement {
 		return new FlatTuple(elements);
 	}
 
-
+	@Override
+	public String toString() {
+		return "TypeJudgement:" + inputKey.getPrettyPrintableName() + "@" + variablesTuple.toString();
+	}
 }
