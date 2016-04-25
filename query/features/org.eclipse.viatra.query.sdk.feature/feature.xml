@@ -8,7 +8,7 @@
       license-feature-version="0.0.0">
 
    <description>
-      VIATRA Query IDE support: editor, code generation, etc.
+      VIATRA Query and Transformation IDE support: editor, code generation, etc.
    </description>
 
    <url>
@@ -37,10 +37,6 @@
 
    <includes
          id="org.eclipse.viatra.addon.querybasedfeatures.runtime.feature"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.viatra.addon.viewers.runtime.feature"
          version="0.0.0"/>
 
    <includes
