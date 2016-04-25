@@ -25,6 +25,8 @@
         <details key="documentation" value="Temporary construct for storing traceability information."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="equivalenceClassIDs" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong" transient="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SingleParentNodeRecipe" abstract="true"
       eSuperTypes="#//ReteNodeRecipe">
