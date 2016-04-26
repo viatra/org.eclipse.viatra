@@ -107,7 +107,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
         @Override
         public boolean apply(PackageImport importDecl) {
-            return nsUri.equals(importDecl.getEPackage().getNsURI());
+            return importDecl != null && nsUri.equals(importDecl.getEPackage().getNsURI());
         }
     }
 

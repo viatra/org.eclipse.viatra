@@ -139,7 +139,7 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
      * @param generator
      *            The XtextGenerator object
      */
-    private void setupXtextGenerator(ResourceOrderingXtextGenerator generator) {
+    private void setupXtextGenerator(ResourceOrderingXtextGenerator generator) throws MojoFailureException {
         generator.setLog(getLog()); // it's needed to give our Logger to the
                                     // other plugin to avoid exceptions
 
@@ -167,11 +167,11 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
 
             Field skipField = generatorClass.getDeclaredField("skip");
             skipField.setAccessible(true);
-            skipField.set(generator, new Boolean(false));
+            skipField.set(generator, Boolean.FALSE);
 
             Field failOnErrorField = generatorClass.getDeclaredField("failOnValidationError");
             failOnErrorField.setAccessible(true);
-            failOnErrorField.set(generator, new Boolean(true));
+            failOnErrorField.set(generator, Boolean.TRUE);
 
             Field projectField = generatorClass.getDeclaredField("project");
             projectField.setAccessible(true);
@@ -197,14 +197,9 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
             targetLevelField.setAccessible(true);
             targetLevelField.set(generator, compilerTargetLevel);
 
-        } catch (NoSuchFieldException e1) {
-
-        } catch (SecurityException e1) {
-
-        } catch (IllegalArgumentException e) {
-
-        } catch (IllegalAccessException e) {
-
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e1) {
+            //Should never happen
+            throw new MojoFailureException("Error initializing Xtext Generator " + e1.getMessage(), e1);
         }
     }
 

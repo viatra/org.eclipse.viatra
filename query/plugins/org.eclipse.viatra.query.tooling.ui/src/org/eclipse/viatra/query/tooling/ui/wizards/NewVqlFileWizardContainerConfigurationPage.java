@@ -199,7 +199,7 @@ public class NewVqlFileWizardContainerConfigurationPage extends NewTypeWizardPag
             return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_7, JavaCore.VERSION_1_7);
         }
         IStatus status = JavaConventionsUtil.validatePackageName(text, project);
-        if (!text.equalsIgnoreCase(text)) {
+        if (!text.equalsIgnoreCase(text.toLowerCase())) {
             return new Status(IStatus.ERROR, ViatraQueryGUIPlugin.PLUGIN_ID, PACKAGE_NAME_WARNING);
         }
         return status;
