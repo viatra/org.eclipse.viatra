@@ -71,11 +71,6 @@ public class EvolutionaryStrategy implements IStrategy {
         for (IEvolutionaryStrategyAdapter adapter : adapters) {
             adapter.init(context);
         }
-        
-        // TODO no design space
-        // context.setDesignSpace(new DummyDesignSpace())
-        // context.setTrajectorySaver(new FullTrajectorySaver())
-        // TODO no instance model
     }
 
     @Override
@@ -88,9 +83,13 @@ public class EvolutionaryStrategy implements IStrategy {
         List<TrajectoryFitness> currentPopulation = initialPopulationSelector.getInitialPopulation();
 
         dsm.setUseDesignSpace(false);
-        // TODO start instance workers
         
-        while (!isInterrupted.get()) {
+        if (isInterrupted.get()) {
+            savePopulationsAsSolutions(currentPopulation);
+            return;
+        }
+        
+        while (true) {
             
             List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation = evaluationStrategy.evaluatePopulation(currentPopulation);
             
@@ -108,18 +107,8 @@ public class EvolutionaryStrategy implements IStrategy {
                 }
             }
             
-            if (stop) {
-                for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
-                    if (trajectoryFitness.rank == 1) {
-                        while(dsm.undoLastTransformation());
-                        for (Object transition : trajectoryFitness.trajectory) {
-                            dsm.fireActivation(transition);
-                        }
-                        context.calculateFitness();
-                        solutionStore.newSolution(context);
-                    }
-                }
-                // TODO stop worker threads
+            if (stop || isInterrupted.get()) {
+                savePopulationsAsSolutions(survivedPopulation);
                 return;
             }
 
@@ -164,6 +153,19 @@ public class EvolutionaryStrategy implements IStrategy {
             currentPopulation = new ArrayList<TrajectoryFitness>(childPopulation);
         }
         
+    }
+
+    private void savePopulationsAsSolutions(List<TrajectoryFitness> survivedPopulation) {
+        for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
+            if (trajectoryFitness.rank == 1) {
+                while(dsm.undoLastTransformation());
+                for (Object transition : trajectoryFitness.trajectory) {
+                    dsm.fireActivation(transition);
+                }
+                context.calculateFitness();
+                solutionStore.newSolution(context);
+            }
+        }
     }
 
     @Override
