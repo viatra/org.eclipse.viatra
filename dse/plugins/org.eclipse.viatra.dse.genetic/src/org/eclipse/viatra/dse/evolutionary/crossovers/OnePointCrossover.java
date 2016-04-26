@@ -49,9 +49,7 @@ public class OnePointCrossover implements ICrossover {
         int minSize = Math.min(p1Size, p2Size);
         int index = random.nextInt(minSize - 1) + 1;
 
-        for (int i = 0; i < index; i++) {
-            dsm.fireActivation(parent1t[i]);
-        }
+        dsm.executeTrajectoryCheaply(parent1t, index);
         for (int i = index; i < p2Size; i++) {
             GeneticHelper.tryFireRightTransition(dsm, parent2t[i]);
         }
@@ -61,9 +59,7 @@ public class OnePointCrossover implements ICrossover {
 
         dsm.undoUntilRoot();
 
-        for (int i = 0; i < index; i++) {
-            dsm.fireActivation(parent2t[i]);
-        }
+        dsm.executeTrajectoryCheaply(parent2t, index);
         for (int i = index; i < p1Size; i++) {
             GeneticHelper.tryFireRightTransition(dsm, parent1t[i]);
         }

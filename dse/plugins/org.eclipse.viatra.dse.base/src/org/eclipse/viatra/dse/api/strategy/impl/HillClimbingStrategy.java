@@ -138,7 +138,7 @@ public class HillClimbingStrategy implements IStrategy {
         solutionStore.newSolution(context);
         logger.debug("Found solution: " + dsm.getTrajectoryInfo().toString());
         logger.debug("Backtrack for more solutions, if needed.");
-        while(dsm.undoLastTransformation());
+        dsm.undoUntilRoot();
     }
 
     @Override

@@ -38,9 +38,7 @@ public class AddTransitionByPriorityMutation implements IMutation {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
 
-        for (Object t : parent.trajectory) {
-            dsm.fireActivation(t);
-        }
+        dsm.executeTrajectoryCheaply(parent.trajectory);
 
         Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int size = transitions.size();

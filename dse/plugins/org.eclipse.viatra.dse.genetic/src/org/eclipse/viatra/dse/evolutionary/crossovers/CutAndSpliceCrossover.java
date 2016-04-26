@@ -49,9 +49,7 @@ public class CutAndSpliceCrossover implements ICrossover {
         int index1 = random.nextInt(p1Size - 1) + 1;
         int index2 = random.nextInt(p2Size - 1) + 1;
 
-        for (int i = 0; i < index1; i++) {
-            dsm.fireActivation(parent1t[i]);
-        }
+        dsm.executeTrajectoryCheaply(parent1t, index1);
         for (int i = index2; i < p2Size; i++) {
             GeneticHelper.tryFireRightTransition(dsm, parent2t[i]);
         }
@@ -61,9 +59,7 @@ public class CutAndSpliceCrossover implements ICrossover {
 
         dsm.undoUntilRoot();
 
-        for (int i = 0; i < index2; i++) {
-            dsm.fireActivation(parent2t[i]);
-        }
+        dsm.executeTrajectoryCheaply(parent2t, index2);
         for (int i = index1; i < p1Size; i++) {
             GeneticHelper.tryFireRightTransition(dsm, parent1t[i]);
         }

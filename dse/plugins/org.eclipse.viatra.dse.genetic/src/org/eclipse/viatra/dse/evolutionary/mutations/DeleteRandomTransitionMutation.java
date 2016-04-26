@@ -32,9 +32,9 @@ public class DeleteRandomTransitionMutation implements IMutation {
 
         int trajectorySize = trajectory.length;
         int index = rnd.nextInt(trajectorySize);
-        for (int i = 0; i < index; i++) {
-            dsm.fireActivation(trajectory[i]);
-        }
+        
+        dsm.executeTrajectoryCheaply(trajectory, index);
+
         for (int i = index + 1; i < trajectorySize; i++) {
             GeneticHelper.tryFireRightTransition(dsm, trajectory[i]);
         }

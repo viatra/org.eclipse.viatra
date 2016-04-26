@@ -68,6 +68,7 @@ public class DesignSpaceManager {
 
     private BiMap<Activation<?>, Object> activationIds;
     private boolean useDesignSpace = true;
+    private boolean generateActivationCodes = true;
 
     public DesignSpaceManager(ThreadContext context, Notifier model, EditingDomain domain, IStateCoderFactory factory,
             IDesignSpace designSpace, RuleEngine ruleEngine, ViatraQueryEngine engine) {
@@ -178,6 +179,51 @@ public class DesignSpaceManager {
         
         return true;
     }
+    
+    public int executeTrajectoryCheaply(Object[] trajectoryToExecute) {
+        return executeTrajectoryCheaply(trajectoryToExecute, trajectoryToExecute.length);
+    }
+
+    public int executeTrajectoryCheaply(Object[] trajectoryToExecute, int excludedIndex) {
+        int unsuccesfulIndex = -1;
+        for (int i = 0; i < excludedIndex; i++) {
+            Object activationId = trajectoryToExecute[i];
+            final Activation<?> activation = getActivationByIdFromConflictSet(activationId);
+
+            if (activation == null) {
+                unsuccesfulIndex = i;
+                break;
+            }
+
+            DSETransformationRule<?, ?> rule = getRuleByActivation(activation);
+
+            Map<String, Double> measureCosts = null;
+            if (activationFitnessProcessors != null && activationFitnessProcessors.containsKey(rule)) {
+                IPatternMatch match = (IPatternMatch) activation.getAtom();
+                ActivationFitnessProcessor processor = activationFitnessProcessors.get(rule);
+                double fitness = processor.process(match);
+                if (measureCosts == null) {
+                    measureCosts = new HashMap<String, Double>();
+                }
+                measureCosts.put(activationFitnessProcessorNames.get(rule), fitness);
+            }
+
+            ChangeCommand rc = new ChangeCommand(model) {
+                @Override
+                protected void doExecute() {
+                    activation.fire(evmContext);
+                }
+            };
+            domain.getCommandStack().execute(rc);
+
+            Object newStateId = stateCoder.createStateCode();
+
+            trajectory.addStep(activationId, rule, newStateId, measureCosts);
+        }
+        generateTransitions();
+        return unsuccesfulIndex;
+
+    }
 
     public Object getTransitionByActivation(Activation<?> activation) {
         return activationIds.get(activation);
@@ -270,9 +316,14 @@ public class DesignSpaceManager {
     }
 
     public void undoUntilRoot() {
-        while(undoLastTransformation());
+        while(trajectory.canStepBack()) {
+            domain.getCommandStack().undo();
+            trajectory.backtrack();
+        }
+        generateTransitions();
+        logger.debug("Backtracked to root.");
     }
-
+    
     private Object generateMatchCode(IPatternMatch match) {
         return stateCoder.createActivationCode(match);
     }
@@ -298,6 +349,24 @@ public class DesignSpaceManager {
 
             activationIds.put(activation, activationId);
         }
+    }
+
+    private Activation<?> getActivationByIdFromConflictSet(Object soughtActivationId) {
+        for (Activation<?> activation : ruleEngine.getConflictingActivations()) {
+            
+            // we ignore not fireable Activations. These shouldn't be here
+            // anyway TODO check if this code makes sense
+            if (!activation.isEnabled()) {
+                continue;
+            }
+            
+            IPatternMatch match = (IPatternMatch) activation.getAtom();
+            Object activationId = stateCoder.createActivationCode(match);
+            if (activationId.equals(soughtActivationId)) {
+                return activation;
+            }
+        }
+        return null;
     }
 
     public SolutionTrajectory createSolutionTrajectroy() {

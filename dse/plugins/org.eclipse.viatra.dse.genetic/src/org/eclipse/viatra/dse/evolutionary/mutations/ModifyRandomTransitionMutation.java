@@ -33,9 +33,8 @@ public class ModifyRandomTransitionMutation implements IMutation {
 
         int trajectorySize = trajectory.length;
         int index = rnd.nextInt(trajectorySize);
-        for (int i = 0; i < index; i++) {
-            dsm.fireActivation(trajectory[i]);
-        }
+
+        dsm.executeTrajectoryCheaply(trajectory, index);
 
         Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int transitionsSize = transitions.size();

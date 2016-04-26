@@ -124,8 +124,7 @@ public class RandomSearchStrategy implements IStrategy {
                 logger.debug(nth + " tries left");
                 if (nth > 0) {
 
-                    while (dsm.undoLastTransformation()) {
-                    }
+                    dsm.undoUntilRoot();
                     maxDepth = rnd.nextInt(shared.maxDepth - shared.minDepth) + shared.minDepth;
 
                 } else {
