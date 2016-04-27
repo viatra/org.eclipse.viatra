@@ -37,7 +37,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
@@ -172,12 +171,12 @@ public final class EMFHelper {
      */
     public static Notifier clone(Notifier notifier) {
         Copier copier = new Copier();
-        Notifier clonedModel = clone(notifier, copier);
+        Notifier clonedModel = clone(notifier, copier, null);
         copier.copyReferences();
         return clonedModel;
     }
 
-    private static Notifier clone(Notifier notifier, Copier copier) {
+    private static Notifier clone(Notifier notifier, Copier copier, ResourceSet resourceSetToCloneTo) {
         Preconditions.checkNotNull(copier);
         
         if (notifier instanceof EObject) {
@@ -185,7 +184,10 @@ public final class EMFHelper {
             return copier.copy(eObject);
         } else if (notifier instanceof Resource) {
             Resource resource = (Resource) notifier;
-            ResourceImpl clonedResource = new ResourceImpl();
+            if (resourceSetToCloneTo == null) {
+                resourceSetToCloneTo = new ResourceSetImpl();
+            }
+            Resource clonedResource = resourceSetToCloneTo.createResource(URI.createFileURI("dummy.dummyext"));
             
             for (EObject eObject : resource.getContents()) {
                 EObject clonedEObject = copier.copy(eObject);
@@ -198,8 +200,7 @@ public final class EMFHelper {
             ResourceSetImpl clonedResourceSet = new ResourceSetImpl();
             
             for (Resource resource : resourceSet.getResources()) {
-                Resource clonedResource = (Resource) clone(resource, copier);
-                clonedResourceSet.getResources().add(clonedResource);
+                clone(resource, copier, clonedResourceSet);
             }
             
             return clonedResourceSet;
