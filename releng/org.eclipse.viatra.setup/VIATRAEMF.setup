@@ -24,11 +24,6 @@
   </setupTask>
   <setupTask
       xsi:type="setup:EclipseIniTask"
-      option="-Doomph.redirection.viatra.setup"
-      value="=http://download.eclipse.org/viatra/setup/VIATRAEMF.setup->${git.clone.viatra.location|uri}/releng/org.eclipse.viatra.setup/VIATRAEMF.setup"
-      vm="true"/>
-  <setupTask
-      xsi:type="setup:EclipseIniTask"
       option="-Xmx"
       value="2048m"
       vm="true">
@@ -113,7 +108,7 @@
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
-      predecessor="//@setupTasks.10"
+      predecessor="//@setupTasks.9"
       successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
     <targlet
         name="${scope.project.label}"
@@ -230,7 +225,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.9"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -288,7 +283,7 @@
       <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.pregen"
-          predecessor="//@setupTasks.10 //@setupTasks.8"
+          predecessor="//@setupTasks.9 //@setupTasks.7"
           onlyNewProjects="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
@@ -425,11 +420,11 @@
       <requirement
           name="org.eclipse.viatra.query.sdk.feature.source.feature.group"/>
       <repository
-          url="https://hudson.eclipse.org/viatra/job/viatra-master/lastSuccessfulBuild/artifact/releng/org.eclipse.viatra.update/target/repository"/>
+          url="https://hudson.eclipse.org/viatra/job/${viatra.hudson.ci.build.job.name}/lastSuccessfulBuild/artifact/releng/org.eclipse.viatra.update/target/repository"/>
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.9"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}">
@@ -437,12 +432,24 @@
             name="org.eclipse.viatra.query.sdk.feature.source.feature.group"/>
         <repositoryList>
           <repository
-              url="https://hudson.eclipse.org/viatra/job/viatra-master/lastSuccessfulBuild/artifact/releng/org.eclipse.viatra.update/target/repository"/>
+              url="https://hudson.eclipse.org/viatra/job/${viatra.hudson.ci.build.job.name}/lastSuccessfulBuild/artifact/releng/org.eclipse.viatra.update/target/repository"/>
         </repositoryList>
       </targlet>
     </setupTask>
     <stream
-        name="master"/>
+        name="master">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="viatra.hudson.ci.build.job.name"
+          value="viatra-master"/>
+    </stream>
+    <stream
+        name="1.2-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="viatra.hudson.ci.build.job.name"
+          value="viatra-maintenance-1.2"/>
+    </stream>
     <description>Installs the development environment of VIATRA into the host instance</description>
   </project>
   <project name="dse"
@@ -488,7 +495,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.cep.premetamodelgen"
-        predecessor="//@setupTasks.8"
+        predecessor="//@setupTasks.7"
         onlyNewProjects="true"
         refresh="true">
       <description></description>
@@ -537,7 +544,7 @@
       label="Xcore Integration">
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.9"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -680,7 +687,7 @@
       <setupTask
           xsi:type="setup:VariableTask"
           name="bugzilla.version"
-          value="1.2"/>
+          value="1.3"/>
       <setupTask
           xsi:type="mylyn:MylynBuildsTask"
           serverURL="https://hudson.eclipse.org/viatra"
@@ -694,8 +701,58 @@
             name="viatra-master-maven"/>
       </setupTask>
     </stream>
+    <stream
+        name="1.2-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="1.2"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/viatra"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="viatra-maintenance-1.2"/>
+        <buildPlan
+            name="viatra-maintenance-1.2-gerrit"/>
+      </setupTask>
+    </stream>
   </project>
   <stream name="master">
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-Doomph.redirection.viatra.setup"
+        value="=https://git.eclipse.org/c/viatra/org.eclipse.viatra.git/plain/releng/org.eclipse.viatra.setup/VIATRAEMF.setup->${git.clone.viatra.location|uri}/releng/org.eclipse.viatra.setup/VIATRAEMF.setup"
+        vm="true"/>
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="VIATRA Releng"
+          id="">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:OrPredicate">
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/releng/.*"/>
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/setup/.*"/>
+            <operand
+                xsi:type="predicates:NaturePredicate"
+                nature="org.eclipse.pde.FeatureNature"/>
+          </operand>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+        </predicate>
+      </workingSet>
+      <description>The dynamic working sets for ${scope.project.label}</description>
+    </setupTask>
+  </stream>
+  <stream name="1.2-maintenance">
     <setupTask
         xsi:type="setup.workingsets:WorkingSetTask">
       <workingSet
