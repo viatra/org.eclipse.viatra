@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.debug.model.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.TransformationState;
 import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMListener;
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
@@ -38,6 +39,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     private String id;
     private List<ITransformationDebugListener> listeners = Lists.newArrayList();
     private List<ITransformationBreakpoint> breakpoints = Lists.newArrayList();
+    private Set<RuleSpecification<?>> rules = Sets.newHashSet();
     private Set<Activation<?>> activations = Sets.newHashSet();
     private Activation<?> nextActivation;
 
@@ -74,16 +76,22 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
             listener.activationCreated(activation);
         }
     }
+    
+    @Override
+    public void addedRule(RuleSpecification<?> specification) {
+        rules.add(specification);
+        for (ITransformationDebugListener listener : listeners) {
+            listener.addedRule(specification);
+        }
+    }
 
-//    @Override
-//    public void activationChanged(Activation<?> activation, ActivationState oldState, EventType event) {
-//        if (event.equals(RuleEngineEventType.FIRE)) {
-//            activations.remove(activation);
-//            for (ITransformationDebugListener listener : listeners) {
-//                listener.activationFired(activation);
-//            }
-//        }
-//    };
+    @Override
+    public void removedRule(RuleSpecification<?> specification) {
+        rules.remove(specification);
+        for (ITransformationDebugListener listener : listeners) {
+            listener.removedRule(specification);
+        }
+    }
     
     @Override
     public void afterFiring(Activation<?> activation) {
@@ -178,7 +186,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         if (!listeners.contains(listener)) {
             listeners.add(listener);
         }
-        return new TransformationState(id, engine, activations, nextActivation);
+        return new TransformationState(id, engine, activations, rules, nextActivation);
     }
 
     public void unRegisterTransformationDebugListener(ITransformationDebugListener listener) {

@@ -17,7 +17,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
 import org.eclipse.viatra.transformation.debug.model.TransformationThreadFactory;
-import org.eclipse.viatra.transformation.debug.ui.views.ActivationBrowser;
+import org.eclipse.viatra.transformation.debug.ui.views.AdaptableTransformationBrowser;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
 public class AddBreakpointHandler extends AbstractHandler{
@@ -26,18 +26,19 @@ public class AddBreakpointHandler extends AbstractHandler{
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             @Override
             public void run() {
-                try {
-                    ActivationBrowser view = (ActivationBrowser) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ActivationBrowser.ID);
-                    Activation<?> selection = view.getSelection();
-                    
-                    //TODO Temporary
-                    for(TransformationThread thread : TransformationThreadFactory.INSTANCE.getTransformationThreads()){
-                        thread.toggleBreakPoint(selection);
-                    }
-                    
-                } catch (PartInitException e) {
-                    e.printStackTrace();
-                }
+                //TODO
+//                try {
+//                    AdaptableTransformationBrowser view = (AdaptableTransformationBrowser) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(AdaptableTransformationBrowser.ID);
+//                    Activation<?> selection = view.getSelection();
+//                    
+//                    //TODO Temporary
+//                    for(TransformationThread thread : TransformationThreadFactory.INSTANCE.getTransformationThreads()){
+//                        thread.toggleBreakPoint(selection);
+//                    }
+//                    
+//                } catch (PartInitException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
         return null;

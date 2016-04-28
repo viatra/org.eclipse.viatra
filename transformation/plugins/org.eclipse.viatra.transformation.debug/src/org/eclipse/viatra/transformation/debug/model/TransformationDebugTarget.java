@@ -25,9 +25,12 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.viatra.transformation.debug.TransformationDebugger;
+import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
+import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter;
+
+import com.google.common.collect.Lists;
 
 public class TransformationDebugTarget extends TransformationDebugElement implements IDebugTarget{
-    // associated system process (VM)
     private TransformationDebugProcess process;
     // containing launch object
     private ILaunch launch;
@@ -37,12 +40,18 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     private List<TransformationThread> threads = new ArrayList<>();
     private boolean terminated = false;
     
-    public TransformationDebugTarget(ILaunch launch, List<TransformationDebugger> debuggers, IType transformationType, String name) throws CoreException {
+    public TransformationDebugTarget(ILaunch launch, AdaptableEVM evm, IType transformationType, String name) throws CoreException {
         super(null);
         this.launch = launch;
         this.name = name;
+        List<TransformationDebugger> debuggers = Lists.newArrayList();
+        for(IEVMAdapter adapter : evm.getAdapters()){
+            if(adapter instanceof TransformationDebugger){
+                debuggers.add((TransformationDebugger) adapter);
+            }
+        }
         for(TransformationDebugger debugger : debuggers){
-            threads.add(TransformationThreadFactory.INSTANCE.createTransformationThread(this, debugger, transformationType));
+            threads.add(TransformationThreadFactory.INSTANCE.createTransformationThread(this, debugger, evm, transformationType));
         }
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
         installDeferredBreakpoints();

@@ -15,23 +15,26 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.viatra.transformation.debug.TransformationDebugger;
+import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 public enum TransformationThreadFactory {
     INSTANCE;
     
     private List<TransformationThread> threads = Lists.newArrayList();
-    private List<ITransformationStateListener> listenersToAdd = Lists.newArrayList();
+    private Multimap<String, ITransformationStateListener> listenersToAdd = ArrayListMultimap.create();
     
-    public TransformationThread createTransformationThread(TransformationDebugTarget target, TransformationDebugger debugger, IType transformationType){
-        TransformationThread thread = new TransformationThread(target, debugger, debugger.getId(), transformationType);
-        if(!threads.contains(thread)){
-            threads.add(thread);
+    public TransformationThread createTransformationThread(TransformationDebugTarget target, TransformationDebugger debugger, AdaptableEVM evm, IType transformationType){
+        TransformationThread thread = new TransformationThread(target, debugger, evm, transformationType);
+        
+        for(ITransformationStateListener listener : listenersToAdd.get(evm.getIdentifier())){
+            thread.registerTransformationStateListener(listener);
         }
-        for (ITransformationStateListener iTransformationStateListener : listenersToAdd) {
-            thread.registerTransformationStateListener(iTransformationStateListener); 
-        }
+        
+        threads.add(thread);
         return thread;
     }
     
@@ -58,23 +61,21 @@ public enum TransformationThreadFactory {
         }
     }
     
-    public void addListener(ITransformationStateListener listener){
-        if(!listenersToAdd.contains(listener)){
-            listenersToAdd.add(listener);
+    public void registerListener(ITransformationStateListener listener, String id){
+        TransformationThread transformationThread = getTransformationThread(id);
+        if(transformationThread != null){
+            transformationThread.registerTransformationStateListener(listener);
         }
-        for (TransformationThread thread : threads) {
-            thread.registerTransformationStateListener(listener);
-        }
+        listenersToAdd.put(id, listener);
     }
     
     public void unRegisterListener(ITransformationStateListener listener){
-        if(listenersToAdd.contains(listener)){
-            listenersToAdd.remove(listener);
+        for (TransformationThread transformationThread : threads) {
+            transformationThread.unRegisterTransformationStateListener(listener);
         }
-        for (TransformationThread thread : threads) {
-            thread.unRegisterTransformationStateListener(listener);
+        for(String id : listenersToAdd.keySet()){
+            listenersToAdd.remove(id, listener);
         }
     }
-    
     
 }

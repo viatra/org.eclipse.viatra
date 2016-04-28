@@ -24,6 +24,8 @@ import org.eclipse.viatra.transformation.debug.DebuggerActions;
 import org.eclipse.viatra.transformation.debug.ITransformationDebugListener;
 import org.eclipse.viatra.transformation.debug.TransformationDebugger;
 import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
+import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 
 import com.google.common.collect.Lists;
 
@@ -35,17 +37,18 @@ public class TransformationThread extends TransformationDebugElement implements 
     private List<Activation<?>> startedFiring = Lists.newArrayList();
     private TransformationState state;
     private TransformationDebugger debugger;
-    private String name;
+    private AdaptableEVM evm;
+
     private boolean stepping = false;
     private boolean suspended = true;
     private boolean terminated = false;
     private boolean initial = true;
     private IType transformationType;
 
-    protected TransformationThread(TransformationDebugTarget target, TransformationDebugger debugger, String name, IType transformationType) {
+    protected TransformationThread(TransformationDebugTarget target, TransformationDebugger debugger, AdaptableEVM evm, IType transformationType) {
         super(target);
         this.debugger = debugger;
-        this.name = name;
+        this.evm = evm;
         this.transformationType = transformationType;
         this.state = debugger.registerTransformationDebugListener(this);
     }
@@ -167,7 +170,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public String getName() throws DebugException {
-        return name;
+        return evm.getIdentifier();
     }
 
     @Override
@@ -181,11 +184,12 @@ public class TransformationThread extends TransformationDebugElement implements 
     // ITransformationDebugListener
     @Override
     public void started() {
-        state = new TransformationState(name, debugger.getEngine());
-        fireCreationEvent();
         try {
+            state = new TransformationState(getName(), debugger.getEngine());
+            fireCreationEvent();
             resume();
         } catch (DebugException e) {
+            e.printStackTrace();
         }
 
     }
@@ -208,7 +212,7 @@ public class TransformationThread extends TransformationDebugElement implements 
         fireTerminateEvent();
         ((TransformationDebugTarget) getDebugTarget()).requestTermination();
         for (ITransformationStateListener listener : stateListeners) {
-            listener.transformationStateDisposed(state);
+            listener.transformationStateDisposed(state, evm.getIdentifier());
         }
         dispose();
         
@@ -238,6 +242,19 @@ public class TransformationThread extends TransformationDebugElement implements 
     public void displayNextActivation(Activation<?> act) {
         startedFiring.add(act);
         state.displayNextActivation(act);
+        notifyListeners(state);
+    }
+    
+    @Override
+    public void addedRule(RuleSpecification<?> specification) {
+        state.ruleAdded(specification);
+        notifyListeners(state);
+        
+    }
+
+    @Override
+    public void removedRule(RuleSpecification<?> specification) {
+        state.ruleRemoved(specification);
         notifyListeners(state);
     }
 
@@ -299,8 +316,14 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     private void notifyListeners(TransformationState state) {
         for (ITransformationStateListener listener : stateListeners) {
-            listener.transformationStateChanged(state);
+            listener.transformationStateChanged(state, evm.getIdentifier());
         }
     }
+    
+    public AdaptableEVM getAdaptableEvm() {
+        return evm;
+    }
+
+
 
 }

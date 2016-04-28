@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.eclipse.viatra.transformation.tracer;singleton:=true
 Bundle-Version: 0.13.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Eclipse VIATRA Project
-Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.xtext.xbase.lib;bundle-version="[2.9.0,3.0.0)",
  org.eclipse.xtend.lib;bundle-version="[2.9.0,3.0.0)",

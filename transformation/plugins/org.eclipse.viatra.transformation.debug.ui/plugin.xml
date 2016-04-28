@@ -5,15 +5,15 @@
          point="org.eclipse.ui.views">
       <view
             category="org.eclipse.viatra.query.tooling.ui"
-            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.ActivationBrowser"
+            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.AdaptableTransformationBrowser"
             icon="icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.transformation.ui.debug.DisplayActivations"
-            name="Activation Browser"
+            name="Adaptable Transformation Browser"
             restorable="true">
       </view>
       <view
             category="org.eclipse.viatra.query.tooling.ui"
-            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.TransformationViewer"
+            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.ModelInstanceViewer"
             icon="icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.transformation.ui.debug.TransformationViewer"
             name="Transformation Viewer"

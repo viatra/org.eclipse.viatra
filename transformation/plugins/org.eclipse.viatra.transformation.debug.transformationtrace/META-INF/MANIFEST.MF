@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: VIATRA Transformation Trace Model
 Bundle-SymbolicName: org.eclipse.viatra.transformation.debug.transformationtrace;singleton:=true
 Bundle-Version: 0.13.0.qualifier
 Bundle-ClassPath: .
@@ -18,6 +18,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.xtend.lib,
  org.eclipse.xtend.lib.macro
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: %providerName
+Bundle-Vendor: Eclipse VIATRA Project
 Bundle-Localization: plugin
 

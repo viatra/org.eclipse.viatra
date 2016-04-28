@@ -12,6 +12,7 @@ package org.eclipse.viatra.transformation.debug;
 
 import org.eclipse.viatra.transformation.debug.model.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 
 public interface ITransformationDebugListener {
     public void started();
@@ -27,5 +28,9 @@ public interface ITransformationDebugListener {
     public void activationFired(Activation<?> activation);
     
     public void displayNextActivation(Activation<?> act);
+
+    public void addedRule(RuleSpecification<?> specification);
+
+    public void removedRule(RuleSpecification<?> specification);
     
 }
