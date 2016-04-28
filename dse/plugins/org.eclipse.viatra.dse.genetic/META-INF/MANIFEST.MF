@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA DSE framework Genetic Algorithms (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.dse.genetic
-Bundle-Version: 0.12.0.qualifier
+Bundle-Version: 0.12.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.viatra.dse.base,
  org.eclipse.viatra.dse.designspace,

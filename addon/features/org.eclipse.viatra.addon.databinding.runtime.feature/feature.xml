@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.databinding.runtime.feature"
       label="VIATRA Data Binding Integration"
-      version="1.2.0.qualifier"
+      version="1.2.1.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

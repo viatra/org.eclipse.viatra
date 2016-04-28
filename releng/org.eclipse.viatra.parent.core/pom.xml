@@ -34,7 +34,7 @@
 	<parent>
 		<groupId>org.eclipse.viatra</groupId>
 		<artifactId>org.eclipse.viatra.parent</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.2.1-SNAPSHOT</version>
 		<relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
 	</parent>
 	   <build>
@@ -66,4 +66,5 @@
             </plugin>
         </plugins>
     </build>
+<version>1.2.1-SNAPSHOT</version>
 </project>

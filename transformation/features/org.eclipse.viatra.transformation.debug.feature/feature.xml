@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.transformation.debug.feature"
       label="VIATRA EMF Debugger"
-      version="0.12.0.qualifier"
+      version="0.12.1.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -12,7 +12,7 @@
    </description>
 
    <requires>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.2.0.qualifier"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.2.1.qualifier"/>
    </requires>
 
    <plugin

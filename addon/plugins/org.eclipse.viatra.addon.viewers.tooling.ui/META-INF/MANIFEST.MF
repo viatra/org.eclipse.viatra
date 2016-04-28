@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Viewers IDE (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.addon.viewers.tooling.ui;singleton:=true
-Bundle-Version: 0.12.0.qualifier
+Bundle-Version: 0.12.1.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
