@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright (c) 2004-2015, Peter Lunk, Zoltan Ujhelyi and Daniel Varro
+/**
+ * Copyright (c) 2010-2016, Peter Lunk, IncQuery Labs Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *   Peter Lunk - initial API and implementation
- *******************************************************************************/
+ */
 package org.eclipse.viatra.transformation.debug.model;
 
 import java.util.List;
@@ -50,11 +50,8 @@ public class TransformationValue extends TransformationDebugElement implements I
 
     @Override
     public String getValueString() throws DebugException {
-//        Descriptor descriptor = EMFEditPlugin.getComposedAdapterFactoryDescriptorRegistry().getDescriptor(Lists.newArrayList(value));
-//        AdapterFactory adapterFactory = descriptor.createAdapterFactory();
         AdapterFactory adapterFactory = new ReflectiveItemProviderAdapterFactory();
         AdapterFactoryLabelProvider adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory);
-        
         
         if (value == null) {
             return "NULL";

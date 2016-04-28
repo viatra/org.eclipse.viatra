@@ -28,10 +28,6 @@
                     <filesets>
                         <fileset>
                             <directory>xtend-gen</directory>
-                            <excludes>
-                                <exclude>keep.txt</exclude>
-                                <exclude>.keep.txt</exclude>
-                            </excludes>
                         </fileset>
                     </filesets>
                 </configuration>

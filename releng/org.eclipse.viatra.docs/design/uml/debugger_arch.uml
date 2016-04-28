@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_WA5Z4PsnEeWhB7pbGP4DdQ" name="RootElement">
+  <packagedElement xmi:type="uml:Package" xmi:id="_cn2fwPsnEeWhB7pbGP4DdQ" name="Debugger_arch">
+    <packagedElement xmi:type="uml:Interface" xmi:id="_isdtkPsnEeWhB7pbGP4DdQ" name="IEVMListener"/>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_k0wPwPsnEeWhB7pbGP4DdQ" name="IEVMAdapter"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_3DFocPsnEeWhB7pbGP4DdQ" name="TransformationDebugAdapter">
+      <generalization xmi:type="uml:Generalization" xmi:id="_Qlqq0PsoEeWhB7pbGP4DdQ" general="_GwR6EPsoEeWhB7pbGP4DdQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_70kacPsnEeWhB7pbGP4DdQ" name="TransformationDebugListener">
+      <generalization xmi:type="uml:Generalization" xmi:id="_RogA0PsoEeWhB7pbGP4DdQ" general="_Ki53IPsoEeWhB7pbGP4DdQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_AXuckPsoEeWhB7pbGP4DdQ" name="ManualConflictResolver">
+      <generalization xmi:type="uml:Generalization" xmi:id="_QOcdoPsoEeWhB7pbGP4DdQ" general="_GwR6EPsoEeWhB7pbGP4DdQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_GwR6EPsoEeWhB7pbGP4DdQ" name="AbstractTransformationAdapter" isAbstract="true">
+      <nestedClassifier xmi:type="uml:Class" xmi:id="_KWCf0PsoEeWhB7pbGP4DdQ" name="AbstractTransformationAdapter"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_Ki53IPsoEeWhB7pbGP4DdQ" name="AbstractTransformationListener" isAbstract="true"/>
+    <packagedElement xmi:type="uml:Realization" xmi:id="_Orv70PsoEeWhB7pbGP4DdQ" client="_GwR6EPsoEeWhB7pbGP4DdQ" supplier="_k0wPwPsnEeWhB7pbGP4DdQ"/>
+    <packagedElement xmi:type="uml:Realization" xmi:id="_PNuAcPsoEeWhB7pbGP4DdQ" client="_Ki53IPsoEeWhB7pbGP4DdQ" supplier="_isdtkPsnEeWhB7pbGP4DdQ"/>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_g5xygPsoEeWhB7pbGP4DdQ" name="IDebugController">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_AtOKQP1_EeWjUPyFZCfgWQ" name="itransformationbreakpoint" type="_kJEZAPsoEeWhB7pbGP4DdQ" aggregation="composite" association="_As6oQP1_EeWjUPyFZCfgWQ">
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_EcHd4P1_EeWjUPyFZCfgWQ"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_EcIsAP1_EeWjUPyFZCfgWQ" value="*"/>
+      </ownedAttribute>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_aQy24PspEeWhB7pbGP4DdQ" name="getAction"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_YZVPsP1-EeWjUPyFZCfgWQ" name="getTransformationBreakpoints"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_kJEZAPsoEeWhB7pbGP4DdQ" name="ITransformationBreakpoint"/>
+    <packagedElement xmi:type="uml:Enumeration" xmi:id="_dzdsYPspEeWhB7pbGP4DdQ" name="DebuggerActions">
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_eyIUEPspEeWhB7pbGP4DdQ" name="Step"/>
+      <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_fosvsPspEeWhB7pbGP4DdQ" name="Continue"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_mVc7kPspEeWhB7pbGP4DdQ" client="_AXuckPsoEeWhB7pbGP4DdQ" supplier="_g5xygPsoEeWhB7pbGP4DdQ"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_n14zkPspEeWhB7pbGP4DdQ" client="_3DFocPsnEeWhB7pbGP4DdQ" supplier="_g5xygPsoEeWhB7pbGP4DdQ"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_o7cGYPspEeWhB7pbGP4DdQ" client="_70kacPsnEeWhB7pbGP4DdQ" supplier="_3AqlYP1-EeWjUPyFZCfgWQ"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_qSZ5UPspEeWhB7pbGP4DdQ" client="_3DFocPsnEeWhB7pbGP4DdQ" supplier="_kJEZAPsoEeWhB7pbGP4DdQ"/>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_3AqlYP1-EeWjUPyFZCfgWQ" name="IDebugViewer">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_KZ3acPspEeWhB7pbGP4DdQ" name="displayTransformationContext"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_As6oQP1_EeWjUPyFZCfgWQ" memberEnd="_AtOKQP1_EeWjUPyFZCfgWQ _AtOxUP1_EeWjUPyFZCfgWQ">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_As9EgP1_EeWjUPyFZCfgWQ" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_As9Egf1_EeWjUPyFZCfgWQ" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_AtOxUP1_EeWjUPyFZCfgWQ" name="idebugcontroller" type="_g5xygPsoEeWhB7pbGP4DdQ" association="_As6oQP1_EeWjUPyFZCfgWQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_PjwgsP1_EeWjUPyFZCfgWQ" name="TransformationDebugController">
+      <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_XO2kIP1_EeWjUPyFZCfgWQ" client="_PjwgsP1_EeWjUPyFZCfgWQ" supplier="_g5xygPsoEeWhB7pbGP4DdQ" contract="_g5xygPsoEeWhB7pbGP4DdQ"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_TLbyAP1_EeWjUPyFZCfgWQ" name="TransformationDebugViewer"/>
+    <packagedElement xmi:type="uml:Realization" xmi:id="_YXUoEP1_EeWjUPyFZCfgWQ" client="_TLbyAP1_EeWjUPyFZCfgWQ" supplier="_3AqlYP1-EeWjUPyFZCfgWQ"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_ZiA5kP1_EeWjUPyFZCfgWQ" name="TransformationDebugView"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_lcThUP1_EeWjUPyFZCfgWQ" client="_ZiA5kP1_EeWjUPyFZCfgWQ" supplier="_PjwgsP1_EeWjUPyFZCfgWQ"/>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_l2MoAP1_EeWjUPyFZCfgWQ" client="_ZiA5kP1_EeWjUPyFZCfgWQ" supplier="_TLbyAP1_EeWjUPyFZCfgWQ"/>
+  </packagedElement>
+</uml:Model>

@@ -3,7 +3,8 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra.transformation.debug.transformationtrace/src-gen"
     modelPluginID="org.eclipse.viatra.transformation.debug.transformationtrace" modelName="Transformationtrace"
     rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" importerID="org.eclipse.emf.importer.ecore"
-    complianceLevel="7.0" copyrightFields="false" operationReflection="true" importOrganizing="true">
+    complianceLevel="7.0" copyrightFields="false" runtimeVersion="2.10" operationReflection="true"
+    importOrganizing="true">
   <foreignModel>transformationtrace.ecore</foreignModel>
   <genPackages prefix="Transformationtrace" basePackage="org.eclipse.viatra.transformation.debug.transformationtrace"
       disposableProviderFactory="true" ecorePackage="transformationtrace.ecore#/">
