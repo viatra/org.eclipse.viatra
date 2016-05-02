@@ -108,13 +108,13 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
             }
             Boolean observed = classObservationMap.get(eClass);
             if (observed == null) {
-                final Set<Object> superTypes = super.store.getSuperTypeMap().get(eClass);
+                final Set<Object> superTypes = metaStore.getSuperTypeMap().get(eClass);
                 final Set<Object> theSuperTypes = superTypes == null ? Collections.emptySet() : superTypes;
                 final boolean overApprox = newClasses.contains(eClass)
-                        || newClasses.contains(super.store.getEObjectClassKey())
+                        || newClasses.contains(metaStore.getEObjectClassKey())
                         || !Collections.disjoint(theSuperTypes, newClasses);
                 observed = overApprox && !oldClasses.contains(eClass)
-                        && !oldClasses.contains(super.store.getEObjectClassKey())
+                        && !oldClasses.contains(metaStore.getEObjectClassKey())
                         && Collections.disjoint(theSuperTypes, oldClasses);
                 if (!observed) {
                     registerSampledClass(eClass);
@@ -150,15 +150,17 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     }
 
     protected NavigationHelperImpl navigationHelper;
-    private final NavigationHelperContentAdapter store;
     boolean isInsertion;
     boolean descendHierarchy;
     boolean traverseOnlyWellBehavingDerivedFeatures;
+    EMFBaseIndexInstanceStore instanceStore;
+    EMFBaseIndexMetaStore metaStore;
 
     NavigationHelperVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion, boolean descendHierarchy) {
         super(isInsertion /* preOrder iff insertion */);
         this.navigationHelper = navigationHelper;
-        this.store = navigationHelper.getContentAdapter();
+        instanceStore = navigationHelper.instanceStore;
+        metaStore = navigationHelper.metaStore;
         this.isInsertion = isInsertion;
         this.descendHierarchy = descendHierarchy;
         this.traverseOnlyWellBehavingDerivedFeatures = navigationHelper.getBaseIndexOptions()
@@ -218,9 +220,9 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         final Object classKey = toKey(eClass);
         if (observesClass(classKey)) {
             if (isInsertion) {
-                store.insertIntoInstanceSet(classKey, source);
+                instanceStore.insertIntoInstanceSet(classKey, source);
             } else {
-                store.removeFromInstanceSet(classKey, source);
+                instanceStore.removeFromInstanceSet(classKey, source);
             }
         }
     }
@@ -232,21 +234,21 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         Object internalValueRepresentation = null;
         if (observesFeature(featureKey)) {
             // if (internalValueRepresentation == null) // always true
-            internalValueRepresentation = store.toInternalValueRepresentation(target);
+            internalValueRepresentation = metaStore.toInternalValueRepresentation(target);
             boolean unique = feature.isUnique();
             if (isInsertion) {
-                store.insertFeatureTuple(featureKey, unique, internalValueRepresentation, source);
+                instanceStore.insertFeatureTuple(featureKey, unique, internalValueRepresentation, source);
             } else {
-                store.removeFeatureTuple(featureKey, unique, internalValueRepresentation, source);
+                instanceStore.removeFeatureTuple(featureKey, unique, internalValueRepresentation, source);
             }
         }
         if (observesDataType(eAttributeType)) {
             if (internalValueRepresentation == null)
-                internalValueRepresentation = store.toInternalValueRepresentation(target);
+                internalValueRepresentation = metaStore.toInternalValueRepresentation(target);
             if (isInsertion) {
-                store.insertIntoDataTypeMap(eAttributeType, internalValueRepresentation);
+                instanceStore.insertIntoDataTypeMap(eAttributeType, internalValueRepresentation);
             } else {
-                store.removeFromDataTypeMap(eAttributeType, internalValueRepresentation);
+                instanceStore.removeFromDataTypeMap(eAttributeType, internalValueRepresentation);
             }
         }
     };
@@ -269,9 +271,9 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         if (observesFeature(featureKey)) {
             boolean unique = feature.isUnique();
             if (isInsertion) {
-                store.insertFeatureTuple(featureKey, unique, target, source);
+                instanceStore.insertFeatureTuple(featureKey, unique, target, source);
             } else {
-                store.removeFeatureTuple(featureKey, unique, target, source);
+                instanceStore.removeFeatureTuple(featureKey, unique, target, source);
             }
         }
     }
@@ -310,11 +312,11 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     }
 
     protected Object toKey(EStructuralFeature feature) {
-        return store.toKey(feature);
+        return metaStore.toKey(feature);
     }
 
     protected Object toKey(EClassifier eClassifier) {
-        return store.toKey(eClassifier);
+        return metaStore.toKey(eClassifier);
     }
 
     /**
@@ -326,7 +328,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     protected boolean isSampledClass(Object eClass) {
         if (!traverseOnlyWellBehavingDerivedFeatures) {
             // TODO we could save this reverse lookup if the calling method would have the EClass, not just the key
-            EClass knownClass = (EClass) store.getKnownClassifierForKey(eClass);
+            EClass knownClass = (EClass) metaStore.getKnownClassifierForKey(eClass);
             // check features that are traversed, and whether there is any that must be sampled
             for (EStructuralFeature feature : knownClass.getEAllStructuralFeatures()) {
                 EMFModelComprehension comprehension = navigationHelper.getComprehension();
