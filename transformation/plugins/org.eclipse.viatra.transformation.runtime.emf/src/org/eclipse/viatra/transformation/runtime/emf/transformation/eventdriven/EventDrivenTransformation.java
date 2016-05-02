@@ -115,7 +115,7 @@ public class EventDrivenTransformation {
                 conflictResolver = new ArbitraryOrderConflictResolver();
             }
 
-            AdaptableEVM vm = AdaptableEVMFactory.INSTANCE.createAdaptableEVM();
+            AdaptableEVM vm = AdaptableEVMFactory.getInstance().createAdaptableEVM();
             vm.addAdapters(adapters);
             vm.addListeners(listeners);
 

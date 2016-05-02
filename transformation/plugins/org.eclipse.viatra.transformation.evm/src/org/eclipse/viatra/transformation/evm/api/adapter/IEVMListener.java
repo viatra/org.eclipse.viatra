@@ -14,6 +14,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
 
 /**
@@ -40,9 +41,9 @@ public interface IEVMListener {
 
     public void activationRemoved(Activation<?> activation, ActivationState oldState);
 
-    public void addedRule(final RuleSpecification<?> specification);
+    public void addedRule(final RuleSpecification<?> specification, EventFilter<?> filter);
 
-    public void removedRule(final RuleSpecification<?> specification);
+    public void removedRule(final RuleSpecification<?> specification, EventFilter<?> filter);
 
     public void disposeListener();
 

@@ -51,7 +51,7 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
             }
         }
         for(TransformationDebugger debugger : debuggers){
-            threads.add(TransformationThreadFactory.INSTANCE.createTransformationThread(this, debugger, evm, transformationType));
+            threads.add(TransformationThreadFactory.getInstance().createTransformationThread(this, debugger, evm, transformationType));
         }
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
         installDeferredBreakpoints();

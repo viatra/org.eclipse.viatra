@@ -140,7 +140,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
             }
         });
 
-        List<AdaptableEVM> adaptableEVMInstances = AdaptableEVMFactory.INSTANCE.getAdaptableEVMInstances();
+        List<AdaptableEVM> adaptableEVMInstances = AdaptableEVMFactory.getInstance().getAdaptableEVMInstances();
 
         comboViewer.setInput(adaptableEVMInstances);
 

@@ -11,6 +11,7 @@
 package org.eclipse.viatra.transformation.debug.model;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
@@ -26,6 +27,8 @@ import org.eclipse.viatra.transformation.debug.TransformationDebugger;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.Lists;
 
@@ -73,6 +76,7 @@ public class TransformationThread extends TransformationDebugElement implements 
         stepping = false;
         suspended = false;
         debugger.setDebuggerAction(DebuggerActions.Continue);
+        state.clearNewActivations();
         fireResumeEvent(DebugEvent.CLIENT_REQUEST);
         
     }
@@ -109,6 +113,7 @@ public class TransformationThread extends TransformationDebugElement implements 
     public void stepOver() throws DebugException {
         stepping = true;
         debugger.setDebuggerAction(DebuggerActions.Step);
+        state.clearNewActivations();
         fireResumeEvent(DebugEvent.STEP_OVER);
     }
 
@@ -197,6 +202,7 @@ public class TransformationThread extends TransformationDebugElement implements 
     @Override
     public void suspended() {
         suspended = true;
+        notifyListeners(state);
         fireSuspendEvent(DebugEvent.SUSPEND);
     }
 
@@ -204,6 +210,7 @@ public class TransformationThread extends TransformationDebugElement implements 
     public void breakpointHit(ITransformationBreakpoint breakpoint) {
         suspended = true;
         fireBreakpointHit(breakpoint);
+        notifyListeners(state);
     }
 
     @Override
@@ -221,41 +228,36 @@ public class TransformationThread extends TransformationDebugElement implements 
     protected void dispose(){
         stateListeners.clear();
         breakpoints.clear();
-        TransformationThreadFactory.INSTANCE.deleteTransformationThread(this); 
-    }
-
-    @Override
-    public void activationCreated(Activation<?> activation) {
-        state.activationCreated(activation);
-        notifyListeners(state);
-
+        TransformationThreadFactory.getInstance().deleteTransformationThread(this); 
     }
 
     @Override
     public void activationFired(Activation<?> activation) {
         startedFiring.remove(activation);
-        state.activationFired(activation);
-        notifyListeners(state);
     }
 
     @Override
-    public void displayNextActivation(Activation<?> act) {
+    public void activationFiring(Activation<?> act) {
         startedFiring.add(act);
-        state.displayNextActivation(act);
-        notifyListeners(state);
+        state.activationFiring(act);
+    }
+    
+
+    @Override
+    public void conflictSetChanged(Set<Activation<?>> nextActivations, Set<Activation<?>> conflictingActivations) {
+        state.updateActivations(nextActivations, conflictingActivations);
+        
     }
     
     @Override
-    public void addedRule(RuleSpecification<?> specification) {
-        state.ruleAdded(specification);
-        notifyListeners(state);
+    public void addedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
+        state.ruleAdded(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
         
     }
 
     @Override
-    public void removedRule(RuleSpecification<?> specification) {
-        state.ruleRemoved(specification);
-        notifyListeners(state);
+    public void removedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
+        state.ruleRemoved(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
     }
 
     // OWN
@@ -323,7 +325,4 @@ public class TransformationThread extends TransformationDebugElement implements 
     public AdaptableEVM getAdaptableEvm() {
         return evm;
     }
-
-
-
 }

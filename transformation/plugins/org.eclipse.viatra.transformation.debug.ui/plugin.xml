@@ -5,9 +5,9 @@
          point="org.eclipse.ui.views">
       <view
             category="org.eclipse.viatra.query.tooling.ui"
-            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.AdaptableTransformationBrowser"
+            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser"
             icon="icons/rsz_viatra_logo.png"
-            id="org.eclipse.viatra.transformation.ui.debug.DisplayActivations"
+            id="org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser"
             name="Adaptable Transformation Browser"
             restorable="true">
       </view>
@@ -43,7 +43,10 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="toolbar:org.eclipse.viatra.transformation.ui.debug.DisplayActivations">
+            locationURI="toolbar:org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser">
+         <control
+               class="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.TransformationBrowserConfigurationControl">
+         </control>
          <separator
                name="org.eclipse.viatra.transformation.ui.separator1">
          </separator>

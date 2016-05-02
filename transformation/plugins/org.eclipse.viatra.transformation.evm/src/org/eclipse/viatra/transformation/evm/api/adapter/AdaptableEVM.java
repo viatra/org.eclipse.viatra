@@ -26,6 +26,7 @@ import org.eclipse.viatra.transformation.evm.api.ScheduledExecution;
 import org.eclipse.viatra.transformation.evm.api.Scheduler;
 import org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
@@ -114,15 +115,15 @@ public class AdaptableEVM {
         }
     }
 
-    public void addedRule(RuleSpecification<?> specification) {
+    public void addedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
         for (IEVMListener listener : listeners) {
-            listener.addedRule(specification);
+            listener.addedRule(specification, filter);
         }
     }
 
-    public void removedRule(RuleSpecification<?> specification) {
+    public void removedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
         for (IEVMListener listener : listeners) {
-            listener.addedRule(specification);
+            listener.removedRule(specification, filter);
         }
     }
 
@@ -132,7 +133,7 @@ public class AdaptableEVM {
         }
         listeners.clear();
         adapters.clear();
-        AdaptableEVMFactory.INSTANCE.disposeAdaptableEVM(this);
+        AdaptableEVMFactory.getInstance().disposeAdaptableEVM(this);
     }
 
     public void activationChanged(Activation<?> activation, ActivationState oldState, EventType event) {

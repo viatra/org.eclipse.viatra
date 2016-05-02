@@ -12,7 +12,6 @@ package org.eclipse.viatra.transformation.evm.api.adapter;
 
 import java.util.Iterator;
 
-import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 

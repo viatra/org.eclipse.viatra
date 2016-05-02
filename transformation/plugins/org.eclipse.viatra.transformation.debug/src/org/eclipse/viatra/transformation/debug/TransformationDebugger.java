@@ -21,8 +21,10 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMListener;
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter;
-import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
+import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
+import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -39,8 +41,9 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     private String id;
     private List<ITransformationDebugListener> listeners = Lists.newArrayList();
     private List<ITransformationBreakpoint> breakpoints = Lists.newArrayList();
-    private Set<RuleSpecification<?>> rules = Sets.newHashSet();
-    private Set<Activation<?>> activations = Sets.newHashSet();
+    private Set<Pair<RuleSpecification<?>, EventFilter<?>>> rules = Sets.newHashSet();
+    private Set<Activation<?>> nextActivations = Sets.newHashSet();
+    private Set<Activation<?>> conflictingActivations = Sets.newHashSet();
     private Activation<?> nextActivation;
 
     private DebuggerActions action = DebuggerActions.Continue;
@@ -68,34 +71,26 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
             listener.started();
         }
     }
-
-    @Override
-    public void activationCreated(Activation<?> activation, ActivationState inactiveState) {
-        activations.add(activation);
-        for (ITransformationDebugListener listener : listeners) {
-            listener.activationCreated(activation);
-        }
-    }
     
     @Override
-    public void addedRule(RuleSpecification<?> specification) {
-        rules.add(specification);
+    public void addedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
+        rules.add(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
         for (ITransformationDebugListener listener : listeners) {
-            listener.addedRule(specification);
+            listener.addedRule(specification, filter);
         }
     }
 
     @Override
-    public void removedRule(RuleSpecification<?> specification) {
-        rules.remove(specification);
+    public void removedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
+        rules.remove(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
         for (ITransformationDebugListener listener : listeners) {
-            listener.removedRule(specification);
+            listener.removedRule(specification, filter);
+            
         }
     }
     
     @Override
     public void afterFiring(Activation<?> activation) {
-        activations.remove(activation);
         for (ITransformationDebugListener listener : listeners) {
             listener.activationFired(activation);
         }
@@ -112,13 +107,62 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
 
     @Override
     public ChangeableConflictSet getConflictSet(ChangeableConflictSet set) {
-        return set;
+        return new TransformationDebuggerConflictSet(set);
     }
     
     @Override
     public Iterator<Activation<?>> getExecutableActivations(Iterator<Activation<?>> iterator) {
         return new TransformationDebuggerIterator(iterator);
     };
+    
+    public class TransformationDebuggerConflictSet implements ChangeableConflictSet {
+        private final ChangeableConflictSet delegatedSet;
+        
+        
+        public TransformationDebuggerConflictSet(ChangeableConflictSet delegatedSet){
+            this.delegatedSet = delegatedSet;
+            conflictSetChanged(this);
+        }
+        
+        @Override
+        public Activation<?> getNextActivation() {
+            Activation<?> nextActivation = delegatedSet.getNextActivation();
+            return nextActivation;
+        }
+
+        @Override
+        public Set<Activation<?>> getNextActivations() {
+            Set<Activation<?>> nextActivations = delegatedSet.getNextActivations();
+            return nextActivations;
+        }
+
+        @Override
+        public Set<Activation<?>> getConflictingActivations() {
+            Set<Activation<?>> conflictingActivations = delegatedSet.getConflictingActivations();
+            return conflictingActivations;
+        }
+
+        @Override
+        public ConflictResolver getConflictResolver() {
+            return delegatedSet.getConflictResolver();
+        }
+
+        @Override
+        public boolean addActivation(Activation<?> activation) {
+            boolean result = delegatedSet.addActivation(activation);
+            conflictSetChanged(this);
+            return result;
+                    
+        }
+
+        @Override
+        public boolean removeActivation(Activation<?> activation) {
+            boolean result = delegatedSet.removeActivation(activation);
+            conflictSetChanged(this);
+            return result;
+        }
+        
+    }
 
     public class TransformationDebuggerIterator implements Iterator<Activation<?>> {
         private final Iterator<Activation<?>> delegatedIterator;
@@ -136,7 +180,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         public Activation<?> next() {
             Activation<?> activation = delegatedIterator.next();
             for (ITransformationDebugListener listener : listeners) {
-                listener.displayNextActivation(activation);
+                listener.activationFiring(activation);
                 
             }
             nextActivation = activation;
@@ -186,7 +230,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         if (!listeners.contains(listener)) {
             listeners.add(listener);
         }
-        return new TransformationState(id, engine, activations, rules, nextActivation);
+        return new TransformationState(id, engine, nextActivations, conflictingActivations, rules, nextActivation);
     }
 
     public void unRegisterTransformationDebugListener(ITransformationDebugListener listener) {
@@ -210,6 +254,14 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     public void setDebuggerAction(DebuggerActions action) {
         this.action = action;
         actionSet = true;
+    }
+    
+    private void conflictSetChanged(TransformationDebuggerConflictSet set){
+        nextActivations = Sets.newHashSet(set.getNextActivations());
+        conflictingActivations = Sets.newHashSet(set.getConflictingActivations());
+        for (ITransformationDebugListener listener : listeners) {
+            listener.conflictSetChanged(nextActivations, conflictingActivations);
+        }
     }
 
 }

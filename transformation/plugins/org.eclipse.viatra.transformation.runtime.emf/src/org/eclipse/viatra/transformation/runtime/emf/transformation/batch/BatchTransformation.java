@@ -109,7 +109,7 @@ public class BatchTransformation {
         }
 
         private BatchTransformation debugBuild() throws ViatraQueryException {
-            AdaptableEVM vm = AdaptableEVMFactory.INSTANCE.createAdaptableEVM();
+            AdaptableEVM vm = AdaptableEVMFactory.getInstance().createAdaptableEVM();
             vm.addAdapters(adapters);
             vm.addListeners(listeners);
 

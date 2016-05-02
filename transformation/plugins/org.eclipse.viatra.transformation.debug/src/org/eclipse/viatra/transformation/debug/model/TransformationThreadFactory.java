@@ -21,11 +21,22 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
-public enum TransformationThreadFactory {
-    INSTANCE;
+public class TransformationThreadFactory {
+    private static TransformationThreadFactory instance;
+    private List<TransformationThread> threads;
+    private Multimap<String, ITransformationStateListener> listenersToAdd;
     
-    private List<TransformationThread> threads = Lists.newArrayList();
-    private Multimap<String, ITransformationStateListener> listenersToAdd = ArrayListMultimap.create();
+    protected TransformationThreadFactory(){
+        threads = Lists.newArrayList();
+        listenersToAdd = ArrayListMultimap.create();
+    }
+
+    public static TransformationThreadFactory getInstance() {
+        if(instance == null){
+            instance = new TransformationThreadFactory();
+        }
+        return instance;
+    }
     
     public TransformationThread createTransformationThread(TransformationDebugTarget target, TransformationDebugger debugger, AdaptableEVM evm, IType transformationType){
         TransformationThread thread = new TransformationThread(target, debugger, evm, transformationType);

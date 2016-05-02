@@ -4,14 +4,27 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public enum AdaptableEVMFactory {
-    INSTANCE;
-    private List<AdaptableEVM> adaptableEVMInstances = Lists.newArrayList();
-    private List<IAdaptableEVMFactoryListener> listeners = Lists.newArrayList();
+public class AdaptableEVMFactory {
+    private static AdaptableEVMFactory instance;
+    private List<AdaptableEVM> adaptableEVMInstances;
+    private List<IAdaptableEVMFactoryListener> listeners;
+    
+    public static AdaptableEVMFactory getInstance() {
+        if(instance == null){
+            instance = new AdaptableEVMFactory();
+        }
+        return instance;
+    }
+    
+    protected AdaptableEVMFactory(){
+        adaptableEVMInstances = Lists.newArrayList();
+        listeners = Lists.newArrayList();
+    }
     
     public List<AdaptableEVM> getAdaptableEVMInstances() {
         return adaptableEVMInstances;
     }
+    
     public AdaptableEVM getAdaptableEVMInstance(String id) {
         for (AdaptableEVM adaptableEVM : adaptableEVMInstances) {
             if(adaptableEVM.getIdentifier().equals(id)){

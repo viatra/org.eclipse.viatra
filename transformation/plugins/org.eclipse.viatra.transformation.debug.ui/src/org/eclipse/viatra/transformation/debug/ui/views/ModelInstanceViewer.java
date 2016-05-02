@@ -108,7 +108,7 @@ public class ModelInstanceViewer extends ViewPart implements ITransformationStat
     }
     
     public void registerToId(String id){
-        TransformationThreadFactory.INSTANCE.registerListener(this, id);
+        TransformationThreadFactory.getInstance().registerListener(this, id);
     }
     
     
@@ -116,7 +116,7 @@ public class ModelInstanceViewer extends ViewPart implements ITransformationStat
     public void dispose() {
         super.dispose();
         engine = null;
-        TransformationThreadFactory.INSTANCE.unRegisterListener(this);
+        TransformationThreadFactory.getInstance().unRegisterListener(this);
     }
     
     public IWorkbenchSiteProgressService getProgressService() {

@@ -36,14 +36,14 @@ public class AdaptableRuleBase extends RuleBase {
     protected <EventAtom> RuleInstance<EventAtom> instantiateRule(final RuleSpecification<EventAtom> specification,
             final EventFilter<? super EventAtom> filter) {
         RuleInstance<EventAtom> instance = super.instantiateRule(specification, filter);
-        vm.addedRule(specification);
+        vm.addedRule(specification, filter);
         return instance;
     }
 
     protected <EventAtom> boolean removeRule(final RuleSpecification<EventAtom> specification,
             final EventFilter<? super EventAtom> filter) {
         boolean result = super.removeRule(specification, filter);
-        vm.removedRule(specification);
+        vm.removedRule(specification, filter);
         return result;
     }
     

@@ -10,9 +10,12 @@
  */
 package org.eclipse.viatra.transformation.debug;
 
+import java.util.Set;
+
 import org.eclipse.viatra.transformation.debug.model.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
 public interface ITransformationDebugListener {
     public void started();
@@ -23,14 +26,14 @@ public interface ITransformationDebugListener {
     
     public void terminated();
     
-    public void activationCreated(Activation<?> activation);
-
+    public void conflictSetChanged(Set<Activation<?>> nextActivations, Set<Activation<?>> conflictingActivations);
+    
     public void activationFired(Activation<?> activation);
     
-    public void displayNextActivation(Activation<?> act);
+    public void activationFiring(Activation<?> activation);
 
-    public void addedRule(RuleSpecification<?> specification);
+    public void addedRule(RuleSpecification<?> specification, EventFilter<?> filter);
 
-    public void removedRule(RuleSpecification<?> specification);
+    public void removedRule(RuleSpecification<?> specification, EventFilter<?> filter);
     
 }

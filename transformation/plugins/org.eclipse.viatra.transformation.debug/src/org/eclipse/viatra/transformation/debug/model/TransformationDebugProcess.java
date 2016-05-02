@@ -75,6 +75,7 @@ public class TransformationDebugProcess implements IProcess{
         return 0;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public Object getAdapter(Class adapter) {
         return null;

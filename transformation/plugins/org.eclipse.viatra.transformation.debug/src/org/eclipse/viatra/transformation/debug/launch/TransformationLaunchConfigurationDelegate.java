@@ -42,7 +42,7 @@ public class TransformationLaunchConfigurationDelegate implements ILaunchConfigu
             IJavaProject javaProject = JavaCore.create(project);
             IType transformationType = javaProject.findType(transformationClassName);
 
-            AdaptableEVM vm = AdaptableEVMFactory.INSTANCE.getAdaptableEVMInstance(evmAttr);
+            AdaptableEVM vm = AdaptableEVMFactory.getInstance().getAdaptableEVMInstance(evmAttr);
 
             if (mode.equals(ILaunchManager.DEBUG_MODE) && vm != null) {
                 TransformationDebugTarget target = new TransformationDebugTarget(launch, vm, transformationType,

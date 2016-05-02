@@ -14,6 +14,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.event.EventType;
 
 /**
@@ -57,11 +58,11 @@ public class AbstractEVMListener implements IEVMListener {
     }
 
     @Override
-    public void addedRule(RuleSpecification<?> specification) {
+    public void addedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
     }
 
     @Override
-    public void removedRule(RuleSpecification<?> specification) {
+    public void removedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
     }
 
     @Override
