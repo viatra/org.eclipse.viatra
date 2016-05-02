@@ -74,12 +74,12 @@ public class SolutionStore {
 
         @Override
         public void solutionFound(ThreadContext context, SolutionTrajectory trajectory) {
-            Logger.getLogger("Solution registered: " + getClass()).info(trajectory.toPrettyString());
+            Logger.getLogger(LogSolutionHandler.class).info("Solution registered: " + trajectory.toPrettyString());
         }
 
         @Override
         public void solutionTriedToSave(ThreadContext context, SolutionTrajectory trajectory) {
-            Logger.getLogger("Not good enough solution: " + getClass()).info(trajectory.toPrettyString());
+            Logger.getLogger(LogSolutionHandler.class).info("Not good enough solution: " + trajectory.toPrettyString());
         }
     }
 
