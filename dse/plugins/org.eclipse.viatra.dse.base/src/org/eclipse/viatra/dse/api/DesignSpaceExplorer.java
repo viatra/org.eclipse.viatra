@@ -88,8 +88,6 @@ public class DesignSpaceExplorer {
 
     private static final String MODEL_NOT_YET_GIVEN = "The starting model is not given yet. Please call the setInitialModel method first.";
 
-    private static final long SLEEP_INTERVAL = 1000;
-
     /**
      * <p>
      * Creates a {@link DesignSpaceExplorer} object that is able to execute a design space exploration process.
@@ -342,18 +340,19 @@ public class DesignSpaceExplorer {
         }
 
         if (waitForTermination) {
-            do {
+            Thread currentThread = Thread.currentThread();
+            synchronized (currentThread) {
                 try {
-                    Thread.sleep(SLEEP_INTERVAL);
+                    currentThread.wait();
                 } catch (InterruptedException e) {
                 }
-
-                if (globalContext.isDone()) {
-                    timer.cancel();
-                    logger.debug("Design space exploration has finished.");
-                    return wasTimeout.get();
+                if (!globalContext.isDone()) {
+                    logger.error("Main thread was notified, while explorer threads are still running.");
                 }
-            } while (true);
+                timer.cancel();
+                logger.debug("Design space exploration has finished.");
+                return wasTimeout.get();
+            }
         } else {
             logger.debug("Design space exploration started asynchronously.");
         }

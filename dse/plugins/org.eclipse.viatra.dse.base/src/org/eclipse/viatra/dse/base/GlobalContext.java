@@ -182,7 +182,9 @@ public class GlobalContext {
 
             // if the main thread (which started the exploration)
             // is waiting for the solution, than wake it up
-            mainThread.interrupt();
+            synchronized (mainThread) {
+                mainThread.notify();
+            }
 
         }
     }
