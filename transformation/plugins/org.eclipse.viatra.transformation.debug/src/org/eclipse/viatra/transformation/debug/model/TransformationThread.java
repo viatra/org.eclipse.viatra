@@ -168,7 +168,7 @@ public class TransformationThread extends TransformationDebugElement implements 
     public IStackFrame getTopStackFrame() throws DebugException {
         IStackFrame[] frames = getStackFrames();
         if (frames.length > 0) {
-            return frames[0];
+            return frames[frames.length-1];
         }
         return null;
     }
@@ -246,7 +246,6 @@ public class TransformationThread extends TransformationDebugElement implements 
     @Override
     public void conflictSetChanged(Set<Activation<?>> nextActivations, Set<Activation<?>> conflictingActivations) {
         state.updateActivations(nextActivations, conflictingActivations);
-        
     }
     
     @Override
@@ -294,7 +293,7 @@ public class TransformationThread extends TransformationDebugElement implements 
     private void fireBreakpointHit(ITransformationBreakpoint breakpoint) {
         fireSuspendEvent(DebugEvent.BREAKPOINT);
     }
-
+    
     protected void addBreakpoint(ITransformationBreakpoint breakpoint) {
         this.breakpoints.add(breakpoint);
     }
@@ -320,6 +319,20 @@ public class TransformationThread extends TransformationDebugElement implements 
         for (ITransformationStateListener listener : stateListeners) {
             listener.transformationStateChanged(state, evm.getIdentifier());
         }
+    }
+    //Manual guidance
+    public void setNextActivation(Activation<?> act){
+        startedFiring.remove(state.getNextActivation());
+        startedFiring.add(act);
+        debugger.setNextActivation(act);
+        state.setNextActivation(act);
+        suspended();
+        
+    }
+    
+        
+    public boolean containsActivation(Activation<?> activation){
+        return state.getConflictingActivations().contains(activation);
     }
     
     public AdaptableEVM getAdaptableEvm() {

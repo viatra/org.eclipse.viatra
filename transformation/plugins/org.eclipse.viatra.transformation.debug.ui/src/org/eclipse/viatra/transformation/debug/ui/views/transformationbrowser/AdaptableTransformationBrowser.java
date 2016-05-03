@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -35,25 +38,36 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
-public class AdaptableTransformationBrowser extends ViewPart implements IAdaptableEVMFactoryListener, ITransformationStateListener{
+public class AdaptableTransformationBrowser extends ViewPart
+        implements IAdaptableEVMFactoryListener, ITransformationStateListener {
     public static final String ID = "org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser";
-    
+
     private Map<AdaptableEVM, TransformationState> transformationStateMap = Maps.newHashMap();
     private Multimap<Class<?>, Object> expandedElementsMap = ArrayListMultimap.create();
     private TreeViewer treeViewer;
+    private Object selection;
 
     @Override
     public void createPartControl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout(SWT.HORIZONTAL));
-        
+
         treeViewer = new TreeViewer(composite, SWT.BORDER);
-        
+
         treeViewer.setContentProvider(new RuleBrowserContentProvider(this));
         treeViewer.setLabelProvider(new RuleBrowserLabelProvider(this));
 
         treeViewer.addDoubleClickListener(new AdaptableEVMDoubleClickListener(this));
-        
+        treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                if (event.getSelection() instanceof IStructuredSelection) {
+                    selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
+                }
+            }
+        });
+
         AdaptableEVMFactory.getInstance().registerListener(this);
     }
 
@@ -70,9 +84,7 @@ public class AdaptableTransformationBrowser extends ViewPart implements IAdaptab
     public void setFocus() {
         treeViewer.getControl().setFocus();
     }
-   
-    
-    
+
     @Override
     public void adaptableEVMPoolChanged(final List<AdaptableEVM> adaptableEVMs) {
         treeViewer.getControl().getDisplay().syncExec(new Runnable() {
@@ -80,16 +92,16 @@ public class AdaptableTransformationBrowser extends ViewPart implements IAdaptab
             @Override
             public void run() {
                 for (AdaptableEVM evm : transformationStateMap.keySet()) {
-                    if(!adaptableEVMs.contains(evm)){
+                    if (!adaptableEVMs.contains(evm)) {
                         transformationStateMap.remove(evm);
                     }
                 }
                 for (AdaptableEVM evm : adaptableEVMs) {
-                    if(!transformationStateMap.containsKey(evm)){
+                    if (!transformationStateMap.containsKey(evm)) {
                         transformationStateMap.put(evm, null);
                     }
                 }
-                
+
                 Object[] expandedElements = treeViewer.getExpandedElements();
                 treeViewer.setInput(transformationStateMap);
                 treeViewer.setExpandedElements(expandedElements);
@@ -105,13 +117,13 @@ public class AdaptableTransformationBrowser extends ViewPart implements IAdaptab
             @Override
             public void run() {
                 AdaptableEVM evmInstance = AdaptableEVMFactory.getInstance().getAdaptableEVMInstance(id);
-                
+
                 transformationStateMap.put(evmInstance, state);
                 Object[] expandedElements = treeViewer.getExpandedElements();
                 treeViewer.setInput(transformationStateMap);
                 treeViewer.setExpandedElements(expandedElements);
             }
-        });       
+        });
     }
 
     @Override
@@ -121,42 +133,46 @@ public class AdaptableTransformationBrowser extends ViewPart implements IAdaptab
             @Override
             public void run() {
                 AdaptableEVM evmInstance = AdaptableEVMFactory.getInstance().getAdaptableEVMInstance(id);
-                
+
                 transformationStateMap.remove(evmInstance);
                 treeViewer.setInput(transformationStateMap);
             }
-        }); 
-        
+        });
+
     }
-    
-    public void setViewConfiguration(final TransformationViewConfiguration config){
-        treeViewer.getControl().getDisplay().syncExec(new ConfigurationApplication(config, this)); 
+
+    public Object getSelection() {
+        return selection;
     }
-        
-    protected TransformationState getStateForRuleSpecification(Pair<RuleSpecification<?>, EventFilter<?>> spec){
+
+    public void setViewConfiguration(final TransformationViewConfiguration config) {
+        treeViewer.getControl().getDisplay().syncExec(new ConfigurationApplication(config, this));
+    }
+
+    protected TransformationState getStateForRuleSpecification(Pair<RuleSpecification<?>, EventFilter<?>> spec) {
         for (AdaptableEVM evm : transformationStateMap.keySet()) {
             TransformationState transformationState = transformationStateMap.get(evm);
-            if(transformationState.getRules().contains(spec)){
+            if (transformationState != null && transformationState.getRules().contains(spec)) {
                 return transformationState;
             }
         }
         return null;
     }
-    
-    protected TransformationState getStateForActivation(Activation<?> act){
+
+    protected TransformationState getStateForActivation(Activation<?> act) {
         for (AdaptableEVM evm : transformationStateMap.keySet()) {
             TransformationState transformationState = transformationStateMap.get(evm);
-            if(transformationState.getConflictingActivations().contains(act)){
+            if (transformationState != null && transformationState.getConflictingActivations().contains(act)) {
                 return transformationState;
             }
         }
         return null;
     }
-    
+
     protected Map<AdaptableEVM, TransformationState> getTransformationStateMap() {
         return transformationStateMap;
     }
-    
+
     private final class ConfigurationApplication implements Runnable {
         private final TransformationViewConfiguration config;
         private final AdaptableTransformationBrowser view;
@@ -176,7 +192,7 @@ public class AdaptableTransformationBrowser extends ViewPart implements IAdaptab
                 treeViewer.refresh();
                 treeViewer.setExpandedElements(loadExpandedElements());
                 break;
-                
+
             case CONFLICTSET_BROWSER:
                 saveExpandedElements();
                 treeViewer.setContentProvider(new ConflictSetContentProvider(view));
@@ -188,22 +204,22 @@ public class AdaptableTransformationBrowser extends ViewPart implements IAdaptab
                 break;
             }
         }
-        
-        private void saveExpandedElements(){
+
+        private void saveExpandedElements() {
             Object[] expandedElements = treeViewer.getExpandedElements();
             IContentProvider contentProvider = treeViewer.getContentProvider();
             for (Object element : expandedElements) {
                 expandedElementsMap.put(contentProvider.getClass(), element);
             }
-            
+
         }
-        
-        private Object[] loadExpandedElements(){
+
+        private Object[] loadExpandedElements() {
             IContentProvider contentProvider = treeViewer.getContentProvider();
             Collection<Object> elements = expandedElementsMap.get(contentProvider.getClass());
-            
+
             return elements.toArray(new Object[elements.size()]);
-            
+
         }
     }
 }

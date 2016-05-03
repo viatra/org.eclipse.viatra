@@ -28,9 +28,9 @@ public class ConflictSetLabelProvider extends RuleBrowserLabelProvider {
             Activation<?> activation = (Activation<?>) element;
             TransformationState state = view.getStateForActivation(activation);
             if(state.getNewActivations().contains(activation)){
-                return "<<NEW>> "+ activation.getInstance().getSpecification().getName()+" Activation, State: " + activation.getState().toString();
+                return "<<NEW>> "+ activation.getInstance().getSpecification().getName()+" Activation, State: " + activation.getState().toString()+ activation.getAtom().toString();
             }else{
-                return activation.getInstance().getSpecification().getName()+" Activation, State: " + activation.getState().toString();
+                return activation.getInstance().getSpecification().getName()+" Activation, State: " + activation.getState().toString()+ activation.getAtom().toString();
             }
         }else if (element instanceof CompositeItem) {
             return ((CompositeItem) element).getName();

@@ -22,40 +22,40 @@ import org.eclipse.xtext.xbase.lib.Pair;
 
 public class RuleBrowserLabelProvider extends LabelProvider {
     protected AdaptableTransformationBrowser view;
-    
-    public RuleBrowserLabelProvider(AdaptableTransformationBrowser view){
+
+    public RuleBrowserLabelProvider(AdaptableTransformationBrowser view) {
         this.view = view;
     }
-    
+
     @Override
     public String getText(Object element) {
         if (element instanceof AdaptableEVM) {
             AdaptableEVM vm = (AdaptableEVM) element;
             return vm.getIdentifier();
-        }else if (element instanceof Pair<?,?>){
-            Object key = ((Pair<?,?>) element).getKey();
-            Object value = ((Pair<?,?>) element).getValue();
-            if(key instanceof RuleSpecification<?> && value instanceof EventFilter<?>){
-                if(value.equals(((RuleSpecification<?>)key).createEmptyFilter())){
-                    return ((RuleSpecification<?>)key).getName();
-                }else {
-                    return ((RuleSpecification<?>)key).getName()+" FILTERED";
+        } else if (element instanceof Pair<?, ?>) {
+            Object key = ((Pair<?, ?>) element).getKey();
+            Object value = ((Pair<?, ?>) element).getValue();
+            if (key instanceof RuleSpecification<?> && value instanceof EventFilter<?>) {
+                if (value.equals(((RuleSpecification<?>) key).createEmptyFilter())) {
+                    return ((RuleSpecification<?>) key).getName();
+                } else {
+                    return ((RuleSpecification<?>) key).getName() + " FILTERED";
                 }
             }
-        }else if (element instanceof RuleSpecification) {
+        } else if (element instanceof RuleSpecification) {
             RuleSpecification<?> spec = (RuleSpecification<?>) element;
             return spec.getName();
-        }else if (element instanceof Activation) {
+        } else if (element instanceof Activation) {
             Activation<?> activation = (Activation<?>) element;
             TransformationState state = view.getStateForActivation(activation);
-            if(state.getNewActivations().contains(activation)){
-                return "<<NEW>> Activation, State: " + activation.getState().toString();
-            }else{
-                return "Activation, State: " + activation.getState().toString();
+            if (state.getNewActivations().contains(activation)) {
+                return "<<NEW>> Activation, State: " + activation.getState().toString()+ activation.getAtom().toString();
+            } else {
+                return "Activation, State: " + activation.getState().toString()+ activation.getAtom().toString();
             }
-            
+
         }
-        //TODO More info about activation
+        // TODO More info about activation
 
         return element.getClass().getName() + " Hash: " + element.hashCode();
     }
@@ -63,25 +63,29 @@ public class RuleBrowserLabelProvider extends LabelProvider {
     @Override
     public Image getImage(Object element) {
         if (element instanceof AdaptableEVM) {
-            return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.ui",
-                    "icons/rsz_viatra_logo.png");
-            //TODO different icon for EVM instances with debugger running
-        }else if (element instanceof Pair<?,?>){
-            Object key = ((Pair<?,?>) element).getKey();
-            Object value = ((Pair<?,?>) element).getValue();
-            if(key instanceof RuleSpecification<?> && value instanceof EventFilter<?>){
+            if (view.getTransformationStateMap().get(element) != null) {
                 return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.debug.ui",
-                        "icons/atom.gif");
+                        "icons/viatra_debug.gif");
+            } else {
+                return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.debug.ui",
+                        "icons/rsz_viatra_logo.png");
             }
-        }else if (element instanceof Activation) {
+        } else if (element instanceof Pair<?, ?>) {
+            Object key = ((Pair<?, ?>) element).getKey();
+            Object value = ((Pair<?, ?>) element).getValue();
+            if (key instanceof RuleSpecification<?> && value instanceof EventFilter<?>) {
+                return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.debug.ui", "icons/atom.gif");
+            }
+        } else if (element instanceof Activation) {
             TransformationState state = view.getStateForActivation((Activation<?>) element);
-            
-            if(element.equals(state.getNextActivation())){
-                return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.ui", "icons/activation_stopped.gif");
-            }else {
+
+            if (element.equals(state.getNextActivation())) {
+                return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.ui",
+                        "icons/activation_stopped.gif");
+            } else {
                 return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.ui", "icons/activation.gif");
             }
-        } 
+        }
         return null;
     }
 }

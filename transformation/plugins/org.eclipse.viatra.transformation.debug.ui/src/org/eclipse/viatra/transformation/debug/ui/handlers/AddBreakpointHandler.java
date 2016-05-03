@@ -18,6 +18,7 @@ import org.eclipse.ui.PlatformUI;
 public class AddBreakpointHandler extends AbstractHandler{
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
+        
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             @Override
             public void run() {
@@ -26,4 +27,5 @@ public class AddBreakpointHandler extends AbstractHandler{
         });
         return null;
     }
+
 }

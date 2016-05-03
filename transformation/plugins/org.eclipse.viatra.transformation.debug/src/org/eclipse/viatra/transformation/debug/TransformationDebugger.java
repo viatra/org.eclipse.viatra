@@ -40,18 +40,20 @@ import com.google.common.collect.Sets;
 public class TransformationDebugger extends AbstractEVMListener implements IEVMAdapter {
     private String id;
     private List<ITransformationDebugListener> listeners = Lists.newArrayList();
+    private ViatraQueryEngine engine;
+    
+    //Debug functions
     private List<ITransformationBreakpoint> breakpoints = Lists.newArrayList();
     private Set<Pair<RuleSpecification<?>, EventFilter<?>>> rules = Sets.newHashSet();
     private Set<Activation<?>> nextActivations = Sets.newHashSet();
     private Set<Activation<?>> conflictingActivations = Sets.newHashSet();
+    
     private Activation<?> nextActivation;
-
+    
     private DebuggerActions action = DebuggerActions.Continue;
     private boolean firstRun = true;
     private boolean actionSet = false;
-
-    private ViatraQueryEngine engine;
-
+    
     public TransformationDebugger(String id) {
         this.id = id;
     }
@@ -126,8 +128,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         
         @Override
         public Activation<?> getNextActivation() {
-            Activation<?> nextActivation = delegatedSet.getNextActivation();
-            return nextActivation;
+            return delegatedSet.getNextActivation();
         }
 
         @Override
@@ -178,13 +179,15 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
 
         @Override
         public Activation<?> next() {
-            Activation<?> activation = delegatedIterator.next();
+                                    
+            nextActivation = delegatedIterator.next();
+            
             for (ITransformationDebugListener listener : listeners) {
-                listener.activationFiring(activation);
+                listener.activationFiring(nextActivation);
                 
             }
-            nextActivation = activation;
-            if (activation != null && (hasBreakpoint(activation) || action == DebuggerActions.Step)) {
+            
+            if (nextActivation != null && (hasBreakpoint(nextActivation) || action == DebuggerActions.Step)) {
 
                 for (ITransformationDebugListener listener : listeners) {
                     listener.suspended();
@@ -199,7 +202,8 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
                 }
                 actionSet = false;
             }
-            return activation;
+            
+            return nextActivation;
         }
 
         @Override
@@ -256,6 +260,10 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         actionSet = true;
     }
     
+    public void setNextActivation(Activation<?> activation) {
+        this.nextActivation = activation;
+    }
+            
     private void conflictSetChanged(TransformationDebuggerConflictSet set){
         nextActivations = Sets.newHashSet(set.getNextActivations());
         conflictingActivations = Sets.newHashSet(set.getConflictingActivations());

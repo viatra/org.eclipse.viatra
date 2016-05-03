@@ -13,6 +13,6 @@ package org.eclipse.viatra.transformation.debug.model;
 public interface ITransformationStateListener {
     
     public void transformationStateChanged(TransformationState state, String id);
-
+    
     public void transformationStateDisposed(TransformationState state, String id);
 }
