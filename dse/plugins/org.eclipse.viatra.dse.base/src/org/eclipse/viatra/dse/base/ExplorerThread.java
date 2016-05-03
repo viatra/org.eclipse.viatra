@@ -63,7 +63,6 @@ public class ExplorerThread implements Runnable {
             strategy.explore();
 
             logger.debug("Strategy stopped on Thread " + Thread.currentThread());
-            globalContext.strategyFinished(this);
             return;
         } catch (Throwable e) {
             logger.error("Thread stopped unexpectedly!", e);
