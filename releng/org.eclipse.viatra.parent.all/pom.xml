@@ -42,9 +42,11 @@
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.views</module>
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.debug</module>
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.debug.ui</module>
+		<module>../../transformation/plugins/org.eclipse.viatra.transformation.debug.transformationtrace</module>
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.tracer</module>
 		<module>../../transformation/features/org.eclipse.viatra.transformation.evm.transactions.feature</module>
 		<module>../../transformation/features/org.eclipse.viatra.transformation.debug.feature</module>
+		
 		
 
 		<!-- CEP -->

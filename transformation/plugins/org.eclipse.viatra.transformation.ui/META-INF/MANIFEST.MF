@@ -11,5 +11,18 @@ Require-Bundle: org.eclipse.jdt.ui,
  org.eclipse.xtend.ide,
  org.eclipse.xtext.ui,
  org.eclipse.ui.ide,
- org.eclipse.jdt.core
+ org.eclipse.jdt.core,
+ org.eclipse.viatra.transformation.debug;bundle-version="0.13.0",
+ org.eclipse.viatra.transformation.evm,
+ org.eclipse.jface.databinding,
+ org.eclipse.viatra.transformation.debug.transformationtrace,
+ org.eclipse.viatra.query.runtime,
+ org.eclipse.gef4.zest.jface,
+ org.eclipse.gef4.zest.core,
+ org.eclipse.viatra.addon.viewers.runtime,
+ org.eclipse.viatra.addon.viewers.runtime.zest,
+ org.eclipse.debug.core,
+ org.eclipse.debug.ui,
+ org.eclipse.jdt.debug.ui
+Export-Package: org.eclipse.viatra.transformation.ui.util
 

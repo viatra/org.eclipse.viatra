@@ -30,14 +30,21 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra.transformation.debug.ui"
+         id="org.eclipse.viatra.transformation.tracer"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra.transformation.tracer"
+         id="org.eclipse.viatra.transformation.debug.transformationtrace"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.transformation.debug.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

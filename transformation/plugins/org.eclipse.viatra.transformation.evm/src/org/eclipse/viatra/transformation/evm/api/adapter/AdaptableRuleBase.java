@@ -46,5 +46,11 @@ public class AdaptableRuleBase extends RuleBase {
         vm.removedRule(specification);
         return result;
     }
+    
+    @Override
+    protected void dispose() {
+        super.dispose();
+        vm.dispose();
+    }
 
 }

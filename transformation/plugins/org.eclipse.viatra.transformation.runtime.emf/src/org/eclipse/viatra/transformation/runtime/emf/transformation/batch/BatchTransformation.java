@@ -24,6 +24,7 @@ import org.eclipse.viatra.transformation.evm.api.Executor;
 import org.eclipse.viatra.transformation.evm.api.IExecutor;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
+import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVMFactory;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableExecutor;
 import org.eclipse.viatra.transformation.evm.api.adapter.IAdapterConfiguration;
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter;
@@ -108,14 +109,15 @@ public class BatchTransformation {
         }
 
         private BatchTransformation debugBuild() throws ViatraQueryException {
-            AdaptableEVM vm = new AdaptableEVM();
+            AdaptableEVM vm = AdaptableEVMFactory.INSTANCE.createAdaptableEVM();
             vm.addAdapters(adapters);
             vm.addListeners(listeners);
 
             final IExecutor executor = new AdaptableExecutor(new Executor(), vm);
             RuleEngine ruleEngine = vm.createAdaptableRuleEngine(engine);
-            return new BatchTransformation(ruleEngine, engine, executor);
-
+            BatchTransformation batchTransformation = new BatchTransformation(ruleEngine, engine, executor);
+            vm.initialize(engine);
+            return batchTransformation;
         }
 
         private void initializeIndexes(ViatraQueryEngine queryEngine) throws ViatraQueryException {

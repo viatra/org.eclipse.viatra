@@ -45,6 +45,15 @@ import com.google.common.collect.Lists;
 public class AdaptableEVM {
     private List<IEVMAdapter> adapters = Lists.newArrayList();
     private List<IEVMListener> listeners = Lists.newArrayList();
+    private String identifier;
+       
+    protected AdaptableEVM(String id) {
+        identifier = id;
+    }
+    
+    public String getIdentifier() {
+        return identifier;
+    }
 
     public List<IEVMAdapter> getAdapters() {
         return adapters;
@@ -75,9 +84,9 @@ public class AdaptableEVM {
         this.listeners.addAll(adapterConfiguration.getListeners());
     }
 
-    public void initializeListener() {
+    public void initialize(ViatraQueryEngine engine) {
         for (IEVMListener listener : listeners) {
-            listener.initializeListener();
+            listener.initializeListener(engine);
         }
     }
 
@@ -117,10 +126,13 @@ public class AdaptableEVM {
         }
     }
 
-    public void disposeListener() {
+    public void dispose() {
         for (IEVMListener listener : listeners) {
             listener.disposeListener();
         }
+        listeners.clear();
+        adapters.clear();
+        AdaptableEVMFactory.INSTANCE.disposeAdaptableEVM(this);
     }
 
     public void activationChanged(Activation<?> activation, ActivationState oldState, EventType event) {
