@@ -12,7 +12,7 @@ package org.eclipse.viatra.transformation.debug;
 
 import java.util.Set;
 
-import org.eclipse.viatra.transformation.debug.model.ITransformationBreakpoint;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;

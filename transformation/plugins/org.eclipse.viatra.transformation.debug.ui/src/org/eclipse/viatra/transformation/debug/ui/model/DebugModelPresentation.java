@@ -16,10 +16,10 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.viatra.transformation.debug.model.TransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.TransformationDebugTarget;
 import org.eclipse.viatra.transformation.debug.model.TransformationStackFrame;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.TransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.RuleParameterTrace;
 
 public class DebugModelPresentation extends LabelProvider implements IDebugModelPresentation {

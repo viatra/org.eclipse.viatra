@@ -8,10 +8,11 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  */
-package org.eclipse.viatra.transformation.debug.model;
+package org.eclipse.viatra.transformation.debug.model.breakpoint;
 
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.viatra.transformation.debug.activationcoder.DefaultActivationCoder;
+import org.eclipse.viatra.transformation.debug.model.TransformationDebugElement;
 import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.ActivationTrace;
 import org.eclipse.viatra.transformation.debug.transformationtrace.util.ActivationTraceUtil;
 import org.eclipse.viatra.transformation.evm.api.Activation;
@@ -24,7 +25,6 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
  *
  */
 public class TransformationBreakpoint extends Breakpoint implements ITransformationBreakpoint{
-    //TODO abstract class for breakpoints
     private DefaultActivationCoder activationCoder;
     private ActivationTrace trace;
     private Activation<?> activation;
@@ -58,5 +58,19 @@ public class TransformationBreakpoint extends Breakpoint implements ITransformat
     @Override
     public String getModelIdentifier() {
         return TransformationDebugElement.MODEL_ID;
+    }
+
+    @Override
+    public String getMarkerIdentifier() {
+        return NON_PERSISTENT;
+    }
+    
+    @Override
+    public boolean equals(Object item) {
+        if(item instanceof TransformationBreakpoint){
+            return ((TransformationBreakpoint) item).getActivation().equals(activation);
+        }else{
+            return false;
+        }
     }
 }

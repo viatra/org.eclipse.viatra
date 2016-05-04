@@ -25,6 +25,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.viatra.transformation.debug.TransformationDebugger;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter;
 

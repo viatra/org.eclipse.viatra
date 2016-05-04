@@ -24,6 +24,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.viatra.transformation.debug.DebuggerActions;
 import org.eclipse.viatra.transformation.debug.ITransformationDebugListener;
 import org.eclipse.viatra.transformation.debug.TransformationDebugger;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.TransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
@@ -261,25 +263,23 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     // OWN
     
-    public void toggleBreakPoint(Activation<?> activation) {
+    
+    public void toggleTransformationBreakPoint(ITransformationBreakpoint breakpoint) {
         ITransformationBreakpoint breakpointToRemove = null;
         for (ITransformationBreakpoint iTransformationBreakpoint : breakpoints) {
-            if(iTransformationBreakpoint.shouldBreak(activation)){
-                breakpointToRemove = iTransformationBreakpoint;
+            if(iTransformationBreakpoint.equals(breakpoint)){
+                breakpointToRemove = breakpoint;
             }
         }
-        if(breakpointToRemove == null){
-            TransformationBreakpoint breakpoint = new TransformationBreakpoint(activation);
-            breakpoints.add(breakpoint);
-            try {
-                breakpoint.setMarker(transformationType.getResource().createMarker(MODEL_ID));
-                breakpoint.setEnabled(true);
-                DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(breakpoint);
-            } catch (CoreException e) {
-                e.printStackTrace();
-            }
-            debugger.addBreakpoint(breakpoint);
+        if(breakpointToRemove != null){
+            removeTransformationBreakpoint(breakpoint);
         }else{
+            addTransformationBreakpoint(breakpoint);
+        }
+    }
+
+    public void removeTransformationBreakpoint(ITransformationBreakpoint breakpointToRemove) {
+        if(breakpoints.contains(breakpointToRemove)){
             breakpoints.remove(breakpointToRemove);
             debugger.removeBreakpoint(breakpointToRemove);
             try {
@@ -290,18 +290,24 @@ public class TransformationThread extends TransformationDebugElement implements 
         }
     }
 
+    public void addTransformationBreakpoint(ITransformationBreakpoint breakpoint) {
+        if(!breakpoints.contains(breakpoint)){
+            breakpoints.add(breakpoint);
+            try {
+                breakpoint.setMarker(transformationType.getResource().createMarker(breakpoint.getMarkerIdentifier()));
+                breakpoint.setEnabled(true);
+                DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(breakpoint);
+            } catch (CoreException e) {
+                e.printStackTrace();
+            }
+            debugger.addBreakpoint(breakpoint);
+        }
+    }
+
     private void fireBreakpointHit(ITransformationBreakpoint breakpoint) {
         fireSuspendEvent(DebugEvent.BREAKPOINT);
     }
     
-    protected void addBreakpoint(ITransformationBreakpoint breakpoint) {
-        this.breakpoints.add(breakpoint);
-    }
-
-    protected void removeBreakpoint(ITransformationBreakpoint breakpoint) {
-        this.breakpoints.remove(breakpoint);
-    }
-
     protected void setStepping(boolean stepping) {
         this.stepping = stepping;
     }

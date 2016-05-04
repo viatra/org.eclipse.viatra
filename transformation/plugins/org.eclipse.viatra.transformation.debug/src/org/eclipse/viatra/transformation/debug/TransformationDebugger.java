@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.transformation.debug.model.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.TransformationState;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMListener;

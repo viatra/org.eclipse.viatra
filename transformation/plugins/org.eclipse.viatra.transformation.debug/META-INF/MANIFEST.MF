@@ -19,4 +19,5 @@ Export-Package: org.eclipse.viatra.transformation.debug,
  org.eclipse.viatra.transformation.debug.activationcoder,
  org.eclipse.viatra.transformation.debug.configuration,
  org.eclipse.viatra.transformation.debug.launch,
- org.eclipse.viatra.transformation.debug.model
+ org.eclipse.viatra.transformation.debug.model,
+ org.eclipse.viatra.transformation.debug.model.breakpoint

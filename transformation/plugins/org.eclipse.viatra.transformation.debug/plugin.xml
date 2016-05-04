@@ -14,17 +14,45 @@
    <extension
          point="org.eclipse.debug.core.breakpoints">
       <breakpoint
-            class="org.eclipse.viatra.transformation.debug.model.TransformationBreakpoint"
+            class="org.eclipse.viatra.transformation.debug.model.breakpoint.TransformationBreakpoint"
             id="org.eclipse.viatra.transformation.debug.TransformationBreakpoint"
             markerType="org.eclipse.viatra.transformation.debug.model"
             name="VIATRA Activation Breakpoint">
       </breakpoint>
+      <breakpoint
+            class="org.eclipse.viatra.transformation.debug.model.breakpoint.PreconditionMatchBreakpoint"
+            id="org.eclipse.viatra.transformation.debug.PreconditionMatchBreakpoint"
+            markerType="org.eclipse.viatra.transformation.debug.model"
+            name="VIATRA Rule Precondition Match Breakpoint">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.viatra.transformation.debug.model.breakpoint.ConditionalTransformationBreakpoint"
+            id="org.eclipse.viatra.transformation.debug.ConditionalTransformationBreakpoint"
+            markerType="org.eclipse.viatra.transformation.debug.model.persistent"
+            name="VIATRA Conditional Transformation Breakpoint">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.viatra.transformation.debug.model.breakpoint.RuleBreakpoint"
+            id="org.eclipse.viatra.transformation.debug.RuleBreakpoint"
+            markerType="org.eclipse.viatra.transformation.debug.model.persistent"
+            name="VIATRA Rule Breakpoint">
+      </breakpoint>
    </extension>
    <extension
-         id="model"
+         id="org.eclipse.viatra.transformation.debug.model"
          point="org.eclipse.core.resources.markers">
       <persistent
             value="false">
+      </persistent>
+      <super
+            type="org.eclipse.debug.core.breakpointMarker">
+      </super>
+   </extension>
+   <extension
+         id="org.eclipse.viatra.transformation.debug.model.persistent"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
       </persistent>
       <super
             type="org.eclipse.debug.core.breakpointMarker">

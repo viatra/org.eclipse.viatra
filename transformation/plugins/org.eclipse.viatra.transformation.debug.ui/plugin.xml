@@ -28,24 +28,33 @@
       </category>
       <command
             categoryId="org.eclipse.viatra.transformation.ui.debug"
-            id="org.eclipse.viatra.transformation.ui.debug.addbreakpoint"
-            name="Add Breakpoint">
+            id="org.eclipse.viatra.transformation.ui.debug.toggleActivationBreakpoint"
+            name="Toggle Activation Breakpoint">
       </command>
       <command
             categoryId="org.eclipse.viatra.transformation.ui.debug"
             id="org.eclipse.viatra.transformation.debug.ui.SelectNextActivation"
             name="SelectNextActivation">
       </command>
+      <command
+            categoryId="org.eclipse.viatra.transformation.ui.debug"
+            id="org.eclipse.viatra.transformation.debug.ui.addRuleBreakpoint"
+            name="Add Rule Breakpoint">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.handlers.AddBreakpointHandler"
-            commandId="org.eclipse.viatra.transformation.ui.debug.addbreakpoint">
+            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.handlers.ToggleActivationBreakpointHandler"
+            commandId="org.eclipse.viatra.transformation.ui.debug.toggleActivationBreakpoint">
       </handler>
       <handler
             class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.handlers.SelectNextActivationHandler"
             commandId="org.eclipse.viatra.transformation.debug.ui.SelectNextActivation">
+      </handler>
+      <handler
+            class="org.eclipse.viatra.transformation.debug.ui.handlers.AddRuleBreakpointHandler"
+            commandId="org.eclipse.viatra.transformation.debug.ui.addRuleBreakpoint">
       </handler>
    </extension>
    <extension
@@ -70,10 +79,17 @@
                name="org.eclipse.viatra.transformation.debug.ui.separator2">
          </separator>
          <command
-               commandId="org.eclipse.viatra.transformation.ui.debug.addbreakpoint"
+               commandId="org.eclipse.viatra.transformation.ui.debug.toggleActivationBreakpoint"
                icon="icons/brkp_obj.gif"
-               id="org.eclipse.viatra.transformation.ui.debug.addbreakpointmenu"
-               label="Toggle Breakpoint"
+               id="org.eclipse.viatra.transformation.ui.debug.toggleActBreakpointMenu"
+               label="Toggle Activation Breakpoint"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.viatra.transformation.debug.ui.addRuleBreakpoint"
+               icon="icons/activation_brkp.gif"
+               id="org.eclipse.viatra.transformation.ui.debug.addRuleBreakpointMenu"
+               label="Add Rule Breakpoint"
                style="push">
          </command>
          <separator
