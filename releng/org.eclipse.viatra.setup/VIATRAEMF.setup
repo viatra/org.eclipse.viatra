@@ -769,7 +769,7 @@
         name="viatraBaseline"
         version="1.2"
         location="${installation.location}/api/v1.2/"
-        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.1.2.0.zip"/>
+        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update-1.2.0.zip"/>
   </stream>
   <stream name="1.2-maintenance">
     <setupTask
@@ -803,7 +803,7 @@
         name="viatraBaseline"
         version="1.2"
         location="${installation.location}/api/v1.2/"
-        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.1.2.0-20160318.zip"/>
+        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update-1.2.0.zip"/>
   </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
