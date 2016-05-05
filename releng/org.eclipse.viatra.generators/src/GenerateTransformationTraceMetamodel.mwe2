@@ -14,7 +14,7 @@ module org.eclipse.viatra.transformation.tracer.generator
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.emf.mwe2.ecore.*
 
-var projectName = "org.eclipse.viatra.transformation.tracer"
+var projectName = "org.eclipse.viatra.transformation.debug.transformationtrace"
 var genModelPath = "platform:/resource/${projectName}/model/transformationtrace.genmodel"
 var directory = "${projectName}/src-gen"
 
