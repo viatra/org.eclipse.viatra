@@ -20,7 +20,6 @@ import org.eclipse.viatra.transformation.debug.model.TransformationThread;
 import org.eclipse.viatra.transformation.debug.model.TransformationThreadFactory;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.RuleBreakpoint;
 import org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser;
-import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 
 public class AddRuleBreakpointHandler extends AbstractHandler{
