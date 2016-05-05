@@ -36,6 +36,7 @@ import com.google.inject.Inject;
  */
 public class SurrogatePatternValidator implements IPatternAnnotationAdditionalValidator {
 
+    private static final String FEATURE_PARAMETER_NAME = "feature";
     private static final String VALIDATOR_BASE_CODE = "org.eclipse.viatra.query.patternlanguage.surrogate.";
     public static final String GENERAL_ISSUE_CODE = VALIDATOR_BASE_CODE + "general";
     public static final String METAMODEL_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_metamodel";
@@ -68,7 +69,7 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
         if (source != null) {
             sourceClassifier = typeProvider.getClassifierForVariable(source);
         }
-        if (sourceClassifier == null || !(sourceClassifier instanceof EClass)) {
+        if (!(sourceClassifier instanceof EClass)) {
             validator.error("The 'source' parameter must be EClass.", source,
                     PatternLanguagePackage.Literals.VARIABLE__TYPE, PATTERN_ISSUE_CODE);
             return;
@@ -79,7 +80,7 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
         String featureName = null;
         EObject contextForFeature = null;
         EStructuralFeature contextESFForFeature = null;
-        ValueReference ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
+        ValueReference ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, FEATURE_PARAMETER_NAME);
         if (ref == null) {
             featureName = pattern.getName();
             contextForFeature = pattern;
@@ -154,7 +155,7 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
     private boolean checkFeatureUniquenessOnSurrogateAnnotations(Annotation annotation, IIssueCallback validator, Pattern pattern) {
         Collection<Annotation> qbfAnnotations = CorePatternLanguageHelper.getAnnotationsByName(pattern, "Surrogate");
         if(qbfAnnotations.size() > 1) {
-            ValueReference feature = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "feature");
+            ValueReference feature = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, FEATURE_PARAMETER_NAME);
             if(feature == null) {
                 validator.error("Feature must be specified when multiple Surrogate annotations are used on a single pattern.", annotation,
                         PatternLanguagePackage.Literals.ANNOTATION__NAME, ANNOTATION_ISSUE_CODE);
@@ -162,7 +163,7 @@ public class SurrogatePatternValidator implements IPatternAnnotationAdditionalVa
             } else {
                 String featureName = ((StringValue) feature).getValue();
                 for (Annotation antn : qbfAnnotations) {
-                    ValueReference otherFeature = CorePatternLanguageHelper.getFirstAnnotationParameter(antn, "feature");
+                    ValueReference otherFeature = CorePatternLanguageHelper.getFirstAnnotationParameter(antn, FEATURE_PARAMETER_NAME);
                     if(otherFeature != null) {
                         String otherFeatureName = ((StringValue) otherFeature).getValue();
                         if(featureName.equals(otherFeatureName)) {

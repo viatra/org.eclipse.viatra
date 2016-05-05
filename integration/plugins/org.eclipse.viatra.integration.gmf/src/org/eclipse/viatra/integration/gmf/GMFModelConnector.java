@@ -94,9 +94,9 @@ public class GMFModelConnector extends EMFModelConnector {
     private TreePath createTreePath(EditPart epBegin, EObject obj) {
         if (epBegin instanceof GraphicalEditPart) {
             List<Object> nodes = new ArrayList<Object>();
-            epBegin = ((GraphicalEditPart) epBegin).findEditPart(epBegin.getRoot(), obj);
-            if (epBegin != null) {
-                nodes.add(epBegin);
+            EditPart ep = ((GraphicalEditPart) epBegin).findEditPart(epBegin.getRoot(), obj);
+            if (ep != null) {
+                nodes.add(ep);
                 return new TreePath(nodes.toArray());
             }
         }
@@ -114,11 +114,9 @@ public class GMFModelConnector extends EMFModelConnector {
             IDiagramWorkbenchPart dwp = (IDiagramWorkbenchPart) editorPart;
             viewer = dwp.getDiagramGraphicalViewer();
         }
-        if (viewer != null) {
-            if (selection.getFirstElement() instanceof GraphicalEditPart) {
-                GraphicalEditPart part = (GraphicalEditPart) selection.getFirstElement();
-                viewer.reveal(part);
-            }
+        if (viewer != null && selection.getFirstElement() instanceof GraphicalEditPart) {
+            GraphicalEditPart part = (GraphicalEditPart) selection.getFirstElement();
+            viewer.reveal(part);
         }
     }
 

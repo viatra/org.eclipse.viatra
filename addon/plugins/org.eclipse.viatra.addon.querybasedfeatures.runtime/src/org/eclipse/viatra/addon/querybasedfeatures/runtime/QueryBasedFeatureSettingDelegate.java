@@ -100,7 +100,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
             // at least one of them has to specify this feature
             for (PAnnotation annotation : qbfAnnotations) {
                 Object featureParam = annotation.getFirstValue("feature");
-                if (featureParam != null && featureParam instanceof String) {
+                if (featureParam instanceof String) {
                     if(eStructuralFeature.getName().equals(featureParam)) {
                         processQBFAnnotation(annotation);
                     }
@@ -111,19 +111,19 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
 
     private void processQBFAnnotation(PAnnotation annotation) {
         Object sourceParam = annotation.getFirstValue("source");
-        if (sourceParam != null && sourceParam instanceof String) {
+        if (sourceParam instanceof String) {
             parameters.sourceVar = (String) sourceParam;
         }
         Object targetParam = annotation.getFirstValue("target");
-        if (targetParam != null && targetParam instanceof String) {
+        if (targetParam instanceof String) {
             parameters.targetVar = (String) targetParam;
         }
         Object keepCacheParam = annotation.getFirstValue("keepCache");
-        if (keepCacheParam != null && keepCacheParam instanceof Boolean) {
+        if (keepCacheParam instanceof Boolean) {
             parameters.keepCache = (Boolean) keepCacheParam;
         }
         Object kindParam = annotation.getFirstValue("kind");
-        if (kindParam != null && kindParam instanceof String) {
+        if (kindParam instanceof String) {
             parameters.kind = QueryBasedFeatureKind.parseKindString((String) kindParam);
         }
     }

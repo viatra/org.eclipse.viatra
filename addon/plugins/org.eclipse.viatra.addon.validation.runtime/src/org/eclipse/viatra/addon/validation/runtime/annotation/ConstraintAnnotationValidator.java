@@ -110,11 +110,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
                 @Override
                 public boolean apply(Variable key) {
                     EClassifier classifier = typeProvider.getClassifierForVariable(key);
-                    if (!(classifier instanceof EClass)) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return (classifier instanceof EClass);
                 }
             });
             if (!atLeastOneEClassKey) {
