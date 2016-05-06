@@ -14,13 +14,18 @@ import java.util.StringTokenizer;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 
 import com.google.inject.Inject;
 
@@ -37,7 +42,8 @@ public class AnnotationExpressionValidator {
     public static final String UNDEFINED_NAME_CODE = VALIDATOR_BASE_CODE + "undefined_name";
 
     @Inject
-    private IEMFTypeProvider typeProvider;
+    private ITypeInferrer typeInferrer;
+    
 
     /**
      * Validates a path expression referring to a simple pattern parameter
@@ -91,19 +97,49 @@ public class AnnotationExpressionValidator {
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, UNKNOWN_VARIABLE_CODE);
             return;
         }
-        EClassifier classifier = typeProvider.getClassifierForVariable(parameter);
+        
+        
 
-        if (tokens.length == 1) {
-            checkClassifierFeature(classifier, "name", ref, validator, false);
-        } else if (tokens.length == 2) {
-            String featureName = tokens[1];
-            checkClassifierFeature(classifier, featureName, ref, validator, true);
+        IInputKey type = typeInferrer.getType(parameter);
+        if (type == null) {
+            // Parameter type errors are reported in called method
+        } else if (type instanceof JavaTransitiveInstancesKey) {
+            Class<?> clazz = ((JavaTransitiveInstancesKey) type).getInstanceClass();
+            validateJavaFeatureAccess(clazz, tokens, ref, validator);
+        } else if (type instanceof EClassTransitiveInstancesKey) {
+            EClassifier classifier = ((EClassTransitiveInstancesKey) type).getEmfKey();
+            validateClassifierFeatureAccess(classifier, tokens, ref, validator);
+        } else if (type instanceof EDataTypeInSlotsKey){
+            EClassifier classifier = ((EDataTypeInSlotsKey) type).getEmfKey();
+            validateClassifierFeatureAccess(classifier, tokens, ref, validator);
         } else {
-            validator.error("Only direct feature references are supported.", ref,
+            validator.error(String.format("Label expressions only supported on EMF types, not on %s", type.getPrettyPrintableName()), parameter,
+                    PatternLanguagePackage.Literals.VARIABLE__NAME, GENERAL_ISSUE_CODE);
+        }
+        
+    }
+
+    private void validateJavaFeatureAccess(Class<?> clazz, String[] nameTokens, Expression context,
+            IIssueCallback validator) {
+        if (nameTokens.length != 1) {
+            validator.error("For Java objects parameters no feature access is supported.", context,
                     PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
         }
     }
-
+    
+    private void validateClassifierFeatureAccess(EClassifier classifier, String[] nameTokens, Expression context,
+            IIssueCallback validator) {
+        if (nameTokens.length == 1) {
+            checkClassifierFeature(classifier, "name", context, validator, false);
+        } else if (nameTokens.length == 2) {
+            String featureName = nameTokens[1];
+            checkClassifierFeature(classifier, featureName, context, validator, true);
+        } else {
+            validator.error("Only direct feature references are supported.", context,
+                    PatternLanguagePackage.Literals.STRING_VALUE__VALUE, GENERAL_ISSUE_CODE);
+        }
+    }
+    
     /**
      * Checks whether an {@link EClassifier} defines a feature with the selected name; if not, reports an error for the
      * selected reference.
@@ -114,7 +150,7 @@ public class AnnotationExpressionValidator {
      * @param validator
      * @param userSpecified TODO
      */
-    private void checkClassifierFeature(EClassifier classifier, String featureName, ValueReference ref,
+    private void checkClassifierFeature(EClassifier classifier, String featureName, Expression ref,
             IIssueCallback validator, boolean userSpecified) {
         if (classifier instanceof EClass) {
             EClass classDef = (EClass) classifier;

@@ -278,7 +278,7 @@ class PatternQuerySpecificationClassInferrer {
 				static = true
 				body = '''
 					INSTANCE.ensureInitializedInternalSneaky();
-					return null;					
+					return null;
 				'''
 			]
 		]

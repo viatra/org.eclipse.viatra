@@ -23,7 +23,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.QueryBasedFeatureKind;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures;
 import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
@@ -33,9 +33,13 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.inject.Inject;
+import com.google.inject.util.Types;
 
 /**
  * @author Abel Hegedus
@@ -50,7 +54,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
     public static final String ANNOTATION_ISSUE_CODE = VALIDATOR_BASE_CODE + "faulty_annotation";
 
     @Inject
-    private IEMFTypeProvider typeProvider;
+    private ITypeInferrer typeInferrer;
 
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
@@ -81,16 +85,16 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                         PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
             }
         }
-        EClassifier sourceClassifier = null;
+        IInputKey sourceType = null;
         if (source != null) {
-            sourceClassifier = typeProvider.getClassifierForVariable(source);
+            sourceType = typeInferrer.getType(source);
         }
-        if (sourceClassifier == null || !(sourceClassifier instanceof EClass)) {
+        if (sourceType == null || !(sourceType instanceof EClassTransitiveInstancesKey)) {
             validator.error("The 'source' parameter must be EClass.", source,
                     PatternLanguagePackage.Literals.VARIABLE__TYPE, PATTERN_ISSUE_CODE);
             return;
         }
-        EClass sourceClass = (EClass) sourceClassifier;
+        EClass sourceClass = ((EClassTransitiveInstancesKey) sourceType).getEmfKey();
 
         // 3. pattern name or "feature" is a feature of Source
         String featureName = null;
@@ -167,8 +171,10 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
                         PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE, ANNOTATION_ISSUE_CODE);
             }
         }
-        EClassifier targetClassifier = typeProvider.getClassifierForVariable(target);
-        if (targetClassifier == null) {
+        IInputKey targetType = typeInferrer.getType(target);
+        
+        EClassifier targetClassifier = EMFTypeSystem.EXTRACT_CLASSIFIER.apply(targetType); 
+        if (targetType == null) {
             validator.warning("Cannot find target EClassifier", target, PatternLanguagePackage.Literals.VARIABLE__TYPE,
                     PATTERN_ISSUE_CODE);
         }

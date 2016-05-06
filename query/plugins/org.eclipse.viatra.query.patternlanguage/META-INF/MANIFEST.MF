@@ -36,6 +36,7 @@ Export-Package: org.eclipse.viatra.query.patternlanguage,
  org.eclipse.viatra.query.patternlanguage.serializer,
  org.eclipse.viatra.query.patternlanguage.services,
  org.eclipse.viatra.query.patternlanguage.typing,
+ org.eclipse.viatra.query.patternlanguage.typing.judgements,
  org.eclipse.viatra.query.patternlanguage.util,
  org.eclipse.viatra.query.patternlanguage.validation,
  org.eclipse.viatra.query.patternlanguage.validation.whitelist

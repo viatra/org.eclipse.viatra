@@ -13,19 +13,38 @@ package org.eclipse.viatra.query.patternlanguage.emf.tests.util;
 
 import static org.eclipse.emf.common.util.Diagnostic.INFO;
 
+import java.util.Iterator;
+
+import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics;
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics.DiagnosticPredicate;
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics.Pred;
 
-public abstract class AbstractValidatorTest{
+public abstract class AbstractValidatorTest {
 
-	protected DiagnosticPredicate getErrorCode(String issueId) {
-		return AssertableDiagnostics.errorCode(issueId);
-	}
-	protected DiagnosticPredicate getWarningCode(String issueId) {
-		return AssertableDiagnostics.warningCode(issueId);
-	}
-	protected DiagnosticPredicate getInfoCode(String issueId) {
-	    return new Pred(INFO, null, issueId, null);
-	}
+    protected DiagnosticPredicate getErrorCode(String issueId) {
+        return AssertableDiagnostics.errorCode(issueId);
+    }
+
+    protected DiagnosticPredicate getWarningCode(String issueId) {
+        return AssertableDiagnostics.warningCode(issueId);
+    }
+
+    protected DiagnosticPredicate getInfoCode(String issueId) {
+        return new Pred(INFO, null, issueId, null);
+    }
+
+    protected void assertOK(AssertableDiagnostics diagnostics) {
+        Iterator<Diagnostic> it = diagnostics.getAllDiagnostics().iterator();
+        if (it.hasNext()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("There are expected to be no diagnostics but the following were found: \n");
+            while (it.hasNext()) {
+                Diagnostic next = it.next();
+                sb.append(next.getMessage());
+                sb.append("\n");
+            }
+            throw new AssertionError(sb.toString());
+        }
+    }
 }

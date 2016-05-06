@@ -12,10 +12,12 @@ package org.eclipse.viatra.query.patternlanguage.emf.helper;
 
 import java.util.List;
 
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSection;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -41,8 +43,6 @@ public class EMFPatternLanguageHelper {
     /**
      * Returns an iterable of package imports in a selected pattern model. If an import package is an unresolvable
      * proxy, it is omitted.
-     * 
-     * @param model
      */
     public static Iterable<PackageImport> getPackageImportsIterable(PatternModel model) {
         XImportSection imports = model.getImportPackages();
@@ -57,5 +57,21 @@ public class EMFPatternLanguageHelper {
                         return !pImport.eIsProxy();
                     }
                 });
+    }
+    
+    /**
+     * Returns an iterable of imported EPackages in a selected pattern model. If an import package is an unresolvable
+     * proxy, it is omitted.
+     *
+     * @since 1.3
+     */
+    public static Iterable<EPackage> getEPackageImportsIterable(PatternModel model) {
+        return Iterables.transform(getPackageImportsIterable(model), new Function<PackageImport, EPackage>() {
+
+            @Override
+            public EPackage apply(PackageImport input) {
+                return input.getEPackage();
+            }
+        });
     }
 }

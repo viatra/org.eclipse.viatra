@@ -32,6 +32,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  * @author Andras Okros, Zoltan Ujhelyi
  *
  */
+@Deprecated
 public interface IEMFTypeProvider {
 
     /**

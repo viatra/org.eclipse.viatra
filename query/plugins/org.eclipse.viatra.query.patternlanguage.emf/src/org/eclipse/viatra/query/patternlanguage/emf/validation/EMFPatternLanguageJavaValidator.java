@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EClass;
@@ -26,6 +27,7 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.BasicEObjectImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
@@ -38,7 +40,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.Reference
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
@@ -47,6 +49,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.ComputationValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.LiteralValueReference;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionTail;
@@ -55,14 +58,20 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCall;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
+import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.xtext.EcoreUtil2;
@@ -73,13 +82,18 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
+import org.eclipse.xtext.xbase.lib.Functions.Function2;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.inject.Inject;
@@ -95,6 +109,8 @@ import com.google.inject.Inject;
  * <li>Pattern body searching for isolated constraints (cartesian products)</li>
  * <li>Non-EDataTypes in check expression</li>
  * </ul>
+ * 
+ * @noreference
  */
 public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
 
@@ -111,15 +127,44 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    private static Type getTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
+        if (pathExpressionTail == null) {
+            return null;
+        }
+        if (pathExpressionTail.getTail() != null) {
+            return getTypeFromPathExpressionTail(pathExpressionTail.getTail());
+        }
+        return pathExpressionTail.getType();
+    }
+
+    private final Function<IInputKey, String> TYPENAME = new Function<IInputKey, String>() {
+
+        @Override
+        public String apply(IInputKey input) {
+            return typeSystem.typeString(input);
+        }
+    };
+    
+    private final Predicate<EClass> NOTNULL_NOTPROXY = new Predicate<EClass>() {
+
+        @Override
+        public boolean apply(EClass input) {
+            return input != null  && !input.eIsProxy();
+        }
+    };
+    
     @Inject
     private IMetamodelProvider metamodelProvider;
 
     @Inject
-    private IEMFTypeProvider emfTypeProvider;
-    
+    private ITypeInferrer typeInferrer;
+
+    @Inject
+    private EMFTypeSystem typeSystem;
+
     @Inject
     private IJvmModelAssociations associations;
-    
+
     @Inject
     private TypeReferences typeReferences;
 
@@ -153,10 +198,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @Check
     public void checkPackageImportGeneratedCode(PackageImport packageImport) {
-        if (packageImport.getEPackage() != null
-                && packageImport.getEPackage().getNsURI() != null
-                && !metamodelProvider.isGeneratedCodeAvailable(packageImport.getEPackage(), packageImport.eResource()
-                        .getResourceSet())) {
+        if (packageImport.getEPackage() != null && packageImport.getEPackage().getNsURI() != null && !metamodelProvider
+                .isGeneratedCodeAvailable(packageImport.getEPackage(), packageImport.eResource().getResourceSet())) {
             warning(String.format(
                     "The generated code of the Ecore model %s cannot be found. Check the org.eclipse.emf.ecore.generated_package extension in the model project or consider setting up a generator model for the generated code to work.",
                     packageImport.getEPackage().getNsURI()),
@@ -200,37 +243,15 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
-    /**
-     * The parameter's type must be the same or more specific than the type inferred from the pattern's body. This
-     * warning usually arises when we have more pattern bodies, which contains different type definitions for the same
-     * parameter. In a case like this the common parameter's type is the most specific common supertype of the
-     * respective calculated types in the bodies.
-     * 
-     * @param pattern
-     */
-    @Check(/*CheckType.NORMAL*/)
-    public void checkPatternParametersType(Pattern pattern) {
-        for (Variable variable : pattern.getParameters()) {
-            EClassifier classifierCorrect = emfTypeProvider.getClassifierForVariable(variable);
-            EClassifier classifierDefined = emfTypeProvider.getClassifierForType(variable.getType());
-            if (classifierCorrect == null || classifierDefined == null || classifierDefined.equals(classifierCorrect)) {
-                // Either correct - they are the same, or other validator returns the type error
-                return;
-            } else {
-                if (classifierCorrect instanceof EClass && classifierDefined instanceof EClass) {
-                    if (((EClass) classifierDefined).getEAllSuperTypes().contains(classifierCorrect)) {
-                        // Correct the defined is more specific than what the pattern needs
-                        return;
-                    }
-                }
-                // OK, issue warning now
-                warning(String.format(
-                        "Inconsistent parameter type definition, should be %s based on the pattern definition",
-                        classifierCorrect.getName()), variable, null, EMFIssueCodes.PARAMETER_TYPE_INVALID);
-            }
+    @Check
+    public void checkVariableType(Variable variable) {
+        if (CorePatternLanguageHelper.isParameter(variable)) {
+            checkParameterTypes(variable);
+        } else {
+            checkPatternVariablesType(variable);
         }
     }
-
+    
     /**
      * A variable's type can come from different sources: parameter's type definition, type definitions in the pattern
      * bodies or calculated from path expression constraints or find calls. In these situations one variable might have
@@ -242,111 +263,186 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      * 
      * @param pattern
      */
-    @Check(/*CheckType.NORMAL*/)
-    public void checkPatternVariablesType(Pattern pattern) {
-        for (PatternBody patternBody : pattern.getBodies()) {
-            for (Variable variable : patternBody.getVariables()) {
-                Set<EClassifier> possibleClassifiers = emfTypeProvider.getIrreducibleClassifiersForVariableInBody(
-                        patternBody, variable);
-                // We only need to give warnings/errors if there is more possible classifiers
-                if (possibleClassifiers.size() > 1) {
-                    Set<String> classifierNamesSet = new HashSet<String>();
-                    Set<String> classifierPackagesSet = new HashSet<String>();
-                    for (EClassifier classifier : possibleClassifiers) {
-                        classifierNamesSet.add(classifier.getName());
-                        if (classifier.getEPackage() != null) {
-                            classifierPackagesSet.add(classifier.getEPackage().getName());
+    private void checkPatternVariablesType(Variable variable) {
+        Set<IInputKey> allPossibleTypes = typeInferrer.getAllPossibleTypes(variable);
+        Set<EClassifier> possibleClassifiers = Sets.newHashSet(
+                Iterables.filter(Iterables.transform(allPossibleTypes, new Function<IInputKey, EClassifier>() {
+
+                    @Override
+                    public EClassifier apply(IInputKey input) {
+                        if (input instanceof EClassTransitiveInstancesKey) {
+                            return ((EClassTransitiveInstancesKey) input).getEmfKey();
+                        } else if (input instanceof EDataTypeInSlotsKey) {
+                            return ((EDataTypeInSlotsKey) input).getEmfKey();
                         }
+                        return null;
                     }
-                    // If the String sets contains only 1 elements than it is an error
-                    // There is some element which is defined multiple types within the ecores
-                    if (classifierNamesSet.size() == 1 && classifierPackagesSet.size() <= 1) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Variable ");
-                        sb.append(variable.getName());
-                        sb.append(" has a type "); 
-                        sb.append(classifierNamesSet.iterator().next());
-                        sb.append(" which has multiple definitions: ");
-                        for (EClassifier cls : possibleClassifiers) {
-                            sb.append(" '");
-                            if (cls.eIsProxy()) {
-                                sb.append(((BasicEObjectImpl)cls).eProxyURI());
-                            } else {
-                                sb.append(cls.eResource().getURI());
+                }), Predicates.notNull()));
+        // We only need to give warnings/errors if there are multiple possible types
+        if (allPossibleTypes.size() <= 1  ) {
+            return;
+        }
+
+        Set<String> typeNameSet = Sets.newHashSet(Iterables.transform(allPossibleTypes, TYPENAME));
+
+        Set<String> classifierNamesSet = new HashSet<String>();
+        Set<String> classifierPackagesSet = new HashSet<String>();
+        for (EClassifier classifier : possibleClassifiers) {
+            classifierNamesSet.add(classifier.getName());
+            if (classifier.getEPackage() != null) {
+                classifierPackagesSet.add(classifier.getEPackage().getName());
+            }
+        }
+
+        // If the String sets contains only 1 elements than it is an error
+        // There is some element which is defined multiple types within the ecores
+        if (possibleClassifiers.size() > 1 && classifierNamesSet.size() == 1 && classifierPackagesSet.size() <= 1) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Variable ");
+            sb.append(variable.getName());
+            sb.append(" has a type ");
+            sb.append(classifierNamesSet.iterator().next());
+            sb.append(" which has multiple definitions: ");
+            for (EClassifier cls : possibleClassifiers) {
+                sb.append(" '");
+                if (cls.eIsProxy()) {
+                    sb.append(((BasicEObjectImpl) cls).eProxyURI());
+                } else {
+                    sb.append(cls.eResource().getURI());
+                }
+                sb.append("' -- ");
+            }
+            error(sb.toString(), variable.getReferences().get(0), null,
+                    EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
+        }
+        final IInputKey declaredType = typeInferrer.getDeclaredType(variable);
+        final PatternModel patternModel = EcoreUtil2.getContainerOfType(variable, PatternModel.class);
+        if (declaredType == null) {
+            if (!typeSystem.hasCommonSubtype(allPossibleTypes,
+                    EMFPatternLanguageHelper.getEPackageImportsIterable(patternModel))) {
+                if (variable instanceof ParameterRef) {
+                    error("Ambiguous variable type definitions: " + typeNameSet
+                            + ", type cannot be selected. Please specify the one to be used as the parameter type"
+                            + " by adding it to the parameter definition.", variable.getReferences().get(0), null,
+                            EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
+                } else {
+                    error("Inconsistent variable type definitions: " + typeNameSet + ", type cannot be selected.",
+                            variable.getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
+                }
+            }
+        } else {
+            // Check whether all types conforms to declared type
+            Iterable<IInputKey> unconformTypes = Iterables.filter(allPossibleTypes, new Predicate<IInputKey>() {
+
+                @Override
+                public boolean apply(IInputKey input) {
+                    return !typeSystem.isConformant(declaredType, input);
+                }
+            });
+            Iterable<String> inconsistentTypes = Iterables.transform(Iterables.filter(unconformTypes, new Predicate<IInputKey>(){
+
+                @Override
+                public boolean apply(IInputKey input) {
+                    return !typeSystem.hasCommonSubtype(ImmutableSet.of(declaredType, input), EMFPatternLanguageHelper.getEPackageImportsIterable(patternModel));
+                }
+                
+            }), TYPENAME);
+            if (!Iterables.isEmpty(inconsistentTypes)) {
+                error("Variable types [" + Joiner.on(", ").join(inconsistentTypes)
+                        + "] do not conform to declared type " + typeSystem.typeString(declaredType),
+                        variable.getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
+            }
+
+        }
+    }
+    
+    private void checkParameterTypes(final Variable variable) {
+        Iterable<Variable> parameterReferences = Iterables.filter(
+                CorePatternLanguageHelper.getLocalReferencesOfParameter(variable), Predicates.notNull());
+        
+        if (variable.getType() == null) {
+            // Missing type validation
+            Set<IInputKey> possibleTypes = Sets.newHashSet();
+
+            for (Variable bodyVar : parameterReferences) {
+                possibleTypes.addAll(typeInferrer.getAllPossibleTypes(bodyVar));
+            }
+            if (possibleTypes.size() == 1) {
+                    IInputKey type = possibleTypes.iterator().next();
+                    if (type instanceof EClassTransitiveInstancesKey) {
+                    EClass eClass = ((EClassTransitiveInstancesKey)type).getEmfKey();
+                    String[] issueData = new String[]{eClass.getName()};
+                    info("Type not defined for variable " + variable.getName() + ", inferred type " + typeSystem.typeString(type) + " is used instead.",
+                            PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
+                            issueData);
+                    }
+            } else if (Iterables.all(possibleTypes, Predicates.instanceOf(EClassTransitiveInstancesKey.class))) {
+                Set<IInputKey> types = typeSystem.getCompatibleSupertypes(possibleTypes);
+                Iterable<EClass> eClasses = Iterables.filter(Iterables.transform(
+                        Iterables.filter(types, EClassTransitiveInstancesKey.class),
+                        new Function<EClassTransitiveInstancesKey, EClass>() {
+                            
+                            @Override
+                            public EClass apply(EClassTransitiveInstancesKey input) {
+                                return input.getEmfKey();
+                                
                             }
-                            sb.append("' -- ");
-                        }
-                        error(sb.toString(), variable
-                                .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_MULTIPLE_DECLARATION);
-                    } else {
-                        EClassifier explicitType = emfTypeProvider.getExplicitClassifierForPatternParameterVariable(variable);
-                        PatternModel patternModel = (PatternModel) patternBody.eContainer().eContainer();
-                        if (explicitType != null && possibleClassifiers.contains(explicitType)
-                                && hasCommonSubType(patternModel, possibleClassifiers)) {
-                            warning("Ambiguous variable type defintions: " + classifierNamesSet
-                                    + ", the parameter type (" + explicitType.getName() + ") is used now.", variable
-                                    .getReferences().get(0), null, EMFIssueCodes.VARIABLE_TYPE_INVALID_WARNING);
+                            
+                        }), NOTNULL_NOTPROXY);
+                Iterable<String> typeNames = Iterables.concat(Iterables.transform(eClasses, new Function<EClass, String>() {
+
+                    @Override
+                    public String apply(EClass input) {
+                        return input.getName();
+                    }
+                }), ImmutableSet.of("EObject"));
+                String[] issueData = Iterables.toArray(typeNames, String.class);
+                EClass reduced = IterableExtensions.fold(eClasses, EcorePackage.Literals.EOBJECT, new Function2<EClass, EClass, EClass>() {
+
+                    @Override
+                    public EClass apply(EClass t1, EClass t2) {
+                        if (t1 == EcorePackage.Literals.EOBJECT) {
+                            return t2;
+                        } else if (t1 == null || t2 == null) {
+                            return null;
                         } else {
-                            boolean isParameter = false;
-                            for (Variable parameter : pattern.getParameters()) {
-                                if (parameter.getName().equals(variable.getName())) {
-                                    isParameter = true;
-                                }
-                            }
-                            if (isParameter) {
-                                error("Ambiguous variable type defintions: "
-                                        + classifierNamesSet
-                                        + ", type cannot be selected. Please specify the one to be used as the parameter type"
-                                        + " by adding it to the parameter definition.",
-                                        variable.getReferences().get(0), null,
-                                        EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
-                            } else {
-                                error("Inconsistent variable type defintions: " + classifierNamesSet
-                                        + ", type cannot be selected.", variable.getReferences().get(0), null,
-                                        EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
-                            }
+                            return (EClass) EcoreUtil2.getCompatibleType(t1, t2, null);
                         }
                     }
+                    
+                });
+                if (reduced == null) {
+                    error("Variable type cannot be calculated unambiguously, the types [" 
+                            + Joiner.on(", ").join(Iterables.transform(possibleTypes, TYPENAME))
+                            + "] have no _unique_ common supertype. The list of possible supertypes found are [" 
+                            + Joiner.on(", ").join(typeNames)
+                            + "], specify one as the intended supertype.", variable, null,
+                            EMFIssueCodes.PARAMETER_TYPE_AMBIGUOUS, issueData);
+                } else if (issueData.length > 0) {
+                    info("Type not defined for variable " + variable.getName() + ", inferred type " + typeSystem.typeString(typeInferrer.getType(variable)) + " is used instead.",
+                            PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
+                            issueData);
+                }
+            }
+        } else {
+            // Check for more specific type inferrable for bodies
+            Iterable<IInputKey> referenceTypes = Iterables.filter(Iterables.transform(parameterReferences, new Function<Variable, IInputKey>() {
+
+                @Override
+                public IInputKey apply(Variable input) {
+                    return typeInferrer.getInferredType(input);
+                }
+            }), Predicates.notNull());
+            Set<IInputKey> aggregatedTypes = typeSystem.minimizeTypeInformation(Sets.newHashSet(referenceTypes), true);
+            IInputKey parameterType = typeInferrer.getType(variable);
+            if (aggregatedTypes.size() == 1 && parameterType != null) {
+                IInputKey aggregatedType = aggregatedTypes.iterator().next();
+                if (!Objects.equals(parameterType, aggregatedType) && typeSystem.isConformant(parameterType, aggregatedType)) {
+                    warning("Declared type " + typeSystem.typeString(parameterType) + " is less specific then the type " + typeSystem.typeString(aggregatedType) + " inferred from bodies", variable, null,
+                            EMFIssueCodes.PARAMETER_TYPE_INVALID);                
                 }
             }
         }
-    }
-
-    /**
-     * @param patternModel
-     * @param classifiers
-     * @return True if the given classifiers has a common subtype. The {@link PatternModel} is needed for focusing the
-     *         search, all ecore packages referenced from the patternmodel's head, and it's subpackages will be searched
-     *         for common subtype elements.
-     */
-    private boolean hasCommonSubType(PatternModel patternModel, Set<EClassifier> classifiers) {
-        Set<EClass> realSubTypes = new HashSet<EClass>();
-        Set<EClassifier> probableSubTypes = new HashSet<EClassifier>();
-        for (PackageImport packageImport : EMFPatternLanguageHelper.getPackageImportsIterable(patternModel)) {
-            probableSubTypes.addAll(getAllEClassifiers(packageImport.getEPackage()));
-        }
-        for (EClassifier classifier : probableSubTypes) {
-            if (classifier instanceof EClass) {
-                EClass eClass = (EClass) classifier;
-                if (eClass.getEAllSuperTypes().containsAll(classifiers)) {
-                    realSubTypes.add(eClass);
-                }
-            }
-        }
-        return !realSubTypes.isEmpty();
-    }
-
-    /**
-     * @param ePackage
-     * @return all EClassifiers contained in the ePackage, and in the subpackages as well
-     */
-    private static Set<EClassifier> getAllEClassifiers(EPackage ePackage) {
-        Set<EClassifier> resultSet = new HashSet<EClassifier>();
-        resultSet.addAll(ePackage.getEClassifiers());
-        for (EPackage subEPackage : ePackage.getESubpackages()) {
-            resultSet.addAll(subEPackage.getEClassifiers());
-        }
-        return resultSet;
     }
 
     /**
@@ -405,21 +501,21 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     // Positive composition (find)
                     for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
                         if (!isValueReferenceComputed(valueReference)) {
-                            positiveVariables.addAll(CorePatternLanguageHelper
-                                    .getVariablesFromValueReference(valueReference));
-                            generalVariables.addAll(CorePatternLanguageHelper
-                                    .getVariablesFromValueReference(valueReference));
+                            positiveVariables
+                                    .addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
+                            generalVariables
+                                    .addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
                         } else {
                             isSecondRunNeeded = true;
-                            generalVariables.addAll(CorePatternLanguageHelper
-                                    .getVariablesFromValueReference(valueReference));
+                            generalVariables
+                                    .addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
                         }
                     }
                 } else {
                     // Negative composition (neg find)
                     for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
-                        generalVariables.addAll(CorePatternLanguageHelper
-                                .getVariablesFromValueReference(valueReference));
+                        generalVariables
+                                .addAll(CorePatternLanguageHelper.getVariablesFromValueReference(valueReference));
                     }
                 }
             } else if (constraint instanceof PathExpressionConstraint) {
@@ -467,10 +563,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         ValueReference rightValueReference = compareConstraint.getRightOperand();
                         if (isValueReferenceComputed(leftValueReference)
                                 || isValueReferenceComputed(rightValueReference)) {
-                            addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables, positiveVariables,
-                                    leftValueReference);
-                            addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables, positiveVariables,
-                                    rightValueReference);
+                            addPositiveVariablesFromValueReference(unnamedRunningVariables,
+                                    justPositiveUnionFindForVariables, positiveVariables, leftValueReference);
+                            addPositiveVariablesFromValueReference(unnamedRunningVariables,
+                                    justPositiveUnionFindForVariables, positiveVariables, rightValueReference);
                         }
                     }
                 } else if (constraint instanceof PatternCompositionConstraint) {
@@ -478,8 +574,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     if (!patternCompositionConstraint.isNegative()) {
                         // Positive composition (find), with aggregates in it
                         for (ValueReference valueReference : patternCompositionConstraint.getCall().getParameters()) {
-                            addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables, positiveVariables,
-                                    valueReference);
+                            addPositiveVariablesFromValueReference(unnamedRunningVariables,
+                                    justPositiveUnionFindForVariables, positiveVariables, valueReference);
                         }
                     }
                 } else if (constraint instanceof PathExpressionConstraint) {
@@ -492,8 +588,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     }
                     positiveVariables.add(pathExpressionHeadSourceVariable);
                     ValueReference valueReference = pathExpressionHead.getDst();
-                    addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables, positiveVariables,
-                            valueReference);
+                    addPositiveVariablesFromValueReference(unnamedRunningVariables, justPositiveUnionFindForVariables,
+                            positiveVariables, valueReference);
                 }
                 justPositiveUnionFindForVariables.unite(positiveVariables);
             }
@@ -512,13 +608,16 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                         VariableValue variableValue = (VariableValue) rightValueReference;
                         Variable variableToRemove = variableValue.getValue().getVariable();
                         generalUnionFindForVariables = copyAndRemove(generalUnionFindForVariables, variableToRemove);
-                        justPositiveUnionFindForVariables = copyAndRemove(justPositiveUnionFindForVariables, variableToRemove);
+                        justPositiveUnionFindForVariables = copyAndRemove(justPositiveUnionFindForVariables,
+                                variableToRemove);
                     } else if (leftValueReference instanceof VariableValue
-                            && (rightValueReference instanceof LiteralValueReference || rightValueReference instanceof EnumValue)) {
+                            && (rightValueReference instanceof LiteralValueReference
+                                    || rightValueReference instanceof EnumValue)) {
                         VariableValue variableValue = (VariableValue) leftValueReference;
                         Variable variableToRemove = variableValue.getValue().getVariable();
                         generalUnionFindForVariables = copyAndRemove(generalUnionFindForVariables, variableToRemove);
-                        justPositiveUnionFindForVariables = copyAndRemove(justPositiveUnionFindForVariables, variableToRemove);
+                        justPositiveUnionFindForVariables = copyAndRemove(justPositiveUnionFindForVariables,
+                                variableToRemove);
                     }
                 }
             }
@@ -548,8 +647,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     /**
-     * Returns a copy of this with the given value removed.
-     * The given value does not have to be a set's root node.
+     * Returns a copy of this with the given value removed. The given value does not have to be a set's root node.
      */
     private static <V> UnionFind<V> copyAndRemove(UnionFind<V> unionFind, V element) {
         UnionFind<V> result = new UnionFind<V>();
@@ -593,18 +691,16 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         ValueReference leftValueReference = compareConstraint.getLeftOperand();
         ValueReference rightValueReference = compareConstraint.getRightOperand();
         if ((leftValueReference instanceof LiteralValueReference || leftValueReference instanceof ComputationValue
-                || rightValueReference instanceof LiteralValueReference || rightValueReference instanceof ComputationValue)
-                && !(leftValueReference instanceof VariableValue) && !(rightValueReference instanceof VariableValue)) {
-            EClassifier leftClassifier = emfTypeProvider
-                    .getClassifierForLiteralComputationEnumValueReference(leftValueReference);
-            EClassifier rightClassifier = emfTypeProvider
-                    .getClassifierForLiteralComputationEnumValueReference(rightValueReference);
-            if (!isCompatibleClassifiers(leftClassifier, rightClassifier)) {
-                final String leftName = leftClassifier == null ? "null" : leftClassifier.getInstanceClassName();
-                final String rightName = rightClassifier == null ? "null" : rightClassifier.getInstanceClassName();
-                error("The types of the literal/computational values are different: "
-                        + leftName + ", " + rightName + ".",
-                        compareConstraint, null, EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE);
+                || rightValueReference instanceof LiteralValueReference
+                || rightValueReference instanceof ComputationValue) && !(leftValueReference instanceof VariableValue)
+                && !(rightValueReference instanceof VariableValue)) {
+            IInputKey leftClassifier = typeInferrer.getType(leftValueReference);
+            IInputKey rightClassifier = typeInferrer.getType(rightValueReference);
+            if (!typeSystem.isConformant(leftClassifier, rightClassifier)) {
+                final String leftName = leftClassifier == null ? "null" : leftClassifier.getPrettyPrintableName();
+                final String rightName = rightClassifier == null ? "null" : rightClassifier.getPrettyPrintableName();
+                error("The types of the literal/computational values are different: " + leftName + ", " + rightName
+                        + ".", compareConstraint, null, EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE);
             }
         }
     }
@@ -621,15 +717,14 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
         ValueReference valueReference = pathExpressionHead.getDst();
         if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
-            EClassifier inputClassifier = emfTypeProvider
-                    .getClassifierForLiteralComputationEnumValueReference(valueReference);
-            EClassifier typeClassifier = emfTypeProvider.getClassifierForType(emfTypeProvider
-                    .getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
-            if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
-                String name = typeClassifier == null ? "<unknown>" : typeClassifier.getInstanceClassName();
+            IInputKey actualType = typeInferrer.getType(valueReference);
+            IInputKey expectedType = typeSystem
+                    .extractTypeDescriptor(getTypeFromPathExpressionTail(pathExpressionHead.getTail()));
+            if (!typeSystem.isConformant(expectedType, actualType)) {
+                String name = expectedType == null ? "<unknown>" : typeSystem.typeString(expectedType);
                 error("The type inferred from the path expression (" + name
                         + ") is different from the input literal/computational value ("
-                        + inputClassifier.getInstanceClassName() + ").", pathExpressionConstraint, null,
+                        + typeSystem.typeString(actualType) + ").", pathExpressionConstraint, null,
                         EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION);
             }
         }
@@ -642,71 +737,27 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      */
     @Check
     public void checkForWrongLiteralAndComputationValuesInPatternCalls(PatternCall patternCall) {
-    	if (patternCall.getParameters().size() != patternCall.getPatternRef().getParameters().size()) {
-    		//This kind of error is detected in another place, however it throws an exception during literal checks
-    		return;
-    	}
-    	// Find and neg find (including count find as well)
+        if (patternCall.getParameters().size() != patternCall.getPatternRef().getParameters().size()) {
+            // This kind of error is detected in another place, however it throws an exception during literal checks
+            return;
+        }
+        // Find and neg find (including count find as well)
         for (ValueReference valueReference : patternCall.getParameters()) {
             if (valueReference instanceof LiteralValueReference || valueReference instanceof ComputationValue) {
                 Pattern pattern = patternCall.getPatternRef();
                 Variable variable = pattern.getParameters().get(patternCall.getParameters().indexOf(valueReference));
-                EClassifier typeClassifier = emfTypeProvider.getClassifierForVariable(variable);
-                EClassifier inputClassifier = emfTypeProvider
-                        .getClassifierForLiteralComputationEnumValueReference(valueReference);
-                if (!isCompatibleClassifiers(typeClassifier, inputClassifier)) {
-                    final String typeClassifierName = typeClassifier == null ? "(unknown)" : typeClassifier.getInstanceClassName();
+                IInputKey parameterType = typeInferrer.getType(variable);
+                IInputKey inputType = typeInferrer.getType(valueReference);
+                if (!typeSystem.isConformant(parameterType, inputType)) {
+                    final String typeClassifierName = parameterType == null ? "(unknown)"
+                            : typeSystem.typeString(parameterType);
                     error("The type inferred from the called pattern (" + typeClassifierName
                             + ") is different from the input literal/computational value ("
-                            + inputClassifier.getInstanceClassName() + ").", patternCall, null,
+                            + typeSystem.typeString(inputType) + ").", patternCall, null,
                             EMFIssueCodes.LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL);
                 }
             }
         }
-    }
-
-    private static boolean isCompatibleClassifiers(EClassifier classifierFirst, EClassifier classifierSecond) {
-        if (classifierFirst != null && classifierSecond != null) {
-            Class<?> firstInstanceClass = classifierFirst.getInstanceClass();
-            Class<?> secondInstanceClass = classifierSecond.getInstanceClass();
-            if (firstInstanceClass.equals(secondInstanceClass)) {
-                return true;
-            } else if (firstInstanceClass.isPrimitive() || secondInstanceClass.isPrimitive()) {
-                Class<?> firstWrapperClass = getWrapperClassForType(firstInstanceClass);
-                Class<?> secondWrapperClass = getWrapperClassForType(secondInstanceClass);
-                if (firstWrapperClass.equals(secondWrapperClass)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param typeClass
-     * @return The wrapper class if the input is primitive. If it is not, it returns with the input unchanged.
-     */
-    private static Class<?> getWrapperClassForType(Class<?> typeClass) {
-        if (typeClass != null && typeClass.isPrimitive()) {
-            if (typeClass == boolean.class) {
-                return java.lang.Boolean.class;
-            } else if (typeClass == byte.class) {
-                return java.lang.Byte.class;
-            } else if (typeClass == char.class) {
-                return java.lang.Character.class;
-            } else if (typeClass == double.class) {
-                return java.lang.Double.class;
-            } else if (typeClass == float.class) {
-                return java.lang.Float.class;
-            } else if (typeClass == int.class) {
-                return java.lang.Integer.class;
-            } else if (typeClass == long.class) {
-                return java.lang.Long.class;
-            } else if (typeClass == short.class) {
-                return java.lang.Short.class;
-            }
-        }
-        return typeClass;
     }
 
     /**
@@ -716,29 +767,32 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      */
     @Check
     public void checkForWrongVariablesInXExpressions(CheckConstraint checkConstraint) {
-		checkForWrongVariablesInXExpressionsInternal(checkConstraint.getExpression());
+        checkForWrongVariablesInXExpressionsInternal(checkConstraint.getExpression());
     }
+
     /**
-     * This validator looks up all variables in the {@link FunctionEvaluationValue} and reports an error if one them is not an
-     * {@link EDataType} instance. We do not allow arbitrary EMF elements in, so the checks are less likely to have
-     * side-effects.
+     * This validator looks up all variables in the {@link FunctionEvaluationValue} and reports an error if one them is
+     * not an {@link EDataType} instance. We do not allow arbitrary EMF elements in, so the checks are less likely to
+     * have side-effects.
      */
     @Check
     public void checkForWrongVariablesInXExpressions(FunctionEvaluationValue eval) {
-		checkForWrongVariablesInXExpressionsInternal(eval.getExpression());
+        checkForWrongVariablesInXExpressionsInternal(eval.getExpression());
     }
-    
-	private void checkForWrongVariablesInXExpressionsInternal(final XExpression expression) {
-		for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(expression, associations)) {
-            EClassifier classifier = emfTypeProvider.getClassifierForVariable(variable);
-            if (classifier != null && !(classifier instanceof EDataType)) {// null-check needed, otherwise code throws
-                                                                           // NPE for classifier.getName()
-                error("Only simple EDataTypes are allowed in check() and eval() expressions. The variable " + variable.getName()
-                        + " has a type of " + classifier.getName() + ".", expression.eContainer(), null,
-                        EMFIssueCodes.CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR);
+
+    private void checkForWrongVariablesInXExpressionsInternal(final XExpression expression) {
+        for (Variable variable : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(expression,
+                associations)) {
+            IInputKey classifier = typeInferrer.getType(variable);
+            if (classifier != null && !(classifier instanceof EDataTypeInSlotsKey)
+                    && !(classifier instanceof JavaTransitiveInstancesKey)) {// null-check needed, otherwise code throws
+                                                                             // NPE for classifier.getName()
+                error("Only simple EDataTypes are allowed in check() and eval() expressions. The variable "
+                        + variable.getName() + " has a type of " + classifier.getPrettyPrintableName() + ".",
+                        expression.eContainer(), null, EMFIssueCodes.CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR);
             }
         }
-	}
+    }
 
     /**
      * This validator looks up all {@link EStructuralFeature} used in a {@link PathExpressionConstraint} and reports a
@@ -748,37 +802,62 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
      * @param pathExpressionConstraint
      */
     @Check
-    public void checkForNotWellbehavingDerivedFeatureInPathExpressions(PathExpressionConstraint pathExpressionConstraint) {
+    public void checkForNotWellbehavingDerivedFeatureInPathExpressions(
+            PathExpressionConstraint pathExpressionConstraint) {
         PathExpressionHead pathExpressionHead = pathExpressionConstraint.getHead();
-        Map<PathExpressionTail, EStructuralFeature> tailFeatureMap = emfTypeProvider
-                .getAllFeaturesFromPathExpressionTail(pathExpressionHead.getTail());
+        Map<PathExpressionTail, EStructuralFeature> tailFeatureMap = getAllFeaturesFromPathExpressionTail(
+                pathExpressionHead.getTail());
         for (Entry<PathExpressionTail, EStructuralFeature> tail : tailFeatureMap.entrySet()) {
             EStructuralFeature feature = tail.getValue();
             EMFModelComprehension comprehension = new EMFModelComprehension(new BaseIndexOptions());
             if (!comprehension.representable(feature)) {
-            	final EStructuralFeatureInstancesKey featureInputKey = new EStructuralFeatureInstancesKey(feature);
-				if(SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(featureInputKey)) {
-            		final PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(featureInputKey);
-                    String surrogateQueryFQN = surrogateQuery == null ? "(null)" : surrogateQuery.getFullyQualifiedName();
-            		info("The derived/volatile feature " + feature.getName() + " of class "
-                        + feature.getEContainingClass().getName()
-                        + " used in the path expression has a surrogate query " + surrogateQueryFQN + " which will be used by VIATRA Query.",
-                        tail.getKey().getType(), null, EMFIssueCodes.SURROGATE_QUERY_EXISTS);
-            	} else {
+                final EStructuralFeatureInstancesKey featureInputKey = new EStructuralFeatureInstancesKey(feature);
+                if (SurrogateQueryRegistry.instance().hasSurrogateQueryFQN(featureInputKey)) {
+                    final PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(featureInputKey);
+                    String surrogateQueryFQN = surrogateQuery == null ? "(null)"
+                            : surrogateQuery.getFullyQualifiedName();
+                    info("The derived/volatile feature " + feature.getName() + " of class "
+                            + feature.getEContainingClass().getName()
+                            + " used in the path expression has a surrogate query " + surrogateQueryFQN
+                            + " which will be used by VIATRA Query.", tail.getKey().getType(), null,
+                            EMFIssueCodes.SURROGATE_QUERY_EXISTS);
+                } else {
                     warning("The derived/volatile feature " + feature.getName() + " of class "
                             + feature.getEContainingClass().getName()
                             + " used in the path expression is not representable in VIATRA Query."
                             + " For details, consult the documentation on well-behaving features.",
                             tail.getKey().getType(), null, EMFIssueCodes.FEATURE_NOT_REPRESENTABLE);
-            	}
+                }
             }
+        }
+    }
+
+    public Map<PathExpressionTail, EStructuralFeature> getAllFeaturesFromPathExpressionTail(
+            PathExpressionTail pathExpressionTail) {
+        Map<PathExpressionTail, EStructuralFeature> types = Maps.newHashMap();
+        getAllFeaturesFromPathExpressionTail(pathExpressionTail, types);
+        return types;
+    }
+
+    private void getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail,
+            Map<PathExpressionTail, EStructuralFeature> types) {
+        if (pathExpressionTail != null) {
+            Type type = pathExpressionTail.getType();
+            if (type instanceof ReferenceType) {
+                ReferenceType referenceType = (ReferenceType) type;
+                EStructuralFeature refname = referenceType.getRefname();
+                if (refname != null) {
+                    types.put(pathExpressionTail, refname);
+                }
+            }
+            getAllFeaturesFromPathExpressionTail(pathExpressionTail.getTail(), types);
         }
     }
 
     @Check
     public void checkReferredPackages(ReferenceType type) {
         if (type.getRefname() == null || type.getRefname().eIsProxy()) {
-            //If reference name is not set, do not check package
+            // If reference name is not set, do not check package
             return;
         }
         final EClass referredType = type.getRefname().getEContainingClass();
@@ -797,13 +876,14 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
         }
     }
-    
+
     @SuppressWarnings("restriction")
     @Check
     public void checkPatternImports(XImportSection section) {
         if (!isIgnored(IMPORT_UNUSED)) {
             final Set<Pattern> usedPatterns = Sets.newHashSet();
-            final UnmodifiableIterator<PatternCall> it = Iterators.filter(section.eResource().getAllContents(), PatternCall.class);
+            final UnmodifiableIterator<PatternCall> it = Iterators.filter(section.eResource().getAllContents(),
+                    PatternCall.class);
             while (it.hasNext()) {
                 PatternCall call = it.next();
                 usedPatterns.add(call.getPatternRef());
@@ -811,8 +891,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             for (PatternImport decl : section.getPatternImport()) {
                 if (!usedPatterns.contains(decl.getPattern())) {
                     warning("The import '" + CorePatternLanguageHelper.getFullyQualifiedName(decl.getPattern())
-                            + "' is never used.", decl, null,
-                            IMPORT_UNUSED);
+                            + "' is never used.", decl, null, IMPORT_UNUSED);
                 }
             }
 
@@ -820,42 +899,16 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
     }
 
     @Check
-    public void checkMissingParameterTypes(Variable variable) {
-        if (variable.eContainer() instanceof Pattern && variable.getType() == null) {
-            Pattern pattern = (Pattern) variable.eContainer();
-            Set<EClassifier> possibleTypes = Sets.newHashSet();
-            for (PatternBody body : pattern.getBodies()) {
-                possibleTypes.addAll(emfTypeProvider.getIrreducibleClassifiersForVariableInBody(body, variable));
-            }
-            Iterable<String> typeNames = Iterables.transform(Iterables.filter(possibleTypes, EClass.class),
-                    new Function<EClassifier, String>() {
-
-                        @Override
-                        public String apply(EClassifier input) {
-                            final String name = input.getName();
-                            return (Strings.isEmpty(name)) ? "" : name;
-                        }
-
-                    });
-
-            String[] issueData = Iterables.toArray(typeNames, String.class);
-            if (issueData.length > 0) {
-                info("Type not defined for variable " + variable.getName(),
-                        PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE, issueData);
-            }
-        }
-    }
-    
-
-    @Check
     public void checkClassPath(PatternModel modelFile) {
         final JvmGenericType listType = (JvmGenericType) typeReferences.findDeclaredType(List.class, modelFile);
         if (listType == null || listType.getTypeParameters().isEmpty()) {
-            error("Couldn't find a JDK 1.5 or higher on the project's classpath.", modelFile, PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
-                EMFIssueCodes.JDK_NOT_ON_CLASSPATH);
+            error("Couldn't find a JDK 1.5 or higher on the project's classpath.", modelFile,
+                    PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, EMFIssueCodes.JDK_NOT_ON_CLASSPATH);
         } else if (typeReferences.findDeclaredType(ViatraQueryEngine.class, modelFile) == null) {
             error("Couldn't find the mandatory library 'org.eclipse.viatra.query.runtime' on the project's classpath.",
-                modelFile, PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, EMFIssueCodes.IQR_NOT_ON_CLASSPATH);
+                    modelFile, PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
+                    EMFIssueCodes.IQR_NOT_ON_CLASSPATH);
         }
     }
+    
 }

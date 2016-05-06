@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra.query.patternlanguage.emf.tests/emf-gen"
+    editDirectory="" editorDirectory="" modelPluginID="org.eclipse.viatra.query.patternlanguage.emf.tests"
+    templateDirectory="" redirection="" modelName="Typetest" modelPluginClass="" updateClasspath="false"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" codeFormatting="true"
+    testsDirectory="" importerID="org.eclipse.emf.importer.ecore" bundleManifest="false"
+    complianceLevel="7.0" copyrightFields="false" language="" interfaceNamePattern=""
+    classNamePattern="" operationReflection="true" importOrganizing="true" pluginKey=""
+    cleanup="true">
+  <foreignModel>typetest.ecore</foreignModel>
+  <genPackages prefix="Pltest" basePackage="org.eclipse.viatra.query.patternlanguage.emf.tests"
+      disposableProviderFactory="true" ecorePackage="typetest.ecore#/">
+    <genClasses ecoreClass="typetest.ecore#//Base"/>
+    <genClasses ecoreClass="typetest.ecore#//Common"/>
+    <genClasses image="false" ecoreClass="typetest.ecore#//Interface"/>
+    <genClasses ecoreClass="typetest.ecore#//Child1">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Child1/name"/>
+    </genClasses>
+    <genClasses ecoreClass="typetest.ecore#//Child2"/>
+    <genClasses ecoreClass="typetest.ecore#//GrandChild"/>
+    <genClasses ecoreClass="typetest.ecore#//Child3"/>
+    <genClasses ecoreClass="typetest.ecore#//GrandChild2"/>
+  </genPackages>
+</genmodel:GenModel>

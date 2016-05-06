@@ -15,11 +15,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.viatra.query.patternlanguage.annotations.IPatternAnnotationAdditionalValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator;
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
@@ -29,7 +26,10 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
+import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -56,7 +56,7 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
     private AnnotationExpressionValidator expressionValidator;
 
     @Inject
-    private IEMFTypeProvider typeProvider;
+    private ITypeInferrer typeInferrer;
     
     @Override
     public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
@@ -109,8 +109,8 @@ public class ConstraintAnnotationValidator implements IPatternAnnotationAddition
             boolean atLeastOneEClassKey = Iterables.any(keyList, new Predicate<Variable>() {
                 @Override
                 public boolean apply(Variable key) {
-                    EClassifier classifier = typeProvider.getClassifierForVariable(key);
-                    return (classifier instanceof EClass);
+                    IInputKey classifier = typeInferrer.getType(key);
+                    return (classifier instanceof EClassTransitiveInstancesKey);
                 }
             });
             if (!atLeastOneEClassKey) {

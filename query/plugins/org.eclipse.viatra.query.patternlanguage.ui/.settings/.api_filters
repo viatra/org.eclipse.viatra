@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.patternlanguage.ui" version="2">
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/ui/contentassist/AbstractPatternLanguageProposalProvider.java" type="org.eclipse.viatra.query.patternlanguage.ui.contentassist.AbstractPatternLanguageProposalProvider">
+        <filter comment="Cannot modify Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="complete_Expression(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

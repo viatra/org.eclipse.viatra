@@ -30,10 +30,12 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
@@ -57,6 +59,7 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -507,4 +510,31 @@ public final class CorePatternLanguageHelper {
         return value;
     }
 
+    /**
+     * @since 1.3
+     */
+    public static boolean isParameter(Expression ex) {
+        return (ex instanceof Variable) && (ex.eContainer() instanceof Pattern); 
+    }
+    
+    /**
+     * @since 1.3
+     */
+    public static Set<Variable> getLocalReferencesOfParameter(final Variable variable) {
+        Preconditions.checkArgument(isParameter(variable), "Variable must represent a pattern parameter.");
+        Pattern pattern = (Pattern) variable.eContainer();
+        return Sets.newHashSet(Iterables.filter(Iterables.transform(pattern.getBodies(), new Function<PatternBody, Variable>(){
+
+            @Override
+            public Variable apply(final PatternBody body) {
+                return Iterables.find(body.getVariables(), new Predicate<Variable>() {
+
+                    @Override
+                    public boolean apply(Variable input) {
+                        return (input instanceof ParameterRef)
+                                && ((ParameterRef) input).getReferredParam().equals(variable);
+                    }
+                }, null);
+            }}), Predicates.notNull()));
+    }
 }

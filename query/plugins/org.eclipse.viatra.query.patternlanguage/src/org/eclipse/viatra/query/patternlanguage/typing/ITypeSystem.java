@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.typing;
 
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.RelationType;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
@@ -20,7 +22,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  * A type system represents the types (classes, or references) provided by a modeling backend.
  * 
  * @author Zoltan Ujhelyi
- *
+ * @noimplement
  */
 public interface ITypeSystem {
 
@@ -51,6 +53,39 @@ public interface ITypeSystem {
     IInputKey extractColumnDescriptor(RelationType type, int columnIndex);
 
     /**
+     * Reduces the type descriptor set by providing the most specific set of type descriptors inferrable for a selected
+     * types.
+     * 
+     * @param types
+     *            a collection of type definitions
+     * @param mergeWithSupertypes
+     *            if true, the collection is also minimized by calculating common supertypes
+     * @return the minimized set of type information
+     * @since 1.3
+     */
+    Set<IInputKey> minimizeTypeInformation(Set<IInputKey> types, boolean mergeWithSupertypes);
+
+    /**
+     * Adds a new type descriptor to a collection of type descriptors, and minimizes it. Equivalent of calling
+     * {@link #minimizeTypeInformation(Set)} with <code>types.add(newType)</code>, but might have a more
+     * efficient impementation.
+     * 
+     * @param types
+     * @param newType
+     * @return the minimized set of type information including the new type descriptor key
+     * @since 1.3
+     */
+    Set<IInputKey> addTypeInformation(Set<IInputKey> types, IInputKey newType);
+
+    /**
+     * @param types
+     * @param newTypes
+     * @return
+     * @since 1.3
+     */
+    Set<IInputKey> addTypeInformation(Set<IInputKey> types, Set<IInputKey> newTypes);
+    
+    /**
      * Creates a type reference for model inference from a selected type.
      * 
      * @param type
@@ -66,9 +101,18 @@ public interface ITypeSystem {
      * @return the string representation of the selected type
      */
     String typeString(IInputKey type);
+    
+    /**
+     * Returns a set of types that is a common supertype of a set of type parameters
+     * @param types
+     * @return
+     * @since 1.3
+     */
+    Set<IInputKey> getCompatibleSupertypes(Set<IInputKey> types);
 
     /**
      * An empty implementation of {@link ITypeSystem} that can be used by the abstract pattern language module.
+     * @since 1.3
      */
     public static final class NullTypeSystem implements ITypeSystem {
 
@@ -104,6 +148,38 @@ public interface ITypeSystem {
 		public String typeString(IInputKey type) {
             throw new UnsupportedOperationException();
 		}
+
+        /**
+         * @since 1.3
+         */
+        @Override
+        public Set<IInputKey> minimizeTypeInformation(Set<IInputKey> types, boolean mergeWithSupertypes) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @since 1.3
+         */
+        @Override
+        public Set<IInputKey> addTypeInformation(Set<IInputKey> types, IInputKey newType) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @since 1.3
+         */
+        @Override
+        public Set<IInputKey> addTypeInformation(Set<IInputKey> types, Set<IInputKey> newTypes) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @since 1.3
+         */
+        @Override
+        public Set<IInputKey> getCompatibleSupertypes(Set<IInputKey> types) {
+            throw new UnsupportedOperationException();
+        }
 
 
     }

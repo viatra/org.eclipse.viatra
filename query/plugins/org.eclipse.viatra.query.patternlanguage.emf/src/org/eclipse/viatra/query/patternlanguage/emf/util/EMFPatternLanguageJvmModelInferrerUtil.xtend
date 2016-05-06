@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFPatternTypeProvider
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
@@ -43,8 +42,8 @@ import org.eclipse.xtext.common.types.util.TypeReferences
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
-import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -54,9 +53,8 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 class EMFPatternLanguageJvmModelInferrerUtil {
 
 	@Inject extension TypeReferences
-	Logger logger = Logger::getLogger(getClass())
-	@Inject IEMFTypeProvider emfTypeProvider
-	@Inject TypeReferenceSerializer typeReferenceSerializer
+	@Inject Logger logger
+	@Inject ITypeInferrer typeInferrer
 	@Inject var IJvmModelAssociations associations
     @Inject EMFPatternLanguageGrammarAccess grammar;
 	/**
@@ -194,13 +192,11 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 
 	/**
 	 * Calls the typeProvider.
-	 * See the XBaseUsageCrossReferencer class, possible solution for local variable usage
-	 * TODO: improve type calculation
 	 * @return JvmTypeReference pointing the EClass that defines the Variable's type.
-	 * @see EMFPatternTypeProvider
+	 * @see ITypeInferrer
 	 */
    	def JvmTypeReference calculateType(Variable variable) {
-   		emfTypeProvider.getVariableType(variable)
+          typeInferrer.getJvmType(variable, variable)
    	}
 
    	/**

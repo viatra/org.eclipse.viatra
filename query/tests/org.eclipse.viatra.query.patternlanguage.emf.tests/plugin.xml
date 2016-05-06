@@ -29,4 +29,12 @@
          </annotationparameter>
       </annotation>
    </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated typetest -->
+      <package
+            uri="http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+            class="org.eclipse.viatra.query.patternlanguage.emf.tests.pltest.PltestPackage"
+            genModel="model/typetest.genmodel"/>
+   </extension>
+
 </plugin>

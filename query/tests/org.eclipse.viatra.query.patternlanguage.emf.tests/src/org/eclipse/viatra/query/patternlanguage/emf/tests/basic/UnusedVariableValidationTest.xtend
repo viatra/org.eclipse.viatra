@@ -105,6 +105,7 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
 			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
@@ -151,7 +152,9 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 		)
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
+			getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
 			getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
 			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}

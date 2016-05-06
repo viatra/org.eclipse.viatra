@@ -15,12 +15,16 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
+import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.xbase.ui.hover.XbaseHoverDocumentationProvider;
@@ -39,7 +43,9 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
     @Inject
     private PatternAnnotationProvider annotationProvider;
     @Inject
-    private IEMFTypeProvider emfTypeProvider;
+    private ITypeSystem typeSystem;
+    @Inject
+    private ITypeInferrer typeInferrer;
 
     @Override
     public String computeDocumentation(EObject object) {
@@ -80,11 +86,12 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
                 sb.append("<li>");
                 sb.append("<strong>Parameter</strong> ");
                 sb.append(variable.getName());
-                final EClassifier emfType = emfTypeProvider.getClassifierForVariable(variable);
-                if (emfType != null) {
+                
+                final IInputKey type = typeInferrer.getType(variable);
+                if (type != null) {
                     sb.append(": ");
                     sb.append("<i>");
-                    sb.append(getTypeString(emfType));
+                    sb.append(typeSystem.typeString(type));
                     sb.append("</i>");
                 }
                 sb.append("</li>");
@@ -95,19 +102,17 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
         return super.computeDocumentation(object);
     }
 
-    /**
-     * @param variable
-     * @return
-     */
     private String calculateVariableHover(Variable variable) {
-        JvmTypeReference type = emfTypeProvider.getVariableType(variable); 
-        EClassifier emfType = emfTypeProvider.getClassifierForVariable(variable);
+        JvmTypeReference type = typeInferrer.getJvmType(variable, variable); 
+        IInputKey emfType = typeInferrer.getType(variable); 
         String javaTypeString = type.getQualifiedName();
         String emfTypeString;
-        if (emfType == null) {
-            emfTypeString = "Not applicable";
+        if (emfType instanceof EClassTransitiveInstancesKey) {
+            emfTypeString = getTypeString(((EClassTransitiveInstancesKey) emfType).getEmfKey());
+        } else if (emfType instanceof EDataTypeInSlotsKey) {
+            emfTypeString = getTypeString(((EDataTypeInSlotsKey) emfType).getEmfKey());
         } else {
-            emfTypeString = getTypeString(emfType);
+            emfTypeString = "Not applicable";
         }
         return String.format("<b>EMF Type</b>: %s<br /><b>Java Type</b>: %s", emfTypeString, javaTypeString);
     }

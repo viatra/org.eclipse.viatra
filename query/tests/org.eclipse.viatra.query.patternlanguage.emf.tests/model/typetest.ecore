@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="pltest" nsURI="http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+    nsPrefix="pltest">
+  <eClassifiers xsi:type="ecore:EClass" name="Base"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Common" eSuperTypes="#//Base"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Interface" abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Child1" eSuperTypes="#//Common #//Interface">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Child2" eSuperTypes="#//Common #//Interface #//Child3"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GrandChild" eSuperTypes="#//Child1 #//Child3"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Child3"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GrandChild2" eSuperTypes="#//Child2"/>
+</ecore:EPackage>

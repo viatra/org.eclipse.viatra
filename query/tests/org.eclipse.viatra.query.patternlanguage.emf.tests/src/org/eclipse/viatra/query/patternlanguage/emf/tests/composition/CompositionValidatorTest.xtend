@@ -93,10 +93,32 @@ class CompositionValidatorTest extends AbstractValidatorTest{
 		)
 		tester.validate(model).assertAll(
 			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
-			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
-			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+			getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME)
 		)
 	}	
+	
+	
+   @Test
+   def void duplicateParameters2() {
+       val model = parseHelper.parse(
+           '''package org.eclipse.incquery.patternlanguage.emf.tests
+           import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+
+           pattern calledPattern(p : Pattern, p : Pattern) = {
+               Pattern(p);
+           }
+
+           pattern callPattern(p : Pattern) = {
+               Pattern(p);
+           }'''
+       )
+       tester.validate(model).assertAll(
+           getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME),
+           getErrorCode(IssueCodes::DUPLICATE_PATTERN_PARAMETER_NAME)
+       )
+   }   
+	
+	
 	@Test
 	def void testTooFewParameters() {
 		val model = parseHelper.parse(

@@ -96,7 +96,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 				IntValue(Name2);				// Then this line can be deleted.
 			}
 		') as PatternModel
-		tester.validate(model).assertOK
+		assertOK(tester.validate(model))
 	}
 	@Test
 	def rightNewVariableCompareValidation() {
@@ -123,7 +123,7 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 				StringValue(Name2);				// Then this line can be deleted.
 			}
 		') as PatternModel
-		tester.validate(model).assertOK
+		assertOK(tester.validate(model))
 	}
 	@Test
 	def leftNewVariableCompareValidation() {

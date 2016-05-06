@@ -42,7 +42,7 @@ Modifiers:
 //injective?='injective' &
 	private?='private';
 
-Variable returns types::JvmIdentifiableElement:
+Variable returns Expression:
 	{Variable}
 	name=ID
 	(':' type=Type)?;
@@ -64,7 +64,11 @@ LocalVariable returns Variable:
 	(':' type=Type)?
 ;
 
-VariableReference:
+Expression returns Expression:
+    VariableReference | ValueReference
+;
+
+VariableReference returns VariableReference:
 	var = ID;
 
 	//These types are not meant to be written directly, just in the desc languages

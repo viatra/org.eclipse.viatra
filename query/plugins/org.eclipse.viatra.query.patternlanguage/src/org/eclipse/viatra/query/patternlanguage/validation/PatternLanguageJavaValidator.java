@@ -224,8 +224,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                             IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);
                 } else {
 
-                    IInputKey type1 = typeInferrer.getVariableType(patternRef.getParameters().get(0));
-                    IInputKey type2 = typeInferrer.getVariableType(patternRef.getParameters().get(1));
+                    IInputKey type1 = typeInferrer.getType(patternRef.getParameters().get(0));
+                    IInputKey type2 = typeInferrer.getType(patternRef.getParameters().get(1));
                     if (!typeSystem.isConformant(type1, type2) && !typeSystem.isConformant(type2, type1)) {
                         error(String.format(
                                 "The parameter types %s and %s are not compatible, so no transitive references can exist in instance models.",

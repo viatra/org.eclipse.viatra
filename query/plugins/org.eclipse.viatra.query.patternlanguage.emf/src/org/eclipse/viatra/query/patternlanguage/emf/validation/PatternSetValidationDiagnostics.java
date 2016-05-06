@@ -38,6 +38,7 @@ public final class PatternSetValidationDiagnostics implements IAcceptor<Issue> {
             foundWarnings.add(issue);
             break;
         case INFO:
+        case IGNORE:
             break;
         }
     }

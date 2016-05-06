@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.typing;
 
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -20,73 +23,123 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  * The type inferrer calculates the types of variables and variable references of the pattern model.
  * 
  * @author Zoltan Ujhelyi
+ * @noimplement
  *
  */
 public interface ITypeInferrer {
     /**
      * Returns the declared type of a variable
      * 
-     * @param var
+     * @param ex
      * @return the declared type of the variable, or null if no type declaration is available
+     * @since 1.3
      */
-    IInputKey getDeclaredType(Variable var);
+    IInputKey getDeclaredType(Expression ex);
+    
+    IInputKey getDeclaredType(Variable ex);
 
     /**
      * Returns the inferred type of a variable
      * 
-     * @param var
+     * @param ex
+     * @since 1.3
      */
-    IInputKey getInferredVariableType(Variable var);
+    IInputKey getInferredType(Expression ex);
+    
+    
+    /**
+     * 
+     * @deprecated, use {@link #getInferredType(Expression)} instead.
+     */
+    @Deprecated
+    IInputKey getInferredVariableType(Variable ex);
+    
+    /**
+     * Returns a collection of possible inferred types. Used for validating inputs; not recommended to use when
+     * processing the patterns
+     * @param ex
+     * @return
+     * @since 1.3
+     */
+    Set<IInputKey> getAllPossibleTypes(Expression ex);
 
     /**
      * Returns the type of a variable.
      * 
-     * @param var
+     * @param ex
      * @return if the variable has a declared type, it is returned; otherwise the inferred type is calculated.
+     * @since 1.3
      */
+    IInputKey getType(Expression ex);
+    
+    /**
+     * @deprecated use {@link #getType(Expression)} instead
+     */
+    @Deprecated
+    IInputKey getVariableReferenceType(VariableReference ref);
+    /**
+     * @deprecated use {@link #getType(Expression)} instead
+     */
+    @Deprecated
     IInputKey getVariableType(Variable var);
 
     /**
-     * Calculates the type of a variable reference. A type of a reference is the type of the referred variable.
-     * 
-     * @param reference
-     */
-    IInputKey getVariableReferenceType(VariableReference reference);
-
-    /**
-     * Creates a Jvm Type Reference for a selected variable. Useful during Jvm Model Inference
-     * @param var
+     * Creates a Jvm Type Reference for a selected expression. Useful during Jvm Model Inference
+     * @param ex
      * @param context
+     * @since 1.3
      */
-    JvmTypeReference getVariableJvmType(Variable var, EObject context);
+    JvmTypeReference getJvmType(Expression ex, EObject context);
+    
+    /**
+     * @deprecated use {@link #getJvmType(Expression, EObject)} instead
+     */
+    @Deprecated
+    JvmTypeReference getVariableJvmType(Variable ex, EObject context);
 
     /**
      * An empty implementation of {@link ITypeInferrer} that can be used by the abstract pattern language module.
+     * @since 1.3
      */
-    public static class NullTypeInferrer implements ITypeInferrer {
+    public static class NullTypeInferrer extends AbstractTypeInferrer {
 
+        /**
+         * @since 1.3
+         */
         @Override
-        public IInputKey getInferredVariableType(Variable var) {
+        public IInputKey getInferredType(Expression ex) {
             throw new UnsupportedOperationException();
         }
 
+        /**
+         * @since 1.3
+         */
         @Override
-        public JvmTypeReference getVariableJvmType(Variable var, EObject context) {
+        public JvmTypeReference getJvmType(Expression ex, EObject context) {
             throw new UnsupportedOperationException();
         }
 
+        /**
+         * @since 1.3
+         */
         @Override
-        public IInputKey getVariableReferenceType(VariableReference reference) {
+        public IInputKey getType(Expression ex) {
             throw new UnsupportedOperationException();
         }
 
+        /**
+         * @since 1.3
+         */
         @Override
-        public IInputKey getDeclaredType(Variable var) {
+        public IInputKey getDeclaredType(Expression ex) {
             throw new UnsupportedOperationException();
         }
 
+        /**
+         * @since 1.3
+         */
         @Override
-        public IInputKey getVariableType(Variable var) {
+        public Set<IInputKey> getAllPossibleTypes(Expression ex) {
             throw new UnsupportedOperationException();
         }
 

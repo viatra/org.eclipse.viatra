@@ -149,7 +149,7 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
     public Class<? extends ITypeInferrer> bindITypeInferrer() {
         return EMFTypeInferrer.class;
     }
-    
+
     /**
      * @since 1.3
      */

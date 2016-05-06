@@ -16,11 +16,11 @@ import java.util.Set;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer;
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -115,8 +115,8 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
                 if (var == null) {
                     return new PParameter("", "");
                 } else {
-                    IEMFTypeProvider typeProvider = XtextInjectorProvider.INSTANCE.getInjector().getInstance(IEMFTypeProvider.class);
-                    JvmTypeReference ref = typeProvider.getVariableType(var);
+                    ITypeInferrer typeProvider = XtextInjectorProvider.INSTANCE.getInjector().getInstance(ITypeInferrer.class);
+                    JvmTypeReference ref = typeProvider.getJvmType(var, var);
                     // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
                     String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
                             .getQualifiedName();

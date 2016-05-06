@@ -87,6 +87,7 @@ import com.google.inject.Singleton;
  */
 @Singleton
 @SuppressWarnings("restriction")
+@Deprecated
 public class EMFPatternTypeProvider implements IEMFTypeProvider {
 
     @Inject

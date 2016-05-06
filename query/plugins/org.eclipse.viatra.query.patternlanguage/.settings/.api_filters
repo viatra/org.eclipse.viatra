@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.patternlanguage" version="2">
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/Expression.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression">
+        <filter comment="Cannot modify Xtext generated code" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/PatternLanguageFactory.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory">
+        <filter comment="Cannot modify Xtext/EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory"/>
+                <message_argument value="createExpression()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="createExpression()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/PatternLanguagePackage.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage">
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="AGGREGATED_VALUE"/>
+                <message_argument value="33"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="AGGREGATOR_EXPRESSION"/>
+                <message_argument value="15"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="BOOL_VALUE"/>
+                <message_argument value="28"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="CHECK_CONSTRAINT"/>
+                <message_argument value="22"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="COMPARE_CONSTRAINT"/>
+                <message_argument value="21"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="COMPARE_FEATURE"/>
+                <message_argument value="35"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="COMPUTATION_VALUE"/>
+                <message_argument value="14"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="CONSTRAINT"/>
+                <message_argument value="9"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="COUNT_AGGREGATOR"/>
+                <message_argument value="34"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="DOUBLE_VALUE"/>
+                <message_argument value="29"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="ENTITY_TYPE"/>
+                <message_argument value="18"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="FUNCTION_EVALUATION_VALUE"/>
+                <message_argument value="32"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="INT_VALUE"/>
+                <message_argument value="26"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="LIST_VALUE"/>
+                <message_argument value="31"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="LITERAL_VALUE_REFERENCE"/>
+                <message_argument value="13"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="LOCAL_VARIABLE"/>
+                <message_argument value="17"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PARAMETER_REF"/>
+                <message_argument value="16"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATH_EXPRESSION_CONSTRAINT"/>
+                <message_argument value="23"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATH_EXPRESSION_ELEMENT"/>
+                <message_argument value="11"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATH_EXPRESSION_HEAD"/>
+                <message_argument value="24"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATH_EXPRESSION_TAIL"/>
+                <message_argument value="25"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATTERN_BODY"/>
+                <message_argument value="8"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATTERN_CALL"/>
+                <message_argument value="10"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATTERN_COMPOSITION_CONSTRAINT"/>
+                <message_argument value="20"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="RELATION_TYPE"/>
+                <message_argument value="19"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="STRING_VALUE"/>
+                <message_argument value="27"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="TYPE"/>
+                <message_argument value="7"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="VALUE_REFERENCE"/>
+                <message_argument value="12"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="VARIABLE"/>
+                <message_argument value="5"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="VARIABLE_REFERENCE"/>
+                <message_argument value="6"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="VARIABLE_VALUE"/>
+                <message_argument value="30"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="EXPRESSION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="EXPRESSION_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext/EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="getExpression()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="EXPRESSION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="EXPRESSION_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="getExpression()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/PatternLanguagePackage.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage$Literals">
+        <filter comment="Cannot modify Xtext/EMF generated code" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage.Literals"/>
+                <message_argument value="EXPRESSION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="EXPRESSION"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/impl/ExpressionImpl.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.ExpressionImpl">
+        <filter comment="Cannot modify Xtext generated code" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.ExpressionImpl"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/impl/PatternLanguageFactoryImpl.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternLanguageFactoryImpl">
+        <filter comment="Cannot modify Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="createExpression()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/impl/PatternLanguagePackageImpl.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternLanguagePackageImpl">
+        <filter comment="Cannot modify Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getExpression()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/util/PatternLanguageAdapterFactory.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageAdapterFactory">
+        <filter comment="Cannot modify Xtext/EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageAdapterFactory"/>
+                <message_argument value="createJvmIdentifiableElementAdapter()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="createExpressionAdapter()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/util/PatternLanguageSwitch.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageSwitch">
+        <filter comment="Cannot modify Xtext/EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageSwitch"/>
+                <message_argument value="caseJvmIdentifiableElement(JvmIdentifiableElement)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="caseExpression(Expression)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/services/PatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess">
+        <filter comment="Cannot modify Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getExpressionAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Cannot modify Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getExpressionRule()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/services/PatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess$ExpressionElements">
+        <filter comment="Cannot modify Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="ExpressionElements"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/patternlanguage/typing/AbstractTypeInferrer.java" type="org.eclipse.viatra.query.patternlanguage.typing.AbstractTypeInferrer">
+        <filter comment="Cannot modify Xtext/EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getInferredVariableType(Variable)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

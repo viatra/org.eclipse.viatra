@@ -25,45 +25,37 @@ public abstract class AbstractTypeSystem implements ITypeSystem {
         this.context = context;
     }
 
-//    @Override
-//    public boolean isConformToRelationColumn(IInputKey relationType,
-//    		int columnIndex, IInputKey columnType) {
-//    	// TODO Auto-generated method stub
-//    	return false;
-//    }
-//    
-//    @Override
-//    public boolean isConformToRelationSource(Object relationType, Object sourceType) {
-//        Object expectedType = null;
-//        switch (context.edgeInterpretation()) {
-//        case BINARY:
-//            expectedType = context.binaryEdgeSourceType(relationType);
-//            break;
-//        case TERNARY:
-//            expectedType = context.ternaryEdgeSourceType(relationType);
-//            break;
-//        }
-//        return isConformant(expectedType, sourceType);
-//    }
-//
-//    @Override
-//    public boolean isConformToRelationTarget(Object relationType, Object targetType) {
-//        Object expectedType = null;
-//        switch (context.edgeInterpretation()) {
-//        case BINARY:
-//            expectedType = context.binaryEdgeTargetType(relationType);
-//            break;
-//        case TERNARY:
-//            expectedType = context.ternaryEdgeTargetType(relationType);
-//            break;
-//        }
-//        return isConformant(expectedType, targetType);
-//    }
-
     @Override
     public String typeString(IInputKey type) {
         return type.getPrettyPrintableName();
     }
 
+    /**
+     * @param typeClass
+     * @return The wrapper class if the input is primitive. If it is not, it returns with the input unchanged.
+     * @since 1.3
+     */
+    protected static Class<?> getWrapperClassForType(Class<?> typeClass) {
+        if (typeClass != null && typeClass.isPrimitive()) {
+            if (typeClass == boolean.class) {
+                return java.lang.Boolean.class;
+            } else if (typeClass == byte.class) {
+                return java.lang.Byte.class;
+            } else if (typeClass == char.class) {
+                return java.lang.Character.class;
+            } else if (typeClass == double.class) {
+                return java.lang.Double.class;
+            } else if (typeClass == float.class) {
+                return java.lang.Float.class;
+            } else if (typeClass == int.class) {
+                return java.lang.Integer.class;
+            } else if (typeClass == long.class) {
+                return java.lang.Long.class;
+            } else if (typeClass == short.class) {
+                return java.lang.Short.class;
+            }
+        }
+        return typeClass;
+    }
     
 }
