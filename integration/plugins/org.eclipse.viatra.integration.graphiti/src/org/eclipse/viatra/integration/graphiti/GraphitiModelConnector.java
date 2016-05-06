@@ -102,11 +102,13 @@ public class GraphitiModelConnector extends EMFModelConnector {
     	 try {
     		 //pre-0.10: return editor.getEditPartForPictogramElement(element);
     		 //since 0.10: return editor.getDiagramBehavior().getEditPartForPictogramElement(element);
-             Method m = editor.getClass().getMethod("getEditPartForPictogramElement");
-             if (m==null) { 
-            	 m = editor.getClass().getMethod("getDiagramBehavior");
-            	 Class<?> behaviourClass = m.invoke(element).getClass();
-            	 m = behaviourClass.getMethod("getEditPartForPictogramElement");
+             Method m = null;
+             try {
+                 m = editor.getClass().getMethod("getEditPartForPictogramElement");                 
+             } catch (NoSuchMethodException e) {
+                 m = editor.getClass().getMethod("getDiagramBehavior");
+                 Class<?> behaviourClass = m.invoke(element).getClass();
+                 m = behaviourClass.getMethod("getEditPartForPictogramElement");                 
              }
              if (m != null) {
             	 return (EditPart) m.invoke(editorPart, element);

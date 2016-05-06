@@ -42,7 +42,7 @@ public class ConflictSetContentProvider implements ITreeContentProvider {
         if (inputElement instanceof Map) {
             return ((Map<?,?>) inputElement).keySet().toArray();
         }
-        return null;
+        return new Object[0];
     }
 
     @Override
@@ -54,8 +54,8 @@ public class ConflictSetContentProvider implements ITreeContentProvider {
             }else{
                 List<Activation<?>> conflictingActivations = transformationState.getNotExecutableActivations();
                 List<Activation<?>> nextActivations = transformationState.getNextActivations();
-                CompositeItem nextContainer = new CompositeItem(NEXT_NAME.toString(), nextActivations.toArray());
-                CompositeItem conflictingNode = new CompositeItem(CONFLICTING_NAME.toString(), conflictingActivations.toArray());
+                CompositeItem nextContainer = new CompositeItem(NEXT_NAME, nextActivations.toArray());
+                CompositeItem conflictingNode = new CompositeItem(CONFLICTING_NAME, conflictingActivations.toArray());
                 CompositeItem[] retVal = {nextContainer, conflictingNode};
                 return retVal;
                 
@@ -64,7 +64,7 @@ public class ConflictSetContentProvider implements ITreeContentProvider {
             Object[] children = ((CompositeItem) parentElement).getChildren();
             return children;
         }
-        return null;
+        return new Object[0];
     }
 
     @Override
