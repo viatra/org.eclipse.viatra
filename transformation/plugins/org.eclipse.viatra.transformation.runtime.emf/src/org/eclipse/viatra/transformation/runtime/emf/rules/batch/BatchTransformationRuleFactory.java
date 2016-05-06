@@ -58,13 +58,23 @@ public class BatchTransformationRuleFactory {
 		}
 
 		public BatchTransformationRule<Match, Matcher> build() {
-		    return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
-	                BatchTransformationRule.STATELESS_RULE_LIFECYCLE, fAction, fFilter);
+		    if (fFilter == null) {
+		        return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+		                BatchTransformationRule.STATELESS_RULE_LIFECYCLE, fAction);
+            } else {
+    		    return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+    	                BatchTransformationRule.STATELESS_RULE_LIFECYCLE, fAction, fFilter);
+            }
 		}
 		
 		public BatchTransformationRule<Match, Matcher> buildStateful() {
-		    return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
-	                BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, fAction, fFilter);
+		    if (fFilter == null) {
+		        return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+		                BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, fAction);
+		    } else {
+		        return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+		                BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, fAction, fFilter);
+		    }
 		}
 	}
 	
