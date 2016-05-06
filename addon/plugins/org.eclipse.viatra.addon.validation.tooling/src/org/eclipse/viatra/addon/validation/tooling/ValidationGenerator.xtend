@@ -198,6 +198,9 @@ class ValidationGenerator implements IGenerationFragment {
     def patternHandler(Pattern pattern, Annotation annotation) {
         val className = pattern.name.toFirstUpper + annotationLiteral + pattern.annotations.indexOf(annotation)
         '''
+            /**
+            «pattern.fileComment»
+            */
             package «pattern.packageName»;
             
             import java.util.List;

@@ -92,11 +92,13 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		val matchClass = pattern.toClass(pattern.matchClassName) [
 			it.packageName = packageName
 			superTypes += typeRef(typeof(BasePatternMatch))
+			fileHeader = pattern.fileComment
 		]
 
 		val matcherClass = pattern.toClass(pattern.matcherClassName) [
 			it.packageName = packageName
 			superTypes += typeRef(typeof(BaseMatcher), typeRef(matchClass))
+			fileHeader = pattern.fileComment
 		]
 		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
 			matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)

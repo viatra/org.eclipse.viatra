@@ -46,7 +46,6 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer
 
 /**
@@ -81,6 +80,7 @@ class PatternQuerySpecificationClassInferrer {
   			} else {
 	  			superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecification), typeRef(matcherClass, typeRef(typeof(IPatternMatch))))
   			}
+  			fileHeader = pattern.fileComment
   		]
   		return querySpecificationClass
   	}

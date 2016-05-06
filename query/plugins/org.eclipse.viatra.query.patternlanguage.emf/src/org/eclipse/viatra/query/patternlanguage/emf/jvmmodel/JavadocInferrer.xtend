@@ -212,5 +212,4 @@ class JavadocInferrer {
 		@return the singleton instance of the group
 		@throws ViatraQueryException if there was an error loading the generated code of pattern specifications
    	'''
-
 }

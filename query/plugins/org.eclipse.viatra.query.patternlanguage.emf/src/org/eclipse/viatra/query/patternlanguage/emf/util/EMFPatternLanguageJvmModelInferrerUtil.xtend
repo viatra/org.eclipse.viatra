@@ -19,6 +19,7 @@ import org.apache.log4j.Logger
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFPatternTypeProvider
 import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
@@ -32,6 +33,7 @@ import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.xtend2.lib.StringConcatenation
+import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtend2.lib.StringConcatenationClient.TargetStringConcatenation
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.common.types.JvmDeclaredType
@@ -43,7 +45,6 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.compiler.TypeReferenceSerializer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-import org.eclipse.xtend2.lib.StringConcatenationClient
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -57,7 +58,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	@Inject IEMFTypeProvider emfTypeProvider
 	@Inject TypeReferenceSerializer typeReferenceSerializer
 	@Inject var IJvmModelAssociations associations
-
+    @Inject EMFPatternLanguageGrammarAccess grammar;
 	/**
 	 * This method returns the pattern name.
 	 * If the pattern name contains the package (any dot),
@@ -237,6 +238,42 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   		javadocString = javadocString.replaceAll(">","{@literal >}")
   		return javadocString.trim
   	}
+  	
+  	/**
+     * Returns the file header comment at the beginning of the text corresponding
+     * to the pattern model.
+     * The comment text is escaped, so it does not include stars in multi-line comments.
+     * 
+     * @since 1.3
+     */
+  	def getFileComment(PatternModel patternModel) {
+  	    val patternNode = NodeModelUtils.getNode(patternModel)
+  	    val possibleFileComment = patternNode?.firstChild?.nextSibling
+  	    if (possibleFileComment != null) {
+            val grammarElement = possibleFileComment.grammarElement
+            if (grammarElement == grammar.getML_COMMENTRule) {
+                val multiLineCommentText = possibleFileComment.text.escape
+                return multiLineCommentText
+            } else if (grammarElement == grammar.SL_COMMENTRule) {
+                val singleLineCommentText = possibleFileComment.text.escape
+                return singleLineCommentText
+            }
+        }
+  	    return '''Generated from «patternModel.eResource?.URI»'''
+  	}
+  	
+  	/**
+  	 * Returns the file header comment at the beginning of the text corresponding 
+  	 * to the pattern model containing the given pattern.
+     * The comment text is escaped, so it does not include stars in multi-line comments.
+     * 
+  	 * @since 1.3
+  	 */
+  	def getFileComment(Pattern pattern) {
+  	    val patternModel = EcoreUtil2.getContainerOfType(pattern, PatternModel)
+  	    return patternModel.fileComment
+  	}
+  	
   	/**
   	 * Escapes the input to be usable in literal strings
   	 */

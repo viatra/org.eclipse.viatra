@@ -50,6 +50,7 @@ class PatternMatchProcessorClassInferrer {
   			documentation = pattern.javadocProcessorClass.toString
   			abstract = true
   			superTypes += typeRef(typeof(IMatchProcessor), typeRef(matchClass))
+  			fileHeader = pattern.fileComment
   		]
   		return processorClass
   	}

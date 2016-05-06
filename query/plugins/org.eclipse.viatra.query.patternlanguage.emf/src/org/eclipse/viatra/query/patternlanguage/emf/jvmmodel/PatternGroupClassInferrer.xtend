@@ -45,6 +45,7 @@ class PatternGroupClassInferrer {
 			packageName = model.packageName
 			final = true
 			superTypes += typeRef(typeof (BaseGeneratedPatternGroup))
+			fileHeader = model.fileComment
 		]
 	}
 		
