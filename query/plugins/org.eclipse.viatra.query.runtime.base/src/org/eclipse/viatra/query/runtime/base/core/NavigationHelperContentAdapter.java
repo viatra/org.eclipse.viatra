@@ -65,97 +65,9 @@ import com.google.common.collect.Table.Cell;
 
 public class NavigationHelperContentAdapter extends EContentAdapter {
 
-    private static final EClass EOBJECT_CLASS = EcorePackage.eINSTANCE.getEObject();
-
     private final NavigationHelperImpl navigationHelper;
 
-    /**
-     * since last run of after-update callbacks
-     */
-    private boolean isDirty = false;
 
-    /**
-     * value -> feature (EAttribute or EReference) -> holder(s)
-     * <p>
-     * holder(s) are stored as
-     * <ul>
-     * <li>{@link Set} if feature is unique,
-     * <li>{@link Multiset} if the feature is non-unique (a single holder is contained multiple times, once for each
-     * time it lists the specific value in its feature vale list)
-     * <ul>
-     * <p>
-     * Duplicates of non-unique features are stored in this map only; other index structures consider unique values
-     * only.
-     */
-    private final Table<Object, Object, Collection<EObject>> valueToFeatureToHolderMap;
-
-    /**
-     * feature ((String id or EStructuralFeature) -> holder(s) constructed on-demand
-     */
-    private Map<Object, Multiset<EObject>> featureToHolderMap;
-
-    /**
-     * holder -> feature (String id or EStructuralFeature) -> value(s) constructed on-demand
-     */
-    private Table<EObject, Object, Set<Object>> holderToFeatureToValueMap;
-
-    /**
-     * key (String id or EClass instance) -> instance(s)
-     */
-    private final Map<Object, Set<EObject>> instanceMap;
-
-    /**
-     * key (String id or EDataType instance) -> multiset of value(s)
-     */
-    private final Map<Object, Map<Object, Integer>> dataTypeMap;
-
-    /**
-     * Supports collision detection and EEnum canonicalization. Used for all EPackages that have types whose instances
-     * were encountered at least once.
-     */
-    private final Set<EPackage> knownPackages = new HashSet<EPackage>();
-
-    /**
-     * Field variable because it is needed for collision detection. Used for all EClasses whose instances were
-     * encountered at least once.
-     */
-    private final Set<EClassifier> knownClassifiers = new HashSet<EClassifier>();
-    /**
-     * Field variable because it is needed for collision detection. Used for all EStructuralFeatures whose instances
-     * were encountered at least once.
-     */
-    private final Set<EStructuralFeature> knownFeatures = new HashSet<EStructuralFeature>();
-
-    /**
-     * (EClass or String ID) -> all subtypes in knownClasses
-     */
-    private final Map<Object, Set<Object>> subTypeMap = new HashMap<Object, Set<Object>>();
-    /**
-     * (EClass or String ID) -> all supertypes in knownClasses
-     */
-    private final Map<Object, Set<Object>> superTypeMap = new HashMap<Object, Set<Object>>();
-
-    /**
-     * EPacakge NsURI -> EPackage instances; this is instance-level to detect collisions
-     */
-    private final Multimap<String, EPackage> uniqueIDToPackage = HashMultimap.create();
-
-    /**
-     * static maps between metamodel elements and their unique IDs
-     */
-    private final Map<EClassifier, String> uniqueIDFromClassifier = new HashMap<EClassifier, String>();
-    private final Map<ETypedElement, String> uniqueIDFromTypedElement = new HashMap<ETypedElement, String>();
-    private final Map<Enumerator, String> uniqueIDFromEnumerator = new HashMap<Enumerator, String>();
-    private final Multimap<String, EClassifier> uniqueIDToClassifier = HashMultimap.create(100, 1);
-    private final Multimap<String, ETypedElement> uniqueIDToTypedElement = HashMultimap.create(100, 1);
-    private final Multimap<String, Enumerator> uniqueIDToEnumerator = HashMultimap.create(100, 1);
-    private final Map<String, Enumerator> uniqueIDToCanonicalEnumerator = new HashMap<String, Enumerator>();
-    private Object eObjectClassKey = null;
-
-    /**
-     * Map from enum classes generated for {@link EEnum}s to the actual EEnum.
-     */
-    Map<Class<?>, EEnum> generatedEENumClasses = new HashMap<Class<?>, EEnum>();
 
     // move optimization to avoid removing and re-adding entire subtrees
     protected EObject ignoreInsertionAndDeletion;
@@ -163,10 +75,14 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     // Set<EObject> ignoreRootDeletion = new HashSet<EObject>();
 
     private final EMFModelComprehension comprehension;
-    private final boolean isDynamicModel;
 
     private IBaseIndexObjectFilter objectFilterConfiguration;
     private IBaseIndexResourceFilter resourceFilterConfiguration;
+
+
+
+    private EMFVisitor removalVisitor;
+    private EMFVisitor insertionVisitor;
 
     public NavigationHelperContentAdapter(final NavigationHelperImpl navigationHelper) {
         this.navigationHelper = navigationHelper;
@@ -174,130 +90,13 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         objectFilterConfiguration = options.getObjectFilterConfiguration();
         resourceFilterConfiguration = options.getResourceFilterConfiguration();
         this.comprehension = navigationHelper.getComprehension();
-        this.isDynamicModel = navigationHelper.getBaseIndexOptions().isDynamicEMFMode();
-        this.valueToFeatureToHolderMap = HashBasedTable.create();
-        this.instanceMap = new HashMap<Object, Set<EObject>>();
-        this.dataTypeMap = new HashMap<Object, Map<Object, Integer>>();
+        
+        removalVisitor = new NavigationHelperVisitor.ChangeVisitor(navigationHelper, false);
+        insertionVisitor = new NavigationHelperVisitor.ChangeVisitor(navigationHelper, true);
     }
 
     // key representative of the EObject class
 
-    /**
-     * @return the eObjectClassKey
-     */
-    public Object getEObjectClassKey() {
-        if (eObjectClassKey == null) {
-            eObjectClassKey = toKey(EOBJECT_CLASS);
-        }
-        return eObjectClassKey;
-    }
-
-    protected Object toKey(final EClassifier classifier) {
-        if (isDynamicModel) {
-            return toKeyDynamicInternal(classifier);
-        } else {
-            maintainMetamodel(classifier);
-            return classifier;
-        }
-    }
-
-    private String toKeyDynamicInternal(final EClassifier classifier) {
-        String id = uniqueIDFromClassifier.get(classifier);
-        if (id == null) {
-            Preconditions.checkArgument(!classifier.eIsProxy(),
-                    String.format("Classifier %s is an unresolved proxy", classifier));
-            id = classifier.getEPackage().getNsURI() + "##" + classifier.getName();
-            uniqueIDFromClassifier.put(classifier, id);
-            uniqueIDToClassifier.put(id, classifier);
-            // metamodel maintenance will call back toKey(), but now the ID maps are already filled
-            maintainMetamodel(classifier);
-        }
-        return id;
-    }
-
-    private String enumToKeyDynamicInternal(Enumerator enumerator) {
-        String id = uniqueIDFromEnumerator.get(enumerator);
-        if (id == null) {
-            if (enumerator instanceof EEnumLiteral) {
-                EEnumLiteral enumLiteral = (EEnumLiteral) enumerator;
-                final EEnum eEnum = enumLiteral.getEEnum();
-                maintainMetamodel(eEnum);
-
-                id = constructEnumID(eEnum.getEPackage().getNsURI(), eEnum.getName(), enumLiteral.getLiteral());
-
-                // there might be a generated enum for this enum literal!
-                // generated enum should pre-empt the ecore enum literal as canonical enumerator
-                Enumerator instanceEnum = enumLiteral.getInstance();
-                if (instanceEnum != null && !uniqueIDToCanonicalEnumerator.containsKey(id)) {
-                    uniqueIDToCanonicalEnumerator.put(id, instanceEnum);
-                }
-                // if generated enum not found... delay selection of canonical enumerator
-            } else { // generated enum
-                final EEnum eEnum = generatedEENumClasses.get(enumerator.getClass());
-                if (eEnum != null)
-                    id = constructEnumID(eEnum.getEPackage().getNsURI(), eEnum.getName(), enumerator.getLiteral());
-                else
-                    id = constructEnumID("unkownPackage URI", enumerator.getClass().getSimpleName(),
-                            enumerator.getLiteral());
-
-                // generated enum should pre-empt the ecore enum literal as canonical enumerator
-                if (!uniqueIDToCanonicalEnumerator.containsKey(id)) {
-                    uniqueIDToCanonicalEnumerator.put(id, enumerator);
-                }
-            }
-            uniqueIDFromEnumerator.put(enumerator, id);
-            uniqueIDToEnumerator.put(id, enumerator);
-        }
-        return id;
-    }
-
-    private String constructEnumID(String nsURI, String name, String literal) {
-        return String.format("%s##%s##%s", nsURI, name, literal);
-    }
-
-    protected Object toKey(final EStructuralFeature feature) {
-        if (isDynamicModel) {
-            String id = uniqueIDFromTypedElement.get(feature);
-            if (id == null) {
-                Preconditions.checkArgument(!feature.eIsProxy(),
-                        String.format("Element %s is an unresolved proxy", feature));
-                id = toKeyDynamicInternal((EClassifier) feature.eContainer()) + "##" + feature.getEType().getName()
-                        + "##" + feature.getName();
-                uniqueIDFromTypedElement.put(feature, id);
-                uniqueIDToTypedElement.put(id, feature);
-                // metamodel maintenance will call back toKey(), but now the ID maps are already filled
-                maintainMetamodel(feature);
-            }
-            return id;
-        } else {
-            maintainMetamodel(feature);
-            return feature;
-        }
-    }
-
-    private Enumerator enumToCanonicalDynamicInternal(final Enumerator value) {
-        final String key = enumToKeyDynamicInternal(value);
-        Enumerator canonicalEnumerator = uniqueIDToCanonicalEnumerator.get(key);
-        if (canonicalEnumerator == null) { // if no canonical version appointed yet, appoint first version
-            canonicalEnumerator = uniqueIDToEnumerator.get(key).iterator().next();
-            uniqueIDToCanonicalEnumerator.put(key, canonicalEnumerator);
-        }
-        return canonicalEnumerator;
-    }
-
-    /**
-     * If in dynamic EMF mode, substitutes enum literals with a canonical version of the enum literal.
-     */
-    protected Object toInternalValueRepresentation(final Object value) {
-        if (isDynamicModel) {
-            if (value instanceof Enumerator)
-                return enumToCanonicalDynamicInternal((Enumerator) value);
-            else
-                return value;
-        } else {
-            return value;
-        }
-    }
 
     @Override
     public void notifyChanged(final Notification notification) {
@@ -316,7 +115,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                         final boolean notifyLightweightObservers = handleNotification(notification, notifier, feature);
 
                         if (notifyLightweightObservers) {
-                            notifyLightweightObservers(notifier, feature, notification);
+                            navigationHelper.notifyLightweightObservers(notifier, feature, notification);
                         }
                     } else if (oNotifier instanceof Resource) {
                         if (notification.getFeatureID(Resource.class) == Resource.RESOURCE__IS_LOADED) {
@@ -331,12 +130,12 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 }
             });
         } catch (final InvocationTargetException ex) {
-            processingFatal(ex.getCause(), "handling the following update notification: " + notification);
+            navigationHelper.processingFatal(ex.getCause(), "handling the following update notification: " + notification);
         } catch (final Exception ex) {
-            processingFatal(ex, "handling the following update notification: " + notification);
+            navigationHelper.processingFatal(ex, "handling the following update notification: " + notification);
         }
 
-        notifyBaseIndexChangeListeners();
+        navigationHelper.notifyBaseIndexChangeListeners();
     }
 
     @SuppressWarnings("deprecation")
@@ -393,17 +192,10 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         return notifyLightweightObservers;
     }
 
-    protected void notifyBaseIndexChangeListeners() {
-        navigationHelper.notifyBaseIndexChangeListeners(isDirty);
-        if (isDirty) {
-            isDirty = false;
-        }
-    }
-
     private void featureUpdate(final boolean isInsertion, final EObject notifier, final EStructuralFeature feature,
             final Object value, final Integer position) {
         // this is a safe visitation, no reads will happen, thus no danger of notifications or matcher construction
-        comprehension.traverseFeature(visitor(isInsertion), notifier, feature, value, position);
+        comprehension.traverseFeature(getVisitorForChange(isInsertion), notifier, feature, value, position);
     }
 
     @Override
@@ -426,7 +218,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     // the object is really traversed BEFORE the notification listener is added,
                     // so that if a proxy is resolved due to the traversal, we do not get notified about it
                     if (notifier instanceof EObject) {
-                        comprehension.traverseObject(visitor(true), (EObject) notifier);
+                        comprehension.traverseObject(getVisitorForChange(true), (EObject) notifier);
                     } else if (notifier instanceof Resource) {
                         Resource resource = (Resource) notifier;
                         if (resourceFilterConfiguration != null
@@ -443,9 +235,9 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 }
             });
         } catch (final InvocationTargetException ex) {
-            processingFatal(ex.getCause(), "add the object: " + notifier);
+            navigationHelper.processingFatal(ex.getCause(), "add the object: " + notifier);
         } catch (final Exception ex) {
-            processingFatal(ex, "add the object: " + notifier);
+            navigationHelper.processingFatal(ex, "add the object: " + notifier);
         }
     }
 
@@ -488,7 +280,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 public Void call() throws Exception {
                     if (notifier instanceof EObject) {
                         final EObject eObject = (EObject) notifier;
-                        comprehension.traverseObject(visitor(false), eObject);
+                        comprehension.traverseObject(getVisitorForChange(false), eObject);
                         navigationHelper.delayedProxyResolutions.removeAll(eObject);
                     } else if (notifier instanceof Resource) {
                         if (resourceFilterConfiguration != null
@@ -504,420 +296,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 }
             });
         } catch (final InvocationTargetException ex) {
-            processingFatal(ex.getCause(), "remove the object: " + notifier);
+            navigationHelper.processingFatal(ex.getCause(), "remove the object: " + notifier);
         } catch (final Exception ex) {
-            processingFatal(ex, "remove the object: " + notifier);
+            navigationHelper.processingFatal(ex, "remove the object: " + notifier);
         }
     }
 
-    protected void processingFatal(final Throwable ex, final String task) {
-        navigationHelper.notifyFatalListener(logTaskFormat(task), ex);
+
+    protected EMFVisitor getVisitorForChange(final boolean isInsertion) {
+        return isInsertion ? insertionVisitor : removalVisitor;
     }
 
-    protected void processingError(final Throwable ex, final String task) {
-        navigationHelper.notifyErrorListener(logTaskFormat(task), ex);
-    }
 
-    private String logTaskFormat(final String task) {
-        return "VIATRA Query encountered an error in processing the EMF model. " + "This happened while trying to "
-                + task;
-    }
-
-    protected EMFVisitor visitor(final boolean isInsertion) {
-        return new NavigationHelperVisitor.ChangeVisitor(navigationHelper, isInsertion);
-    }
-
-    /**
-     * This method uses the original {@link EStructuralFeature} instance or the String id.
-     * 
-     * @return true if this was the first time the value was added to this feature of this holder (false is only
-     *         possible for non-unique features)
-     */
-    private boolean addToFeatureMap(final Object featureKey, boolean unique, final Object value, final EObject holder) {
-        Collection<EObject> setVal = valueToFeatureToHolderMap.get(value, featureKey);
-
-        if (setVal == null) {
-            setVal = unique ? new HashSet<EObject>() : HashMultiset.<EObject> create();
-            valueToFeatureToHolderMap.put(value, featureKey, setVal);
-
-        }
-        boolean changed = unique || !setVal.contains(holder);
-        setVal.add(holder);
-        return changed;
-    }
-
-    /**
-     * This method uses either the original {@link EStructuralFeature} instance or the String id.
-     */
-    private void addToReversedFeatureMap(final Object feature, final EObject holder) {
-        Multiset<EObject> setVal = featureToHolderMap.get(feature);
-
-        if (setVal == null) {
-            setVal = HashMultiset.create();
-            featureToHolderMap.put(feature, setVal);
-        }
-        setVal.add(holder);
-    }
-
-    /**
-     * This method uses either the original {@link EStructuralFeature} instance or the String id.
-     */
-    private void addToDirectFeatureMap(final EObject holder, final Object feature, final Object value) {
-        Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
-
-        if (setVal == null) {
-            setVal = new HashSet<Object>();
-            holderToFeatureToValueMap.put(holder, feature, setVal);
-        }
-        setVal.add(value);
-    }
-
-    /**
-     * This method uses either the original {@link EStructuralFeature} instance or the String id.
-     */
-    private void removeFromReversedFeatureMap(final Object feature, final EObject holder) {
-        final Multiset<EObject> setVal = featureToHolderMap.get(feature);
-        if (setVal != null) {
-            setVal.remove(holder);
-
-            if (setVal.isEmpty()) {
-                featureToHolderMap.remove(feature);
-            }
-        }
-    }
-
-    /**
-     * This method uses the original {@link EStructuralFeature} instance.
-     */
-    private boolean removeFromFeatureMap(final Object featureKey, boolean unique, final Object value,
-            final EObject holder) {
-        final Collection<EObject> setHolder = valueToFeatureToHolderMap.get(value, featureKey);
-        if (setHolder != null) {
-            setHolder.remove(holder);
-
-            if (setHolder.isEmpty()) {
-                valueToFeatureToHolderMap.remove(value, featureKey);
-            }
-            return unique || (!setHolder.contains(holder));
-        }
-        return false;
-    }
-
-    /**
-     * This method uses either the original {@link EStructuralFeature} instance or the String id.
-     */
-    private void removeFromDirectFeatureMap(final EObject holder, final Object feature, final Object value) {
-        final Set<Object> setVal = holderToFeatureToValueMap.get(holder, feature);
-        if (setVal != null) {
-            setVal.remove(value);
-
-            if (setVal.isEmpty()) {
-                holderToFeatureToValueMap.remove(holder, feature);
-            }
-        }
-    }
-
-    public void insertFeatureTuple(final Object featureKey, boolean unique, final Object value, final EObject holder) {
-        boolean changed = addToFeatureMap(featureKey, unique, value, holder);
-        if (changed) { // if not duplicated
-            if (featureToHolderMap != null) {
-                addToReversedFeatureMap(featureKey, holder);
-            }
-            if (holderToFeatureToValueMap != null) {
-                addToDirectFeatureMap(holder, featureKey, value);
-            }
-
-            isDirty = true;
-            notifyFeatureListeners(holder, featureKey, value, true);
-        }
-    }
-
-    public void removeFeatureTuple(final Object featureKey, boolean unique, final Object value, final EObject holder) {
-        boolean changed = removeFromFeatureMap(featureKey, unique, value, holder);
-        if (changed) { // if not duplicated
-            if (featureToHolderMap != null) {
-                removeFromReversedFeatureMap(featureKey, holder);
-            }
-            if (holderToFeatureToValueMap != null) {
-                removeFromDirectFeatureMap(holder, featureKey, value);
-            }
-
-            isDirty = true;
-            notifyFeatureListeners(holder, featureKey, value, false);
-        }
-    }
-
-    // START ********* InstanceSet *********
-    public Set<EObject> getInstanceSet(final Object keyClass) {
-        return instanceMap.get(keyClass);
-    }
-
-    public void removeInstanceSet(final Object keyClass) {
-        instanceMap.remove(keyClass);
-    }
-
-    public void insertIntoInstanceSet(final Object keyClass, final EObject value) {
-        Set<EObject> set = instanceMap.get(keyClass);
-        if (set == null) {
-            set = new HashSet<EObject>();
-            instanceMap.put(keyClass, set);
-        }
-        set.add(value);
-
-        isDirty = true;
-        notifyInstanceListeners(keyClass, value, true);
-    }
-
-    public void removeFromInstanceSet(final Object keyClass, final EObject value) {
-        final Set<EObject> set = instanceMap.get(keyClass);
-        if (set != null) {
-            set.remove(value);
-
-            if (set.isEmpty()) {
-                instanceMap.remove(keyClass);
-            }
-        }
-
-        isDirty = true;
-        notifyInstanceListeners(keyClass, value, false);
-    }
-
-    // END ********* InstanceSet *********
-
-    // START ********* DataTypeMap *********
-    public Map<Object, Integer> getDataTypeMap(final Object keyType) {
-        return dataTypeMap.get(keyType);
-    }
-
-    public void removeDataTypeMap(final Object keyType) {
-        dataTypeMap.remove(keyType);
-    }
-
-    public void insertIntoDataTypeMap(final Object keyType, final Object value) {
-        Map<Object, Integer> valMap = dataTypeMap.get(keyType);
-        if (valMap == null) {
-            valMap = new HashMap<Object, Integer>();
-            dataTypeMap.put(keyType, valMap);
-        }
-        final boolean firstOccurrence = (valMap.get(value) == null);
-        if (firstOccurrence) {
-            valMap.put(value, 1);
-        } else {
-            Integer count = valMap.get(value);
-            valMap.put(value, ++count);
-        }
-
-        isDirty = true;
-        notifyDataTypeListeners(keyType, value, true, firstOccurrence);
-    }
-
-    public void removeFromDataTypeMap(final Object keyType, final Object value) {
-        final Map<Object, Integer> valMap = dataTypeMap.get(keyType);
-        if (valMap != null && valMap.get(value) != null) {
-            Integer count = valMap.get(value);
-            final boolean lastOccurrence = (--count == 0);
-            if (lastOccurrence) {
-                valMap.remove(value);
-                if (valMap.size() == 0) {
-                    dataTypeMap.remove(keyType);
-                }
-            } else {
-                valMap.put(value, count);
-            }
-
-            isDirty = true;
-            notifyDataTypeListeners(keyType, value, false, lastOccurrence);
-        }
-        // else: inconsistent deletion? log error?
-    }
-
-    // END ********* DataTypeMap *********
-
-    /**
-     * Checks the {@link EStructuralFeature}'s source and target {@link EPackage} for NsURI collision. An error message
-     * will be logged if a model element from an other {@link EPackage} instance with the same NsURI has been already
-     * processed. The error message will be logged only for the first time for a given {@link EPackage} instance.
-     *
-     * @param classifier
-     *            the classifier instance
-     */
-    protected void maintainMetamodel(final EStructuralFeature feature) {
-        if (!knownFeatures.contains(feature)) {
-            knownFeatures.add(feature);
-            maintainMetamodel(feature.getEContainingClass());
-            maintainMetamodel(feature.getEType());
-        }
-    }
-
-    /**
-     * put subtype information into cache
-     */
-    protected void maintainMetamodel(final EClassifier classifier) {
-        if (!knownClassifiers.contains(classifier)) {
-            checkEPackage(classifier);
-            knownClassifiers.add(classifier);
-
-            if (classifier instanceof EClass) {
-                final EClass clazz = (EClass) classifier;
-                final Object clazzKey = toKey(clazz);
-                for (final EClass superType : clazz.getEAllSuperTypes()) {
-                    maintainTypeHierarhyInternal(clazzKey, toKey(superType));
-                }
-                maintainTypeHierarhyInternal(clazzKey, getEObjectClassKey());
-            } else if (classifier instanceof EEnum) {
-                EEnum eEnum = (EEnum) classifier;
-
-                if (isDynamicModel) {
-                    // if there is a generated enum class, save this model element for describing that class
-                    if (eEnum.getInstanceClass() != null)
-                        generatedEENumClasses.put(eEnum.getInstanceClass(), eEnum);
-
-                    for (EEnumLiteral eEnumLiteral : eEnum.getELiterals()) {
-                        // create string ID; register generated enum values
-                        enumToKeyDynamicInternal(eEnumLiteral);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Checks the {@link EClassifier}'s {@link EPackage} for NsURI collision. An error message will be logged if a model
-     * element from an other {@link EPackage} instance with the same NsURI has been already processed. The error message
-     * will be logged only for the first time for a given {@link EPackage} instance.
-     *
-     * @param classifier
-     *            the classifier instance
-     */
-    private void checkEPackage(final EClassifier classifier) {
-        final EPackage ePackage = classifier.getEPackage();
-        if (knownPackages.add(ePackage)) { // this is a new EPackage
-            final String nsURI = ePackage.getNsURI();
-            final Collection<EPackage> packagesOfURI = uniqueIDToPackage.get(nsURI);
-            if (!packagesOfURI.contains(ePackage)) { // this should be true
-                uniqueIDToPackage.put(nsURI, ePackage);
-                // collision detection between EPackages (disabled in dynamic model mode)
-                if (!isDynamicModel && packagesOfURI.size() == 2) { // only report the issue if the new EPackage
-                                                                    // instance is the second for the same URI
-                    processingError(
-                            new ViatraBaseException("NsURI (" + nsURI
-                                    + ") collision detected between different instances of EPackages. If this is normal, try using dynamic EMF mode."),
-                            "process new metamodel elements.");
-                }
-            }
-        }
-    }
-
-    /**
-     * Maintains subtype hierarchy
-     * 
-     * @param subClassKey
-     *            EClass or String id of subclass
-     * @param superClassKey
-     *            EClass or String id of superclass
-     */
-    private void maintainTypeHierarhyInternal(final Object subClassKey, final Object superClassKey) {
-        // update observed class and instance listener tables according to new subtype information
-        if (navigationHelper.directlyObservedClasses.contains(superClassKey)) {
-            navigationHelper.getAllObservedClassesInternal().add(subClassKey);
-        }
-        final Table<Object, InstanceListener, Set<EClass>> instanceListeners = navigationHelper.peekInstanceListeners();
-        if (instanceListeners != null) { // table already constructed
-            for (final Entry<InstanceListener, Set<EClass>> entry : instanceListeners.row(superClassKey).entrySet()) {
-                final InstanceListener listener = entry.getKey();
-                for (final EClass subscriptionType : entry.getValue()) {
-                    navigationHelper.addInstanceListenerInternal(listener, subscriptionType, subClassKey);
-                }
-            }
-        }
-
-        // update subtype maps
-        Set<Object> subTypes = subTypeMap.get(superClassKey);
-        if (subTypes == null) {
-            subTypes = new HashSet<Object>();
-            subTypeMap.put(superClassKey, subTypes);
-        }
-        subTypes.add(subClassKey);
-        Set<Object> superTypes = superTypeMap.get(subClassKey);
-        if (superTypes == null) {
-            superTypes = new HashSet<Object>();
-            superTypeMap.put(subClassKey, superTypes);
-        }
-        superTypes.add(superClassKey);
-    }
-
-    private void notifyDataTypeListeners(final Object typeKey, final Object value, final boolean isInsertion,
-            final boolean firstOrLastOccurrence) {
-        for (final Entry<DataTypeListener, Set<EDataType>> entry : navigationHelper.getDataTypeListeners().row(typeKey)
-                .entrySet()) {
-            final DataTypeListener listener = entry.getKey();
-            for (final EDataType subscriptionType : entry.getValue()) {
-                if (isInsertion) {
-                    listener.dataTypeInstanceInserted(subscriptionType, value, firstOrLastOccurrence);
-                } else {
-                    listener.dataTypeInstanceDeleted(subscriptionType, value, firstOrLastOccurrence);
-                }
-            }
-        }
-    }
-
-    private void notifyFeatureListeners(final EObject host, final Object featureKey, final Object value,
-            final boolean isInsertion) {
-        for (final Entry<FeatureListener, Set<EStructuralFeature>> entry : navigationHelper.getFeatureListeners()
-                .row(featureKey).entrySet()) {
-            final FeatureListener listener = entry.getKey();
-            for (final EStructuralFeature subscriptionType : entry.getValue()) {
-                if (isInsertion) {
-                    listener.featureInserted(host, subscriptionType, value);
-                } else {
-                    listener.featureDeleted(host, subscriptionType, value);
-                }
-            }
-        }
-    }
-
-    private void notifyInstanceListeners(final Object clazzKey, final EObject instance, final boolean isInsertion) {
-        for (final Entry<InstanceListener, Set<EClass>> entry : navigationHelper.getInstanceListeners().row(clazzKey)
-                .entrySet()) {
-            final InstanceListener listener = entry.getKey();
-            for (final EClass subscriptionType : entry.getValue()) {
-                if (isInsertion) {
-                    listener.instanceInserted(subscriptionType, instance);
-                } else {
-                    listener.instanceDeleted(subscriptionType, instance);
-                }
-            }
-        }
-    }
-
-    private void notifyLightweightObservers(final EObject host, final EStructuralFeature feature,
-            final Notification notification) {
-        for (final Entry<LightweightEObjectObserver, Collection<EObject>> entry : navigationHelper
-                .getLightweightObservers().entrySet()) {
-            if (entry.getValue().contains(host)) {
-                entry.getKey().notifyFeatureChanged(host, feature, notification);
-            }
-        }
-    }
-
-    private void initReversedFeatureMap() {
-        for (final Cell<Object, Object, Collection<EObject>> entry : valueToFeatureToHolderMap.cellSet()) {
-            final Object feature = entry.getColumnKey();
-            for (final EObject holder : holderCollectionToUniqueSet(entry.getValue())) {
-                addToReversedFeatureMap(feature, holder);
-            }
-        }
-    }
-
-    private void initDirectFeatureMap() {
-        for (final Cell<Object, Object, Collection<EObject>> entry : valueToFeatureToHolderMap.cellSet()) {
-            final Object value = entry.getRowKey();
-            final Object feature = entry.getColumnKey();
-            for (final EObject holder : holderCollectionToUniqueSet(entry.getValue())) {
-                addToDirectFeatureMap(holder, feature, value);
-            }
-        }
-    }
 
     // The superclass contains a workaround for Bug 385039.
     // The workaround (checking whether the adapter is installed at 'notifier') is no longer necessary for this subclass
@@ -990,215 +380,5 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    /**
-     * @return the valueToFeatureToHolderMap
-     */
-    protected Table<Object, Object, Collection<EObject>> getValueToFeatureToHolderMap() {
-        return valueToFeatureToHolderMap;
-    }
-
-    /**
-     * Decodes the collection of holders (potentially non-unique) to a unique set
-     */
-    protected static Set<EObject> holderCollectionToUniqueSet(Collection<EObject> holders) {
-        if (holders instanceof Set<?>) {
-            return (Set<EObject>) holders;
-        } else if (holders instanceof Multiset<?>) {
-            Multiset<EObject> multiSet = (Multiset<EObject>) holders;
-            return multiSet.elementSet();
-        } else
-            throw new IllegalStateException("Neither Set nor Multiset: " + holders);
-    }
-
-    /**
-     * @return the featureToHolderMap
-     */
-    protected Map<Object, Multiset<EObject>> getFeatureToHolderMap() {
-        if (featureToHolderMap == null) {
-            featureToHolderMap = new HashMap<Object, Multiset<EObject>>();
-            initReversedFeatureMap();
-        }
-        return featureToHolderMap;
-    }
-
-    protected Map<Object, Multiset<EObject>> peekFeatureToHolderMap() {
-        return featureToHolderMap;
-    }
-
-    /**
-     * Calling this method will construct the map for all holders and features, consuming significant memory!
-     * 
-     * @return the holderToFeatureToValeMap
-     */
-    protected Table<EObject, Object, Set<Object>> getHolderToFeatureToValueMap() {
-        if (holderToFeatureToValueMap == null) {
-            holderToFeatureToValueMap = HashBasedTable.create();
-            initDirectFeatureMap();
-        }
-        return holderToFeatureToValueMap;
-    }
-
-    protected Table<EObject, Object, Set<Object>> peekHolderToFeatureToValueMap() {
-        return holderToFeatureToValueMap;
-    }
-
-    /**
-     * @return the subTypeMap
-     */
-    protected Map<Object, Set<Object>> getSubTypeMap() {
-        return subTypeMap;
-    }
-
-    protected Map<Object, Set<Object>> getSuperTypeMap() {
-        return superTypeMap;
-    }
-
-    /**
-     * Returns the corresponding {@link EStructuralFeature} instance for the id.
-     *
-     * @param featureId
-     *            the id of the feature
-     * @return the {@link EStructuralFeature} instance
-     */
-    public EStructuralFeature getKnownFeature(final String featureId) {
-        final Collection<ETypedElement> features = uniqueIDToTypedElement.get(featureId);
-        if (features != null && !features.isEmpty()) {
-            final ETypedElement next = features.iterator().next();
-            if (next instanceof EStructuralFeature) {
-                return (EStructuralFeature) next;
-            }
-        }
-        return null;
-
-    }
-
-    public EStructuralFeature getKnownFeatureForKey(Object featureKey) {
-        EStructuralFeature feature;
-        if (isDynamicModel()) {
-            feature = getKnownFeature((String) featureKey);
-        } else {
-            feature = (EStructuralFeature) featureKey;
-        }
-        return feature;
-    }
-
-    /**
-     * Returns the corresponding {@link EClassifier} instance for the id.
-     */
-    public EClassifier getKnownClassifier(final String key) {
-        final Collection<EClassifier> classifiersOfThisID = uniqueIDToClassifier.get(key);
-        if (classifiersOfThisID != null && !classifiersOfThisID.isEmpty()) {
-            return classifiersOfThisID.iterator().next();
-        } else {
-            return null;
-        }
-    }
-
-    public EClassifier getKnownClassifierForKey(Object classifierKey) {
-        EClassifier cls;
-        if (isDynamicModel()) {
-            cls = getKnownClassifier((String) classifierKey);
-        } else {
-            cls = (EClassifier) classifierKey;
-        }
-        return cls;
-    }
-
-    /**
-     * Returns all EClasses that currently have direct instances cached by the index.
-     * <p>
-     * Supertypes will not be returned, unless they have direct instances in the model as well. If not in
-     * <em>wildcard mode</em>, only registered EClasses and their subtypes will be returned.
-     * <p>
-     * Note for advanced users: if a type is represented by multiple EClass objects, one of them is chosen as
-     * representative and returned.
-     */
-    public Set<EClass> getAllCurrentClasses() {
-        final Set<EClass> result = Sets.newHashSet();
-        final Set<Object> classifierKeys = instanceMap.keySet();
-        for (final Object classifierKey : classifierKeys) {
-            if (isDynamicModel) {
-                final EClassifier knownClassifier = getKnownClassifier((String) classifierKey);
-                if (knownClassifier instanceof EClass) {
-                    result.add((EClass) knownClassifier);
-                }
-            } else {
-                result.add((EClass) classifierKey);
-            }
-
-        }
-        return result;
-    }
-
-    public boolean isDynamicModel() {
-        return isDynamicModel;
-    }
-
-    protected void resampleFeatureValueForHolder(EObject source, EStructuralFeature feature,
-            EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
-        // traverse features and update value
-        Object newValue = source.eGet(feature);
-        Set<Object> oldValues = getOldValuesForHolderAndFeature(source, feature);
-        if (feature.isMany()) {
-            resampleManyFeatureValueForHolder(source, feature, newValue, oldValues, insertionVisitor, removalVisitor);
-        } else {
-            resampleSingleFeatureValueForHolder(source, feature, newValue, oldValues, insertionVisitor, removalVisitor);
-        }
-
-    }
-
-    private Set<Object> getOldValuesForHolderAndFeature(EObject source, EStructuralFeature feature) {
-        // while this is slower than using the holderToFeatureToValueMap, we do not want to construct that to avoid
-        // memory overhead
-        Map<Object, Collection<EObject>> oldValuesToHolders = valueToFeatureToHolderMap.column(feature);
-        Set<Object> oldValues = new HashSet<Object>();
-        for (Entry<Object, Collection<EObject>> entry : oldValuesToHolders.entrySet()) {
-            if (entry.getValue().contains(source)) {
-                oldValues.add(entry.getKey());
-            }
-        }
-        return oldValues;
-    }
-
-    private void resampleManyFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
-            Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
-        InternalEObject internalEObject = (InternalEObject) source;
-        Collection<?> newValues = (Collection<?>) newValue;
-        // add those that are in new but not in old
-        Set<Object> newValueSet = new HashSet<Object>(newValues);
-        newValueSet.removeAll(oldValues);
-        // remove those that are in old but not in new
-        oldValues.removeAll(newValues);
-        if (!oldValues.isEmpty()) {
-            for (Object ov : oldValues) {
-                comprehension.traverseFeature(removalVisitor, source, feature, ov, null);
-            }
-            ENotificationImpl removeNotification = new ENotificationImpl(internalEObject, Notification.REMOVE_MANY,
-                    feature, oldValues, null);
-            notifyLightweightObservers(source, feature, removeNotification);
-        }
-        if (!newValueSet.isEmpty()) {
-            for (Object nv : newValueSet) {
-                comprehension.traverseFeature(insertionVisitor, source, feature, nv, null);
-            }
-            ENotificationImpl addNotification = new ENotificationImpl(internalEObject, Notification.ADD_MANY, feature,
-                    null, newValueSet);
-            notifyLightweightObservers(source, feature, addNotification);
-        }
-    }
-
-    private void resampleSingleFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
-            Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
-        InternalEObject internalEObject = (InternalEObject) source;
-        Object oldValue = Iterables.getFirst(oldValues, null);
-        if (!Objects.equal(oldValue, newValue)) {
-            // value changed
-            comprehension.traverseFeature(removalVisitor, source, feature, oldValue, null);
-            comprehension.traverseFeature(insertionVisitor, source, feature, newValue, null);
-            ENotificationImpl notification = new ENotificationImpl(internalEObject, Notification.SET, feature, oldValue,
-                    newValue);
-            notifyLightweightObservers(source, feature, notification);
-        }
-    }
 
 }

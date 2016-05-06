@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.NotifyingList;
 import org.eclipse.emf.common.util.EList;
@@ -35,7 +36,9 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -56,7 +59,9 @@ import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
@@ -137,6 +142,9 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     private EMFModelComprehension comprehension;
 
+    EMFBaseIndexMetaStore metaStore;
+    EMFBaseIndexInstanceStore instanceStore;
+
     <T> Set<T> setMinus(Collection<? extends T> a, Collection<T> b) {
         Set<T> result = new HashSet<T>(a);
         result.removeAll(b);
@@ -210,6 +218,10 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.observedFeatures = new HashSet<Object>();
         this.ignoreResolveNotificationFeatures = new HashSet<Object>();
         this.observedDataTypes = new HashSet<Object>();
+        
+        metaStore = new EMFBaseIndexMetaStore(this);
+        instanceStore = new EMFBaseIndexInstanceStore(this);
+        
         this.contentAdapter = new NavigationHelperContentAdapter(this);
         this.baseIndexChangeListeners = new HashSet<EMFBaseIndexChangeListener>();
         this.errorListeners = new LinkedHashSet<IEMFIndexingErrorListener>();
@@ -247,7 +259,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<Object> getDataTypeInstances(EDataType type) {
     	Object typeKey = toKey(type);
-        Map<Object, Integer> valMap = contentAdapter.getDataTypeMap(typeKey);
+        Map<Object, Integer> valMap = instanceStore.getDataTypeMap(typeKey);
         if (valMap != null) {
             return Collections.unmodifiableSet(valMap.keySet());
         } else {
@@ -259,12 +271,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     public Set<Setting> findByAttributeValue(Object value_) {
     	Object value = toCanonicalValueRepresentation(value_);
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<Object, Collection<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
 
         for (Entry<Object, Collection<EObject>> entry : valMap.entrySet()) {
             final Collection<EObject> holders = entry.getValue();
-            EStructuralFeature feature = contentAdapter.getKnownFeatureForKey(entry.getKey());
-			for (EObject holder : NavigationHelperContentAdapter.holderCollectionToUniqueSet(holders)) {
+            EStructuralFeature feature = metaStore.getKnownFeatureForKey(entry.getKey());
+			for (EObject holder : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
                 retSet.add(new NavigationHelperSetting(feature, holder, value));
             }
         }
@@ -276,13 +288,13 @@ public class NavigationHelperImpl implements NavigationHelper {
     public Set<Setting> findByAttributeValue(Object value_, Collection<EAttribute> attributes) {
     	Object value = toCanonicalValueRepresentation(value_);
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<Object, Collection<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
 
         for (EAttribute attr : attributes) {
             Object feature = toKey(attr);
             final Collection<EObject> holders = valMap.get(feature);
 			if (holders != null) {
-                for (EObject holder : NavigationHelperContentAdapter.holderCollectionToUniqueSet(holders)) {
+                for (EObject holder : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
                     retSet.add(new NavigationHelperSetting(attr, holder, value));
                 }
             }
@@ -294,22 +306,22 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<EObject> findByAttributeValue(Object value_, EAttribute attribute) {
     	Object value = toCanonicalValueRepresentation(value_);
-        Map<Object, Collection<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
         Object feature = toKey(attribute);
         final Collection<EObject> holders = valMap.get(feature);
 		if (holders == null) {
             return Collections.emptySet();
         } else {
-            return Collections.unmodifiableSet(NavigationHelperContentAdapter.holderCollectionToUniqueSet(holders));
+            return Collections.unmodifiableSet(EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders));
         }
     }
         
     @Override
     public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor) {
-       final Map<Object, Collection<EObject>> instanceMap = contentAdapter.getValueToFeatureToHolderMap().column(toKey(feature));
+       final Map<Object, Collection<EObject>> instanceMap = instanceStore.getValueToFeatureToHolderMap().column(toKey(feature));
         for (Entry<Object, Collection<EObject>> entry : instanceMap.entrySet()) {
             final Collection<EObject> holders = entry.getValue();
-			for (EObject src : NavigationHelperContentAdapter.holderCollectionToUniqueSet(holders)) {
+			for (EObject src : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
                 processor.process(feature, src, entry.getKey());
             }
         }
@@ -324,7 +336,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public void processAllInstances(EClass type, IEClassProcessor processor) {
         Object typeKey = toKey(type);
-        Set<Object> subTypes = contentAdapter.getSubTypeMap().get(typeKey);
+        Set<Object> subTypes = metaStore.getSubTypeMap().get(typeKey);
         if (subTypes != null) {
             for (Object subTypeKey : subTypes) {
                 processDirectInstancesInternal(type, processor, subTypeKey);
@@ -336,7 +348,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public void processDataTypeInstances(EDataType type, IEDataTypeProcessor processor) {
     	Object typeKey = toKey(type);
-        Map<Object, Integer> valMap = contentAdapter.getDataTypeMap(typeKey);
+        Map<Object, Integer> valMap = instanceStore.getDataTypeMap(typeKey);
         if (valMap == null) {
             return;
         }
@@ -346,7 +358,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     private void processDirectInstancesInternal(EClass type, IEClassProcessor processor, Object typeKey) {
-        final Set<EObject> instances = contentAdapter.getInstanceSet(typeKey);
+        final Set<EObject> instances = instanceStore.getInstanceSet(typeKey);
         if (instances != null) {
             for (EObject eObject : instances) {
                 processor.process(type, eObject);
@@ -357,12 +369,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<Setting> getInverseReferences(EObject target) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<Object, Collection<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
+        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(target);
 
         for (Entry<Object, Collection<EObject>> entry : valMap.entrySet()) {
             final Collection<EObject> holders = entry.getValue();
-			for (EObject source : NavigationHelperContentAdapter.holderCollectionToUniqueSet(holders)) {
-                EStructuralFeature feature = contentAdapter.getKnownFeatureForKey(entry.getKey());
+			for (EObject source : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
+                EStructuralFeature feature = metaStore.getKnownFeatureForKey(entry.getKey());
                 retSet.add(new NavigationHelperSetting(feature, source, target));
             }
         }
@@ -373,13 +385,13 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<Setting> getInverseReferences(EObject target, Collection<EReference> references) {
         Set<Setting> retSet = new HashSet<Setting>();
-        Map<Object, Collection<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
+        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(target);
 
         for (EReference ref : references) {
             Object feature = toKey(ref);
             final Collection<EObject> holders = valMap.get(feature);
 			if (holders != null) {
-                for (EObject source : NavigationHelperContentAdapter.holderCollectionToUniqueSet(holders)) {
+                for (EObject source : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
                     retSet.add(new NavigationHelperSetting(ref, source, target));
                 }
             }
@@ -391,12 +403,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<EObject> getInverseReferences(EObject target, EReference reference) {
         Object feature = toKey(reference);
-        Map<Object, Collection<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(target);
+        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(target);
         final Collection<EObject> holders = valMap.get(feature);
 		if (holders == null) {
             return Collections.emptySet();
         } else {
-            return Collections.unmodifiableSet(NavigationHelperContentAdapter.holderCollectionToUniqueSet(holders));
+            return Collections.unmodifiableSet(EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders));
         }
     }
 
@@ -410,7 +422,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<Object> getFeatureTargets(EObject source, EStructuralFeature _feature) {
         Object feature = toKey(_feature);
-        final Set<Object> valSet = contentAdapter.getHolderToFeatureToValueMap().get(source, feature);
+        final Set<Object> valSet = instanceStore.getHolderToFeatureToValueMap().get(source, feature);
         if (valSet == null) {
             return Collections.emptySet();
         } else {
@@ -421,7 +433,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature _feature) {
         Object feature = toKey(_feature);
-    	final Map<EObject, Set<Object>> valMap = contentAdapter.getHolderToFeatureToValueMap().column(feature);
+    	final Map<EObject, Set<Object>> valMap = instanceStore.getHolderToFeatureToValueMap().column(feature);
         if (valMap == null) {
             return Collections.emptyMap();
         } else {
@@ -432,7 +444,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<EObject> getDirectInstances(EClass type) {
     	Object typeKey = toKey(type);
-        Set<EObject> valSet = contentAdapter.getInstanceSet(typeKey);
+        Set<EObject> valSet = instanceStore.getInstanceSet(typeKey);
         if (valSet == null) {
             return Collections.emptySet();
         } else {
@@ -441,15 +453,15 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
 	private Object toKey(EClassifier eClassifier) {
-		return contentAdapter.toKey(eClassifier);
+		return metaStore.toKey(eClassifier);
 	}
 	private Object toKey(EStructuralFeature feature) {
-		return contentAdapter.toKey(feature);
+		return metaStore.toKey(feature);
 	}
 	
 	@Override
 	public Object toCanonicalValueRepresentation(Object value) {
-		return contentAdapter.toInternalValueRepresentation(value);
+		return metaStore.toInternalValueRepresentation(value);
 	}
 
     @Override
@@ -457,16 +469,16 @@ public class NavigationHelperImpl implements NavigationHelper {
         Set<EObject> retSet = new HashSet<EObject>();
 
         Object typeKey = toKey(type);
-        Set<Object> subTypes = contentAdapter.getSubTypeMap().get(typeKey);
+        Set<Object> subTypes = metaStore.getSubTypeMap().get(typeKey);
         if (subTypes != null) {
             for (Object subTypeKey : subTypes) {
-                final Set<EObject> instances = contentAdapter.getInstanceSet(subTypeKey);
+                final Set<EObject> instances = instanceStore.getInstanceSet(subTypeKey);
                 if (instances != null) {
                     retSet.addAll(instances);
                 }
             }
         } 
-        final Set<EObject> instances = contentAdapter.getInstanceSet(typeKey);
+        final Set<EObject> instances = instanceStore.getInstanceSet(typeKey);
         if (instances != null) {
             retSet.addAll(instances);
         }
@@ -479,10 +491,10 @@ public class NavigationHelperImpl implements NavigationHelper {
     	Object value = toCanonicalValueRepresentation(value_);
         Object feature = toKey(_feature);
         Set<EObject> retSet = new HashSet<EObject>();
-        Map<Object, Collection<EObject>> valMap = contentAdapter.getValueToFeatureToHolderMap().row(value);
+        Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
         final Collection<EObject> holders = valMap.get(feature);
 		if (holders != null) {
-            retSet.addAll(NavigationHelperContentAdapter.holderCollectionToUniqueSet(holders));
+            retSet.addAll(EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders));
         }
         return retSet;
     }
@@ -490,7 +502,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public Set<EObject> getHoldersOfFeature(EStructuralFeature _feature) {
         Object feature = toKey(_feature);
-        Multiset<EObject> holders = contentAdapter.getFeatureToHolderMap().get(feature);
+        Multiset<EObject> holders = instanceStore.getFeatureToHolderMap().get(feature);
         if (holders == null) {
            return Collections.emptySet();
         } else {
@@ -512,7 +524,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     	        for (EClass subscriptionType : delta) {
     	        	final Object superElementTypeKey = toKey(subscriptionType);
 					addInstanceListenerInternal(listener, subscriptionType, superElementTypeKey);
-					final Set<Object> subTypeKeys = contentAdapter.getSubTypeMap().get(superElementTypeKey);
+					final Set<Object> subTypeKeys = metaStore.getSubTypeMap().get(superElementTypeKey);
 					if (subTypeKeys != null) for (Object subTypeKey : subTypeKeys) {
 						addInstanceListenerInternal(listener, subscriptionType, subTypeKey);
 					}
@@ -630,6 +642,13 @@ public class NavigationHelperImpl implements NavigationHelper {
         return lightweightObservers;
     }
 
+    public void notifyBaseIndexChangeListeners() {
+        notifyBaseIndexChangeListeners(instanceStore.isDirty);
+        if (instanceStore.isDirty) {
+            instanceStore.isDirty = false;
+        }
+    }
+
     /**
      * This will run after updates.
      */
@@ -648,6 +667,61 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
+    
+    void notifyDataTypeListeners(final Object typeKey, final Object value, final boolean isInsertion,
+            final boolean firstOrLastOccurrence) {
+        for (final Entry<DataTypeListener, Set<EDataType>> entry : getDataTypeListeners().row(typeKey)
+                .entrySet()) {
+            final DataTypeListener listener = entry.getKey();
+            for (final EDataType subscriptionType : entry.getValue()) {
+                if (isInsertion) {
+                    listener.dataTypeInstanceInserted(subscriptionType, value, firstOrLastOccurrence);
+                } else {
+                    listener.dataTypeInstanceDeleted(subscriptionType, value, firstOrLastOccurrence);
+                }
+            }
+        }
+    }
+
+    void notifyFeatureListeners(final EObject host, final Object featureKey, final Object value,
+            final boolean isInsertion) {
+        for (final Entry<FeatureListener, Set<EStructuralFeature>> entry : getFeatureListeners()
+                .row(featureKey).entrySet()) {
+            final FeatureListener listener = entry.getKey();
+            for (final EStructuralFeature subscriptionType : entry.getValue()) {
+                if (isInsertion) {
+                    listener.featureInserted(host, subscriptionType, value);
+                } else {
+                    listener.featureDeleted(host, subscriptionType, value);
+                }
+            }
+        }
+    }
+
+    void notifyInstanceListeners(final Object clazzKey, final EObject instance, final boolean isInsertion) {
+        for (final Entry<InstanceListener, Set<EClass>> entry : getInstanceListeners().row(clazzKey)
+                .entrySet()) {
+            final InstanceListener listener = entry.getKey();
+            for (final EClass subscriptionType : entry.getValue()) {
+                if (isInsertion) {
+                    listener.instanceInserted(subscriptionType, instance);
+                } else {
+                    listener.instanceDeleted(subscriptionType, instance);
+                }
+            }
+        }
+    }
+
+    void notifyLightweightObservers(final EObject host, final EStructuralFeature feature,
+            final Notification notification) {
+        for (final Entry<LightweightEObjectObserver, Collection<EObject>> entry : getLightweightObservers().entrySet()) {
+            if (entry.getValue().contains(host)) {
+                entry.getKey().notifyFeatureChanged(host, feature, notification);
+            }
+        }
+    }
+    
+    
     @Override
     public void addBaseIndexChangeListener(EMFBaseIndexChangeListener listener) {
         checkArgument(listener != null, "Cannot add null listener!");
@@ -670,6 +744,15 @@ public class NavigationHelperImpl implements NavigationHelper {
         return errorListeners.remove(listener);
     }
     
+    protected void processingFatal(final Throwable ex, final String task) {
+        notifyFatalListener(logTaskFormat(task), ex);
+    }
+
+    protected void processingError(final Throwable ex, final String task) {
+        notifyErrorListener(logTaskFormat(task), ex);
+    }
+    
+    
     public void notifyErrorListener(String message, Throwable t) {
         logger.error(message, t);
         for (IEMFIndexingErrorListener listener : errorListeners) {
@@ -682,6 +765,11 @@ public class NavigationHelperImpl implements NavigationHelper {
         for (IEMFIndexingErrorListener listener : errorListeners) {
             listener.fatal(message, t);
         }
+    }
+    
+    private String logTaskFormat(final String task) {
+        return "VIATRA Query encountered an error in processing the EMF model. " + "This happened while trying to "
+                + task;
     }
 
     protected void considerForExpansion(EObject obj) {
@@ -710,7 +798,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 		// no veto by filters
         modelRoots.add(root);
         contentAdapter.addAdapter(root);
-        contentAdapter.notifyBaseIndexChangeListeners();
+        notifyBaseIndexChangeListeners();
     }
 
     /**
@@ -739,7 +827,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             allObservedClasses = new HashSet<Object>();
             for (Object eClassKey : directlyObservedClasses) {
                 allObservedClasses.add(eClassKey);
-                final Set<Object> subTypes = contentAdapter.getSubTypeMap().get(eClassKey);
+                final Set<Object> subTypes = metaStore.getSubTypeMap().get(eClassKey);
                 if (subTypes != null) {
                     allObservedClasses.addAll(subTypes);
                 }
@@ -759,7 +847,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 				for (EClass subscriptionType : subscription.getValue()) {
 					final Object superElementTypeKey = toKey(subscriptionType);
 					addInstanceListenerInternal(listener, subscriptionType, superElementTypeKey);
-					final Set<Object> subTypeKeys = contentAdapter.getSubTypeMap().get(superElementTypeKey);
+					final Set<Object> subTypeKeys = metaStore.getSubTypeMap().get(superElementTypeKey);
 					if (subTypeKeys != null) for (Object subTypeKey : subTypeKeys) {
 						addInstanceListenerInternal(listener, subscriptionType, subTypeKey);
 					}
@@ -856,11 +944,11 @@ public class NavigationHelperImpl implements NavigationHelper {
 			         }
 			     });
 			 } catch (InvocationTargetException ex) {
-			     processingError(ex.getCause(), "register en masse the observed EClasses " + resolvedClasses
+			     processingFatal(ex.getCause(), "register en masse the observed EClasses " + resolvedClasses
 			    		 + " and EDatatypes " + resolvedDatatypes
 			    		 + " and EStructuralFeatures " + resolvedFeatures);
 			 } catch (Exception ex) {
-			     processingError(ex, "register en masse the observed EClasses " + resolvedClasses
+			     processingFatal(ex, "register en masse the observed EClasses " + resolvedClasses
 			    		 + " and EDatatypes " + resolvedDatatypes
 			    		 + " and EStructuralFeatures " + resolvedFeatures);
 			 }
@@ -890,9 +978,9 @@ public class NavigationHelperImpl implements NavigationHelper {
                     }
                 });
             } catch (InvocationTargetException ex) {
-                processingError(ex.getCause(), "register the observed EStructuralFeatures: " + resolved);
+                processingFatal(ex.getCause(), "register the observed EStructuralFeatures: " + resolved);
             } catch (Exception ex) {
-                processingError(ex, "register the observed EStructuralFeatures: " + resolved);
+                processingFatal(ex, "register the observed EStructuralFeatures: " + resolved);
             }
         }
     }
@@ -906,12 +994,12 @@ public class NavigationHelperImpl implements NavigationHelper {
             observedFeatures.removeAll(resolved);
             delayedFeatures.removeAll(resolved);
             for (Object f : resolved) {
-                contentAdapter.getValueToFeatureToHolderMap().column(f).clear();
-                if (contentAdapter.peekFeatureToHolderMap() != null) {
-                	contentAdapter.peekFeatureToHolderMap().remove(f);
+                instanceStore.getValueToFeatureToHolderMap().column(f).clear();
+                if (instanceStore.peekFeatureToHolderMap() != null) {
+                    instanceStore.peekFeatureToHolderMap().remove(f);
                 }
-                if (contentAdapter.peekHolderToFeatureToValueMap() != null) {
-                	contentAdapter.peekHolderToFeatureToValueMap().column(f).clear();
+                if (instanceStore.peekHolderToFeatureToValueMap() != null) {
+                    instanceStore.peekHolderToFeatureToValueMap().column(f).clear();
                 }
             }
         }
@@ -932,9 +1020,9 @@ public class NavigationHelperImpl implements NavigationHelper {
                     }
                 });
             } catch (InvocationTargetException ex) {
-                processingError(ex.getCause(), "register the observed EClasses: " + resolvedClasses);
+                processingFatal(ex.getCause(), "register the observed EClasses: " + resolvedClasses);
             } catch (Exception ex) {
-                processingError(ex, "register the observed EClasses: " + resolvedClasses);
+                processingFatal(ex, "register the observed EClasses: " + resolvedClasses);
             }
         }
     }
@@ -946,7 +1034,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         directlyObservedClasses.addAll(classKeys);
         getAllObservedClassesInternal().addAll(classKeys);
         for (Object classKey : classKeys) {
-            final Set<Object> subTypes = contentAdapter.getSubTypeMap().get(classKey);
+            final Set<Object> subTypes = metaStore.getSubTypeMap().get(classKey);
             if (subTypes != null) {
                 allObservedClasses.addAll(subTypes);
             }
@@ -963,7 +1051,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             allObservedClasses = null;
             delayedClasses.removeAll(resolved);
             for (Object c : resolved) {
-                contentAdapter.removeInstanceSet(c);
+                instanceStore.removeInstanceSet(c);
             }
         }
     }
@@ -985,9 +1073,9 @@ public class NavigationHelperImpl implements NavigationHelper {
                     }
                 });
             } catch (InvocationTargetException ex) {
-                processingError(ex.getCause(), "register the observed EDataTypes: " + resolved);
+                processingFatal(ex.getCause(), "register the observed EDataTypes: " + resolved);
             } catch (Exception ex) {
-                processingError(ex, "register the observed EDataTypes: " + resolved);
+                processingFatal(ex, "register the observed EDataTypes: " + resolved);
             }
         }
     }
@@ -1001,7 +1089,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             observedDataTypes.removeAll(resolved);
             delayedDataTypes.removeAll(resolved);
             for (Object dataType : resolved) {
-                contentAdapter.removeDataTypeMap(dataType);
+                instanceStore.removeDataTypeMap(dataType);
             }
         }
     }
@@ -1110,7 +1198,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         for (Notifier root : new HashSet<Notifier>(modelRoots)) {
             comprehension.traverseModel(visitor, root);
         }
-        contentAdapter.notifyBaseIndexChangeListeners();
+        notifyBaseIndexChangeListeners();
     }
 
     @Override
@@ -1142,7 +1230,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature) {
-    	contentAdapter.maintainMetamodel(containmentFeature);           	
+    	metaStore.maintainMetamodel(containmentFeature);           	
     	if (containmentFeature.isMany())
     		cheapMoveTo(element, (EList)parent.eGet(containmentFeature));
     	else if (element.eAdapters().contains(contentAdapter) &&
@@ -1172,12 +1260,9 @@ public class NavigationHelperImpl implements NavigationHelper {
     
     @Override
     public Set<EClass> getAllCurrentClasses() {
-    	return contentAdapter.getAllCurrentClasses();
+    	return instanceStore.getAllCurrentClasses();
     }
     
-    protected void processingError(Throwable ex, String task) {
-        contentAdapter.processingFatal(ex, task);
-    }
 
     private void ensureNotInWildcardMode() {
     	if (inWildcardMode) {
@@ -1201,7 +1286,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         // otherwise notifications are delivered anyway
         if(!baseIndexOptions.isTraverseOnlyWellBehavingDerivedFeatures()) {
             // get all required classes
-            Set<EClass> allCurrentClasses = contentAdapter.getAllCurrentClasses();
+            Set<EClass> allCurrentClasses = instanceStore.getAllCurrentClasses();
             Set<EStructuralFeature> featuresToSample = Sets.newHashSet();
             // collect features to sample
             for (EClass cls : allCurrentClasses) {
@@ -1214,8 +1299,8 @@ public class NavigationHelperImpl implements NavigationHelper {
                 }
             }
             
-            final EMFVisitor removalVisitor = contentAdapter.visitor(false);
-            final EMFVisitor insertionVisitor = contentAdapter.visitor(true);
+            final EMFVisitor removalVisitor = contentAdapter.getVisitorForChange(false);
+            final EMFVisitor insertionVisitor = contentAdapter.getVisitorForChange(true);
             
             // iterate on instances
             for (final EStructuralFeature f : featuresToSample) {
@@ -1223,11 +1308,67 @@ public class NavigationHelperImpl implements NavigationHelper {
                 processAllInstances(containingClass, new IEClassProcessor() {
                     @Override
                     public void process(EClass type, EObject instance) {
-                        contentAdapter.resampleFeatureValueForHolder(instance, f, insertionVisitor, removalVisitor);
+                        resampleFeatureValueForHolder(instance, f, insertionVisitor, removalVisitor);
                     }
                 });
             }
-            contentAdapter.notifyBaseIndexChangeListeners();
+            notifyBaseIndexChangeListeners();
         }
     }
+    
+    protected void resampleFeatureValueForHolder(EObject source, EStructuralFeature feature,
+            EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
+        // traverse features and update value
+        Object newValue = source.eGet(feature);
+        Set<Object> oldValues = instanceStore.getOldValuesForHolderAndFeature(source, feature);
+        if (feature.isMany()) {
+            resampleManyFeatureValueForHolder(source, feature, newValue, oldValues, insertionVisitor, removalVisitor);
+        } else {
+            resampleSingleFeatureValueForHolder(source, feature, newValue, oldValues, insertionVisitor, removalVisitor);
+        }
+
+    }
+
+
+    private void resampleManyFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
+            Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
+        InternalEObject internalEObject = (InternalEObject) source;
+        Collection<?> newValues = (Collection<?>) newValue;
+        // add those that are in new but not in old
+        Set<Object> newValueSet = new HashSet<Object>(newValues);
+        newValueSet.removeAll(oldValues);
+        // remove those that are in old but not in new
+        oldValues.removeAll(newValues);
+        if (!oldValues.isEmpty()) {
+            for (Object ov : oldValues) {
+                comprehension.traverseFeature(removalVisitor, source, feature, ov, null);
+            }
+            ENotificationImpl removeNotification = new ENotificationImpl(internalEObject, Notification.REMOVE_MANY,
+                    feature, oldValues, null);
+            notifyLightweightObservers(source, feature, removeNotification);
+        }
+        if (!newValueSet.isEmpty()) {
+            for (Object nv : newValueSet) {
+                comprehension.traverseFeature(insertionVisitor, source, feature, nv, null);
+            }
+            ENotificationImpl addNotification = new ENotificationImpl(internalEObject, Notification.ADD_MANY, feature,
+                    null, newValueSet);
+            notifyLightweightObservers(source, feature, addNotification);
+        }
+    }
+
+    private void resampleSingleFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
+            Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
+        InternalEObject internalEObject = (InternalEObject) source;
+        Object oldValue = Iterables.getFirst(oldValues, null);
+        if (!Objects.equal(oldValue, newValue)) {
+            // value changed
+            comprehension.traverseFeature(removalVisitor, source, feature, oldValue, null);
+            comprehension.traverseFeature(insertionVisitor, source, feature, newValue, null);
+            ENotificationImpl notification = new ENotificationImpl(internalEObject, Notification.SET, feature, oldValue,
+                    newValue);
+            notifyLightweightObservers(source, feature, notification);
+        }
+    }
+    
 }
