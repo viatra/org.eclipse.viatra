@@ -59,6 +59,9 @@ public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> impl
 		return getTypesImpliedByCall(supplierKey, variablesTuple);
 	}
 
+	/**
+     * @since 1.3
+     */
 	public static Set<TypeJudgement> getTypesImpliedByCall(PQuery calledQuery, Tuple actualParametersTuple) {
 		Set<TypeJudgement> result = new HashSet<TypeJudgement>();
 		for (TypeJudgement parameterJudgement : calledQuery.getTypeGuarantees()) {			

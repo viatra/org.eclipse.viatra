@@ -45,6 +45,9 @@ public class BinaryTransitiveClosure extends KeyedEnumerablePConstraint<PQuery> 
     	return supplierKey;
     }
     
+    /**
+     * @since 1.3
+     */
     @Override
     public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
     	return PositivePatternCall.getTypesImpliedByCall(supplierKey, variablesTuple);
