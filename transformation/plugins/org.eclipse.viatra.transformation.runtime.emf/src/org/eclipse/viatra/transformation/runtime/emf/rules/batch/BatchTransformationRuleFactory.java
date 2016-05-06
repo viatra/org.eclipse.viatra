@@ -14,6 +14,7 @@ import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
 public class BatchTransformationRuleFactory {
 
@@ -22,6 +23,7 @@ public class BatchTransformationRuleFactory {
 		private IQuerySpecification<Matcher> fPrecondition;
 		private IMatchProcessor<Match> fAction;
 		private String fName = "";
+		private EventFilter<Match> fFilter;
 		
 		/**
 		 * Sets the user-understandable name of the rule. Should be unique if set.
@@ -47,15 +49,22 @@ public class BatchTransformationRuleFactory {
 			return this;
 		}
 
+		/**
+		 * Sets the event filter of the rule.
+		 */
+		public BatchTransformationRuleBuilder<Match, Matcher> filter(EventFilter<Match> filter) {
+		    this.fFilter = filter;
+		    return this;
+		}
 
 		public BatchTransformationRule<Match, Matcher> build() {
 		    return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
-	                BatchTransformationRule.STATELESS_RULE_LIFECYCLE, fAction);
+	                BatchTransformationRule.STATELESS_RULE_LIFECYCLE, fAction, fFilter);
 		}
 		
 		public BatchTransformationRule<Match, Matcher> buildStateful() {
 		    return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
-	                BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, fAction);
+	                BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, fAction, fFilter);
 		}
 	}
 	
