@@ -48,39 +48,39 @@ public class Network {
     protected Map<ReteContainer, Long> globalTerminationCriteria = null;
     protected Map<ReteContainer, Long> reportedClocks = null;
     protected Lock updateLock = null; // grab during normal update operations
-    protected Lock structuralChangeLock = null; // grab if the network structure is to
+    protected Lock structuralChangeLock = null; // grab if the network structure
+                                                // is to
     // be changed
 
     // Knowledge of the outside world
-	private ReteEngine engine;
+    private ReteEngine engine;
     protected NodeFactory nodeFactory;
     protected InputConnector inputConnector;
-    
+
     // Node and recipe administration
     // incl. addresses for existing nodes by recipe (where available)
     // Maintained by NodeProvisioner of each container
     Map<ReteNodeRecipe, Address<? extends Node>> nodesByRecipe = CollectionsFactory.getMap();
-    /** if EcoreUtil.equals(recipe1, recipe2), only one of them will be included here */
-    Map<EClass, Collection<ReteNodeRecipe>> primaryRecipesByClass = CollectionsFactory.getMap();
     Set<RecipeTraceInfo> recipeTraces = CollectionsFactory.getSet();
 
     /**
-     * @throws IllegalStateException if no node has been constructed for the recipe
+     * @throws IllegalStateException
+     *             if no node has been constructed for the recipe
      */
     public synchronized Address<? extends Node> getExistingNodeByRecipe(ReteNodeRecipe recipe) {
-    	final Address<? extends Node> node = nodesByRecipe.get(recipe);
-    	if (node == null) 
-    		throw new IllegalStateException(String.format("Rete node for recipe %s not constructed yet.", recipe));
-    	return node;
+        final Address<? extends Node> node = nodesByRecipe.get(recipe);
+        if (node == null)
+            throw new IllegalStateException(String.format("Rete node for recipe %s not constructed yet.", recipe));
+        return node;
     }
+
     /**
      * @return null if no node has been constructed for the recipe
      */
     public synchronized Address<? extends Node> getNodeByRecipeIfExists(ReteNodeRecipe recipe) {
-    	final Address<? extends Node> node = nodesByRecipe.get(recipe);
-    	return node;
+        final Address<? extends Node> node = nodesByRecipe.get(recipe);
+        return node;
     }
-    
 
     /**
      * @param threads
@@ -90,7 +90,7 @@ public class Network {
     public Network(int threads, ReteEngine engine) {
         super();
         this.threads = threads;
-		this.engine = engine;
+        this.engine = engine;
         this.inputConnector = new InputConnector(this);
         this.nodeFactory = new NodeFactory(engine.getLogger());
 
@@ -99,8 +99,12 @@ public class Network {
         nextContainer = firstContainer;
 
         if (threads > 0) {
-            globalTerminationCriteria = CollectionsFactory.getMap();//new HashMap<ReteContainer, Long>();
-            reportedClocks = CollectionsFactory.getMap();//new HashMap<ReteContainer, Long>();
+            globalTerminationCriteria = CollectionsFactory.getMap();// new
+                                                                    // HashMap<ReteContainer,
+                                                                    // Long>();
+            reportedClocks = CollectionsFactory.getMap();// new
+                                                         // HashMap<ReteContainer,
+                                                         // Long>();
             ReadWriteLock rwl = new ReentrantReadWriteLock();
             updateLock = rwl.readLock();
             structuralChangeLock = rwl.writeLock();
@@ -156,7 +160,8 @@ public class Network {
      * 
      * @pre threads == 0
      */
-    private void sendUpdateSingleThreaded(Address<? extends Receiver> receiver, Direction direction, Tuple updateElement) {
+    private void sendUpdateSingleThreaded(Address<? extends Receiver> receiver, Direction direction,
+            Tuple updateElement) {
         ReteContainer affectedContainer = receiver.getContainer();
         affectedContainer.sendUpdateToLocalAddressSingleThreaded(receiver, direction, updateElement);
     }
@@ -166,7 +171,8 @@ public class Network {
      * 
      * @pre threads > 0
      */
-    private void sendUpdates(Address<? extends Receiver> receiver, Direction direction, Collection<Tuple> updateElements) {
+    private void sendUpdates(Address<? extends Receiver> receiver, Direction direction,
+            Collection<Tuple> updateElements) {
         if (updateElements.isEmpty())
             return;
         ReteContainer affectedContainer = receiver.getContainer();
@@ -380,28 +386,30 @@ public class Network {
      * @return an unmodifiable set of known recipe traces
      */
     public Set<RecipeTraceInfo> getRecipeTraces() {
-		return Collections.unmodifiableSet(recipeTraces);
-	}
-    
+        return Collections.unmodifiableSet(recipeTraces);
+    }
+
     /**
      * @return an unmodifiable list of containers
      */
-	public List<ReteContainer> getContainers() {
-		return Collections.unmodifiableList(containers);
-	}
-	
+    public List<ReteContainer> getContainers() {
+        return Collections.unmodifiableList(containers);
+    }
+
     public Lock getStructuralChangeLock() {
         return structuralChangeLock;
     }
 
-	public NodeFactory getNodeFactory() {
-		return nodeFactory;
-	}
-	public InputConnector getInputConnector() {
-		return inputConnector;
-	}
+    public NodeFactory getNodeFactory() {
+        return nodeFactory;
+    }
+
+    public InputConnector getInputConnector() {
+        return inputConnector;
+    }
+
     public ReteEngine getEngine() {
-		return engine;
-	}
+        return engine;
+    }
 
 }
