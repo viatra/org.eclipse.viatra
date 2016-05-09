@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="viatra" sequenceNumber="35">
+<?pde version="3.8"?><target name="viatra" sequenceNumber="36">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.8.2.v201511170833"/>
@@ -21,10 +21,6 @@
 <unit id="org.eclipse.gef4.geometry.feature.group" version="0.1.0.201406280202"/>
 <unit id="org.eclipse.gef4.zest.sdk.feature.group" version="0.1.0.201406280202"/>
 <repository location="http://download.eclipse.org/viatra/dependency"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.9.0.v201512010527"/>
-<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.9.0"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150601-0402"/>
@@ -55,6 +51,10 @@
 <unit id="org.eclipse.jdt.feature.group" version="3.8.2.v20130116-090414-8-8nFu3FNOfwKLRuqgXKIy9z0I83"/>
 <unit id="org.eclipse.pde.source.feature.group" version="3.8.2.v20130116-091538-7c7wFj0FFt6Zr9bd4AM1JEQMS"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.2/R-4.2.2-201302041200"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.10.0.v201604290858"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/milestones/head/S201604290858"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>

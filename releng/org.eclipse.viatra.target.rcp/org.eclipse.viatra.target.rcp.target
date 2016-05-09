@@ -21,7 +21,6 @@
 <unit id="org.eclipse.xpand.feature.group" version="2.1.0.v201505260349"/>
 <unit id="org.eclipse.equinox.p2.sdk.feature.group" version="3.9.101.v20160212-1721"/>
 <unit id="org.eclipse.e4.rcp.feature.group" version="1.4.1.v20160212-1350"/>
-<unit id="org.eclipse.xtext.sdk.feature.group" version="2.9.1.v201512180746"/>
 <unit id="org.eclipse.emf.sdk.feature.group" version="2.11.2.v20160208-0841"/>
 <unit id="org.eclipse.platform.sdk" version="4.5.2.M20160212-1500"/>
 <unit id="org.eclipse.emf.transaction.sdk.feature.group" version="1.9.0.201506010221"/>
@@ -30,6 +29,10 @@
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.license.feature.group" version="1.0.1.v20140414-1359"/>
 <repository location="http://download.eclipse.org/cbi/updates/license"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.xtext.sdk.feature.group" version="2.10.0.v201604290858"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/milestones/head/S201604290858"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="com.google.inject.source" version="3.0.0.v201312141243"/>

@@ -112,11 +112,6 @@
   <setupTask
       xsi:type="setup.p2:P2Task">
     <requirement
-        name="org.eclipse.xtext.sdk.feature.group"
-        versionRange="[2.9.0,2.10.0)"/>
-    <requirement
-        name="de.itemis.xtext.antlr.feature.feature.group"/>
-    <requirement
         name="org.eclipse.egit.feature.group"/>
     <requirement
         name="org.eclipse.emf.sdk.feature.group"/>
@@ -140,11 +135,6 @@
         activeRepositoryList="Mars">
       <requirement
           name="org.eclipse.license.feature.group"/>
-      <requirement
-          name="de.itemis.xtext.antlr.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.xtext.sdk.feature.group"
-          versionRange="[2.9.0,2.10.0)"/>
       <requirement
           name="org.eclipse.emf.sdk.feature.group"
           versionRange="[2.0.0,2.12.0)"/>
@@ -782,6 +772,41 @@
         version="1.2"
         location="${installation.location}/api/v1.2/"
         remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.1.2.0.zip"/>
+    <setupTask
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.10.0,2.11.0)"/>
+      <requirement
+          name="de.itemis.xtext.antlr.feature.feature.group"/>
+      <repository
+          url="http://download.itemis.com/updates/releases"/>
+      <repository
+          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones/"/>
+      <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask"
+        predecessor="//@setupTasks.10"
+        successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
+        targetName="">
+      <targlet
+          name="Xtext"
+          activeRepositoryList="">
+        <requirement
+            name="de.itemis.xtext.antlr.feature.feature.group"/>
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.10.0,2.11.0)"/>
+        <repositoryList
+            name="">
+          <repository
+              url="http://download.itemis.com/updates/releases"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
   </stream>
   <stream name="1.2-maintenance">
     <setupTask
@@ -816,6 +841,39 @@
         version="1.2"
         location="${installation.location}/api/v1.2/"
         remoteURI="http://www.eclipse.org/downloads/download.php?file=/viatra/updates/zipped/org.eclipse.viatra.update.1.2.0.zip"/>
+    <setupTask
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.9.0,2.10.0)"/>
+      <requirement
+          name="de.itemis.xtext.antlr.feature.feature.group"/>
+      <repository
+          url="http://download.itemis.com/updates/releases"/>
+      <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask"
+        predecessor="//@setupTasks.10"
+        successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
+        targetName="">
+      <targlet
+          name="Xtext"
+          activeRepositoryList="">
+        <requirement
+            name="de.itemis.xtext.antlr.feature.feature.group"/>
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.9.0,2.10.0)"/>
+        <repositoryList
+            name="">
+          <repository
+              url="http://download.itemis.com/updates/releases"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
   </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
