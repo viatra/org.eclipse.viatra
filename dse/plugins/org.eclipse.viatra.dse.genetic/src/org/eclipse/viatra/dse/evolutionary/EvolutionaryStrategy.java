@@ -82,7 +82,7 @@ public class EvolutionaryStrategy implements IStrategy {
         initialPopulationSelector.explore();
         List<TrajectoryFitness> currentPopulation = initialPopulationSelector.getInitialPopulation();
 
-        dsm.setUseDesignSpace(false);
+        dsm.setDesignSpace(null);
         
         if (isInterrupted.get()) {
             savePopulationsAsSolutions(currentPopulation);

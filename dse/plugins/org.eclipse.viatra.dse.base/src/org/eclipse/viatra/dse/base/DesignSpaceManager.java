@@ -49,7 +49,7 @@ public class DesignSpaceManager {
     private final EditingDomain domain;
     private Notifier model;
 
-    private final IDesignSpace designSpace;
+    private IDesignSpace designSpace;
 
     private final TrajectoryInfo trajectory;
 
@@ -67,7 +67,6 @@ public class DesignSpaceManager {
     private ThreadContext context;
 
     private BiMap<Activation<?>, Object> activationIds;
-    private boolean useDesignSpace = true;
     private boolean generateActivationCodes = true;
 
     public DesignSpaceManager(ThreadContext context, Notifier model, EditingDomain domain, IStateCoderFactory factory,
@@ -160,9 +159,8 @@ public class DesignSpaceManager {
         Object newStateId = stateCoder.createStateCode();
         generateTransitions();
 
-        isNewState = !designSpace.isTraversed(newStateId);
-
-        if (useDesignSpace) {
+        if (designSpace != null) {
+            isNewState = !designSpace.isTraversed(newStateId);
             designSpace.addState(previousState, transition, newStateId);
         }
 
@@ -273,7 +271,7 @@ public class DesignSpaceManager {
     }
 
     public Collection<Object> getUntraversedTransitionsFromCurrentState() {
-        if (!useDesignSpace) {
+        if (designSpace == null) {
             throw new DSEException("Unsopperted without a design space");
         }
         Object currentState = trajectory.getCurrentStateId();
@@ -377,12 +375,12 @@ public class DesignSpaceManager {
         return trajectory;
     }
 
-    public void setUseDesignSpace(boolean useDesignSpace) {
-        this.useDesignSpace = useDesignSpace;
+    public void setDesignSpace(IDesignSpace designSpace) {
+        this.designSpace = designSpace;
     }
 
-    public boolean isUseDesignSpace() {
-        return useDesignSpace;
+    public IDesignSpace getDesignSpace() {
+        return designSpace;
     }
 
     public void registerExploreEventHandler(IExploreEventHandler handler) {
