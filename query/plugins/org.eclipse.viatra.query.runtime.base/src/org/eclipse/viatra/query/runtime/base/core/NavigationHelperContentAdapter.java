@@ -7,63 +7,46 @@
  *
  * Contributors:
  *   Tamas Szabo, Gabor Bergmann - initial API and implementation
+ *   IBM - original implementation of EContentAdapter.java
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.Enumerator;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.ETypedElement;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
-import org.eclipse.viatra.query.runtime.base.api.DataTypeListener;
-import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
-import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
-import org.eclipse.viatra.query.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
-import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
-import com.google.common.collect.Table.Cell;
-
-public class NavigationHelperContentAdapter extends EContentAdapter {
+/**
+ * Content Adapter that recursively attaches itself to the containment hierarchy of an EMF model. 
+ * The purpose is to gather the contents of the model, and to subscribe to model change notifications. 
+ * 
+ * <p> Originally, this was implemented as a subclass of {@link EContentAdapter}. 
+ * Because of Bug 490105, EContentAdapter is no longer a superclass; its code is copied over with modifications.
+ * See {@link EContentAdapter} header for original authorship and copyright information. 
+ * 
+ * @author Gabor Bergmann
+ * @see EContentAdapter
+ *
+ */
+public class NavigationHelperContentAdapter extends AdapterImpl {
 
     private final NavigationHelperImpl navigationHelper;
 
@@ -104,7 +87,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
             this.navigationHelper.coalesceTraversals(new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    NavigationHelperContentAdapter.super.notifyChanged(notification);
+                    simpleNotifyChanged(notification);
 
                     final Object oFeature = notification.getFeature();
                     final Object oNotifier = notification.getNotifier();
@@ -198,8 +181,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         comprehension.traverseFeature(getVisitorForChange(isInsertion), notifier, feature, value, position);
     }
 
-    @Override
-    // OFFICIAL ENTRY POINT
+    // OFFICIAL ENTRY POINT OF BASE INDEX RELATED PARTS
     protected void addAdapter(final Notifier notifier) {
         if (notifier == ignoreInsertionAndDeletion) {
             return;
@@ -230,7 +212,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     }
                     // subscribes to the adapter list, will receive setTarget callback that will spread addAdapter to
                     // children
-                    NavigationHelperContentAdapter.super.addAdapter(notifier);
+                    simpleAddAdapter(notifier);
                     return null;
                 }
             });
@@ -241,15 +223,23 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
         }
     }
 
-    @Override
-    // OFFICIAL ENTRY POINT
+    // OFFICIAL ENTRY POINT OF BASE INDEX RELATED PARTS
     protected void removeAdapter(final Notifier notifier) {
-        removeAdapter(notifier, true, true);
+        if (notifier == ignoreInsertionAndDeletion) {
+            return;
+        }
+        try {
+            removeAdapterInternal(notifier);
+        } catch (final InvocationTargetException ex) {
+            navigationHelper.processingFatal(ex.getCause(), "remove the object: " + notifier);
+        } catch (final Exception ex) {
+            navigationHelper.processingFatal(ex, "remove the object: " + notifier);
+        }
     }
 
     // The additional boolean options are there to save the cost of extra checks, see Bug 483089 and Bug 483086.
-    void removeAdapter(final Notifier notifier, boolean additionalResourceContainerPossible,
-            boolean additionalObjectContainerPossible) {
+    void removeAdapter(final Notifier notifier, boolean additionalObjectContainerPossible,
+            boolean additionalResourceContainerPossible) {
         if (notifier == ignoreInsertionAndDeletion) {
             return;
         }
@@ -272,34 +262,41 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                 }
             }
 
-            if (objectFilterConfiguration != null && objectFilterConfiguration.isFiltered(notifier)) {
-                return;
-            }
-            this.navigationHelper.coalesceTraversals(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    if (notifier instanceof EObject) {
-                        final EObject eObject = (EObject) notifier;
-                        comprehension.traverseObject(getVisitorForChange(false), eObject);
-                        navigationHelper.delayedProxyResolutions.removeAll(eObject);
-                    } else if (notifier instanceof Resource) {
-                        if (resourceFilterConfiguration != null
-                                && resourceFilterConfiguration.isResourceFiltered((Resource) notifier)) {
-                            return null;
-                        }
-                        navigationHelper.resolutionDelayingResources.remove(notifier);
-                    }
-                    // unsubscribes from the adapter list, will receive unsetTarget callback that will spread
-                    // removeAdapter to children
-                    NavigationHelperContentAdapter.super.removeAdapter(notifier);
-                    return null;
-                }
-            });
+            removeAdapterInternal(notifier);
         } catch (final InvocationTargetException ex) {
             navigationHelper.processingFatal(ex.getCause(), "remove the object: " + notifier);
         } catch (final Exception ex) {
             navigationHelper.processingFatal(ex, "remove the object: " + notifier);
         }
+    }
+
+    /**
+     * @throws InvocationTargetException
+     */
+    private void removeAdapterInternal(final Notifier notifier) throws InvocationTargetException {
+        if (objectFilterConfiguration != null && objectFilterConfiguration.isFiltered(notifier)) {
+            return;
+        }
+        this.navigationHelper.coalesceTraversals(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                if (notifier instanceof EObject) {
+                    final EObject eObject = (EObject) notifier;
+                    comprehension.traverseObject(getVisitorForChange(false), eObject);
+                    navigationHelper.delayedProxyResolutions.removeAll(eObject);
+                } else if (notifier instanceof Resource) {
+                    if (resourceFilterConfiguration != null
+                            && resourceFilterConfiguration.isResourceFiltered((Resource) notifier)) {
+                        return null;
+                    }
+                    navigationHelper.resolutionDelayingResources.remove(notifier);
+                }
+                // unsubscribes from the adapter list, will receive unsetTarget callback that will spread
+                // removeAdapter to children
+                simpleRemoveAdapter(notifier);
+                return null;
+            }
+        });
     }
 
 
@@ -308,45 +305,18 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
     }
 
 
-
-    // The superclass contains a workaround for Bug 385039.
-    // The workaround (checking whether the adapter is installed at 'notifier') is no longer necessary for this subclass
-    // (since the check is performed by addAdapter() anyway).
-    // Therefore we are overriding to improve performance.
-    @Override
-    protected void setTarget(final ResourceSet target) {
-        basicSetTarget(target);
-        final List<Resource> resources = target.getResources();
-        for (int i = 0; i < resources.size(); ++i) {
-            final Notifier notifier = resources.get(i);
-            addAdapter(notifier);
-        }
-    }
-
-    // This override mitigates the performance consequences of Bug 483089 and Bug 483086
-    @Override
-    protected void unsetTarget(Resource target) {
-        basicUnsetTarget(target);
-        List<EObject> contents = target.getContents();
-        for (int i = 0, size = contents.size(); i < size; ++i) {
-            Notifier notifier = contents.get(i);
-            removeAdapter(notifier, false, true);
-        }
-    }
-
     // WORKAROUND (TMP) for eContents vs. derived features bug
-    @Override
     protected void setTarget(final EObject target) {
         basicSetTarget(target);
         spreadToChildren(target, true);
     }
 
-    @Override
     protected void unsetTarget(final EObject target) {
         basicUnsetTarget(target);
         spreadToChildren(target, false);
     }
 
+    // Spread adapter removal/addition to children of EObject
     protected void spreadToChildren(final EObject target, final boolean add) {
         final EList<EReference> features = target.eClass().getEAllReferences();
         for (final EReference feature : features) {
@@ -363,7 +333,7 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     if (add) {
                         addAdapter(notifier);
                     } else {
-                        removeAdapter(notifier, true, false);
+                        removeAdapter(notifier, false, true);
                     }
                 }
             } else {
@@ -373,12 +343,394 @@ public class NavigationHelperContentAdapter extends EContentAdapter {
                     if (add) {
                         addAdapter(notifier);
                     } else {
-                        removeAdapter(notifier, true, false);
+                        removeAdapter(notifier, false, true);
                     }
                 }
             }
         }
     }
 
+
+    //
+    // ***********************************************************
+    // RENAMED METHODS COPIED OVER FROM EContentAdapter DOWN BELOW
+    // ***********************************************************
+    //
+    
+    /**
+     * Handles a notification by calling {@link #selfAdapt selfAdapter}.
+     */
+    public void simpleNotifyChanged(Notification notification)
+    {
+      selfAdapt(notification);
+
+      super.notifyChanged(notification);
+    }
+
+    protected void simpleAddAdapter(Notifier notifier)
+    {
+      EList<Adapter> eAdapters = notifier.eAdapters();
+      if (!eAdapters.contains(this))
+      {
+        eAdapters.add(this); 
+      }
+    }
+    
+    protected void simpleRemoveAdapter(Notifier notifier)
+    {
+      notifier.eAdapters().remove(this); 
+    }
+
+
+    // 
+    // *********************************************************
+    // CODE COPIED OVER VERBATIM FROM EContentAdapter DOWN BELOW
+    // *********************************************************
+    //
+    
+
+    /**
+     * Handles a notification by calling {@link #handleContainment handleContainment}
+     * for any containment-based notification.
+     */
+    protected void selfAdapt(Notification notification)
+    {
+      Object notifier = notification.getNotifier();
+      if (notifier instanceof ResourceSet)
+      {
+        if (notification.getFeatureID(ResourceSet.class) == ResourceSet.RESOURCE_SET__RESOURCES)
+        {
+          handleContainment(notification);
+        }
+      }
+      else if (notifier instanceof Resource)
+      {
+        if (notification.getFeatureID(Resource.class) == Resource.RESOURCE__CONTENTS)
+        {
+          handleContainment(notification);
+        }
+      }
+      else if (notifier instanceof EObject)
+      {
+        Object feature = notification.getFeature();
+        if (feature instanceof EReference)
+        {
+          EReference eReference = (EReference)feature;
+          if (eReference.isContainment())
+          {
+            handleContainment(notification);
+          }
+        }
+      }
+    }
+
+    /**
+     * Handles a containment change by adding and removing the adapter as appropriate.
+     */
+    protected void handleContainment(Notification notification)
+    {
+      switch (notification.getEventType())
+      {
+        case Notification.RESOLVE:
+        {
+          // We need to be careful that the proxy may be resolved while we are attaching this adapter.
+          // We need to avoid attaching the adapter during the resolve 
+          // and also attaching it again as we walk the eContents() later.
+          // Checking here avoids having to check during addAdapter.
+          //
+          Notifier oldValue = (Notifier)notification.getOldValue();
+          if (oldValue.eAdapters().contains(this))
+          {
+            removeAdapter(oldValue);
+            Notifier newValue = (Notifier)notification.getNewValue();
+            addAdapter(newValue);
+          }
+          break;
+        }
+        case Notification.UNSET:
+        {
+          Object oldValue = notification.getOldValue();
+          if (oldValue != Boolean.TRUE && oldValue != Boolean.FALSE)
+          {
+            if (oldValue != null)
+            {
+              removeAdapter((Notifier)oldValue, false, true);
+            }
+            Notifier newValue = (Notifier)notification.getNewValue();
+            if (newValue != null)
+            {
+              addAdapter(newValue);
+            }
+          }
+          break;
+        }
+        case Notification.SET:
+        {
+          Notifier oldValue = (Notifier)notification.getOldValue();
+          if (oldValue != null)
+          {
+            removeAdapter(oldValue, false, true);
+          }
+          Notifier newValue = (Notifier)notification.getNewValue();
+          if (newValue != null)
+          {
+            addAdapter(newValue);
+          }
+          break;
+        }
+        case Notification.ADD:
+        {
+          Notifier newValue = (Notifier)notification.getNewValue();
+          if (newValue != null)
+          {
+            addAdapter(newValue);
+          }
+          break;
+        }
+        case Notification.ADD_MANY:
+        {
+          @SuppressWarnings("unchecked") Collection<Notifier> newValues = (Collection<Notifier>)notification.getNewValue();
+          for (Notifier newValue : newValues)
+          {
+            addAdapter(newValue);
+          }
+          break;
+        }
+        case Notification.REMOVE:
+        {
+          Notifier oldValue = (Notifier)notification.getOldValue();
+          if (oldValue != null)
+          {
+            boolean checkContainer = notification.getNotifier() instanceof Resource;
+            boolean checkResource = notification.getFeature() != null;
+            removeAdapter(oldValue, checkContainer, checkResource);
+          }
+          break;
+        }
+        case Notification.REMOVE_MANY:
+        {
+          boolean checkContainer = notification.getNotifier() instanceof Resource;
+          boolean checkResource = notification.getFeature() != null;
+          @SuppressWarnings("unchecked") Collection<Notifier> oldValues = (Collection<Notifier>)notification.getOldValue();
+          for ( Notifier oldContentValue : oldValues)
+          {
+            removeAdapter(oldContentValue, checkContainer, checkResource);
+          }
+          break;
+        }
+      }
+    }
+
+    /**
+     * Handles installation of the adapter
+     * by adding the adapter to each of the directly contained objects.
+     */
+    @Override
+    public void setTarget(Notifier target)
+    {
+      if (target instanceof EObject)
+      {
+        setTarget((EObject)target);
+      }
+      else if (target instanceof Resource)
+      {
+        setTarget((Resource)target);
+      }
+      else if (target instanceof ResourceSet)
+      {
+        setTarget((ResourceSet)target);
+      }
+      else
+      {
+        basicSetTarget(target);
+      }
+    }
+    
+    /**
+     * Actually sets the target by calling super.
+     */
+    protected void basicSetTarget(Notifier target)
+    {
+      super.setTarget(target);
+    }
+
+    /**
+     * Handles installation of the adapter on a Resource
+     * by adding the adapter to each of the directly contained objects.
+     */
+    protected void setTarget(Resource target)
+    {
+      basicSetTarget(target);
+      List<EObject> contents = target.getContents();
+      for (int i = 0, size = contents.size(); i < size; ++i)
+      {
+        Notifier notifier = contents.get(i);
+        addAdapter(notifier);
+      }
+    }
+
+    /**
+     * Handles installation of the adapter on a ResourceSet
+     * by adding the adapter to each of the directly contained objects.
+     */
+    protected void setTarget(ResourceSet target)
+    {
+      basicSetTarget(target);
+      List<Resource> resources =  target.getResources();
+      for (int i = 0; i < resources.size(); ++i)
+      {
+        Notifier notifier = resources.get(i);
+        addAdapter(notifier);
+      }
+    }
+
+    /**
+     * Handles undoing the installation of the adapter
+     * by removing the adapter from each of the directly contained objects.
+     */
+    @Override
+    public void unsetTarget(Notifier target)
+    {
+      unsetTarget((Object)target);
+    }
+
+    /**
+     * Actually unsets the target by calling super.
+     */
+    protected void basicUnsetTarget(Notifier target)
+    {
+      super.unsetTarget(target);
+    }
+    
+    /**
+     * Handles undoing the installation of the adapter
+     * by removing the adapter from each of the directly contained objects.
+     * @deprecated Use or override {@link #unsetTarget(Notifier)} instead.
+     */
+    @Deprecated
+    protected void unsetTarget(Object target)
+    {
+      if (target instanceof EObject)
+      {
+        unsetTarget((EObject)target);
+      }
+      else if (target instanceof Resource)
+      {
+        unsetTarget((Resource)target);
+      }
+      else if (target instanceof ResourceSet)
+      {
+        unsetTarget((ResourceSet)target);
+      }
+      else
+      {
+        basicUnsetTarget((Notifier)target);
+      }
+    }
+
+    /**
+     * Handles undoing the installation of the adapter from a Resource
+     * by removing the adapter from each of the directly contained objects.
+     */
+    protected void unsetTarget(Resource target)
+    {
+      basicUnsetTarget(target);
+      List<EObject> contents = target.getContents();
+      for (int i = 0, size = contents.size(); i < size; ++i)
+      {
+        Notifier notifier = contents.get(i);
+        removeAdapter(notifier, true, false);
+      }
+    }
+
+    /**
+     * Handles undoing the installation of the adapter from a ResourceSet
+     * by removing the adapter from each of the directly contained objects.
+     */
+    protected void unsetTarget(ResourceSet target)
+    {
+      basicUnsetTarget(target);
+      List<Resource> resources =  target.getResources();
+      for (int i = 0; i < resources.size(); ++i)
+      {
+        Notifier notifier = resources.get(i);
+        removeAdapter(notifier, false, false);
+      }
+    }
+
+    protected boolean resolve()
+    {
+      return true;
+    }
+
+    // 
+    // *********************************************************
+    // OBSOLETE CODE COPIED OVER FROM EContentAdapter DOWN BELOW
+    // *********************************************************
+    //
+    // *** Preserved on purpose as comments, 
+    // ***  in order to more easily follow future changes to EContentAdapter.
+    //
+
+
+//  protected void removeAdapter(Notifier notifier, boolean checkContainer, boolean checkResource)
+//  {
+//    if (checkContainer || checkResource)
+//    {
+//      InternalEObject internalEObject = (InternalEObject) notifier;
+//      if (checkResource)
+//      {
+//        Resource eDirectResource = internalEObject.eDirectResource();
+//        if (eDirectResource != null && eDirectResource.eAdapters().contains(this))
+//        {
+//          return;
+//        }
+//      }
+//      if (checkContainer)
+//      {
+//        InternalEObject eInternalContainer = internalEObject.eInternalContainer();
+//        if (eInternalContainer != null && eInternalContainer.eAdapters().contains(this))
+//        {
+//          return;
+//        }
+//      }
+//    }
+//
+//    removeAdapter(notifier);
+//  }
+
+//  /**
+//   * Handles undoing the installation of the adapter from an EObject
+//   * by removing the adapter from each of the directly contained objects.
+//   */
+//  protected void unsetTarget(EObject target)
+//  {
+//    basicUnsetTarget(target);
+//    for (Iterator<? extends Notifier> i = resolve() ? 
+//           target.eContents().iterator() : 
+//           ((InternalEList<EObject>)target.eContents()).basicIterator(); 
+//         i.hasNext(); )
+//    {
+//      Notifier notifier = i.next();
+//      removeAdapter(notifier, false, true);
+//    }
+//  }
+
+//  /**
+//   * Handles installation of the adapter on an EObject
+//   * by adding the adapter to each of the directly contained objects.
+//   */
+//  protected void setTarget(EObject target)
+//  {
+//    basicSetTarget(target);
+//    for (Iterator<? extends Notifier> i = resolve() ? 
+//           target.eContents().iterator() : 
+//           ((InternalEList<? extends Notifier>)target.eContents()).basicIterator();
+//         i.hasNext(); )
+//    {
+//      Notifier notifier = i.next();
+//      addAdapter(notifier);
+//    }
+//  }
 
 }
