@@ -33,6 +33,7 @@ import com.google.common.collect.Sets;
  * {@link #isEquivalentRecipe(ReteNodeRecipe, ReteNodeRecipe)}.
  * 
  * @author Gabor Bergmann
+ * @since 1.3
  *
  */
 public class RecipeRecognizer {
