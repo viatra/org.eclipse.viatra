@@ -132,12 +132,11 @@
       successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
     <targlet
         name="${scope.project.label}"
-        activeRepositoryList="Mars">
+        activeRepositoryList="${eclipse.target.platform}">
       <requirement
           name="org.eclipse.license.feature.group"/>
       <requirement
-          name="org.eclipse.emf.sdk.feature.group"
-          versionRange="[2.0.0,2.12.0)"/>
+          name="org.eclipse.emf.sdk.feature.group"/>
       <requirement
           name="org.eclipse.sdk.feature.group"/>
       <requirement
@@ -244,7 +243,7 @@
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
-          activeRepositoryList="Mars">
+          activeRepositoryList="${eclipse.target.platform}">
         <requirement
             name="org.eclipse.modisco.infrastructure.feature.feature.group"
             versionRange="[0.13.0,0.14.0)"/>
@@ -563,7 +562,7 @@
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
-          activeRepositoryList="Mars">
+          activeRepositoryList="${eclipse.target.platform}">
         <requirement
             name="org.eclipse.emf.ecore.xcore.sdk.feature.group"/>
         <repositoryList
