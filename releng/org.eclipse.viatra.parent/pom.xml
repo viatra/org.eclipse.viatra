@@ -123,12 +123,36 @@
 					<version>2.5</version>
 				</plugin>
 				<plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-toolchains-plugin</artifactId>
+                    <version>1.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>toolchain</goal>
+                            </goals>
+                            <configuration>
+                             <toolchains>
+                                 <jdk>
+                                     <id>JavaSE-${java.version}</id>
+                                 </jdk>
+                             </toolchains>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-compiler-plugin</artifactId>
 					<version>${tycho.version}</version>
 					<configuration>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
+						<useJDK>BREE</useJDK>
+						<useProjectSettings>true</useProjectSettings>
+						<excludeResources>
+							<excludeResource>**/.gitignore</excludeResource>
+						</excludeResources>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -156,7 +180,7 @@
 					<version>${jacoco.version}</version>
 					<configuration>
 						<destFile>${jacoco.targetdir}/jacoco.exec</destFile>
-                        <append>true</append>
+						<append>true</append>
 					</configuration>
 					<executions>
 						<execution>

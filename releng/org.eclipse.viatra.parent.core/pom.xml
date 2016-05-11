@@ -41,6 +41,9 @@
 	   <build>
         <plugins>
             <plugin>
+                <artifactId>maven-toolchains-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho.version}</version>
