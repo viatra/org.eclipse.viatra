@@ -8,7 +8,9 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.extensibility;
+package org.eclipse.viatra.query.runtime.registry;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
 import java.util.Map;
@@ -20,10 +22,13 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.viatra.query.runtime.IExtensions;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.extensibility.IQueryGroupProvider;
+import org.eclipse.viatra.query.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -49,6 +54,8 @@ public class ExtensionBasedQuerySpecificationLoader {
     
     private Multimap<String, String>  contributingPluginOfGroupMap = HashMultimap.create();
     private Map<String, QueryGroupProvider> contributedQueryGroups;
+
+    private ExtensionBasedSourceConnector sourceConnector;
     
     /**
      * @return the single instance of the loader.
@@ -62,22 +69,20 @@ public class ExtensionBasedQuerySpecificationLoader {
      * {@link QuerySpecificationRegistry}.
      */
     public void loadRegisteredQuerySpecificationsIntoRegistry() {
-        Map<String, QueryGroupProvider> queryGroupIdToProviderMap = getRegisteredQueryGroups();
-        QuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
-        for (QueryGroupProvider provider : queryGroupIdToProviderMap.values()) {
-            Set<String> querySpecificationFQNs = provider.getQuerySpecificationFQNs();
-            if(querySpecificationFQNs.isEmpty()){
-                // either the group is empty or the extension was not regenerated to include FQNs
-                // delay query group loading
-                registry.addDelayedQueryGroupProvider(provider);
-            } else {
-                // delay specification class loading
-                for (IQuerySpecificationProvider specificationProvider : provider.getQuerySpecificationProviders()) {
-                    registry.addQuerySpecification(specificationProvider);
-                }
-            }
+        ((QuerySpecificationRegistry) QuerySpecificationRegistry.getInstance()).addDelayedSourceConnector(getSourceConnector());
+    }
+    
+    /**
+     * Return a source connector that can be used to load query specifications contributed through
+     * extensions into a {@link IQuerySpecificationRegistry}.
+     * 
+     * @return the source connector
+     */
+    public IRegistrySourceConnector getSourceConnector() {
+        if (this.sourceConnector == null) {
+            this.sourceConnector = new ExtensionBasedSourceConnector();
         }
-        
+        return sourceConnector; 
     }
 
     private Map<String, QueryGroupProvider> getRegisteredQueryGroups() {
@@ -129,6 +134,45 @@ public class ExtensionBasedQuerySpecificationLoader {
     }
 
     /**
+     * @author Abel Hegedus
+     *
+     */
+    private final class ExtensionBasedSourceConnector implements IRegistrySourceConnector {
+        
+        private static final String CONNECTOR_ID = "org.eclipse.viatra.query.runtime.querygroup.extension.based.connector";
+
+        private Set<IConnectorListener> listeners;
+        
+        public ExtensionBasedSourceConnector() {
+            this.listeners = Sets.newHashSet();
+        }
+        
+        @Override
+        public String getIdentifier() {
+            return CONNECTOR_ID;
+        }
+
+        @Override
+        public void addListener(IConnectorListener listener) {
+            checkNotNull(listener, "Listener must not be null!");
+            boolean added = listeners.add(listener);
+            if(added) {
+                for (QueryGroupProvider queryGroupProvider : getRegisteredQueryGroups().values()) {
+                    for (IQuerySpecificationProvider specificationProvider : queryGroupProvider.getQuerySpecificationProviders()) {
+                        listener.querySpecificationAdded(this, specificationProvider);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void removeListener(IConnectorListener listener) {
+            checkNotNull(listener, "Listener must not be null!");
+            listeners.remove(listener);
+        }
+    }
+
+    /**
      * Provider implementation that uses the group extension to load the query group on-demand.
      * It also provides the set of query FQNs that are part of the group without class loading.
      * Once loaded, the query group is cached for future use.
@@ -141,13 +185,13 @@ public class ExtensionBasedQuerySpecificationLoader {
         private final IConfigurationElement element;
         private IQueryGroup queryGroup;
         private Set<String> querySpecificationFQNs;
-        private Set<IQuerySpecificationProvider> querySpecifications;
+        private Map<String, IQuerySpecificationProvider> querySpecificationMap;
         
         public QueryGroupProvider(IConfigurationElement element) {
             this.element = element;
             this.queryGroup = null;
             this.querySpecificationFQNs = null;
-            this.querySpecifications = null;
+            this.querySpecificationMap = null;
         }
         
         @Override
@@ -165,34 +209,54 @@ public class ExtensionBasedQuerySpecificationLoader {
         @Override
         public Set<String> getQuerySpecificationFQNs() {
             if(querySpecificationFQNs == null) {
-                querySpecificationFQNs = Sets.newHashSet();
+                Set<String> fqns = Sets.newHashSet();
                 final Iterable<IConfigurationElement> config = ImmutableList.<IConfigurationElement> builder()
                         .add(element.getChildren("query-specification"))
                         .build();
                 for (IConfigurationElement e : config) {
                     if (e.isValid()) {
                         String fqn = e.getAttribute("fqn");
-                        boolean added = querySpecificationFQNs.add(fqn);
+                        boolean added = fqns.add(fqn);
                         if(!added) {
                             String contributorName = e.getContributor().getName();
                             throw new IllegalArgumentException(String.format(DUPLICATE_FQN_MESSAGE,fqn, contributorName));
                         }
                     }
                 }
+                if(fqns.isEmpty()) {
+                    // we must load the class and get the specifications
+                    IQueryGroup loadedQueryGroup = get();
+                    for (IQuerySpecification<?> specification : loadedQueryGroup.getSpecifications()) {
+                        String fullyQualifiedName = specification.getFullyQualifiedName();
+                        boolean added = fqns.add(fullyQualifiedName);
+                        if(!added) {
+                            String contributorName = element.getContributor().getName();
+                            throw new IllegalArgumentException(String.format(DUPLICATE_FQN_MESSAGE, fullyQualifiedName, contributorName));
+                        }
+                    }
+                }
+                // we will never change the set after initialization
+                querySpecificationFQNs = ImmutableSet.copyOf(fqns);
             }
             return querySpecificationFQNs;
         }
         
+        @Override
         public Set<IQuerySpecificationProvider> getQuerySpecificationProviders() {
-            if(querySpecifications == null){
-                querySpecifications = Sets.newHashSet();
+            return ImmutableSet.copyOf(getQuerySpecificationMap().values());
+        }
+
+        private Map<String, IQuerySpecificationProvider> getQuerySpecificationMap() {
+            if(querySpecificationMap == null){
+                querySpecificationMap = Maps.newHashMap();
                 Set<String> fqns = getQuerySpecificationFQNs();
                 for (String fqn : fqns) {
-                    querySpecifications.add(new GroupBasedQuerySpecificationProvider(fqn, this));
+                    querySpecificationMap.put(fqn, new GroupBasedQuerySpecificationProvider(fqn, this));
                 }
             }
-            return querySpecifications;
+            return querySpecificationMap;
         }
+        
     }
     
     /**
@@ -203,7 +267,7 @@ public class ExtensionBasedQuerySpecificationLoader {
      * @author Abel Hegedus
      *
      */
-    private static final class GroupBasedQuerySpecificationProvider implements IQuerySpecificationProvider{
+    private static final class GroupBasedQuerySpecificationProvider implements IQuerySpecificationProvider {
 
         private String queryFQN;
         private QueryGroupProvider queryGroupProvider;
@@ -218,14 +282,15 @@ public class ExtensionBasedQuerySpecificationLoader {
         @Override
         public IQuerySpecification<?> get() {
             if(specification == null) {
-                Set<IQuerySpecification<?>> specifications = queryGroupProvider.get().getSpecifications();
-                for (IQuerySpecification<?> spec : specifications) {
-                    if(spec.getFullyQualifiedName().equals(queryFQN)){
-                        this.specification = spec;
-                        return this.specification;
+                if(queryGroupProvider.getQuerySpecificationFQNs().contains(queryFQN)) {
+                    for (IQuerySpecification<?> spec : queryGroupProvider.get().getSpecifications()) {
+                        if(spec.getFullyQualifiedName().equals(queryFQN)){
+                            this.specification = spec;
+                        }
                     }
+                } else {
+                    throw new IllegalStateException(String.format("Could not find query specifition %s in group (plug-in %s)", queryFQN, queryGroupProvider.element.getContributor().getName()));
                 }
-                throw new IllegalStateException(String.format("Could not find query specifition %s in group (plug-in %s)", queryFQN, queryGroupProvider.element.getContributor().getName()));
             }
             return specification;
         }

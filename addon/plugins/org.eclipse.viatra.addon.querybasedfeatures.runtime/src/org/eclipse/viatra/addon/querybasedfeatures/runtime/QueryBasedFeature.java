@@ -22,12 +22,14 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener.ChangeLevel;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.collect.Sets;
@@ -95,8 +97,9 @@ public abstract class QueryBasedFeature {
         public void engineWiped() {
             String patternName = matcher.getPatternName();
             try {
-                matcher = (ViatraQueryMatcher<IPatternMatch>) QuerySpecificationRegistry
-                        .getInstance().getRegisteredSpecification(patternName).getMatcher(engineForMatcher());
+                IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
+                IQuerySpecification<?> querySpecification = registry.getDefaultView().getEntry(patternName).get();
+                matcher = (ViatraQueryMatcher<IPatternMatch>) querySpecification.getMatcher(engineForMatcher());
             } catch (ViatraQueryException e) {
                 ViatraQueryLoggingUtil.getLogger(getClass()).error(
                         "[QueryBasedFeature] Exception during wipe callback: " + e.getMessage(), e);

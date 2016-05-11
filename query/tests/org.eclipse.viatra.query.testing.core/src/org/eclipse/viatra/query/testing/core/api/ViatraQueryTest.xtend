@@ -22,9 +22,9 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
-import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
+import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry
 import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.SnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.ViatraQueryTestCase
@@ -95,9 +95,8 @@ class ViatraQueryTest {
 	}
 
 	def and(String pattern) {
-		and(
-			QuerySpecificationRegistry.
-				instance.getRegisteredSpecification(pattern) as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
+	    val view = QuerySpecificationRegistry.instance.defaultView
+		and(view.getEntry(pattern).get as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
 	}
 
 	private new(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {

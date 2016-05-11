@@ -70,11 +70,14 @@ import org.eclipse.viatra.integration.uml.derivedfeatures.util.StructuredClassif
 import org.eclipse.viatra.integration.uml.derivedfeatures.util.TypePackageQuerySpecification;
 import org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexIncomingQuerySpecification;
 import org.eclipse.viatra.integration.uml.derivedfeatures.util.VertexOutgoingQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.extensibility.SingletonQueryGroupProvider;
 import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
+import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.registry.connector.QueryGroupProviderSourceConnector;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -88,23 +91,28 @@ import com.google.common.collect.ImmutableMap;
  */
 public class ViatraQueryUMLStandaloneSetup {
 
-	/**
+	private static final String CONNECTOR_ID = "org.eclipse.viatra.integration.uml.standalone.connector";
+
+    /**
 	 * Register the query specifications
-	 * @throws ViatraQueryException if a query specifiation cannot be initialized or registered
+	 * @throws ViatraQueryException if a query specification cannot be initialized or registered
 	 */
 	public static void doSetup() throws ViatraQueryException {
-		for (IQuerySpecification<?> specification : getAllQuerySpecifications()) {
-			QuerySpecificationRegistry.getInstance().addQuerySpecification(specification);
-		}
-		for (Map.Entry<EStructuralFeature, IQuerySpecification<?>> entry : getSurrogateQueries().entrySet()) {
+	    // query specification registry
+	    SingletonQueryGroupProvider groupProvider = new SingletonQueryGroupProvider(getQueryGroup());
+        QueryGroupProviderSourceConnector sourceConnector = new QueryGroupProviderSourceConnector(CONNECTOR_ID, groupProvider);
+        QuerySpecificationRegistry.getInstance().addSource(sourceConnector);
+		
+        // surrogate queries
+        for (Map.Entry<EStructuralFeature, IQuerySpecification<?>> entry : getSurrogateQueries().entrySet()) {
 			SurrogateQueryRegistry.instance().registerSurrogateQueryForFeature(
 					new EStructuralFeatureInstancesKey(entry.getKey()),
 					entry.getValue().getInternalQueryRepresentation());
 		}
 	}
 
-	private static Iterable<IQuerySpecification<?>> getAllQuerySpecifications() throws ViatraQueryException {
-		return DerivedFeatures.instance().getSpecifications();
+	private static IQueryGroup getQueryGroup() throws ViatraQueryException {
+	    return DerivedFeatures.instance();
 	}
 
 	private static Map<EStructuralFeature, IQuerySpecification<?>> getSurrogateQueries() throws ViatraQueryException {

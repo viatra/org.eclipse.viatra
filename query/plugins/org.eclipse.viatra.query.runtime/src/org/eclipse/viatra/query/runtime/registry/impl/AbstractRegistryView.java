@@ -19,7 +19,6 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener;
@@ -102,8 +101,6 @@ public abstract class AbstractRegistryView implements IRegistryView, IRegistryCh
 
     /**
      * Note that calling this method will perform class loading on all included IQuerySpecifications.
-     * 
-     * TODO use different {@link IQueryGroup} implementation that can work with {@link IQuerySpecificationProvider}s.
      */
     @Override
     public IQueryGroup getQueryGroup() {

@@ -39,7 +39,6 @@ import org.eclipse.viatra.query.runtime.api.scope.IEngineContext;
 import org.eclipse.viatra.query.runtime.api.scope.IIndexingErrorListener;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.viatra.query.runtime.internal.engine.ModelUpdateProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
@@ -55,6 +54,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.registry.IRegistryView;
+import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
@@ -164,8 +166,9 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
     
     @Override
     public ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws ViatraQueryException {
-        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification = QuerySpecificationRegistry
-                .getInstance().getRegisteredSpecification(patternFQN);
+        IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
+        IRegistryView view = registry.getDefaultView();
+        IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification = view.getEntry(patternFQN).get();
         if (querySpecification != null) {
             return getMatcher(querySpecification);
         } else {

@@ -37,8 +37,10 @@ import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationB
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.registry.IRegistryView;
+import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 
@@ -46,7 +48,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -391,11 +392,9 @@ public class QueryExplorerPatternRegistry {
      * @return
      */
     public static synchronized ImmutableList<IQuerySpecification<?>> getGeneratedQuerySpecifications() {
-        Builder<IQuerySpecification<?>> builder = ImmutableList.<IQuerySpecification<?>> builder();
-        for (String queryFQN : QuerySpecificationRegistry.getInstance().getRegisteredFQNs()) {
-            builder.add(QuerySpecificationRegistry.getInstance().getRegisteredSpecification(queryFQN));
-        }
-        return builder.build();
+        IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
+        IRegistryView view = registry.getDefaultView();
+        return ImmutableList.copyOf(view.getQueryGroup().getSpecifications());
     }
 
 }

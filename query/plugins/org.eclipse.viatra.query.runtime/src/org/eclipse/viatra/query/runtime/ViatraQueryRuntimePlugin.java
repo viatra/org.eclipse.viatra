@@ -11,8 +11,8 @@
 package org.eclipse.viatra.query.runtime;
 
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.viatra.query.runtime.extensibility.ExtensionBasedQuerySpecificationLoader;
 import org.eclipse.viatra.query.runtime.internal.ExtensionBasedSurrogateQueryLoader;
+import org.eclipse.viatra.query.runtime.registry.ExtensionBasedQuerySpecificationLoader;
 import org.osgi.framework.BundleContext;
 
 /**

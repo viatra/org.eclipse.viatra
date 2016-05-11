@@ -27,7 +27,9 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
+import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
@@ -145,8 +147,10 @@ public final class QueryBasedFeatureHelper {
         QueryBasedFeatureHandler queryBasedFeatureHandler = new QueryBasedFeatureHandler(newFeature);
         features.put(feature, new WeakReference<IQueryBasedFeatureHandler>(queryBasedFeatureHandler));
 
+        IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
+        IQuerySpecificationRegistryEntry registryEntry = registry.getDefaultView().getEntry(patternFQN);
         @SuppressWarnings("unchecked")
-        IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getInstance().getRegisteredSpecification(patternFQN);
+        IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) registryEntry.get();
         if (querySpecification != null) {
             try {
                 ViatraQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(ViatraQueryEngine.on(new EMFScope(notifier)));

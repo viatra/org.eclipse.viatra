@@ -38,7 +38,8 @@ import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecificat
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -161,7 +162,8 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
             if(specificationMap.containsKey(patternFQN)) {
                 querySpec = specificationMap.get(patternFQN);
             } else {
-                querySpec = QuerySpecificationRegistry.getInstance().getRegisteredSpecification(patternFQN);
+                IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
+                querySpec = registry.getDefaultView().getEntry(patternFQN).get();
             }
         }
         return querySpec;
