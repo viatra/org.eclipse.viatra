@@ -3,18 +3,37 @@
     <view category="org.eclipse.viatra.query.tooling.ui" class="org.eclipse.viatra.query.tooling.ui.retevis.views.ReteVisualizationView" icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png" id="org.eclipse.viatra.query.tooling.ui.retevis.views.ReteVisualizer" name="Rete Visualizer"/>
   </extension>
   <extension id="org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization" point="org.eclipse.viatra.query.runtime.queryspecification">
-    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization" id="org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization"/>
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization" id="org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization">
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.inputRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.constantRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.countAggregatorRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.antiJoinRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.semiJoinRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.joinRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.productionRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.uniquenessEnforcerRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.checkRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.evalRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.inequalityFilterRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.inputFilterRecipeWithMask"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.inputFilterRecipeWithoutMask"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.inputFilterMask"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.equalityFilterRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.transparentRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.transitiveClosureRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.trimmerRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.aggregatorIndexerRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.projectionIndexerRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.aggregatorRecipeParent"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.betaRecipeLeftParent"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.betaRecipeRightParent"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.multiParentNodeRecipeParents"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.singleParentNodeRecipeParent"/>
+    </group>
   </extension>
-  <extension
-        point="org.eclipse.ui.preferencePages">
-     <page
-           category="org.eclipse.viatra.query.tooling.ui.viatra"
-           class="org.eclipse.viatra.query.tooling.ui.retevis.preference.ReteVisualizationPreferencePage"
-           id="org.eclipse.viatra.query.tooling.ui.retevis"
-           name="Rete Visualization">
-        <keywordReference
-              id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage">
-        </keywordReference>
-     </page>
+  <extension point="org.eclipse.ui.preferencePages">
+    <page category="org.eclipse.viatra.query.tooling.ui.viatra" class="org.eclipse.viatra.query.tooling.ui.retevis.preference.ReteVisualizationPreferencePage" id="org.eclipse.viatra.query.tooling.ui.retevis" name="Rete Visualization">
+      <keywordReference id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage"/>
+    </page>
   </extension>
 </plugin>

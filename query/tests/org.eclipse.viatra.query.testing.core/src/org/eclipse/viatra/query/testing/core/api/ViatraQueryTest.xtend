@@ -97,7 +97,7 @@ class ViatraQueryTest {
 	def and(String pattern) {
 		and(
 			QuerySpecificationRegistry.
-				getQuerySpecification(pattern) as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
+				instance.getRegisteredSpecification(pattern) as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
 	}
 
 	private new(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {

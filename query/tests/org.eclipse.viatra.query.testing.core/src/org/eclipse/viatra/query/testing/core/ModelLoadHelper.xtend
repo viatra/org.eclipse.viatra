@@ -123,7 +123,7 @@ class ModelLoadHelper {
 	 * Initialize a registered matcher for the pattern FQN on the selected EMF root.
 	 */
 	def initializeMatcherFromRegistry(Notifier emfRoot, String patternFQN) {
-		val querySpecification = QuerySpecificationRegistry::getQuerySpecification(patternFQN)
+		val querySpecification = QuerySpecificationRegistry.instance.getRegisteredSpecification(patternFQN)
 		querySpecification.getMatcher(ViatraQueryEngine::on(new EMFScope(emfRoot)))
 	}
 

@@ -16,6 +16,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmMo
 import org.eclipse.viatra.query.runtime.IExtensions
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup
 import org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory
+import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 
 class GenerateQuerySpecificationExtension {
 
@@ -33,6 +34,13 @@ class GenerateQuerySpecificationExtension {
 						contribAttribute(it, "id", groupClass.qualifiedName)
 						contribAttribute(it, "group",
 							typeof(SingletonExtensionFactory).canonicalName + ":" + groupClass.qualifiedName)
+						model.patterns.filter[public].filterNull.map[
+						    CorePatternLanguageHelper.getFullyQualifiedName(it)
+						].forEach[ fqn |
+						    contribElement(it, "query-specification") [
+						        contribAttribute(it, "fqn", fqn)
+						    ]
+						]
 					]
 				]
 			})

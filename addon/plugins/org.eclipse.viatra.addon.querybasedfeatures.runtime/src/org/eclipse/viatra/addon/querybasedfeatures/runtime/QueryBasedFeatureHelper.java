@@ -146,7 +146,7 @@ public final class QueryBasedFeatureHelper {
         features.put(feature, new WeakReference<IQueryBasedFeatureHandler>(queryBasedFeatureHandler));
 
         @SuppressWarnings("unchecked")
-        IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getQuerySpecification(patternFQN);
+        IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>> querySpecification = (IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>) QuerySpecificationRegistry.getInstance().getRegisteredSpecification(patternFQN);
         if (querySpecification != null) {
             try {
                 ViatraQueryMatcher<IPatternMatch> matcher = querySpecification.getMatcher(ViatraQueryEngine.on(new EMFScope(notifier)));

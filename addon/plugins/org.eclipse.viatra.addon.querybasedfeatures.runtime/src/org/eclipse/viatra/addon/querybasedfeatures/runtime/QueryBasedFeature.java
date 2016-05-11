@@ -96,7 +96,7 @@ public abstract class QueryBasedFeature {
             String patternName = matcher.getPatternName();
             try {
                 matcher = (ViatraQueryMatcher<IPatternMatch>) QuerySpecificationRegistry
-                        .getQuerySpecification(patternName).getMatcher(engineForMatcher());
+                        .getInstance().getRegisteredSpecification(patternName).getMatcher(engineForMatcher());
             } catch (ViatraQueryException e) {
                 ViatraQueryLoggingUtil.getLogger(getClass()).error(
                         "[QueryBasedFeature] Exception during wipe callback: " + e.getMessage(), e);

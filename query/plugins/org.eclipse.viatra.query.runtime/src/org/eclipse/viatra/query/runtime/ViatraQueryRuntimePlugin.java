@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.viatra.query.runtime.extensibility.ExtensionBasedQuerySpecificationLoader;
 import org.eclipse.viatra.query.runtime.internal.ExtensionBasedSurrogateQueryLoader;
 import org.osgi.framework.BundleContext;
 
@@ -25,6 +26,7 @@ public class ViatraQueryRuntimePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		ExtensionBasedSurrogateQueryLoader.instance().loadKnownSurrogateQueriesIntoRegistry();
+		ExtensionBasedQuerySpecificationLoader.getInstance().loadRegisteredQuerySpecificationsIntoRegistry();
 	}
 
 }

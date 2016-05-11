@@ -165,7 +165,7 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
     @Override
     public ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws ViatraQueryException {
         IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification = QuerySpecificationRegistry
-                .getQuerySpecification(patternFQN);
+                .getInstance().getRegisteredSpecification(patternFQN);
         if (querySpecification != null) {
             return getMatcher(querySpecification);
         } else {

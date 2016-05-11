@@ -10,138 +10,101 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.extensibility;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.viatra.query.runtime.IExtensions;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Maps;
+
 /**
- * Registry for generated query specifications contributed via the plug-in mechanism. Allows accessing query
- * specification instances based on the Pattern object or the fully qualified name of the pattern.
+ * Registry for query specifications that can be accessed using fully qualified names. In addition, it can create query 
+ * groups based on the package hierarchy, even if the queries are defined in different projects or query definition files.
+ * 
+ * When running as an OSGi plug-in, the generated query specifications registered through extensions are automatically loaded
+ * into the registry by the {@link ExtensionBasedQuerySpecificationLoader} class.
  * 
  * @author Abel Hegedus
  * 
  */
 public final class QuerySpecificationRegistry {
-    private static final Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> QUERY_SPECIFICATIONS = createQuerySpecificationRegistry();
 
+    private static final String DUPLICATE_FQN_MESSAGE = "[QuerySpecificationRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!";
+
+    private static final QuerySpecificationRegistry INSTANCE = new QuerySpecificationRegistry();
+    
+    private Map<String, IQuerySpecificationProvider> registeredQuerySpecifications = Maps.newHashMap();
+    
+    /**
+     * @since 1.3
+     * @return the singleton instance of the registry
+     */
+    public static QuerySpecificationRegistry getInstance() {
+        return INSTANCE;
+    }
+    
     /**
      * Utility class constructor hidden
      */
     private QuerySpecificationRegistry() {
     }
 
-    private static Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> createQuerySpecificationRegistry() {
-        final Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specifications = new HashMap<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>();
-        initRegistry(specifications);
-        return specifications;
+    private Map<String, IQuerySpecificationProvider> getRegisteredQuerySpecifications() {
+        return registeredQuerySpecifications;
     }
-
-    // Does not use the field QUERY_SPECIFICATIONS as it may still be uninitialized
-    private static void initRegistry(
-            Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specifications) {
-        specifications.clear();
-
-        IExtensionRegistry reg = Platform.getExtensionRegistry();
-        if (reg == null) {
-            return;
-        }
-
-        IExtensionPoint poi = reg.getExtensionPoint(IExtensions.QUERY_SPECIFICATION_EXTENSION_POINT_ID);
-        if (poi != null) {
-            IExtension[] exts = poi.getExtensions();
-
-            Set<String> duplicates = new HashSet<String>();
-
-            for (IExtension ext : exts) {
-
-                IConfigurationElement[] els = ext.getConfigurationElements();
-                for (IConfigurationElement el : els) {
-                    if (el.getName().equals("group")) {
-                        prepareQueryGroup(specifications, duplicates, el);
-                    } else {
-                        ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
-                                "[QuerySpecificationRegistry] Unknown configuration element " + el.getName()
-                                        + " in plugin.xml of " + el.getDeclaringExtension().getUniqueIdentifier());
-                    }
-                }
-            }
-            if (!duplicates.isEmpty()) {
-                StringBuilder duplicateSB = new StringBuilder(
-                        "[QuerySpecificationRegistry] Trying to register patterns with the same FQN multiple times. Check your plug-in configuration!\n");
-                duplicateSB.append("The following pattern FQNs appeared multiple times:\n");
-                for (String fqn : duplicates) {
-                    duplicateSB.append(String.format("\t%s%n", fqn));
-                }
-                ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).warn(duplicateSB.toString());
-            }
-        }
-    }
-
-    private static void prepareQueryGroup(
-            Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specifications,
-            Set<String> duplicates, IConfigurationElement el) {
-        String id = null;
-        try {
-            id = el.getAttribute("id");
-            IQueryGroup group = (IQueryGroup) el.createExecutableExtension("group");
-            for (IQuerySpecification<?> specification : group.getSpecifications()) {
-                loadQuerySpecification(specifications, duplicates, el, specification);
-            }
-        } catch (Throwable e) {
-            // If there are serious compilation errors in the file loaded by the query registry, an error is thrown
-            if (id == null) {
-                id = "undefined in plugin.xml";
-            }
-            // TODO error logging for the user interface
-            ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class).error(
-                    "[QuerySpecificationRegistry] Exception during query specification registry initialization when preparing group: "
-                            + id + "! " + e.getMessage(), e);
-        }
-    }
-
-    private static void loadQuerySpecification(
-            Map<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> specifications,
-            Set<String> duplicates, IConfigurationElement el,
-            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification) {
-    	
-        String fullyQualifiedName = querySpecification.getFullyQualifiedName();
-        if (specifications.containsKey(fullyQualifiedName)) {
-            duplicates.add(fullyQualifiedName);
-        } else {
-            specifications.put(fullyQualifiedName, querySpecification);
-        }
+    
+    /**
+     * Puts the specification in the registry, unless it already contains a specification for the given pattern FQN
+     * 
+     * @param specification
+     * @deprecated Use {@link #getInstance()}.{@link #addQuerySpecification(IQuerySpecification)} instead
+     */
+    public static void registerQuerySpecification(
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification) {
+        QuerySpecificationRegistry querySpecificationRegistry = getInstance();
+        querySpecificationRegistry.addQuerySpecification(specification);
     }
 
     /**
      * Puts the specification in the registry, unless it already contains a specification for the given pattern FQN
      * 
      * @param specification
+     * @param querySpecificationRegistry
+     * @since 1.3
      */
-    public static void registerQuerySpecification(
-            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification) {
+    public void addQuerySpecification(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification) {
         String qualifiedName = specification.getFullyQualifiedName();
-        if (!QUERY_SPECIFICATIONS.containsKey(qualifiedName)) {
-            QUERY_SPECIFICATIONS.put(qualifiedName, specification);
+        if (!getRegisteredQuerySpecifications().containsKey(qualifiedName)) {
+            getRegisteredQuerySpecifications().put(qualifiedName, new SingletonQuerySpecificationProvider(specification));
         } else {
-            ViatraQueryLoggingUtil
-                    .getLogger(QuerySpecificationRegistry.class)
-                    .warn(String
-                            .format("[QuerySpecificationRegistry] Trying to register duplicate FQN (%s). Check your plug-in configuration!",
-                                    qualifiedName));
+            ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class)
+                    .warn(String.format(DUPLICATE_FQN_MESSAGE, qualifiedName));
+        }
+    }
+    
+    /**
+     * Puts the provided specification in the registry, unless it already contains a specification for the given pattern FQN
+     * 
+     * @param specificationProvider
+     * @param querySpecificationRegistry
+     * @since 1.3
+     */
+    public void addQuerySpecification(IQuerySpecificationProvider specificationProvider) {
+        String qualifiedName = specificationProvider.getFullyQualifiedName();
+        if (!getRegisteredQuerySpecifications().containsKey(qualifiedName)) {
+            getRegisteredQuerySpecifications().put(qualifiedName, specificationProvider);
+        } else {
+            ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class)
+                    .warn(String.format(DUPLICATE_FQN_MESSAGE, qualifiedName));
         }
     }
 
@@ -150,17 +113,52 @@ public final class QuerySpecificationRegistry {
      * 
      * @param patternFQN
      *            the fully qualified name of the pattern
+     * @deprecated Use {@link #getInstance()}.{@link #removeQuerySpecification(String)} instead
      */
     public static void unregisterQuerySpecification(String patternFQN) {
-        QUERY_SPECIFICATIONS.remove(patternFQN);
+        getInstance().removeQuerySpecification(patternFQN);
+    }
+    
+    /**
+     * Removes the query specification from the registry which belongs to the given fully qualified pattern name.
+     * 
+     * @param patternFQN
+     *            the fully qualified name of the pattern
+     * @since 1.3
+     */
+    public void removeQuerySpecification(String patternFQN) {
+        getRegisteredQuerySpecifications().remove(patternFQN);
     }
 
     /**
      * @return a copy of the set of contributed query specifications
+     * @deprecated Use {@link #getInstance()}.{@link #getRegisteredFQNs()} and {@link #getQuerySpecification(String)} instead
      */
     public static Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getContributedQuerySpecifications() {
-        return new HashSet<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>(
-                QUERY_SPECIFICATIONS.values());
+        Builder<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> builder = ImmutableSet.<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>builder();
+        for (IQuerySpecificationProvider provider : getInstance().getRegisteredQuerySpecifications().values()) {
+            builder.add(provider.get());
+        }
+        return builder.build();
+    }
+    
+    /**
+     * @return a copy of the set of contributed query specification FQNs
+     * @since 1.3
+     */
+    public Set<String> getRegisteredFQNs() {
+        return ImmutableSet.<String>builder().addAll(getRegisteredQuerySpecifications().keySet()).build();
+    }
+    
+    /**
+     * @param queryFQN that may have a query registered, null not allowed
+     * @return true if there is a query registered with the given FQN
+     * @throws IllegalArgumentException if the queryFQN is null
+     * @since 1.3
+     */
+    public boolean hasQueryRegisteredWithFQN(String queryFQN) {
+        Preconditions.checkArgument(queryFQN != null, "Query FQN must not be null!");
+        return getRegisteredQuerySpecifications().containsKey(queryFQN);
     }
 
     /**
@@ -168,13 +166,31 @@ public final class QuerySpecificationRegistry {
      *            the fully qualified name of a registered generated pattern
      * @return the generated query specification of the pattern with the given fully qualified name, if it is
      *         registered, or null if there is no such generated pattern
+     * @deprecated Use {@link #getInstance()}.{@link #getRegisteredSpecification(String)} instead
      */
     public static IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> getQuerySpecification(
             String patternFQN) {
-        if (QUERY_SPECIFICATIONS.containsKey(patternFQN)) {
-            return QUERY_SPECIFICATIONS.get(patternFQN);
+        if (patternFQN != null && getInstance().hasQueryRegisteredWithFQN(patternFQN)) {
+            return getInstance().getRegisteredSpecification(patternFQN);
         }
         return null;
+    }
+    
+    /**
+     * @param queryFQN
+     *            the fully qualified name of a registered query specification
+     * @return the generated query specification of the pattern with the given fully qualified name, if it is
+     *         registered, or null if there is no such generated pattern
+     * @throws NoSuchElementException if no query is registered with the given FQN, use {@link #hasQueryRegisteredWithFQN(String)} to check
+     * @since 1.3
+     */
+    public IQuerySpecification<?> getRegisteredSpecification(String queryFQN) {
+        Preconditions.checkArgument(queryFQN != null, "Query FQN must not be null!");
+        if (getRegisteredQuerySpecifications().containsKey(queryFQN)) {
+            return getRegisteredQuerySpecifications().get(queryFQN).get();
+        } else {
+            throw new NoSuchElementException(String.format("No query specification registered with FQN %s",queryFQN));
+        }
     }
 
     /**
@@ -184,10 +200,25 @@ public final class QuerySpecificationRegistry {
      * @param packageFQN
      *            the fully qualified name of the package
      * @return the set of query specifications inside the given package, empty set otherwise.
+     * @deprecated Use {@link #getInstance()}.{@link #getQueryGroup(String)}
      */
     public static Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getPatternGroup(
             String packageFQN) {
-        return getPatternGroupOrSubTree(packageFQN, false);
+        return getInstance().getQueryGroup(packageFQN);
+    }
+    
+    /**
+     * Returns the set of query specifications in a given package. Only query specifications with the exact package
+     * fully qualified name are returned.
+     * 
+     * @param packageFQN
+     *            the fully qualified name of the package, null is not allowed
+     * @return the set of query specifications inside the given package, empty set otherwise.
+     * @since 1.3
+     */
+    public Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getQueryGroup(String packageFQN) {
+        Preconditions.checkArgument(packageFQN != null, "Package FQN must not be null!");
+        return getQueryGroupOrSubTree(packageFQN, false);
     }
 
     /**
@@ -197,10 +228,26 @@ public final class QuerySpecificationRegistry {
      * @param packageFQN
      *            the fully qualified name of the package
      * @return the set of query specifications in the given package subtree, empty set otherwise.
+     * @deprecated Use {@link #getInstance()}.{@link #getPackageSubTreeQueryGroup(String)} instead
      */
     public static Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getPatternSubTree(
             String packageFQN) {
-        return getPatternGroupOrSubTree(packageFQN, true);
+        return getInstance().getPackageSubTreeQueryGroup(packageFQN);
+    }
+    
+    /**
+     * Returns the set of query specifications in a given package. query specifications with package names starting with
+     * the given package are returned.
+     * 
+     * @param packageFQN
+     *            the fully qualified name of the package, must not be null
+     * @return the set of query specifications in the given package subtree, empty set otherwise.
+     * @since 1.3
+     */
+    public Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getPackageSubTreeQueryGroup(
+            String packageFQN) {
+        Preconditions.checkArgument(packageFQN != null, "Package FQN must not be null!");
+        return getQueryGroupOrSubTree(packageFQN, true);
     }
 
     /**
@@ -213,22 +260,13 @@ public final class QuerySpecificationRegistry {
      *            if it is in the given package
      * @return the query specifications in the group
      */
-    private static Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getPatternGroupOrSubTree(
+    private Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> getQueryGroupOrSubTree(
             String packageFQN, boolean includeSubPackages) {
-        Map<String, Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>> map = new HashMap<String, Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>>();
-        if (map.containsKey(packageFQN)) {
-            return map.get(packageFQN);
-        } else {
-            Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> group = new HashSet<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>();
-            for (Entry<String, IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> entry : QUERY_SPECIFICATIONS
-                    .entrySet()) {
-                addPatternToGroup(packageFQN, group, entry.getKey(), entry.getValue(), includeSubPackages);
-            }
-            if (group.size() > 0) {
-                map.put(packageFQN, group);
-            }
-            return group;
+        Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> group = new HashSet<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>>();
+        for (Entry<String, IQuerySpecificationProvider> entry : getRegisteredQuerySpecifications().entrySet()) {
+            addQuerySpecificationToGroup(packageFQN, group, entry.getKey(), entry.getValue(), includeSubPackages);
         }
+        return group;
     }
 
     /**
@@ -247,19 +285,19 @@ public final class QuerySpecificationRegistry {
      *            if true, the pattern is added if it is in the package hierarchy, if false, the pattern is added only
      *            if it is in the given package
      */
-    private static void addPatternToGroup(String packageFQN,
+    private void addQuerySpecificationToGroup(String packageFQN,
             Set<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> group, String patternFQN,
-            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification,
+            IQuerySpecificationProvider provider,
             boolean includeSubPackages) {
         if (packageFQN.length() + 1 < patternFQN.length()) {
             if (includeSubPackages) {
                 if (patternFQN.startsWith(packageFQN + '.')) {
-                    group.add(specification);
+                    group.add(provider.get());
                 }
             } else {
                 String name = patternFQN.substring(patternFQN.lastIndexOf('.') + 1, patternFQN.length());
                 if (patternFQN.equals(packageFQN + '.' + name)) {
-                    group.add(specification);
+                    group.add(provider.get());
                 }
             }
         }

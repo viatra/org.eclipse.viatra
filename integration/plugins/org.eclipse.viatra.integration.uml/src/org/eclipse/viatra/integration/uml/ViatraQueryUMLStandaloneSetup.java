@@ -94,7 +94,7 @@ public class ViatraQueryUMLStandaloneSetup {
 	 */
 	public static void doSetup() throws ViatraQueryException {
 		for (IQuerySpecification<?> specification : getAllQuerySpecifications()) {
-			QuerySpecificationRegistry.registerQuerySpecification(specification);
+			QuerySpecificationRegistry.getInstance().addQuerySpecification(specification);
 		}
 		for (Map.Entry<EStructuralFeature, IQuerySpecification<?>> entry : getSurrogateQueries().entrySet()) {
 			SurrogateQueryRegistry.instance().registerSurrogateQueryForFeature(

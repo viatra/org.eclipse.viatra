@@ -27,6 +27,7 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
     private final Set<IQuerySpecification<?>> querySpecifications = new HashSet<IQuerySpecification<?>>();
     private final String packageName;
     private final boolean includeSubPackages;
+    private final QuerySpecificationRegistry registry;
 
     public PackageBasedQueryGroup(String packageName) {
         this(packageName, false);
@@ -36,6 +37,7 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
         super();
         this.packageName = packageName;
         this.includeSubPackages = includeSubPackages;
+        this.registry = QuerySpecificationRegistry.getInstance();
         refresh();
     }
 
@@ -66,7 +68,8 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
     }
 
     /**
-     * Refreshes the pattern group from the matcher registry based on the parameters used during the initialization
+     * Refreshes the pattern group from the query specification registry based on the parameters used during the
+     * initialization.
      */
     public void refresh() {
         refreshInternal();
@@ -74,9 +77,9 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
 
     private void refreshInternal() {
         if (isIncludeSubPackages()) {
-            this.querySpecifications.addAll(QuerySpecificationRegistry.getPatternSubTree(this.packageName));
+            this.querySpecifications.addAll(registry.getPackageSubTreeQueryGroup(this.packageName));
         } else {
-            this.querySpecifications.addAll(QuerySpecificationRegistry.getPatternGroup(this.packageName));
+            this.querySpecifications.addAll(registry.getQueryGroup(this.packageName));
         }
     }
 

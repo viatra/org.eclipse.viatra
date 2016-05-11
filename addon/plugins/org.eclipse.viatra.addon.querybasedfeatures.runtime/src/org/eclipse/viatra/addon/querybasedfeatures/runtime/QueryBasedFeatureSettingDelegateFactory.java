@@ -129,15 +129,7 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
             if(specificationMap.containsKey(patternFQN)) {
                 querySpec = specificationMap.get(patternFQN);
             } else {
-                querySpec = QuerySpecificationRegistry.getQuerySpecification(patternFQN);
-            // TODO let's use Pattern Registry instead (requires added dependency!)
-//                List<IPatternInfo> patternInfosByFQN = PatternRegistry.INSTANCE.getPatternInfosByFQN(patternFQN);
-//                if(patternInfosByFQN.size() > 0) {
-//                    querySpec = patternInfosByFQN.get(0).getQuerySpecification();
-//                    if(patternInfosByFQN.size() > 1) {
-//                        ViatraQueryLoggingUtil.getDefaultLogger().warn("Multiple patterns (" + patternInfosByFQN + ") registered for FQN " + patternFQN);
-//                    }
-//                }
+                querySpec = QuerySpecificationRegistry.getInstance().getRegisteredSpecification(patternFQN);
             }
         }
         return querySpec;

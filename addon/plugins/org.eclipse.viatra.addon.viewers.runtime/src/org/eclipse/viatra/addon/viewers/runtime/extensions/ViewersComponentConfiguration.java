@@ -76,7 +76,7 @@ public class ViewersComponentConfiguration
 	{
 		ViewersComponentConfiguration c = new ViewersComponentConfiguration();
 		for (String fqn : fqns) {
-			c.patterns.add( QuerySpecificationRegistry.getQuerySpecification(fqn));
+			c.patterns.add( QuerySpecificationRegistry.getInstance().getRegisteredSpecification(fqn));
 		}
 		return c;
 	}

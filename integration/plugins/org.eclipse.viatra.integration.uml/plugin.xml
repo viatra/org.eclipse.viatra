@@ -165,6 +165,62 @@
     <surrogate-query-emf class-name="Package" feature-name="ownedStereotype" package-nsUri="http://www.eclipse.org/uml2/5.0.0/UML" query-fqn="org.eclipse.viatra.integration.uml.derivedfeatures.packageOwnedStereotype" surrogate-query="org.eclipse.viatra.query.runtime.extensibility.PQueryExtensionFactory:org.eclipse.viatra.integration.uml.derivedfeatures.util.PackageOwnedStereotypeQuerySpecification"/>
   </extension>
   <extension id="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures" point="org.eclipse.viatra.query.runtime.queryspecification">
-    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures" id="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures"/>
+    <group group="org.eclipse.viatra.query.runtime.extensibility.SingletonExtensionFactory:org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures" id="org.eclipse.viatra.integration.uml.derivedfeatures.DerivedFeatures">
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.actionInput"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.actionOutput"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityGroup"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityGroupInActivity"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityNode"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityNodeActivity"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityEdgeInGroup"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityGroupContainedEdge"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityGroupContainedNode"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityNodeInGroup"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityGroupSubgroup"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.activityGroupSuperGroup"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.classifierAttribute"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.classifierFeature"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.featureFeaturingClassifier"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.directedRelationshipSource"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.directedRelationshipTarget"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.elementOwnedElement"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.elementOwner"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.namespaceMember"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.namespaceOwnedMember"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.redefinableElementRedefinedElement"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.redefinableElementRedefinitionContext"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.relationshipRelatedElement"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.structuredClassifierRole"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.actionContext"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.associationEndType"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.behaviorContext"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.connectableElementEnd"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.deploymentTargetDeployedElement"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.namedElementClientDependency"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.protocolTransitionReferred"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.vertexIncoming"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.vertexOutgoing"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.connectorKind"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.messageMessageKind"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.packageNestedPackage"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.packageOwnedStereotype"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.packageOwnedType"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.propertyIsComposite"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.stateIsComposite"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.namedElementNamespace"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.typePackage"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.classExtension"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.classSuperClass"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.classifierGeneral"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.encapsulatedClassifierOwnedPort"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.extensionMetaclass"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.namedElementQualifiedName"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.namespaceImportedMember"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.opaqueExpressionResult"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.packageNestingPackage"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.redefinableTemplateSignatureInheritedParameter"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.structuredClassifierPart"/>
+      <query-specification fqn="org.eclipse.viatra.integration.uml.derivedfeatures.stateIsOrthogonal"/>
+    </group>
   </extension>
 </plugin>
