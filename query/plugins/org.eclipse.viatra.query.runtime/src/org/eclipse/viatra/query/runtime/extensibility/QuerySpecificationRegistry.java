@@ -25,6 +25,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Registry for query specifications that can be accessed using fully qualified names. In addition, it can create query 
@@ -43,6 +44,7 @@ public final class QuerySpecificationRegistry {
     private static final QuerySpecificationRegistry INSTANCE = new QuerySpecificationRegistry();
     
     private Map<String, IQuerySpecificationProvider> registeredQuerySpecifications = Maps.newHashMap();
+    private Set<IQueryGroupProvider> delayedQueryGroups = Sets.newHashSet(); 
     
     /**
      * @since 1.3
@@ -59,6 +61,17 @@ public final class QuerySpecificationRegistry {
     }
 
     private Map<String, IQuerySpecificationProvider> getRegisteredQuerySpecifications() {
+        if(!delayedQueryGroups.isEmpty()) {
+            ImmutableSet<IQueryGroupProvider> delayedProviders = ImmutableSet.copyOf(delayedQueryGroups);
+            for (IQueryGroupProvider groupProvider : delayedProviders) {
+                // either the group is empty or the extension was not regenerated to include FQNs
+                Set<IQuerySpecification<?>> specifications = groupProvider.get().getSpecifications();
+                for (IQuerySpecification<?> specification : specifications) {
+                    addQuerySpecificationInternal(specification, registeredQuerySpecifications);
+                }
+                delayedQueryGroups.remove(groupProvider);
+            }
+        }
         return registeredQuerySpecifications;
     }
     
@@ -82,9 +95,16 @@ public final class QuerySpecificationRegistry {
      * @since 1.3
      */
     public void addQuerySpecification(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification) {
+        Map<String, IQuerySpecificationProvider> querySpecifications = getRegisteredQuerySpecifications();
+        addQuerySpecificationInternal(specification, querySpecifications);
+    }
+
+    private void addQuerySpecificationInternal(
+            IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> specification,
+            Map<String, IQuerySpecificationProvider> querySpecifications) {
         String qualifiedName = specification.getFullyQualifiedName();
-        if (!getRegisteredQuerySpecifications().containsKey(qualifiedName)) {
-            getRegisteredQuerySpecifications().put(qualifiedName, new SingletonQuerySpecificationProvider(specification));
+        if (!querySpecifications.containsKey(qualifiedName)) {
+            querySpecifications.put(qualifiedName, new SingletonQuerySpecificationProvider(specification));
         } else {
             ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class)
                     .warn(String.format(DUPLICATE_FQN_MESSAGE, qualifiedName));
@@ -106,6 +126,10 @@ public final class QuerySpecificationRegistry {
             ViatraQueryLoggingUtil.getLogger(QuerySpecificationRegistry.class)
                     .warn(String.format(DUPLICATE_FQN_MESSAGE, qualifiedName));
         }
+    }
+    
+    protected void addDelayedQueryGroupProvider(IQueryGroupProvider groupProvider) {
+        delayedQueryGroups.add(groupProvider);
     }
 
     /**

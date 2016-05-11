@@ -68,10 +68,8 @@ public class ExtensionBasedQuerySpecificationLoader {
             Set<String> querySpecificationFQNs = provider.getQuerySpecificationFQNs();
             if(querySpecificationFQNs.isEmpty()){
                 // either the group is empty or the extension was not regenerated to include FQNs
-                Set<IQuerySpecification<?>> specifications = provider.get().getSpecifications();
-                for (IQuerySpecification<?> specification : specifications) {
-                    registry.addQuerySpecification(specification);
-                }
+                // delay query group loading
+                registry.addDelayedQueryGroupProvider(provider);
             } else {
                 // delay specification class loading
                 for (IQuerySpecificationProvider specificationProvider : provider.getQuerySpecificationProviders()) {
