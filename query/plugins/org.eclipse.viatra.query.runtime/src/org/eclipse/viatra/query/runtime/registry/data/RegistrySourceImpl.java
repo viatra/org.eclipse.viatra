@@ -1,0 +1,65 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Abel Hegedus, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Abel Hegedus - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.registry.data;
+
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
+/**
+ * Internal data storage object that represents a query specification source driven by a connector. The source must have
+ * unique identifier that is copied from the connector. The source uses a FQN to entry map to manage registry entries.
+ * 
+ * @author Abel Hegedus
+ *
+ */
+public class RegistrySourceImpl {
+
+    private String identifier;
+    private QuerySpecificationStore querySpecificationStore;
+    private Map<String, RegistryEntryImpl> fqnToEntryMap;
+
+    /**
+     * Creates a new source with the given identifier and an empty entry map.
+     * 
+     * @param identifier
+     *            for the source
+     * @param querySpecificationStore
+     *            that contains this source
+     */
+    public RegistrySourceImpl(String identifier, QuerySpecificationStore querySpecificationStore) {
+        this.identifier = identifier;
+        this.querySpecificationStore = querySpecificationStore;
+        this.fqnToEntryMap = Maps.newTreeMap();
+    }
+
+    /**
+     * @return the identifier of the source
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @return the store that contains the source
+     */
+    public QuerySpecificationStore getStore() {
+        return querySpecificationStore;
+    }
+
+    /**
+     * @return the live, modifiable FQN to entry map 
+     */
+    public Map<String, RegistryEntryImpl> getFqnToEntryMap() {
+        return fqnToEntryMap;
+    }
+
+}

@@ -26,11 +26,17 @@ import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 public interface IQueryGroupProvider extends IProvider<IQueryGroup> {
 
     /**
-     * Note that the provider should not load the query group class if the FQNs are not available from other sources.
-     * Instead, it should return an empty set.
+     * Note that the provider should load the query group class only if the FQNs can not be computed in other ways.
      * 
      * @return the set of query specification FQNs in the group
      */
     Set<String> getQuerySpecificationFQNs();
+
+    /**
+     * Note that the provider should load the query group class only if the FQNs can not be computed in other ways.
+     * 
+     * @return a set of providers for query specifications in the group
+     */
+    Set<IQuerySpecificationProvider> getQuerySpecificationProviders();
     
 }

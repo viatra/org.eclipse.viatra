@@ -155,6 +155,10 @@
       <requirement
           name="com.google.inject.multibindings"
           versionRange="[3.0.0,4.0.0)"/>
+      <requirement
+          name="org.mockito"/>
+      <requirement
+          name="org.hamcrest"/>
       <repositoryList
           name="Mars">
         <repository
