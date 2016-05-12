@@ -6,18 +6,19 @@ import java.util.Map
 import java.util.concurrent.TimeUnit
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
-import org.junit.Test
-import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
-import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
+import org.junit.Test
+import org.eclipse.xtend.lib.annotations.Data
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements of the base index and
@@ -42,8 +43,18 @@ abstract class QueryPerformanceTest {
 
 	protected static extension Logger logger = ViatraQueryLoggingUtil.getLogger(QueryPerformanceTest)
 
+    @Data
+    private static class QueryPerformanceData {
+        int sequence
+        int countMatches
+        long usedHeapBefore
+        long usedHeapAfter
+        long usedHeap
+        long elapsed
+    }
+
 	AdvancedViatraQueryEngine queryEngine
-	Map<String, Long> results = Maps.newTreeMap()
+	Map<String, QueryPerformanceData> results = Maps.newTreeMap()
 
 	/**
 	 * This method shall return a scope that identifies the input artifact used for performance testing the queries.
@@ -89,11 +100,13 @@ abstract class QueryPerformanceTest {
 
 		info("Starting query performance test")
 
-		for (IQuerySpecification<?> _specification : queryGroup.
-			getSpecifications) {
-
+		val specifications = queryGroup.getSpecifications
+		val numOfSpecifications = specifications.length
+		var current = 0
+        for (IQuerySpecification<?> _specification : specifications) {
 			val specification = _specification as IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>
-			debug("Measuring query " + specification.getFullyQualifiedName)
+			current += 1
+			debug("Measuring query " + specification.getFullyQualifiedName +"("+current+"/"+numOfSpecifications+")")
 			queryEngine.wipe
 			val usedHeapBefore = logMemoryProperties("Wiped engine before building")
 
@@ -105,10 +118,11 @@ abstract class QueryPerformanceTest {
 			val usedHeapAfter = logMemoryProperties("Matcher created")
 
 			val usedHeap = usedHeapAfter - usedHeapBefore
-			results.put(specification.getFullyQualifiedName, usedHeap)
+			val elapsed = watch.elapsed(TimeUnit.MILLISECONDS)
+			results.put(specification.getFullyQualifiedName, new QueryPerformanceData(current, countMatches, usedHeapBefore, usedHeapAfter, usedHeap, elapsed))
 			info(
 				"Query " + specification.fullyQualifiedName + "( " + countMatches + " matches, used " + usedHeap +
-					" kByte heap, took " + watch.elapsed(TimeUnit.MILLISECONDS) + " ms)")
+					" kByte heap, took " + elapsed + " ms)")
 
 			queryEngine.wipe
 			logMemoryProperties("Wiped engine after building")
@@ -123,8 +137,16 @@ abstract class QueryPerformanceTest {
 	protected def printResults() {
 
 		val resultSB = new StringBuilder("\n\nPerformance test results:\n")
+		resultSB.append("pattern, sequence, matches count, heap before (kb), heap after (kb), used heap (kb), elapsed (ms)\n");
 		results.entrySet.forEach [ entry |
-			resultSB.append("  " + entry.key + "," + entry.value + "\n")
+			resultSB.append(entry.key)
+			resultSB.append(", "); resultSB.append(entry.value.sequence)
+			resultSB.append(", "); resultSB.append(entry.value.countMatches)
+            resultSB.append(", "); resultSB.append(entry.value.usedHeapBefore)
+            resultSB.append(", "); resultSB.append(entry.value.usedHeapAfter)
+			resultSB.append(", "); resultSB.append(entry.value.usedHeap)
+			resultSB.append(", "); resultSB.append(entry.value.elapsed)
+			resultSB.append("\n")
 		]
 		info(resultSB)
 
