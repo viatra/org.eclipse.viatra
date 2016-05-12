@@ -12,7 +12,6 @@ package org.eclipse.viatra.addon.databinding.runtime.observables;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.viatra.addon.databinding.runtime.api.ViatraObservables;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;

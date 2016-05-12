@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.emf.common.util.EList;
@@ -279,7 +278,7 @@ public final class ViatraObservables {
      */
     public static IObservableValue getObservableLabelFeature(final IPatternMatch match, final String expression,
             Object container) {
-        ComputedValue value = new ObservableLabelFeature(match, expression, container);
+        ObservableLabelFeature value = new ObservableLabelFeature(match, expression, container);
         return value;
     }
 
