@@ -33,7 +33,9 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
     public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet resourceSet,
             IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
                     throws ViatraQueryException {
-        engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resourceSet));
+        if (engine == null){
+            engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resourceSet));
+        }
         ViatraQueryMatcher<Match> matcher = (ViatraQueryMatcher<Match>) ((AdvancedViatraQueryEngine) engine)
                 .getMatcher(querySpecification, hint);
         return new SnapshotHelper().createMatchSetRecordForMatcher(matcher,
