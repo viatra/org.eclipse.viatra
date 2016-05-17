@@ -32,7 +32,10 @@ import com.google.common.base.Preconditions;
  */
 public class MatchingFrame extends Tuple implements Cloneable {
 
-	/**
+    private static final String KEYS_ARRAY_SETUP_MISSING_MESSAGE = "A non-null key array has to be set up before getElements() is called.";
+    private static final String KEYS_ARRAY_MUST_NOT_BE_NULL_MESSAGE = "Argument keys must not be null.";
+
+    /**
      * The pattern variant for which this MatchingFrame is a
      * matching. 
 	 */
@@ -47,13 +50,14 @@ public class MatchingFrame extends Tuple implements Cloneable {
     private Object[] parameterValues;
 
     public MatchingFrame(Object pattern, int frameSize) {
-        this(pattern, null, frameSize);
+        this.pattern = pattern;
+        this.frame = new Object[frameSize];
     }
     
     private MatchingFrame(Object pattern, int[] keyMap, int frameSize) {
-        this.pattern = pattern;
+        this(pattern, frameSize);        
+        Preconditions.checkArgument(keyMap != null, KEYS_ARRAY_MUST_NOT_BE_NULL_MESSAGE);
         this.keys = Arrays.copyOf(keyMap, keyMap.length);
-        this.frame = new Object[frameSize];
     }
 
     /**
@@ -66,6 +70,7 @@ public class MatchingFrame extends Tuple implements Cloneable {
      * @see {@linkplain #setParameterValues(Object[])} for setting the initial parameter
      */
     public void setKeys(int[] keys) {
+        Preconditions.checkArgument(keys != null, KEYS_ARRAY_MUST_NOT_BE_NULL_MESSAGE);
         this.keys = Arrays.copyOf(keys, keys.length);
         if (parameterValues != null) {
             for (int i=0; i<parameterValues.length; i++) {
@@ -139,7 +144,9 @@ public class MatchingFrame extends Tuple implements Cloneable {
     }
 
     public MatchingFrame clone() {
-        MatchingFrame clone = new MatchingFrame(pattern, keys, frame.length);
+        MatchingFrame clone = (keys == null) 
+                ? new MatchingFrame(pattern, frame.length)
+                : new MatchingFrame(pattern, keys, frame.length);
         clone.frame = Arrays.copyOf(frame, frame.length);
         clone.parameterValues = this.parameterValues;
         return clone;
@@ -165,6 +172,7 @@ public class MatchingFrame extends Tuple implements Cloneable {
     
     @Override
     public Object[] getElements() {
+        Preconditions.checkState(keys != null, KEYS_ARRAY_SETUP_MISSING_MESSAGE);
         //Redefining to trim the results to keySize
         Object[] allElements = new Object[keys.length];
         for (int i = 0; i < keys.length; ++i)
