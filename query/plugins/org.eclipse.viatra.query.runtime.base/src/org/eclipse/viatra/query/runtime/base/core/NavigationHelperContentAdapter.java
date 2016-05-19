@@ -39,7 +39,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.DataTypeListener;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
@@ -49,6 +48,7 @@ import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
+import org.eclipse.viatra.query.runtime.base.core.internal.EContentAdapter;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 
 import com.google.common.base.Objects;
