@@ -190,6 +190,14 @@ abstract class JavaProjectMigratorData {
             "org.eclipse.incquery.runtime.evm.specific.event.IncQueryActivationStateEnum" -> "org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEnum",
             "org.eclipse.incquery.runtime.evm.specific.event.IncQueryEvent" ->   "org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEvent",
             "org.eclipse.incquery.runtime.evm.specific.event.IncQueryEventTypeEnum" -> "org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum",
+            
+            "org.eclipse.incquery.runtime.evm.specific.TransactionalSchedulers" -> "org.eclipse.viatra.transformation.evm.transactions.specific.TransactionalSchedulers",
+            "org.eclipse.incquery.runtime.evm.specific.TransactionalJobs" -> "org.eclipse.viatra.transformation.evm.transactions.specific.TransactionalJobs",
+            "org.eclipse.incquery.runtime.evm.specific.job.CommandExecutingJob" -> "org.eclipse.viatra.transformation.evm.transactions.specific.job.CommandExecutingJob",
+            "org.eclipse.incquery.runtime.evm.specific.job.EventAtomEditingDomainProvider" -> "org.eclipse.viatra.transformation.evm.transactions.specific.job.EventAtomEditingDomainProvider",
+            "org.eclipse.incquery.runtime.evm.specific.job.RecordingJob" -> "org.eclipse.viatra.transformation.evm.transactions.specific.job.RecordingJob",
+            "org.eclipse.incquery.runtime.evm.update.TransactionUpdateCompleteProvider" -> "org.eclipse.viatra.transformation.evm.transactions.update.TransactionUpdateCompleteProvider",
+            
             "org.eclipse.incquery.runtime.base.exception.IncQueryBaseException" -> "org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException",
             "org.eclipse.incquery.runtime.base.api.IncQueryBaseFactory"  ->  "org.eclipse.viatra.query.runtime.base.api.ViatraBaseFactory",
             "org.eclipse.incquery.runtime.base.api.scope.IncQueryBaseIndexChangeListener" ->  "org.eclipse.viatra.query.runtime.api.scope.ViatraBaseIndexChangeListener",
