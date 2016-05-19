@@ -11,12 +11,17 @@
 package org.eclipse.viatra.transformation.debug.ui.views;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -47,30 +52,25 @@ public class ModelInstanceViewer extends ViewPart implements ITransformationStat
         composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout(SWT.HORIZONTAL));
         treeViewer = new TreeViewer(composite, SWT.BORDER);
-        
-        
-        
+
     }
 
     @Override
     public void setFocus() {
         treeViewer.getControl().setFocus();
     }
-    
-    //TODO change content based on the selected Adaptable EVM instance
-    
+
     @Override
     public void transformationStateChanged(final TransformationState state, String id) {
         treeViewer.getControl().getDisplay().syncExec(new Runnable() {
             @Override
             public void run() {
-                if(engine == null){
+                if (engine == null) {
                     engine = state.getEngine();
-                    treeViewer.setInput(getModel()); 
-                }   
+                    treeViewer.setInput(getModel());
+                }
             }
         });
-        
 
     }
 
@@ -80,45 +80,48 @@ public class ModelInstanceViewer extends ViewPart implements ITransformationStat
             @Override
             public void run() {
                 engine = null;
-                treeViewer.setInput(null);    
+                treeViewer.setInput(null);
             }
         });
 
     }
-    
+
     private List<EObject> getModel() {
         QueryScope scope = engine.getScope();
-        if(scope instanceof EMFScope){
+        if (scope instanceof EMFScope) {
             List<EObject> input = Lists.newArrayList();
-            if(((EMFScope) scope).getScopeRoots().size()>0){
+            if (((EMFScope) scope).getScopeRoots().size() > 0) {
                 Notifier root = Lists.newArrayList(((EMFScope) scope).getScopeRoots()).get(0);
-                if(root instanceof ResourceSet){
-                    EList<Resource> resources = ((ResourceSet)root).getResources();
+                if (root instanceof ResourceSet) {
+                    EList<Resource> resources = ((ResourceSet) root).getResources();
                     for (Resource resource : resources) {
                         input.addAll(((Resource) resource).getContents());
                     }
                 }
             }
-            
-            
+
             return input;
         }
         return null;
 
     }
-    
-    public void registerToId(String id){
-        TransformationThreadFactory.getInstance().registerListener(this, id);
+
+    public void registerToId(String id) {
+        try {
+            TransformationThreadFactory.getInstance().registerListener(this, id);
+        } catch (NoSuchElementException | DebugException e) {
+            ErrorDialog.openError(composite.getShell(), "An error has occured during initialization", e.getMessage(),
+                    new Status(IStatus.ERROR, "org.eclipse.viatra.transformation.debug.ui", e.getMessage()));
+        }
     }
-    
-    
+
     @Override
     public void dispose() {
         super.dispose();
         engine = null;
         TransformationThreadFactory.getInstance().unRegisterListener(this);
     }
-    
+
     public IWorkbenchSiteProgressService getProgressService() {
         IWorkbenchSiteProgressService service = null;
         Object siteService = getSite().getAdapter(IWorkbenchSiteProgressService.class);
@@ -127,6 +130,5 @@ public class ModelInstanceViewer extends ViewPart implements ITransformationStat
         }
         return service;
     }
-    
 
 }

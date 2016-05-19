@@ -13,37 +13,52 @@ package org.eclipse.viatra.transformation.debug.ui.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.TransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.ui.util.DebugUIUtil;
 import org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
-public class ToggleActivationBreakpointHandler extends AbstractHandler{
+public class ToggleActivationBreakpointHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    AdaptableTransformationBrowser view = (AdaptableTransformationBrowser) PlatformUI.getWorkbench()
-                            .getActiveWorkbenchWindow().getActivePage().showView(AdaptableTransformationBrowser.ID);
-                    Object selection = view.getSelection();
-                    if (selection instanceof Activation<?>) {
-                        TransformationThread thread = DebugUIUtil.getActivationThread((Activation<?>) selection);
-                        if(thread!=null){
-                            thread.toggleTransformationBreakPoint(new TransformationBreakpoint((Activation<?>) selection));
+        try {
+            ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+            if (selection instanceof IStructuredSelection
+                    && ((IStructuredSelection) selection).getFirstElement() instanceof Activation<?>) {
+                TransformationThread thread = DebugUIUtil
+                        .getActivationThread((Activation<?>) ((IStructuredSelection) selection).getFirstElement());
+                if (thread != null) {
+                    TransformationBreakpoint transformationBreakpoint = new TransformationBreakpoint(
+                            (Activation<?>) selection);
+                    transformationBreakpoint.setMarker(thread.getTransformationType().getResource()
+                            .createMarker(transformationBreakpoint.getMarkerIdentifier()));
+                    transformationBreakpoint.setEnabled(true);
+
+                    ITransformationBreakpoint breakpointToRemove = null;
+                    for (IBreakpoint iBreakpoint : thread.getBreakpoints()) {
+                        if (iBreakpoint.equals(transformationBreakpoint)) {
+                            breakpointToRemove = transformationBreakpoint;
                         }
                     }
-
-                } catch (PartInitException e) {
-                    e.printStackTrace();
+                    if (breakpointToRemove != null) {
+                        DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpointToRemove, true);
+                    } else {
+                        DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(transformationBreakpoint);
+                    }
                 }
             }
-        });
+
+        } catch (CoreException e) {
+            throw new ExecutionException("Error while toggling breakpoint", e);
+        }
         return null;
     }
 

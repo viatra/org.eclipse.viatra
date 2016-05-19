@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.debug.model.TransformationState;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
@@ -70,7 +71,12 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     public void initializeListener(ViatraQueryEngine engine) {
         this.engine = engine;
         for (ITransformationDebugListener listener : listeners) {
-            listener.started();
+            try {
+                listener.started();
+            } catch (Exception e) {
+                e.printStackTrace();
+                listeners.remove(listener);
+            }
         }
     }
     
@@ -101,7 +107,11 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     @Override
     public void disposeListener() {
         for (ITransformationDebugListener listener : listeners) {
-            listener.terminated();
+            try {
+                listener.terminated();
+            } catch (CoreException e) {
+                e.printStackTrace();
+            }
         }
         breakpoints.clear();
         listeners.clear();
@@ -216,11 +226,16 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
 
     private boolean hasBreakpoint(Activation<?> activation) {
         for (ITransformationBreakpoint breakpoint : breakpoints) {
-            if (breakpoint.shouldBreak(activation)) {
-                for (ITransformationDebugListener listener : listeners) {
-                    listener.breakpointHit(breakpoint);
+            try {
+                if (breakpoint.isEnabled() && breakpoint.shouldBreak(activation)) {
+                    for (ITransformationDebugListener listener : listeners) {
+                        listener.breakpointHit(breakpoint);
+                    }
+                    return true;
                 }
-                return true;
+            } catch (CoreException e) {
+                e.printStackTrace();
+                return false;
             }
         }
         if (breakpoints.isEmpty() && firstRun) {

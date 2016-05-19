@@ -10,6 +10,8 @@
  */
 package org.eclipse.viatra.transformation.debug.model.breakpoint;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.viatra.transformation.debug.model.TransformationDebugElement;
 import org.eclipse.viatra.transformation.evm.api.Activation;
@@ -17,6 +19,9 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
 public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpoint{
     private String ruleId;
 
+    public RuleBreakpoint() {}
+    
+    
     public RuleBreakpoint(String ruleId) {
         super();
         this.ruleId = ruleId;
@@ -34,7 +39,7 @@ public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpo
 
     @Override
     public String getMarkerIdentifier() {
-        return PERSISTENT;
+        return RULE;
     }
     
     @Override
@@ -48,5 +53,15 @@ public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpo
     
     protected String getRuleId() {
         return ruleId;
+    }
+    
+@Override
+    public void setMarker(IMarker marker) throws CoreException {
+        super.setMarker(marker);
+        if(ruleId != null){
+            marker.setAttribute("content", ruleId);
+        }else{
+            ruleId = marker.getAttribute("content", ruleId);
+        }
     }
 }

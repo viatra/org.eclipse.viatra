@@ -13,19 +13,22 @@ package org.eclipse.viatra.transformation.debug.model;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.debug.DebuggerActions;
 import org.eclipse.viatra.transformation.debug.ITransformationDebugListener;
 import org.eclipse.viatra.transformation.debug.TransformationDebugger;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.ConditionalTransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
-import org.eclipse.viatra.transformation.debug.model.breakpoint.TransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
@@ -34,7 +37,7 @@ import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.Lists;
 
-public class TransformationThread extends TransformationDebugElement implements IThread, ITransformationDebugListener {
+public class TransformationThread extends TransformationDebugElement implements IThread, ITransformationDebugListener, IBreakpointListener {
 
     private List<ITransformationBreakpoint> breakpoints = Lists.newArrayList();
 
@@ -56,6 +59,7 @@ public class TransformationThread extends TransformationDebugElement implements 
         this.evm = evm;
         this.transformationType = transformationType;
         this.state = debugger.registerTransformationDebugListener(this);
+        DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
     }
 
     @Override
@@ -190,13 +194,13 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     // ITransformationDebugListener
     @Override
-    public void started() {
+    public void started() throws DebugException {
         try {
             state = new TransformationState(getName(), debugger.getEngine());
             fireCreationEvent();
             resume();
         } catch (DebugException e) {
-            e.printStackTrace();
+            throw e;
         }
 
     }
@@ -216,10 +220,20 @@ public class TransformationThread extends TransformationDebugElement implements 
     }
 
     @Override
-    public void terminated() {
+    public void terminated() throws CoreException, DebugException {
         terminated = true;
+        DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+        for (ITransformationBreakpoint iTransformationBreakpoint : breakpoints) {
+            debugger.removeBreakpoint(iTransformationBreakpoint);
+            DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(iTransformationBreakpoint, true);
+        }
+        breakpoints.clear();
         fireTerminateEvent();
-        ((TransformationDebugTarget) getDebugTarget()).requestTermination();
+        try {
+            ((TransformationDebugTarget) getDebugTarget()).requestTermination();
+        } catch (DebugException e) {
+            throw e;
+        }
         for (ITransformationStateListener listener : stateListeners) {
             listener.transformationStateDisposed(state, evm.getIdentifier());
         }
@@ -228,8 +242,8 @@ public class TransformationThread extends TransformationDebugElement implements 
     }
     
     protected void dispose(){
+        
         stateListeners.clear();
-        breakpoints.clear();
         TransformationThreadFactory.getInstance().deleteTransformationThread(this); 
     }
 
@@ -263,46 +277,10 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     // OWN
     
-    
-    public void toggleTransformationBreakPoint(ITransformationBreakpoint breakpoint) {
-        ITransformationBreakpoint breakpointToRemove = null;
-        for (ITransformationBreakpoint iTransformationBreakpoint : breakpoints) {
-            if(iTransformationBreakpoint.equals(breakpoint)){
-                breakpointToRemove = breakpoint;
-            }
-        }
-        if(breakpointToRemove != null){
-            removeTransformationBreakpoint(breakpoint);
-        }else{
-            addTransformationBreakpoint(breakpoint);
-        }
+    public IType getTransformationType() {
+        return transformationType;
     }
 
-    public void removeTransformationBreakpoint(ITransformationBreakpoint breakpointToRemove) {
-        if(breakpoints.contains(breakpointToRemove)){
-            breakpoints.remove(breakpointToRemove);
-            debugger.removeBreakpoint(breakpointToRemove);
-            try {
-                DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpointToRemove, true);
-            } catch (CoreException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void addTransformationBreakpoint(ITransformationBreakpoint breakpoint) {
-        if(!breakpoints.contains(breakpoint)){
-            breakpoints.add(breakpoint);
-            try {
-                breakpoint.setMarker(transformationType.getResource().createMarker(breakpoint.getMarkerIdentifier()));
-                breakpoint.setEnabled(true);
-                DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(breakpoint);
-            } catch (CoreException e) {
-                e.printStackTrace();
-            }
-            debugger.addBreakpoint(breakpoint);
-        }
-    }
 
     private void fireBreakpointHit(ITransformationBreakpoint breakpoint) {
         fireSuspendEvent(DebugEvent.BREAKPOINT);
@@ -344,4 +322,37 @@ public class TransformationThread extends TransformationDebugElement implements 
     public AdaptableEVM getAdaptableEvm() {
         return evm;
     }
+    
+    public ViatraQueryEngine getEngine(){
+        return debugger.getEngine();
+    }
+
+    
+    //BreakpointListener
+    
+    @Override
+    public void breakpointAdded(IBreakpoint breakpoint) {
+        if(breakpoint instanceof ITransformationBreakpoint){
+            if(breakpoint instanceof ConditionalTransformationBreakpoint){
+                ((ConditionalTransformationBreakpoint) breakpoint).setEngine(debugger.getEngine());
+            }
+            breakpoints.add((ITransformationBreakpoint) breakpoint);
+            debugger.addBreakpoint((ITransformationBreakpoint) breakpoint);
+        }
+    }
+
+    @Override
+    public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+        if(breakpoint instanceof ITransformationBreakpoint){
+            breakpoints.remove(breakpoint);
+            debugger.removeBreakpoint((ITransformationBreakpoint) breakpoint);
+        }
+    }
+
+    @Override
+    public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {}
+        
+    
 }
+
+
