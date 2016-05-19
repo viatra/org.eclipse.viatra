@@ -424,6 +424,8 @@
     </setupTask>
     <stream
         name="master"/>
+    <stream
+        name="1.2-maintenance"/>
     <description>Viatra query and transformation framework</description>
   </project>
   <project name="tooling"
@@ -496,6 +498,8 @@
     </setupTask>
     <stream
         name="master"/>
+    <stream
+        name="1.2-maintenance"/>
     <description>Design space exploration for VIATRA</description>
   </project>
   <project name="cep"
@@ -552,6 +556,8 @@
     </setupTask>
     <stream
         name="master"/>
+    <stream
+        name="1.2-maintenance"/>
     <description>Complex Event Processing for VIATRA</description>
   </project>
   <project name="xcore"
@@ -620,6 +626,8 @@
     </setupTask>
     <stream
         name="master"/>
+    <stream
+        name="1.2-maintenance"/>
     <description></description>
   </project>
   <project name="mylyn"
