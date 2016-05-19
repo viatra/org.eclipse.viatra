@@ -152,8 +152,7 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
 
     @Override
     public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
-        // TODO
-        //Not supported yet
+
     }
     
     //IDisconnect
@@ -191,14 +190,14 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
         }
     }
     
-    protected void requestTermination() {
+    protected void requestTermination() throws DebugException {
         if(threadsTerminated()){
             try {
                 launch.terminate();
                 terminated = true;
                 fireTerminateEvent();
             } catch (DebugException e) {
-                e.printStackTrace();
+                throw e;
             }
         }
     }

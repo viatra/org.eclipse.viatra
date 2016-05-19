@@ -13,36 +13,27 @@ package org.eclipse.viatra.transformation.debug.ui.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
 import org.eclipse.viatra.transformation.debug.ui.util.DebugUIUtil;
-import org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
-public class SelectNextActivationHandler extends AbstractHandler{
+public class SelectNextActivationHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    AdaptableTransformationBrowser view = (AdaptableTransformationBrowser) PlatformUI.getWorkbench()
-                            .getActiveWorkbenchWindow().getActivePage().showView(AdaptableTransformationBrowser.ID);
-                    Object selection = view.getSelection();
-                    if (selection instanceof Activation<?>) {
-                        TransformationThread thread = DebugUIUtil.getActivationThread((Activation<?>) selection);
-                        if(thread!=null){
-                            thread.setNextActivation((Activation<?>) selection);
-                        }
-                    }
 
-                } catch (PartInitException e) {
-                    e.printStackTrace();
-                }
+        ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+        if (selection instanceof IStructuredSelection
+                && ((IStructuredSelection) selection).getFirstElement() instanceof Activation<?>) {
+            TransformationThread thread = DebugUIUtil
+                    .getActivationThread((Activation<?>) ((IStructuredSelection) selection).getFirstElement());
+            if (thread != null) {
+                thread.setNextActivation((Activation<?>) selection);
             }
-        });
+        }
+
         return null;
     }
 

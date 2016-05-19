@@ -67,7 +67,6 @@ public class AdaptableEVMDoubleClickListener implements IDoubleClickListener {
                         fullyQualifiedName = type.getFullyQualifiedName();
                         projectName = type.getJavaProject().getElementName();
                     }
-
                     ILaunchConfigurationWorkingCopy workingCopy = launchConfigurationType.newInstance(null, vm.getIdentifier());
                     
                     workingCopy.setAttribute(TransformationLaunchConfigurationDelegate.ADAPTABLE_EVM_ATTR,
@@ -76,7 +75,8 @@ public class AdaptableEVMDoubleClickListener implements IDoubleClickListener {
                             fullyQualifiedName);
                     workingCopy.setAttribute(TransformationLaunchConfigurationDelegate.PROJECT_NAME,
                             projectName);
-
+                    
+                    
                     DebugUITools.launch(workingCopy, "debug");
                     
                     TransformationThreadFactory.getInstance().registerListener(view, vm.getIdentifier());

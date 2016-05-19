@@ -21,7 +21,8 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
  */
 public interface ITransformationBreakpoint extends IBreakpoint{
     public static final String NON_PERSISTENT = TransformationDebugElement.MODEL_ID;
-    public static final String PERSISTENT = TransformationDebugElement.MODEL_ID+".persistent";
+    public static final String RULE = "org.eclipse.viatra.transformation.debug.model.rule";
+    public static final String CONDITIONAL = "org.eclipse.viatra.transformation.debug.model.conditional";
     /**
      * Method definition that returns true if the execution of the transformation should be halted
      * 

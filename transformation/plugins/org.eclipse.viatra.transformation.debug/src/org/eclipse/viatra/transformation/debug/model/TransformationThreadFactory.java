@@ -11,6 +11,7 @@
 package org.eclipse.viatra.transformation.debug.model;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
@@ -49,35 +50,35 @@ public class TransformationThreadFactory {
         return thread;
     }
     
-    public TransformationThread getTransformationThread(String id){
+    public TransformationThread getTransformationThread(String id) throws DebugException{
         for (TransformationThread thread : threads) {
             try {
                 if(thread.getName().equals(id)){
                     return thread;
                 }
             } catch (DebugException e) {
-                e.printStackTrace();
+                throw e;
             }
         }
         return null;
     }
-    
-    public List<TransformationThread> getTransformationThreads(){
-        return threads;
-    }
-    
+        
     public void deleteTransformationThread(TransformationThread thread){
         if(threads.contains(thread)){
             threads.remove(thread);
         }
     }
     
-    public void registerListener(ITransformationStateListener listener, String id){
-        TransformationThread transformationThread = getTransformationThread(id);
-        if(transformationThread != null){
-            transformationThread.registerTransformationStateListener(listener);
+    public void registerListener(ITransformationStateListener listener, String id) throws NoSuchElementException, DebugException{
+        try {
+            TransformationThread transformationThread = getTransformationThread(id);
+            if(transformationThread != null){
+                transformationThread.registerTransformationStateListener(listener);
+            }
+            listenersToAdd.put(id, listener);
+        } catch (NoSuchElementException | DebugException e) {
+            throw e;
         }
-        listenersToAdd.put(id, listener);
     }
     
     public void unRegisterListener(ITransformationStateListener listener){
@@ -87,6 +88,10 @@ public class TransformationThreadFactory {
         for(String id : listenersToAdd.keySet()){
             listenersToAdd.remove(id, listener);
         }
+    }
+    
+    public List<TransformationThread> getTransformationThreads(){
+        return threads;
     }
     
 }

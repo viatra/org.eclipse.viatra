@@ -8,15 +8,15 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  */
-package org.eclipse.viatra.transformation.debug.ui.util;
+package org.eclipse.viatra.transformation.debug.util;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.EMFPatternLanguageExecutableExtensionFactory;
 import org.osgi.framework.Bundle;
 
-public class DebugQueryLanguageExecutableExtensionFactory extends EMFPatternLanguageExecutableExtensionFactory{
+public class DebugExecutableExtensionFactory extends EMFPatternLanguageExecutableExtensionFactory{
     @Override
     protected Bundle getBundle() {
-        return Platform.getBundle("org.eclipse.viatra.transformation.debug.ui");
+        return Platform.getBundle("org.eclipse.viatra.transformation.debug");
     }
 }

@@ -29,6 +29,7 @@ public class ConditionalBreakpointDialog extends ResizableDialog{
     private Injector injector;
     private static final String TITLE = "Define VIATRA Transformation Conditional Breakpoint Query";
     private EmbeddedEditorModelAccess model; 
+    private String result;
 
     protected ConditionalBreakpointDialog(Shell parentShell, Injector injector) {
         super(parentShell, null);
@@ -66,9 +67,7 @@ public class ConditionalBreakpointDialog extends ResizableDialog{
     
     @Override
     protected void okPressed() {
-        model.getEditablePart();
-        
-        //Do stuff here
+        result = model.getEditablePart();
         super.okPressed();
     }
     
@@ -78,5 +77,10 @@ public class ConditionalBreakpointDialog extends ResizableDialog{
         newShell.setText(TITLE);
         newShell.setImage(ResourceManager.getPluginImage("org.eclipse.viatra.transformation.debug.ui","icons/rsz_viatra_logo.png"));
     }
+    
+    public String getResults(){
+        return result;
+    }
+    
     
 }

@@ -12,19 +12,20 @@ package org.eclipse.viatra.transformation.debug;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
 public interface ITransformationDebugListener {
-    public void started();
+    public void started() throws Exception;
     
     public void suspended();
     
     public void breakpointHit(ITransformationBreakpoint breakpoint);
     
-    public void terminated();
+    public void terminated() throws CoreException;
     
     public void conflictSetChanged(Set<Activation<?>> nextActivations, Set<Activation<?>> conflictingActivations);
     
