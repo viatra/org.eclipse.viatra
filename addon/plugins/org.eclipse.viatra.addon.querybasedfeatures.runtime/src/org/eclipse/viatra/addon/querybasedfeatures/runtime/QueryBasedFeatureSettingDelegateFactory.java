@@ -11,17 +11,23 @@
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.ECollections;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EStructuralFeature.Internal.SettingDelegate;
 import org.eclipse.emf.ecore.EStructuralFeature.Internal.SettingDelegate.Factory;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.BasicSettingDelegate;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.addon.querybasedfeatures.runtime.handler.QueryBasedFeatures;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -34,10 +40,12 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.extensibility.QuerySpecificationRegistry;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * @author Abel Hegedus
@@ -85,6 +93,30 @@ public class QueryBasedFeatureSettingDelegateFactory implements Factory {
         } else {
             return AdvancedViatraQueryEngine.from(ViatraQueryEngine.on(new EMFScope(notifier)));
         }
+    }
+    
+    /**
+     * 
+     * Returns the setting delegate created by EMF for a query based feature. Users can call this method for query based
+     * features to manually initialize the QBF without having a specific object that has this feature.
+     * 
+     * Call {@link QueryBasedFeatureSettingDelegate#initializeSettingDelegate(Notifier)} with the resource set on the
+     * returned value for initialization.
+     * 
+     * @param eStructuralFeature
+     * @return the delegate wrapped in optional or absent if it is null or not a query based feature
+     * @since 1.3
+     */
+    public Optional<QueryBasedFeatureSettingDelegate> getSettingDelegate(EStructuralFeature eStructuralFeature) {
+        QueryBasedFeatureSettingDelegate settingDelegate = null;
+        if(eStructuralFeature instanceof EStructuralFeature.Internal) {
+            EStructuralFeature.Internal internalFeature = (EStructuralFeature.Internal) eStructuralFeature;
+            SettingDelegate delegate = internalFeature.getSettingDelegate();
+            if(delegate instanceof QueryBasedFeatureSettingDelegate) {
+                settingDelegate = (QueryBasedFeatureSettingDelegate) delegate;
+            }
+        }
+        return Optional.fromNullable(settingDelegate);
     }
     
     @Override

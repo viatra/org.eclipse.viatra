@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.querybasedfeatures.runtime;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,6 +23,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.BasicSettingDelegate;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -140,6 +143,30 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
             notifierForSource = QueryBasedFeatureHelper.prepareNotifierForSource(owner);    
         }
                 
+        QueryBasedFeature queryBasedFeature = initializeSettingDelegateInternal(notifierForSource);
+
+        return queryBasedFeature.getValue(owner);
+    }
+    
+    /**
+     * 
+     * Initializes the query based feature setting delegate using the given notifier as the root of the query engine
+     * base index. This is usually the {@link ResourceSet} unless you know what you are doing.
+     * 
+     * @param rootNotifier
+     *            the root of the indexing for the matcher driving the feature
+     * @since 1.3
+     */
+    public void initializeSettingDelegate(Notifier rootNotifier) {
+        checkArgument(rootNotifier != null, "Notifier cannot be null");
+        initializeSettingDelegateInternal(rootNotifier);
+    }
+
+    /**
+     * @param notifierForSource
+     * @return
+     */
+    private QueryBasedFeature initializeSettingDelegateInternal(Notifier notifierForSource) {
         AdvancedViatraQueryEngine engine = null;
         try {
             engine = delegateFactory.getEngineForNotifier(notifierForSource, dynamicEMFMode);
@@ -160,8 +187,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         if (!queryBasedFeature.isInitialized()) {
             initializeQueryBasedFeature(engine, queryBasedFeature);
         }
-
-        return queryBasedFeature.getValue(owner);
+        return queryBasedFeature;
     }
 
 	private void initializeQueryBasedFeature(AdvancedViatraQueryEngine engine, QueryBasedFeature queryBasedFeature) {
