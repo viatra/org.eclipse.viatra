@@ -141,10 +141,8 @@ public class EvolutionaryStrategy implements IStrategy {
                     TrajectoryFitness parent1 = parentSelectionStrategy.getNextParent();
                     TrajectoryFitness parent2 = parentSelectionStrategy.getNextParent();
                     TrajectoryFitness[] children = crossover.mutate(parent1, parent2, context);
-                    if (children[0] != null) {
+                    if (children != null) {
                         childPopulation.add(children[0]);
-                    }
-                    if (children[1] != null) {
                         childPopulation.add(children[1]);
                     }
                 }
