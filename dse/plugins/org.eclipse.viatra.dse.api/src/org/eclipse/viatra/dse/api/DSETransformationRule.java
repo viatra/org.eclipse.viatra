@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
-import java.util.Map;
-
 import org.eclipse.viatra.query.runtime.api.IMatchProcessor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
@@ -36,10 +34,6 @@ import com.google.common.base.Preconditions;
 public class DSETransformationRule<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> extends
         BatchTransformationRule<Match, Matcher> {
 
-    public interface ActivationCostProcessor<Match> {
-        public Map<String, Double> process(Match match);
-    }
-    
     public DSETransformationRule(String name, IQuerySpecification<Matcher> querySpec,
             IMatchProcessor<Match> action) {
         super(name, querySpec, BatchTransformationRule.STATELESS_RULE_LIFECYCLE, action);
@@ -53,24 +47,6 @@ public class DSETransformationRule<Match extends IPatternMatch, Matcher extends 
     public DSETransformationRule(IQuerySpecification<Matcher> querySpec,
             IMatchProcessor<Match> action) {
         this(querySpec.getFullyQualifiedName(), querySpec, action);
-    }
-
-    @Override
-    public int hashCode() {
-        return getPrecondition().getFullyQualifiedName().hashCode();
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof DSETransformationRule<?, ?>) {
-            IQuerySpecification<?> precondition2 = ((DSETransformationRule<?,?>) obj).getPrecondition();
-            return getPrecondition().getFullyQualifiedName().equals(precondition2.getFullyQualifiedName());
-        } else {
-            return false;
-        }
     }
 
 }

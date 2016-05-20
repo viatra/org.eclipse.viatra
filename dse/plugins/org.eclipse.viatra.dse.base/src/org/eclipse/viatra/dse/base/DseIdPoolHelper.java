@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.viatra.dse.api.DSETransformationRule;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 public enum DseIdPoolHelper {
 
@@ -22,10 +22,10 @@ public enum DseIdPoolHelper {
 
     public static class IdProvider {
 
-        private final DSETransformationRule<?, ?> rule;
-        private List<DSETransformationRule<?, ?>> rulesTrajectory;
+        private final BatchTransformationRule<?, ?> rule;
+        private List<BatchTransformationRule<?, ?>> rulesTrajectory;
 
-        public IdProvider(ThreadContext context, DSETransformationRule<?, ?> rule) {
+        public IdProvider(ThreadContext context, BatchTransformationRule<?, ?> rule) {
             this.rule = rule;
 
             rulesTrajectory = context.getDesignSpaceManager().getTrajectoryInfo().getRules();
@@ -33,7 +33,7 @@ public enum DseIdPoolHelper {
 
         public int getId() {
             int nextId = 0;
-            for (DSETransformationRule<?, ?> r : rulesTrajectory) {
+            for (BatchTransformationRule<?, ?> r : rulesTrajectory) {
                 if (r.equals(this.rule)) {
                     nextId++;
                 }
@@ -43,12 +43,12 @@ public enum DseIdPoolHelper {
 
     }
 
-    private ConcurrentHashMap<Thread, HashMap<DSETransformationRule<?, ?>, IdProvider>> idProviders = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Thread, HashMap<BatchTransformationRule<?, ?>, IdProvider>> idProviders = new ConcurrentHashMap<>();
     private AtomicInteger fallBackId = new AtomicInteger();
 
-    public int getId(DSETransformationRule<?, ?> rule) {
+    public int getId(BatchTransformationRule<?, ?> rule) {
         Thread currentThread = Thread.currentThread();
-        HashMap<DSETransformationRule<?, ?>, IdProvider> ruleMap = idProviders.get(currentThread);
+        HashMap<BatchTransformationRule<?, ?>, IdProvider> ruleMap = idProviders.get(currentThread);
         if (ruleMap == null) {
             return fallBackId.getAndIncrement();
         }
@@ -58,8 +58,8 @@ public enum DseIdPoolHelper {
 
     public void registerRules(ThreadContext context) {
         Thread currentThread = Thread.currentThread();
-        HashMap<DSETransformationRule<?, ?>, IdProvider> ruleMap = new HashMap<>();
-        for (DSETransformationRule<?, ?> rule : context.getGlobalContext().getTransformations()) {
+        HashMap<BatchTransformationRule<?, ?>, IdProvider> ruleMap = new HashMap<>();
+        for (BatchTransformationRule<?, ?> rule : context.getGlobalContext().getTransformations()) {
             IdProvider idProvider = new IdProvider(context, rule);
             ruleMap.put(rule, idProvider);
         }

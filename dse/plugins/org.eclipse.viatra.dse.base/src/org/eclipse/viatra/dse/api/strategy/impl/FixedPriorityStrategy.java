@@ -18,12 +18,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.collect.Lists;
 
@@ -36,7 +36,7 @@ public class FixedPriorityStrategy implements IStrategy {
     private SolutionStore solutionStore;
 
     private Logger logger = Logger.getLogger(getClass());
-    private Map<DSETransformationRule<?, ?>, Integer> priorities = new HashMap<DSETransformationRule<?, ?>, Integer>();
+    private Map<BatchTransformationRule<?, ?>, Integer> priorities = new HashMap<BatchTransformationRule<?, ?>, Integer>();
 
     private Random random = new Random();
     private Map<Object, List<Object>> bestPriorityInState = new HashMap<>();
@@ -66,12 +66,12 @@ public class FixedPriorityStrategy implements IStrategy {
      *            The priority of the rule.
      * @return The actual instance to enable a builder pattern like usage.
      */
-    public FixedPriorityStrategy withRulePriority(DSETransformationRule<?, ?> rule, int priority) {
+    public FixedPriorityStrategy withRulePriority(BatchTransformationRule<?, ?> rule, int priority) {
         priorities.put(rule, priority);
         return this;
     }
 
-    public Map<DSETransformationRule<?, ?>, Integer> getPriorities() {
+    public Map<BatchTransformationRule<?, ?>, Integer> getPriorities() {
         return priorities;
     }
 

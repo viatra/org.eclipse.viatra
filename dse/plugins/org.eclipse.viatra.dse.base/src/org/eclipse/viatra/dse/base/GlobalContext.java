@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
@@ -36,6 +35,7 @@ import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.collect.ImmutableList;
 
@@ -68,7 +68,7 @@ public class GlobalContext {
     private AtomicBoolean firstThreadContextInited = new AtomicBoolean(false);
     private AtomicBoolean firstThreadContextIniting = new AtomicBoolean(false);
 
-    private Map<RuleSpecification<?>, DSETransformationRule<?,?>> specificationRuleMap;
+    private Map<RuleSpecification<?>, BatchTransformationRule<?,?>> specificationRuleMap;
 
     /**
      * The DesignSpaceExplorer's thread.
@@ -97,7 +97,7 @@ public class GlobalContext {
 
             if (specificationRuleMap == null) {
                 specificationRuleMap = new HashMap<>();
-                for (DSETransformationRule<?,?> rule : transformations) {
+                for (BatchTransformationRule<?,?> rule : transformations) {
                     specificationRuleMap.put(rule.getRuleSpecification(), rule);
                 }
             }
@@ -218,7 +218,7 @@ public class GlobalContext {
     private List<IObjective> objectives = new ArrayList<IObjective>();
     private IObjective[][] leveledObjectives;
     private List<IGlobalConstraint> globalConstraints = new ArrayList<IGlobalConstraint>();
-    private Set<DSETransformationRule<?, ?>> transformations = new HashSet<DSETransformationRule<?, ?>>();
+    private Set<BatchTransformationRule<?, ?>> transformations = new HashSet<BatchTransformationRule<?, ?>>();
     private IStateCoderFactory stateCoderFactory;
     private SolutionStore solutionStore = new SolutionStore();
     private Object SharedObject;
@@ -289,11 +289,11 @@ public class GlobalContext {
         this.stateCoderFactory = stateCoderFactory;
     }
 
-    public Set<DSETransformationRule<?, ?>> getTransformations() {
+    public Set<BatchTransformationRule<?, ?>> getTransformations() {
         return transformations;
     }
 
-    public void setTransformations(Set<DSETransformationRule<?, ?>> transformations) {
+    public void setTransformations(Set<BatchTransformationRule<?, ?>> transformations) {
         this.transformations = transformations;
     }
 
@@ -361,7 +361,7 @@ public class GlobalContext {
         return solutionStore;
     }
 
-    public Map<RuleSpecification<?>, DSETransformationRule<?, ?>> getSpecificationRuleMap() {
+    public Map<RuleSpecification<?>, BatchTransformationRule<?, ?>> getSpecificationRuleMap() {
         return specificationRuleMap;
     }
 }

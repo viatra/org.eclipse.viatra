@@ -23,7 +23,6 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.ITransition;
@@ -37,6 +36,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -62,8 +62,8 @@ public class DesignSpaceManager {
     private Logger logger = Logger.getLogger(this.getClass());
 
     private boolean isNewState = false;
-    private Map<DSETransformationRule<?, ?>, ActivationFitnessProcessor> activationFitnessProcessors;
-    private Map<DSETransformationRule<?, ?>, String> activationFitnessProcessorNames;
+    private Map<BatchTransformationRule<?, ?>, ActivationFitnessProcessor> activationFitnessProcessors;
+    private Map<BatchTransformationRule<?, ?>, String> activationFitnessProcessorNames;
     private ThreadContext context;
 
     private BiMap<Activation<?>, Object> activationIds;
@@ -132,7 +132,7 @@ public class DesignSpaceManager {
             return false;
         }
 
-        DSETransformationRule<?, ?> rule = getRuleByActivation(activation);
+        BatchTransformationRule<?, ?> rule = getRuleByActivation(activation);
 
         Map<String, Double> measureCosts = null;
         if (activationFitnessProcessors != null && activationFitnessProcessors.containsKey(rule)) {
@@ -193,7 +193,7 @@ public class DesignSpaceManager {
                 break;
             }
 
-            DSETransformationRule<?, ?> rule = getRuleByActivation(activation);
+            BatchTransformationRule<?, ?> rule = getRuleByActivation(activation);
 
             Map<String, Double> measureCosts = null;
             if (activationFitnessProcessors != null && activationFitnessProcessors.containsKey(rule)) {
@@ -235,11 +235,11 @@ public class DesignSpaceManager {
         return activation;
     }
     
-    public DSETransformationRule<?, ?> getRuleByActivation(Activation<?> activation) {
+    public BatchTransformationRule<?, ?> getRuleByActivation(Activation<?> activation) {
         return context.getGlobalContext().getSpecificationRuleMap().get(activation.getInstance().getSpecification());
     }
 
-    public DSETransformationRule<?, ?> getRuleByActivationId(Object activationId) {
+    public BatchTransformationRule<?, ?> getRuleByActivationId(Object activationId) {
         return getRuleByActivation(getActivationById(activationId));
     }
     
@@ -402,11 +402,11 @@ public class DesignSpaceManager {
         }
     }
 
-    public void registerActivationCostProcessor(String name, DSETransformationRule<?, ?> rule,
+    public void registerActivationCostProcessor(String name, BatchTransformationRule<?, ?> rule,
             ActivationFitnessProcessor activationFitnessProcessor) {
         if (activationFitnessProcessors == null || activationFitnessProcessorNames == null) {
-            activationFitnessProcessors = new HashMap<DSETransformationRule<?, ?>, ActivationFitnessProcessor>();
-            activationFitnessProcessorNames = new HashMap<DSETransformationRule<?, ?>, String>();
+            activationFitnessProcessors = new HashMap<BatchTransformationRule<?, ?>, ActivationFitnessProcessor>();
+            activationFitnessProcessorNames = new HashMap<BatchTransformationRule<?, ?>, String>();
         }
         activationFitnessProcessors.put(rule, activationFitnessProcessor);
         activationFitnessProcessorNames.put(rule, name);

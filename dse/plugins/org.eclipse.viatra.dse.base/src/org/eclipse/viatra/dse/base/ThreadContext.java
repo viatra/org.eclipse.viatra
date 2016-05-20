@@ -17,21 +17,22 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 import org.eclipse.viatra.dse.util.EMFHelper;
+import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.specific.RuleEngines;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 /**
  * This class holds all the information that is related to a single processing thread of the DesignSpaceExploration
@@ -78,7 +79,6 @@ public class ThreadContext {
         this.globalContext = globalContext;
         this.strategy = strategy;
         this.model = model;
-        this.domain = EMFHelper.createEditingDomain(model);
     }
 
     /**
@@ -106,28 +106,17 @@ public class ThreadContext {
         // prohibit re-initialization
         checkArgument(!inited.getAndSet(true), "This Thread context has been initialized already!");
 
-
         try {
             // initialize query engine
             final EMFScope scope = new EMFScope(model);
             queryEngine = ViatraQueryEngine.on(scope);
+            ruleEngine = RuleEngines.createViatraQueryRuleEngine(queryEngine);
+            for (BatchTransformationRule<?, ?> tr : globalContext.getTransformations()) {
+                ruleEngine.addRule(tr.getRuleSpecification(), (EventFilter<IPatternMatch>) tr.getFilter());
+            }
         } catch (ViatraQueryException e) {
             throw new DSEException("Failed to create unmanaged ViatraQueryEngine on the model.", e);
         }
-
-        // initialize RuleEngine
-        ruleEngine = RuleEngines.createViatraQueryRuleEngine(queryEngine);
-
-        ChangeCommand addRuleCommand = new ChangeCommand(model) {
-            @Override
-            protected void doExecute() {
-                // add rules to the RuleEngine
-                for (DSETransformationRule<?, ?> tr : globalContext.getTransformations()) {
-                    ruleEngine.addRule(tr.getRuleSpecification());
-                }
-            }
-        };
-        domain.getCommandStack().execute(addRuleCommand);
 
         if (isFirstThread) {
 
@@ -155,6 +144,7 @@ public class ThreadContext {
 
         }
         // create the thread specific DesignSpaceManager
+        this.domain = EMFHelper.createEditingDomain(model);
         designSpaceManager = new DesignSpaceManager(this, model, domain, globalContext.getStateCoderFactory(),
                 globalContext.getDesignSpace(), ruleEngine, queryEngine);
 

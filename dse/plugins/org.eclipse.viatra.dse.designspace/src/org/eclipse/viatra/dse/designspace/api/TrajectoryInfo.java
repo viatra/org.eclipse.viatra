@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.viatra.dse.api.DSEException;
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.base.Preconditions;
 
@@ -26,8 +26,8 @@ public class TrajectoryInfo implements Cloneable {
 
     private final List<Object> trajectory;
     private final List<Object> trajectoryView;
-    private final List<DSETransformationRule<?, ?>> rules;
-    private final List<DSETransformationRule<?, ?>> rulesView;
+    private final List<BatchTransformationRule<?, ?>> rules;
+    private final List<BatchTransformationRule<?, ?>> rulesView;
     private final List<Object> stateIds;
     private final List<Object> stateIdsView;
     private final List<Map<String, Double>> measuredCosts;
@@ -47,7 +47,7 @@ public class TrajectoryInfo implements Cloneable {
         rulesView = Collections.unmodifiableList(rules);
     }
 
-    protected TrajectoryInfo(List<Object> stateIds, List<Object> trajectory, List<DSETransformationRule<?, ?>> rules, List<Map<String, Double>> measuredCosts) {
+    protected TrajectoryInfo(List<Object> stateIds, List<Object> trajectory, List<BatchTransformationRule<?, ?>> rules, List<Map<String, Double>> measuredCosts) {
 
         this.stateIds = new ArrayList<>(stateIds);
         this.trajectory = new ArrayList<>(trajectory);
@@ -58,7 +58,7 @@ public class TrajectoryInfo implements Cloneable {
         this.measuredCosts = new ArrayList<>(measuredCosts);
     }
 
-    public void addStep(Object activationId, DSETransformationRule<?, ?> rule, Object newStateId, Map<String, Double> measuredCosts) {
+    public void addStep(Object activationId, BatchTransformationRule<?, ?> rule, Object newStateId, Map<String, Double> measuredCosts) {
         stateIds.add(newStateId);
         trajectory.add(activationId);
         rules.add(rule);
@@ -102,7 +102,7 @@ public class TrajectoryInfo implements Cloneable {
         return stateIdsView;
     }
 
-    public List<DSETransformationRule<?, ?>> getRules() {
+    public List<BatchTransformationRule<?, ?>> getRules() {
         return rulesView;
     }
 
@@ -117,7 +117,7 @@ public class TrajectoryInfo implements Cloneable {
     public SolutionTrajectory createSolutionTrajectory(final IStateCoderFactory stateCoderFactory) {
 
         List<Object> activationIds = new ArrayList<>(trajectory);
-        List<DSETransformationRule<?, ?>> rules = new ArrayList<>(this.rules);
+        List<BatchTransformationRule<?, ?>> rules = new ArrayList<>(this.rules);
 
         return new SolutionTrajectory(activationIds, rules, stateCoderFactory);
     }

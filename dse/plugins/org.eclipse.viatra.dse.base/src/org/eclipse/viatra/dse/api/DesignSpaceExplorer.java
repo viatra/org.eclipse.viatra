@@ -38,6 +38,7 @@ import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecoding.simple.SimpleStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 /**
  * <p>
@@ -150,14 +151,14 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Adds a {@link DSETransformationRule}.
+     * Adds a {@link BatchTransformationRule}.
      * 
      * @param rule
      *            The transformationRule.
      */
-    public void addTransformationRule(DSETransformationRule<?, ?> rule) {
+    public void addTransformationRule(BatchTransformationRule<?, ?> rule) {
         checkArgument(rule != null);
-        for (DSETransformationRule<?, ?> rule2 : globalContext.getTransformations()) {
+        for (BatchTransformationRule<?, ?> rule2 : globalContext.getTransformations()) {
             if (rule.getPrecondition().equals(rule2.getPrecondition())) {
                 throw new DSEException(
                         "Two transformation rule ("

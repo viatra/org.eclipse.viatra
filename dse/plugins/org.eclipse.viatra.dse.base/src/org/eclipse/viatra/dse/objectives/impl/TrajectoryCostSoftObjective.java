@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.objectives.Comparators;
 import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.base.Preconditions;
 
@@ -35,8 +35,8 @@ import com.google.common.base.Preconditions;
 public class TrajectoryCostSoftObjective extends BaseObjective {
 
     public static final String DEFAULT_NAME = "TrajectoryCostObjective";
-    protected Map<DSETransformationRule<?, ?>, Double> fixCosts;
-    protected Map<DSETransformationRule<?, ?>, ActivationFitnessProcessor> activationCostProcessors;
+    protected Map<BatchTransformationRule<?, ?>, Double> fixCosts;
+    protected Map<BatchTransformationRule<?, ?>, ActivationFitnessProcessor> activationCostProcessors;
     protected double trajectoryLengthWeight = 0.0;
     protected boolean withTrajectoryLengthWeight;
 
@@ -56,10 +56,10 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
      * @param cost
      * @return The actual instance to enable builder pattern like usage.
      */
-    public TrajectoryCostSoftObjective withRuleCost(DSETransformationRule<?, ?> rule, double cost) {
+    public TrajectoryCostSoftObjective withRuleCost(BatchTransformationRule<?, ?> rule, double cost) {
         Preconditions.checkNotNull(rule);
         if (fixCosts == null) {
-            fixCosts = new HashMap<DSETransformationRule<?, ?>, Double>();
+            fixCosts = new HashMap<BatchTransformationRule<?, ?>, Double>();
         }
         Preconditions.checkArgument(!fixCosts.containsKey(rule));
         fixCosts.put(rule, cost);
@@ -73,12 +73,12 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
      * @param activationCostProcessor
      * @return The actual instance to enable builder pattern like usage.
      */
-    public TrajectoryCostSoftObjective withActivationCost(DSETransformationRule<?, ?> rule,
+    public TrajectoryCostSoftObjective withActivationCost(BatchTransformationRule<?, ?> rule,
             ActivationFitnessProcessor activationCostProcessor) {
         Preconditions.checkNotNull(rule);
         Preconditions.checkNotNull(activationCostProcessor);
         if (activationCostProcessors == null) {
-            activationCostProcessors = new HashMap<DSETransformationRule<?, ?>, ActivationFitnessProcessor>();
+            activationCostProcessors = new HashMap<BatchTransformationRule<?, ?>, ActivationFitnessProcessor>();
         }
         Preconditions.checkArgument(!activationCostProcessors.containsKey(rule));
         activationCostProcessors.put(rule, activationCostProcessor);
@@ -104,12 +104,12 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
         List<Object> trajectory = trajectoryInfo.getTrajectory();
-        List<DSETransformationRule<?, ?>> rules = trajectoryInfo.getRules();
+        List<BatchTransformationRule<?, ?>> rules = trajectoryInfo.getRules();
 
         double result = 0;
 
         for (int i = 0; i < trajectory.size(); i++) {
-            DSETransformationRule<?, ?> rule = rules.get(i);
+            BatchTransformationRule<?, ?> rule = rules.get(i);
 
             Double cost = fixCosts.get(rule);
             if (cost != null) {
@@ -135,7 +135,7 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
     @Override
     public void init(ThreadContext context) {
         DesignSpaceManager dsm = context.getDesignSpaceManager();
-        for (Entry<DSETransformationRule<?, ?>, ActivationFitnessProcessor> entry : activationCostProcessors.entrySet()) {
+        for (Entry<BatchTransformationRule<?, ?>, ActivationFitnessProcessor> entry : activationCostProcessors.entrySet()) {
             dsm.registerActivationCostProcessor(name, entry.getKey(), entry.getValue());
         }
     }

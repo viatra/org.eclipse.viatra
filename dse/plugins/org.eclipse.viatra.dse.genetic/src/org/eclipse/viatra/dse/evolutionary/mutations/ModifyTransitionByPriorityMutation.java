@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.eclipse.viatra.dse.api.DSETransformationRule;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -24,13 +23,14 @@ import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 public class ModifyTransitionByPriorityMutation implements IMutation {
 
     private Random rnd = new Random();
-    private Map<DSETransformationRule<?, ?>, Integer> priorities;
+    private Map<BatchTransformationRule<?, ?>, Integer> priorities;
 
-    public ModifyTransitionByPriorityMutation(Map<DSETransformationRule<?, ?>, Integer> priorities) {
+    public ModifyTransitionByPriorityMutation(Map<BatchTransformationRule<?, ?>, Integer> priorities) {
         this.priorities = priorities;
     }
 

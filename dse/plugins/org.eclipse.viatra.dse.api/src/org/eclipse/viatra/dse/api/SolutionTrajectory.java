@@ -29,6 +29,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
@@ -48,7 +49,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 public class SolutionTrajectory {
 
     private final List<Object> activationCodes;
-    private final List<DSETransformationRule<?, ?>> transformationRules;
+    private final List<BatchTransformationRule<?, ?>> transformationRules;
     private final IStateCoderFactory stateCoderFactory;
     private Map<String, Double> fitness;
 
@@ -60,7 +61,7 @@ public class SolutionTrajectory {
     private int currentIndex;
 
     public SolutionTrajectory(final List<Object> activationCodes,
-            final List<DSETransformationRule<?, ?>> transformationRules, final IStateCoderFactory stateCoderFactory) {
+            final List<BatchTransformationRule<?, ?>> transformationRules, final IStateCoderFactory stateCoderFactory) {
         checkNotNull(transformationRules, "Parameter transformationRules cannot be null!");
         checkNotNull(stateCoderFactory, "Parameter stateCoderFactory cannot be null!");
         checkNotNull(activationCodes, "Parameter activations cannot be null!");
@@ -166,7 +167,7 @@ public class SolutionTrajectory {
         checkNotNull(model, "The model cannot be null! Use the setModel method.");
 
         // cast for the ".process(match)" method.
-        DSETransformationRule<?, ?> tr = transformationRules.get(index);
+        BatchTransformationRule<?, ?> tr = transformationRules.get(index);
 
         ViatraQueryMatcher<?> matcher = tr.getPrecondition().getMatcher(engine);
 
@@ -226,7 +227,7 @@ public class SolutionTrajectory {
         return activationCodes;
     }
 
-    public List<DSETransformationRule<?, ?>> getTransformationRules() {
+    public List<BatchTransformationRule<?, ?>> getTransformationRules() {
         return transformationRules;
     }
 
