@@ -38,9 +38,13 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="viatra.copyright.holder"
-      label="Copyright owner (VIATRA)">
-    <description>Copyright owner to be inserted in copyright comment on new files.</description>
+      label="Additional copyright owners (VIATRA)">
+    <description>Copyright owner to be inserted in copyright comment on new files after user name (e.g. employer)</description>
   </setupTask>
+  <setupTask
+      xsi:type="setup:VariableTask"
+      name="viatra.git.branch"
+      value="master"/>
   <setupTask
       xsi:type="setup:CompoundTask"
       name="Eclipse Preferences">
@@ -128,7 +132,7 @@
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
-      predecessor="//@setupTasks.10"
+      predecessor="//@setupTasks.11"
       successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
     <targlet
         name="${scope.project.label}"
@@ -188,7 +192,8 @@
   <setupTask
       xsi:type="git:GitCloneTask"
       id="git.clone.viatra"
-      remoteURI="viatra/org.eclipse.viatra">
+      remoteURI="viatra/org.eclipse.viatra"
+      checkoutBranch="${viatra.git.branch}">
     <annotation
         source="http://www.eclipse.org/oomph/setup/InducedChoices">
       <detail
@@ -239,7 +244,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.11"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -297,7 +302,7 @@
       <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.pregen"
-          predecessor="//@setupTasks.10 //@setupTasks.8"
+          predecessor="//@setupTasks.11 //@setupTasks.9"
           onlyNewProjects="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
@@ -440,7 +445,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.11"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}">
@@ -513,7 +518,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.cep.premetamodelgen"
-        predecessor="//@setupTasks.8"
+        predecessor="//@setupTasks.9"
         onlyNewProjects="true"
         refresh="true">
       <description></description>
@@ -564,7 +569,7 @@
       label="Xcore Integration">
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.11"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -794,7 +799,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.11"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
@@ -816,6 +821,10 @@
     </setupTask>
   </stream>
   <stream name="1.2-maintenance">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="viatra.git.branch"
+        value="1.2-maintenance"/>
     <setupTask
         xsi:type="setup.workingsets:WorkingSetTask">
       <workingSet
@@ -861,7 +870,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.10"
+        predecessor="//@setupTasks.11"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
