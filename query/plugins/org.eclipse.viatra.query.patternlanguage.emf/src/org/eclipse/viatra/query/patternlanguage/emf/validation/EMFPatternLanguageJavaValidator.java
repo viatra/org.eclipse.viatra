@@ -193,7 +193,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 }
             } catch (ResolutionException e) {
                 // EClassifier type = EMFPatternLanguageScopeHelper.calculateExpressionType(expression);
-                error(String.format("Invalid enumeration constant %s", enumType.getName()), value,
+                String name = (enumType == null) ? "<UNKNOWN>" : enumType.getName();
+                error(String.format("Invalid enumeration constant %s", name), value,
                         EMFPatternLanguagePackage.Literals.ENUM_VALUE__ENUMERATION, EMFIssueCodes.INVALID_ENUM_LITERAL);
             }
         }
