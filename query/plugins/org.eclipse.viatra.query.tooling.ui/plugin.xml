@@ -70,8 +70,9 @@
          <view
                id="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
                ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList">
+               relationship="stack"
+               relative="org.eclipse.ui.views.ProblemView"
+               visible="false">
          </view>
          <newWizardShortcut
                id="org.eclipse.viatra.query.tooling.ui.newvqlfile">
@@ -82,11 +83,116 @@
          <view
                id="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
                ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList">
+               relationship="stack"
+               relative="org.eclipse.ui.views.ProblemView"
+               visible="false">
          </view>
          <newWizardShortcut
                id="org.eclipse.viatra.query.tooling.ui.newvqlfile">
+         </newWizardShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <viewShortcut
+               id="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
+         <view
+               id="org.eclipse.jdt.ui.TypeHierarchy"
+               minimized="false"
+               visible="false"
+               relationship="stack"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+         </view>
+         <view
+               id="org.eclipse.jdt.ui.PackageExplorer"
+               minimized="false"
+               visible="false"
+               relationship="stack"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+         </view>
+         <view
+               id="org.eclipse.ui.views.PropertySheet"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ProblemView">
+         </view>
+         <view
+               id="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.PropertySheet">
+         </view>
+         <view
+               id="org.eclipse.amalgam.explorer.contextual.ui.view.ExplorerContextualID"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.PropertySheet">
+         </view>
+         <view
+               id="org.eclipse.ui.console.ConsoleView"
+               minimized="false"
+               visible="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.PropertySheet">
+         </view>
+         <view
+               id="org.eclipse.ui.views.BookmarkView"
+               minimized="false"
+               visible="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.PropertySheet">
+         </view>
+         <view
+               id="org.eclipse.ui.views.ProgressView"
+               minimized="false"
+               visible="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.PropertySheet">
+         </view>
+         <viewShortcut
+               id="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.views.PropertySheet">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.ui.views.ProblemView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.jdt.ui.PackageExplorer">
+         </viewShortcut>
+         <newWizardShortcut
+               id="org.eclipse.viatra.query.tooling.ui.newproject">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.viatra.query.tooling.ui.newvqlfile">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.viatra.query.tooling.ui.newvqlgenmodel">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.xtend.ide.wizards.NewXtendClassWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.xtend.ide.wizards.NewXtendInterfaceWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.jdt.ui.wizards.NewClassCreationWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.pde.ui.NewProjectWizard">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.ui.wizards.new.folder">
+         </newWizardShortcut>
+         <newWizardShortcut
+               id="org.eclipse.ui.wizards.new.file">
          </newWizardShortcut>
       </perspectiveExtension>
    </extension>
@@ -624,5 +730,14 @@
                class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory">
                <parameter name="guicekey" value="org.eclipse.viatra.query.tooling.ui.builder.ViatraQueryProjectBuilder"/>
          </run></builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.viatra.query.tooling.ui.perspective.TransformationDevelopmentPerspective"
+            icon="icons/rsz_viatra_logo.png"
+            id="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective"
+            name="Transformation Development">
+      </perspective>
    </extension>
 </plugin>

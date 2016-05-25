@@ -21,5 +21,14 @@
             </class>
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
+         <newWizardShortcut
+               id="org.eclipse.viatra.transformation.ui.wizards.transformation">
+         </newWizardShortcut>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>

@@ -106,5 +106,21 @@
       		implementation="org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs.TreeViewerSandboxTab">
       </tab>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
+         <view
+               id="org.eclipse.viatra.addon.viewers.tooling.ui.sandbox"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="false">
+         </view>
+         <viewShortcut
+               id="org.eclipse.viatra.addon.viewers.tooling.ui.sandbox">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>

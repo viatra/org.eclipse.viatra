@@ -189,5 +189,30 @@
                type="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
          </propertyTester>
       </extension>
-
+      <extension
+            point="org.eclipse.ui.perspectiveExtensions">
+         <perspectiveExtension
+               targetID="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
+            <view
+                  id="org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser"
+                  minimized="false"
+                  relationship="stack"
+                  relative="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
+                  visible="false">
+            </view>
+            <viewShortcut
+                  id="org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser">
+            </viewShortcut>
+            <view
+                  id="org.eclipse.viatra.transformation.ui.debug.TransformationViewer"
+                  minimized="false"
+                  relationship="stack"
+                  relative="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
+                  visible="false">
+            </view>
+            <viewShortcut
+                  id="org.eclipse.viatra.transformation.ui.debug.TransformationViewer">
+            </viewShortcut>
+         </perspectiveExtension>
+      </extension>
 </plugin>

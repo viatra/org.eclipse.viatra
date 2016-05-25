@@ -157,5 +157,21 @@
             type="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView">
       </propertyTester>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
+         <viewShortcut
+               id="org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView">
+         </viewShortcut>
+         <view
+               id="org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
