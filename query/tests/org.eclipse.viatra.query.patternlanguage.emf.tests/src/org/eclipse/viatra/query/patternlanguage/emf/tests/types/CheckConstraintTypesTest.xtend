@@ -31,132 +31,219 @@ import org.junit.runner.RunWith
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class CheckConstraintTypesTest extends AbstractValidatorTest{
 
-	@Inject
-	ParseHelper<PatternModel> parseHelper
+    @Inject
+    ParseHelper<PatternModel> parseHelper
 
-	@Inject
-	EMFPatternLanguageJavaValidator validator
+    @Inject
+    EMFPatternLanguageJavaValidator validator
 
-	@Inject
-	Injector injector
+    @Inject
+    Injector injector
 
-	ValidatorTester<EMFPatternLanguageJavaValidator> tester
+    ValidatorTester<EMFPatternLanguageJavaValidator> tester
 
-	@Inject extension ValidationTestHelper
+    @Inject extension ValidationTestHelper
 
-	@Before
-	def void initialize() {
-		tester = new ValidatorTester(validator, injector)
-	}
+    @Before
+    def void initialize() {
+        tester = new ValidatorTester(validator, injector)
+    }
 
-	@Test
-	def booleanCheck() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+    @Test
+    def booleanCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(C) = {
-				EBoolean(C);
-				check(C);
-			}
-		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		model.assertNoErrors
-		tester.validate(model).assertOK
-	}
+            pattern name(C) = {
+                EBoolean(C);
+                check(C);
+            }
+        ''')
+//      model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+        model.assertNoErrors
+        tester.validate(model).assertOK
+    }
 
-	@Test
-	def accessEClassInCheck() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+    @Test
+    def accessEClassInCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(C) = {
-				EClass(C);
-				check(C.name.empty);
-			}
-		')
-		tester.validate(model).assertAll(
-			getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
-			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
-		)
-	}
+            pattern name(C) = {
+                EClass(C);
+                check(C.name.empty);
+            }
+        ''')
+        tester.validate(model).assertAll(
+            getErrorCode(EMFIssueCodes::CHECK_CONSTRAINT_SCALAR_VARIABLE_ERROR),
+            getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+    }
 
-	@Test
-	def booleanBlockExpressionCheck() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+    @Test
+    def booleanBlockExpressionCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(C) = {
-				EClass(C);
-				EClass.name(C,S);
-				check({
-					val name = S;
-					name.empty;
-				});
-			}
-		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		model.assertNoErrors
-		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
-	}
+            pattern name(C) = {
+                EClass(C);
+                EClass.name(C,S);
+                check({
+                    val name = S;
+                    name.empty;
+                });
+            }
+        ''')
+//      model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+        model.assertNoErrors
+        tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+    }
 
-	@Test
-	def booleanBlockExpressionWithReturnCheck() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+    @Test
+    def booleanBlockExpressionWithReturnCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(C) = {
-				EClass(C);
-				EClass.name(C,S);
-				check({
-					val name = S;
-					name.empty
-				});
-			}
-		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
-		model.assertNoErrors
-		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
-	}
+            pattern name(C) = {
+                EClass(C);
+                EClass.name(C,S);
+                check({
+                    val name = S;
+                    name.empty
+                });
+            }
+        ''')
+//      model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+        model.assertNoErrors
+        tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+    }
 
-	@Test
-	def nonBooleanCheck() {
-		val model = parseHelper.parse('
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+    @Test
+    def nonBooleanCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern name(S) = {
-				EString(S);
-				check(S.length);
-			}
-		')
-		tester.validate(model).assertError(IssueCodes::CHECK_MUST_BE_BOOLEAN)
-	}
+            pattern name(S) = {
+                EString(S);
+                check(S.length);
+            }
+        ''')
+        tester.validate(model).assertError(IssueCodes::CHECK_MUST_BE_BOOLEAN)
+    }
 
-	@Test
-	def multibodyCheck() {
-		val model = parseHelper.parse('''
-			package org.eclipse.viatra.query.patternlanguage.emf.tests
-			import "http://www.eclipse.org/emf/2002/Ecore"
+    @Test
+    def multibodyCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
 
-			pattern object(obj) {
-				EObject(obj);
-			}
+            pattern object(obj) {
+                EObject(obj);
+            }
 
-			pattern andPrecond(n) {
-				n == c1;
-				c1 == count find object(_);
-				check(c1 >= 2);
-			}/* or {
-				n == c2;
-				c2 == count find object(_);
-				check(c2 >= 2);
-			}*/
-		''')
-		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
-	}
+            pattern andPrecond(n) {
+                n == c1;
+                c1 == count find object(_);
+                check(c1 >= 2);
+            } or {
+                n == c2;
+                c2 == count find object(_);
+                check(c2 >= 2);
+            }
+        ''')
+        tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+    }
+    
+    @Test
+    def constantEvalCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern name(n) = {
+                n == eval(2);
+            }
+        ''')
+        tester.validate(model).assertOK
+    }
+    
+    @Test
+    def parameterizedEvalCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern name(n) = {
+                EString(s);
+                n == eval(s.length);
+            }
+        ''')
+        tester.validate(model).assertOK
+    }
+    
+    @Test
+    def parameterizedEvalCheck2() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern name(s) = {
+                EString(s);
+                4 == eval(s.length);
+            }
+        ''')
+        tester.validate(model).assertOK
+    }
+    
+    @Test
+    def parameterizedEvalCheck3() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern name(s, o : EStructuralFeature) = {
+                EString(s);
+                n == eval(s.length);
+                EStructuralFeature.upperBound(o, n);
+            }
+        ''')
+        tester.validate(model).assertOK
+    }
+    
+    @Test
+    def parameterizedEvalCheck4() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern name(s, o : EStructuralFeature) = {
+                EString(s);
+                n == eval(s.length);
+                EStructuralFeature.upperBound(o, n);
+                check(s.length > 5);
+            }
+        ''')
+        tester.validate(model).assertOK
+    }
+    
+    @Test
+    def incorrectEvalCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern name(s, o : EStructuralFeature) = {
+                EString(s);
+                n == eval(s.length);
+                EStructuralFeature.transient(o, n);
+            }
+        ''')
+        tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+    }
 }
