@@ -25,7 +25,7 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.IRegistrySourceConnector;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
-import org.eclipse.viatra.query.runtime.registry.connector.SimpleRegistrySourceConnector;
+import org.eclipse.viatra.query.runtime.registry.connector.SpecificationMapSourceConnector;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 /**
@@ -45,7 +45,7 @@ public final class QuerySpecificationRegistry {
 
     private static final QuerySpecificationRegistry INSTANCE = new QuerySpecificationRegistry();
      
-    private final SimpleRegistrySourceConnector dynamicSpecificationsConnector;
+    private final SpecificationMapSourceConnector dynamicSpecificationsConnector;
     
     /**
      * @return the singleton instance of the registry
@@ -59,7 +59,7 @@ public final class QuerySpecificationRegistry {
      */
     private QuerySpecificationRegistry() {
         IQuerySpecificationRegistry internalRegistry = org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry.getInstance();
-        this.dynamicSpecificationsConnector = new SimpleRegistrySourceConnector(DYNAMIC_CONNECTOR_ID);
+        this.dynamicSpecificationsConnector = new SpecificationMapSourceConnector(DYNAMIC_CONNECTOR_ID);
         internalRegistry.addSource(dynamicSpecificationsConnector);
     }
 
@@ -73,7 +73,7 @@ public final class QuerySpecificationRegistry {
     /**
      * @return the dynamicSpecificationsConnector that is used internally to register dynamic specifications
      */
-    private SimpleRegistrySourceConnector getDynamicSpecificationsConnector() {
+    private SpecificationMapSourceConnector getDynamicSpecificationsConnector() {
         getInternalRegistry();
         return dynamicSpecificationsConnector;
     }
@@ -104,7 +104,7 @@ public final class QuerySpecificationRegistry {
 
     private void addQuerySpecificationInternal(IQuerySpecificationProvider specificationProvider) {
         String qualifiedName = specificationProvider.getFullyQualifiedName();
-        SimpleRegistrySourceConnector connector = getDynamicSpecificationsConnector();
+        SpecificationMapSourceConnector connector = getDynamicSpecificationsConnector();
         if (!connector.hasQuerySpecificationFQN(qualifiedName)) {
             connector.addQuerySpecificationProvider(specificationProvider);
         } else {
@@ -146,7 +146,7 @@ public final class QuerySpecificationRegistry {
      *            the fully qualified name of the pattern
      */
     private void removeQuerySpecification(String patternFQN) {
-        SimpleRegistrySourceConnector connector = getDynamicSpecificationsConnector();
+        SpecificationMapSourceConnector connector = getDynamicSpecificationsConnector();
         if(connector.hasQuerySpecificationFQN(patternFQN)) {
             connector.removeQuerySpecificationProvider(patternFQN);
         }
@@ -214,7 +214,7 @@ public final class QuerySpecificationRegistry {
     }
     
     /**
-     * Returns the set of query specifications in a given package. query specifications with package names starting with
+     * Returns the set of query specifications in a given package. All query specifications with package names starting with
      * the given package are returned.
      * 
      * @param packageFQN

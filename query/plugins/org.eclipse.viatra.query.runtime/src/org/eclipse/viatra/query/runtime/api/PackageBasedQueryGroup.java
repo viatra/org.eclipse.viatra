@@ -34,22 +34,35 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
     private final Set<IQuerySpecification<?>> querySpecifications = new HashSet<IQuerySpecification<?>>();
     private final String packageName;
     private final boolean includeSubPackages;
-    private IRegistryView view;
-    private SpecificationSetUpdater listener;
 
+    /**
+     * Creates a query group with specifications of a given package from the {@link QuerySpecificationRegistry}. Only
+     * query specifications with the exact package fully qualified name are included.
+     * 
+     * @param packageName
+     *            that contains the specifications
+     */
     public PackageBasedQueryGroup(String packageName) {
         this(packageName, false);
     }
 
+    /**
+     * Creates a query group with specifications of a given package from the {@link QuerySpecificationRegistry}.
+     * 
+     * @param packageName
+     *            that contain the specifications
+     * @param includeSubPackages
+     *            if true all query specifications with package names starting with the given package are included
+     */
     public PackageBasedQueryGroup(String packageName, boolean includeSubPackages) {
         super();
         this.packageName = packageName;
         this.includeSubPackages = includeSubPackages;
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
-        this.view = registry.createView(new PackageNameBasedViewFilter());
-        this.querySpecifications.addAll(this.view.getQueryGroup().getSpecifications());
-        this.listener = new SpecificationSetUpdater();
-        this.view.addViewListener(listener);
+        IRegistryView view = registry.createView(new PackageNameBasedViewFilter());
+        this.querySpecifications.addAll(view.getQueryGroup().getSpecifications());
+        SpecificationSetUpdater listener = new SpecificationSetUpdater();
+        view.addViewListener(listener);
     }
 
     @Override

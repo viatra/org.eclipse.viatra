@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.registry.impl;
 
-import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.Set;
+import java.util.WeakHashMap;
 
-import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
-
-import com.google.common.collect.Sets;
+import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener;
 
 /**
  * Listener implementation that propagates all changes to a set of listeners.
@@ -27,13 +26,13 @@ import com.google.common.collect.Sets;
  */
 public class RegistryChangeMultiplexer implements IRegistryChangeListener {
 
-    private Set<WeakReference<IRegistryChangeListener>> listeners;
+    private Set<IRegistryChangeListener> listeners;
     
     /**
      * Creates a new instance of the multiplexer.
      */
     public RegistryChangeMultiplexer() {
-        this.listeners = Sets.newHashSet();
+        this.listeners = Collections.newSetFromMap(new WeakHashMap<IRegistryChangeListener, Boolean>());
     }
     
     /**
@@ -44,30 +43,20 @@ public class RegistryChangeMultiplexer implements IRegistryChangeListener {
      * @return
      */
     public boolean addListener(IRegistryChangeListener listener) {
-        return listeners.add(new WeakReference<IRegistryChangeListener>(listener));
+        return listeners.add(listener);
     }
     
     @Override
     public void entryAdded(IQuerySpecificationRegistryEntry entry) {
-        for (WeakReference<IRegistryChangeListener> listenerRef : listeners) {
-            IRegistryChangeListener iRegistryChangeListener = listenerRef.get();
-            if(iRegistryChangeListener != null){
-                iRegistryChangeListener.entryAdded(entry);
-            } else {
-                listeners.remove(listenerRef);
-            }
+        for (IRegistryChangeListener listener : listeners) {
+            listener.entryAdded(entry);
         }
     }
 
     @Override
     public void entryRemoved(IQuerySpecificationRegistryEntry entry) {
-        for (WeakReference<IRegistryChangeListener> listenerRef : listeners) {
-            IRegistryChangeListener iRegistryChangeListener = listenerRef.get();
-            if(iRegistryChangeListener != null){
-                iRegistryChangeListener.entryRemoved(entry);
-            } else {
-                listeners.remove(listenerRef);
-            }
+        for (IRegistryChangeListener listener : listeners) {
+            listener.entryRemoved(entry);
         }
     }
 

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.tests.registry;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -28,7 +27,7 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IRegistrySourceConnector;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
-import org.eclipse.viatra.query.runtime.registry.connector.SimpleRegistrySourceConnector;
+import org.eclipse.viatra.query.runtime.registry.connector.SpecificationMapSourceConnector;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -52,7 +51,7 @@ public class QuerySpecificationRegistryTest {
     public void simpleConnectorTest() {
         
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
-        IRegistrySourceConnector connector = new SimpleRegistrySourceConnector("test1");
+        IRegistrySourceConnector connector = new SpecificationMapSourceConnector("test1");
         boolean registerSource = registry.addSource(connector);
         assertTrue(registerSource);
         
@@ -77,7 +76,7 @@ public class QuerySpecificationRegistryTest {
     public void querySpecificationTest() {
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
         
-        SimpleRegistrySourceConnector connector = new SimpleRegistrySourceConnector("test2");
+        SpecificationMapSourceConnector connector = new SpecificationMapSourceConnector("test2");
         IQuerySpecificationProvider mockedProvider = mock(IQuerySpecificationProvider.class);
         when(mockedProvider.getFullyQualifiedName()).thenReturn("testQS");
         IQuerySpecification<ViatraQueryMatcher<? extends IPatternMatch>> mockedSpecification = mock(IQuerySpecification.class);

@@ -31,7 +31,7 @@ import com.google.common.collect.Maps;
  * @since 1.3
  *
  */
-public class SimpleRegistrySourceConnector extends AbstractRegistrySourceConnector {
+public class SpecificationMapSourceConnector extends AbstractRegistrySourceConnector {
 
     private static final String DUPLICATE_MESSAGE = "Duplicate FQN %s cannot be added to connector";
     private Map<String, IQuerySpecificationProvider> specificationProviderMap;
@@ -43,9 +43,40 @@ public class SimpleRegistrySourceConnector extends AbstractRegistrySourceConnect
      * @param identifier
      *            of the newly created connector
      */
-    public SimpleRegistrySourceConnector(String identifier) {
+    public SpecificationMapSourceConnector(String identifier) {
         super(identifier);
         this.specificationProviderMap = Maps.newHashMap();
+    }
+    
+    /**
+     * Creates an instance of the connector with the given identifier and fills it up with the given specification
+     * providers. The identifier should be unique if you want to add it to a registry as a source.
+     * 
+     * @param identifier
+     *            of the newly created connector
+     * @param specificationProviders
+     *            the initial set of specifications in the connector
+     */
+    public SpecificationMapSourceConnector(String identifier, Set<IQuerySpecificationProvider> specificationProviders) {
+        this(identifier);
+        for (IQuerySpecificationProvider provider : specificationProviders) {
+            addQuerySpecificationProvider(provider);
+        }
+    }
+
+    /**
+     * Creates an instance of the connector with the given identifier and fills it up with the specification providers
+     * from the given {@link SpecificationMapSourceConnector}. The identifier should be unique if you want to add it to
+     * a registry as a source.
+     * 
+     * @param identifier
+     *            of the newly created connector
+     * @param connector
+     *            that contains the specifications to copy into the new instance
+     */
+    public SpecificationMapSourceConnector(String identifier, SpecificationMapSourceConnector connector) {
+        this(identifier);
+        this.specificationProviderMap.putAll(connector.specificationProviderMap);
     }
 
     /**

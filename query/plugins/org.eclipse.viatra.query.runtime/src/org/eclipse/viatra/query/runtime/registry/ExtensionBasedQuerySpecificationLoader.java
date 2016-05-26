@@ -122,7 +122,7 @@ public class ExtensionBasedQuerySpecificationLoader {
             
             contributedQueryGroups.put(id, provider);
             contributingPluginOfGroupMap.put(id, contributorName);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             // If there are serious compilation errors in the file loaded by the query registry, an error is thrown
             if (id == null) {
                 id = "undefined in plugin.xml";
