@@ -30,7 +30,8 @@ import com.google.common.collect.Sets;
 public abstract class AbstractRegistrySourceConnector implements IRegistrySourceConnector {
 
     protected Set<IConnectorListener> listeners;
-    protected String identifier;
+    private String identifier;
+    private boolean includeInDefaultViews;
 
     /**
      * Creates an instance of the connector with the given identifier. The identifier should be unique if you want to
@@ -38,17 +39,25 @@ public abstract class AbstractRegistrySourceConnector implements IRegistrySource
      * 
      * @param identifier
      *            of the newly created connector
+     * @param includeInDefaultViews
+     *            true if the specifications in the connector should be included in default views
      */
-    public AbstractRegistrySourceConnector(String identifier) {
+    public AbstractRegistrySourceConnector(String identifier, boolean includeInDefaultViews) {
         super();
         checkNotNull(identifier, "Identifier must not be null!");
         this.identifier = identifier;
+        this.includeInDefaultViews = includeInDefaultViews;
         this.listeners = Sets.newHashSet();
     }
 
     @Override
     public String getIdentifier() {
         return identifier;
+    }
+    
+    @Override
+    public boolean includeSpecificationsInDefaultViews() {
+        return includeInDefaultViews;
     }
 
     @Override

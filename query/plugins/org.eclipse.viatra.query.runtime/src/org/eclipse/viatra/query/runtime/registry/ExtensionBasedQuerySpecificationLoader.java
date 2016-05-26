@@ -170,6 +170,11 @@ public class ExtensionBasedQuerySpecificationLoader {
             checkNotNull(listener, "Listener must not be null!");
             listeners.remove(listener);
         }
+
+        @Override
+        public boolean includeSpecificationsInDefaultViews() {
+            return false;
+        }
     }
 
     /**

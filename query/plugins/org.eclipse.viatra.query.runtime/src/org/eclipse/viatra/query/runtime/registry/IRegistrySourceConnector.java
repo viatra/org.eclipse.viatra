@@ -29,6 +29,12 @@ public interface IRegistrySourceConnector {
     String getIdentifier();
 
     /**
+     * 
+     * @return true if the specifications of the connector should be included in default views
+     */
+    boolean includeSpecificationsInDefaultViews();
+    
+    /**
      * Add a listener to get updates on changes in the query specifications available from the connector. When the
      * listener is added, the connector is expected to call the listener with each existing query specification.
      * 

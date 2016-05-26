@@ -42,9 +42,11 @@ public class SpecificationMapSourceConnector extends AbstractRegistrySourceConne
      * 
      * @param identifier
      *            of the newly created connector
+     * @param includeInDefaultViews
+     *            true if the specifications in the connector should be included in default views
      */
-    public SpecificationMapSourceConnector(String identifier) {
-        super(identifier);
+    public SpecificationMapSourceConnector(String identifier, boolean includeInDefaultViews) {
+        super(identifier, includeInDefaultViews);
         this.specificationProviderMap = Maps.newHashMap();
     }
     
@@ -56,9 +58,11 @@ public class SpecificationMapSourceConnector extends AbstractRegistrySourceConne
      *            of the newly created connector
      * @param specificationProviders
      *            the initial set of specifications in the connector
+     * @param includeInDefaultViews
+     *            true if the specifications in the connector should be included in default views
      */
-    public SpecificationMapSourceConnector(String identifier, Set<IQuerySpecificationProvider> specificationProviders) {
-        this(identifier);
+    public SpecificationMapSourceConnector(String identifier, Set<IQuerySpecificationProvider> specificationProviders, boolean includeInDefaultViews) {
+        this(identifier, includeInDefaultViews);
         for (IQuerySpecificationProvider provider : specificationProviders) {
             addQuerySpecificationProvider(provider);
         }
@@ -73,9 +77,11 @@ public class SpecificationMapSourceConnector extends AbstractRegistrySourceConne
      *            of the newly created connector
      * @param connector
      *            that contains the specifications to copy into the new instance
+     * @param includeInDefaultViews
+     *            true if the specifications in the connector should be included in default views
      */
-    public SpecificationMapSourceConnector(String identifier, SpecificationMapSourceConnector connector) {
-        this(identifier);
+    public SpecificationMapSourceConnector(String identifier, SpecificationMapSourceConnector connector, boolean includeInDefaultViews) {
+        this(identifier, includeInDefaultViews);
         this.specificationProviderMap.putAll(connector.specificationProviderMap);
     }
 

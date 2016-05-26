@@ -42,17 +42,17 @@ public interface IQuerySpecificationRegistry {
     boolean removeSource(IRegistrySourceConnector connector);
 
     /**
-     * Returns a default view instance that contains all query specification entries in the registry. If there are entries with 
-     * the same FQN, only the last added will be included in the view to avoid duplicate FQNs.
-     * 
+     * Returns a default view instance that contains query specification entries that indicate their inclusion in
+     * default views. If there are entries with the same FQN, only the last added will be included in the view to avoid
+     * duplicate FQNs.
      * 
      * @return the default view instance
      */
     IRegistryView getDefaultView();
     
     /**
-     * Creates a view which contains all registered query specifications. This view will also be incrementally updated
-     * on registry changes and accepts listeners to notify on changes.
+     * Creates a view which contains query specification entries that indicate their inclusion in default views. This
+     * view will also be incrementally updated on registry changes and accepts listeners to notify on changes.
      * 
      * @return a new view instance
      */

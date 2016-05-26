@@ -100,7 +100,7 @@ public class ViatraQueryUMLStandaloneSetup {
 	public static void doSetup() throws ViatraQueryException {
 	    // query specification registry
 	    SingletonQueryGroupProvider groupProvider = new SingletonQueryGroupProvider(getQueryGroup());
-        QueryGroupProviderSourceConnector sourceConnector = new QueryGroupProviderSourceConnector(CONNECTOR_ID, groupProvider);
+        QueryGroupProviderSourceConnector sourceConnector = new QueryGroupProviderSourceConnector(CONNECTOR_ID, groupProvider, true);
         QuerySpecificationRegistry.getInstance().addSource(sourceConnector);
 		
         // surrogate queries

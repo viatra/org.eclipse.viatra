@@ -62,7 +62,7 @@ public class QuerySpecificationRegistryImpl implements IQuerySpecificationRegist
         if(sources.containsKey(identifier)){
             return false;
         }
-        RegistrySourceImpl source = new RegistrySourceImpl(identifier, querySpecificationStore);
+        RegistrySourceImpl source = new RegistrySourceImpl(identifier, querySpecificationStore, connector.includeSpecificationsInDefaultViews());
         sources.put(identifier, source);
         connector.addListener(connectorListener);
         logger.debug("Source added: " + source.getIdentifier());

@@ -51,7 +51,7 @@ public class QuerySpecificationRegistryTest {
     public void simpleConnectorTest() {
         
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
-        IRegistrySourceConnector connector = new SpecificationMapSourceConnector("test1");
+        IRegistrySourceConnector connector = new SpecificationMapSourceConnector("test1", false);
         boolean registerSource = registry.addSource(connector);
         assertTrue(registerSource);
         
@@ -76,7 +76,7 @@ public class QuerySpecificationRegistryTest {
     public void querySpecificationTest() {
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
         
-        SpecificationMapSourceConnector connector = new SpecificationMapSourceConnector("test2");
+        SpecificationMapSourceConnector connector = new SpecificationMapSourceConnector("test2", true);
         IQuerySpecificationProvider mockedProvider = mock(IQuerySpecificationProvider.class);
         when(mockedProvider.getFullyQualifiedName()).thenReturn("testQS");
         IQuerySpecification<ViatraQueryMatcher<? extends IPatternMatch>> mockedSpecification = mock(IQuerySpecification.class);

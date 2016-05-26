@@ -52,6 +52,11 @@ public class RegistryEntryImpl implements IQuerySpecificationRegistryEntry {
     }
 
     @Override
+    public boolean includeInDefaultViews() {
+        return getSource().includeEntriesInDefaultViews();
+    }
+
+    @Override
     public String getFullyQualifiedName() {
         return provider.getFullyQualifiedName();
     }

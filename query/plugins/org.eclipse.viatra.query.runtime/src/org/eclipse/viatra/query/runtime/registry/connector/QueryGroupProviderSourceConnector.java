@@ -37,9 +37,11 @@ public class QueryGroupProviderSourceConnector extends AbstractRegistrySourceCon
      *            of the newly created connector
      * @param provider
      *            that contains the query specifications handled by the connector
+     * @param includeInDefaultViews
+     *            true if the specifications in the connector should be included in default views
      */
-    public QueryGroupProviderSourceConnector(String identifier, IQueryGroupProvider provider) {
-        super(identifier);
+    public QueryGroupProviderSourceConnector(String identifier, IQueryGroupProvider provider, boolean includeInDefaultViews) {
+        super(identifier, includeInDefaultViews);
         this.queryGroupProvider = provider;
     }
 
@@ -49,6 +51,8 @@ public class QueryGroupProviderSourceConnector extends AbstractRegistrySourceCon
      * 
      * @param queryGroupProvider
      *            the queryGroupProvider to set
+     * @param includeInDefaultViews
+     *            true if the specifications in the connector should be included in default views
      */
     public void setQueryGroupProvider(IQueryGroupProvider queryGroupProvider) {
         checkNotNull(queryGroupProvider, "Query group provider must not be null!");

@@ -14,7 +14,7 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 
 /**
- * Registry view implementation that considers all specifications relevant.
+ * Registry view implementation that considers specifications relevant if they are included in default views.
  * 
  * @author Abel Hegedus
  *
@@ -32,7 +32,7 @@ public class GlobalRegistryView extends AbstractRegistryView {
     
     @Override
     protected boolean isEntryRelevant(IQuerySpecificationRegistryEntry entry) {
-        return true;
+        return entry.includeInDefaultViews();
     }
 
 }

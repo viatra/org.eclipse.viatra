@@ -59,7 +59,7 @@ public final class QuerySpecificationRegistry {
      */
     private QuerySpecificationRegistry() {
         IQuerySpecificationRegistry internalRegistry = org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry.getInstance();
-        this.dynamicSpecificationsConnector = new SpecificationMapSourceConnector(DYNAMIC_CONNECTOR_ID);
+        this.dynamicSpecificationsConnector = new SpecificationMapSourceConnector(DYNAMIC_CONNECTOR_ID, true);
         internalRegistry.addSource(dynamicSpecificationsConnector);
     }
 
@@ -67,8 +67,6 @@ public final class QuerySpecificationRegistry {
         IQuerySpecificationRegistry internalRegistry = org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry.getInstance();
         return internalRegistry;
     }
-
-    
 
     /**
      * @return the dynamicSpecificationsConnector that is used internally to register dynamic specifications

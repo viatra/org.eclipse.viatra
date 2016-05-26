@@ -62,7 +62,7 @@ public class PackageBasedQueryGroupTest {
         IQuerySpecification<ViatraQueryMatcher<? extends IPatternMatch>> mockedSpecification = mock(IQuerySpecification.class);
         when(mockedProvider.get()).thenReturn(mockedSpecification);
         when(mockedSpecification.getFullyQualifiedName()).thenReturn(fqn);
-        SpecificationMapSourceConnector connector = new SpecificationMapSourceConnector("umlSource", ImmutableSet.of(mockedProvider));
+        SpecificationMapSourceConnector connector = new SpecificationMapSourceConnector("umlSource", ImmutableSet.of(mockedProvider), true);
         QuerySpecificationRegistry.getInstance().addSource(connector);
         
         Set<IQuerySpecification<?>> specifications2 = packageBasedQueryGroup.getSpecifications();

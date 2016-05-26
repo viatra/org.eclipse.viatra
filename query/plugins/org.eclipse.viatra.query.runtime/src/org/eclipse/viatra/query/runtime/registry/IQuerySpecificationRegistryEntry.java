@@ -27,4 +27,8 @@ public interface IQuerySpecificationRegistryEntry extends IQuerySpecificationPro
      */
     String getSourceIdentifier();
 
+    /**
+     * @return true if the entry should be included in default views (created without any filters)
+     */
+    boolean includeInDefaultViews();
 }

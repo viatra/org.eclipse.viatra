@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 public class RegistrySourceImpl {
 
     private String identifier;
+    private boolean includeInDefaultViews;
     private QuerySpecificationStore querySpecificationStore;
     private Map<String, RegistryEntryImpl> fqnToEntryMap;
 
@@ -34,9 +35,12 @@ public class RegistrySourceImpl {
      *            for the source
      * @param querySpecificationStore
      *            that contains this source
+     * @param includeInDefaultViews
+     *            true if the entries of the source should be included in default views
      */
-    public RegistrySourceImpl(String identifier, QuerySpecificationStore querySpecificationStore) {
+    public RegistrySourceImpl(String identifier, QuerySpecificationStore querySpecificationStore, boolean includeInDefaultViews) {
         this.identifier = identifier;
+        this.includeInDefaultViews = includeInDefaultViews;
         this.querySpecificationStore = querySpecificationStore;
         this.fqnToEntryMap = Maps.newTreeMap();
     }
@@ -48,6 +52,13 @@ public class RegistrySourceImpl {
         return identifier;
     }
 
+    /**
+     * @return true if the entries in the source should be included in default views
+     */
+    public boolean includeEntriesInDefaultViews() {
+        return includeInDefaultViews;
+    }
+    
     /**
      * @return the store that contains the source
      */
