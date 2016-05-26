@@ -31,6 +31,7 @@ import com.google.common.base.Preconditions;
  *            A VIATRA Query pattern matcher - left hand side of the rule
  * 
  */
+@Deprecated
 public class DSETransformationRule<Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> extends
         BatchTransformationRule<Match, Matcher> {
 
