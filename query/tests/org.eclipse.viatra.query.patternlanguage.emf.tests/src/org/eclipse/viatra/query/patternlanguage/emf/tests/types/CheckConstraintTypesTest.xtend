@@ -233,6 +233,22 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
     }
     
     @Test
+    def parameterizedEvalCheck5() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern name(s, o : EStructuralFeature) = {
+                check(s.length > 5);
+                EStructuralFeature.upperBound(o, n);
+                n == eval(s.length);
+                EString(s);
+            }
+        ''')
+        tester.validate(model).assertOK
+    }
+    
+    @Test
     def incorrectEvalCheck() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
