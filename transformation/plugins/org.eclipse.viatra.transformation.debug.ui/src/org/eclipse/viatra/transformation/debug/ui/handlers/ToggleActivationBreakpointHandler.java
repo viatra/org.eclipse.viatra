@@ -23,7 +23,6 @@ import org.eclipse.viatra.transformation.debug.model.TransformationThread;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.TransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.ui.util.DebugUIUtil;
-import org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
 public class ToggleActivationBreakpointHandler extends AbstractHandler {
