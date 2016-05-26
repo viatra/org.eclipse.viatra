@@ -173,7 +173,7 @@ public class ExtensionBasedQuerySpecificationLoader {
 
         @Override
         public boolean includeSpecificationsInDefaultViews() {
-            return false;
+            return true;
         }
     }
 
