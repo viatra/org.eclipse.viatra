@@ -272,11 +272,7 @@
           <repository
               url="http://download.eclipse.org/releases/mars"/>
           <repository
-              url="http://download.itemis.com/updates/releases"/>
-          <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
-          <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
         </repositoryList>
@@ -587,11 +583,7 @@
           <repository
               url="http://download.eclipse.org/releases/mars"/>
           <repository
-              url="http://download.itemis.com/updates/releases"/>
-          <repository
               url="http://download.eclipse.org/cbi/updates/license"/>
-          <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
         </repositoryList>
@@ -819,7 +811,7 @@
           <repository
               url="http://download.itemis.com/updates/releases"/>
           <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones"/>
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
         </repositoryList>
       </targlet>
     </setupTask>
