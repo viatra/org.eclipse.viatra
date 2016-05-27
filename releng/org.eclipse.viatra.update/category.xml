@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <stats location="http://download.eclipse.org/stats/">
+   </stats>
    <feature url="features/org.eclipse.viatra.addon.viewers.runtime.zest.feature.source_0.12.1.qualifier.jar" id="org.eclipse.viatra.addon.viewers.runtime.zest.feature.source" version="0.12.1.qualifier">
       <category name="org.eclipse.viatra.addons"/>
    </feature>
@@ -46,4 +48,5 @@
    <category-def name="org.eclipse.viatra.addons" label="VIATRA Addons"/>
    <category-def name="org.eclipse.viatra.integrations" label="VIATRA Integrations"/>
    <category-def name="thirdparty" label="Third party features"/>
+   <repository-reference location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/" enabled="false" />
 </site>
