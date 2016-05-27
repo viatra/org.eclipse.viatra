@@ -48,5 +48,5 @@
    <category-def name="org.eclipse.viatra.addons" label="VIATRA Addons"/>
    <category-def name="org.eclipse.viatra.integrations" label="VIATRA Integrations"/>
    <category-def name="thirdparty" label="Third party features"/>
-   <repository-reference location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/" enabled="false" />
+   <repository-reference location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/" enabled="true" />
 </site>
