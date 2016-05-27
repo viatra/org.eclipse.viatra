@@ -13,6 +13,7 @@
 
    <url>
       <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
+      <discovery label="Xtext Releases" url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
    </url>
 
    <requires>
