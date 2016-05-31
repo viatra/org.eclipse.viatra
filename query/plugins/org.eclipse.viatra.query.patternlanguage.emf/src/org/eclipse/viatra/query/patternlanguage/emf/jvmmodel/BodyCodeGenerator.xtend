@@ -13,8 +13,6 @@ import com.google.common.base.Joiner
 import java.util.Arrays
 import java.util.List
 import org.eclipse.emf.common.util.Enumerator
-import org.eclipse.emf.ecore.EClass
-import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.viatra.query.patternlanguage.emf.specification.XBaseEvaluator
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer
@@ -25,9 +23,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
-import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
-import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator
 import org.eclipse.viatra.query.runtime.matchers.psystem.IValueProvider
@@ -50,7 +45,6 @@ import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
 
-import static extension org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.BodyCodeGenerator.*
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternModelAcceptor
 
 /** 
