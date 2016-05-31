@@ -32,7 +32,7 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class EnumResolutionTest {
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject extension ValidationTestHelper
 	

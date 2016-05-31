@@ -29,7 +29,7 @@ import static org.junit.Assert.*
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class PackageDeclarationTest {
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject extension ValidationTestHelper
 	

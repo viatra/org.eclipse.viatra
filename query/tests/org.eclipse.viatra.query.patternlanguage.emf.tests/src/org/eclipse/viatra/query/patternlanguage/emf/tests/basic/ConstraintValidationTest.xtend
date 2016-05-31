@@ -30,8 +30,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class ConstraintValidationTest extends AbstractValidatorTest {
-		@Inject
-	ParseHelper parseHelper
+	@Inject
+	ParseHelper<PatternModel> parseHelper
 	@Inject
 	EMFPatternLanguageJavaValidator validator
 	@Inject

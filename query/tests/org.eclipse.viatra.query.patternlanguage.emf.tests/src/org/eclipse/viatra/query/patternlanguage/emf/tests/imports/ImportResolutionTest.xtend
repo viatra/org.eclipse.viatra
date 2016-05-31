@@ -29,7 +29,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.helper.EMFPatternLanguageHel
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class ImportResolutionTest {
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject extension ValidationTestHelper
 	
@@ -42,7 +42,7 @@ class ImportResolutionTest {
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		val importDecl = EMFPatternLanguageHelper::getAllPackageImports(model).get(0)
 		val ePackage = importDecl.EPackage
@@ -60,7 +60,7 @@ class ImportResolutionTest {
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		val imports = EMFPatternLanguageHelper::getAllPackageImports(model)
 		var importDecl = imports.get(0)
@@ -82,7 +82,7 @@ class ImportResolutionTest {
 			pattern resolutionTest(Name) = {
 				Pattern(Name2);
 			}
-		') as PatternModel
+		')
 		val importDecl = model.importPackages.packageImport.get(0)
 		importDecl.assertError(EMFPatternLanguagePackage$Literals::PACKAGE_IMPORT,
 			Diagnostic::LINKING_DIAGNOSTIC, "http://nonexisting.package.uri"

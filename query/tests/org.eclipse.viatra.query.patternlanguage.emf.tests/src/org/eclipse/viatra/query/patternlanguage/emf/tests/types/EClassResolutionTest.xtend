@@ -32,7 +32,7 @@ import org.eclipse.emf.ecore.EcorePackage
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class EClassResolutionTest {
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject extension ValidationTestHelper
 	

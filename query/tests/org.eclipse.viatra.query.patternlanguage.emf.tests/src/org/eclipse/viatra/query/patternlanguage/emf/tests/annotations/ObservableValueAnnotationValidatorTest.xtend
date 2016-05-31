@@ -25,14 +25,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.viatra.addon.databinding.runtime.util.validation.ObservableValuePatternValidator
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.AnnotationExpressionValidator
-
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class ObservableValueAnnotationValidatorTest extends AbstractValidatorTest{
 		
-@Inject
-	ParseHelper parseHelper
+    @Inject
+	ParseHelper<PatternModel> parseHelper
 	@Inject
 	EMFPatternLanguageJavaValidator validator
 	@Inject

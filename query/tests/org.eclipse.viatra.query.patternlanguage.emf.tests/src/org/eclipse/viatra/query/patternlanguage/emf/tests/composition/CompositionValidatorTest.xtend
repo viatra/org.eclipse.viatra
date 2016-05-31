@@ -17,7 +17,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.tests.EMFPatternLanguageInje
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage
 import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
@@ -27,13 +26,14 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class CompositionValidatorTest extends AbstractValidatorTest{
 		
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	@Inject
 	EMFPatternLanguageJavaValidator validator
 	@Inject

@@ -32,7 +32,7 @@ import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class VariableResolutionTest {
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject extension ValidationTestHelper
 	
@@ -45,7 +45,7 @@ class VariableResolutionTest {
 			pattern resolutionTest(Name) = {
 				Pattern(Name);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
 		val parameter = pattern.parameters.get(0)
@@ -62,7 +62,7 @@ class VariableResolutionTest {
 			pattern resolutionTest(Name) = {
 				Pattern.parameters(Name,_parameter);
 			}
-		') as PatternModel
+		')
 		
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
@@ -83,7 +83,7 @@ class VariableResolutionTest {
 			pattern resolutionTest(A) = {
 				find helper(A, _, _);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		val pattern = model.patterns.get(1)
 		val constraint = pattern.bodies.get(0).constraints.get(0) as PatternCompositionConstraint
@@ -101,7 +101,7 @@ class VariableResolutionTest {
 			pattern resolutionTest(Name) = {
 				Pattern(Name2);
 			}
-		') as PatternModel
+		')
 		val pattern = model.patterns.get(0)
 		val parameter = pattern.parameters.get(0)
 		val constraint = pattern.bodies.get(0).constraints.get(0) as EClassifierConstraint
@@ -120,7 +120,7 @@ class VariableResolutionTest {
 				Pattern(Name2);
 				Pattern(Name2);
 			}
-		') as PatternModel
+		')
 		val pattern = model.patterns.get(0)
 		val parameter = pattern.parameters.get(0)
 		model.assertError(parameter.eClass, IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED)

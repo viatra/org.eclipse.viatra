@@ -29,10 +29,10 @@ import org.junit.runner.RunWith
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class LiteralAndComputationTest extends AbstractValidatorTest {
+class LiteralAndComputationTypeTest extends AbstractValidatorTest {
 
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 
 	@Inject
 	EMFPatternLanguageJavaValidator validator
@@ -64,7 +64,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 				10 == count find Good(X);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
@@ -84,7 +84,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 				10 == count find Good(count find Good(X));
 			}
-		') as PatternModel
+		')
 		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL)
 	}
 
@@ -103,7 +103,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 				count find Good(X) == count find Good(X);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
@@ -123,7 +123,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 				find Good(X);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
@@ -143,7 +143,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 				find Good(10);
 			}
-		') as PatternModel
+		')
 		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATTERN_CALL)
 	}
 
@@ -162,7 +162,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 				10 == 20;
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
 			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
@@ -183,7 +183,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 				"apple" == "orange";
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertAll(getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
 			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT))
@@ -204,7 +204,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 				"apple" == 10;
 			}
-		') as PatternModel
+		')
 		tester.validate(model).assertAll(
 			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
 			getWarningCode(IssueCodes::CONSTANT_COMPARE_CONSTRAINT),
@@ -227,7 +227,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 				EClass(X);
 				"test" == count find Good(X);
 			}
-		') as PatternModel
+		')
 		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_COMPARE)
 	}
 
@@ -241,7 +241,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			pattern ConstantInPathExpressionGood(X : EClass) = {
 				EClass.name(X, "Name");
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
@@ -256,7 +256,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			pattern ConstantInPathExpressionMismatch(X : EClass) = {
 				EClass.name(X, 10);
 			}
-		') as PatternModel
+		')
 		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
 	}
 
@@ -274,7 +274,7 @@ class LiteralAndComputationTest extends AbstractValidatorTest {
 			pattern CountFindInPathExpressionMismatch(X : EClass) = {
 				EClass.name(X, count find Good(_));
 			}
-		') as PatternModel
+		')
 		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
 	}
 

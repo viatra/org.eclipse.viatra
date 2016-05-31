@@ -24,14 +24,14 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguag
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import com.google.inject.Injector
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class AnnotationValidatorTest extends AbstractValidatorTest{
 		
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	@Inject
 	EMFPatternLanguageJavaValidator validator
 	@Inject

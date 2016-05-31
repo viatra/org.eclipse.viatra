@@ -21,12 +21,13 @@ import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage
 import org.eclipse.xtext.diagnostics.Diagnostic
 import org.junit.Test
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class AggregationTest {
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 
 	@Inject extension ValidationTestHelper
 

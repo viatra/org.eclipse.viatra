@@ -31,7 +31,7 @@ import org.junit.runner.RunWith
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
 class PatternValidationTest extends AbstractValidatorTest {
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	@Inject
 	EMFPatternLanguageJavaValidator validator
 	@Inject

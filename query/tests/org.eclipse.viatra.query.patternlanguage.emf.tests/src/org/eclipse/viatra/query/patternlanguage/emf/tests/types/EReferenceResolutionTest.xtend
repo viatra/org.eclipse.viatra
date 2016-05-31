@@ -32,7 +32,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageP
 class EReferenceResolutionTest {
 
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	
 	@Inject extension ValidationTestHelper
 	
@@ -45,7 +45,7 @@ class EReferenceResolutionTest {
 			pattern resolutionTest(Name : Pattern, Body) = {
 				Pattern.bodies(Name, Body);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
 		val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
@@ -63,7 +63,7 @@ class EReferenceResolutionTest {
 			pattern resolutionTest(Name : Pattern, Constraint) = {
 				Pattern.bodies.constraints(Name, Constraint);
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
 		val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
@@ -84,7 +84,7 @@ class EReferenceResolutionTest {
 			pattern keywordAsIdentifier(A,B) = {
 				EClassifierConstraint.^var(A,B); 
 			}
-		') as PatternModel
+		')
 		model.assertNoErrors
 		val pattern = model.patterns.get(0)
 		val constraint = pattern.bodies.get(0).constraints.get(0) as PathExpressionConstraint
@@ -101,7 +101,7 @@ class EReferenceResolutionTest {
 			pattern resolutionTest(Name : Pattern, Constraint) = {
 				Pattern.notExist(Name, Constraint);
 			}
-		') as PatternModel
+		')
 		model.assertError(EMFPatternLanguagePackage$Literals::REFERENCE_TYPE,
 			Diagnostic::LINKING_DIAGNOSTIC, "notExist")
 	}

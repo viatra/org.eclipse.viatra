@@ -32,7 +32,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 class EnumValidationTest extends AbstractValidatorTest {
 	
 	@Inject
-	ParseHelper parseHelper
+	ParseHelper<PatternModel> parseHelper
 	@Inject
 	EMFPatternLanguageJavaValidator validator
 	@Inject
