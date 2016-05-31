@@ -51,6 +51,7 @@ public class BatchTransformationRuleFactory {
 
 		/**
 		 * Sets the event filter of the rule.
+		 * @since 1.3
 		 */
 		public BatchTransformationRuleBuilder<Match, Matcher> filter(EventFilter<Match> filter) {
 		    this.fFilter = filter;
