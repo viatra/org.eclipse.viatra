@@ -27,6 +27,9 @@
 		<!-- Composite site related properties -->
 		<viatra.updates.dir>updates</viatra.updates.dir>
 		<viatra.download.area>target/composite</viatra.download.area>
+        <!-- Maven deploy related properties-->
+        <viatra.deploy.release>https://repo.eclipse.org/content/repositories/viatra2-releases/</viatra.deploy.release>
+        <viatra.deploy.snapshot>https://repo.eclipse.org/content/repositories/viatra2-snapshots/</viatra.deploy.snapshot>
 	</properties>
 	<build>
 		<plugins>
@@ -154,12 +157,12 @@
 		<repository>
 			<id>repo.eclipse.org</id>
 			<name>VIATRA Project Repository - Releases</name>
-			<url>https://repo.eclipse.org/content/repositories/viatra2-releases/</url>
+			<url>${viatra.deploy.release}</url>
 		</repository>
 		<snapshotRepository>
 			<id>repo.eclipse.org</id>
 			<name>VIATRA Project Repository - Snapshots</name>
-			<url>https://repo.eclipse.org/content/repositories/viatra2-snapshots/</url>
+			<url>${viatra.deploy.snapshot}</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<scm>
