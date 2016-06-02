@@ -12,17 +12,19 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 
 /**
  * This rewriter class can add new equality constraints to the copied body
@@ -30,63 +32,75 @@ import com.google.common.collect.Maps;
  * @author Marton Bur
  *
  */
-public class FlattenerCopier extends PBodyCopier {
+class FlattenerCopier extends PBodyCopier {
 
-    private List<PositivePatternCall> callsToFlatten;
-    private List<PBody> calledBodies;
+    private Map<PositivePatternCall, PBody> callsToFlatten;
 
-    private ListMultimap<PVariable, PVariable> variableMultimap = ArrayListMultimap.create();
-    private Map<PQuery, Integer> patternCallCounter = Maps.newHashMap();
+    private Table<PositivePatternCall, PVariable, PVariable> variableCopyTable = HashBasedTable.create();
     
-    @Override
-    protected void copyVariable(PVariable variable, String newName) {
+    protected void copyVariable(PositivePatternCall contextPatternCall, PVariable variable, String newName){
         PVariable newPVariable = body.getOrCreateVariableByName(newName);
-            variableMapping.put(variable, newPVariable);
-            variableMultimap.put(variable, newPVariable);
-    };
+        variableCopyTable.put(contextPatternCall, variable, newPVariable);
+        variableMapping.put(variable, newPVariable);
+    }
     
-    public FlattenerCopier(PQuery query, List<PositivePatternCall> callsToFlatten, List<PBody> calledBodies) {
+    /**
+     * Merge all variables and constraints from the body called through the given pattern call to a target body. If multiple bodies are merged into a single one, use the renamer and filter options to avoid collisions.
+     * @param sourceBody
+     * @param namingTool
+     * @param filter
+     */
+    public void mergeBody(PositivePatternCall contextPatternCall, IVariableRenamer namingTool, IConstraintFilter filter) {
+
+        PBody sourceBody = callsToFlatten.get(contextPatternCall);
+        
+        // Copy variables
+        Set<PVariable> allVariables = sourceBody.getAllVariables();
+        for (PVariable pVariable : allVariables) {
+            if (pVariable.isUnique()) {
+                copyVariable(contextPatternCall, pVariable, namingTool.createVariableName(pVariable, sourceBody.getPattern()));
+            }
+        }
+
+        // Copy constraints which are not filtered
+        Set<PConstraint> constraints = sourceBody.getConstraints();
+        for (PConstraint pConstraint : constraints) {
+            if (!(pConstraint instanceof ExportedParameter) && !filter.filter(pConstraint)) {
+                copyConstraint(pConstraint);
+            }
+        }
+    }
+    
+    public FlattenerCopier(PQuery query, Map<PositivePatternCall, PBody> callsToFlatten) {
         super(query);
         this.callsToFlatten = callsToFlatten;
-        this.calledBodies = Lists.newArrayList(calledBodies);
     }
     
     @Override
     protected void copyPositivePatternCallConstraint(PositivePatternCall positivePatternCall) {
 
-        if(!callsToFlatten.contains(positivePatternCall)){
+        if(!callsToFlatten.containsKey(positivePatternCall)){
             // If the call was not flattened, copy the constraint
             super.copyPositivePatternCallConstraint(positivePatternCall);
         } else {
-            PBody bodyToRemoveFromList = null;
-            for (PBody calledBody : calledBodies) {
-                if(positivePatternCall.getReferredQuery().equals(calledBody.getPattern())){
-                    PQuery pattern = calledBody.getPattern();
-                    //This index is used to differentiate between the different calls
-                    int callIndex = 0;
-                    if(patternCallCounter.containsKey(pattern)){
-                        callIndex = patternCallCounter.get(pattern);
-                        callIndex++;
-                        patternCallCounter.put(pattern,callIndex);
-                    } else {
-                        patternCallCounter.put(pattern,0);
-                    }
-                    List<PVariable> symbolicParameters = calledBody.getSymbolicParameterVariables();                
-                    Object[] elements = positivePatternCall.getVariablesTuple().getElements();
-                    for (int i = 0; i < elements.length; i++ ) {
-                        // Create equality constraints between the caller PositivePatternCall and the corresponding body parameter variables
-                        createEqualityConstraint((PVariable) elements[i], symbolicParameters.get(i), callIndex);
-                    }
-                    bodyToRemoveFromList = calledBody;
-                    break;
-                }
+            PBody calledBody = callsToFlatten.get(positivePatternCall);
+            Preconditions.checkNotNull(calledBody);
+            Preconditions.checkArgument(positivePatternCall.getReferredQuery().equals(calledBody.getPattern()));
+                    
+            List<PVariable> symbolicParameters = calledBody.getSymbolicParameterVariables();                
+            Object[] elements = positivePatternCall.getVariablesTuple().getElements();
+            for (int i = 0; i < elements.length; i++ ) {
+                // Create equality constraints between the caller PositivePatternCall and the corresponding body parameter variables
+                createEqualityConstraint((PVariable) elements[i], symbolicParameters.get(i), positivePatternCall);
             }
-            calledBodies.remove(bodyToRemoveFromList);
+             
         }
     }
-
-    private void createEqualityConstraint(PVariable pVariable1, PVariable pVariable2, int index){
-        new Equality(body, variableMultimap.get(pVariable1).get(0), variableMultimap.get(pVariable2).get(index));
+    
+    private void createEqualityConstraint(PVariable pVariable1, PVariable pVariable2, PositivePatternCall contextPatternCall){
+        PVariable who = variableMapping.get(pVariable1);
+        PVariable withWhom = variableCopyTable.get(contextPatternCall, pVariable2);
+        new Equality(body, who, withWhom);
     }
         
 }

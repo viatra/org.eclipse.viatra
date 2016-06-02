@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,38 @@ import com.google.common.collect.Sets;
  */
 public class PQueryFlattener extends PDisjunctionRewriter {
 
+    /**
+     * Utility function to produce the permutation of every possible mapping of values.
+     * 
+     * @param values
+     * @return
+     */
+    private static <K,V> Set<Map<K, V>> permutation(Map<K, Set<V>> values){    
+        // An ordering of keys is defined here which will help restoring the appropriate values after the execution of the cartesian product
+        List<K> keyList = Lists.newArrayList(values.keySet());
+        
+        // Produce list of value sets with the ordering defined by keyList
+        List<Set<V>> valuesList = new ArrayList<Set<V>>(keyList.size());
+        for(K key : keyList){
+            valuesList.add(values.get(key));
+        }
+        
+        // Cartesian product will obey ordering of the list
+        Set<List<V>> valueMappings = Sets.cartesianProduct(valuesList);
+        
+        // Build result
+        Set<Map<K, V>> result = Sets.newLinkedHashSet();
+        for(List<V> valueList : valueMappings){
+            Map<K, V> map = Maps.newHashMap();
+            for(int i=0;i<keyList.size();i++){
+                map.put(keyList.get(i), valueList.get(i));
+            }
+            result.add(map);
+        }
+        
+        return result;
+    }
+    
     private static final String FLATTENING_ERROR_MESSAGE = "Error occured while flattening";
 	private IFlattenCallPredicate flattenCallPredicate;
 
@@ -80,8 +114,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
 		Deque<Object> preStack = Queues.newArrayDeque();
 		Deque<Object> postStack = Queues.newArrayDeque();
 
-		List<PositivePatternCall> callsToFlatten = Lists.newArrayList();
-
 		preStack.push(rootDisjunction);
 
 		while (!preStack.isEmpty()) {
@@ -119,7 +151,6 @@ public class PQueryFlattener extends PDisjunctionRewriter {
 								// If the above preconditions meet, the call should be flattened
 								PDisjunction disjunction = positivePatternCall.getReferredQuery().getDisjunctBodies();
 								preStack.push(disjunction);
-								callsToFlatten.add(positivePatternCall);
 							}
 						}
 					}
@@ -142,7 +173,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
 				Set<PBody> containerSet = flatBodyMapping.get(pBody.getContainerDisjunction());
 
 				if (isFlatteningNeeded(pBody)) {
-					List<Set<PBody>> flattenedBodies = Lists.newArrayList();
+					Map<PositivePatternCall, Set<PBody>> flattenedBodies = Maps.newHashMap();
 					for (PConstraint pConstraint : pBody.getConstraints()) {
 
 						if (pConstraint instanceof PositivePatternCall) {
@@ -151,11 +182,11 @@ public class PQueryFlattener extends PDisjunctionRewriter {
 								// If the above preconditions meet, do the flattening and return the disjoint bodies
 								PDisjunction disjunction = positivePatternCall.getReferredQuery().getDisjunctBodies();
 
-								flattenedBodies.add(flatBodyMapping.get(disjunction));
+								flattenedBodies.put(positivePatternCall, flatBodyMapping.get(disjunction));
 							}
 						}
 					}
-					containerSet.addAll(createSetOfFlatPBodies(pBody, flattenedBodies, callsToFlatten));
+					containerSet.addAll(createSetOfFlatPBodies(pBody, flattenedBodies));
 				}
 
 			}
@@ -164,7 +195,7 @@ public class PQueryFlattener extends PDisjunctionRewriter {
 
 		return new PDisjunction(rootDisjunction.getQuery(), flatBodyMapping.get(rootDisjunction));
 	}
-
+	
     /**
      * Creates the flattened bodies based on the caller body and the called (and already flattened) disjunctions
      * 
@@ -173,27 +204,23 @@ public class PQueryFlattener extends PDisjunctionRewriter {
      * @param flattenedCalls
      * @return
      */
-    private Set<PBody> createSetOfFlatPBodies(PBody pBody, List<Set<PBody>> flattenedBodies,
-    		List<PositivePatternCall> flattenedCalls) {
+    private Set<PBody> createSetOfFlatPBodies(PBody pBody, Map<PositivePatternCall, Set<PBody>> flattenedCalls) {
         PQuery pQuery = pBody.getPattern();
 
-        // The members of this set are lists containing bodies in conjunction
-        // Ordering is not important within the list, only the cartesian product function requires a list
-      
-        Set<List<PBody>> conjunctBodyLists = Sets.cartesianProduct(flattenedBodies);
+        Set<Map<PositivePatternCall, PBody>> conjunctedCalls = permutation(flattenedCalls);
         
         // The result set containing the merged conjuncted bodies
         Set<PBody> conjunctedBodies = Sets.<PBody> newHashSet();
 
-        for (List<PBody> bodyList : conjunctBodyLists) {
-            PBodyCopier copier = createBodyCopier(pQuery, flattenedCalls, bodyList); 
+        for (Map<PositivePatternCall, PBody> calledBodies : conjunctedCalls) {
+            FlattenerCopier copier = createBodyCopier(pQuery, calledBodies); 
 
             int i = 0;
             HierarchicalName hierarchicalNamingTool = new HierarchicalName();
-            for (PBody calledBody : bodyList) {
+            for (PositivePatternCall patternCall : calledBodies.keySet()) {
                 // Merge each called body
                 hierarchicalNamingTool.setCallCount(i++);
-                copier.mergeBody(calledBody, hierarchicalNamingTool, new ExportedParameterFilter());
+                copier.mergeBody(patternCall, hierarchicalNamingTool, new ExportedParameterFilter());
             }
 
             // Merge the caller's constraints to the conjunct body
@@ -207,12 +234,12 @@ public class PQueryFlattener extends PDisjunctionRewriter {
         return conjunctedBodies;
     }
 
-    protected PBodyCopier createBodyCopier(PQuery query, List<PositivePatternCall> flattenedCalls, List<PBody> calledBodies) {
-    	return new FlattenerCopier(query, flattenedCalls, calledBodies);
+    private FlattenerCopier createBodyCopier(PQuery query, Map<PositivePatternCall, PBody> calledBodies) {
+    	return new FlattenerCopier(query, calledBodies);
     }
     
     private PBody prepareFlatPBody(PBody pBody) {
-        PBodyCopier copier = createBodyCopier(pBody.getPattern(), Lists.<PositivePatternCall> newArrayList(), Lists.<PBody> newArrayList());
+        PBodyCopier copier = createBodyCopier(pBody.getPattern(), Collections.<PositivePatternCall, PBody>emptyMap());
         copier.mergeBody(pBody, new SameName(), new AllowAllFilter());
         // the copying of the body here is necessary for only one containing PDisjunction can be assigned to a PBody
         return copier.getCopiedBody();
