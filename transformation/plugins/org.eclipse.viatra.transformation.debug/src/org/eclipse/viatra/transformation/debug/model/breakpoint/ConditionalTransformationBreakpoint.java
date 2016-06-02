@@ -46,7 +46,10 @@ import com.google.inject.Injector;
 public class ConditionalTransformationBreakpoint extends Breakpoint implements ITransformationBreakpoint, IMatchUpdateListener {
     private AdvancedViatraQueryEngine engine;
     private String patternString;
+    private String toString;
     private boolean matcherChanged = false;
+    
+    
     
     public ConditionalTransformationBreakpoint() {
         super();
@@ -107,10 +110,12 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
     
     public void setEngine(ViatraQueryEngine engine) {
         this.engine = AdvancedViatraQueryEngine.from(engine);
+        toString = "Conditional Transformation Breakpoint - ";
         ViatraQueryMatcher<? extends IPatternMatch> matcher;
         try {
             List<IQuerySpecification<?>> parsePatterns = parsePatterns();
             for (IQuerySpecification<?> iQuerySpecification : parsePatterns) {
+                toString += "Query specification name: "+iQuerySpecification.getFullyQualifiedName();
                 matcher = engine.getMatcher(iQuerySpecification);
                 this.engine.addMatchUpdateListener(matcher, this, false);
             }
@@ -145,6 +150,11 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
             return specList;
         }
         return null;
+    }
+    
+    @Override
+    public String toString() {
+        return toString;
     }
 
 }

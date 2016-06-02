@@ -10,15 +10,12 @@
  */
 package org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -32,7 +29,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.viatra.transformation.debug.launch.TransformationLaunchConfigurationDelegate;
 import org.eclipse.viatra.transformation.debug.model.TransformationThreadFactory;
-import org.eclipse.viatra.transformation.debug.ui.util.BreakpointCacheUtil;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 
 @SuppressWarnings("restriction")
@@ -83,19 +79,11 @@ public class AdaptableEVMDoubleClickListener implements IDoubleClickListener {
                     
                     DebugUITools.launch(workingCopy, "debug");
                     
-                    if(BreakpointCacheUtil.breakpointCacheExists()){
-                        ImportBreakpointsOperation operation = new ImportBreakpointsOperation(
-                                BreakpointCacheUtil.getBreakpointCacheLocation().trim(), 
-                                false, 
-                                false);
-                        operation.run(null);
-                    }
-                    
                     
                     TransformationThreadFactory.getInstance().registerListener(view, vm.getIdentifier());
                                             
                     
-                } catch (CoreException | InvocationTargetException e) {
+                } catch (CoreException e) {
                     e.printStackTrace();
                 }
 

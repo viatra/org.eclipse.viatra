@@ -8,23 +8,23 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  */
-package org.eclipse.viatra.transformation.debug.ui.util;
+package org.eclipse.viatra.transformation.debug.util;
 
 import java.io.File;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.viatra.transformation.debug.activator.TransformationDebugActivator;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ConditionalTransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.RuleBreakpoint;
-import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 
 import com.google.common.collect.Lists;
 
 public class BreakpointCacheUtil {
     
     public static String getBreakpointCacheLocation(){
-        TransformationDebugUIActivator activator = new TransformationDebugUIActivator();
+        TransformationDebugActivator activator = new TransformationDebugActivator();
         IPath stateLocation = activator.getStateLocation();
         String location = stateLocation.toString();
         String fileLocation = location+"/persistentbreakpoints.brpkt";

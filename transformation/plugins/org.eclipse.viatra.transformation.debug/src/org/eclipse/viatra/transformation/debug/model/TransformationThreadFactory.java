@@ -79,6 +79,10 @@ public class TransformationThreadFactory {
         } catch (NoSuchElementException | DebugException e) {
             throw e;
         }
+        if(!listenersToAdd.containsEntry(id, listener)){
+            listenersToAdd.put(id, listener);
+        }
+        
     }
     
     public void unRegisterListener(ITransformationStateListener listener){

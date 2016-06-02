@@ -10,14 +10,11 @@
  */
 package org.eclipse.viatra.transformation.debug.ui.handlers;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -26,7 +23,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
 import org.eclipse.viatra.transformation.debug.model.TransformationThreadFactory;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.RuleBreakpoint;
-import org.eclipse.viatra.transformation.debug.ui.util.BreakpointCacheUtil;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 
 public class AddRuleBreakpointHandler extends AbstractHandler {
@@ -51,14 +47,10 @@ public class AddRuleBreakpointHandler extends AbstractHandler {
                             .createMarker(breakpoint.getMarkerIdentifier()));
                     breakpoint.setEnabled(true);
                     DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(breakpoint);
-                    ExportBreakpointsOperation operation = new ExportBreakpointsOperation(
-                            BreakpointCacheUtil.filterBreakpoints(thread.getBreakpoints()),
-                            BreakpointCacheUtil.getBreakpointCacheLocation());
-                    operation.run(null);
                 }
             }
 
-        } catch (CoreException | InvocationTargetException e) {
+        } catch (CoreException e) {
             throw new ExecutionException("Error while adding rule breakpoint", e);
         }
         return null;
