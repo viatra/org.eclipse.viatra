@@ -22,7 +22,6 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<viatra.main.version>1.3.0-SNAPSHOT</viatra.main.version>
-		<viatra.incubation.version>0.13.0-SNAPSHOT</viatra.incubation.version>
 		<cbi.jarsigner.version>1.1.3</cbi.jarsigner.version>
 		<!-- Composite site related properties -->
 		<viatra.updates.dir>updates</viatra.updates.dir>
