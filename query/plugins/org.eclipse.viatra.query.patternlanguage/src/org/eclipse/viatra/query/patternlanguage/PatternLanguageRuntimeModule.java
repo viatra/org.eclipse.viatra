@@ -17,6 +17,8 @@ import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer.NullTypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem.NullTypeSystem;
+import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
+import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider.NoExpectedPackageNameProvider;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 
 import com.google.inject.Provides;
@@ -46,5 +48,12 @@ public class PatternLanguageRuntimeModule extends AbstractPatternLanguageRuntime
     
     public Class<? extends ITypeInferrer> bindITypeInferrer() {
         return NullTypeInferrer.class;
+    }
+    
+    /**
+     * @since 1.3
+     */
+    public Class<? extends IExpectedPackageNameProvider> bindIExpectedPackageNameProvider() {
+        return NoExpectedPackageNameProvider.class;
     }
 }

@@ -58,6 +58,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReferenc
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
+import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.validation.VariableReferenceCount.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PureWhitelistExtensionLoader;
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PurityChecker;
@@ -73,6 +74,7 @@ import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.impl.LiveShadowedResourceDescriptions;
 import org.eclipse.xtext.util.IResourceScopeCache;
+import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
@@ -143,6 +145,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private IQualifiedNameProvider nameProvider;
     @Inject
     private IContainer.Manager containerManager;
+    @Inject
+    private IExpectedPackageNameProvider packageNameProvider;
 
     @Check
     public void checkPatternParameters(Pattern pattern) {
@@ -582,14 +586,19 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Check
     public void checkPackageDeclaration(PatternModel model) {
-        String packageName = model.getPackageName();
-
-        if (packageName == null || packageName.isEmpty()) {
-            error("The package declaration must not be empty",
-                    PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_EMPTY);
+        String declaredPackage = packageNameProvider.getExpectedPackageName(model);
+        String actualPackage = model.getPackageName();
+        
+        if (declaredPackage != null && !Strings.equal(actualPackage, declaredPackage)) {
+            error(String.format(
+                    "The package declaration '%s' does not match the container '%s'",
+                    Strings.emptyIfNull(declaredPackage),
+                    Strings.emptyIfNull(actualPackage)),
+                    PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
+                    IssueCodes.PACKAGE_NAME_MISMATCH);
         }
 
-        if (packageName != null && !packageName.equals(packageName.toLowerCase())) {
+        if (actualPackage != null && !actualPackage.equals(actualPackage.toLowerCase())) {
             error("Only lowercase package names supported",
                     PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_MISMATCH);
         }

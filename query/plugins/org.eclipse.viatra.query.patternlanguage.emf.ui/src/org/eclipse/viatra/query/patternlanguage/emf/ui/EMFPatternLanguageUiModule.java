@@ -33,9 +33,11 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageT
 import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageTypeScopeProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.validation.GenmodelBasedEMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
+import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionGenerator;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.ExtensionBasedGenerationFragmentProvider;
@@ -196,5 +198,12 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @Override
     public Class<? extends AbstractTypeScopeProvider> bindAbstractTypeScopeProvider() {
         return EMFPatternLanguageTypeScopeProvider.class;
+    }
+    
+    /**
+     * @since 1.3
+     */
+    public Class<? extends IExpectedPackageNameProvider> bindIExpectedPackageNameProvider() {
+        return JavaProjectExpectedPackageNameProvider.class;
     }
 }

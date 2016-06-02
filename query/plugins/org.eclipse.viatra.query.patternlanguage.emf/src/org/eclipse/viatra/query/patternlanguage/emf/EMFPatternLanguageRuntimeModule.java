@@ -37,6 +37,8 @@ import org.eclipse.viatra.query.patternlanguage.scoping.MyAbstractDeclarativeSco
 import org.eclipse.viatra.query.patternlanguage.scoping.PatternLanguageResourceDescriptionStrategy;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
+import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
+import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider.NoExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
@@ -148,4 +150,10 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
         return EMFTypeInferrer.class;
     }
     
+    /**
+     * @since 1.3
+     */
+    public Class<? extends IExpectedPackageNameProvider> bindIExpectedPackageNameProvider() {
+        return NoExpectedPackageNameProvider.class;
+    }
 }
