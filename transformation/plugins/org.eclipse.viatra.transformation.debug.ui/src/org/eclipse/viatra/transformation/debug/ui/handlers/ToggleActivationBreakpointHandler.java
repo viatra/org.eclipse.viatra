@@ -36,7 +36,7 @@ public class ToggleActivationBreakpointHandler extends AbstractHandler {
                         .getActivationThread((Activation<?>) ((IStructuredSelection) selection).getFirstElement());
                 if (thread != null) {
                     TransformationBreakpoint transformationBreakpoint = new TransformationBreakpoint(
-                            (Activation<?>) selection);
+                            (Activation<?>) ((IStructuredSelection) selection).getFirstElement());
                     transformationBreakpoint.setMarker(thread.getTransformationType().getResource()
                             .createMarker(transformationBreakpoint.getMarkerIdentifier()));
                     transformationBreakpoint.setEnabled(true);

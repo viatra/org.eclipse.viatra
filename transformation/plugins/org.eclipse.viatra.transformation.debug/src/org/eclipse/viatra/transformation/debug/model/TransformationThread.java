@@ -10,6 +10,7 @@
  */
 package org.eclipse.viatra.transformation.debug.model;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,8 @@ import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
+import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.debug.DebuggerActions;
@@ -29,12 +32,14 @@ import org.eclipse.viatra.transformation.debug.ITransformationDebugListener;
 import org.eclipse.viatra.transformation.debug.TransformationDebugger;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ConditionalTransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
+import org.eclipse.viatra.transformation.debug.util.BreakpointCacheUtil;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.xtext.xbase.lib.Pair;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 public class TransformationThread extends TransformationDebugElement implements IThread, ITransformationDebugListener, IBreakpointListener {
@@ -55,11 +60,27 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     protected TransformationThread(TransformationDebugTarget target, TransformationDebugger debugger, AdaptableEVM evm, IType transformationType) {
         super(target);
+        Preconditions.checkNotNull(debugger, "Viatra Debugger must not be null.");
+        Preconditions.checkNotNull(evm, "Adaptable EVM instance must not be null.");
+        Preconditions.checkNotNull(transformationType, "Transformation Class must not be null.");
         this.debugger = debugger;
         this.evm = evm;
         this.transformationType = transformationType;
         this.state = debugger.registerTransformationDebugListener(this);
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+        
+        
+        if(BreakpointCacheUtil.breakpointCacheExists()){
+            ImportBreakpointsOperation operation = new ImportBreakpointsOperation(
+                    BreakpointCacheUtil.getBreakpointCacheLocation().trim(), 
+                    false, 
+                    false);
+            try {
+                operation.run(null);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -223,11 +244,6 @@ public class TransformationThread extends TransformationDebugElement implements 
     public void terminated() throws CoreException, DebugException {
         terminated = true;
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
-        for (ITransformationBreakpoint iTransformationBreakpoint : breakpoints) {
-            debugger.removeBreakpoint(iTransformationBreakpoint);
-            DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(iTransformationBreakpoint, true);
-        }
-        breakpoints.clear();
         fireTerminateEvent();
         try {
             ((TransformationDebugTarget) getDebugTarget()).requestTermination();
@@ -237,12 +253,12 @@ public class TransformationThread extends TransformationDebugElement implements 
         for (ITransformationStateListener listener : stateListeners) {
             listener.transformationStateDisposed(state, evm.getIdentifier());
         }
+        
         dispose();
         
     }
     
-    protected void dispose(){
-        
+    protected void dispose(){       
         stateListeners.clear();
         TransformationThreadFactory.getInstance().deleteTransformationThread(this); 
     }
@@ -291,8 +307,10 @@ public class TransformationThread extends TransformationDebugElement implements 
     }
 
     public void registerTransformationStateListener(ITransformationStateListener listener) {
-        stateListeners.add(listener);
-        notifyListeners(state);
+        if(!stateListeners.contains(listener)){
+            stateListeners.add(listener);
+            notifyListeners(state);
+        }
     }
 
     public void unRegisterTransformationStateListener(ITransformationStateListener listener) {
@@ -338,6 +356,16 @@ public class TransformationThread extends TransformationDebugElement implements 
             }
             breakpoints.add((ITransformationBreakpoint) breakpoint);
             debugger.addBreakpoint((ITransformationBreakpoint) breakpoint);
+            
+            ExportBreakpointsOperation operation = new ExportBreakpointsOperation(
+                    BreakpointCacheUtil.filterBreakpoints(getBreakpoints()),
+                    BreakpointCacheUtil.getBreakpointCacheLocation());
+            
+            try {
+                operation.run(null);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -346,6 +374,16 @@ public class TransformationThread extends TransformationDebugElement implements 
         if(breakpoint instanceof ITransformationBreakpoint){
             breakpoints.remove(breakpoint);
             debugger.removeBreakpoint((ITransformationBreakpoint) breakpoint);
+            
+            ExportBreakpointsOperation operation = new ExportBreakpointsOperation(
+                    BreakpointCacheUtil.filterBreakpoints(getBreakpoints()),
+                    BreakpointCacheUtil.getBreakpointCacheLocation());
+            
+            try {
+                operation.run(null);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
         }
     }
 

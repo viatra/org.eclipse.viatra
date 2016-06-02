@@ -15,16 +15,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.transformation.debug.model.ITransformationStateListener;
+import org.eclipse.viatra.transformation.debug.model.TransformationStackFrame;
 import org.eclipse.viatra.transformation.debug.model.TransformationState;
+import org.eclipse.viatra.transformation.debug.model.TransformationThread;
 import org.eclipse.viatra.transformation.debug.model.TransformationThreadFactory;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -46,12 +53,14 @@ public class AdaptableTransformationBrowser extends ViewPart
     private Multimap<Class<?>, Object> expandedElementsMap = ArrayListMultimap.create();
     private TreeViewer treeViewer;
     private Object selection;
-
+//    private ISelectionListener listener;
+    private ISelectionService sService;
+    
     @Override
     public void createPartControl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout(SWT.HORIZONTAL));
-
+        sService = getSite().getWorkbenchWindow().getSelectionService();
         treeViewer = new TreeViewer(composite, SWT.BORDER);
 
         treeViewer.setContentProvider(new RuleBrowserContentProvider(this));
@@ -67,8 +76,28 @@ public class AdaptableTransformationBrowser extends ViewPart
                 }
             }
         });
+        
+//        listener = new ISelectionListener() {
+//            @Override
+//            public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+//                if (!selection.isEmpty() && selection instanceof StructuredSelection) {
+//                    Object firstElement = ((StructuredSelection) selection).getFirstElement();
+//                    if (firstElement instanceof TransformationThread) {
+//                        treeViewer.setSelection(new StructuredSelection(((TransformationThread) firstElement).getAdaptableEvm()));
+//                    } else if (firstElement instanceof TransformationStackFrame){
+//                        treeViewer.setSelection(new StructuredSelection(((TransformationThread) ((TransformationStackFrame) firstElement).getThread()).getAdaptableEvm()));
+//                    }
+//                }
+//
+//            }
+//        };
+        
 
+        getSite().setSelectionProvider(treeViewer);
         AdaptableEVMFactory.getInstance().registerListener(this);
+        
+//        sService.addSelectionListener("org.eclipse.debug.ui.DebugView", listener);
+        
     }
 
     @Override
@@ -221,5 +250,5 @@ public class AdaptableTransformationBrowser extends ViewPart
             return elements.toArray(new Object[elements.size()]);
 
         }
-    }
+    }    
 }

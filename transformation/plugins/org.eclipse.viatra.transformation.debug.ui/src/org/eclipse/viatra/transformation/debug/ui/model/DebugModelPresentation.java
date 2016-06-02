@@ -38,7 +38,7 @@ public class DebugModelPresentation extends LabelProvider implements IDebugModel
                 for (RuleParameterTrace parameterTrace : breakpoint.getTrace().getRuleParameterTraces()) {
                     parameters += parameterTrace.getParameterName() + " : " + parameterTrace.getObjectId() + " ";
                 }
-                return "Rule: " + breakpoint.getTrace().getRuleName() + "(" + parameters + ")";
+                return "Transformation Activation Breakpoint - Rule: " + breakpoint.getTrace().getRuleName() + "(" + parameters + ")";
 
             } else if (element instanceof TransformationStackFrame) {
                 return ((TransformationStackFrame) element).getName();
@@ -56,8 +56,6 @@ public class DebugModelPresentation extends LabelProvider implements IDebugModel
 
     @Override
     public void computeDetail(IValue value, IValueDetailListener listener) {
-        // TODO support details for values
-
     }
 
     @Override

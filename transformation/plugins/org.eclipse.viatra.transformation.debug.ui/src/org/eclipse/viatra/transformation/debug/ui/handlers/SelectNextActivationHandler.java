@@ -30,7 +30,7 @@ public class SelectNextActivationHandler extends AbstractHandler {
             TransformationThread thread = DebugUIUtil
                     .getActivationThread((Activation<?>) ((IStructuredSelection) selection).getFirstElement());
             if (thread != null) {
-                thread.setNextActivation((Activation<?>) selection);
+                thread.setNextActivation((Activation<?>) ((IStructuredSelection) selection).getFirstElement());
             }
         }
 
