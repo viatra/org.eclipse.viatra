@@ -219,6 +219,8 @@ public class ConstraintsObjective extends BaseObjective {
     @Override
     public void init(ThreadContext context) {
 
+        super.init(context);
+
         softMatches = new ArrayList<Integer>(softConstraints.size());
         softMatchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>(softConstraints.size());
         hardMatches = new ArrayList<Integer>(hardConstraints.size());
@@ -250,12 +252,15 @@ public class ConstraintsObjective extends BaseObjective {
     public IObjective createNew() {
         new ArrayList<Double>(softConstraints.size());
         ConstraintsObjective result = new ConstraintsObjective(name, softConstraints, hardConstraints);
+        if (isThereFitnessConstraint) {
+            result.withHardConstraintOnFitness(fitnessConstraint, fitnessConstraintComparator);
+        }
         return result.withComparator(comparator).withLevel(level);
     }
 
     @Override
     public boolean isHardObjective() {
-        return !hardConstraints.isEmpty();
+        return !hardConstraints.isEmpty() || super.isHardObjective();
     }
 
     @Override
@@ -272,6 +277,9 @@ public class ConstraintsObjective extends BaseObjective {
                 result = false;
             }
         }
+        
+        result = super.satisifiesHardObjective(fitness) ? result : false;
+        
         return result;
     }
 

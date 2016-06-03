@@ -134,6 +134,7 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
 
     @Override
     public void init(ThreadContext context) {
+        super.init(context);
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         for (Entry<BatchTransformationRule<?, ?>, ActivationFitnessProcessor> entry : activationCostProcessors.entrySet()) {
             dsm.registerActivationCostProcessor(name, entry.getKey(), entry.getValue());
@@ -144,15 +145,4 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
     public IObjective createNew() {
         return this;
     }
-
-    @Override
-    public boolean isHardObjective() {
-        return false;
-    }
-
-    @Override
-    public boolean satisifiesHardObjective(Double fitness) {
-        return true;
-    }
-
 }
