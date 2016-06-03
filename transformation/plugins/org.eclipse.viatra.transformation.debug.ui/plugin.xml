@@ -41,6 +41,11 @@
             id="org.eclipse.viatra.transformation.debug.ui.addRuleBreakpoint"
             name="Add Rule Breakpoint">
       </command>
+      <command
+            categoryId="org.eclipse.viatra.transformation.ui.debug"
+            id="org.eclipse.viatra.transformation.debug.ui.addCondBreakpoint"
+            name="Add Conditional Breakpoint">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -53,8 +58,12 @@
             commandId="org.eclipse.viatra.transformation.debug.ui.SelectNextActivation">
       </handler>
       <handler
-            class="org.eclipse.viatra.transformation.debug.ui.handlers.AddRuleBreakpointHandler"
+            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.handlers.AddRuleBreakpointHandler"
             commandId="org.eclipse.viatra.transformation.debug.ui.addRuleBreakpoint">
+      </handler>
+      <handler
+            class="org.eclipse.viatra.transformation.debug.ui.util.DebugQueryLanguageExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.handlers.AddConditionalBreakpointHandler"
+            commandId="org.eclipse.viatra.transformation.debug.ui.addCondBreakpoint">
       </handler>
    </extension>
    <extension
@@ -90,6 +99,13 @@
                icon="icons/activation_brkp.gif"
                id="org.eclipse.viatra.transformation.ui.debug.addRuleBreakpointMenu"
                label="Add Rule Breakpoint"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.viatra.transformation.debug.ui.addCondBreakpoint"
+               icon="icons/activation_brkpd.gif"
+               id="org.eclipse.viatra.transformation.ui.debug.addCondBreakpointMenu"
+               label="Add Conditional Breakpoint"
                style="push">
          </command>
          <separator
