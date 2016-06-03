@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra.query.patternlanguage.annotations.ExtensionBasedAnnotationValidatorLoader;
 import org.eclipse.viatra.query.patternlanguage.annotations.IAnnotationValidatorLoader;
@@ -34,6 +35,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageT
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectExpectedPackageNameProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.util.internal.SyntheticEditedResourceProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.validation.GenmodelBasedEMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
@@ -51,10 +53,13 @@ import org.eclipse.xtext.builder.IXtextBuilderParticipant;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
+import org.eclipse.xtext.ui.editor.embedded.IEditedResourceProvider;
 import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
@@ -205,5 +210,12 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
      */
     public Class<? extends IExpectedPackageNameProvider> bindIExpectedPackageNameProvider() {
         return JavaProjectExpectedPackageNameProvider.class;
+    }
+    
+    /**
+     * @since 1.3
+     */
+    public Class<? extends IEditedResourceProvider> bindIEditedResourceProvider(){
+        return SyntheticEditedResourceProvider.class;
     }
 }
