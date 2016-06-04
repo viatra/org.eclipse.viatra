@@ -69,7 +69,7 @@ public class CodeGeneratorImpl implements ICodeGenerator {
         VQLVariableSetting variableSetting = variableRegister.getVariableSetting(eo);
         String eClassName = variableSetting.getType().getName();
         String varName = variableSetting.getVariableName();
-        return variableSetting.isInputVariable() == true ? varName + " : " + eClassName
+        return variableSetting.isInputVariable()  ? varName + " : " + eClassName
                 : eClassName + "(" + varName + ")";
     }
 
@@ -77,7 +77,7 @@ public class CodeGeneratorImpl implements ICodeGenerator {
     public String generateVariable(VQLVariableSetting variableSetting) {
         String eClassName = variableSetting.getType().getName();
         String varName = variableSetting.getVariableName();
-        return variableSetting.isInputVariable() == true ? varName + " : " + eClassName
+        return variableSetting.isInputVariable()  ? varName + " : " + eClassName
                 : eClassName + "(" + varName + ")";
     }
 

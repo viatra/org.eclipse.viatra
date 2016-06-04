@@ -35,7 +35,7 @@ public class QBEViewMainSourceProvider extends AbstractSourceProvider {
         public String getValue() {
             return this.value;
         }
-    };
+    }
 
     @Override
     public void dispose() {

@@ -25,7 +25,7 @@ public class HelpHandler extends AbstractHandler {
     private static final String HELP_TITLE = "VIATRA Query-by-Example - Help";
     private static final String HELP_MAIN_TEXT;
 
-    private class HelpDialog extends MessageDialog {
+    private static class HelpDialog extends MessageDialog {
         public HelpDialog(Shell parentShell, String dialogTitle, Image dialogTitleImage, String dialogMessage,
                 int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
             super(parentShell, dialogTitle, dialogTitleImage, dialogMessage, dialogImageType, dialogButtonLabels,

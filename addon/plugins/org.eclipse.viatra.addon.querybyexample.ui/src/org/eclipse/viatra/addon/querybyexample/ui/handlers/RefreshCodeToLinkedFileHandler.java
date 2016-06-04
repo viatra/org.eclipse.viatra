@@ -17,6 +17,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.viatra.addon.querybyexample.ui.QBEViewUtils;
@@ -39,7 +40,7 @@ public class RefreshCodeToLinkedFileHandler extends AbstractHandler {
             try {
                 String code = ((this.qbeView == null || this.qbeView.getService() == null) ? null
                         : this.qbeView.getService().getPatternCode());
-                QBEViewUtils.getLinkedFile().setContents(new ByteArrayInputStream(code.getBytes()), true, false, null);
+                QBEViewUtils.getLinkedFile().setContents(new ByteArrayInputStream(code.getBytes()), true, false, new NullProgressMonitor());
             } catch (CoreException ex) {
                 StatusManager.getManager().handle(new Status(IStatus.ERROR, QBEViewUtils.PLUGIN_ID,
                         IStatus.ERROR, ex.getMessage(), ex));

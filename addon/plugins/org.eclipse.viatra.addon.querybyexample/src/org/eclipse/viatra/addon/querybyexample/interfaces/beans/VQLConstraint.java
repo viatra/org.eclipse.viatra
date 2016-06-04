@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.querybyexample.interfaces.beans;
 
+import java.util.Objects;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
@@ -93,24 +95,18 @@ public class VQLConstraint {
         if (getClass() != obj.getClass())
             return false;
         VQLConstraint other = (VQLConstraint) obj;
-        if (end == null) {
-            if (other.end != null)
-                return false;
-        }
-        if (reference == null) {
-            if (other.reference != null)
-                return false;
-        }
-        if (start == null) {
-            if (other.start != null)
-                return false;
-        }
+        if (end == null && other.end != null)
+            return false;
+        if (reference == null && other.reference != null)
+            return false;
+        if (start == null && other.start != null)
+            return false;
 
-        if (this.start.equals(other.start) && this.end.equals(other.end) && this.reference.equals(other.reference))
+        if (Objects.equals(this.start, other.start) && Objects.equals(this.end, other.end) && Objects.equals(this.reference, other.reference))
             return true;
         else if (this.reference.getEOpposite() != null)
-            return (this.start.equals(other.end) && this.end.equals(other.start)
-                    && this.reference.getEOpposite().equals(other.reference));
+            return (Objects.equals(this.start, other.end) && Objects.equals(this.end, other.start)
+                    && Objects.equals(this.reference.getEOpposite(), other.reference));
         else
             return false;
     }

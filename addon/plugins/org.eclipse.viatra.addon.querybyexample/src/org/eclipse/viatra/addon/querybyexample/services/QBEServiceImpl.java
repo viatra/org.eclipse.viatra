@@ -173,7 +173,7 @@ public class QBEServiceImpl implements IQBEService {
             if (currentPath.equals(path))
                 currentPath.setVisible(value);
 
-            if (value == false && currentPath.isVisible()) {
+            if (!value && currentPath.isVisible()) {
                 for (VQLConstraint c : path.getConstraints()) {
                     if (currentPath.getConstraints().contains(c))
                         c.setVisible(true);
