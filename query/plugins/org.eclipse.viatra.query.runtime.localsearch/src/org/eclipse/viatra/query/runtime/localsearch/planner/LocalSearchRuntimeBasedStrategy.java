@@ -11,9 +11,8 @@
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,12 +20,8 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintKeys;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.OperationCostComparator;
-import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
@@ -38,12 +33,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
@@ -63,16 +55,14 @@ import com.google.common.collect.Sets.SetView;
  */
 public class LocalSearchRuntimeBasedStrategy {
 
-	private boolean allowInverseNavigation;
-	private boolean useIndex;
+	private final PConstraintInfoInferrer pConstraintInfoInferrer;
 	
     public LocalSearchRuntimeBasedStrategy() {
         this(true,true);
     }
 
     public LocalSearchRuntimeBasedStrategy(final boolean allowInverseNavigation, boolean useIndex) {
-        this.allowInverseNavigation = allowInverseNavigation;
-        this.useIndex = useIndex;
+       this.pConstraintInfoInferrer = new PConstraintInfoInferrer(allowInverseNavigation, useIndex);
     }
 	
     /**
@@ -94,10 +84,15 @@ public class LocalSearchRuntimeBasedStrategy {
         SubPlanFactory subPlanFactory = new SubPlanFactory(pBody);
 
         // We assume that the adornment (now the bound variables) is previously set
+        Set<PVariable> constantVariables = new HashSet<>();
+        for(ConstantValue constantValue : pBody.getConstraintsOfType(ConstantValue.class)){
+            constantVariables.addAll(constantValue.getAffectedVariables());
+        }
+        initialBoundVariables = Sets.union(initialBoundVariables, constantVariables);
         SubPlan plan = subPlanFactory.createSubPlan(new PStart(initialBoundVariables));
         // Create mask infos
         Set<PConstraint> constraintSet = pBody.getConstraints();
-        List<PConstraintInfo> constraintInfos = createPConstraintInfos(constraintSet, runtimeContext);
+        List<PConstraintInfo> constraintInfos = pConstraintInfoInferrer.createPConstraintInfos(constraintSet, runtimeContext);
 
         // Calculate the characteristic function
         // The characteristic function tells whether a given adornment is backward reachable from the (B)* state, where
@@ -129,6 +124,7 @@ public class LocalSearchRuntimeBasedStrategy {
 
         // rename for better understanding
         Set<PVariable> boundVariables = initialBoundVariables;
+        
         Set<PVariable> freeVariables = Sets.difference(pBody.getUniqueVariables(), initialBoundVariables);
 
         int n = freeVariables.size();
@@ -274,137 +270,6 @@ public class LocalSearchRuntimeBasedStrategy {
         return reachableBoundVariableSets;
     }
 
-    /**
-     * Create all possible application condition for all constraint
-     * 
-     * @param constraintSet the set of constraints
-     * @param runtimeContext the model dependent runtime contest
-     * @return a collection of the wrapper PConstraintInfo objects with all the allowed application conditions
-     */
-    private List<PConstraintInfo> createPConstraintInfos(Set<PConstraint> constraintSet, IQueryRuntimeContext runtimeContext) {
-        List<PConstraintInfo> constraintInfos = Lists.newArrayList();
-
-        for (PConstraint pConstraint : constraintSet) {
-            if(pConstraint instanceof ExportedParameter){
-                // Do not create mask info for exported parameter, for it is only a symbolic constraint
-                continue;
-            }
-            if(pConstraint instanceof TypeConstraint){
-                Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
-                Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
-                doCreateConstraintInfosForTypeConstraint(runtimeContext, constraintInfos, (TypeConstraint)pConstraint, affectedVariables, bindings);
-            } else {
-                // Create constraint infos so that only single use variables can be unbound
-                Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
-                
-                Set<PVariable> singleUseVariables = Sets.newHashSet();
-                for (PVariable pVariable : affectedVariables) {
-                    Set<PConstraint> allReferringConstraints = pVariable.getReferringConstraints();
-                    // Filter out exported parameter constraints
-                    Set<ExportedParameter> referringExportedParameters = pVariable.getReferringConstraintsOfType(ExportedParameter.class);
-                    SetView<PConstraint> trueReferringConstraints = Sets.difference(allReferringConstraints, referringExportedParameters);
-                    if(trueReferringConstraints.size() == 1){
-                        singleUseVariables.add(pVariable);
-                    }
-                }
-                SetView<PVariable> nonSingleUseVariables = Sets.difference(affectedVariables, singleUseVariables);
-                // Generate bindings by taking the unioning each element of the power set with the set of non-single use variables
-                Set<Set<PVariable>> singleUseVariablesPowerSet = Sets.powerSet(singleUseVariables);
-                Set<Set<PVariable>> bindings = Sets.newHashSet();
-                for (Set<PVariable> set : singleUseVariablesPowerSet) {
-                    bindings.add(Sets.newHashSet(set));
-                }
-                for (Set<PVariable> set : bindings) {
-                    set.addAll(nonSingleUseVariables);
-                }
-                
-                if(pConstraint instanceof PatternMatchCounter){
-                    // in cases of this type, the deduced variables will contain only the result variable
-                    final PVariable resultVariable = pConstraint.getDeducedVariables().iterator().next();
-                    Set<Set<PVariable>> additionalBindings = Sets.newHashSet();
-                    for (Set<PVariable> binding : bindings) {
-                        if(binding.contains(resultVariable)){
-                            Collection<PVariable> filteredBinding = Collections2.filter(binding, new Predicate<PVariable>() {
-                                @Override
-                                public boolean apply(PVariable input) {
-                                    return input != resultVariable;
-                                }
-                            });
-                            additionalBindings.add(Sets.newHashSet(filteredBinding));
-                        }
-                        
-                    }
-                    bindings.addAll(additionalBindings);
-                }
-                
-                doCreateConstraintInfos(runtimeContext, constraintInfos, pConstraint, affectedVariables, bindings);
-            }
-        }
-        return constraintInfos;
-    }
-
-    private void doCreateConstraintInfosForTypeConstraint(IQueryRuntimeContext runtimeContext,
-            List<PConstraintInfo> constraintInfos, TypeConstraint typeConstraint, Set<PVariable> affectedVariables,
-            Set<Set<PVariable>> bindings) {
-        if(!allowInverseNavigation){
-            // When inverse navigation is not allowed, filter out operation masks, where
-            // the first variable would be free AND the feature is an EReference and has no EOpposite
-            bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
-        } else {
-            // Also do the above case, if it is an EReference with no EOpposite, or is an EAttribute
-            IInputKey inputKey = typeConstraint.getSupplierKey();
-            if(inputKey instanceof EStructuralFeatureInstancesKey){
-                final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
-                if(feature instanceof EReference){
-                    if(!useIndex){                        
-                        bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
-                    }
-                } else {
-                    bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
-                }
-            }
-        }
-        doCreateConstraintInfos(runtimeContext, constraintInfos, typeConstraint, affectedVariables, bindings);
-    }
-    private Set<Set<PVariable>> excludeUnnavigableOperationMasks(TypeConstraint typeConstraint, Set<Set<PVariable>> bindings) {
-        PVariable firstVariable = typeConstraint.getVariableInTuple(0);
-        Iterator<Set<PVariable>> iterator = bindings.iterator();
-        Set<Set<PVariable>>elementsToRemove = Sets.newHashSet();
-        while (iterator.hasNext()) {
-            Set<PVariable> boundVariablesSet = iterator.next();
-            if(!boundVariablesSet.isEmpty() && !boundVariablesSet.contains(firstVariable) && !hasEOpposite(typeConstraint)){
-                elementsToRemove.add(boundVariablesSet);
-            }
-        }
-        bindings = Sets.difference(bindings, elementsToRemove);
-        return bindings;
-    }
-    
-    private boolean hasEOpposite(TypeConstraint typeConstraint) {
-        IInputKey supplierKey = typeConstraint.getSupplierKey();
-        if(supplierKey instanceof EStructuralFeatureInstancesKey){
-            EStructuralFeature wrappedKey = ((EStructuralFeatureInstancesKey) supplierKey).getWrappedKey();
-            if(wrappedKey instanceof EReference){
-                EReference eOpposite = ((EReference) wrappedKey).getEOpposite();
-                if(eOpposite != null){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private void doCreateConstraintInfos(IQueryRuntimeContext runtimeContext, List<PConstraintInfo> constraintInfos,
-            PConstraint pConstraint, Set<PVariable> affectedVariables, Set<Set<PVariable>> bindings) {
-        Set<PConstraintInfo> sameWithDifferentBindings = Sets.newHashSet();
-        for (Set<PVariable> boundVariables : bindings) {
-            PConstraintInfo info = new PConstraintInfo(pConstraint, boundVariables, Sets.difference(
-                    affectedVariables, boundVariables), sameWithDifferentBindings, runtimeContext);
-            constraintInfos.add(info);
-            sameWithDifferentBindings.add(info);
-        }
-    }
-
     protected EClassifier extractClassifierLiteral(String packageUriAndClassifierName) {
         int lastSlashPosition = packageUriAndClassifierName.lastIndexOf('/');
         int scopingPosition = packageUriAndClassifierName.lastIndexOf("::");
@@ -417,5 +282,5 @@ public class LocalSearchRuntimeBasedStrategy {
         Preconditions.checkState(literal != null, "Classifier %s not found in EPackage %s", classifierName, packageUri);
         return literal;
     }
-
+    
 }
