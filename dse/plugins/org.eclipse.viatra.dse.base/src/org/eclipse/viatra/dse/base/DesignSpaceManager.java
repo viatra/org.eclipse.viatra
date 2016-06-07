@@ -85,6 +85,8 @@ public class DesignSpaceManager {
         this.serializerFactory = factory;
         activationIds = HashBiMap.create();
 
+        conflictSet = context.getConflictResolver().conflictSet;
+
         // init serializer
         stateCoder = factory.createStateCoder();
         stateCoder.init(model);
@@ -94,8 +96,6 @@ public class DesignSpaceManager {
         designSpace.addState(null, null, initialStateId);
 
         this.trajectory = new TrajectoryInfo(initialStateId);
-
-        conflictSet = context.getConflictResolver().conflictSet;
 
         logger.debug("DesignSpaceManager initialized with root (" + initialStateId + ")");
     }
