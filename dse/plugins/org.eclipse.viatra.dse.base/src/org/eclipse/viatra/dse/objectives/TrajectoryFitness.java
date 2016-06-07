@@ -54,7 +54,7 @@ public class TrajectoryFitness {
     }
 
     /**
-     * Creates a {@link TrajectoryFitness} with the given {@link ITransition}
+     * Creates a {@link TrajectoryFitness} with the given activation id}
      * @param transition The transition.
      * @param fitness The fitness.
      */

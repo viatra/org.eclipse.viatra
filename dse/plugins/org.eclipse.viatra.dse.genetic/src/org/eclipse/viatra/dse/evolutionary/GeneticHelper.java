@@ -19,37 +19,6 @@ import org.eclipse.viatra.dse.designspace.api.ITransition;
 
 public class GeneticHelper {
 
-    /**
-     * Checks if two trajectories are the same.
-     * 
-     * @param trajectory1
-     * @param trajectory2
-     * @return Returns true, if they are equivalent.
-     */
-    public static boolean isSameTrajectory(List<ITransition> trajectory1, List<ITransition> trajectory2) {
-
-        if (trajectory1.size() != trajectory2.size()) {
-            return false;
-        }
-
-        for (int i = trajectory1.size() - 1; i >= 1; --i) {
-            ITransition t1 = trajectory1.get(i);
-            ITransition t2 = trajectory2.get(i);
-            if (!t1.getId().equals(t2.getId()) || !t1.getFiredFrom().getId().equals(t2.getFiredFrom().getId())) {
-                return false;
-            }
-        }
-
-        // The first transitions don't have parent state
-        ITransition t1 = trajectory1.get(0);
-        ITransition t2 = trajectory2.get(0);
-        if (!t1.getId().equals(t2.getId())) {
-            return false;
-        }
-
-        return true;
-    }
-
     public static Object getByIndex(Collection<Object> availableTransitions, int index) {
         int i = 0;
         Iterator<Object> iterator = availableTransitions.iterator();

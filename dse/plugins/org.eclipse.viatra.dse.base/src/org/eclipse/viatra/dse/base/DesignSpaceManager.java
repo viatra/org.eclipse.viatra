@@ -243,17 +243,6 @@ public class DesignSpaceManager {
         return getRuleByActivation(getActivationById(activationId));
     }
     
-    public Activation<?> getActivationByTransitionId(ITransition transition) {
-        for (Activation<?> act : ruleEngine.getConflictingActivations()) {
-            IPatternMatch match = (IPatternMatch) act.getAtom();
-            Object code = generateMatchCode(match);
-            if (code.equals(transition.getId())) {
-                return act;
-            }
-        }
-        return null;
-    }
-
     /**
      * Returns true if the given state is not owned by this crawler.
      * 
