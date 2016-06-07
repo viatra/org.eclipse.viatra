@@ -36,6 +36,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
+import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.collect.BiMap;
@@ -68,6 +69,7 @@ public class DesignSpaceManager {
 
     private BiMap<Activation<?>, Object> activationIds;
     private boolean generateActivationCodes = true;
+    private ChangeableConflictSet conflictSet;
 
     public DesignSpaceManager(ThreadContext context, Notifier model, EditingDomain domain, IStateCoderFactory factory,
             IDesignSpace designSpace, RuleEngine ruleEngine, ViatraQueryEngine engine) {
@@ -93,6 +95,8 @@ public class DesignSpaceManager {
 
         this.trajectory = new TrajectoryInfo(initialStateId);
 
+        conflictSet = context.getConflictResolver().conflictSet;
+
         logger.debug("DesignSpaceManager initialized with root (" + initialStateId + ")");
     }
 
@@ -111,7 +115,7 @@ public class DesignSpaceManager {
         sb.append("\nActual state: " + (actualStateId.equals(currentStateId) ? "same as current" : actualStateId));
         sb.append("\n" + trajectory);
         sb.append("\nAvailable transitions:");
-        for (Activation<?> act : ruleEngine.getConflictingActivations()) {
+        for (Activation<?> act : conflictSet.getNextActivations()) {
             IPatternMatch match = (IPatternMatch) act.getAtom();
             Object code = generateMatchCode(match);
             sb.append("\n\t");
@@ -323,7 +327,7 @@ public class DesignSpaceManager {
 
         activationIds.clear();
 
-        for (Activation<?> activation : ruleEngine.getConflictingActivations()) {
+        for (Activation<?> activation : conflictSet.getNextActivations()) {
 
             // we ignore not fireable Activations. These shouldn't be here
             // anyway TODO check if this code makes sense
@@ -339,7 +343,7 @@ public class DesignSpaceManager {
     }
 
     private Activation<?> getActivationByIdFromConflictSet(Object soughtActivationId) {
-        for (Activation<?> activation : ruleEngine.getConflictingActivations()) {
+        for (Activation<?> activation : conflictSet.getNextActivations()) {
             
             // we ignore not fireable Activations. These shouldn't be here
             // anyway TODO check if this code makes sense

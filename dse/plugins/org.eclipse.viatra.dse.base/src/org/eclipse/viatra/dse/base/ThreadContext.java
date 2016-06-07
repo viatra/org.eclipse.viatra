@@ -31,6 +31,8 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
+import org.eclipse.viatra.transformation.evm.specific.ConflictResolvers;
 import org.eclipse.viatra.transformation.evm.specific.RuleEngines;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
@@ -64,6 +66,12 @@ public class ThreadContext {
     private boolean isFirstThread = false;
     private IObjective[][] leveledObjectives;
     private boolean isThereHardObjective;
+    
+    private SingletonSetConflictResolver conflictResolver;
+    
+    public SingletonSetConflictResolver getConflictResolver() {
+        return conflictResolver;
+    }
 
     /**
      * Creates a {@link ThreadContext} and sets it up to be initialized on the given {@link TransactionalEditingDomain}
@@ -111,6 +119,9 @@ public class ThreadContext {
             final EMFScope scope = new EMFScope(model);
             queryEngine = ViatraQueryEngine.on(scope);
             ruleEngine = RuleEngines.createViatraQueryRuleEngine(queryEngine);
+            ConflictResolver conflictResolver = globalContext.getConflictResolver();
+            this.conflictResolver = new SingletonSetConflictResolver(conflictResolver);
+            ruleEngine.setConflictResolver(this.conflictResolver);
             for (BatchTransformationRule<?, ?> tr : globalContext.getTransformations()) {
                 ruleEngine.addRule(tr.getRuleSpecification(), (EventFilter<IPatternMatch>) tr.getFilter());
             }

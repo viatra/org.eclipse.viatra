@@ -38,6 +38,7 @@ import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecoding.simple.SimpleStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
+import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 /**
@@ -493,6 +494,10 @@ public class DesignSpaceExplorer {
     @Deprecated
     public String prettyPrintSolutions() {
         return toStringSolutions();
+    }
+
+    public void setConflictResolver(ConflictResolver conflictResolver) {
+        globalContext.setConflictResolver(conflictResolver);
     }
 
 }

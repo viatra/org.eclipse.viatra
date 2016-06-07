@@ -35,6 +35,8 @@ import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
+import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
+import org.eclipse.viatra.transformation.evm.specific.ConflictResolvers;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.collect.ImmutableList;
@@ -224,6 +226,8 @@ public class GlobalContext {
     private Object SharedObject;
     private List<IDesignSpaceVisualizer> visualizers;
 
+    private ConflictResolver conflictResolver = ConflictResolvers.createArbitraryResolver();
+
     public void initLeveledObjectives() {
         leveledObjectives = new LeveledObjectivesHelper(objectives).initLeveledObjectives();
     }
@@ -363,5 +367,13 @@ public class GlobalContext {
 
     public Map<RuleSpecification<?>, BatchTransformationRule<?, ?>> getSpecificationRuleMap() {
         return specificationRuleMap;
+    }
+
+    public void setConflictResolver(ConflictResolver conflictResolver) {
+        this.conflictResolver = conflictResolver;
+    }
+
+    public ConflictResolver getConflictResolver() {
+        return conflictResolver;
     }
 }
