@@ -38,8 +38,8 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
+import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
-import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
@@ -393,7 +393,7 @@ public class QueryExplorerPatternRegistry {
      */
     public static synchronized ImmutableList<IQuerySpecification<?>> getGeneratedQuerySpecifications() {
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
-        IRegistryView view = registry.getDefaultView();
+        IDefaultRegistryView view = registry.getDefaultView();
         return ImmutableList.copyOf(view.getQueryGroup().getSpecifications());
     }
 

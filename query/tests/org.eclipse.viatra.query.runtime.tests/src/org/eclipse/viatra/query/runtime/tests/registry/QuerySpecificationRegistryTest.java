@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.tests.registry;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -87,7 +88,7 @@ public class QuerySpecificationRegistryTest {
         assertTrue(registerSource);
         
         IRegistryView aspect = registry.createView();
-        assertTrue(aspect.getQueryGroup().getSpecifications().contains(mockedSpecification));
+        assertEquals(aspect.getEntries(mockedProvider.getFullyQualifiedName()).iterator().next().get(), mockedSpecification);
         
         boolean removeSource = registry.removeSource(connector);
         assertTrue(removeSource);
@@ -101,7 +102,7 @@ public class QuerySpecificationRegistryTest {
         Set<String> registeredFQNs = view.getQuerySpecificationFQNs();
         assertTrue("No registered query specifications!", registeredFQNs.size() > 0);
         
-        IQuerySpecification<?> specification = view.getEntry(registeredFQNs.iterator().next()).get();
+        IQuerySpecification<?> specification = view.getEntries(registeredFQNs.iterator().next()).iterator().next().get();
         assertNotNull(specification);
         
         boolean hasQueryRegisteredWithFQN = view.hasQuerySpecificationFQN(specification.getFullyQualifiedName());

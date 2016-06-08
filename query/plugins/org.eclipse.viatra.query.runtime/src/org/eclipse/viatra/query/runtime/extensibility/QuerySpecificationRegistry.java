@@ -21,10 +21,10 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.PackageBasedQueryGroup;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.registry.ExtensionBasedQuerySpecificationLoader;
+import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.IRegistrySourceConnector;
-import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.registry.connector.SpecificationMapSourceConnector;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
@@ -82,7 +82,7 @@ public final class QuerySpecificationRegistry {
      * the registry to access registered specifications.
      * 
      */
-    private IRegistryView getDefaultView() {
+    private IDefaultRegistryView getDefaultView() {
         IQuerySpecificationRegistry registry = getInternalRegistry();
         return registry.getDefaultView();
     }

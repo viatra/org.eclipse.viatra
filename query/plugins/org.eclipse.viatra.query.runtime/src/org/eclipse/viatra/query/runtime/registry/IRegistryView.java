@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.registry;
 
-import java.util.NoSuchElementException;
 import java.util.Set;
-
-import org.eclipse.viatra.query.runtime.api.IQueryGroup;
 
 /**
  * The registry view is the primary interface for users to interact with the query specifications in an
@@ -30,7 +27,7 @@ import org.eclipse.viatra.query.runtime.api.IQueryGroup;
  * @since 1.3
  *
  */
-public interface IRegistryView {
+public interface IRegistryView extends IRegistryChangeListener {
 
     /**
      * @return an immutable copy of all entries found in the view
@@ -51,17 +48,10 @@ public interface IRegistryView {
 
     /**
      * @param fullyQualifiedName
-     *            of the entry that is requested
-     * @return the entry with the given FQN
-     * @throws NoSuchElementException
-     *             if the view does not contain an entry with the given FQN
+     *            of the entries that are requested
+     * @return the possible empty set of entries with the given FQN
      */
-    IQuerySpecificationRegistryEntry getEntry(String fullyQualifiedName);
-
-    /**
-     * @return a query group containing all query specifications
-     */
-    IQueryGroup getQueryGroup();
+    Set<IQuerySpecificationRegistryEntry> getEntries(String fullyQualifiedName);
 
     /**
      * Adds a listener to the view that will be notified when an entry is added to or removed from the view.

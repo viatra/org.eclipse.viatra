@@ -48,7 +48,7 @@ public interface IQuerySpecificationRegistry {
      * 
      * @return the default view instance
      */
-    IRegistryView getDefaultView();
+    IDefaultRegistryView getDefaultView();
     
     /**
      * Creates a view which contains query specification entries that indicate their inclusion in default views. This
@@ -65,4 +65,12 @@ public interface IQuerySpecificationRegistry {
      * @return a new filtered view instance
      */
     IRegistryView createView(IRegistryViewFilter filter);
+    
+    /**
+     * Creates a view which is instantiated by the factory and is connected to the registry. This
+     * view will also be incrementally updated on registry changes and accepts listeners to notify on changes.
+     * 
+     * @return a new view instance
+     */
+    IRegistryView createView(IRegistryViewFactory factory);
 }

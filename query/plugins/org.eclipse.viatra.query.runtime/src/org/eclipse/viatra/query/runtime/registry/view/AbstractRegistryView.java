@@ -8,41 +8,40 @@
  * Contributors:
  *   Abel Hegedus - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.registry.impl;
+package org.eclipse.viatra.query.runtime.registry.view;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.Collection;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
-import org.eclipse.viatra.query.runtime.api.IQueryGroup;
-import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 
-import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 
 /**
  * An abstract {@link IRegistryView} implementation that stores the registry, the set of listeners added to the view and
  * the FQN to entry map of the view itself. The only responsibility of subclasses is to decide whether an entry received
- * as an addition or removal notification is relevent to the view.
+ * as an addition or removal notification is relevant to the view.
  * 
  * @author Abel Hegedus
+ * @since 1.3
  *
  */
-public abstract class AbstractRegistryView implements IRegistryView, IRegistryChangeListener {
+public abstract class AbstractRegistryView implements IRegistryView {
 
-    protected IQuerySpecificationRegistry registry;
-    protected Map<String, IQuerySpecificationRegistryEntry> fqnToEntryMap;
-    protected Set<IRegistryChangeListener> listeners;
+    protected final IQuerySpecificationRegistry registry;
+    protected final SetMultimap<String, IQuerySpecificationRegistryEntry> fqnToEntryMap;
+    protected final Set<IRegistryChangeListener> listeners;
+    protected final boolean allowDuplicateFQNs;
 
     /**
      * This method is called both when an addition or removal notification is received from the registry. Subclasses can
@@ -60,9 +59,17 @@ public abstract class AbstractRegistryView implements IRegistryView, IRegistryCh
      * 
      * @param registry
      */
-    public AbstractRegistryView(IQuerySpecificationRegistry registry) {
+    public AbstractRegistryView(IQuerySpecificationRegistry registry, boolean allowDuplicateFQNs) {
         this.registry = registry;
-        this.fqnToEntryMap = Maps.newTreeMap();
+        this.allowDuplicateFQNs = allowDuplicateFQNs;
+        this.fqnToEntryMap = Multimaps.newSetMultimap(
+                Maps.<String, Collection<IQuerySpecificationRegistryEntry>> newTreeMap(),
+                new Supplier<Set<IQuerySpecificationRegistryEntry>>() {
+                    @Override
+                    public Set<IQuerySpecificationRegistryEntry> get() {
+                        return Sets.newHashSet();
+                    }
+                });
         this.listeners = Sets.newHashSet();
     }
 
@@ -90,29 +97,10 @@ public abstract class AbstractRegistryView implements IRegistryView, IRegistryCh
     }
 
     @Override
-    public IQuerySpecificationRegistryEntry getEntry(String fullyQualifiedName) {
+    public Set<IQuerySpecificationRegistryEntry> getEntries(String fullyQualifiedName) {
         checkArgument(fullyQualifiedName != null, "FQN must not be null!");
-        IQuerySpecificationRegistryEntry entry = fqnToEntryMap.get(fullyQualifiedName);
-        if (entry == null) {
-            throw new NoSuchElementException(String.format("Cannot find entry with FQN %s", fullyQualifiedName));
-        }
-        return entry;
-    }
-
-    /**
-     * Note that calling this method will perform class loading on all included IQuerySpecifications.
-     */
-    @Override
-    public IQueryGroup getQueryGroup() {
-        Iterable<IQuerySpecification<?>> querySpecifications = Iterables.transform(fqnToEntryMap.values(),
-                new Function<IQuerySpecificationRegistryEntry, IQuerySpecification<?>>() {
-                    @Override
-                    public IQuerySpecification<?> apply(IQuerySpecificationRegistryEntry entry) {
-                        return entry.get();
-                    }
-                });
-        IQueryGroup queryGroup = GenericQueryGroup.of(ImmutableSet.copyOf(querySpecifications));
-        return queryGroup;
+        Set<IQuerySpecificationRegistryEntry> entries = fqnToEntryMap.get(fullyQualifiedName);
+        return ImmutableSet.copyOf(entries);
     }
 
     @Override
@@ -129,14 +117,17 @@ public abstract class AbstractRegistryView implements IRegistryView, IRegistryCh
     public void entryAdded(IQuerySpecificationRegistryEntry entry) {
         if (isEntryRelevant(entry)) {
             String fullyQualifiedName = entry.getFullyQualifiedName();
-            IQuerySpecificationRegistryEntry oldEntry = fqnToEntryMap.put(fullyQualifiedName, entry);
-            if (oldEntry != null) {
-                for (IRegistryChangeListener iRegistryChangeListener : listeners) {
-                    iRegistryChangeListener.entryRemoved(oldEntry);
+            if(!allowDuplicateFQNs && fqnToEntryMap.containsKey(fullyQualifiedName)){
+                Set<IQuerySpecificationRegistryEntry> removed = fqnToEntryMap.removeAll(fullyQualifiedName);
+                for (IQuerySpecificationRegistryEntry e : removed) {
+                    for (IRegistryChangeListener listener : listeners) {
+                        listener.entryRemoved(e);
+                    }
                 }
             }
-            for (IRegistryChangeListener iRegistryChangeListener : listeners) {
-                iRegistryChangeListener.entryAdded(entry);
+            fqnToEntryMap.put(fullyQualifiedName, entry);
+            for (IRegistryChangeListener listener : listeners) {
+                listener.entryAdded(entry);
             }
         }
     }
@@ -145,12 +136,9 @@ public abstract class AbstractRegistryView implements IRegistryView, IRegistryCh
     public void entryRemoved(IQuerySpecificationRegistryEntry entry) {
         if (isEntryRelevant(entry)) {
             String fullyQualifiedName = entry.getFullyQualifiedName();
-            IQuerySpecificationRegistryEntry existingEntry = fqnToEntryMap.get(fullyQualifiedName);
-            if (entry.equals(existingEntry)) {
-                fqnToEntryMap.remove(fullyQualifiedName);
-                for (IRegistryChangeListener iRegistryChangeListener : listeners) {
-                    iRegistryChangeListener.entryRemoved(entry);
-                }
+            fqnToEntryMap.remove(fullyQualifiedName, entry);
+            for (IRegistryChangeListener listener : listeners) {
+                listener.entryRemoved(entry);
             }
         }
     }

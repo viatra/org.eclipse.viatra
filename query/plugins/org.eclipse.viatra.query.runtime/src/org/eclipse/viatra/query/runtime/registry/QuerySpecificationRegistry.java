@@ -63,6 +63,7 @@ public class QuerySpecificationRegistry implements IQuerySpecificationRegistry {
             ImmutableSet<IRegistrySourceConnector> delayed = ImmutableSet.copyOf(delayedConnectors);
             for (IRegistrySourceConnector connector : delayed) {
                 internalRegistry.addSource(connector);
+                delayedConnectors.remove(connector);
             }
         }
         return internalRegistry;
@@ -91,7 +92,7 @@ public class QuerySpecificationRegistry implements IQuerySpecificationRegistry {
     }
 
     @Override
-    public IRegistryView getDefaultView() {
+    public IDefaultRegistryView getDefaultView() {
         return getInternalRegistry().getDefaultView();
     }
 
@@ -103,6 +104,11 @@ public class QuerySpecificationRegistry implements IQuerySpecificationRegistry {
     @Override
     public IRegistryView createView(IRegistryViewFilter filter) {
         return getInternalRegistry().createView(filter);
+    }
+
+    @Override
+    public IRegistryView createView(IRegistryViewFactory factory) {
+        return getInternalRegistry().createView(factory);
     }
 
 }
