@@ -62,6 +62,13 @@
             id="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
             name="Query Explorer">
       </view>
+      <view
+            category="org.eclipse.viatra.query.tooling.ui"
+            class="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
+            icon="icons/rsz_viatra_logo.png"
+            id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
+            name="Query Registry">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -126,6 +133,12 @@
                relative="org.eclipse.ui.views.PropertySheet">
          </view>
          <view
+               id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
+               minimized="false"
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
+         </view>
+         <view
                id="org.eclipse.amalgam.explorer.contextual.ui.view.ExplorerContextualID"
                minimized="false"
                relationship="stack"
@@ -154,6 +167,9 @@
          </view>
          <viewShortcut
                id="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
          </viewShortcut>
          <viewShortcut
                id="org.eclipse.ui.views.PropertySheet">
@@ -382,6 +398,10 @@
             class="org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers.ResetUIHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.resetui">
       </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.queryregistry.handlers.ResetViewHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.registry.reset">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -574,6 +594,16 @@
             </visibleWhen>
          </command>            -->
          </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.registry.reset"
+               icon="icons/reset.gif"
+               label="Reset view"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -645,6 +675,11 @@
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.resetui"
             name="Reset UI">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.registry.reset"
+            name="Reset view">
       </command>
    </extension>
    <extension
@@ -739,5 +774,66 @@
             id="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective"
             name="Transformation Development">
       </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
+         <propertyCategory
+               category="org.eclipse.viatra.query.tooling.ui.propertiesCategory">
+         </propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
+      <propertyTabs
+            contributorId="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
+         <propertyTab
+               category="org.eclipse.viatra.query.tooling.ui.propertiesCategory"
+               id="org.eclipse.viatra.query.tooling.ui.properties.specification"
+               label="Query">
+         </propertyTab>
+         <propertyTab
+               afterTab="org.eclipse.viatra.query.tooling.ui.properties.specification"
+               category="org.eclipse.viatra.query.tooling.ui.propertiesCategory"
+               id="org.eclipse.viatra.query.tooling.ui.properties.specification.advanced"
+               indented="true"
+               label="Advanced">
+         </propertyTab>
+      </propertyTabs>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertySections">
+      <propertySections
+            contributorId="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
+         <propertySection
+               class="org.eclipse.viatra.query.tooling.ui.queryregistry.QuerySpecificationPropertySection"
+               enablesFor="1"
+               id="org.eclipse.viatra.query.tooling.ui.properties.specification.section"
+               tab="org.eclipse.viatra.query.tooling.ui.properties.specification">
+            <input
+                  type="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
+            </input>
+         </propertySection>
+         <propertySection
+               class="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
+               enablesFor="1"
+               id="org.eclipse.ui.views.properties.tabbed.AdvancedPropertySection"
+               tab="org.eclipse.viatra.query.tooling.ui.properties.specification.advanced">
+            <input
+                  type="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
+            </input>
+         </propertySection>
+      </propertySections>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry"
+            class="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntryAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
    </extension>
 </plugin>
