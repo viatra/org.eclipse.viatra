@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
@@ -75,11 +76,26 @@ class PConstraintInfoInferrer {
             createConstraintInfoTypeConstraint(resultList, runtimeContext, (TypeConstraint)pConstraint);
         } else if (pConstraint instanceof Inequality){
             createConstraintInfoInequality(resultList, runtimeContext, (Inequality) pConstraint);
-        } else {
+        } else if (pConstraint instanceof ExpressionEvaluation){
+            createConstraintInfoExpressionEvaluation(resultList, runtimeContext, (ExpressionEvaluation)pConstraint);
+        } else{
             createConstraintInfoGeneric(resultList, runtimeContext, pConstraint);
         }
     }
     
+    private void createConstraintInfoExpressionEvaluation(List<PConstraintInfo> resultList,
+            IQueryRuntimeContext runtimeContext, ExpressionEvaluation expressionEvaluation) {
+        // An expression evaluation can only have its output variable unbound. All other variables shall be bound
+        PVariable output = expressionEvaluation.getOutputVariable();
+        Set<Set<PVariable>> bindings = Sets.newHashSet();
+        Set<PVariable> affectedVariables = expressionEvaluation.getAffectedVariables();
+        // All variables bound -> check
+        bindings.add(affectedVariables);
+        // Output variable is not bound -> extend
+        bindings.add(Sets.difference(affectedVariables, Collections.singleton(output)));
+        doCreateConstraintInfos(runtimeContext, resultList, expressionEvaluation, affectedVariables, bindings);
+    }
+
     private void createConstraintInfoInequality(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, Inequality inequality){
         // In case of inequality, all affected variables must be bound in order to execute
         Set<PVariable> affectedVariables = inequality.getAffectedVariables();
