@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,6 +25,7 @@ import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
+import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 
 /**
@@ -32,6 +34,11 @@ import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
  *
  */
 public class SolutionStore {
+
+    public interface ISolutionSaver {
+        void setSolutionsCollection(Map<Object, Solution> solutions);
+        boolean saveSolution(ThreadContext context, Object id, SolutionTrajectory solutionTrajectory);
+    }
 
     public interface IEnoughSolutions extends ISolutionFoundHandler {
         boolean enoughSolutions();
@@ -83,9 +90,101 @@ public class SolutionStore {
         }
     }
 
+    public static class SimpleSolutionSaver implements ISolutionSaver {
+
+        private Map<Object, Solution> solutions;
+
+        @Override
+        public void setSolutionsCollection(Map<Object, Solution> solutions) {
+            this.solutions = solutions;
+        }
+
+        @Override
+        public boolean saveSolution(ThreadContext context, Object id, SolutionTrajectory solutionTrajectory) {
+            Solution solution = solutions.get(id);
+            if (solution != null) {
+                if (solution.getTrajectories().contains(solutionTrajectory)) {
+                    return false;
+                } else {
+                    solution.addTrajectory(solutionTrajectory);
+                    solutionTrajectory.setSolution(solution);
+                }
+            } else {
+                solution = new Solution(id, solutionTrajectory);
+                solutions.put(id, solution);
+                solutionTrajectory.setSolution(solution);
+            }
+            return true;
+        }
+    }
+
+    public static class BestSolutionSaver implements ISolutionSaver {
+
+        private Map<Object, Solution> solutions;
+        private Map<SolutionTrajectory, Fitness> trajectories = new HashMap<>();
+
+        @Override
+        public void setSolutionsCollection(Map<Object, Solution> solutions) {
+            this.solutions = solutions;
+        }
+
+        @Override
+        public boolean saveSolution(ThreadContext context, Object id, SolutionTrajectory solutionTrajectory) {
+
+            Fitness lastFitness = context.getLastFitness();
+            ObjectiveComparatorHelper comparatorHelper = context.getObjectiveComparatorHelper();
+
+            List<SolutionTrajectory> dominatedTrajectories = new ArrayList<>();
+
+            for (Entry<SolutionTrajectory, Fitness> entry : trajectories.entrySet()) {
+                int isLastFitnessBetter = comparatorHelper.compare(lastFitness, entry.getValue());
+                if (isLastFitnessBetter < 0) {
+                    return false;
+                }
+                if (isLastFitnessBetter > 0) {
+                    dominatedTrajectories.add(entry.getKey());
+                }
+            }
+
+            boolean solutionSaved = false;
+
+            Solution solution = solutions.get(id);
+            if (solution != null) {
+                if (!solution.getTrajectories().contains(solutionTrajectory)) {
+                    solution.addTrajectory(solutionTrajectory);
+                    solutionTrajectory.setSolution(solution);
+                    solutionSaved = true;
+                    trajectories.put(solutionTrajectory, lastFitness);
+                }
+            } else {
+                solution = new Solution(id, solutionTrajectory);
+                solutions.put(id, solution);
+                solutionTrajectory.setSolution(solution);
+                solutionSaved = true;
+                trajectories.put(solutionTrajectory, lastFitness);
+            }
+
+            for (SolutionTrajectory st : dominatedTrajectories) {
+                trajectories.remove(st);
+                Solution s = st.getSolution();
+                if (!s.getTrajectories().remove(st)) {
+                    throw new RuntimeException();
+                }
+                if (s.getTrajectories().isEmpty()) {
+                    Object stateCode = s.getStateCode();
+                    solutions.remove(stateCode);
+                }
+            }
+
+            return solutionSaved;
+        }
+
+    }
+
     private boolean acceptOnlyGoalSolutions = true;
     private final Map<Object, Solution> solutions = new HashMap<Object, Solution>();
-    private List<ISolutionFoundHandler> solutionFoundHandlers;
+    private ISolutionSaver solutionSaver = new SimpleSolutionSaver();
+    private List<ISolutionFoundHandler> solutionFoundHandlers = new ArrayList<ISolutionFoundHandler>(1);
 
     private final IEnoughSolutions enoughSolutions;
 
@@ -119,46 +218,45 @@ public class SolutionStore {
      * @param context
      * @return True if the solutions is not found previously.
      */
-    public synchronized boolean newSolution(ThreadContext context) {
-
+    public synchronized void newSolution(ThreadContext context) {
+        solutionSaver.setSolutionsCollection(solutions);
         Fitness fitness = context.getLastFitness();
-
-        if (acceptOnlyGoalSolutions && !fitness.isSatisifiesHardObjectives()) {
-            return false;
-        }
-
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         Object id = dsm.getCurrentState();
         IStateCoderFactory stateCoderFactory = context.getGlobalContext().getStateCoderFactory();
         SolutionTrajectory solutionTrajectory = dsm.getTrajectoryInfo().createSolutionTrajectory(stateCoderFactory);
         solutionTrajectory.setFitness(fitness);
 
-        Solution solution = solutions.get(id);
+        if (acceptOnlyGoalSolutions && !fitness.isSatisifiesHardObjectives()) {
+            unsavedSolutionCallbacks(context, solutionTrajectory);
+            return;
+        }
 
-        if (solution != null) {
-            if (solution.getTrajectories().contains(solutionTrajectory)) {
-                return false;
-            } else {
-                solution.addTrajectory(solutionTrajectory);
+        boolean solutionSaved = solutionSaver.saveSolution(context, id, solutionTrajectory);
+
+        if (solutionSaved) {
+            enoughSolutions.solutionFound(context, solutionTrajectory);
+
+            savedSolutionCallbacks(context, solutionTrajectory);
+
+            if (enoughSolutions.enoughSolutions()) {
+                context.getGlobalContext().stopAllThreads();
             }
         } else {
-            Solution newSolution = new Solution(id, solutionTrajectory);
-            solutions.put(id, newSolution);
+            unsavedSolutionCallbacks(context, solutionTrajectory);
         }
+    }
 
-        enoughSolutions.solutionFound(context, solutionTrajectory);
-
-        if (solutionFoundHandlers != null) {
-            for (ISolutionFoundHandler handler : solutionFoundHandlers) {
-                handler.solutionFound(context, solutionTrajectory);
-            }
+    private void unsavedSolutionCallbacks(ThreadContext context, SolutionTrajectory solutionTrajectory) {
+        for (ISolutionFoundHandler handler : solutionFoundHandlers) {
+            handler.solutionFound(context, solutionTrajectory);
         }
+    }
 
-        if (enoughSolutions.enoughSolutions()) {
-            context.getGlobalContext().stopAllThreads();
+    private void savedSolutionCallbacks(ThreadContext context, SolutionTrajectory solutionTrajectory) {
+        for (ISolutionFoundHandler handler : solutionFoundHandlers) {
+            handler.solutionTriedToSave(context, solutionTrajectory);
         }
-
-        return true;
     }
 
     public synchronized Collection<Solution> getSolutions() {
@@ -172,16 +270,29 @@ public class SolutionStore {
         solutionFoundHandlers.add(handler);
     }
 
-    public void logSolutionsWhenFound() {
+    public SolutionStore logSolutionsWhenFound() {
         registerSolutionFoundHandler(new LogSolutionHandler());
         Logger.getLogger(LogSolutionHandler.class).setLevel(Level.INFO);
+        return this;
     }
 
-    public void acceptGoalSolutionsOnly() {
+    public SolutionStore acceptGoalSolutionsOnly() {
         acceptOnlyGoalSolutions = true;
+        return this;
     }
 
-    public void acceptAnySolutions() {
+    public SolutionStore acceptAnySolutions() {
         acceptOnlyGoalSolutions = false;
+        return this;
+    }
+
+    public SolutionStore withSolutionSaver(ISolutionSaver solutionSaver) {
+        this.solutionSaver = solutionSaver;
+        return this;
+    }
+
+    public SolutionStore storeBestSolutionsOnly() {
+        this.solutionSaver = new BestSolutionSaver();
+        return this;
     }
 }

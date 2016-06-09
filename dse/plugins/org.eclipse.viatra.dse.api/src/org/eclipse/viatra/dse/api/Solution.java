@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.List;
 
 public class Solution {
 
-    private ConcurrentLinkedQueue<SolutionTrajectory> trajectories;
+    private List<SolutionTrajectory> trajectories;
     private final Object stateId;
 
     public Solution(Object stateId, SolutionTrajectory trajectory) {
         this.stateId = stateId;
-        trajectories = new ConcurrentLinkedQueue<SolutionTrajectory>();
+        trajectories = new ArrayList<>();
         trajectories.add(trajectory);
     }
 
@@ -29,14 +30,14 @@ public class Solution {
     }
 
     public SolutionTrajectory getArbitraryTrajectory() {
-        return trajectories.peek();
+        return trajectories.get(0);
     }
 
     public SolutionTrajectory getShortestTrajectory() {
         if (trajectories.size() == 1) {
-            return trajectories.peek();
+            return trajectories.get(0);
         }
-        SolutionTrajectory shortestTrajecotry = trajectories.peek();
+        SolutionTrajectory shortestTrajecotry = trajectories.get(0);
         int minSize = shortestTrajecotry.getTrajectoryLength();
         for (SolutionTrajectory traj : trajectories) {
             int size = traj.getTrajectoryLength();

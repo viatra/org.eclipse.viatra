@@ -52,7 +52,8 @@ public class SolutionTrajectory {
     private final List<BatchTransformationRule<?, ?>> transformationRules;
     private final IStateCoderFactory stateCoderFactory;
     private Map<String, Double> fitness;
-
+    private Solution solution;
+    
     private ViatraQueryEngine engine;
     private EObject model;
     private EditingDomain editingDomain;
@@ -281,6 +282,17 @@ public class SolutionTrajectory {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         return activationCodes.equals(obj);
+    }
+
+    public Solution getSolution() {
+        return solution;
+    }
+
+    public void setSolution(Solution solution) {
+        this.solution = solution;
     }
 }
