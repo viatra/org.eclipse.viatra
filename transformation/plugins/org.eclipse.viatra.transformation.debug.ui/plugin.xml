@@ -52,18 +52,62 @@
       <handler
             class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.handlers.ToggleActivationBreakpointHandler"
             commandId="org.eclipse.viatra.transformation.ui.debug.toggleActivationBreakpoint">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+               </instanceof>
+               <test
+                     property="org.eclipse.viatra.transformation.debug.ui.activation">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.handlers.SelectNextActivationHandler"
             commandId="org.eclipse.viatra.transformation.debug.ui.SelectNextActivation">
+          <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+               </instanceof>
+               <test
+                     property="org.eclipse.viatra.transformation.debug.ui.activation">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.handlers.AddRuleBreakpointHandler"
             commandId="org.eclipse.viatra.transformation.debug.ui.addRuleBreakpoint">
+          <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+               </instanceof>
+               <test
+                     property="org.eclipse.viatra.transformation.debug.ui.running">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.viatra.transformation.debug.ui.util.DebugQueryLanguageExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.handlers.AddConditionalBreakpointHandler"
             commandId="org.eclipse.viatra.transformation.debug.ui.addCondBreakpoint">
+           <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+               </instanceof>
+               <test
+                     property="org.eclipse.viatra.transformation.debug.ui.running">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
@@ -135,5 +179,15 @@
             id="org.eclipse.viatra.transformation.debug.model">
       </debugModelPresentation>
    </extension>
+      <extension
+            point="org.eclipse.core.expressions.propertyTesters">
+         <propertyTester
+               class="org.eclipse.viatra.transformation.debug.ui.util.ViatraDebuggerPropertyTester"
+               id="org.eclipse.viatra.transformation.debug.ui.debuggerPropertyTester"
+               namespace="org.eclipse.viatra.transformation.debug.ui"
+               properties="adaptableevm,activation,running"
+               type="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+         </propertyTester>
+      </extension>
 
 </plugin>

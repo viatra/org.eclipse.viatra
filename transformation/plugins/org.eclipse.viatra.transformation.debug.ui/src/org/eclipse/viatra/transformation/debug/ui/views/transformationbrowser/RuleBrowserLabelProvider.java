@@ -55,15 +55,13 @@ public class RuleBrowserLabelProvider extends LabelProvider {
             }
 
         }
-        // TODO More info about activation
-
         return element.getClass().getName() + " Hash: " + element.hashCode();
     }
 
     @Override
     public Image getImage(Object element) {
         if (element instanceof AdaptableEVM) {
-            if (view.getTransformationStateMap().get(element) != null) {
+            if (view.isUnderDebugging((AdaptableEVM) element)) {
                 return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.debug.ui",
                         "icons/viatra_debug.gif");
             } else {
