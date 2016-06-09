@@ -218,7 +218,7 @@ public class PBodyCopier {
 
     protected void copyExpressionEvaluationConstraint(ExpressionEvaluation expressionEvaluation) {
         PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
-        new ExpressionEvaluation(body, expressionEvaluation.getEvaluator(), mappedOutputVariable);
+        new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable);
     }
     
     
