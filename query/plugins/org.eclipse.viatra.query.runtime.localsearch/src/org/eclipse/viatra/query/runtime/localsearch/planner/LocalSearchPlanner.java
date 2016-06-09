@@ -34,6 +34,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterExcep
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -146,24 +147,18 @@ public class LocalSearchPlanner {
     private void removeDuplicateConstraints(Set<PBody> normalizedBodies) {
         for (PBody pBody : normalizedBodies) {
             pBody.setStatus(PQueryStatus.UNINITIALIZED);
-            Set<PConstraint> constraintsToRemove = Sets.newHashSet();
-            Set<PConstraint> duplicateConstraints = Sets.newHashSet();
-            Set<PConstraint> constraints = pBody.getConstraints();
-            for (PConstraint pConstraint1 : constraints) {
-                for (PConstraint pConstraint2 : constraints) {
-                    if(!constraintsToRemove.contains(pConstraint2) && pConstraint1.toString().equals(pConstraint2.toString())){
-                        duplicateConstraints.add(pConstraint1);
-                        constraintsToRemove.add(pConstraint1);
-                        constraintsToRemove.add(pConstraint2);                        
-                    }
+            
+            Map<String, PConstraint> constraints = Maps.newHashMap();
+            for(PConstraint constraint : pBody.getConstraints()){
+                String key = constraint.toString();
+                // Retain first found instance of a constraint
+                if (!constraints.containsKey(key)){
+                    constraints.put(key, constraint);
                 }
-            }            
-            for (PConstraint pConstraint : constraintsToRemove) {                
-                pBody.getConstraints().remove(pConstraint);
             }
-            for (PConstraint pConstraint : duplicateConstraints) {
-                pBody.getConstraints().add(pConstraint);
-            }
+            
+            // Retain collected constraints, remove everything else
+            pBody.getConstraints().retainAll(constraints.values());
             pBody.setStatus(PQueryStatus.OK);
         }
     }
