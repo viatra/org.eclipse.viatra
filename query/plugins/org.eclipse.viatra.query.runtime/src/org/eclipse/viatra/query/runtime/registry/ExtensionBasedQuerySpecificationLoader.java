@@ -48,14 +48,16 @@ import com.google.common.collect.Sets;
  */
 public class ExtensionBasedQuerySpecificationLoader {
 
-    private static final String DUPLICATE_QUERY_GROUP_MESSAGE = "Duplicate query group identifier %s for plugin %s (already contributed by %s)";
+    public static final String CONNECTOR_ID = "org.eclipse.viatra.query.runtime.querygroup.extension.based.connector";
 
+    private static final String DUPLICATE_QUERY_GROUP_MESSAGE = "Duplicate query group identifier %s for plugin %s (already contributed by %s)";
     private static final ExtensionBasedQuerySpecificationLoader INSTANCE = new ExtensionBasedQuerySpecificationLoader();
     
     private Multimap<String, String>  contributingPluginOfGroupMap = HashMultimap.create();
     private Map<String, QueryGroupProvider> contributedQueryGroups;
 
     private ExtensionBasedSourceConnector sourceConnector;
+
     
     /**
      * @return the single instance of the loader.
@@ -139,8 +141,6 @@ public class ExtensionBasedQuerySpecificationLoader {
      */
     private final class ExtensionBasedSourceConnector implements IRegistrySourceConnector {
         
-        private static final String CONNECTOR_ID = "org.eclipse.viatra.query.runtime.querygroup.extension.based.connector";
-
         private Set<IConnectorListener> listeners;
         
         public ExtensionBasedSourceConnector() {
@@ -149,7 +149,7 @@ public class ExtensionBasedQuerySpecificationLoader {
         
         @Override
         public String getIdentifier() {
-            return CONNECTOR_ID;
+            return ExtensionBasedQuerySpecificationLoader.CONNECTOR_ID;
         }
 
         @Override

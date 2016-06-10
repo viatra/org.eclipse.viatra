@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.registry.impl;
 
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IRegistryViewFilter;
+import org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 
 /**
@@ -31,8 +32,8 @@ public class FilteringRegistryView extends AbstractRegistryView {
      * @param registry that defines the view
      * @param filter that is used for deciding relevancy
      */
-    public FilteringRegistryView(IQuerySpecificationRegistry registry, IRegistryViewFilter filter) {
-        super(registry);
+    public FilteringRegistryView(IQuerySpecificationRegistry registry, IRegistryViewFilter filter, boolean allowDuplicateFQNs) {
+        super(registry, allowDuplicateFQNs);
         this.filter = filter;
     }
 

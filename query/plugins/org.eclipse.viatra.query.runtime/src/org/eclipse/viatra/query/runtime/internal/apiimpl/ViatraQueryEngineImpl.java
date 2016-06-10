@@ -54,8 +54,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
-import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
@@ -167,7 +167,7 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
     @Override
     public ViatraQueryMatcher<? extends IPatternMatch> getMatcher(String patternFQN) throws ViatraQueryException {
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
-        IRegistryView view = registry.getDefaultView();
+        IDefaultRegistryView view = registry.getDefaultView();
         IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification = view.getEntry(patternFQN).get();
         if (querySpecification != null) {
             return getMatcher(querySpecification);

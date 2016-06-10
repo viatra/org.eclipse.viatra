@@ -60,7 +60,9 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
         this.includeSubPackages = includeSubPackages;
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
         IRegistryView view = registry.createView(new PackageNameBasedViewFilter());
-        this.querySpecifications.addAll(view.getQueryGroup().getSpecifications());
+        for (IQuerySpecificationRegistryEntry entry : view.getEntries()) {
+            this.querySpecifications.add(entry.get());
+        }
         SpecificationSetUpdater listener = new SpecificationSetUpdater();
         view.addViewListener(listener);
     }

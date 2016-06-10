@@ -17,8 +17,10 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.extensibility.IQuerySpecificationProvider;
 import org.eclipse.viatra.query.runtime.registry.IConnectorListener;
+import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
+import org.eclipse.viatra.query.runtime.registry.IRegistryViewFactory;
 import org.eclipse.viatra.query.runtime.registry.IRegistryViewFilter;
 import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener;
 import org.eclipse.viatra.query.runtime.registry.IRegistrySourceConnector;
@@ -42,7 +44,7 @@ public class QuerySpecificationRegistryImpl implements IQuerySpecificationRegist
     private final IConnectorListener connectorListener;
     private final RegistryChangeMultiplexer multiplexer;
     private final Logger logger;
-    private IRegistryView defaultView = null;
+    private IDefaultRegistryView defaultView = null;
     
     /**
      * Creates a new instance of the registry
@@ -95,9 +97,13 @@ public class QuerySpecificationRegistryImpl implements IQuerySpecificationRegist
 
     @Override
     public IRegistryView createView() {
-        GlobalRegistryView registryAspect = new GlobalRegistryView(this);
-        initializeChangeListener(registryAspect);
-        return registryAspect;
+        return createGlobalView();
+    }
+
+    private GlobalRegistryView createGlobalView() {
+        GlobalRegistryView registryView = new GlobalRegistryView(this);
+        initializeChangeListener(registryView);
+        return registryView;
     }
 
     protected void initializeChangeListener(IRegistryChangeListener listener) {
@@ -114,9 +120,9 @@ public class QuerySpecificationRegistryImpl implements IQuerySpecificationRegist
     @Override
     public IRegistryView createView(IRegistryViewFilter filter) {
         checkArgument(filter != null, "Filter cannot be null");
-        FilteringRegistryView registryAspect = new FilteringRegistryView(this, filter);
-        initializeChangeListener(registryAspect);
-        return registryAspect;
+        FilteringRegistryView registryView = new FilteringRegistryView(this, filter, false);
+        initializeChangeListener(registryView);
+        return registryView;
     }
 
     /**
@@ -154,11 +160,18 @@ public class QuerySpecificationRegistryImpl implements IQuerySpecificationRegist
     }
 
     @Override
-    public IRegistryView getDefaultView() {
+    public IDefaultRegistryView getDefaultView() {
         if(this.defaultView == null){
-            this.defaultView = createView();
+            this.defaultView = createGlobalView();
         }
         return this.defaultView;
+    }
+
+    @Override
+    public IRegistryView createView(IRegistryViewFactory factory) {
+        IRegistryView registryView = factory.createView(this);
+        initializeChangeListener(registryView);
+        return registryView;
     }
     
     
