@@ -29,7 +29,6 @@ import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.DesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
-import org.eclipse.viatra.dse.designspace.impl.pojo.ConcurrentDesignSpace;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
@@ -50,29 +49,25 @@ import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransforma
  * To parameterize the algorithm one must use the following methods after instantiating:
  * <ul>
  * <li>{@link #setInitialModel(EObject)} or it's overloads to set the starting model.</li>
- * <li>
- * {@link #addTransformationRule(DSETransformationRule)} to define the transformations.</li>
- * <li> {@link #addGlobalConstraint(IGlobalConstraint)} to ensure some patterns on the trajectory's steps.</li>
- * <li {@link #addObjective(IObjective)} to define the objective functions.</li>
- * <li> {@link #startExploration(LocalSearchStrategyBase) to start an exploration with the given exploration strategy.</li>
+ * <li>{@link #addTransformationRule(BatchTransformationRule)} to define the transformations.</li> <li
+ * {@link #addObjective(IObjective)} to define the objective functions. Use the {@link Objectives} helper class for
+ * instantiating built-in, configurable objectives.</li>
+ * <li>{@link #startExploration(IStrategy)} or it's overloads to start an exploration with the given exploration
+ * strategy. Use the {@link Strategies} helper class for instantiating built-in, configurable exploration strategies.
+ * </li>
  * </ul>
  * </p>
  * 
  * <p>
  * <b>Designs Space Exploration</b> is the process of finding a sequence (or sequences) of predefined transformation
- * rules ("transitions") that, if applied in order on the starting model, results in a new model state that fulfills
- * the hard constraints defined by the objectives.
+ * rules ("transitions") that, if applied in order on the starting model, results in a new model state that fulfills the
+ * hard (or goal) constraints and is near optimal with respect to the objectives.
  * </p>
  * 
  * <p>
  * An extension to this paradigm is the introduction of global constraints, which guarantees, that no sequence will be
- * returned, which if executed, results in an intermediate model state that violate the specified global constraints,
- * including the final state. (or in reverse, they all fulfill the negative of the given constraints). You can add
- * constraints by invoking {@link #addGlobalConstraint(IGlobalConstraint)}.
- * </p>
- * 
- * <p>
- * There are several built-in exploration strategies which you can find by using the static methods of Strategies helper class. 
+ * returned, which if executed, results in an intermediate model state that violates the specified global constraints,
+ * including the final state. You can add constraints by invoking {@link #addGlobalConstraint(IGlobalConstraint)}.
  * </p>
  * 
  * @author Andras Szabolcs Nagy & Miklos Foldenyi
@@ -93,12 +88,6 @@ public class DesignSpaceExplorer {
     /**
      * <p>
      * Creates a {@link DesignSpaceExplorer} object that is able to execute a design space exploration process.
-     * </p>
-     * 
-     * <p>
-     * By default the design space implementation is the POJO based {@link ConcurrentDesignSpace}. You can provide your
-     * own custom design space implementation by implementing the {@link IDesignSpace} interface and passing it to the
-     * {@link #setDesignspace(IDesignSpace)} method.
      * </p>
      * 
      * <p>
@@ -206,19 +195,8 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Sets a {@link IStateCoderFactory} for which will be used for creating {@link IStateCoder}s.
-     * 
-     * @param serializerFactory
-     *            The factory.
-     * @deprecated Use {@link DesignSpaceExplorer#setStateCoderFactory(IStateCoderFactory)}
-     */
-    @Deprecated
-    public final void setSerializerFactory(IStateCoderFactory serializerFactory) {
-        setStateCoderFactory(serializerFactory);
-    }
-
-    /**
-     * Sets a {@link IStateCoderFactory} for which will be used for creating {@link IStateCoder}s.
+     * Sets a {@link IStateCoderFactory} for which will be used for creating {@link IStateCoder}s. The default
+     * implementation is the {@link SimpleStateCoderFactory}, which works well in most of the cases.
      * 
      * @param stateCoderFactory
      *            The factory.
@@ -241,7 +219,7 @@ public class DesignSpaceExplorer {
 
     /**
      * Sets the {@link IDesignSpace} implementation that is to be used during the design space exploration process. By
-     * default, the {@link ConcurrentDesignSpace} implementation is used.
+     * default, the {@link DesignSpace} implementation is used.
      * 
      * @param designspace
      *            The {@link IDesignSpace} implementation.
@@ -251,7 +229,7 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Sets the solution store for strategies using the new strategy API. Please see the {@link SolutionStore} for details.
+     * Sets the solution store for strategies. Please see the {@link SolutionStore} for how to configure it.
      * 
      * @param solutionStore
      *            The parameterized {@link SolutionStore} implementation.
@@ -379,7 +357,6 @@ public class DesignSpaceExplorer {
 
         logger.debug("DesignSpaceExplorer started exploration.");
 
-        // Create main thread with given model, without cloning.
         ThreadContext threadContext = new ThreadContext(globalContext, strategy, model);
 
         globalContext.tryStartNewThread(threadContext, false);
@@ -468,6 +445,12 @@ public class DesignSpaceExplorer {
         globalContext.registerDesignSpaceVisualizer(visualizer);
     }
 
+    /**
+     * Creates a string containing the state codes of all the found solutions and the found trajectories to these
+     * solutions with fitness values.
+     * 
+     * @return A pretty string with the solutions.
+     */
     public String toStringSolutions() {
         StringBuilder sb = new StringBuilder();
         Collection<Solution> solutions = getSolutions();
@@ -488,14 +471,11 @@ public class DesignSpaceExplorer {
     }
 
     /**
+     * A conflict resolver can filter rule activations the DSE engine will see. The primary use of this is symmetry
+     * reduction. This function is subject to change for better API.
      * 
-     * @deprecated use toStringSolutions instead
+     * @param conflictResolver
      */
-    @Deprecated
-    public String prettyPrintSolutions() {
-        return toStringSolutions();
-    }
-
     public void setConflictResolver(ConflictResolver conflictResolver) {
         globalContext.setConflictResolver(conflictResolver);
     }

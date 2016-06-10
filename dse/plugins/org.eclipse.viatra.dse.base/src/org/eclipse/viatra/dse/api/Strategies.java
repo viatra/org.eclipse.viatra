@@ -17,7 +17,7 @@ import org.eclipse.viatra.dse.api.strategy.impl.HillClimbingStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 
 /**
- * Helper class for instantiating Strategies. To implement a new strategy use the {@link IStrategy} interface.
+ * Helper class for instantiating strategies. To implement a new strategy use the {@link IStrategy} interface.
  * 
  * @author Andras Szabolcs Nagy
  * 
@@ -27,22 +27,94 @@ public final class Strategies {
     private Strategies() {
     }
 
+    /**
+     * 
+     * @param depthLimit
+     * @return
+     * @deprecated Use {@link Strategies#createDfsStrategy(int)} instead.
+     */
+    @Deprecated
     public static DepthFirstStrategy createDFSStrategy(int depthLimit) {
         return new DepthFirstStrategy(depthLimit);
     }
 
+    /**
+     * Creates a depth-first search exploration strategy without a depth limit.
+     * 
+     * @return The strategy.
+     * @see DepthFirstStrategy
+     */
+    public static DepthFirstStrategy createDfsStrategy() {
+        return new DepthFirstStrategy(0);
+    }
+
+    /**
+     * Creates a depth-first search exploration strategy with a depth limit. A zero or negative depth limit means no
+     * depth limit.
+     * 
+     * @param depthLimit
+     * @return The strategy.
+     * @see DepthFirstStrategy
+     */
+    public static DepthFirstStrategy createDfsStrategy(int depthLimit) {
+        return new DepthFirstStrategy(depthLimit);
+    }
+
+    /**
+     * Creates a fixed priority exploration strategy without a depth limit. It is a depth-first search exploration
+     * strategy but from a current state it only explores the activations with the highest priority. Priorities can be
+     * defined on the strategy itself.
+     * 
+     * @return The strategy.
+     * @see FixedPriorityStrategy
+     */
     public static FixedPriorityStrategy createFixedPriorityStrategy() {
         return createFixedPriorityStrategy(0);
     }
 
+    /**
+     * Creates a fixed priority exploration strategy with a depth limit, where a zero or negative depth limit means no
+     * depth limit. It is a depth-first search exploration strategy but from a current state it only explores the
+     * activations with the highest priority. Priorities can be defined on the strategy itself.
+     * 
+     * @param depthLimit
+     * @return The strategy.
+     * @see FixedPriorityStrategy
+     */
     public static FixedPriorityStrategy createFixedPriorityStrategy(int depthLimit) {
         return new FixedPriorityStrategy().withDepthLimit(depthLimit);
     }
 
+    /**
+     * Creates a breadth-first search exploration strategy without a depth limit.
+     * 
+     * @return The strategy.
+     * @see BreadthFirstStrategy
+     */
+    public static BreadthFirstStrategy createBfsStrategy() {
+        return new BreadthFirstStrategy(0);
+    }
+
+    /**
+     * Creates a breadth-first search exploration strategy with a depth limit. A zero or negative depth limit means no
+     * depth limit.
+     * 
+     * @param depthLimit
+     * @return The strategy.
+     * @see BreadthFirstStrategy
+     */
     public static BreadthFirstStrategy createBfsStrategy(int depthLimit) {
         return new BreadthFirstStrategy(depthLimit);
     }
-    
+
+    /**
+     * Creates a hill climbing exploration strategy. By default, it explores all neighborhood states and chooses the
+     * best one to continue with until all neighborhood states are dominated by the current state. Other options are
+     * available on the strategy.
+     * 
+     * @return The strategy.
+     * @see HillClimbingStrategy
+     */
     public static HillClimbingStrategy creatHillClimbingStrategy() {
         return new HillClimbingStrategy();
     }
