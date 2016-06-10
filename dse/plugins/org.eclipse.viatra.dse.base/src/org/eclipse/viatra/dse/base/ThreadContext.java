@@ -32,7 +32,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
-import org.eclipse.viatra.transformation.evm.specific.ConflictResolvers;
+import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSet;
 import org.eclipse.viatra.transformation.evm.specific.RuleEngines;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
@@ -71,6 +71,10 @@ public class ThreadContext {
     
     public SingletonSetConflictResolver getConflictResolver() {
         return conflictResolver;
+    }
+
+    public ConflictSet getConflictSet() {
+        return conflictResolver.conflictSet;
     }
 
     /**

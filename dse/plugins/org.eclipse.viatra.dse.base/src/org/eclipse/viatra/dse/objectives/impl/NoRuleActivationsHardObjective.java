@@ -32,7 +32,7 @@ public class NoRuleActivationsHardObjective extends BaseObjective {
 
     @Override
     public Double getFitness(ThreadContext context) {
-        return context.getRuleEngine().getConflictingActivations().isEmpty() ? 1d : 0d;
+        return context.getConflictSet().getNextActivations().isEmpty() ? 1d : 0d;
     }
 
     @Override
