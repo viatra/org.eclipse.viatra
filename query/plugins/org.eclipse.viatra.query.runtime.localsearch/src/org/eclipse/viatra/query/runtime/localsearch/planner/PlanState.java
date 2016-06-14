@@ -67,8 +67,7 @@ public class PlanState {
 
         Set<PConstraintInfo> allUsedAppliedConstraints = Sets.newHashSet();
         for (PConstraintInfo pConstraintPlanInfo : operationsList) {
-            allUsedAppliedConstraints = Sets.newHashSet(Sets.union(allUsedAppliedConstraints,
-                    pConstraintPlanInfo.getSameWithDifferentBindings()));
+            allUsedAppliedConstraints.addAll(pConstraintPlanInfo.getSameWithDifferentBindings());
         }
 
         final Set<PConstraintInfo> allUsedAppliedConstraintsArg = allUsedAppliedConstraints;
