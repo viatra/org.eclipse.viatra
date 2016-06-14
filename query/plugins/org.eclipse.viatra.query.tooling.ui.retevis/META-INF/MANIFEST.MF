@@ -10,17 +10,23 @@ Export-Package: org.eclipse.viatra.query.tooling.ui.retevis,
 Require-Bundle: org.eclipse.viatra.query.runtime.rete.recipes,
  org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.draw2d,
  org.eclipse.viatra.query.tooling.ui,
  org.eclipse.viatra.query.runtime,
- org.eclipse.gef4.zest.core,
- org.eclipse.gef4.zest.jface,
- org.eclipse.gef4.layout,
+ org.eclipse.gef.zest.fx;bundle-version="5.0.0",
+ org.eclipse.gef.zest.fx.jface;bundle-version="5.0.0",
+ org.eclipse.gef.mvc.fx;bundle-version="5.0.0",
+ com.google.inject;bundle-version="3.0.0",
+ org.eclipse.gef.graph;bundle-version="5.0.0",
+ org.eclipse.gef.common;bundle-version="5.0.0",
+ org.eclipse.gef.fx;bundle-version="5.0.0",
+ org.eclipse.gef.fx.swt;bundle-version="5.0.0",
+ org.eclipse.gef.layout;bundle-version="5.0.0",
  org.eclipse.viatra.query.patternlanguage,
  org.eclipse.viatra.query.patternlanguage.emf,
  com.google.guava,
  org.eclipse.viatra.query.runtime.rete,
- org.eclipse.viatra.addon.viewers.runtime.zest;bundle-version="0.12.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+ org.eclipse.viatra.addon.viewers.runtime.zest;bundle-version="[0.16.0,0.17.0)",
+ org.eclipse.viatra.integration.zest;bundle-version="[0.16.0,0.17.0)"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.apache.log4j
 Bundle-ActivationPolicy: lazy

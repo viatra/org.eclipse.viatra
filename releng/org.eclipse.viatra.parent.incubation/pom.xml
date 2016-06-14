@@ -12,7 +12,7 @@
 	
 		<!-- Query -->
 <!-- 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.localsearch.ui</module> -->
-<!-- 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.retevis</module> -->
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.retevis</module>
 <!-- 		<module>../../query/features/org.eclipse.viatra.query.tooling.ui.visualization.feature</module> -->
 		<module>../../query/features/org.eclipse.viatra.query.sdk.extensions.feature</module>
         

@@ -23,14 +23,14 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.viewers.GraphViewer;
+import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.addon.viewers.runtime.zest.extensions.ViatraViewersZestViewSupport;
-import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestContentWithIsolatedNodesProvider;
+import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestContentProvider;
+import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -68,7 +68,7 @@ import com.google.common.collect.Sets;
 public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
 
     public ReteVisualizationViewSupport(IViewPart _owner, ViewersComponentConfiguration _config,
-            GraphViewer _graphViewer) {
+            ModifiableZestContentViewer _graphViewer) {
         super(_owner, _config, IModelConnectorTypeEnum.RESOURCESET, _graphViewer);
     }
 
@@ -249,8 +249,8 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
             state = ViatraViewerDataModel.newViewerState(engine, this.configuration.getPatterns(),
                     this.configuration.getFilter(),
                     ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
-            GraphViewer viewer = (GraphViewer) jfaceViewer;
-            viewer.setContentProvider(new ZestContentWithIsolatedNodesProvider());
+            ModifiableZestContentViewer viewer = (ModifiableZestContentViewer) jfaceViewer;
+            viewer.setContentProvider(new ZestContentProvider());
             viewer.setLabelProvider(
                     new ReteVisualizationLabelProvider(state, nodeTrace, viewer.getControl().getDisplay()));
             viewer.setInput(state);

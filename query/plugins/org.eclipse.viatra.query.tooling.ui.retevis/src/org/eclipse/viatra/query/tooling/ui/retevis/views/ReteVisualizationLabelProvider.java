@@ -14,8 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
-import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
@@ -32,7 +30,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
 import org.eclipse.viatra.query.runtime.rete.tuple.MaskedTupleMemory;
 
-public class ReteVisualizationLabelProvider extends ZestLabelProvider implements IEntityStyleProvider, IConnectionStyleProvider {
+public class ReteVisualizationLabelProvider extends ZestLabelProvider {
 
     private final Map<ReteNodeRecipe, Node> nodeTrace;
 
