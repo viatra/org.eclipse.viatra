@@ -40,6 +40,8 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
  * After each step, the used, total and free heap space is logged in MBytes after 5 GC calls and 1 second of waiting.
  * Note that even this does not always provide an absolute steady state or a precise result, but can be useful for 
  * finding problematic queries.
+ * 
+ * @since 1.3
  */
 abstract class RelativeQueryPerformanceTest extends QueryPerformanceTest {
 
