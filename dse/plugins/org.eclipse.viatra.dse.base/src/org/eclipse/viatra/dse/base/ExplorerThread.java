@@ -33,6 +33,7 @@ public class ExplorerThread implements Runnable {
 
     public ExplorerThread(final ThreadContext context) {
         this.threadContext = context;
+        strategy = threadContext.getStrategy();
     }
 
     /**
@@ -48,8 +49,6 @@ public class ExplorerThread implements Runnable {
      */
     public void run() {
         try {
-
-            strategy = threadContext.getStrategy();
             
             threadContext.init();
 
