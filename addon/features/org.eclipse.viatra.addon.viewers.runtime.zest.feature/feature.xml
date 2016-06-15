@@ -16,12 +16,21 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.gef4.zest.sdk" version="0.1.0.201607041345" match="perfect"/>
       <import feature="org.eclipse.viatra.addon.viewers.runtime.feature"/>
+      <import feature="org.eclipse.gef4.graph" />
+      <import feature="org.eclipse.gef4.layout" />
+      <import feature="org.eclipse.gef4.zest.fx.jface" />
    </requires>
 
    <plugin
          id="org.eclipse.viatra.addon.viewers.runtime.zest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.viatra.integration.zest"
          download-size="0"
          install-size="0"
          version="0.0.0"
