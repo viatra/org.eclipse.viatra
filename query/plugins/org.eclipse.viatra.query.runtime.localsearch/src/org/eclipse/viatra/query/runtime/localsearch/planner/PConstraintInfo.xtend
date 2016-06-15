@@ -207,16 +207,16 @@ class PConstraintInfo {
 		return cost
 	}
 
-	def PConstraintCategory getCategory(PBody pBody, Set<PVariable> boundVariables) {
-		if (Sets.intersection(this.freeMaskVariables, boundVariables).size() > 0) {
-			return PConstraintCategory.PAST
-		} else if (Sets.intersection(this.boundMaskVariables, Sets.difference(pBody.getAllVariables(), boundVariables)).
-			size() > 0) {
-			return PConstraintCategory.FUTURE
-		} else {
-			return PConstraintCategory.PRESENT
-		}
-	}
+    def PConstraintCategory getCategory(PBody pBody, Set<PVariable> boundVariables) {
+        if (!Sets.intersection(this.freeMaskVariables, boundVariables).isEmpty) {
+            return PConstraintCategory.PAST
+        } else if (!Sets.intersection(this.boundMaskVariables, Sets.difference(pBody.getAllVariables(), boundVariables)).
+            isEmpty) {
+            return PConstraintCategory.FUTURE
+        } else {
+            return PConstraintCategory.PRESENT
+        }
+    }
 
 	override String toString()
 		'''«String.format("\n")»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''	
