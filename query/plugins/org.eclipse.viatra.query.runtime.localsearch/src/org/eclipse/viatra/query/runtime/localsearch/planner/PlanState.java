@@ -140,7 +140,7 @@ public class PlanState {
         if (category == PConstraintCategory.PAST) {
             return false;
         } else {
-            return constraintInfo.getFreeVariables().size() > 0;
+            return !constraintInfo.getFreeVariables().isEmpty();
         }
     }
 
@@ -153,7 +153,7 @@ public class PlanState {
         if (category == PConstraintCategory.PAST) {
             return false;
         } else {
-            return constraintInfo.getFreeVariables().size() == 0;
+            return constraintInfo.getFreeVariables().isEmpty();
         }
     }
 
