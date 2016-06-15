@@ -15,8 +15,8 @@ import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.gef4.zest.core.viewers.IGraphEntityRelationshipContentProvider;
-import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.viatra.integration.zest.viewer.IGraphEntityRelationshipContentProvider;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 
 import com.google.common.collect.Lists;
@@ -27,30 +27,45 @@ import com.google.common.collect.Lists;
  * @author Marton Bur
  *
  */
-public class FrameViewerContentProvider extends ArrayContentProvider implements IGraphEntityRelationshipContentProvider {
+public class FrameViewerContentProvider implements IGraphEntityRelationshipContentProvider {
+
+    private MatchingFrame frame;
+
 
     @Override
-    public Object[] getElements(Object inputElement) {
-        MatchingFrame frame = (MatchingFrame) inputElement;
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        if (newInput instanceof MatchingFrame) {
+            frame = (MatchingFrame) newInput;
+        } else {
+            frame = null;
+        }
+    }
+
+
+    @Override
+    public Object[] getNodes() {
+        if (frame == null) {
+            return new Object[0];
+        }
 
         ArrayList<Object> elements = Lists.newArrayList();
         if (frame != null) {
             for (int i = 0; i < frame.getSize(); i++) {
                 Object element = frame.get(i);
                 if(element != null && element instanceof EObject){
-            	    elements.add(element);            	
+                    elements.add(element);              
                 }
             }
         }
         return elements.toArray();
     }
-    
+
 
     @Override
-    public Object[] getRelationships(Object source, Object dest) {
-        if (source instanceof EObject && dest instanceof EObject) {
+    public Object[] getEdges(Object source, Object target) {
+        if (source instanceof EObject && target instanceof EObject) {
             EObject eSource = (EObject) source;
-            EObject eDest = (EObject) dest;
+            EObject eDest = (EObject) target;
 
             Collection<EReference> refs = Lists.newArrayList();
             
@@ -66,6 +81,22 @@ public class FrameViewerContentProvider extends ArrayContentProvider implements 
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Object[] getNestedGraphNodes(Object node) {
+        return null;
+    }
+
+
+    @Override
+    public boolean hasNestedGraph(Object node) {
+        return false;
+    }
+
+
+    @Override
+    public void dispose() {
     }
 
 }

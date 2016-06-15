@@ -8,7 +8,7 @@
       license-feature-version="0.0.0">
 
    <description>
-      VIATRA Query Visualization Features. Requires the GEF4 version of Zest.
+      VIATRA Query Visualization Features. Requires the GEF 5 version of Zest.
    </description>
 
    <url>
@@ -16,9 +16,11 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.gef4.zest.sdk" version="0.1.0.201607041345" match="perfect"/>
       <import feature="org.eclipse.viatra.query.sdk.feature"/>
-      <import feature="org.eclipse.viatra.addon.viewers.runtime.zest.feature" version="0.12.0.qualifier"/>
+      <import feature="org.eclipse.viatra.addon.viewers.runtime.zest.feature" version="0.16.0.qualifier"/>
+      <import feature="org.eclipse.gef.graph" />
+      <import feature="org.eclipse.gef.layout" />
+      <import feature="org.eclipse.gef.zest.fx.jface" />
    </requires>
 
    <plugin

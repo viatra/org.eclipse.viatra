@@ -36,9 +36,6 @@
    <feature url="features/org.eclipse.viatra.query.tooling.ui.visualization.feature.source_0.16.0.qualifier.jar" id="org.eclipse.viatra.query.tooling.ui.visualization.feature.source" version="0.16.0.qualifier">
       <category name="org.eclipse.viatra"/>
    </feature>
-   <feature url="features/org.eclipse.gef4.zest.sdk_0.1.0.201607041345.jar" id="org.eclipse.gef4.zest.sdk" version="0.1.0.201607041345">
-      <category name="thirdparty"/>
-   </feature>
    <feature url="features/org.eclipse.viatra.transformation.debug.feature_0.16.0.qualifier.jar" id="org.eclipse.viatra.transformation.debug.feature" version="0.16.0.qualifier">
       <category name="org.eclipse.viatra.addons"/>
    </feature>

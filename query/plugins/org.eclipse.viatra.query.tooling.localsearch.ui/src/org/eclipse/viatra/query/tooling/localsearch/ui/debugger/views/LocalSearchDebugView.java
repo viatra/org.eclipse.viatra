@@ -17,13 +17,8 @@ import java.util.Map;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.viewers.AbstractZoomableViewer;
-import org.eclipse.gef4.zest.core.viewers.GraphViewer;
-import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
-import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
-import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.gef.layout.ILayoutAlgorithm;
+import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -43,10 +38,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.services.IEvaluationService;
+import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
+import org.eclipse.viatra.integration.zest.viewer.ZestContentViewer;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.FrameViewerContentProvider;
@@ -63,7 +59,7 @@ import com.google.common.collect.Maps;
  * @author Marton Bur
  *
  */
-public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbenchPart {
+public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkbenchPart*/ {
 
 
 	public static final String ID = "org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView";
@@ -73,8 +69,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     private OperationListContentProvider operationListContentProvider;
     private TreeViewer operationListViewer;
 
-    private GraphViewer graphViewer;
-    private FrameViewerContentProvider zestContentProvider;
+    private ZestContentViewer graphViewer;
     
 	private SashForm planSashForm;
 	private CTabFolder matchesTabFolder;
@@ -148,7 +143,8 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 	}
     
 	private void createZestViewer(SashForm sashForm) {
-        this.graphViewer = new GraphViewer(sashForm, SWT.BORDER);
+        this.graphViewer = new ModifiableZestContentViewer();
+        graphViewer.createControl(sashForm, SWT.BORDER);
         
         FrameViewerContentProvider zestContentProvider = new FrameViewerContentProvider();
         this.graphViewer.setContentProvider(zestContentProvider);
@@ -158,10 +154,8 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
         AdapterFactoryLabelProvider labelProvider = new AdapterFactoryLabelProvider(adapterFactory);
         this.graphViewer.setLabelProvider(labelProvider);
 
-        LayoutAlgorithm layout = getLayout();
-        this.graphViewer.setLayoutAlgorithm(layout, true);
-        this.graphViewer.applyLayout();
-        this.graphViewer.setNodeStyle(ZestStyles.NONE);
+        ILayoutAlgorithm layout = getLayout();
+        this.graphViewer.setLayoutAlgorithm(layout);
         
         fillToolBar();
     }
@@ -177,8 +171,8 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 
     }
 
-    private LayoutAlgorithm getLayout() {
-        LayoutAlgorithm layout;
+    private ILayoutAlgorithm getLayout() {
+        ILayoutAlgorithm layout;
         layout = new TreeLayoutAlgorithm();
         // layout = new GridLayoutAlgorithm();
         // layout = new SpringLayoutAlgorithm();
@@ -188,15 +182,15 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     }
 
     private void fillToolBar() {
-        ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
-        IActionBars bars = getViewSite().getActionBars();
-        bars.getMenuManager().add(toolbarZoomContributionViewItem);
+//        ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
+//        IActionBars bars = getViewSite().getActionBars();
+//        bars.getMenuManager().add(toolbarZoomContributionViewItem);
     }
 
-    @Override
-    public AbstractZoomableViewer getZoomableViewer() {
-        return graphViewer;
-    }
+//    @Override
+//    public AbstractZoomableViewer getZoomableViewer() {
+//        return graphViewer;
+//    }
 
     @Override
     public void setFocus() {
@@ -209,7 +203,6 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 			public void run() {
 				operationListViewer.refresh();
 				graphViewer.refresh();
-				graphViewer.applyLayout();
 				Collection<TableViewer> tableViewers = matchViewersMap.values();
 				for (TableViewer tableViewer : tableViewers) {
 					tableViewer.refresh();
@@ -230,12 +223,8 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
     	return operationListContentProvider;
     }
 
-    public GraphViewer getGraphViewer() {
+    public ZestContentViewer getGraphViewer() {
         return graphViewer;
-    }
-
-    public FrameViewerContentProvider getZestContentProvider() {
-        return zestContentProvider;
     }
 
 	public TableViewer getMatchesViewer(String queryName) {
@@ -269,7 +258,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 							IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 							MatchingFrame frame = (MatchingFrame) selection.getFirstElement();
 							graphViewer.setInput(frame);
-							graphViewer.applyLayout();
+							graphViewer.refresh();
 						}
 					}
 				});
