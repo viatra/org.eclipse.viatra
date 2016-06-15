@@ -548,6 +548,26 @@ class TypeInferenceTest extends AbstractValidatorTest {
         assertEquals("parameter", param.name) 
         assertEquals(classifierToInputKey(interface), type) 
     }
+    
+	@Test
+    def complexHierarchyOK() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+
+            pattern test(a: Common, aa: Common) {
+                GrandGrandChildE.a1(a, aa);
+            } or {
+                GrandGrandChildF.a2(a, aa);
+            }
+        ''')
+        tester.validate(model).assertOK
+        
+        val param = model.patterns.get(0).parameters.get(0)
+        val type = typeInferrer.getType(param)
+        assertEquals("a", param.name) 
+        assertEquals(classifierToInputKey(common), type) 
+    }
 	
 	@Test
 	def errorTypeTest1() {

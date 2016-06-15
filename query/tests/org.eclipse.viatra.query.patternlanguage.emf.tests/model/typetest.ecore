@@ -7,8 +7,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="Interface" abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="Child1" eSuperTypes="#//Common #//Interface">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="a1" eType="#//Common"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Child2" eSuperTypes="#//Common #//Interface #//Child3"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Child2" eSuperTypes="#//Common #//Interface #//Child3">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="a2" eType="#//Common"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="GrandChild" eSuperTypes="#//Child1 #//Child3"/>
   <eClassifiers xsi:type="ecore:EClass" name="Child3"/>
   <eClassifiers xsi:type="ecore:EClass" name="GrandChild2" eSuperTypes="#//Child2"/>
@@ -19,4 +22,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="WhatEver">
     <eStructuralFeatures xsi:type="ecore:EReference" name="someRef" eType="#//Circle"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GrandChildD" eSuperTypes="#//Child3"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GrandGrandChildE" eSuperTypes="#//GrandChildD #//Child1"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GrandGrandChildF" eSuperTypes="#//GrandChildD #//Child2"/>
 </ecore:EPackage>
