@@ -26,7 +26,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.GlobalContext;
-import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.DesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
@@ -35,7 +34,6 @@ import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.statecoding.simple.SimpleStateCoderFactory;
-import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.dse.visualizer.IDesignSpaceVisualizer;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
@@ -85,6 +83,8 @@ public class DesignSpaceExplorer {
 
     private static final String MODEL_NOT_YET_GIVEN = "The starting model is not given yet. Please call the setInitialModel method first.";
 
+    private boolean deepCopyModel;
+
     /**
      * <p>
      * Creates a {@link DesignSpaceExplorer} object that is able to execute a design space exploration process.
@@ -110,34 +110,40 @@ public class DesignSpaceExplorer {
     }
 
     /**
-     * Defines the starting model of the algorithm, and whether it is supposed to be used to execute the DSE process or
-     * it should be cloned. Please note that in multithreaded mode any subsequent threads will be working on cloned
+     * Defines the initial model of the exploration, and whether it is supposed to be used to execute the DSE process or
+     * it should be cloned. Please note, that in multithreaded mode any subsequent threads will be working on cloned
      * models.
      * 
      * @param model
      *            The root object of the EMF model.
      * @param deepCopyModel
-     *            If it is set to true, the algorithm will run in cloned model.
+     *            If it is set to true, the exploration will run on a cloned model.
      */
     public void setInitialModel(Notifier model, boolean deepCopyModel) {
-
-        Notifier copiedEObject = model;
-
-        if (deepCopyModel) {
-            copiedEObject = EMFHelper.clone(model);
-        }
-
-        this.model = copiedEObject;
+        this.model = model;
+        this.deepCopyModel = deepCopyModel;
     }
 
     /**
-     * Defines the starting model of the algorithm.
+     * Defines the initial model of the exploration. The model will be cloned, which is desired in most cases as the
+     * given model won't be changed.
      * 
      * @param model
-     *            The root object of the EMF model. It will be cloned on default.
+     *            The root object of the EMF model.
      */
     public void setInitialModel(Notifier model) {
         setInitialModel(model, true);
+    }
+
+    /**
+     * Defines the initial model of the exploration. The given model won't be cloned, thus the exploration will modify
+     * it.
+     * 
+     * @param model
+     *            The root object of the EMF model. It won't be cloned.
+     */
+    public void setInitialModelUncloned(Notifier model) {
+        setInitialModel(model, false);
     }
 
     /**
@@ -357,9 +363,11 @@ public class DesignSpaceExplorer {
 
         logger.debug("DesignSpaceExplorer started exploration.");
 
-        ThreadContext threadContext = new ThreadContext(globalContext, strategy, model);
-
-        globalContext.tryStartNewThread(threadContext, false);
+        if (deepCopyModel) {
+            globalContext.startFirstThread(strategy, model);
+        } else {
+            globalContext.startFirstThreadWithoutModelClone(strategy, model);
+        }
     }
 
     /**

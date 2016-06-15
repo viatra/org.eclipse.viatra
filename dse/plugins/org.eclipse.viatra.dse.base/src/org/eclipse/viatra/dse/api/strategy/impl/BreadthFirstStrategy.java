@@ -124,8 +124,7 @@ public class BreadthFirstStrategy implements IStrategy {
             shared.push(currentTrajectory);
 
             GlobalContext globalContext = context.getGlobalContext();
-            while (globalContext.tryStartNewThread(context, context.getModel(), true,
-                    new BreadthFirstStrategy(maxDepth)) != null) {
+            while (globalContext.tryStartNewThread(context, new BreadthFirstStrategy(maxDepth)) != null) {
             }
         } else {
             try {

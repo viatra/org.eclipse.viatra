@@ -50,7 +50,7 @@ public class DepthFirstStrategy implements IStrategy {
             globalContext.setSharedObject(new Object());
             int maxThreads = globalContext.getThreadPool().getMaximumPoolSize();
             for (int i = 1; i < maxThreads; i++) {
-                globalContext.tryStartNewThread(context, context.getModel(), true, new DepthFirstStrategy(maxDepth));
+                globalContext.tryStartNewThread(context, new DepthFirstStrategy(maxDepth));
             }
         }
         

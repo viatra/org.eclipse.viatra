@@ -154,7 +154,7 @@ public class RandomSearchStrategy implements IStrategy {
     }
 
     private ExplorerThread tryStartNewThread(ThreadContext context) {
-        return gc.tryStartNewThread(context, context.getModel(), true, new RandomSearchStrategy());
+        return gc.tryStartNewThread(context, new RandomSearchStrategy());
     }
 
     private static Object getByIndex(Collection<Object> availableTransitions, int index) {

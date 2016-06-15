@@ -136,7 +136,6 @@ public class ThreadContext {
         if (isFirstThread) {
 
             objectives = globalContext.getObjectives();
-            globalContext.initLeveledObjectives();
             leveledObjectives = globalContext.getLeveledObjectives();
             globalConstraints = globalContext.getGlobalConstraints();
 

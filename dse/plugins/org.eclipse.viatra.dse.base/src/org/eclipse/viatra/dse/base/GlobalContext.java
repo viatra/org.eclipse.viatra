@@ -22,8 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
@@ -39,6 +37,7 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.specific.ConflictResolvers;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -83,6 +82,8 @@ public class GlobalContext {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
+    private boolean isAlreadyInited;
+
     /**
      * Starts a new thread to explore the design space.
      * 
@@ -92,40 +93,19 @@ public class GlobalContext {
      * @param strategy The strategy, the thread will use.
      * @return The {@link ExplorerThread}
      */
-    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, Notifier model,
-            boolean cloneModel, IStrategy strategy) {
+    private synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, Notifier model,
+            IStrategy strategy) {
+        
+        if(!isAlreadyInited) {
+            isAlreadyInited = true;
+            init();
+        }
+
         if (state != ExplorationProcessState.COMPLETED && state != ExplorationProcessState.STOPPING
                 && threadPool.canStartNewThread()) {
 
-            if (specificationRuleMap == null) {
-                specificationRuleMap = new HashMap<>();
-                for (BatchTransformationRule<?,?> rule : transformations) {
-                    specificationRuleMap.put(rule.getRuleSpecification(), rule);
-                }
-            }
+            ThreadContext newThreadContext = new ThreadContext(this, strategy, model);
 
-            if (model == null) {
-                if (cloneModel) {
-                    throw new DSEException(
-                            "If the newly started thread's root EObject is different then the original, it must be cloned. Change parameters.");
-                } else {
-                    model = originalThreadContext.getModel();
-                }
-            }
-
-            if (cloneModel) {
-                model = EMFHelper.clone(model);
-                EMFHelper.createEditingDomain(model);
-            }
-
-            ThreadContext newThreadContext;
-            if (cloneModel) {
-                newThreadContext = new ThreadContext(this, strategy, model);
-            } else {
-                // TODO This is only appropriate if this is the first thread
-                // There can be circumstances, when cloneModel is false, but this is not first thread!
-                newThreadContext = originalThreadContext;
-            }
             // TODO : clone undo list? slave strategy can't go further back...
             ExplorerThread explorerThread = new ExplorerThread(newThreadContext);
             newThreadContext.setExplorerThread(explorerThread);
@@ -148,6 +128,25 @@ public class GlobalContext {
         return null;
     }
 
+    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, IStrategy strategy) {
+        return tryStartNewThread(originalThreadContext, EMFHelper.clone(originalThreadContext.getModel()), strategy);
+    }
+
+    public synchronized ExplorerThread tryStartNewThreadWithoutModelClone(ThreadContext originalThreadContext,
+            IStrategy strategy) {
+        return tryStartNewThread(originalThreadContext, originalThreadContext.getModel(), strategy);
+    }
+
+    public synchronized ExplorerThread startFirstThread(IStrategy strategy, Notifier model) {
+        Preconditions.checkState(!isAlreadyInited, "First thread is already started.");
+        return tryStartNewThread(null, EMFHelper.clone(model), strategy);
+    }
+
+    public synchronized ExplorerThread startFirstThreadWithoutModelClone(IStrategy strategy, Notifier model) {
+        Preconditions.checkState(!isAlreadyInited, "First thread is already started.");
+        return tryStartNewThread(null, model, strategy);
+    }
+
     /**
      * Starts a new thread to explore the design space.
      * 
@@ -158,17 +157,6 @@ public class GlobalContext {
      * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their
      *         maximum.
      */
-    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext) {
-        return tryStartNewThread(originalThreadContext, null, true, originalThreadContext.getStrategy());
-    }
-
-    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, boolean cloneModel) {
-        return tryStartNewThread(originalThreadContext, null, cloneModel, originalThreadContext.getStrategy());
-    }
-
-    public synchronized ExplorerThread tryStartNewThread(ThreadContext originalThreadContext, EObject root) {
-        return tryStartNewThread(originalThreadContext, root, true, originalThreadContext.getStrategy());
-    }
 
     public synchronized void strategyFinished(ExplorerThread strategy) {
         runningThreads.remove(strategy);
@@ -228,14 +216,13 @@ public class GlobalContext {
 
     private ConflictResolver conflictResolver = ConflictResolvers.createArbitraryResolver();
 
-    public void initLeveledObjectives() {
+    private void init() {
         leveledObjectives = new LeveledObjectivesHelper(objectives).initLeveledObjectives();
-    }
-
-    public void reset() {
-        state = ExplorationProcessState.NOT_STARTED;
-        threadPool = new DSEThreadPool();
-        exceptions.clear();
+        
+        specificationRuleMap = new HashMap<>();
+        for (BatchTransformationRule<?,?> rule : transformations) {
+            specificationRuleMap.put(rule.getRuleSpecification(), rule);
+        }
     }
 
     public List<IDesignSpaceVisualizer> getVisualizers() {
