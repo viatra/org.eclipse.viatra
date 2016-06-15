@@ -210,7 +210,7 @@ public class GlobalContext {
     private List<IGlobalConstraint> globalConstraints = new ArrayList<IGlobalConstraint>();
     private Set<BatchTransformationRule<?, ?>> transformations = new HashSet<BatchTransformationRule<?, ?>>();
     private IStateCoderFactory stateCoderFactory;
-    private SolutionStore solutionStore = new SolutionStore();
+    private SolutionStore solutionStore = new SolutionStore(1);
     private Object SharedObject;
     private List<IDesignSpaceVisualizer> visualizers;
 
