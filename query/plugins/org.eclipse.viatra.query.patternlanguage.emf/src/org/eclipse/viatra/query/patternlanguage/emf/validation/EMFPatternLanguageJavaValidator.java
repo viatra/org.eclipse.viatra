@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.BasicEObjectImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
@@ -911,4 +912,13 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
     
+    @Check(CheckType.NORMAL)
+    public void checkClassPath(ClassType typeDecl) {
+        EClassifier classifier = typeDecl.getClassname();
+        String clazz = metamodelProvider.getQualifiedClassName(classifier, classifier);
+        if (clazz != null && !clazz.isEmpty() && typeReferences.findDeclaredType(clazz, typeDecl) == null) {
+            error(String.format("Couldn't find type %s on the project's classpath", clazz), typeDecl, null,
+                    EMFIssueCodes.TYPE_NOT_ON_CLASSPATH, classifier.getEPackage().getNsURI());
+        }
+    }
 }
