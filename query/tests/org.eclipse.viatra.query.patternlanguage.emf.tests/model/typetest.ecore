@@ -12,4 +12,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="GrandChild" eSuperTypes="#//Child1 #//Child3"/>
   <eClassifiers xsi:type="ecore:EClass" name="Child3"/>
   <eClassifiers xsi:type="ecore:EClass" name="GrandChild2" eSuperTypes="#//Child2"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Red">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="redness" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Circle"/>
+  <eClassifiers xsi:type="ecore:EClass" name="WhatEver">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="someRef" eType="#//Circle"/>
+  </eClassifiers>
 </ecore:EPackage>

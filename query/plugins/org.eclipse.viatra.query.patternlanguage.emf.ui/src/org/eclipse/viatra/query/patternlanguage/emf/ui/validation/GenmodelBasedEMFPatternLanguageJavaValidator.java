@@ -68,7 +68,7 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
                 try {
                     if (modelPluginID != null && !modelPluginID.isEmpty() && !modelPluginID.equals(project.getName())
                             && !ProjectGenerationHelper.checkBundleDependency(project, modelPluginID)) {
-                        error(String.format(
+                        warning(String.format(
                                 "To refer elements from the Package %s the bundle %s must be added as dependency",
                                 importDecl.getEPackage().getNsURI(), modelPluginID), importDecl,
                                 EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
