@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
@@ -55,7 +54,7 @@ public class SolutionTrajectory {
     private Solution solution;
     
     private ViatraQueryEngine engine;
-    private EObject model;
+    private Notifier model;
     private EditingDomain editingDomain;
     private IStateCoder stateCoder;
 
@@ -78,17 +77,17 @@ public class SolutionTrajectory {
     /**
      * Initialize this SolutionTrajectory for transforming the model along the trajectory.
      * 
-     * @param modelRoot
-     *            The root of the model.
+     * @param model
+     *            The model.
      * @throws ViatraQueryException
      *             If the VIATRA Query fails to initialize.
      */
-    public void setModel(Notifier modelRoot) throws ViatraQueryException {
-        EMFScope scope = new EMFScope(modelRoot);
+    public void setModel(Notifier model) throws ViatraQueryException {
+        EMFScope scope = new EMFScope(model);
         this.engine = ViatraQueryEngine.on(scope);
-        this.model = (EObject) modelRoot;
+        this.model = model;
         stateCoder = stateCoderFactory.createStateCoder();
-        stateCoder.init(modelRoot);
+        stateCoder.init(model);
         currentIndex = 0;
     }
 
@@ -137,7 +136,7 @@ public class SolutionTrajectory {
 
     /**
      * Transforms the given model along the trajectory. To initialize the model call the
-     * {@link SolutionTrajectory#setModel(EObject)} method.
+     * {@link SolutionTrajectory#setModel(Notifier)} method.
      * 
      * @throws Exception
      *             If the activation to fire is not found. Possible problems: wrong model, bad state serializer.
@@ -150,7 +149,7 @@ public class SolutionTrajectory {
 
     /**
      * Transforms the given model by one step to the solution (makes one step in the trajectory). To initialize the
-     * model call the {@link SolutionTrajectory#setModel(EObject)} method.
+     * model call the {@link SolutionTrajectory#setModel(Notifier)} method.
      * 
      * @throws ViatraQueryException
      */
