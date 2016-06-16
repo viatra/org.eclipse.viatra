@@ -82,7 +82,7 @@ class XtextIndexBasedRegistryUpdater {
                 val uri = it.URI.toString
                 val projectName = it.URI.segment(1)
                 val projectExists = ResourcesPlugin.workspace.root.getProject(projectName).exists
-                if(projectExists){
+                if(!projectExists){
                     // only care about workspace projects
                     return
                 }
@@ -134,7 +134,7 @@ class XtextIndexBasedRegistryUpdater {
                 }
                 val projectName = delta.uri.segment(1)
                 val projectExists = ResourcesPlugin.workspace.root.getProject(projectName).exists
-                if(projectExists){
+                if(!projectExists){
                     // only care about workspace projects
                     return
                 }
