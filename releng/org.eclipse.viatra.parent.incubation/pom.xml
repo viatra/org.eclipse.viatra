@@ -10,10 +10,11 @@
 	<packaging>pom</packaging>
 	<modules>
 		<!-- Query -->
+        <module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.browser</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.localsearch.ui</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.retevis</module>
 		<module>../../query/features/org.eclipse.viatra.query.tooling.ui.visualization.feature</module>
-
+        
 		<!-- Transformations -->
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.views</module>
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.debug</module>

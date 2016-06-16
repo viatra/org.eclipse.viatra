@@ -38,6 +38,7 @@ import org.eclipse.xtext.resource.IResourceDescription.Event
 import org.eclipse.xtext.resource.IResourceDescription.Event.Listener
 import org.eclipse.xtext.resource.IResourceDescriptions
 import org.eclipse.xtext.ui.notification.IStateChangeEventBroker
+import java.util.ResourceBundle
 
 /**
  * @author Abel Hegedus
@@ -89,7 +90,7 @@ class XtextIndexBasedRegistryUpdater {
                 val connectorId = DYNAMIC_CONNECTOR_ID_PREFIX + projectName
                 var connector = connectorMap.get(connectorId)
                 if(connector == null) {
-                    connector = new PatternDescriptionBasedSourceConnector(connectorId, false)
+                    connector = new PatternDescriptionBasedSourceConnector(connectorId)
                     connectorMap.put(connectorId, connector)
                 }
                 val conn = connector
@@ -169,7 +170,7 @@ class XtextIndexBasedRegistryUpdater {
             } else {
                 if(!desc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN).empty) {
                     // create connector based on URI
-                    val connector = new PatternDescriptionBasedSourceConnector(connectorId, false)
+                    val connector = new PatternDescriptionBasedSourceConnector(connectorId)
                     updater.connectorMap.put(connectorId, connector)
                     if(delta.haveEObjectDescriptionsChanged) {
                         desc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN).forEach[
@@ -226,8 +227,8 @@ class XtextIndexBasedRegistryUpdater {
         
         final Multimap<String,IQuerySpecificationProvider> descriptionToProvider; 
         
-        new(String identifier, boolean includeInDefaultViews) {
-            super(identifier, includeInDefaultViews)
+        new(String identifier) {
+            super(identifier, false)
             this.descriptionToProvider = HashMultimap.create
         }
         
