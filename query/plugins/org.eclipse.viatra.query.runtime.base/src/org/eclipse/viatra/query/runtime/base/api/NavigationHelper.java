@@ -324,6 +324,15 @@ public interface NavigationHelper {
     public Set<EObject> getAllInstances(EClass clazz);
 
     /**
+     * Get the total number of instances of the given {@link EClass} and all of its subclasses.
+     * 
+     * @param clazz
+     * @return
+     * @since 1.3
+     */
+    public int countAllInstances(EClass clazz);
+    
+    /**
      * Find all source {@link EObject}s for which the given <code>feature</code> points to / takes the given <code>value</code>.
      * 
      * <p>
@@ -465,8 +474,25 @@ public interface NavigationHelper {
      * @param features
      *            the set of features to observe (null okay)
      * @throws IllegalStateException if in wildcard mode
+     * @deprecated use {@link #registerObservedTypes(Set, Set, Set, IndexingLevel)} instead
      */
     public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
+    
+    /**
+     * Manually turns on indexing for the given types (indexing of others are unaffected). Note that
+     * registering new types will result in a single iteration through the whole attached model.
+     * <b> Not usable in <em>wildcard mode</em>.</b>
+     * 
+     * @param classes
+     *            the set of classes to observe (null okay)
+     * @param dataTypes
+     *            the set of data types to observe (null okay)
+     * @param features
+     *            the set of features to observe (null okay)
+     * @throws IllegalStateException if in wildcard mode
+     * @since 1.4
+     */
+    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features, IndexingLevel level);
     
     /**
      * Manually turns off indexing for the given types (indexing of others are unaffected). Note that if the
@@ -482,8 +508,7 @@ public interface NavigationHelper {
      *            the set of features that will be ignored again from now on (null okay)
      * @throws IllegalStateException if in wildcard mode, or if there are listeners registered for the given types
      */
-    public void unregisterObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);
-   
+    public void unregisterObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features);  
     
     /**
      * Manually turns on indexing for the given features (indexing of other features are unaffected). Note that
@@ -493,8 +518,22 @@ public interface NavigationHelper {
      * @param features
      *            the set of features to observe
      * @throws IllegalStateException if in wildcard mode
+     * @deprecated use {@link #registerEStructuralFeatures(Set, IndexingLevel)} instead
      */
+    @Deprecated
     public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features);
+    
+    /**
+     * Manually turns on indexing for the given features (indexing of other features are unaffected). Note that
+     * registering new features will result in a single iteration through the whole attached model.
+     * <b> Not usable in <em>wildcard mode</em>.</b>
+     * 
+     * @param features
+     *            the set of features to observe
+     * @throws IllegalStateException if in wildcard mode
+     * @since 1.4
+     */
+    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features, IndexingLevel level);
 
     /**
      * Manually turns off indexing for the given features (indexing of other features are unaffected). Note that if the
@@ -518,8 +557,23 @@ public interface NavigationHelper {
      * @param classes
      *            the set of classes to observe
      * @throws IllegalStateException if in wildcard mode
+     * @deprecated use {@link #registerEClasses(Set, IndexingLevel)} instead
      */
+    @Deprecated
     public void registerEClasses(Set<EClass> classes);
+    
+    /**
+     * Manually turns on indexing for the given classes (indexing of other classes are unaffected). Instances of
+     * subclasses will also be indexed. Note that registering new classes will result in a single iteration through the whole
+     * attached model.
+     * <b> Not usable in <em>wildcard mode</em>.</b>
+     * 
+     * @param classes
+     *            the set of classes to observe
+     * @throws IllegalStateException if in wildcard mode
+     * @since 1.4
+     */
+    public void registerEClasses(Set<EClass> classes, IndexingLevel level);
 
     /**
      * Manually turns off indexing for the given classes (indexing of other classes are unaffected). Note that if the
@@ -541,9 +595,23 @@ public interface NavigationHelper {
      * @param dataTypes
      *            the set of data types to observe
      * @throws IllegalStateException if in wildcard mode
+     * @deprecated use {@link #registerEDataTypes(Set, IndexingLevel)} instead
      */
+    @Deprecated
     public void registerEDataTypes(Set<EDataType> dataTypes);
 
+    /**
+     * Manually turns on indexing for the given data types (indexing of other features are unaffected). Note that
+     * registering new data types will result in a single iteration through the whole attached model.
+     * <b> Not usable in <em>wildcard mode</em>.</b>
+     * 
+     * @param dataTypes
+     *            the set of data types to observe
+     * @throws IllegalStateException if in wildcard mode
+     * @since 1.4
+     */
+    public void registerEDataTypes(Set<EDataType> dataTypes, IndexingLevel level);
+    
     /**
      * Manually turns off indexing for the given data types (indexing of other data types are unaffected). Note that if
      * the unregistered data types are re-registered later, the whole attached model needs to be visited again.
@@ -722,4 +790,39 @@ public interface NavigationHelper {
      */
 	Object toCanonicalValueRepresentation(Object value);
 
+	/**
+     * @since 1.4
+     */
+	IndexingLevel getIndexingLevel(EClass type);
+	
+	/**
+     * @since 1.4
+     */
+	IndexingLevel getIndexingLevel(EDataType type);
+	
+	/**
+     * @since 1.4
+     */
+	IndexingLevel getIndexingLevel(EStructuralFeature feature);
+
+    /**
+     * @param dataType
+     * @return
+     * @since 1.4
+     */
+    public int countDataTypeInstances(EDataType dataType);
+
+    /**
+     * @param seedSource
+     * @param feature
+     * @return
+     * @since 1.4
+     */
+    public int countFeatureTargets(EObject seedSource, EStructuralFeature feature);
+    
+    /**
+     * @since 1.4
+     */
+    public int countFeatures(EStructuralFeature feature);
+	
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.runtime" version="2">
+    <resource path="src/org/eclipse/viatra/query/runtime/emf/EMFQueryRuntimeContext.java" type="org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext">
+        <filter comment="Replaced internal set with map" id="388161617">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext"/>
+                <message_argument value="indexedClasses"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Replaced internal set with map" id="388161617">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext"/>
+                <message_argument value="indexedDataTypes"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Replaced internal set with map" id="388161617">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext"/>
+                <message_argument value="indexedFeatures"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

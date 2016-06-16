@@ -13,8 +13,9 @@ package org.eclipse.viatra.query.runtime.emf;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -26,6 +27,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.DataTypeListener;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
 import org.eclipse.viatra.query.runtime.base.api.IEStructuralFeatureProcessor;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
@@ -34,30 +36,30 @@ import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.context.AbstractQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
+import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
  * The EMF-based runtime query context, backed by an IQBase NavigationHelper.
  * 
  * @author Bergmann Gabor
  *
- * <p> TODO: {@link #containsTuple(IInputKey, Tuple)} and {@link #countTuples(IInputKey, Tuple)} are inefficient as they first enumerate the collections.
  * <p> TODO: {@link #ensureIndexed(EClass)} may be inefficient if supertype already cached.
  */
 public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 	protected final NavigationHelper baseIndex;
     //private BaseIndexListener listener;
     
-	protected final Set<EClass> indexedClasses = new HashSet<EClass>();
-	protected final Set<EDataType> indexedDataTypes = new HashSet<EDataType>();
-	protected final Set<EStructuralFeature> indexedFeatures = new HashSet<EStructuralFeature>();
+	protected final Map<EClass, EnumSet<IndexingService>> indexedClasses = Maps.newHashMap();
+	protected final Map<EDataType, EnumSet<IndexingService>> indexedDataTypes = Maps.newHashMap();
+	protected final Map<EStructuralFeature, EnumSet<IndexingService>> indexedFeatures = Maps.newHashMap();
     
 	protected final EMFQueryMetaContext metaContext = EMFQueryMetaContext.INSTANCE;
 
@@ -74,6 +76,25 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     
     public EMFScope getEmfScope() {
         return emfScope;
+    }
+    
+    /**
+     * Utility method to add an indexing service to a given key. Returns true if the requested service was
+     * not present before this call.
+     * @param map
+     * @param key
+     * @param service
+     * @return
+     */
+    private static <K> boolean addIndexingService(Map<K, EnumSet<IndexingService>> map, K key, IndexingService service){
+        EnumSet<IndexingService> current = map.get(key);
+        if (current == null){
+            current = EnumSet.of(service);
+            map.put(key, current);
+            return true;
+        }else{
+            return current.add(service);
+        }
     }
     
     public void dispose() {
@@ -103,40 +124,63 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     }
     
     @Override
+    public void ensureIndexed(IInputKey key, IndexingService service) {
+        ensureEnumerableKey(key);
+        if (key instanceof EClassTransitiveInstancesKey) {
+            EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
+            ensureIndexed(eClass, service);
+        } else if (key instanceof EDataTypeInSlotsKey) {
+            EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
+            ensureIndexed(dataType, service);
+        } else if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+            ensureIndexed(feature, service);
+        } else {
+            illegalInputKey(key);
+        }
+    }
+    
+    @Override
     public void ensureIndexed(IInputKey key) {
-    	ensureEnumerableKey(key);
-    	if (key instanceof EClassTransitiveInstancesKey) {
-    		EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
-    		ensureIndexed(eClass);
-    	} else if (key instanceof EDataTypeInSlotsKey) {
-    		EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-    		ensureIndexed(dataType);
-    	} else if (key instanceof EStructuralFeatureInstancesKey) {
-    		EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-    		ensureIndexed(feature);
-    	} else {
-    		illegalInputKey(key);
-    	}
+    	this.ensureIndexed(key, IndexingService.INSTANCES);
+    }
+    
+    /**
+     * Retrieve the current registered indexing services for the given key. May not null,
+     * returns an empty set if no indexing is registered.
+     * 
+     * @since 1.4
+     */
+    protected EnumSet<IndexingService> getCurrentIndexingServiceFor(IInputKey key){
+        ensureValidKey(key);
+        if (key instanceof JavaTransitiveInstancesKey) {
+            return EnumSet.noneOf(IndexingService.class);
+        } else if (key instanceof EClassTransitiveInstancesKey) {
+            EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
+            EnumSet<IndexingService> is = indexedClasses.get(eClass);
+            return is == null ? EnumSet.noneOf(IndexingService.class) : is; 
+        } else if (key instanceof EDataTypeInSlotsKey) {
+            EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
+            EnumSet<IndexingService> is =  indexedDataTypes.get(dataType);
+            return is == null ? EnumSet.noneOf(IndexingService.class) : is;
+        } else if (key instanceof EStructuralFeatureInstancesKey) {
+            EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+            EnumSet<IndexingService> is =  indexedFeatures.get(feature);
+            return is == null ? EnumSet.noneOf(IndexingService.class) : is;
+        } else {
+            illegalInputKey(key);
+            return EnumSet.noneOf(IndexingService.class);
+        }
+    }
+    
+    @Override
+    public boolean isIndexed(IInputKey key, IndexingService service) {
+        return getCurrentIndexingServiceFor(key).contains(service);
     }
     
     @Override
     public boolean isIndexed(IInputKey key) {
-    	ensureValidKey(key);
-    	if (key instanceof JavaTransitiveInstancesKey) {
-    		return false;
-    	} else if (key instanceof EClassTransitiveInstancesKey) {
-    		EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
-    		return indexedClasses.contains(eClass);
-    	} else if (key instanceof EDataTypeInSlotsKey) {
-    		EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();
-    		return indexedDataTypes.contains(dataType);
-    	} else if (key instanceof EStructuralFeatureInstancesKey) {
-    		EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
-    		return indexedFeatures.contains(feature);
-    	} else {
-    		illegalInputKey(key);
-    		return false;
-    	}
+    	return isIndexed(key, IndexingService.INSTANCES);
     }
     
     @Override
@@ -293,14 +337,14 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     
     @Override
     public int countTuples(IInputKey key, Tuple seed) {
-		ensureIndexed(key);
+		ensureIndexed(key, IndexingService.STATISTICS);
 		
 		if (key instanceof EClassTransitiveInstancesKey) {
 			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
 			
 			Object seedInstance = getFromSeed(seed, 0);
 			if (seedInstance == null) { // unseeded
-				return baseIndex.getAllInstances(eClass).size();
+				return baseIndex.countAllInstances(eClass);
 			} else { // fully seeded
 				return (containsTuple(key, seed)) ? 1 : 0;
 			}
@@ -309,7 +353,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 			
 			Object seedInstance = getFromSeed(seed, 0);
 			if (seedInstance == null) { // unseeded
-				return baseIndex.getDataTypeInstances(dataType).size();
+				return baseIndex.countDataTypeInstances(dataType);
 			} else { // fully seeded
 				return (containsTuple(key, seed)) ? 1 : 0;
 			}
@@ -323,14 +367,9 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 			} else if (seedSource != null && seedTarget != null) { // fully seeded
 				return (containsTuple(key, seed)) ? 1 : 0;
 			} else if (seedSource == null && seedTarget == null) { // fully unseeded
-				int result = 0;
-				Set<Entry<EObject, Set<Object>>> entrySet = baseIndex.getFeatureInstances(feature).entrySet();
-				for (Entry<EObject, Set<Object>> entry : entrySet) {
-					result += entry.getValue().size();
-				}
-				return result;
+				return baseIndex.countFeatures(feature);
 			} else if (seedSource != null && seedTarget == null) { 
-				return baseIndex.getFeatureTargets((EObject) seedSource, feature).size();
+				return baseIndex.countFeatureTargets((EObject) seedSource, feature);
 			} 
 		} else {
 			illegalInputKey(key);
@@ -357,29 +396,65 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 		throw new IllegalArgumentException("Must have exactly one unseeded element in enumerateValues() invocation, received instead: " + seed);
 	}
 
-	public void ensureIndexed(EClass eClass) {
-        if (indexedClasses.add(eClass)) {
+	/**
+	 * @deprecated use {@link #ensureIndexed(EClass, IndexingService)} instead
+	 * @param eClass
+	 */
+	@Deprecated
+	public void ensureIndexed(EClass eClass){
+	    ensureIndexed(eClass, IndexingService.INSTANCES);
+	}
+	
+	/**
+     * @since 1.4
+     */
+	public void ensureIndexed(EClass eClass, IndexingService service) {
+        if (addIndexingService(indexedClasses, eClass, service)) {
             final Set<EClass> newClasses = Collections.singleton(eClass);
             if (!baseIndex.isInWildcardMode())
-                baseIndex.registerEClasses(newClasses);
+                baseIndex.registerEClasses(newClasses, IndexingLevel.toLevel(service));
             //baseIndex.addInstanceListener(newClasses, listener);
         }
     }
 
-    public void ensureIndexed(EDataType eDataType) {
-        if (indexedDataTypes.add(eDataType)) {
+	/**
+	 * @deprecated use {@link #ensureIndexed(EDataType, IndexingService)} instead
+	 * @param eDataType
+	 */
+	@Deprecated
+	public void ensureIndexed(EDataType eDataType){
+	    ensureIndexed(eDataType, IndexingService.INSTANCES);
+	}
+	
+    /**
+     * @since 1.4
+     */
+    public void ensureIndexed(EDataType eDataType, IndexingService service) {
+        if (addIndexingService(indexedDataTypes, eDataType, service)) {
             final Set<EDataType> newDataTypes = Collections.singleton(eDataType);
             if (!baseIndex.isInWildcardMode())
-                baseIndex.registerEDataTypes(newDataTypes);
+                baseIndex.registerEDataTypes(newDataTypes, IndexingLevel.toLevel(service));
             //baseIndex.addDataTypeListener(newDataTypes, listener);
         }
     }
 
-    public void ensureIndexed(EStructuralFeature feature) {
-        if (indexedFeatures.add(feature)) {
+    /**
+     * @deprecated use {@link #ensureIndexed(EStructuralFeature, IndexingService)} instead
+     * @param feature
+     */
+    @Deprecated
+    public void ensureIndexed(EStructuralFeature feature){
+        ensureIndexed(feature, IndexingService.INSTANCES);
+    }
+    
+    /**
+     * @since 1.4
+     */
+    public void ensureIndexed(EStructuralFeature feature, IndexingService service) {
+        if (addIndexingService(indexedFeatures, feature, service)) {
             final Set<EStructuralFeature> newFeatures = Collections.singleton(feature);
             if (!baseIndex.isInWildcardMode())
-                baseIndex.registerEStructuralFeatures(newFeatures);
+                baseIndex.registerEStructuralFeatures(newFeatures, IndexingLevel.toLevel(service));
             //baseIndex.addFeatureListener(newFeatures, listener);
         }
     }

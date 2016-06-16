@@ -36,8 +36,8 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.EStructuralFeature.Setting;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -46,23 +46,26 @@ import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.base.api.DataTypeListener;
 import org.eclipse.viatra.query.runtime.base.api.EMFBaseIndexChangeListener;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
+import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
+import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.viatra.query.runtime.base.api.IEMFIndexingErrorListener;
 import org.eclipse.viatra.query.runtime.base.api.IEStructuralFeatureProcessor;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.LightweightEObjectObserver;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEClassProcessor;
-import org.eclipse.viatra.query.runtime.base.api.IEClassifierProcessor.IEDataTypeProcessor;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
 import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
@@ -79,13 +82,13 @@ public class NavigationHelperImpl implements NavigationHelper {
     protected NavigationHelperContentAdapter contentAdapter;
 
     private final Logger logger;
-    
+
     // type object or String id
-    protected Set<Object> directlyObservedClasses = new HashSet<Object>();
+    protected Map<Object, IndexingLevel> directlyObservedClasses = new HashMap<Object, IndexingLevel>();
     // including subclasses; if null, must be recomputed
-    protected Set<Object> allObservedClasses = null;
-    protected Set<Object> observedDataTypes;
-    protected Set<Object> observedFeatures;
+    protected Map<Object, IndexingLevel> allObservedClasses = null;
+    protected Map<Object, IndexingLevel> observedDataTypes;
+    protected Map<Object, IndexingLevel> observedFeatures;
     // ignore RESOLVE for these features, as they are just starting to be observed - see [428458]
     protected Set<Object> ignoreResolveNotificationFeatures;
 
@@ -96,17 +99,16 @@ public class NavigationHelperImpl implements NavigationHelper {
     /**
      * Classes (or String ID in dynamic mode) to be registered once the coalescing period is over
      */
-   protected Set<Object> delayedClasses;
+    protected Map<Object, IndexingLevel> delayedClasses;
     /**
      * EStructuralFeatures (or String ID in dynamic mode) to be registered once the coalescing period is over
      */
-    protected Set<Object> delayedFeatures;
+    protected Map<Object, IndexingLevel> delayedFeatures;
     /**
      * EDataTypes (or String ID in dynamic mode) to be registered once the coalescing period is over
      */
-    protected Set<Object> delayedDataTypes;
-    
-    
+    protected Map<Object, IndexingLevel> delayedDataTypes;
+
     /**
      * Features per EObject to be resolved later (towards the end of a coalescing period when no Resources are loading)
      */
@@ -115,12 +117,11 @@ public class NavigationHelperImpl implements NavigationHelper {
      * Reasources that are currently loading, implying the proxy resolution attempts should be delayed
      */
     protected Set<Resource> resolutionDelayingResources = new HashSet<Resource>();
-    
-    
+
     /**
      * These global listeners will be called after updates.
      */
-    //private final Set<Runnable> afterUpdateCallbacks;
+    // private final Set<Runnable> afterUpdateCallbacks;
     private final Set<EMFBaseIndexChangeListener> baseIndexChangeListeners;
     private final Map<LightweightEObjectObserver, Collection<EObject>> lightweightObservers;
 
@@ -132,7 +133,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     // these are the internal notification tables
     // (element Type or String id) -> listener -> (subscription types)
     // if null, must be recomputed from subscriptions
-    // potentially multiple subscription types for each element type because (a) nsURI collisions, (b) multiple supertypes
+    // potentially multiple subscription types for each element type because (a) nsURI collisions, (b) multiple
+    // supertypes
     private Table<Object, InstanceListener, Set<EClass>> instanceListeners;
     private Table<Object, FeatureListener, Set<EStructuralFeature>> featureListeners;
     private Table<Object, DataTypeListener, Set<EDataType>> dataTypeListeners;
@@ -144,6 +146,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     EMFBaseIndexMetaStore metaStore;
     EMFBaseIndexInstanceStore instanceStore;
+    EMFBaseIndexStatisticsStore statsStore;
 
     <T> Set<T> setMinus(Collection<? extends T> a, Collection<T> b) {
         Set<T> result = new HashSet<T>(a);
@@ -153,7 +156,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @SuppressWarnings("unchecked")
     <T extends EObject> Set<T> resolveAllInternal(Set<? extends T> a) {
-    	if (a==null) a = Collections.emptySet();
+        if (a == null)
+            a = Collections.emptySet();
         Set<T> result = new HashSet<T>();
         for (T t : a) {
             if (t.eIsProxy()) {
@@ -164,16 +168,18 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         return result;
     }
+
     Set<Object> resolveClassifiersToKey(Set<? extends EClassifier> classes) {
-    	Set<? extends EClassifier> resolveds = resolveAllInternal(classes);
+        Set<? extends EClassifier> resolveds = resolveAllInternal(classes);
         Set<Object> result = new HashSet<Object>();
         for (EClassifier resolved : resolveds) {
             result.add(toKey(resolved));
         }
         return result;
     }
+
     Set<Object> resolveFeaturesToKey(Set<? extends EStructuralFeature> features) {
-    	Set<EStructuralFeature> resolveds = resolveAllInternal(features);
+        Set<EStructuralFeature> resolveds = resolveAllInternal(features);
         Set<Object> result = new HashSet<Object>();
         for (EStructuralFeature resolved : resolveds) {
             result.add(toKey(resolved));
@@ -185,72 +191,72 @@ public class NavigationHelperImpl implements NavigationHelper {
     public boolean isInWildcardMode() {
         return baseIndexOptions.isWildcardMode();
     }
-    
+
     @Override
     public boolean isInDynamicEMFMode() {
-    	return baseIndexOptions.isDynamicEMFMode();
+        return baseIndexOptions.isDynamicEMFMode();
     }
-    
+
     /**
      * @return the baseIndexOptions
      */
     public BaseIndexOptions getBaseIndexOptions() {
         return baseIndexOptions.copy();
     }
-    
+
     /**
      * @return the comprehension
      */
     public EMFModelComprehension getComprehension() {
         return comprehension;
     }
-    
+
     public NavigationHelperImpl(Notifier emfRoot, BaseIndexOptions options, Logger logger) throws ViatraBaseException {
         this.baseIndexOptions = options.copy();
         this.logger = logger;
         assert (logger != null);
-        
+
         this.comprehension = new EMFModelComprehension(baseIndexOptions);
         this.subscribedInstanceListeners = new HashMap<InstanceListener, Set<EClass>>();
         this.subscribedFeatureListeners = new HashMap<FeatureListener, Set<EStructuralFeature>>();
         this.subscribedDataTypeListeners = new HashMap<DataTypeListener, Set<EDataType>>();
         this.lightweightObservers = new HashMap<LightweightEObjectObserver, Collection<EObject>>();
-        this.observedFeatures = new HashSet<Object>();
+        this.observedFeatures = new HashMap<Object, IndexingLevel>();
         this.ignoreResolveNotificationFeatures = new HashSet<Object>();
-        this.observedDataTypes = new HashSet<Object>();
-        
+        this.observedDataTypes = new HashMap<Object, IndexingLevel>();
+
         metaStore = new EMFBaseIndexMetaStore(this);
         instanceStore = new EMFBaseIndexInstanceStore(this);
-        
+        statsStore = new EMFBaseIndexStatisticsStore();
+
         this.contentAdapter = new NavigationHelperContentAdapter(this);
         this.baseIndexChangeListeners = new HashSet<EMFBaseIndexChangeListener>();
         this.errorListeners = new LinkedHashSet<IEMFIndexingErrorListener>();
-        
+
         this.notifier = emfRoot;
         this.modelRoots = new HashSet<Notifier>();
         this.expansionAllowed = false;
-        
+
         if (emfRoot != null) {
             addRootInternal(emfRoot);
         }
     }
-    
 
     public NavigationHelperContentAdapter getContentAdapter() {
         return contentAdapter;
     }
 
-    public Set<Object> getObservedFeaturesInternal() {
+    public Map<Object, IndexingLevel> getObservedFeaturesInternal() {
         return observedFeatures;
     }
-    
+
     public boolean isFeatureResolveIgnored(EStructuralFeature feature) {
         return ignoreResolveNotificationFeatures.contains(toKey(feature));
     }
 
     @Override
     public void dispose() {
-    	ensureNoListenersForDispose();
+        ensureNoListenersForDispose();
         for (Notifier root : modelRoots) {
             contentAdapter.removeAdapter(root);
         }
@@ -258,7 +264,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<Object> getDataTypeInstances(EDataType type) {
-    	Object typeKey = toKey(type);
+        Object typeKey = toKey(type);
         Map<Object, Integer> valMap = instanceStore.getDataTypeMap(typeKey);
         if (valMap != null) {
             return Collections.unmodifiableSet(valMap.keySet());
@@ -269,31 +275,31 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<Setting> findByAttributeValue(Object value_) {
-    	Object value = toCanonicalValueRepresentation(value_);
+        Object value = toCanonicalValueRepresentation(value_);
         Set<Setting> retSet = new HashSet<Setting>();
         Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
 
         for (Entry<Object, Collection<EObject>> entry : valMap.entrySet()) {
             final Collection<EObject> holders = entry.getValue();
             EStructuralFeature feature = metaStore.getKnownFeatureForKey(entry.getKey());
-			for (EObject holder : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
+            for (EObject holder : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
                 retSet.add(new NavigationHelperSetting(feature, holder, value));
             }
         }
 
         return retSet;
     }
-    
+
     @Override
     public Set<Setting> findByAttributeValue(Object value_, Collection<EAttribute> attributes) {
-    	Object value = toCanonicalValueRepresentation(value_);
+        Object value = toCanonicalValueRepresentation(value_);
         Set<Setting> retSet = new HashSet<Setting>();
         Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
 
         for (EAttribute attr : attributes) {
             Object feature = toKey(attr);
             final Collection<EObject> holders = valMap.get(feature);
-			if (holders != null) {
+            if (holders != null) {
                 for (EObject holder : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
                     retSet.add(new NavigationHelperSetting(attr, holder, value));
                 }
@@ -305,28 +311,29 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<EObject> findByAttributeValue(Object value_, EAttribute attribute) {
-    	Object value = toCanonicalValueRepresentation(value_);
+        Object value = toCanonicalValueRepresentation(value_);
         Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
         Object feature = toKey(attribute);
         final Collection<EObject> holders = valMap.get(feature);
-		if (holders == null) {
+        if (holders == null) {
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders));
         }
     }
-        
+
     @Override
     public void processAllFeatureInstances(EStructuralFeature feature, IEStructuralFeatureProcessor processor) {
-       final Map<Object, Collection<EObject>> instanceMap = instanceStore.getValueToFeatureToHolderMap().column(toKey(feature));
+        final Map<Object, Collection<EObject>> instanceMap = instanceStore.getValueToFeatureToHolderMap()
+                .column(toKey(feature));
         for (Entry<Object, Collection<EObject>> entry : instanceMap.entrySet()) {
             final Collection<EObject> holders = entry.getValue();
-			for (EObject src : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
+            for (EObject src : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
                 processor.process(feature, src, entry.getKey());
             }
         }
     }
-    
+
     @Override
     public void processDirectInstances(EClass type, IEClassProcessor processor) {
         Object typeKey = toKey(type);
@@ -341,19 +348,19 @@ public class NavigationHelperImpl implements NavigationHelper {
             for (Object subTypeKey : subTypes) {
                 processDirectInstancesInternal(type, processor, subTypeKey);
             }
-        } 
+        }
         processDirectInstancesInternal(type, processor, typeKey);
     }
-    
+
     @Override
     public void processDataTypeInstances(EDataType type, IEDataTypeProcessor processor) {
-    	Object typeKey = toKey(type);
+        Object typeKey = toKey(type);
         Map<Object, Integer> valMap = instanceStore.getDataTypeMap(typeKey);
         if (valMap == null) {
             return;
         }
         for (Object value : valMap.keySet()) {
-        	processor.process(type, value);
+            processor.process(type, value);
         }
     }
 
@@ -373,7 +380,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
         for (Entry<Object, Collection<EObject>> entry : valMap.entrySet()) {
             final Collection<EObject> holders = entry.getValue();
-			for (EObject source : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
+            for (EObject source : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
                 EStructuralFeature feature = metaStore.getKnownFeatureForKey(entry.getKey());
                 retSet.add(new NavigationHelperSetting(feature, source, target));
             }
@@ -390,7 +397,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         for (EReference ref : references) {
             Object feature = toKey(ref);
             final Collection<EObject> holders = valMap.get(feature);
-			if (holders != null) {
+            if (holders != null) {
                 for (EObject source : EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders)) {
                     retSet.add(new NavigationHelperSetting(ref, source, target));
                 }
@@ -405,18 +412,18 @@ public class NavigationHelperImpl implements NavigationHelper {
         Object feature = toKey(reference);
         Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(target);
         final Collection<EObject> holders = valMap.get(feature);
-		if (holders == null) {
+        if (holders == null) {
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders));
         }
     }
 
-	@Override
-	@SuppressWarnings("unchecked")
+    @Override
+    @SuppressWarnings("unchecked")
     public Set<EObject> getReferenceValues(EObject source, EReference reference) {
-    	Set<Object> targets = getFeatureTargets(source, reference);
-        return (Set<EObject>)(Set<?>) targets; // this is known to be safe, as EReferences can only point to EObjects
+        Set<Object> targets = getFeatureTargets(source, reference);
+        return (Set<EObject>) (Set<?>) targets; // this is known to be safe, as EReferences can only point to EObjects
     }
 
     @Override
@@ -429,11 +436,11 @@ public class NavigationHelperImpl implements NavigationHelper {
             return Collections.unmodifiableSet(valSet);
         }
     }
-    
+
     @Override
     public Map<EObject, Set<Object>> getFeatureInstances(EStructuralFeature _feature) {
         Object feature = toKey(_feature);
-    	final Map<EObject, Set<Object>> valMap = instanceStore.getHolderToFeatureToValueMap().column(feature);
+        final Map<EObject, Set<Object>> valMap = instanceStore.getHolderToFeatureToValueMap().column(feature);
         if (valMap == null) {
             return Collections.emptyMap();
         } else {
@@ -443,7 +450,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<EObject> getDirectInstances(EClass type) {
-    	Object typeKey = toKey(type);
+        Object typeKey = toKey(type);
         Set<EObject> valSet = instanceStore.getInstanceSet(typeKey);
         if (valSet == null) {
             return Collections.emptySet();
@@ -452,17 +459,18 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-	private Object toKey(EClassifier eClassifier) {
-		return metaStore.toKey(eClassifier);
-	}
-	private Object toKey(EStructuralFeature feature) {
-		return metaStore.toKey(feature);
-	}
-	
-	@Override
-	public Object toCanonicalValueRepresentation(Object value) {
-		return metaStore.toInternalValueRepresentation(value);
-	}
+    private Object toKey(EClassifier eClassifier) {
+        return metaStore.toKey(eClassifier);
+    }
+
+    private Object toKey(EStructuralFeature feature) {
+        return metaStore.toKey(feature);
+    }
+
+    @Override
+    public Object toCanonicalValueRepresentation(Object value) {
+        return metaStore.toInternalValueRepresentation(value);
+    }
 
     @Override
     public Set<EObject> getAllInstances(EClass type) {
@@ -477,7 +485,7 @@ public class NavigationHelperImpl implements NavigationHelper {
                     retSet.addAll(instances);
                 }
             }
-        } 
+        }
         final Set<EObject> instances = instanceStore.getInstanceSet(typeKey);
         if (instances != null) {
             retSet.addAll(instances);
@@ -488,12 +496,12 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public Set<EObject> findByFeatureValue(Object value_, EStructuralFeature _feature) {
-    	Object value = toCanonicalValueRepresentation(value_);
+        Object value = toCanonicalValueRepresentation(value_);
         Object feature = toKey(_feature);
         Set<EObject> retSet = new HashSet<EObject>();
         Map<Object, Collection<EObject>> valMap = instanceStore.getValueToFeatureToHolderMap().row(value);
         final Collection<EObject> holders = valMap.get(feature);
-		if (holders != null) {
+        if (holders != null) {
             retSet.addAll(EMFBaseIndexInstanceStore.holderCollectionToUniqueSet(holders));
         }
         return retSet;
@@ -504,7 +512,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         Object feature = toKey(_feature);
         Multiset<EObject> holders = instanceStore.getFeatureToHolderMap().get(feature);
         if (holders == null) {
-           return Collections.emptySet();
+            return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(holders.elementSet());
         }
@@ -519,29 +527,31 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         Set<EClass> delta = setMinus(classes, registered);
         if (!delta.isEmpty()) {
-        	registered.addAll(delta);
-        	if (instanceListeners!= null) { // if already computed
-    	        for (EClass subscriptionType : delta) {
-    	        	final Object superElementTypeKey = toKey(subscriptionType);
-					addInstanceListenerInternal(listener, subscriptionType, superElementTypeKey);
-					final Set<Object> subTypeKeys = metaStore.getSubTypeMap().get(superElementTypeKey);
-					if (subTypeKeys != null) for (Object subTypeKey : subTypeKeys) {
-						addInstanceListenerInternal(listener, subscriptionType, subTypeKey);
-					}
-    	        }
-        	}
+            registered.addAll(delta);
+            if (instanceListeners != null) { // if already computed
+                for (EClass subscriptionType : delta) {
+                    final Object superElementTypeKey = toKey(subscriptionType);
+                    addInstanceListenerInternal(listener, subscriptionType, superElementTypeKey);
+                    final Set<Object> subTypeKeys = metaStore.getSubTypeMap().get(superElementTypeKey);
+                    if (subTypeKeys != null)
+                        for (Object subTypeKey : subTypeKeys) {
+                            addInstanceListenerInternal(listener, subscriptionType, subTypeKey);
+                        }
+                }
+            }
         }
     }
 
     @Override
     public void removeInstanceListener(Collection<EClass> classes, InstanceListener listener) {
-    	Set<EClass> restriction = this.subscribedInstanceListeners.get(listener);
+        Set<EClass> restriction = this.subscribedInstanceListeners.get(listener);
         if (restriction != null) {
             boolean changed = restriction.removeAll(classes);
             if (restriction.size() == 0) {
                 this.subscribedInstanceListeners.remove(listener);
             }
-            if (changed) instanceListeners = null; // recompute later on demand
+            if (changed)
+                instanceListeners = null; // recompute later on demand
         }
     }
 
@@ -554,12 +564,12 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         Set<EStructuralFeature> delta = setMinus(features, registered);
         if (!delta.isEmpty()) {
-        	registered.addAll(delta);
-        	if (featureListeners!= null) { // if already computed
-    	        for (EStructuralFeature subscriptionType : delta) {
-    	        	addFeatureListenerInternal(listener, subscriptionType, toKey(subscriptionType));
-    	        }
-        	}
+            registered.addAll(delta);
+            if (featureListeners != null) { // if already computed
+                for (EStructuralFeature subscriptionType : delta) {
+                    addFeatureListenerInternal(listener, subscriptionType, toKey(subscriptionType));
+                }
+            }
         }
     }
 
@@ -567,11 +577,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     public void removeFeatureListener(Collection<? extends EStructuralFeature> features, FeatureListener listener) {
         Collection<EStructuralFeature> restriction = this.subscribedFeatureListeners.get(listener);
         if (restriction != null) {
-        	boolean changed = restriction.removeAll(features);
+            boolean changed = restriction.removeAll(features);
             if (restriction.size() == 0) {
                 this.subscribedFeatureListeners.remove(listener);
             }
-            if (changed) featureListeners = null; // recompute later on demand
+            if (changed)
+                featureListeners = null; // recompute later on demand
         }
     }
 
@@ -584,12 +595,12 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         Set<EDataType> delta = setMinus(types, registered);
         if (!delta.isEmpty()) {
-        	registered.addAll(delta);
-        	if (dataTypeListeners!= null) { // if already computed
-    	        for (EDataType subscriptionType : delta) {
-    	        	addDatatypeListenerInternal(listener, subscriptionType, toKey(subscriptionType));
-    	        }
-        	}
+            registered.addAll(delta);
+            if (dataTypeListeners != null) { // if already computed
+                for (EDataType subscriptionType : delta) {
+                    addDatatypeListenerInternal(listener, subscriptionType, toKey(subscriptionType));
+                }
+            }
         }
     }
 
@@ -597,44 +608,45 @@ public class NavigationHelperImpl implements NavigationHelper {
     public void removeDataTypeListener(Collection<EDataType> types, DataTypeListener listener) {
         Collection<EDataType> restriction = this.subscribedDataTypeListeners.get(listener);
         if (restriction != null) {
-        	boolean changed = restriction.removeAll(types);
+            boolean changed = restriction.removeAll(types);
             if (restriction.size() == 0) {
                 this.subscribedDataTypeListeners.remove(listener);
             }
-            if (changed) dataTypeListeners = null; // recompute later on demand
+            if (changed)
+                dataTypeListeners = null; // recompute later on demand
         }
     }
 
     /**
      * @return the observedDataTypes
      */
-    public Set<Object> getObservedDataTypesInternal() {
+    public Map<Object, IndexingLevel> getObservedDataTypesInternal() {
         return observedDataTypes;
     }
-    
+
     @Override
-    public boolean addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject){
+    public boolean addLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject) {
         Collection<EObject> observedObjects = lightweightObservers.get(observer);
-        if(observedObjects == null) {
+        if (observedObjects == null) {
             observedObjects = new HashSet<EObject>();
             lightweightObservers.put(observer, observedObjects);
         }
         return observedObjects.add(observedObject);
     }
-    
+
     @Override
     public boolean removeLightweightEObjectObserver(LightweightEObjectObserver observer, EObject observedObject) {
         boolean result = false;
-    	Collection<EObject> observedObjects = lightweightObservers.get(observer);
-        if(observedObjects != null) {
-        	result = observedObjects.remove(observedObject);
-            if(observedObjects.isEmpty()) {
-            	lightweightObservers.remove(observer);
+        Collection<EObject> observedObjects = lightweightObservers.get(observer);
+        if (observedObjects != null) {
+            result = observedObjects.remove(observedObject);
+            if (observedObjects.isEmpty()) {
+                lightweightObservers.remove(observer);
             }
         }
         return result;
     }
-    
+
     /**
      * @return the lightweightObservers
      */
@@ -654,9 +666,10 @@ public class NavigationHelperImpl implements NavigationHelper {
      */
     protected void notifyBaseIndexChangeListeners(boolean baseIndexChanged) {
         if (!baseIndexChangeListeners.isEmpty()) {
-            for (EMFBaseIndexChangeListener listener : new ArrayList<EMFBaseIndexChangeListener>(baseIndexChangeListeners)) {
+            for (EMFBaseIndexChangeListener listener : new ArrayList<EMFBaseIndexChangeListener>(
+                    baseIndexChangeListeners)) {
                 try {
-                    if(!listener.onlyOnIndexChange() || baseIndexChanged) {
+                    if (!listener.onlyOnIndexChange() || baseIndexChanged) {
                         listener.notifyChanged(baseIndexChanged);
                     }
                 } catch (Exception ex) {
@@ -667,11 +680,9 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
-    
     void notifyDataTypeListeners(final Object typeKey, final Object value, final boolean isInsertion,
             final boolean firstOrLastOccurrence) {
-        for (final Entry<DataTypeListener, Set<EDataType>> entry : getDataTypeListeners().row(typeKey)
-                .entrySet()) {
+        for (final Entry<DataTypeListener, Set<EDataType>> entry : getDataTypeListeners().row(typeKey).entrySet()) {
             final DataTypeListener listener = entry.getKey();
             for (final EDataType subscriptionType : entry.getValue()) {
                 if (isInsertion) {
@@ -685,8 +696,8 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     void notifyFeatureListeners(final EObject host, final Object featureKey, final Object value,
             final boolean isInsertion) {
-        for (final Entry<FeatureListener, Set<EStructuralFeature>> entry : getFeatureListeners()
-                .row(featureKey).entrySet()) {
+        for (final Entry<FeatureListener, Set<EStructuralFeature>> entry : getFeatureListeners().row(featureKey)
+                .entrySet()) {
             final FeatureListener listener = entry.getKey();
             for (final EStructuralFeature subscriptionType : entry.getValue()) {
                 if (isInsertion) {
@@ -699,8 +710,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     void notifyInstanceListeners(final Object clazzKey, final EObject instance, final boolean isInsertion) {
-        for (final Entry<InstanceListener, Set<EClass>> entry : getInstanceListeners().row(clazzKey)
-                .entrySet()) {
+        for (final Entry<InstanceListener, Set<EClass>> entry : getInstanceListeners().row(clazzKey).entrySet()) {
             final InstanceListener listener = entry.getKey();
             for (final EClass subscriptionType : entry.getValue()) {
                 if (isInsertion) {
@@ -714,14 +724,14 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     void notifyLightweightObservers(final EObject host, final EStructuralFeature feature,
             final Notification notification) {
-        for (final Entry<LightweightEObjectObserver, Collection<EObject>> entry : getLightweightObservers().entrySet()) {
+        for (final Entry<LightweightEObjectObserver, Collection<EObject>> entry : getLightweightObservers()
+                .entrySet()) {
             if (entry.getValue().contains(host)) {
                 entry.getKey().notifyFeatureChanged(host, feature, notification);
             }
         }
     }
-    
-    
+
     @Override
     public void addBaseIndexChangeListener(EMFBaseIndexChangeListener listener) {
         checkArgument(listener != null, "Cannot add null listener!");
@@ -743,7 +753,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     public boolean removeIndexingErrorListener(IEMFIndexingErrorListener listener) {
         return errorListeners.remove(listener);
     }
-    
+
     protected void processingFatal(final Throwable ex, final String task) {
         notifyFatalListener(logTaskFormat(task), ex);
     }
@@ -751,22 +761,21 @@ public class NavigationHelperImpl implements NavigationHelper {
     protected void processingError(final Throwable ex, final String task) {
         notifyErrorListener(logTaskFormat(task), ex);
     }
-    
-    
+
     public void notifyErrorListener(String message, Throwable t) {
         logger.error(message, t);
         for (IEMFIndexingErrorListener listener : errorListeners) {
             listener.error(message, t);
         }
     }
-    
+
     public void notifyFatalListener(String message, Throwable t) {
         logger.fatal(message, t);
         for (IEMFIndexingErrorListener listener : errorListeners) {
             listener.fatal(message, t);
         }
     }
-    
+
     private String logTaskFormat(final String task) {
         return "VIATRA Query encountered an error in processing the EMF model. " + "This happened while trying to "
                 + task;
@@ -776,26 +785,27 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (expansionAllowed) {
             Resource eResource = obj.eResource();
             if (eResource != null && eResource.getResourceSet() == null) {
-            	expandToAdditionalRoot(eResource);
+                expandToAdditionalRoot(eResource);
             }
         }
     }
 
     protected void expandToAdditionalRoot(Notifier root) {
-    	if (modelRoots.contains(root)) return;
-    	
-    	if (root instanceof ResourceSet) {
-    		expansionAllowed = true;
-    	} else if (root instanceof Resource) {
-    		IBaseIndexResourceFilter resourceFilter = baseIndexOptions.getResourceFilterConfiguration();
-    		if (resourceFilter != null && resourceFilter.isResourceFiltered((Resource) root))
-    			return;
-    	}
-		final IBaseIndexObjectFilter objectFilter = baseIndexOptions.getObjectFilterConfiguration();
-		if (objectFilter != null && objectFilter.isFiltered(root))
-			return;
-    	
-		// no veto by filters
+        if (modelRoots.contains(root))
+            return;
+
+        if (root instanceof ResourceSet) {
+            expansionAllowed = true;
+        } else if (root instanceof Resource) {
+            IBaseIndexResourceFilter resourceFilter = baseIndexOptions.getResourceFilterConfiguration();
+            if (resourceFilter != null && resourceFilter.isResourceFiltered((Resource) root))
+                return;
+        }
+        final IBaseIndexObjectFilter objectFilter = baseIndexOptions.getObjectFilterConfiguration();
+        if (objectFilter != null && objectFilter.isFiltered(root))
+            return;
+
+        // no veto by filters
         modelRoots.add(root);
         contentAdapter.addAdapter(root);
         notifyBaseIndexChangeListeners();
@@ -812,169 +822,210 @@ public class NavigationHelperImpl implements NavigationHelper {
      * @return the directlyObservedClasses
      */
     public Set<Object> getDirectlyObservedClassesInternal() {
-        return directlyObservedClasses;
+        return directlyObservedClasses.keySet();
     }
 
-    boolean isObservedInternal(Object clazzKey) {      
-    	return inWildcardMode || getAllObservedClassesInternal().contains(clazzKey);
-    }  
-    
+    boolean isObservedInternal(Object clazzKey) {
+        return inWildcardMode || getAllObservedClassesInternal().containsKey(clazzKey);
+    }
+
+    /**
+     * Add the given item the map with the given indexing level if it wasn't already added with a higher level.
+     * 
+     * @param map
+     * @param key
+     * @param level
+     */
+    private static <V> void putIntoMapIfHigherLevel(Map<V, IndexingLevel> map, V key, IndexingLevel level) {
+        IndexingLevel l = map.get(key);
+        if (l == null || level.compareTo(l) > 0) {
+            map.put(key, level);
+        }
+    }
+
+    private void addObservedClassesInternal(Object eClassKey, IndexingLevel level) {
+        putIntoMapIfHigherLevel(allObservedClasses, eClassKey, level);
+        final Set<Object> subTypes = metaStore.getSubTypeMap().get(eClassKey);
+        if (subTypes != null) {
+            for (Object subType : subTypes) {
+                /*
+                 * It is necessary to check if the class has already been added with a higher indexing level as in case
+                 * of multiple inheritance, a subclass may be registered for statistics only but full indexing may be
+                 * required via one of its super classes.
+                 */
+                putIntoMapIfHigherLevel(allObservedClasses, subType, level);
+            }
+        }
+    }
+
     /**
      * not just the directly observed classes, but also their known subtypes
      */
-    public Set<Object> getAllObservedClassesInternal() {
+    public Map<Object, IndexingLevel> getAllObservedClassesInternal() {
         if (allObservedClasses == null) {
-            allObservedClasses = new HashSet<Object>();
-            for (Object eClassKey : directlyObservedClasses) {
-                allObservedClasses.add(eClassKey);
-                final Set<Object> subTypes = metaStore.getSubTypeMap().get(eClassKey);
-                if (subTypes != null) {
-                    allObservedClasses.addAll(subTypes);
-                }
+            allObservedClasses = new HashMap<Object, IndexingLevel>();
+            for (Entry<Object, IndexingLevel> entry : directlyObservedClasses.entrySet()) {
+                Object eClassKey = entry.getKey();
+                IndexingLevel level = entry.getValue();
+                addObservedClassesInternal(eClassKey, level);
             }
         }
         return allObservedClasses;
     }
-    
+
     /**
-	 * @return the instanceListeners
-	 */
-	Table<Object, InstanceListener, Set<EClass>> getInstanceListeners() {
-		if (instanceListeners == null) {
-			instanceListeners = HashBasedTable.create(100,1);
-			for (Entry<InstanceListener, Set<EClass>> subscription : subscribedInstanceListeners.entrySet()) {
-				final InstanceListener listener = subscription.getKey();
-				for (EClass subscriptionType : subscription.getValue()) {
-					final Object superElementTypeKey = toKey(subscriptionType);
-					addInstanceListenerInternal(listener, subscriptionType, superElementTypeKey);
-					final Set<Object> subTypeKeys = metaStore.getSubTypeMap().get(superElementTypeKey);
-					if (subTypeKeys != null) for (Object subTypeKey : subTypeKeys) {
-						addInstanceListenerInternal(listener, subscriptionType, subTypeKey);
-					}
-				}
-			}	
-		}
-		return instanceListeners;
-	}
-	Table<Object, InstanceListener, Set<EClass>> peekInstanceListeners() {
-		return instanceListeners;
-	}
-
-	void addInstanceListenerInternal(final InstanceListener listener,
-			EClass subscriptionType, final Object elementTypeKey) {
-		Set<EClass> subscriptionTypes = instanceListeners.get(elementTypeKey,listener);
-		if (subscriptionTypes == null) {
-			subscriptionTypes = new HashSet<EClass>();
-			instanceListeners.put(elementTypeKey, listener, subscriptionTypes);
-		}
-		subscriptionTypes.add(subscriptionType);
-	}
-
-	/**
-	 * @return the featureListeners
-	 */
-	Table<Object, FeatureListener, Set<EStructuralFeature>> getFeatureListeners() {
-		if (featureListeners == null) {
-			featureListeners = HashBasedTable.create(100,1);
-			for (Entry<FeatureListener, Set<EStructuralFeature>> subscription : subscribedFeatureListeners.entrySet()) {
-				final FeatureListener listener = subscription.getKey();
-				for (EStructuralFeature subscriptionType : subscription.getValue()) {
-					final Object elementTypeKey = toKey(subscriptionType);
-					addFeatureListenerInternal(listener, subscriptionType,
-							elementTypeKey);
-				}
-			}	
-		}
-		return featureListeners;
-	}
-
-	void addFeatureListenerInternal(final FeatureListener listener,
-			EStructuralFeature subscriptionType, final Object elementTypeKey) {
-		Set<EStructuralFeature> subscriptionTypes = featureListeners.get(elementTypeKey,listener);
-		if (subscriptionTypes == null) {
-			subscriptionTypes = new HashSet<EStructuralFeature>();
-			featureListeners.put(elementTypeKey, listener, subscriptionTypes);
-		}
-		subscriptionTypes.add(subscriptionType);
-	}
-
-	/**
-	 * @return the dataTypeListeners
-	 */
-	Table<Object, DataTypeListener, Set<EDataType>> getDataTypeListeners() {
-		if (dataTypeListeners == null) {
-			dataTypeListeners = HashBasedTable.create(100,1);
-			for (Entry<DataTypeListener, Set<EDataType>> subscription : subscribedDataTypeListeners.entrySet()) {
-				final DataTypeListener listener = subscription.getKey();
-				for (EDataType subscriptionType : subscription.getValue()) {
-					final Object elementTypeKey = toKey(subscriptionType);
-					addDatatypeListenerInternal(listener, subscriptionType, elementTypeKey);
-				}
-			}	
-		}
-		return dataTypeListeners;
-	}
-
-	void addDatatypeListenerInternal(final DataTypeListener listener,
-			EDataType subscriptionType, final Object elementTypeKey) {
-		Set<EDataType> subscriptionTypes = dataTypeListeners.get(elementTypeKey,listener);
-		if (subscriptionTypes == null) {
-			subscriptionTypes = new HashSet<EDataType>();
-			dataTypeListeners.put(elementTypeKey, listener, subscriptionTypes);
-		}
-		subscriptionTypes.add(subscriptionType);
-	}
-
-	@Override
-    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features) {
-        ensureNotInWildcardMode();
-        if (classes !=null || features != null || dataTypes!=null) {
-			final Set<Object> resolvedFeatures = resolveFeaturesToKey(features);
-			final Set<Object> resolvedClasses = resolveClassifiersToKey(classes);
-			final Set<Object> resolvedDatatypes = resolveClassifiersToKey(dataTypes);
-			
-			try {
-			     coalesceTraversals(new Callable<Void>() {
-			         @Override
-			         public Void call() throws Exception {
-			         	delayedFeatures.addAll(resolvedFeatures);
-			         	delayedDataTypes.addAll(resolvedDatatypes);
-			         	delayedClasses.addAll(resolvedClasses);
-			         	return null;
-			         }
-			     });
-			 } catch (InvocationTargetException ex) {
-			     processingFatal(ex.getCause(), "register en masse the observed EClasses " + resolvedClasses
-			    		 + " and EDatatypes " + resolvedDatatypes
-			    		 + " and EStructuralFeatures " + resolvedFeatures);
-			 } catch (Exception ex) {
-			     processingFatal(ex, "register en masse the observed EClasses " + resolvedClasses
-			    		 + " and EDatatypes " + resolvedDatatypes
-			    		 + " and EStructuralFeatures " + resolvedFeatures);
-			 }
-	     }
-	 }
-
-    @Override
-    public void unregisterObservedTypes(Set<EClass> classes,
-    		Set<EDataType> dataTypes, Set<? extends EStructuralFeature> features) {
-    	unregisterEClasses(classes);
-    	unregisterEDataTypes(dataTypes);
-    	unregisterEStructuralFeatures(features);
+     * @return the instanceListeners
+     */
+    Table<Object, InstanceListener, Set<EClass>> getInstanceListeners() {
+        if (instanceListeners == null) {
+            instanceListeners = HashBasedTable.create(100, 1);
+            for (Entry<InstanceListener, Set<EClass>> subscription : subscribedInstanceListeners.entrySet()) {
+                final InstanceListener listener = subscription.getKey();
+                for (EClass subscriptionType : subscription.getValue()) {
+                    final Object superElementTypeKey = toKey(subscriptionType);
+                    addInstanceListenerInternal(listener, subscriptionType, superElementTypeKey);
+                    final Set<Object> subTypeKeys = metaStore.getSubTypeMap().get(superElementTypeKey);
+                    if (subTypeKeys != null)
+                        for (Object subTypeKey : subTypeKeys) {
+                            addInstanceListenerInternal(listener, subscriptionType, subTypeKey);
+                        }
+                }
+            }
+        }
+        return instanceListeners;
     }
-    
+
+    Table<Object, InstanceListener, Set<EClass>> peekInstanceListeners() {
+        return instanceListeners;
+    }
+
+    void addInstanceListenerInternal(final InstanceListener listener, EClass subscriptionType,
+            final Object elementTypeKey) {
+        Set<EClass> subscriptionTypes = instanceListeners.get(elementTypeKey, listener);
+        if (subscriptionTypes == null) {
+            subscriptionTypes = new HashSet<EClass>();
+            instanceListeners.put(elementTypeKey, listener, subscriptionTypes);
+        }
+        subscriptionTypes.add(subscriptionType);
+    }
+
+    /**
+     * @return the featureListeners
+     */
+    Table<Object, FeatureListener, Set<EStructuralFeature>> getFeatureListeners() {
+        if (featureListeners == null) {
+            featureListeners = HashBasedTable.create(100, 1);
+            for (Entry<FeatureListener, Set<EStructuralFeature>> subscription : subscribedFeatureListeners.entrySet()) {
+                final FeatureListener listener = subscription.getKey();
+                for (EStructuralFeature subscriptionType : subscription.getValue()) {
+                    final Object elementTypeKey = toKey(subscriptionType);
+                    addFeatureListenerInternal(listener, subscriptionType, elementTypeKey);
+                }
+            }
+        }
+        return featureListeners;
+    }
+
+    void addFeatureListenerInternal(final FeatureListener listener, EStructuralFeature subscriptionType,
+            final Object elementTypeKey) {
+        Set<EStructuralFeature> subscriptionTypes = featureListeners.get(elementTypeKey, listener);
+        if (subscriptionTypes == null) {
+            subscriptionTypes = new HashSet<EStructuralFeature>();
+            featureListeners.put(elementTypeKey, listener, subscriptionTypes);
+        }
+        subscriptionTypes.add(subscriptionType);
+    }
+
+    /**
+     * @return the dataTypeListeners
+     */
+    Table<Object, DataTypeListener, Set<EDataType>> getDataTypeListeners() {
+        if (dataTypeListeners == null) {
+            dataTypeListeners = HashBasedTable.create(100, 1);
+            for (Entry<DataTypeListener, Set<EDataType>> subscription : subscribedDataTypeListeners.entrySet()) {
+                final DataTypeListener listener = subscription.getKey();
+                for (EDataType subscriptionType : subscription.getValue()) {
+                    final Object elementTypeKey = toKey(subscriptionType);
+                    addDatatypeListenerInternal(listener, subscriptionType, elementTypeKey);
+                }
+            }
+        }
+        return dataTypeListeners;
+    }
+
+    void addDatatypeListenerInternal(final DataTypeListener listener, EDataType subscriptionType,
+            final Object elementTypeKey) {
+        Set<EDataType> subscriptionTypes = dataTypeListeners.get(elementTypeKey, listener);
+        if (subscriptionTypes == null) {
+            subscriptionTypes = new HashSet<EDataType>();
+            dataTypeListeners.put(elementTypeKey, listener, subscriptionTypes);
+        }
+        subscriptionTypes.add(subscriptionType);
+    }
+
+    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes,
+            Set<? extends EStructuralFeature> features) {
+        registerObservedTypes(classes, dataTypes, features, IndexingLevel.FULL);
+    }
+
     @Override
-    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features) {
+    public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes,
+            Set<? extends EStructuralFeature> features, final IndexingLevel level) {
         ensureNotInWildcardMode();
-        if (features != null) {
-            final Set<Object> resolved = resolveFeaturesToKey(features);
-            
+        if (classes != null || features != null || dataTypes != null) {
+            final Set<Object> resolvedFeatures = resolveFeaturesToKey(features);
+            final Set<Object> resolvedClasses = resolveClassifiersToKey(classes);
+            final Set<Object> resolvedDatatypes = resolveClassifiersToKey(dataTypes);
+
             try {
                 coalesceTraversals(new Callable<Void>() {
                     @Override
                     public Void call() throws Exception {
-                    	delayedFeatures.addAll(resolved);
-                    	return null;
+                        Function<Object, IndexingLevel> f = new Function<Object, IndexingLevel>() {
+
+                            @Override
+                            public IndexingLevel apply(Object input) {
+                                return level;
+                            }
+                        };
+                        delayedFeatures.putAll(Maps.asMap(resolvedFeatures, f));
+                        delayedDataTypes.putAll(Maps.asMap(resolvedDatatypes, f));
+                        delayedClasses.putAll(Maps.asMap(resolvedClasses, f));
+                        return null;
+                    }
+                });
+            } catch (InvocationTargetException ex) {
+                processingFatal(ex.getCause(), "register en masse the observed EClasses " + resolvedClasses
+                        + " and EDatatypes " + resolvedDatatypes + " and EStructuralFeatures " + resolvedFeatures);
+            } catch (Exception ex) {
+                processingFatal(ex, "register en masse the observed EClasses " + resolvedClasses + " and EDatatypes "
+                        + resolvedDatatypes + " and EStructuralFeatures " + resolvedFeatures);
+            }
+        }
+    }
+
+    @Override
+    public void unregisterObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes,
+            Set<? extends EStructuralFeature> features) {
+        unregisterEClasses(classes);
+        unregisterEDataTypes(dataTypes);
+        unregisterEStructuralFeatures(features);
+    }
+
+    @Override
+    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features, final IndexingLevel level) {
+        ensureNotInWildcardMode();
+        if (features != null) {
+            final Set<Object> resolved = resolveFeaturesToKey(features);
+
+            try {
+                coalesceTraversals(new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        for (Object o : resolved) {
+                            delayedFeatures.put(o, level);
+                        }
+                        return null;
                     }
                 });
             } catch (InvocationTargetException ex) {
@@ -986,13 +1037,18 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
+    public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features) {
+        registerEStructuralFeatures(features, IndexingLevel.FULL);
+    }
+
+    @Override
     public void unregisterEStructuralFeatures(Set<? extends EStructuralFeature> features) {
         ensureNotInWildcardMode();
         if (features != null) {
-        	final Set<Object> resolved = resolveFeaturesToKey(features);
-            ensureNoListeners(resolved, getFeatureListeners());									
-            observedFeatures.removeAll(resolved);
-            delayedFeatures.removeAll(resolved);
+            final Set<Object> resolved = resolveFeaturesToKey(features);
+            ensureNoListeners(resolved, getFeatureListeners());
+            observedFeatures.keySet().removeAll(resolved);
+            delayedFeatures.keySet().removeAll(resolved);
             for (Object f : resolved) {
                 instanceStore.getValueToFeatureToHolderMap().column(f).clear();
                 if (instanceStore.peekFeatureToHolderMap() != null) {
@@ -1001,22 +1057,25 @@ public class NavigationHelperImpl implements NavigationHelper {
                 if (instanceStore.peekHolderToFeatureToValueMap() != null) {
                     instanceStore.peekHolderToFeatureToValueMap().column(f).clear();
                 }
+                statsStore.removeType(f);
             }
         }
     }
 
-	@Override
-    public void registerEClasses(Set<EClass> classes) {
+    @Override
+    public void registerEClasses(Set<EClass> classes, final IndexingLevel level) {
         ensureNotInWildcardMode();
         if (classes != null) {
             final Set<Object> resolvedClasses = resolveClassifiersToKey(classes);
-            
+
             try {
                 coalesceTraversals(new Callable<Void>() {
                     @Override
                     public Void call() throws Exception {
-                    	delayedClasses.addAll(resolvedClasses);
-                    	return null;
+                        for (Object o : resolvedClasses) {
+                            delayedClasses.put(o, level);
+                        }
+                        return null;
                     }
                 });
             } catch (InvocationTargetException ex) {
@@ -1027,17 +1086,18 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
     }
 
+    @Override
+    public void registerEClasses(Set<EClass> classes) {
+        registerEClasses(classes, IndexingLevel.FULL);
+    }
+
     /**
      * @param classes
      */
-    protected void startObservingClasses(Set<Object> classKeys) {
-        directlyObservedClasses.addAll(classKeys);
-        getAllObservedClassesInternal().addAll(classKeys);
-        for (Object classKey : classKeys) {
-            final Set<Object> subTypes = metaStore.getSubTypeMap().get(classKey);
-            if (subTypes != null) {
-                allObservedClasses.addAll(subTypes);
-            }
+    protected void startObservingClasses(Map<Object, IndexingLevel> classObservations) {
+        for (Entry<Object, IndexingLevel> classObservation : classObservations.entrySet()) {
+            putIntoMapIfHigherLevel(directlyObservedClasses, classObservation.getKey(), classObservation.getValue());
+            addObservedClassesInternal(classObservation.getKey(), classObservation.getValue());
         }
     }
 
@@ -1045,31 +1105,32 @@ public class NavigationHelperImpl implements NavigationHelper {
     public void unregisterEClasses(Set<EClass> classes) {
         ensureNotInWildcardMode();
         if (classes != null) {
-        	final Set<Object> resolved = resolveClassifiersToKey(classes);
-            ensureNoListeners(resolved, getInstanceListeners());									
-            directlyObservedClasses.removeAll(resolved);
+            final Set<Object> resolved = resolveClassifiersToKey(classes);
+            ensureNoListeners(resolved, getInstanceListeners());
+            directlyObservedClasses.keySet().removeAll(resolved);
             allObservedClasses = null;
-            delayedClasses.removeAll(resolved);
+            delayedClasses.keySet().removeAll(resolved);
             for (Object c : resolved) {
                 instanceStore.removeInstanceSet(c);
+                statsStore.removeType(c);
             }
         }
     }
 
-
-
     @Override
-    public void registerEDataTypes(Set<EDataType> dataTypes) {
+    public void registerEDataTypes(Set<EDataType> dataTypes, final IndexingLevel level) {
         ensureNotInWildcardMode();
         if (dataTypes != null) {
             final Set<Object> resolved = resolveClassifiersToKey(dataTypes);
-            
+
             try {
                 coalesceTraversals(new Callable<Void>() {
                     @Override
                     public Void call() throws Exception {
-                    	delayedDataTypes.addAll(resolved);
-                    	return null;
+                        for (Object o : resolved) {
+                            delayedDataTypes.put(o, level);
+                        }
+                        return null;
                     }
                 });
             } catch (InvocationTargetException ex) {
@@ -1081,118 +1142,163 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     @Override
+    public void registerEDataTypes(Set<EDataType> dataTypes) {
+        registerEDataTypes(dataTypes, IndexingLevel.FULL);
+    }
+
+    @Override
     public void unregisterEDataTypes(Set<EDataType> dataTypes) {
         ensureNotInWildcardMode();
         if (dataTypes != null) {
-        	final Set<Object> resolved = resolveClassifiersToKey(dataTypes);
-            ensureNoListeners(resolved, getDataTypeListeners());									
-            observedDataTypes.removeAll(resolved);
-            delayedDataTypes.removeAll(resolved);
+            final Set<Object> resolved = resolveClassifiersToKey(dataTypes);
+            ensureNoListeners(resolved, getDataTypeListeners());
+            observedDataTypes.keySet().removeAll(resolved);
+            delayedDataTypes.keySet().removeAll(resolved);
             for (Object dataType : resolved) {
                 instanceStore.removeDataTypeMap(dataType);
+                statsStore.removeType(dataType);
             }
         }
     }
-    
+
     @Override
     public boolean isCoalescing() {
-    	return delayTraversals;
+        return delayTraversals;
     }
 
     @Override
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException {
         V finalResult = null;
-        
+
         if (delayTraversals) { // reentrant case, no special action needed
             try {
-            	finalResult = callable.call();
+                finalResult = callable.call();
             } catch (Exception e) {
                 throw new InvocationTargetException(e);
             }
             return finalResult;
         }
-        
-	    boolean firstRun = true;
-        while (callable != null) {   // repeat if post-processing needed  	
-	        delayedClasses = new HashSet<Object>();
-	        delayedFeatures = new HashSet<Object>();
-	        delayedDataTypes = new HashSet<Object>();
 
-        	try {
-        		try {
-        			delayTraversals = true;
-        			
-        			V result = callable.call();
-        			if (firstRun) {
-        				firstRun = false;
-        				finalResult = result; 
-        			}
-        			
-        			// are there proxies left to be resolved? are we allowed to resolve them now?
-        			while((!delayedProxyResolutions.isEmpty()) && resolutionDelayingResources.isEmpty()) {
-        				// pop first entry
-        				final Collection<Entry<EObject, EReference>> entries = delayedProxyResolutions.entries();
-						final Entry<EObject, EReference> toResolve = entries.iterator().next();
-        				entries.remove(toResolve);
-        				
-        				// see if we can resolve proxies
-        				comprehension.tryResolveReference(toResolve.getKey(), toResolve.getValue());
-        			}
-        			
-        		} finally {
-        			delayTraversals = false;
-        			callable = null;
-        			
-        			delayedFeatures = setMinus(delayedFeatures, observedFeatures);
-        			delayedClasses = setMinus(delayedClasses, directlyObservedClasses);
-        			delayedDataTypes = setMinus(delayedDataTypes, observedDataTypes);
-        			
-        			boolean classesWarrantTraversal = !setMinus(delayedClasses, getAllObservedClassesInternal()).isEmpty();
-        			
-        			if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
-        				final Set<Object> oldClasses = new HashSet<Object>(directlyObservedClasses);
-        				startObservingClasses(delayedClasses);
-        				observedDataTypes.addAll(delayedDataTypes);
-        				observedFeatures.addAll(delayedFeatures);
-        				
-        				// make copies so that original accumulators can be cleaned for the next cycle
-        				// or for the rare case that a coalesced  traversal is invoked during visitation, 
-        				// e.g. by a derived feature implementation
-        				final Set<Object> toGatherClasses = new HashSet<Object>(delayedClasses);
-        				final Set<Object> toGatherFeatures = new HashSet<Object>(delayedFeatures);
-        				final Set<Object> toGatherDataTypes = new HashSet<Object>(delayedDataTypes);
-        				
-        				if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
-        					// repeat the cycle with this visit
-        					final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
-        							toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
-        					
-        					callable = new Callable<V>() {
-        						@Override
-        						public V call() throws Exception {
-        							// temporarily ignoring RESOLVE on these features, as they were not observed before
-        							ignoreResolveNotificationFeatures.addAll(toGatherFeatures); 
-        							try {
-        								traverse(visitor);
-        							} finally {
-        								ignoreResolveNotificationFeatures.removeAll(toGatherFeatures);        								
-        							}
-        							return null;
-        						}
-							};
-        					
-        				}
-        			}
-        		}
-	        } catch (Exception e) {
-	            notifyFatalListener("VIATRA Base encountered an error while traversing the EMF model to gather new information. ",
-	                            e);
-	            throw new InvocationTargetException(e);
-	        }
+        boolean firstRun = true;
+        while (callable != null) { // repeat if post-processing needed
+            delayedClasses = new HashMap<Object, IndexingLevel>();
+            delayedFeatures = new HashMap<Object, IndexingLevel>();
+            delayedDataTypes = new HashMap<Object, IndexingLevel>();
+
+            try {
+                try {
+                    delayTraversals = true;
+
+                    V result = callable.call();
+                    if (firstRun) {
+                        firstRun = false;
+                        finalResult = result;
+                    }
+
+                    // are there proxies left to be resolved? are we allowed to resolve them now?
+                    while ((!delayedProxyResolutions.isEmpty()) && resolutionDelayingResources.isEmpty()) {
+                        // pop first entry
+                        final Collection<Entry<EObject, EReference>> entries = delayedProxyResolutions.entries();
+                        final Entry<EObject, EReference> toResolve = entries.iterator().next();
+                        entries.remove(toResolve);
+
+                        // see if we can resolve proxies
+                        comprehension.tryResolveReference(toResolve.getKey(), toResolve.getValue());
+                    }
+
+                } finally {
+                    delayTraversals = false;
+                    callable = null;
+
+                    for(Entry<Object, IndexingLevel> entry: observedFeatures.entrySet()){
+                        IndexingLevel requested = delayedFeatures.get(entry.getKey());
+                        if (requested != null){
+                            IndexingLevel old = entry.getValue();
+                            IndexingLevel merged = requested.merge(old);
+                            if (merged == old){
+                                delayedFeatures.remove(entry.getKey());
+                            }else{
+                                delayedFeatures.put(entry.getKey(), merged);
+                            }
+                        }
+                    }
+                    for(Entry<Object, IndexingLevel> entry: directlyObservedClasses.entrySet()){
+                        IndexingLevel requested = delayedClasses.get(entry.getKey());
+                        if (requested != null){
+                            IndexingLevel old = entry.getValue();
+                            IndexingLevel merged = requested.merge(old);
+                            if (merged == old){
+                                delayedClasses.remove(entry.getKey());
+                            } else{
+                                delayedClasses.put(entry.getKey(), merged);
+                            }
+                        }
+                    }
+                    for(Entry<Object, IndexingLevel> entry: observedDataTypes.entrySet()){
+                        IndexingLevel requested = delayedDataTypes.get(entry.getKey());
+                        if (requested != null){
+                            IndexingLevel old = entry.getValue();
+                            IndexingLevel merged = requested.merge(old);
+                            if (merged == old){
+                                delayedDataTypes.remove(entry.getKey());
+                            }else{
+                                delayedDataTypes.put(entry.getKey(), merged);
+                            }
+                        }
+                    }
+
+                    boolean classesWarrantTraversal = !Maps
+                            .difference(delayedClasses, getAllObservedClassesInternal()).areEqual();
+
+                    if (!delayedClasses.isEmpty() || !delayedFeatures.isEmpty() || !delayedDataTypes.isEmpty()) {
+                        final HashMap<Object, IndexingLevel> oldClasses = new HashMap<Object, IndexingLevel>(
+                                directlyObservedClasses);
+                        startObservingClasses(delayedClasses);
+                        observedDataTypes.putAll(delayedDataTypes);
+                        observedFeatures.putAll(delayedFeatures);
+
+                        // make copies so that original accumulators can be cleaned for the next cycle
+                        // or for the rare case that a coalesced traversal is invoked during visitation,
+                        // e.g. by a derived feature implementation
+                        final Map<Object, IndexingLevel> toGatherClasses = new HashMap<Object, IndexingLevel>(
+                                delayedClasses);
+                        final Map<Object, IndexingLevel> toGatherFeatures = new HashMap<Object, IndexingLevel>(
+                                delayedFeatures);
+                        final Map<Object, IndexingLevel> toGatherDataTypes = new HashMap<Object, IndexingLevel>(
+                                delayedDataTypes);
+
+                        if (classesWarrantTraversal || !toGatherFeatures.isEmpty() || !toGatherDataTypes.isEmpty()) {
+                            // repeat the cycle with this visit
+                            final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
+                                    toGatherFeatures, toGatherClasses, oldClasses, toGatherDataTypes);
+
+                            callable = new Callable<V>() {
+                                @Override
+                                public V call() throws Exception {
+                                    // temporarily ignoring RESOLVE on these features, as they were not observed before
+                                    ignoreResolveNotificationFeatures.addAll(toGatherFeatures.keySet());
+                                    try {
+                                        traverse(visitor);
+                                    } finally {
+                                        ignoreResolveNotificationFeatures.removeAll(toGatherFeatures.keySet());
+                                    }
+                                    return null;
+                                }
+                            };
+
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                notifyFatalListener(
+                        "VIATRA Base encountered an error while traversing the EMF model to gather new information. ",
+                        e);
+                throw new InvocationTargetException(e);
+            }
         }
         return finalResult;
     }
-    
+
     private void traverse(final NavigationHelperVisitor visitor) {
         // Cloning model roots avoids a concurrent modification exception
         for (Notifier root : new HashSet<Notifier>(modelRoots)) {
@@ -1206,47 +1312,44 @@ public class NavigationHelperImpl implements NavigationHelper {
         addRootInternal(emfRoot);
     }
 
-    
     @Override
     public <T extends EObject> void cheapMoveTo(T element, EList<T> targetContainmentReferenceList) {
-    	if (element.eAdapters().contains(contentAdapter) && 
-    			targetContainmentReferenceList instanceof NotifyingList<?>) {
-    		final Object listNotifier = ((NotifyingList<?>)targetContainmentReferenceList).getNotifier();
-    		if (listNotifier instanceof Notifier && ((Notifier) listNotifier).eAdapters().contains(contentAdapter)) {
-	     		contentAdapter.ignoreInsertionAndDeletion = element;
-		    	try {
-		    		targetContainmentReferenceList.add(element);
-		    	} finally {
-		        	contentAdapter.ignoreInsertionAndDeletion = null;
-		    	}
-    		} else {
-    			targetContainmentReferenceList.add(element);
-    		}
-    	} else {
-    		targetContainmentReferenceList.add(element);
-    	}
+        if (element.eAdapters().contains(contentAdapter)
+                && targetContainmentReferenceList instanceof NotifyingList<?>) {
+            final Object listNotifier = ((NotifyingList<?>) targetContainmentReferenceList).getNotifier();
+            if (listNotifier instanceof Notifier && ((Notifier) listNotifier).eAdapters().contains(contentAdapter)) {
+                contentAdapter.ignoreInsertionAndDeletion = element;
+                try {
+                    targetContainmentReferenceList.add(element);
+                } finally {
+                    contentAdapter.ignoreInsertionAndDeletion = null;
+                }
+            } else {
+                targetContainmentReferenceList.add(element);
+            }
+        } else {
+            targetContainmentReferenceList.add(element);
+        }
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void cheapMoveTo(EObject element, EObject parent, EReference containmentFeature) {
-    	metaStore.maintainMetamodel(containmentFeature);           	
-    	if (containmentFeature.isMany())
-    		cheapMoveTo(element, (EList)parent.eGet(containmentFeature));
-    	else if (element.eAdapters().contains(contentAdapter) &&
-    			parent.eAdapters().contains(contentAdapter)) 
-    	{
-     		contentAdapter.ignoreInsertionAndDeletion = element;
-	    	try {
-	    		parent.eSet(containmentFeature, element);
-	    	} finally {
-	        	contentAdapter.ignoreInsertionAndDeletion = null;
-	    	}
-		} else {
-			parent.eSet(containmentFeature, element);
-		}
+        metaStore.maintainMetamodel(containmentFeature);
+        if (containmentFeature.isMany())
+            cheapMoveTo(element, (EList) parent.eGet(containmentFeature));
+        else if (element.eAdapters().contains(contentAdapter) && parent.eAdapters().contains(contentAdapter)) {
+            contentAdapter.ignoreInsertionAndDeletion = element;
+            try {
+                parent.eSet(containmentFeature, element);
+            } finally {
+                contentAdapter.ignoreInsertionAndDeletion = null;
+            }
+        } else {
+            parent.eSet(containmentFeature, element);
+        }
     }
-    
+
     /**
      * @param emfRoot
      * @throws ViatraBaseException
@@ -1257,34 +1360,36 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
         expandToAdditionalRoot(emfRoot);
     }
-    
+
     @Override
     public Set<EClass> getAllCurrentClasses() {
-    	return instanceStore.getAllCurrentClasses();
+        return instanceStore.getAllCurrentClasses();
     }
-    
 
     private void ensureNotInWildcardMode() {
-    	if (inWildcardMode) {
-    		throw new IllegalStateException("Cannot register/unregister observed classes in wildcard mode");
-    	}
-    }
-    private <X,Y> void ensureNoListeners(Set<Object> unobservedTypes, final Table<Object, X, Set<Y>> listenerRegistry) {
-		if (!Collections.disjoint(unobservedTypes, listenerRegistry.rowKeySet()))
-			throw new IllegalStateException("Cannot unregister observed types for which there are active listeners");
-    }
-    private void ensureNoListenersForDispose() {
-    	if (!(baseIndexChangeListeners.isEmpty() && subscribedFeatureListeners.isEmpty() && subscribedDataTypeListeners.isEmpty() && subscribedInstanceListeners.isEmpty()))
-    		throw new IllegalStateException("Cannot dispose while there are active listeners");
+        if (inWildcardMode) {
+            throw new IllegalStateException("Cannot register/unregister observed classes in wildcard mode");
+        }
     }
 
+    private <X, Y> void ensureNoListeners(Set<Object> unobservedTypes,
+            final Table<Object, X, Set<Y>> listenerRegistry) {
+        if (!Collections.disjoint(unobservedTypes, listenerRegistry.rowKeySet()))
+            throw new IllegalStateException("Cannot unregister observed types for which there are active listeners");
+    }
+
+    private void ensureNoListenersForDispose() {
+        if (!(baseIndexChangeListeners.isEmpty() && subscribedFeatureListeners.isEmpty()
+                && subscribedDataTypeListeners.isEmpty() && subscribedInstanceListeners.isEmpty()))
+            throw new IllegalStateException("Cannot dispose while there are active listeners");
+    }
 
     /**
      * Resamples the values of not well-behaving derived features if those features are also indexed.
      */
     public void resampleDerivedFeatures() {
         // otherwise notifications are delivered anyway
-        if(!baseIndexOptions.isTraverseOnlyWellBehavingDerivedFeatures()) {
+        if (!baseIndexOptions.isTraverseOnlyWellBehavingDerivedFeatures()) {
             // get all required classes
             Set<EClass> allCurrentClasses = instanceStore.getAllCurrentClasses();
             Set<EStructuralFeature> featuresToSample = Sets.newHashSet();
@@ -1293,15 +1398,15 @@ public class NavigationHelperImpl implements NavigationHelper {
                 EList<EStructuralFeature> features = cls.getEAllStructuralFeatures();
                 for (EStructuralFeature f : features) {
                     // is feature only sampled?
-                    if(comprehension.onlySamplingFeature(f)) {
+                    if (comprehension.onlySamplingFeature(f)) {
                         featuresToSample.add(f);
                     }
                 }
             }
-            
+
             final EMFVisitor removalVisitor = contentAdapter.getVisitorForChange(false);
             final EMFVisitor insertionVisitor = contentAdapter.getVisitorForChange(true);
-            
+
             // iterate on instances
             for (final EStructuralFeature f : featuresToSample) {
                 EClass containingClass = f.getEContainingClass();
@@ -1315,7 +1420,7 @@ public class NavigationHelperImpl implements NavigationHelper {
             notifyBaseIndexChangeListeners();
         }
     }
-    
+
     protected void resampleFeatureValueForHolder(EObject source, EStructuralFeature feature,
             EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
         // traverse features and update value
@@ -1328,7 +1433,6 @@ public class NavigationHelperImpl implements NavigationHelper {
         }
 
     }
-
 
     private void resampleManyFeatureValueForHolder(EObject source, EStructuralFeature feature, Object newValue,
             Set<Object> oldValues, EMFVisitor insertionVisitor, EMFVisitor removalVisitor) {
@@ -1370,5 +1474,71 @@ public class NavigationHelperImpl implements NavigationHelper {
             notifyLightweightObservers(source, feature, notification);
         }
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.viatra.query.runtime.base.api.NavigationHelper#countAllInstances(org.eclipse.emf.ecore.EClass)
+     */
+    @Override
+    public int countAllInstances(EClass type) {
+        int result = 0;
+
+        Object typeKey = toKey(type);
+        Set<Object> subTypes = metaStore.getSubTypeMap().get(typeKey);
+        if (subTypes != null) {
+            for (Object subTypeKey : subTypes) {
+                result += statsStore.countInstances(subTypeKey);
+            }
+        }
+        result += statsStore.countInstances(typeKey);
+
+        return result;
+    }
+
+    @Override
+    public int countDataTypeInstances(EDataType dataType) {
+        return statsStore.countInstances(dataType);
+    }
+
+    @Override
+    public int countFeatureTargets(EObject seedSource, EStructuralFeature feature) {
+        return statsStore.countFeatures(seedSource, feature);
+    }
+
+    @Override
+    public int countFeatures(EStructuralFeature feature) {
+        return statsStore.countFeatures(feature);
+    }
+
+    @Override
+    public IndexingLevel getIndexingLevel(EClass type) {
+        Object key = toKey(type);
+        IndexingLevel level = directlyObservedClasses.get(key);
+        if (level == null) {
+            level = delayedClasses.get(key);
+        }
+        return level == null ? IndexingLevel.NONE : level;
+    }
+
+    @Override
+    public IndexingLevel getIndexingLevel(EDataType type) {
+        Object key = toKey(type);
+        IndexingLevel level = observedDataTypes.get(key);
+        if (level == null) {
+            level = delayedDataTypes.get(key);
+        }
+        return level == null ? IndexingLevel.NONE : level;
+    }
+
+    @Override
+    public IndexingLevel getIndexingLevel(EStructuralFeature feature) {
+        Object key = toKey(feature);
+        IndexingLevel level = observedFeatures.get(key);
+        if (level == null) {
+            level = delayedFeatures.get(key);
+        }
+        return level == null ? IndexingLevel.NONE : level;
+    }
+
 }

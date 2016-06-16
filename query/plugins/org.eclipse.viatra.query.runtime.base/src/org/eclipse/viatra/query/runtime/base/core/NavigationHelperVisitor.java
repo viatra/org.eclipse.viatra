@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.core;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +22,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.base.comprehension.EMFVisitor;
 
@@ -36,9 +36,9 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     public static class ChangeVisitor extends NavigationHelperVisitor {
         // local copies to save actual state, in case visitor has to be saved for later due unresolvable proxies
         private final boolean wildcardMode;
-        private final Set<Object> allObservedClasses;
-        private final Set<Object> observedDataTypes;
-        private final Set<Object> observedFeatures;
+        private final Map<Object, IndexingLevel> allObservedClasses;
+        private final Map<Object, IndexingLevel> observedDataTypes;
+        private final Map<Object, IndexingLevel> observedFeatures;
         private final Map<Object, Boolean> sampledClasses;
 
         public ChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
@@ -52,7 +52,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
         @Override
         protected boolean observesClass(Object eClass) {
-            return wildcardMode || allObservedClasses.contains(eClass) || registerSampledClass(eClass);
+            return wildcardMode || (IndexingLevel.FULL == allObservedClasses.get(eClass)) || registerSampledClass(eClass);
         }
 
         private boolean registerSampledClass(Object eClass) {
@@ -68,12 +68,27 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
         @Override
         protected boolean observesDataType(Object type) {
-            return wildcardMode || observedDataTypes.contains(type);
+            return wildcardMode || (IndexingLevel.FULL == observedDataTypes.get(type));
         }
 
         @Override
         protected boolean observesFeature(Object feature) {
-            return wildcardMode || observedFeatures.contains(feature);
+            return wildcardMode || (IndexingLevel.FULL == observedFeatures.get(feature));
+        }
+
+        @Override
+        protected boolean countsFeature(Object feature) {
+            return observedFeatures.containsKey(feature) && observedFeatures.get(feature).hasStatistics();
+        }
+
+        @Override
+        protected boolean countsDataType(Object type) {
+            return observedDataTypes.containsKey(type) && observedDataTypes.get(type).hasStatistics();
+        }
+
+        @Override
+        protected boolean countsClass(Object eClass) {
+            return allObservedClasses.containsKey(eClass) && allObservedClasses.get(eClass).hasStatistics();
         }
     }
 
@@ -82,65 +97,101 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
      */
     public static class TraversingVisitor extends NavigationHelperVisitor {
         private final boolean wildcardMode;
-        Set<Object> features;
-        Set<Object> newClasses;
-        Set<Object> oldClasses; // if decends from an old class, no need to add!
-        Map<Object, Boolean> classObservationMap; // true for a class even if only a supertype is included in classes;
-        Set<Object> dataTypes;
-        private final Map<Object, Boolean> sampledClasses;
+        Map<Object, IndexingLevel> features;
+        Map<Object, IndexingLevel> newClasses;
+        Map<Object, IndexingLevel> oldClasses; // if decends from an old class, no need to add!
+        Map<Object, IndexingLevel> classObservationMap; // true for a class even if only a supertype is included in classes;
+        Map<Object, IndexingLevel> dataTypes;
 
-        public TraversingVisitor(NavigationHelperImpl navigationHelper, Set<Object> features, Set<Object> newClasses,
-                Set<Object> oldClasses, Set<Object> dataTypes) {
+        public TraversingVisitor(NavigationHelperImpl navigationHelper, Map<Object, IndexingLevel> features, Map<Object, IndexingLevel> newClasses,
+                Map<Object, IndexingLevel> oldClasses, Map<Object, IndexingLevel> dataTypes) {
             super(navigationHelper, true, true);
             wildcardMode = navigationHelper.isInWildcardMode();
             this.features = features;
             this.newClasses = newClasses;
             this.oldClasses = oldClasses;
-            this.classObservationMap = new HashMap<Object, Boolean>();
+            this.classObservationMap = new HashMap<Object, IndexingLevel>();
             this.dataTypes = dataTypes;
-            this.sampledClasses = new HashMap<Object, Boolean>();
         }
 
+        private IndexingLevel getExistingIndexingLevel(Object eClass){
+            IndexingLevel result = IndexingLevel.NONE;
+            result = result.merge(oldClasses.get(eClass));
+            result = result.merge(oldClasses.get(metaStore.getEObjectClassKey()));
+            if (IndexingLevel.FULL == result) return result;
+            Set<Object> superTypes = metaStore.getSuperTypeMap().get(eClass);
+            if (superTypes != null){
+                for(Object superType: superTypes){
+                    result = result.merge(oldClasses.get(superType));
+                    if (IndexingLevel.FULL == result) return result;
+                }
+            }
+            return result;
+        }
+        
+        private IndexingLevel getRequestedIndexingLevel(Object eClass){
+            IndexingLevel result = IndexingLevel.NONE;
+            result = result.merge(newClasses.get(eClass));
+            result = result.merge(newClasses.get(metaStore.getEObjectClassKey()));
+            if (IndexingLevel.FULL == result) return result;
+            Set<Object> superTypes = metaStore.getSuperTypeMap().get(eClass);
+            if (superTypes != null){
+                for(Object superType: superTypes){
+                    result = result.merge(newClasses.get(superType));
+                    if (IndexingLevel.FULL == result) return result;
+                }
+            }
+            return result;
+        }
+        
+        private IndexingLevel getTraversalIndexing(Object eClass){
+            IndexingLevel level = classObservationMap.get(eClass);
+            if (level == null){
+                IndexingLevel existing = getExistingIndexingLevel(eClass);
+                IndexingLevel requested = getRequestedIndexingLevel(eClass);
+                
+                // Calculate the type of indexing which needs to be executed to reach requested indexing state
+                // Considering indexes which are already available
+                if (existing == requested || existing == IndexingLevel.FULL) return IndexingLevel.NONE;
+                if (requested == IndexingLevel.FULL) return IndexingLevel.FULL;
+                if (requested.hasStatistics() == existing.hasStatistics()) return IndexingLevel.NONE;
+                if (requested.hasStatistics()) return IndexingLevel.STATISTICS;
+                return IndexingLevel.NONE;
+            }
+            return level;
+        }
+        
         @Override
         protected boolean observesClass(Object eClass) {
             if (wildcardMode) {
                 return true;
             }
-            Boolean observed = classObservationMap.get(eClass);
-            if (observed == null) {
-                final Set<Object> superTypes = metaStore.getSuperTypeMap().get(eClass);
-                final Set<Object> theSuperTypes = superTypes == null ? Collections.emptySet() : superTypes;
-                final boolean overApprox = newClasses.contains(eClass)
-                        || newClasses.contains(metaStore.getEObjectClassKey())
-                        || !Collections.disjoint(theSuperTypes, newClasses);
-                observed = overApprox && !oldClasses.contains(eClass)
-                        && !oldClasses.contains(metaStore.getEObjectClassKey())
-                        && Collections.disjoint(theSuperTypes, oldClasses);
-                if (!observed) {
-                    registerSampledClass(eClass);
-                }
-                classObservationMap.put(eClass, observed);
-            }
-            return observed;
+            return IndexingLevel.FULL == getTraversalIndexing(eClass);
         }
         
-        private void registerSampledClass(Object eClass) {
-            Boolean classAlreadyChecked = this.sampledClasses.get(eClass);
-            if (classAlreadyChecked != null) {
-                return;
-            }
-            boolean isSampledClass = isSampledClass(eClass);
-            this.sampledClasses.put(eClass, isSampledClass);
+        @Override
+        protected boolean countsClass(Object eClass) {
+            return getTraversalIndexing(eClass).hasStatistics();
         }
 
         @Override
         protected boolean observesDataType(Object type) {
-            return wildcardMode || dataTypes.contains(type);
+            return wildcardMode || (IndexingLevel.FULL == dataTypes.get(type));
         }
 
         @Override
         protected boolean observesFeature(Object feature) {
-            return wildcardMode || features.contains(feature);
+            return wildcardMode || (IndexingLevel.FULL == features.get(feature));
+        }
+        
+        @Override
+        protected boolean countsDataType(Object type) {
+            return dataTypes.containsKey(type) && dataTypes.get(type).hasStatistics();
+        }
+        
+        @Override
+        protected boolean countsFeature(Object feature) {
+            return features.containsKey(feature) && features.get(feature).hasStatistics();
         }
 
         @Override
@@ -154,6 +205,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
     boolean descendHierarchy;
     boolean traverseOnlyWellBehavingDerivedFeatures;
     EMFBaseIndexInstanceStore instanceStore;
+    EMFBaseIndexStatisticsStore statsStore;
     EMFBaseIndexMetaStore metaStore;
 
     NavigationHelperVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion, boolean descendHierarchy) {
@@ -161,6 +213,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         this.navigationHelper = navigationHelper;
         instanceStore = navigationHelper.instanceStore;
         metaStore = navigationHelper.metaStore;
+        statsStore = navigationHelper.statsStore;
         this.isInsertion = isInsertion;
         this.descendHierarchy = descendHierarchy;
         this.traverseOnlyWellBehavingDerivedFeatures = navigationHelper.getBaseIndexOptions()
@@ -210,6 +263,12 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
      */
     protected abstract boolean observesClass(Object eClass);
 
+    protected abstract boolean countsFeature(Object feature);
+    
+    protected abstract boolean countsDataType(Object type);
+    
+    protected abstract boolean countsClass(Object eClass);
+    
     @Override
     public void visitElement(EObject source) {
         EClass eClass = source.eClass();
@@ -223,6 +282,13 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 instanceStore.insertIntoInstanceSet(classKey, source);
             } else {
                 instanceStore.removeFromInstanceSet(classKey, source);
+            }
+        }
+        if (countsClass(classKey)){
+            if (isInsertion){
+                statsStore.addInstance(classKey);
+            } else {
+                statsStore.removeInstance(classKey);
             }
         }
     }
@@ -242,6 +308,13 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 instanceStore.removeFeatureTuple(featureKey, unique, internalValueRepresentation, source);
             }
         }
+        if (countsFeature(featureKey)){
+            if (isInsertion) {
+                statsStore.addFeature(source, featureKey);
+            }else{
+                statsStore.removeFeature(source, featureKey);
+            }
+        }
         if (observesDataType(eAttributeType)) {
             if (internalValueRepresentation == null)
                 internalValueRepresentation = metaStore.toInternalValueRepresentation(target);
@@ -249,6 +322,13 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 instanceStore.insertIntoDataTypeMap(eAttributeType, internalValueRepresentation);
             } else {
                 instanceStore.removeFromDataTypeMap(eAttributeType, internalValueRepresentation);
+            }
+        }
+        if (countsDataType(eAttributeType)){
+            if (isInsertion){
+                statsStore.addInstance(eAttributeType);
+            } else {
+                statsStore.removeInstance(eAttributeType);
             }
         }
     };
@@ -274,6 +354,13 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 instanceStore.insertFeatureTuple(featureKey, unique, target, source);
             } else {
                 instanceStore.removeFeatureTuple(featureKey, unique, target, source);
+            }
+        }
+        if (countsFeature(featureKey)){
+            if (isInsertion){
+                statsStore.addFeature(source, featureKey);
+            } else {
+                statsStore.removeFeature(source, featureKey);
             }
         }
     }

@@ -14,8 +14,6 @@ import java.util.EnumSet;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 
-import com.google.common.base.Preconditions;
-
 /**
  * The values of this enum denotes the level of indexing the base indexer is capable of.
  * 
@@ -90,8 +88,17 @@ public enum IndexingLevel {
      * @return
      */
     public IndexingLevel merge(IndexingLevel other){
-        Preconditions.checkArgument(other != null);
+        if (other == null) return this;
         return mergeTable[this.ordinal()][other.ordinal()];
+    }
+
+    /**
+     * Tells whether the indexer shall perform separate statistics calculation for this level
+     * 
+     * @return
+     */
+    public boolean hasStatistics() {
+        return this == IndexingLevel.BOTH || this == IndexingLevel.STATISTICS || this == IndexingLevel.FULL;
     }
     
 }

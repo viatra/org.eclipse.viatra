@@ -305,8 +305,8 @@ public class EMFBaseIndexMetaStore {
      */
     private void maintainTypeHierarhyInternal(final Object subClassKey, final Object superClassKey) {
         // update observed class and instance listener tables according to new subtype information
-        if (navigationHelper.directlyObservedClasses.contains(superClassKey)) {
-            navigationHelper.getAllObservedClassesInternal().add(subClassKey);
+        if (navigationHelper.directlyObservedClasses.containsKey(superClassKey)) {
+            navigationHelper.getAllObservedClassesInternal().put(subClassKey, navigationHelper.directlyObservedClasses.get(superClassKey));
         }
         final Table<Object, InstanceListener, Set<EClass>> instanceListeners = navigationHelper.peekInstanceListeners();
         if (instanceListeners != null) { // table already constructed
