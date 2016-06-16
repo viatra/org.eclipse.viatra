@@ -17,9 +17,10 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
  * Provides instance model information (relations corresponding to input keys) to query evaluator backends at runtime.
+ * Implementors shall extend {@link AbstractQueryRuntimeContext} instead directly this interface.
  * 
  * @author Bergmann Gabor
- *
+ * @noimplement This interface is not intended to be implemented by clients. Extend {@link AbstractQueryRuntimeContext} instead.
  */
 public interface IQueryRuntimeContext {
 	/** 
@@ -48,23 +49,54 @@ public interface IQueryRuntimeContext {
 	public boolean isCoalescing();
 	
 	/**
-	 * @return true iff the given input key is already indexed, and contents are available without costly model traversal.
+	 * Returns true if index is available for the given key providing the given service.
+	 * 
+	 * @param key
+	 * @param service
+	 * @return
+	 * @since 1.4
 	 */
+	public boolean isIndexed(IInputKey key, IndexingService service);
+	
+	/**
+	 * @return true iff the given input key is already indexed, and contents are available without costly model traversal.
+	 * @deprecated use {@link #isIndexed(IInputKey, IndexingService)} instead
+	 */
+	@Deprecated
 	public boolean isIndexed(IInputKey key);
+	
 	/**
 	 * If the given (enumerable) input key is not yet indexed, the model will be traversed 
 	 * (after the end of the outermost coalescing block, see {@link IQueryRuntimeContext#coalesceTraversals(Callable)}) 
-	 * so that the index can be built.
+	 * so that the index can be built. It is possible that the base indexer will select a higher indexing level merging
+	 * multiple indexing requests to an appropriate level.
 	 * 
-	 * <p><b>Postcondition:</b> After invoking this method, {@link #isIndexed(IInputKey)} for the same key 
-	 * will be guaranteed to return true as soon as {@link #isCoalescing()} first returns false.
+	 * <p><b>Postcondition:</b> After invoking this method, {@link #getIndexed(IInputKey, IndexingService)} for the same key
+	 * and service will be guaranteed to return the requested or a highing indexing level as soon as {@link #isCoalescing()} first returns false.
 	 * 
 	 * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
 	 * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+	 * @since 1.4
 	 */
-	public void ensureIndexed(IInputKey key);
+	public void ensureIndexed(IInputKey key, IndexingService service);
 	
-
+	/**
+     * If the given (enumerable) input key is not yet indexed, the model will be traversed 
+     * (after the end of the outermost coalescing block, see {@link IQueryRuntimeContext#coalesceTraversals(Callable)}) 
+     * so that the index can be built.
+     * 
+     * <p><b>Postcondition:</b> After invoking this method, {@link #isIndexed(IInputKey)} for the same key 
+     * will be guaranteed to return true as soon as {@link #isCoalescing()} first returns false.
+     * 
+     * <p><b>Precondition:</b> the given key is enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * @throws IllegalArgumentException if key is not enumerable, see {@link IQueryMetaContext#isEnumerable(IInputKey)}.
+     * 
+     * @deprecated use ensureIndexed(IInputKey, IndexingServices) instead
+     */
+	@Deprecated
+    public void ensureIndexed(IInputKey key);
+	
+	
 	/**
 	 * Returns the number of tuples in the extensional relation identified by the input key, optionally seeded with the given tuple.
 	 * 

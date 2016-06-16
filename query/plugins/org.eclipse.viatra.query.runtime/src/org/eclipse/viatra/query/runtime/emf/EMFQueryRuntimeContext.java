@@ -31,6 +31,7 @@ import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.viatra.query.runtime.matchers.context.AbstractQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
@@ -50,7 +51,7 @@ import com.google.common.collect.Iterables;
  * <p> TODO: {@link #containsTuple(IInputKey, Tuple)} and {@link #countTuples(IInputKey, Tuple)} are inefficient as they first enumerate the collections.
  * <p> TODO: {@link #ensureIndexed(EClass)} may be inefficient if supertype already cached.
  */
-public class EMFQueryRuntimeContext implements IQueryRuntimeContext {
+public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 	protected final NavigationHelper baseIndex;
     //private BaseIndexListener listener;
     
