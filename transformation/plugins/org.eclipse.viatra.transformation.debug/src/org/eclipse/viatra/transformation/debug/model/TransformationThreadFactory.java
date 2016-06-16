@@ -89,7 +89,12 @@ public class TransformationThreadFactory {
         for (TransformationThread transformationThread : threads) {
             transformationThread.unRegisterTransformationStateListener(listener);
         }
+        List<String> idsToRemove = Lists.newArrayList();
         for(String id : listenersToAdd.keySet()){
+            idsToRemove.add(id);
+        }
+        
+        for (String id : idsToRemove) {
             listenersToAdd.remove(id, listener);
         }
     }
