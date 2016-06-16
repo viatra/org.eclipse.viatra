@@ -159,7 +159,7 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
     
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return patternString.hashCode();
     }
 
 }

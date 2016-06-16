@@ -67,7 +67,7 @@ public class PreconditionMatchBreakpoint extends Breakpoint implements ITransfor
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return breakpointObjects.hashCode();
     }
     
 }

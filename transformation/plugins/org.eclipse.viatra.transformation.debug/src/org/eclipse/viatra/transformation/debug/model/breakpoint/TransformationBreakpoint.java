@@ -76,6 +76,6 @@ public class TransformationBreakpoint extends Breakpoint implements ITransformat
     
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return activation.hashCode();
     }
 }

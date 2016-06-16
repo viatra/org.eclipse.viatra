@@ -27,6 +27,6 @@ public class CompositeItem{
     }
     
     public Object[] getChildren() {
-        return children;
+        return Arrays.copyOf(children, children.length);
     }
 }

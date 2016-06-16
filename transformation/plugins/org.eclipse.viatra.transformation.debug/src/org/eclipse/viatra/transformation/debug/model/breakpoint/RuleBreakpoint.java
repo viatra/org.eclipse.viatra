@@ -72,6 +72,6 @@ public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpo
     
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return getRuleId().hashCode();
     }
 }

@@ -37,7 +37,7 @@ public class DebugModelPresentation extends LabelProvider implements IDebugModel
                 TransformationBreakpoint breakpoint = (TransformationBreakpoint) element;
                 String parameters = "";
                 for (RuleParameterTrace parameterTrace : breakpoint.getTrace().getRuleParameterTraces()) {
-                    parameters.concat(parameterTrace.getParameterName() + " : " + parameterTrace.getObjectId() + " ");
+                    parameters = parameters.concat(parameterTrace.getParameterName() + " : " + parameterTrace.getObjectId() + " ");
                 }
                 return "Transformation Activation Breakpoint - Rule: " + breakpoint.getTrace().getRuleName() + "(" + parameters + ")";
 

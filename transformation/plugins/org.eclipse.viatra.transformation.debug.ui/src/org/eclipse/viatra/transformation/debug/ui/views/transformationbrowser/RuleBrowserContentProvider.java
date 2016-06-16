@@ -42,7 +42,7 @@ public class RuleBrowserContentProvider implements ITreeContentProvider {
         if (inputElement instanceof Map) {
             return ((Map<?,?>) inputElement).keySet().toArray();
         }
-        return null;
+        return new Object[0];
     }
 
     @Override
@@ -50,7 +50,7 @@ public class RuleBrowserContentProvider implements ITreeContentProvider {
         if(parentElement instanceof AdaptableEVM){
             TransformationState transformationState = view.getTransformationStateMap().get(parentElement);
             if(transformationState == null){
-                return null;
+                return new Object[0];
             }else{
                 List<Pair<RuleSpecification<?>, EventFilter<?>>> rules = transformationState.getRules();
                 return rules.toArray(new Pair<?,?>[rules.size()]);
@@ -64,13 +64,13 @@ public class RuleBrowserContentProvider implements ITreeContentProvider {
                     List<Activation<?>> activations = state.getConflictingActivations((Pair<RuleSpecification<?>, EventFilter<?>>) parentElement);
                     return activations.toArray(new Activation<?>[activations.size()]);
                 }else{
-                    return null;
+                    return new Object[0];
                 }
             }
             
             
         }
-        return null;
+        return new Object[0];
     }
 
     @Override

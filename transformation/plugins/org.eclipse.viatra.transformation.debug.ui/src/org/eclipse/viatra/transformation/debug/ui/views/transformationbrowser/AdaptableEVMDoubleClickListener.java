@@ -109,7 +109,7 @@ public class AdaptableEVMDoubleClickListener implements IDoubleClickListener {
                             TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
                         }
                     }
-                    e.printStackTrace();
+                    TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
                 }
 
             }

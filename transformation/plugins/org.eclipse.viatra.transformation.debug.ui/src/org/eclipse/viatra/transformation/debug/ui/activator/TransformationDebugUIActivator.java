@@ -56,8 +56,6 @@ public class TransformationDebugUIActivator extends AbstractUIPlugin {
     @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
-        @SuppressWarnings("unused")
-        Bundle bundle = Platform.getBundle(PLUGIN_ID);
         reg.put(ICON_VIATRA_ACT_BRKP, imageDescriptorFromPlugin(PLUGIN_ID, "icons/activation_brkp.gif"));
         reg.put(ICON_VIATRA_ACT_BRKPD, imageDescriptorFromPlugin(PLUGIN_ID, "icons/activation_brkpd.gif"));
         reg.put(ICON_VIATRA_ACT_STOPPED, imageDescriptorFromPlugin(PLUGIN_ID, "icons/activation_stopped.gif"));
