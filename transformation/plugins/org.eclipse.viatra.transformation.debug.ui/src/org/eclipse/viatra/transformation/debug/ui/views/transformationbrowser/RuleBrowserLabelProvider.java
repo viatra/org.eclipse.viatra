@@ -10,21 +10,24 @@
  */
 package org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser;
 
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.viatra.transformation.debug.model.TransformationState;
+import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 public class RuleBrowserLabelProvider extends LabelProvider {
     protected AdaptableTransformationBrowser view;
+    protected ImageRegistry imageRegistry;
 
     public RuleBrowserLabelProvider(AdaptableTransformationBrowser view) {
         this.view = view;
+        this.imageRegistry = TransformationDebugUIActivator.getDefault().getImageRegistry();
     }
 
     @Override
@@ -62,26 +65,24 @@ public class RuleBrowserLabelProvider extends LabelProvider {
     public Image getImage(Object element) {
         if (element instanceof AdaptableEVM) {
             if (view.isUnderDebugging((AdaptableEVM) element)) {
-                return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.debug.ui",
-                        "icons/viatra_debug.gif");
+                return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_DEBUG_LOGO);
+                
             } else {
-                return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.debug.ui",
-                        "icons/rsz_viatra_logo.png");
+                return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_LOGO);
             }
         } else if (element instanceof Pair<?, ?>) {
             Object key = ((Pair<?, ?>) element).getKey();
             Object value = ((Pair<?, ?>) element).getValue();
             if (key instanceof RuleSpecification<?> && value instanceof EventFilter<?>) {
-                return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.debug.ui", "icons/atom.gif");
+                return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_ATOM);
             }
         } else if (element instanceof Activation) {
             TransformationState state = view.getStateForActivation((Activation<?>) element);
 
             if (element.equals(state.getNextActivation())) {
-                return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.ui",
-                        "icons/activation_stopped.gif");
+                return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_ACT_STOPPED);
             } else {
-                return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.ui", "icons/activation.gif");
+                return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_ACTIVATION);
             }
         }
         return null;

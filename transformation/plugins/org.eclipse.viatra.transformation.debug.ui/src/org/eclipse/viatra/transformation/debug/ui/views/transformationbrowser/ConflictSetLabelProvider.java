@@ -12,9 +12,9 @@ package org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.viatra.transformation.debug.model.TransformationState;
+import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 import org.eclipse.viatra.transformation.debug.ui.views.model.CompositeItem;
 import org.eclipse.viatra.transformation.evm.api.Activation;
-import org.eclipse.wb.swt.ResourceManager;
 
 public class ConflictSetLabelProvider extends RuleBrowserLabelProvider {
 
@@ -42,8 +42,7 @@ public class ConflictSetLabelProvider extends RuleBrowserLabelProvider {
     @Override
     public Image getImage(Object element) {
         if (element instanceof CompositeItem) {
-            return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.ui",
-                    "icons/atom.gif");
+            return TransformationDebugUIActivator.getDefault().getImageRegistry().get(TransformationDebugUIActivator.ICON_VIATRA_ATOM);
         }else {
             return super.getImage(element);
         }

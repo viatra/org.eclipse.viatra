@@ -42,9 +42,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.viatra.transformation.debug.launch.TransformationLaunchConfigurationDelegate;
+import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVMFactory;
-import org.eclipse.wb.swt.ResourceManager;
 
 @SuppressWarnings("restriction")
 public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab {
@@ -191,6 +191,6 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
 
     @Override
     public Image getImage() {
-        return ResourceManager.getPluginImage("org.eclipse.viatra.transformation.ui", "icons/rsz_viatra_logo.png");
+        return TransformationDebugUIActivator.getDefault().getImageRegistry().get(TransformationDebugUIActivator.ICON_VIATRA_LOGO);
     }
 }

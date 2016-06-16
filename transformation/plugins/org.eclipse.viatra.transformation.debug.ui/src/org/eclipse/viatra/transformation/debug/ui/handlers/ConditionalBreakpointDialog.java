@@ -16,7 +16,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditor;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorFactory;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorModelAccess;
@@ -75,7 +75,7 @@ public class ConditionalBreakpointDialog extends ResizableDialog{
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(TITLE);
-        newShell.setImage(ResourceManager.getPluginImage("org.eclipse.viatra.transformation.debug.ui","icons/rsz_viatra_logo.png"));
+        newShell.setImage(TransformationDebugUIActivator.getDefault().getImageRegistry().get(TransformationDebugUIActivator.ICON_VIATRA_LOGO));
     }
     
     public String getResults(){
