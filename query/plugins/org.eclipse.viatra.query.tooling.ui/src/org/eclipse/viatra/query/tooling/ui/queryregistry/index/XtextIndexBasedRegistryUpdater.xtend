@@ -81,6 +81,11 @@ class XtextIndexBasedRegistryUpdater {
                 // create connector based on URI
                 val uri = it.URI.toString
                 val projectName = it.URI.segment(1)
+                val projectExists = ResourcesPlugin.workspace.root.getProject(projectName).exists
+                if(projectExists){
+                    // only care about workspace projects
+                    return
+                }
                 val connectorId = DYNAMIC_CONNECTOR_ID_PREFIX + projectName
                 var connector = connectorMap.get(connectorId)
                 if(connector == null) {
@@ -128,6 +133,11 @@ class XtextIndexBasedRegistryUpdater {
                     return
                 }
                 val projectName = delta.uri.segment(1)
+                val projectExists = ResourcesPlugin.workspace.root.getProject(projectName).exists
+                if(projectExists){
+                    // only care about workspace projects
+                    return
+                }
                 val connectorId = DYNAMIC_CONNECTOR_ID_PREFIX + projectName
                 
                 if (oldDesc != null) {
