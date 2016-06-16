@@ -69,4 +69,9 @@ public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpo
     public String toString() {
         return "Rule Transformation Breakpoint - Rule name: "+ruleId;
     }
+    
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

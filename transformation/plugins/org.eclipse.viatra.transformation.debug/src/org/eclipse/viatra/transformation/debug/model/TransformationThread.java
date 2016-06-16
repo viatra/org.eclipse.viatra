@@ -27,6 +27,7 @@ import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
 import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.debug.DebuggerActions;
 import org.eclipse.viatra.transformation.debug.ITransformationDebugListener;
 import org.eclipse.viatra.transformation.debug.TransformationDebugger;
@@ -78,7 +79,7 @@ public class TransformationThread extends TransformationDebugElement implements 
             try {
                 operation.run(null);
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
             }
         }
     }
@@ -364,7 +365,7 @@ public class TransformationThread extends TransformationDebugElement implements 
             try {
                 operation.run(null);
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
             }
         }
     }
@@ -382,7 +383,7 @@ public class TransformationThread extends TransformationDebugElement implements 
             try {
                 operation.run(null);
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
             }
         }
     }

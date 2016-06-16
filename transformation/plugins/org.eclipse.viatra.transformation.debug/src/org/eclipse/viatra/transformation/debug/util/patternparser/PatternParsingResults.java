@@ -59,7 +59,7 @@ public class PatternParsingResults {
 
     @Override
     public String toString() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         for (Issue d : getAllDiagnostics()) {
             b.append(d.toString());
             b.append("\n");

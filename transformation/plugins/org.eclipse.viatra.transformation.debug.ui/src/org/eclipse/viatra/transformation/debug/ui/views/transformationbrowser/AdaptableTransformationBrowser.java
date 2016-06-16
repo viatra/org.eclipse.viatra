@@ -13,6 +13,7 @@ package org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -150,9 +151,9 @@ public class AdaptableTransformationBrowser extends ViewPart
     }
 
     protected TransformationState getStateForRuleSpecification(Pair<RuleSpecification<?>, EventFilter<?>> spec) {
-        for (AdaptableEVM evm : transformationStateMap.keySet()) {
-            TransformationState transformationState = transformationStateMap.get(evm);
-            if (transformationState != null && transformationState.getRules().contains(spec)) {
+        for (Entry<AdaptableEVM, TransformationState> entry : transformationStateMap.entrySet()) {
+            TransformationState transformationState = entry.getValue();
+            if (transformationState.getRules().contains(spec)) {
                 return transformationState;
             }
         }
@@ -160,8 +161,8 @@ public class AdaptableTransformationBrowser extends ViewPart
     }
 
     protected TransformationState getStateForActivation(Activation<?> act) {
-        for (AdaptableEVM evm : transformationStateMap.keySet()) {
-            TransformationState transformationState = transformationStateMap.get(evm);
+        for (Entry<AdaptableEVM, TransformationState> entry : transformationStateMap.entrySet()) {
+            TransformationState transformationState = entry.getValue();
             if (transformationState != null && transformationState.getConflictingActivations().contains(act)) {
                 return transformationState;
             }

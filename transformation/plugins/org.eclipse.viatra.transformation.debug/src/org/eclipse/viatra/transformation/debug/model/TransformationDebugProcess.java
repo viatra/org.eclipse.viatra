@@ -14,23 +14,16 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
-import org.eclipse.viatra.transformation.debug.TransformationDebugger;
 
 public class TransformationDebugProcess implements IProcess{
-    private TransformationDebugger debugger;
     private String label;
     private ILaunch launch;
     
-    public TransformationDebugProcess(ILaunch launch, String label, TransformationDebugger debugger) {
-        this.debugger = debugger;
+    public TransformationDebugProcess(ILaunch launch, String label) {
         this.label = label;
         this.launch = launch;
     }
     
-    public TransformationDebugger getDebugger() {
-        return debugger;
-    }
-
     @Override
     public boolean canTerminate() {
         return false;

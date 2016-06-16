@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
+import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 
 public class TransformationBrowserConfigurationControl extends WorkbenchWindowControlContribution{
 
@@ -39,7 +40,7 @@ public class TransformationBrowserConfigurationControl extends WorkbenchWindowCo
             AdaptableTransformationBrowser view = (AdaptableTransformationBrowser) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(AdaptableTransformationBrowser.ID);
             return view;
         } catch (PartInitException e) {
-            e.printStackTrace();
+            TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
         }
         return null;
     }

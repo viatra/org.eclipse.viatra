@@ -13,13 +13,14 @@ package org.eclipse.viatra.transformation.debug;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
 public interface ITransformationDebugListener {
-    public void started() throws Exception;
+    public void started() throws DebugException;
     
     public void suspended();
     

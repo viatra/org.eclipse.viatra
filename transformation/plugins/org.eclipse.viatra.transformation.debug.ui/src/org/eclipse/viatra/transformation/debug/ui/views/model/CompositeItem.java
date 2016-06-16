@@ -10,6 +10,8 @@
  */
 package org.eclipse.viatra.transformation.debug.ui.views.model;
 
+import java.util.Arrays;
+
 public class CompositeItem{
     private String name;
     private Object[] children; 
@@ -17,7 +19,7 @@ public class CompositeItem{
     public CompositeItem(String name, Object[] children) {
         super();
         this.name = name;
-        this.children = children;
+        this.children = Arrays.copyOf(children, children.length);
     }
     
     public String getName() {

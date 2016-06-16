@@ -50,7 +50,7 @@ public class ConflictSetContentProvider implements ITreeContentProvider {
         if(parentElement instanceof AdaptableEVM){
             TransformationState transformationState = view.getTransformationStateMap().get(parentElement);
             if(transformationState == null){
-                return null;
+                return new Object[0];
             }else{
                 List<Activation<?>> conflictingActivations = transformationState.getNotExecutableActivations();
                 List<Activation<?>> nextActivations = transformationState.getNextActivations();

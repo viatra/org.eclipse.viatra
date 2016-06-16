@@ -64,5 +64,10 @@ public class PreconditionMatchBreakpoint extends Breakpoint implements ITransfor
             return false;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
     
 }

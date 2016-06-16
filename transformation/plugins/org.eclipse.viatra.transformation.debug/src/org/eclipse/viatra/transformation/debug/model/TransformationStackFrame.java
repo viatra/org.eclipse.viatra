@@ -10,6 +10,7 @@
  */
 package org.eclipse.viatra.transformation.debug.model;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
@@ -33,24 +34,24 @@ public class TransformationStackFrame extends TransformationDebugElement impleme
         this.thread = thread;
         this.name = activation.getInstance().getSpecification().getName()+" : "+activation.getState();
                 
-        List<TransformationVariable> variables = Lists.newArrayList();
+        List<TransformationVariable> transformationVariables = Lists.newArrayList();
         Object atom = activation.getAtom();
         if(atom instanceof IPatternMatch){
             IPatternMatch match = (IPatternMatch) atom;
-            variables.addAll(createVariables(match));
+            transformationVariables.addAll(createVariables(match));
         }
         
-        this.variables = (IVariable[]) variables.toArray(new TransformationVariable[0]); 
+        this.variables = (IVariable[]) transformationVariables.toArray(new TransformationVariable[0]); 
     }
     
     private List<TransformationVariable> createVariables(IPatternMatch match){
         List<TransformationVariable> createdVariables = Lists.newArrayList();
         List<String> parameterNames = match.parameterNames();
 
-        for (String name : parameterNames) {
-            Object parameter = match.get(name);
+        for (String parameterName : parameterNames) {
+            Object parameter = match.get(parameterName);
             TransformationValue value = new TransformationValue((TransformationDebugTarget) getDebugTarget(), parameter);
-            TransformationVariable variable = new TransformationVariable((TransformationDebugTarget) getDebugTarget(), name, value);
+            TransformationVariable variable = new TransformationVariable((TransformationDebugTarget) getDebugTarget(), parameterName, value);
             createdVariables.add(variable);
         }
         return createdVariables;
@@ -138,7 +139,7 @@ public class TransformationStackFrame extends TransformationDebugElement impleme
 
     @Override
     public IVariable[] getVariables() throws DebugException {
-        return variables;
+        return Arrays.copyOf(variables, variables.length);
     }
 
     @Override

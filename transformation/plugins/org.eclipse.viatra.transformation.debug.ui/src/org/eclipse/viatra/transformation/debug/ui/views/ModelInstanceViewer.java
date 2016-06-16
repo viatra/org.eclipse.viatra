@@ -68,24 +68,18 @@ public class ModelInstanceViewer extends ViewPart implements ITransformationStat
 
     private Composite composite;
 
-    private ISelectionListener listener;
-
-    private ReflectiveItemProviderAdapterFactory adapterFactory;
-
     private AdapterFactoryLabelProvider adapterFactoryLabelProvider;
 
     private AdapterFactoryContentProvider adapterFactoryContentProvider;
 
     private Map<CTabItem, TreeViewer> tabMap = Maps.newHashMap();
 
-    private ISelectionService sService;
-    
     private TabbedSelectionProviderWrapper selectionProviderWrapper;
 
     @Override
     public void createPartControl(Composite parent) {
-        adapterFactory = new ReflectiveItemProviderAdapterFactory();
-        sService = getSite().getWorkbenchWindow().getSelectionService();
+        ReflectiveItemProviderAdapterFactory adapterFactory = new ReflectiveItemProviderAdapterFactory();
+        ISelectionService sService = getSite().getWorkbenchWindow().getSelectionService();
 
         adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory);
         adapterFactoryContentProvider = new AdapterFactoryContentProvider(adapterFactory);
@@ -115,7 +109,7 @@ public class ModelInstanceViewer extends ViewPart implements ITransformationStat
 
         });
         
-        listener = new ISelectionListener() {
+        ISelectionListener listener = new ISelectionListener() {
             @Override
             public void selectionChanged(IWorkbenchPart part, ISelection selection) {
                 if (!selection.isEmpty() && selection instanceof StructuredSelection) {
@@ -132,6 +126,7 @@ public class ModelInstanceViewer extends ViewPart implements ITransformationStat
                             }
                         }
                     } catch (Exception e) {
+                        TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
                         ErrorDialog.openError(composite.getShell(), "An error has occured", e.getMessage(), new Status(IStatus.ERROR, TransformationDebugUIActivator.PLUGIN_ID, e.getMessage()));
                     }
                 }
@@ -268,7 +263,7 @@ public class ModelInstanceViewer extends ViewPart implements ITransformationStat
         }
 
         public void setActiveProvider(ISelectionProvider provider) {
-            if (fActiveProvider == provider || this == provider) {
+            if (fActiveProvider != null && (fActiveProvider.equals(provider)  || this.equals(provider))) {
                 return;
             }
             if (fActiveProvider != null) {

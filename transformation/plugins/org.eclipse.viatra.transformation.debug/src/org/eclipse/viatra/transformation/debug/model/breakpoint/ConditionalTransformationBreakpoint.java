@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.debug.model.TransformationDebugElement;
 import org.eclipse.viatra.transformation.debug.util.patternparser.PatternParser;
 import org.eclipse.viatra.transformation.debug.util.patternparser.PatternParsingResults;
@@ -44,9 +45,8 @@ import com.google.inject.Injector;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ConditionalTransformationBreakpoint extends Breakpoint implements ITransformationBreakpoint, IMatchUpdateListener {
-    private AdvancedViatraQueryEngine engine;
     private String patternString;
-    private String toString;
+    private String stringRep;
     private boolean matcherChanged = false;
     
     
@@ -109,18 +109,18 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
     }
     
     public void setEngine(ViatraQueryEngine engine) {
-        this.engine = AdvancedViatraQueryEngine.from(engine);
-        toString = "Conditional Transformation Breakpoint - ";
+        AdvancedViatraQueryEngine advancedEngine = AdvancedViatraQueryEngine.from(engine);
+        stringRep = "Conditional Transformation Breakpoint - ";
         ViatraQueryMatcher<? extends IPatternMatch> matcher;
         try {
             List<IQuerySpecification<?>> parsePatterns = parsePatterns();
             for (IQuerySpecification<?> iQuerySpecification : parsePatterns) {
-                toString += "Query specification name: "+iQuerySpecification.getFullyQualifiedName();
-                matcher = engine.getMatcher(iQuerySpecification);
-                this.engine.addMatchUpdateListener(matcher, this, false);
+                stringRep += "Query specification name: "+iQuerySpecification.getFullyQualifiedName();
+                matcher = advancedEngine.getMatcher(iQuerySpecification);
+                advancedEngine.addMatchUpdateListener(matcher, this, false);
             }
         } catch (ViatraQueryException e) {
-            e.printStackTrace();
+            ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
         }
     }
     
@@ -144,17 +144,22 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
                         specList.add(spec);
                     }
                 } catch (ViatraQueryException e) {
-                    e.printStackTrace();
+                    ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
                 }
             }
             return specList;
         }
-        return null;
+        return Lists.newArrayList();
     }
     
     @Override
     public String toString() {
-        return toString;
+        return stringRep;
+    }
+    
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
 }

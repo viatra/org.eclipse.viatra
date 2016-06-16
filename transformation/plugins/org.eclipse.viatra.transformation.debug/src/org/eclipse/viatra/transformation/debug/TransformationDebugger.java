@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.debug.model.TransformationState;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
@@ -74,7 +75,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
             try {
                 listener.started();
             } catch (Exception e) {
-                e.printStackTrace();
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
                 listeners.remove(listener);
             }
         }
@@ -110,7 +111,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
             try {
                 listener.terminated();
             } catch (CoreException e) {
-                e.printStackTrace();
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
             }
         }
         breakpoints.clear();
@@ -125,7 +126,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     @Override
     public Iterator<Activation<?>> getExecutableActivations(Iterator<Activation<?>> iterator) {
         return new TransformationDebuggerIterator(iterator);
-    };
+    }
     
     public class TransformationDebuggerConflictSet implements ChangeableConflictSet {
         private final ChangeableConflictSet delegatedSet;
@@ -143,14 +144,12 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
 
         @Override
         public Set<Activation<?>> getNextActivations() {
-            Set<Activation<?>> nextActivations = delegatedSet.getNextActivations();
-            return nextActivations;
+            return delegatedSet.getNextActivations();
         }
 
         @Override
         public Set<Activation<?>> getConflictingActivations() {
-            Set<Activation<?>> conflictingActivations = delegatedSet.getConflictingActivations();
-            return conflictingActivations;
+            return delegatedSet.getConflictingActivations();
         }
 
         @Override
@@ -207,7 +206,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
                     try {
                         Thread.sleep(25);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
                     }
                 }
                 actionSet = false;
@@ -234,7 +233,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
                     return true;
                 }
             } catch (CoreException e) {
-                e.printStackTrace();
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
                 return false;
             }
         }

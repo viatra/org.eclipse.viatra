@@ -45,6 +45,7 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
         super(null);
         this.launch = launch;
         this.name = name;
+        this.process = new TransformationDebugProcess(launch, name);
         List<TransformationDebugger> debuggers = Lists.newArrayList();
         for(IEVMAdapter adapter : evm.getAdapters()){
             if(adapter instanceof TransformationDebugger){
@@ -55,7 +56,6 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
             threads.add(TransformationThreadFactory.getInstance().createTransformationThread(this, debugger, evm, transformationType));
         }
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
-        installDeferredBreakpoints();
         fireCreationEvent();
     }
     
@@ -144,16 +144,13 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     
     //IBreakpointListener
     @Override
-    public void breakpointAdded(IBreakpoint breakpoint) {      
-    }
+    public void breakpointAdded(IBreakpoint breakpoint) {}
 
     @Override
     public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {}
 
     @Override
-    public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
-
-    }
+    public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {}
     
     //IDisconnect
 
@@ -181,13 +178,6 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     @Override
     public IMemoryBlock getMemoryBlock(long startAddress, long length) throws DebugException {
         return null;
-    }
-
-    private void installDeferredBreakpoints() {
-        IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(TransformationDebugElement.MODEL_ID);
-        for (int i = 0; i < breakpoints.length; i++) {
-            breakpointAdded(breakpoints[i]);
-        }
     }
     
     protected void requestTermination() throws DebugException {

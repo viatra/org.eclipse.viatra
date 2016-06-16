@@ -21,6 +21,7 @@ import org.eclipse.viatra.transformation.debug.model.TransformationStackFrame;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.TransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.RuleParameterTrace;
+import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 
 public class DebugModelPresentation extends LabelProvider implements IDebugModelPresentation {
 
@@ -36,7 +37,7 @@ public class DebugModelPresentation extends LabelProvider implements IDebugModel
                 TransformationBreakpoint breakpoint = (TransformationBreakpoint) element;
                 String parameters = "";
                 for (RuleParameterTrace parameterTrace : breakpoint.getTrace().getRuleParameterTraces()) {
-                    parameters += parameterTrace.getParameterName() + " : " + parameterTrace.getObjectId() + " ";
+                    parameters.concat(parameterTrace.getParameterName() + " : " + parameterTrace.getObjectId() + " ");
                 }
                 return "Transformation Activation Breakpoint - Rule: " + breakpoint.getTrace().getRuleName() + "(" + parameters + ")";
 
@@ -48,7 +49,8 @@ public class DebugModelPresentation extends LabelProvider implements IDebugModel
                 return ((TransformationDebugTarget) element).getName();
             } 
         } catch (DebugException e) {
-            e.printStackTrace();
+            TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
+            return super.getText(element);
         }
 
         return super.getText(element);

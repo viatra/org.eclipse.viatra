@@ -122,7 +122,8 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
                         getLaunchConfigurationDialog().updateButtons();
                     }
                 } catch (JavaModelException e) {
-                    e.printStackTrace();
+                    TransformationDebugUIActivator.getDefault()
+                            .logException("An error occured during the creation of the VIATRA debugger wizard tab", e);
                 }
 
             }
@@ -179,8 +180,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
                     getSelectedEVM().getIdentifier());
             configuration.setAttribute(TransformationLaunchConfigurationDelegate.TRANSFORMATION_ATTR,
                     transformationTypeText.getText());
-            configuration.setAttribute(TransformationLaunchConfigurationDelegate.PROJECT_NAME,
-                    projectName);
+            configuration.setAttribute(TransformationLaunchConfigurationDelegate.PROJECT_NAME, projectName);
         }
     }
 
@@ -191,6 +191,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
 
     @Override
     public Image getImage() {
-        return TransformationDebugUIActivator.getDefault().getImageRegistry().get(TransformationDebugUIActivator.ICON_VIATRA_LOGO);
+        return TransformationDebugUIActivator.getDefault().getImageRegistry()
+                .get(TransformationDebugUIActivator.ICON_VIATRA_LOGO);
     }
 }

@@ -7,8 +7,8 @@ import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
 
 public class ViatraDebuggerPropertyTester extends PropertyTester {
 
-    private final String ACTIVATION_SELECTED = "activation";
-    private final String ADAPTABLE_EVM_DEBUGGING = "running";
+    private static final String ACTIVATION_SELECTED = "activation";
+    private static final String ADAPTABLE_EVM_DEBUGGING = "running";
 
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
