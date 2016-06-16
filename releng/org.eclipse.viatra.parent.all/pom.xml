@@ -36,6 +36,7 @@
 		<module>../../query/tests/org.eclipse.viatra.query.testing.ui</module>
 		<module>../../query/features/org.eclipse.viatra.query.testing.sdk.feature</module>
 		<module>../../query/features/org.eclipse.viatra.query.sdk.feature</module>
+		<module>../../query/features/org.eclipse.viatra.query.tooling.debug.feature</module>
 
 		<!-- Transformations -->
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.ui</module>
@@ -70,6 +71,7 @@
 	</parent>
 	<properties>
 		<core.repository.url>file://${basedir}/../../../releng/org.eclipse.viatra.update.core/target/repository</core.repository.url>
+		<target.classifier>indigo</target.classifier>
 	</properties>
 	<repositories>
 		<repository>
@@ -101,6 +103,7 @@
 							<groupId>org.eclipse.viatra</groupId>
 							<artifactId>org.eclipse.viatra.target.all</artifactId>
 							<version>${viatra.main.version}</version>
+							<classifier>${target.classifier}</classifier>
 						</artifact>
 						<dependency-resolution>
                         <extraRequirements>

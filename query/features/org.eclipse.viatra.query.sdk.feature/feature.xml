@@ -46,7 +46,7 @@
    <requires>
       <import feature="org.eclipse.jdt"/>
       <import feature="org.eclipse.pde"/>
-      <import feature="org.eclipse.xtext.ui" version="2.9.0" match="compatible"/>
+      <import feature="org.eclipse.xtext.ui" version="2.10.0" match="compatible"/>
    </requires>
 
    <plugin
@@ -65,13 +65,6 @@
 
    <plugin
          id="org.eclipse.viatra.query.tooling.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.viatra.query.tooling.debug"
          download-size="0"
          install-size="0"
          version="0.0.0"

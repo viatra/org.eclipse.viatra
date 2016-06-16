@@ -121,8 +121,12 @@
         name="org.eclipse.emf.sdk.feature.group"/>
     <requirement
         name="org.eclipse.pde.api.tools.ee.feature.feature.group"/>
+    <requirement
+        name="fr.obeo.releng.targetplatform-feature.feature.group"/>
     <repository
         url="http://download.itemis.com/updates/releases"/>
+    <repository
+        url="http://mbarbero.github.io/fr.obeo.releng.targetplatform/p2/"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask

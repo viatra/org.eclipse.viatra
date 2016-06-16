@@ -11,11 +11,7 @@
 	</parent>
 	<artifactId>org.eclipse.viatra.query.tooling.debug</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<repositories>
-		<repository>
-			<id>eclipse-juno</id>
-			<url>http://download.eclipse.org/releases/juno</url>
-			<layout>p2</layout>
-		</repository>
-	</repositories>
+	<properties>
+	   <target.classifier>juno</target.classifier>
+	</properties>
 </project>

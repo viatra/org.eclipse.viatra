@@ -11,14 +11,13 @@
       Integration with EMF Facet.
    </description>
 
-
    <url>
       <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
    </url>
 
    <requires>
       <import feature="org.eclipse.viatra.query.sdk.feature"/>
-      <import feature="org.eclipse.modisco.infra.browser.feature"/>
+      <import feature="org.eclipse.modisco.infrastructure.feature"/>
    </requires>
 
    <plugin

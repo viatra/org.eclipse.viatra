@@ -33,6 +33,7 @@
                             <groupId>org.eclipse.viatra</groupId>
                             <artifactId>org.eclipse.viatra.target.rcp</artifactId>
                             <version>${viatra.main.version}</version>
+                            <classifier>org.eclipse.viatra.target.rcp</classifier>
                         </artifact>
                         <dependency-resolution>
                         <extraRequirements>
