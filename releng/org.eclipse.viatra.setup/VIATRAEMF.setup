@@ -363,7 +363,14 @@
       <setupTask
           xsi:type="launching:LaunchTask"
           predecessor="viatra.xtext.postgen"
+          successor="//@projects[name='core']/@setupTasks.2/@setupTasks.10"
           launcher="org.eclipse.viatra.setup/GenerateEMFPatternLanguage.mwe2.launch">
+        <description></description>
+      </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="//@projects[name='core']/@setupTasks.2/@setupTasks.9"
+          launcher="org.eclipse.viatra.setup/GeneratePatternLanguageTestMetamodel.mwe2.launch">
         <description></description>
       </setupTask>
     </setupTask>
