@@ -29,8 +29,8 @@ import org.eclipse.viatra.query.runtime.emf.types.BaseEMFTypeKey;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.viatra.query.runtime.matchers.context.AbstractQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.InputKeyImplication;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 
@@ -41,10 +41,19 @@ import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveIn
  * @author Bergmann Gabor
  *
  */
-public enum EMFQueryMetaContext implements IQueryMetaContext {
+public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
 	
-	INSTANCE;
+    /**
+     * Singleton instance
+     */
+    public static final EMFQueryMetaContext INSTANCE = new EMFQueryMetaContext();
 
+    /**
+     * Private constructor for singleton instance
+     */
+    private EMFQueryMetaContext() {
+    }
+    
 	@Override
 	public boolean isEnumerable(IInputKey key) {		
 		ensureValidKey(key);

@@ -16,6 +16,7 @@ import java.util.Set;
 
 /**
  * Provides metamodel information (relationship of input keys) to query evaluator backends at runtime and at query planning time.
+ * Implementors should extend {@link AbstractQueryMetaContext} instead of directly implementing this interface.
  * 
  * @author Bergmann Gabor
  *
