@@ -111,11 +111,11 @@ public class RefreshCodeDialog extends Dialog {
                 : this.qbeView.getService().getPatternCode());
 
         if (code != null) {
-            if (radioButtonOne.getSelection() == true)
+            if (radioButtonOne.getSelection())
                 this.performNewFileExistingProjectAction(code);
-            else if (radioButtonTwo.getSelection() == true)
+            else if (radioButtonTwo.getSelection())
                 this.performExistingFileAction(code);
-            else if (radioButtonThree.getSelection() == true)
+            else if (radioButtonThree.getSelection())
                 this.performClipboardAction(code);
         }
 

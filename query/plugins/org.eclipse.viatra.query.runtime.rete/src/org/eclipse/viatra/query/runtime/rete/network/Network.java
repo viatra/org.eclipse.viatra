@@ -22,7 +22,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
@@ -37,7 +36,7 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
  * 
  */
 public class Network {
-    int threads;
+    final int threads;
 
     protected ArrayList<ReteContainer> containers;
     ReteContainer headContainer;

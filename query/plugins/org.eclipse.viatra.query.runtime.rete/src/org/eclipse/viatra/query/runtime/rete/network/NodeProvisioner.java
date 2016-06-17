@@ -11,12 +11,9 @@
 
 package org.eclipse.viatra.query.runtime.rete.network;
 
-import java.lang.ref.WeakReference;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;

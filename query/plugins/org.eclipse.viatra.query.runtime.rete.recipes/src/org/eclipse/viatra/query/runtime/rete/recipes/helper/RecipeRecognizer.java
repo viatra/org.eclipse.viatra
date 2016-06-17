@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.runtime.rete.recipes.helper;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -132,6 +131,8 @@ public class RecipeRecognizer {
     // TODO reuse in more cases later, e.g. switching join node parents, etc.
     private static class EqualityHelper extends EcoreUtil.EqualityHelper {
 
+        private static final long serialVersionUID = -8841971394686015188L;
+        
         final static EAttribute reteNodeRecipe_EquivalenceClassIDs = RecipesPackage.eINSTANCE
                 .getReteNodeRecipe_EquivalenceClassIDs();
 

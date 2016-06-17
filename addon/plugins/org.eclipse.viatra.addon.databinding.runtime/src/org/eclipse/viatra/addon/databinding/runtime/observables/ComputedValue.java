@@ -286,15 +286,13 @@ abstract class ComputedValue/*<T>*/ extends AbstractObservableValue/*<T>*/ {
 		getRealm().exec(new Runnable() {
 			@Override
 			public void run() {
-				if (dependencies == null) {
-					// We are not currently listening.
-					if (hasListeners()) {
-						// But someone is listening for changes. Call getValue()
-						// to make sure we start listening to the observables we
-						// depend on.
-						getValue();
-					}
-				}
+				if (dependencies == null && hasListeners()) {
+				    // We are not currently listening.
+                	// But someone is listening for changes. Call getValue()
+                	// to make sure we start listening to the observables we
+                	// depend on.
+                	getValue();
+                }
 			}
 		});
 	}

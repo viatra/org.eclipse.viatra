@@ -78,7 +78,7 @@ public class QBEViewElementVariable extends QBEViewElement {
     public String getLabel(Object o) {
         String eClassName = variableSetting.getType().getName();
         String varName = variableSetting.getVariableName();
-        return variableSetting.isInputVariable() == true ? varName + " : " + eClassName
+        return variableSetting.isInputVariable() ? varName + " : " + eClassName
                 : eClassName + "(" + varName + ")";
     }
 

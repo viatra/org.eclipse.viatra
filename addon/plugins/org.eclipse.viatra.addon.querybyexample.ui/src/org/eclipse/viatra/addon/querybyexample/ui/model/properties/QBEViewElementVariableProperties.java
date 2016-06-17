@@ -144,7 +144,7 @@ public class QBEViewElementVariableProperties implements IPropertySource {
         if (PROPERTY_CHECKBOX_INPUTVAR.equals(id)) {
             boolean b = (Boolean) value;
             this.element.getVariableSetting().setInputVariable(b);
-            if (b == true)
+            if (b)
                 this.element.getVariableSetting().setVisible(b);
         }
         if (PROPERTY_TEXT.equals(id)) {
@@ -158,10 +158,8 @@ public class QBEViewElementVariableProperties implements IPropertySource {
             }
             this.element.getVariableSetting().setVariableName(strValue);
         }
-        if (PROPERTY_COMBO.equals(id)) {
-            if (value instanceof Integer) {
-                this.element.getVariableSetting().setType(this.typesMap.get((Integer) value));
-            }
+        if (PROPERTY_COMBO.equals(id) && value instanceof Integer) {
+            this.element.getVariableSetting().setType(this.typesMap.get((Integer) value));
         }
         this.element.getContainer().updateViewer();
     }

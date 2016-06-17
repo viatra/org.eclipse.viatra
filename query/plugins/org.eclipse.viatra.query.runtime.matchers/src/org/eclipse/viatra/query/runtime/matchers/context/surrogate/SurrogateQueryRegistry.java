@@ -19,7 +19,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
 import org.eclipse.viatra.query.runtime.matchers.util.SingletonInstanceProvider;
-import org.eclipse.viatra.query.runtime.matchers.util.IProvider.ProvidedValueFunction;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
