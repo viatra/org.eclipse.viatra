@@ -39,11 +39,9 @@
 					<metamodels>
 						<metamodel>
 							<packageClass>org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
-							<genmodelUri>../org.eclipse.viatra.cep.core.metamodels/models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 						<metamodel>
 							<packageClass>org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage</packageClass>
-							<genmodelUri>../org.eclipse.viatra.cep.core.metamodels/models/InternalModel.genmodel</genmodelUri>
 						</metamodel>
 					</metamodels>
 				</configuration>
@@ -61,10 +59,15 @@
 				<configuration>
 					<filesets>
 						<fileset>
+							<directory>src-gen</directory>
+							<excludes>
+								<exclude>.gitignore</exclude>
+							</excludes>
+						</fileset>
+						<fileset>
 							<directory>xtend-gen</directory>
 							<excludes>
-								<exclude>keep.txt</exclude>
-								<exclude>.keep.txt</exclude>
+								<exclude>.gitignore</exclude>
 							</excludes>
 						</fileset>
 					</filesets>
