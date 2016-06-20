@@ -17,7 +17,6 @@ import java.util.Arrays
 import java.util.List
 import java.util.Set
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
-import org.eclipse.viatra.query.patternlanguage.emf.types.IEMFTypeProvider
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
@@ -46,7 +45,8 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -58,7 +58,8 @@ class PatternQuerySpecificationClassInferrer {
 	@Inject extension EMFJvmTypesBuilder
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil util
 	@Inject extension JavadocInferrer
-	@Inject extension IEMFTypeProvider
+	@Inject extension ITypeInferrer
+	@Inject var ITypeSystem typeSystem
 	@Inject var IErrorFeedback feedback
 	@Inject var Serializer serializer
 	@Extension private JvmTypeReferenceBuilder builder
@@ -306,15 +307,14 @@ class PatternQuerySpecificationClassInferrer {
     }
 
     def StringConcatenationClient parameterInstantiation(Variable variable) {
-		val ref = getVariableType(variable);
+		val ref = getJvmType(variable, variable);
         // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
         val clazz = if (ref == null || ref instanceof JvmUnknownTypeReference) {
         	""
         } else {
 			ref.getType().getQualifiedName()
 		}
-		val declaredClassifier = variable.type.classifierForType
-		val declaredInputKey = PatternBodyTransformer.classifierToInputKey(declaredClassifier)
+		val declaredInputKey = typeSystem.extractTypeDescriptor(variable.type)
 		'''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)»)'''
     }
 
