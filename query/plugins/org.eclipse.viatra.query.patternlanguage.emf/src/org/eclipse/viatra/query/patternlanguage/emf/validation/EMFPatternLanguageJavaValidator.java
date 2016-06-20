@@ -911,14 +911,4 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     EMFIssueCodes.IQR_NOT_ON_CLASSPATH);
         }
     }
-    
-    @Check(CheckType.NORMAL)
-    public void checkClassPath(ClassType typeDecl) {
-        EClassifier classifier = typeDecl.getClassname();
-        String clazz = metamodelProvider.getQualifiedClassName(classifier, classifier);
-        if (clazz != null && !clazz.isEmpty() && typeReferences.findDeclaredType(clazz, typeDecl) == null) {
-            error(String.format("Couldn't find type %s on the project's classpath", clazz), typeDecl, null,
-                    EMFIssueCodes.TYPE_NOT_ON_CLASSPATH, classifier.getEPackage().getNsURI());
-        }
-    }
 }

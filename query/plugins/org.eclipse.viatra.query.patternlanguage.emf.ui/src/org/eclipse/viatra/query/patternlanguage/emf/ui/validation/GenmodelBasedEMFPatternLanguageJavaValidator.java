@@ -16,17 +16,22 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguageJavaValidator;
 import org.eclipse.viatra.query.tooling.core.generator.genmodel.IVQGenmodelProvider;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
+import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.CheckType;
 
 import com.google.inject.Inject;
 
@@ -38,6 +43,10 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
     private IJavaProjectProvider projectProvider;
     @Inject
     private Logger logger;
+    @Inject
+    private IMetamodelProvider metamodelProvider;
+    @Inject
+    private TypeReferences typeReferences;
 
     @Deprecated
     public void checkPackageDeclaration(PatternModel model) {
@@ -78,6 +87,24 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
                     logger.error("Error while checking the dependencies of the import declaration", e);
                 }
             }
+        }
+    }
+    
+    @Check(CheckType.NORMAL)
+    public void checkClassPath(ClassType typeDecl) {
+        Resource resource = typeDecl.eResource();
+        if (resource == null || resource.getResourceSet() == null) {
+            return;
+        }
+        IJavaProject javaProject = projectProvider.getJavaProject(resource.getResourceSet());
+        if (javaProject == null) {
+            return;
+        }
+        EClassifier classifier = typeDecl.getClassname();
+        String clazz = metamodelProvider.getQualifiedClassName(classifier, classifier);
+        if (clazz != null && !clazz.isEmpty() && typeReferences.findDeclaredType(clazz, typeDecl) == null) {
+            error(String.format("Couldn't find type %s on the project's classpath", clazz), typeDecl, null,
+                    EMFIssueCodes.TYPE_NOT_ON_CLASSPATH, classifier.getEPackage().getNsURI());
         }
     }
 }
