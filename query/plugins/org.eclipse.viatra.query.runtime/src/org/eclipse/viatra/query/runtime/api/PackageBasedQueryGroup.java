@@ -34,6 +34,7 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
     private final Set<IQuerySpecification<?>> querySpecifications = new HashSet<IQuerySpecification<?>>();
     private final String packageName;
     private final boolean includeSubPackages;
+    private IRegistryView view;
 
     /**
      * Creates a query group with specifications of a given package from the {@link QuerySpecificationRegistry}. Only
@@ -59,7 +60,7 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
         this.packageName = packageName;
         this.includeSubPackages = includeSubPackages;
         IQuerySpecificationRegistry registry = QuerySpecificationRegistry.getInstance();
-        IRegistryView view = registry.createView(new PackageNameBasedViewFilter());
+        view = registry.createView(new PackageNameBasedViewFilter());
         for (IQuerySpecificationRegistryEntry entry : view.getEntries()) {
             this.querySpecifications.add(entry.get());
         }
