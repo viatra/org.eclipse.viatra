@@ -51,31 +51,36 @@ public class PackageBasedQueryGroupTest {
     
     @Test
     public void updateTest() throws ViatraQueryException {
-        PackageBasedQueryGroup packageBasedQueryGroup = new PackageBasedQueryGroup("org.eclipse.viatra.integration.uml.derivedfeatures");
-        Set<IQuerySpecification<?>> specifications = packageBasedQueryGroup.getSpecifications();
-        assertFalse(specifications.isEmpty());
-        
-        IQuerySpecificationProvider mockedProvider = mock(IQuerySpecificationProvider.class);
-        final String fqn = "org.eclipse.viatra.integration.uml.derivedfeatures.testQS";
-        when(mockedProvider.getFullyQualifiedName()).thenReturn(fqn);
-        @SuppressWarnings("unchecked")
-        IQuerySpecification<ViatraQueryMatcher<? extends IPatternMatch>> mockedSpecification = mock(IQuerySpecification.class);
-        when(mockedProvider.get()).thenReturn(mockedSpecification);
-        when(mockedSpecification.getFullyQualifiedName()).thenReturn(fqn);
-        SpecificationMapSourceConnector connector = new SpecificationMapSourceConnector("umlSource", ImmutableSet.of(mockedProvider), true);
-        QuerySpecificationRegistry.getInstance().addSource(connector);
-        
-        Set<IQuerySpecification<?>> specifications2 = packageBasedQueryGroup.getSpecifications();
-        boolean fqnIncluded = Iterables.any(specifications2, new Predicate<IQuerySpecification<?>>() {
-
-            @Override
-            public boolean apply(IQuerySpecification<?> specification) {
-                return specification.getFullyQualifiedName().equals(fqn);
+        SpecificationMapSourceConnector connector = null;
+        try {
+            PackageBasedQueryGroup packageBasedQueryGroup = new PackageBasedQueryGroup("org.eclipse.viatra.integration.uml.derivedfeatures");
+            Set<IQuerySpecification<?>> specifications = packageBasedQueryGroup.getSpecifications();
+            assertFalse(specifications.isEmpty());
+            
+            IQuerySpecificationProvider mockedProvider = mock(IQuerySpecificationProvider.class);
+            final String fqn = "org.eclipse.viatra.integration.uml.derivedfeatures.testQS";
+            when(mockedProvider.getFullyQualifiedName()).thenReturn(fqn);
+            @SuppressWarnings("unchecked")
+            IQuerySpecification<ViatraQueryMatcher<? extends IPatternMatch>> mockedSpecification = mock(IQuerySpecification.class);
+            when(mockedProvider.get()).thenReturn(mockedSpecification);
+            when(mockedSpecification.getFullyQualifiedName()).thenReturn(fqn);
+            connector = new SpecificationMapSourceConnector("umlSource", ImmutableSet.of(mockedProvider), true);
+            QuerySpecificationRegistry.getInstance().addSource(connector);
+            
+            Set<IQuerySpecification<?>> specifications2 = packageBasedQueryGroup.getSpecifications();
+            boolean fqnIncluded = Iterables.any(specifications2, new Predicate<IQuerySpecification<?>>() {
+    
+                @Override
+                public boolean apply(IQuerySpecification<?> specification) {
+                    return specification.getFullyQualifiedName().equals(fqn);
+                }
+            });
+            assertTrue(fqnIncluded);
+        } finally {
+            if (connector != null) {
+                QuerySpecificationRegistry.getInstance().removeSource(connector);
             }
-        });
-        assertTrue(fqnIncluded);
-        
-        QuerySpecificationRegistry.getInstance().removeSource(connector);
+        }
     }
     
     @Test
