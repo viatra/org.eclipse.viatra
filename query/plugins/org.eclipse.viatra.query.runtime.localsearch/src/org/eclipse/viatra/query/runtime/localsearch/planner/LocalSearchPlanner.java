@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
@@ -144,13 +145,21 @@ public class LocalSearchPlanner {
         return normalizedBodies;
     }
 
+    private Object getConstraintKey(PConstraint constraint){
+        if (constraint instanceof TypeConstraint){
+            return ((TypeConstraint) constraint).getEquivalentJudgement();
+        }
+        // Do not check duplication for any other types
+        return constraint;
+    }
+    
     private void removeDuplicateConstraints(Set<PBody> normalizedBodies) {
         for (PBody pBody : normalizedBodies) {
             pBody.setStatus(PQueryStatus.UNINITIALIZED);
             
-            Map<String, PConstraint> constraints = Maps.newHashMap();
+            Map<Object, PConstraint> constraints = Maps.newHashMap();
             for(PConstraint constraint : pBody.getConstraints()){
-                String key = constraint.toString();
+                Object key = getConstraintKey(constraint);
                 // Retain first found instance of a constraint
                 if (!constraints.containsKey(key)){
                     constraints.put(key, constraint);
