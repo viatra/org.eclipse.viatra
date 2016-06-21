@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
@@ -19,11 +20,14 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 
 /**
@@ -109,4 +113,17 @@ class FlattenerCopier extends PBodyCopier {
         new Equality(body, who, withWhom);
     }
 
+    @Override
+    protected void copyExpressionEvaluationConstraint(final ExpressionEvaluation expressionEvaluation) {
+        Map<PVariable, PVariable> variableMapping = Maps.filterEntries(this.variableMapping, new Predicate<Entry<PVariable, PVariable>>() {
+
+            @Override
+            public boolean apply(Entry<PVariable, PVariable> input) {
+                return expressionEvaluation.getPSystem().getAllVariables().contains(input.getKey());
+            }
+        });
+        PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
+        new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable);
+    }
+    
 }
