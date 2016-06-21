@@ -16,7 +16,8 @@ public class MigratorConstants {
 
 	public static final ImmutableList<String> INCORRECT_BUILDER_IDS = ImmutableList.of(
 			"org.eclipse.incquery.tooling.ui.projectbuilder", // $NON-NLS-1
-			"org.eclipse.incquery.tooling.core.projectbuilder"// $NON-NLS-1
+			"org.eclipse.incquery.tooling.core.projectbuilder",// $NON-NLS-1
+			"org.eclipse.viatra.query.tooling.core.projectbuilder"
 	);
 	public static final ImmutableList<String> INCORRECT_NATURE_IDS = ImmutableList.of(
 			"org.eclipse.viatra2.emf.incquery.projectnature", // $NON-NLS-1
