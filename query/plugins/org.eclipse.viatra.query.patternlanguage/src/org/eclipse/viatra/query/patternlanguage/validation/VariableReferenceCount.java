@@ -17,6 +17,8 @@ import java.util.Set;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 
+import com.google.common.base.Joiner;
+
 /**
  * Helper class for counting variable references
  * 
@@ -74,5 +76,23 @@ class VariableReferenceCount {
     public void incrementCounter(ReferenceType type) {
         size++;
         counters.put(type, counters.get(type) + 1);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (parameter) {
+            sb.append("Variable: ");
+        } else {
+            sb.append("Parameter: ");
+        }
+        sb.append("<");
+        Joiner joiner = Joiner.on(", ");
+        joiner.appendTo(sb, getVariables());
+        sb.append("> ");
+        joiner.withKeyValueSeparator("=").appendTo(sb, counters);
+        sb.append(" ---- Total: ");
+        sb.append(size);
+        return sb.toString();
     }
 }
