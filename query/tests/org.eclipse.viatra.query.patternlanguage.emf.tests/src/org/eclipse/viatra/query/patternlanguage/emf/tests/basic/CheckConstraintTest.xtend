@@ -106,6 +106,21 @@ class CheckConstraintTest {
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
+	@Test
+	def nonwhitelistedImportedToplevelCheck() {
+		val model = parseHelper.parse('''
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			import java org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass2
+
+			pattern name(D) = {
+				EDouble(D);
+				check (DummyClass2::alwaysFalse());
+			}
+		''')
+		model.assertNoErrors
+		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+	}
 
 	@Test
 	def nonWhitelistedCheck() {

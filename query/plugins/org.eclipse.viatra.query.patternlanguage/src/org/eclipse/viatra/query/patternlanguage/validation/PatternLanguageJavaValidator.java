@@ -64,6 +64,7 @@ import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PureWhiteli
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PurityChecker;
 import org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.util.Primitives.Primitive;
@@ -884,7 +885,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private void checkForImpureJavaCallsInternal(XExpression xExpression, EStructuralFeature feature) {
         Set<String> elementsWithWarnings = new HashSet<String>();
         if (xExpression != null) {
-            TreeIterator<EObject> eAllContents = xExpression.eAllContents();
+            Iterator<EObject> eAllContents = Iterators.concat(Iterators.singletonIterator(xExpression), xExpression.eAllContents());
             while (eAllContents.hasNext()) {
                 EObject nextEObject = eAllContents.next();
                 if (nextEObject instanceof XMemberFeatureCall) {
