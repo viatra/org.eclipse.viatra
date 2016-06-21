@@ -23,7 +23,8 @@ class PureWhitelistExtensionLoader {
     static def void load() {
         val configurationElements = Platform.extensionRegistry.getConfigurationElementsFor(EXTENSION_ID)
         val pureElements = configurationElements.map[
-            val fullyQualifiedName = getAttribute("fully-qualified-name")
+            // Bug 496473: make sure whitespace is removed from fqn
+            val fullyQualifiedName = getAttribute("fully-qualified-name").replaceAll("\\s","");
             val type = PureElement.Type.valueOf(getAttribute("type").toUpperCase)
             new PureElement(fullyQualifiedName, type)
         ]

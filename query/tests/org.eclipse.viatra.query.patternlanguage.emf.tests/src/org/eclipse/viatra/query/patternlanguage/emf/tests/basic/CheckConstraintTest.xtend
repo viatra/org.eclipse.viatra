@@ -49,18 +49,60 @@ class CheckConstraintTest {
 	}
 
 	@Test
-	@Ignore("Custom white lists removed")
-	def whitelistedCheck() {
+	def whitelistedMethodCheck1() {
 		val model = parseHelper.parse('
 			package org.eclipse.viatra.query.patternlanguage.emf.tests
 			import "http://www.eclipse.org/emf/2002/Ecore"
 
 			pattern name(D) = {
 				EDouble(D);
-				check(java::lang::Math::abs(D) > 10.5);
+				check(^java::lang::Math::abs(D) > 10.5);
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	
+	@Test
+	def whitelistedMethodCheck2() {
+		val model = parseHelper.parse('
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern name(D) = {
+				EDouble(D);
+				check(Math::max(0,D) < 3);
+			}
+		')
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	@Test
+	def whitelistedClassCheck() {
+		val model = parseHelper.parse('''
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern name(D) = {
+				EDouble(D);
+				check (org::eclipse::viatra::query::patternlanguage::emf::tests::DummyClass::alwaysTrue());
+			}
+		''')
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	@Test
+	def whitelistedImportedClassCheck() {
+		val model = parseHelper.parse('''
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			import java org.eclipse.viatra.query.patternlanguage.emf.tests.DummyClass
+
+			pattern name(D) = {
+				EDouble(D);
+				check (DummyClass::alwaysFalse());
+			}
+		''')
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
@@ -76,7 +118,6 @@ class CheckConstraintTest {
 				check(^java::util::Calendar::getInstance().getTime().getTime() > L);
 			}
 		')
-//		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
 		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
 	}
