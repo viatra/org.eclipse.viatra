@@ -26,6 +26,7 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -261,5 +262,40 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
             }
         ''')
         tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+    }
+    
+    @Test
+    @Ignore("Known issues with type information process between Xbase expressions")
+    def multipleEvalCheck1() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+
+            pattern t2(n) {
+                find t(n);
+                check(n > 2);
+            }
+            pattern t(n){
+                n == eval(Integer.parseInt("2"));
+            }
+        ''')
+        tester.validate(model).assertOK
+    }
+    
+    @Test
+    @Ignore("Known issues with type information process between Xbase expressions")
+    def multipleEvalCheck2() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+
+            pattern t(n){
+                n == eval(Integer.parseInt("2"));
+            }
+            
+            pattern t2(n) {
+                find t(n);
+                check(n > 2);
+            }
+        ''')
+        tester.validate(model).assertOK
     }
 }
