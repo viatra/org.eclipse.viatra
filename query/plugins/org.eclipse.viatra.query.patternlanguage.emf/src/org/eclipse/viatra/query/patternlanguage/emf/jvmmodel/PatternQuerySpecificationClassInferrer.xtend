@@ -314,14 +314,19 @@ class PatternQuerySpecificationClassInferrer {
         } else {
 			ref.getType().getQualifiedName()
 		}
-		val declaredInputKey = typeSystem.extractTypeDescriptor(variable.type)
-		'''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)»)'''
+		val type = variable.type
+        if (type == null || type.eIsProxy) {
+    		'''new PParameter("«variable.name»", "«clazz»")'''
+        } else {
+            val declaredInputKey = typeSystem.extractTypeDescriptor(type)
+            '''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)»)'''
+        }
     }
 
     def StringConcatenationClient inferAnnotations(Pattern pattern) {
     	'''
     		«FOR annotation : pattern.annotations»
-                {
+        		{
         			«PAnnotation» annotation = new «PAnnotation»("«annotation.name»");
         			«FOR attribute : CorePatternLanguageHelper.evaluateAnnotationParameters(annotation).entrySet»
         				annotation.addAttribute("«attribute.key»", «outputAnnotationParameter(attribute.value)»);

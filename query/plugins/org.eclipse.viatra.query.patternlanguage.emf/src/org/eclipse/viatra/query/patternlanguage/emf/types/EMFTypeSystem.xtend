@@ -83,9 +83,6 @@ public class EMFTypeSystem extends AbstractTypeSystem {
     }
 
     override IInputKey extractTypeDescriptor(Type type) {
-        if (type == null || type.eIsProxy) {
-            return new JavaTransitiveInstancesKey(Object)
-        }
         checkArgument(type instanceof ClassType || type instanceof ReferenceType, NON_EMF_TYPE_ENCOUNTERED,
             type.getClass())
         if (type instanceof ClassType) {

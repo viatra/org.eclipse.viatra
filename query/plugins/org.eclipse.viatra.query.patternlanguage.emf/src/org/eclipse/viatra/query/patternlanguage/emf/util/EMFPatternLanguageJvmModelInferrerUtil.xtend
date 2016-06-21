@@ -44,6 +44,7 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -466,6 +467,12 @@ class EMFPatternLanguageJvmModelInferrerUtil {
                 target.append('''((''')
                 target.append(EDataType)
                 target.append(''')«classifierGetterName(forParameter)»("«packageNsUri»", "«literal.name»"))''')
+            }
+            JavaTransitiveInstancesKey : {
+                val clazz = key.prettyPrintableName
+                target.append('''new ''')
+                target.append(JavaTransitiveInstancesKey)
+                target.append('''(«clazz»)''')
             }
             case null : {
                 target.append('''null''')
