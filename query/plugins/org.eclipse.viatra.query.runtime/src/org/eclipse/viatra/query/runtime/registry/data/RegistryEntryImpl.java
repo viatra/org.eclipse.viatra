@@ -65,4 +65,9 @@ public class RegistryEntryImpl implements IQuerySpecificationRegistryEntry {
     public IQuerySpecification<?> get() {
         return provider.get();
     }
+
+    @Override
+    public IQuerySpecificationProvider getProvider() {
+        return provider;
+    }
 }
