@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
@@ -159,29 +160,34 @@ public class CleanSupport {
     private void internalNormalClean(IBuildContext context, List<Delta> relevantDeltas, IProgressMonitor monitor)
             throws CoreException, ViatraQueryException {
         for (Delta delta : relevantDeltas) {
-            if (delta.getOld() != null) {
-                OldVersionHelper oldVersion = injector.getInstance(OldVersionHelper.class);
-                for (IEObjectDescription desc : delta.getOld().getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN)) {
-                    Pattern pattern = (Pattern) desc.getEObjectOrProxy();
-                    if (pattern.eIsProxy()) {
-                        pattern = oldVersion.findPattern(((InternalEObject)pattern).eProxyURI());
+            // Determine if this resource is logically nested in the project being built.
+            // Not currently built projects should be left alone, see bugs 452176 and 496257
+            URI uri = delta.getUri();
+            if (uri.isPlatformResource() && context.getBuiltProject().getName().equals(uri.segment(1))) {
+                if (delta.getOld() != null) {
+                    OldVersionHelper oldVersion = injector.getInstance(OldVersionHelper.class);
+                    for (IEObjectDescription desc : delta.getOld().getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN)) {
+                        Pattern pattern = (Pattern) desc.getEObjectOrProxy();
+                        if (pattern.eIsProxy()) {
+                            pattern = oldVersion.findPattern(((InternalEObject)pattern).eProxyURI());
+                        }
+                        final String fqn = desc.getQualifiedName().toString();
+                        if (pattern == null || pattern.eIsProxy()) {
+                            // Old version cannot be found, executing full clean
+                            context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+                            return;
+                        }
+                        final String foundFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+                        if (!foundFQN.equals(fqn)){
+                        	// Incorrect old version found, executing full clean
+                            context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+                            return;
+                        }
+                        // clean up code and extensions in the modelProject
+                        executeCleanUpOnModelProject(context.getBuiltProject(), fqn);
+                        // clean up code and extensions for all fragments
+                        executeCleanUpOnFragments(context.getBuiltProject(), pattern);
                     }
-                    final String fqn = desc.getQualifiedName().toString();
-                    if (pattern == null || pattern.eIsProxy()) {
-                        // Old version cannot be found, executing full clean
-                        context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-                        return;
-                    }
-                    final String foundFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
-                    if (!foundFQN.equals(fqn)){
-                    	// Incorrect old version found, executing full clean
-                        context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-                        return;
-                    }
-                    // clean up code and extensions in the modelProject
-                    executeCleanUpOnModelProject(context.getBuiltProject(), fqn);
-                    // clean up code and extensions for all fragments
-                    executeCleanUpOnFragments(context.getBuiltProject(), pattern);
                 }
             }
         }
