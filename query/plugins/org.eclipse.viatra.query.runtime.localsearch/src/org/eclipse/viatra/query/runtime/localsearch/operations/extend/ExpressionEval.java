@@ -43,7 +43,11 @@ public class ExpressionEval extends ExtendOperation<Object> {
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         try {
             Object result = evaluator.evaluateExpression(new MatchingFrameValueProvider(frame, nameMap));
-            it = Iterators.singletonIterator(result);
+            if (result != null){
+                it = Iterators.singletonIterator(result);
+            }else{
+                it = Iterators.emptyIterator();
+            }
         } catch (Exception e) {
             throw new LocalSearchException("Error while evaluating expression", e);
         }

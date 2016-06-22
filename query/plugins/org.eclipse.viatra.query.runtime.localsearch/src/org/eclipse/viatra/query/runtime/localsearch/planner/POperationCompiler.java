@@ -32,6 +32,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTrans
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckConstant;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CountCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.ExpressionCheck;
+import org.eclipse.viatra.query.runtime.localsearch.operations.check.ExpressionEvalCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.InequalityCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.InstanceOfClassCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.InstanceOfDataTypeCheck;
@@ -247,8 +248,21 @@ public class POperationCompiler {
 
 
     private void createCheck(ExpressionEvaluation expressionEvaluation, Map<PVariable, Integer> variableMapping) {
-        // Technically same as extend
-        createExtend(expressionEvaluation, variableMapping);
+        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
+        Iterable<String> inputParameterNames = expressionEvaluation.getEvaluator().getInputParameterNames();
+        Map<String, Integer> nameMap = Maps.newHashMap();
+        
+        for (String pVariableName : inputParameterNames) {
+            PVariable pVariable = expressionEvaluation.getPSystem().getVariableByNameChecked(pVariableName);
+            nameMap.put(pVariableName, variableMapping.get(pVariable));
+        }
+        
+        // output variable can be null; if null it is an ExpressionCheck
+        if(expressionEvaluation.getOutputVariable() == null){
+            operations.add(new ExpressionCheck(expressionEvaluation.getEvaluator(), nameMap));
+        } else {
+            operations.add(new ExpressionEvalCheck(expressionEvaluation.getEvaluator(), nameMap, variableMapping.get(expressionEvaluation.getOutputVariable())));
+        }
     }    
     
     private void createCheck(PatternMatchCounter patternMatchCounter, Map<PVariable, Integer> variableMapping) {
