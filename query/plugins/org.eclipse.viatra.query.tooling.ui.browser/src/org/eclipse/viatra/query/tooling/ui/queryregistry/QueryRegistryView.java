@@ -48,7 +48,6 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
     private XtextIndexBasedRegistryUpdater updater;
 
     public QueryRegistryView() {
-        
         Injector injector = EMFPatternLanguageActivator.getInstance().getInjector(EMFPatternLanguageActivator.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
         updater = injector.getInstance(XtextIndexBasedRegistryUpdater.class);
         updater.connectIndexToRegistry(QuerySpecificationRegistry.getInstance());

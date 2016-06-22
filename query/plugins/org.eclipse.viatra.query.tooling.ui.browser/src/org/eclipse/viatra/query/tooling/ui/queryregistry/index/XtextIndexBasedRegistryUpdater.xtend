@@ -16,11 +16,13 @@ import com.google.common.collect.Maps
 import com.google.common.collect.Multimap
 import com.google.inject.Inject
 import java.util.Map
+import java.util.WeakHashMap
+import org.eclipse.core.resources.IProject
 import org.eclipse.core.resources.IResourceChangeEvent
 import org.eclipse.core.resources.IResourceChangeListener
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
@@ -30,7 +32,9 @@ import org.eclipse.viatra.query.runtime.extensibility.IQuerySpecificationProvide
 import org.eclipse.viatra.query.runtime.registry.IConnectorListener
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry
 import org.eclipse.viatra.query.runtime.registry.connector.AbstractRegistrySourceConnector
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import org.eclipse.xtext.resource.DerivedStateAwareResource
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.resource.IResourceDescription
 import org.eclipse.xtext.resource.IResourceDescription.Delta
@@ -38,7 +42,7 @@ import org.eclipse.xtext.resource.IResourceDescription.Event
 import org.eclipse.xtext.resource.IResourceDescription.Event.Listener
 import org.eclipse.xtext.resource.IResourceDescriptions
 import org.eclipse.xtext.ui.notification.IStateChangeEventBroker
-import java.util.ResourceBundle
+import org.eclipse.xtext.ui.resource.IResourceSetProvider
 
 /**
  * @author Abel Hegedus
@@ -50,17 +54,20 @@ class XtextIndexBasedRegistryUpdater {
     
     private final IStateChangeEventBroker source
     private final IResourceDescriptions descriptions
+    private final IResourceSetProvider resourceSetProvider
     
     private final QueryRegistryUpdaterListener listener
     private final Map<String,PatternDescriptionBasedSourceConnector> connectorMap
     private final WorkspaceBuildCompletedListener workspaceListener
     private IQuerySpecificationRegistry connectedRegistry
+    private Map<IProject, ResourceSet> resourceSetMap = new WeakHashMap<IProject, ResourceSet>();
     
     @Inject
-    new(IStateChangeEventBroker source, IResourceDescriptions descriptions) {
+    new(IStateChangeEventBroker source, IResourceDescriptions descriptions, IResourceSetProvider resSetProvider) {
         super()
         this.source = source
         this.descriptions = descriptions
+        this.resourceSetProvider = resSetProvider
         this.workspaceListener = new WorkspaceBuildCompletedListener(this)
         this.listener = new QueryRegistryUpdaterListener(this)
         this.connectorMap = Maps.newTreeMap
@@ -94,9 +101,10 @@ class XtextIndexBasedRegistryUpdater {
                     connectorMap.put(connectorId, connector)
                 }
                 val conn = connector
+                val resourceSet = createResourceSet(projectName)
                 // create specification providers based on patterns
                 patternObjects.forEach[
-                    val provider = new PatternDescriptionBasedSpecificationProvider(resourceDesc, it)
+                    val provider = new PatternDescriptionBasedSpecificationProvider(this, resourceDesc, it, resourceSet)
                     conn.addProvider(uri, provider)
                 ]
             ]
@@ -117,6 +125,13 @@ class XtextIndexBasedRegistryUpdater {
             connectorMap.clear
             connectedRegistry = null
         }
+    }
+    
+    def createResourceSet(String projectName) {
+        val root = ResourcesPlugin.getWorkspace().getRoot();
+        val project = root.getProject(projectName);
+        val resourceSet = resourceSetProvider.get(project);
+        return resourceSet
     }
     
     @FinalFieldsConstructor
@@ -141,30 +156,35 @@ class XtextIndexBasedRegistryUpdater {
                 }
                 val connectorId = DYNAMIC_CONNECTOR_ID_PREFIX + projectName
                 
-                if (oldDesc != null) {
-                    if(newDesc == null) {
-                        // delete
-                        val connector = updater.connectorMap.get(connectorId)
-                        if(connector != null){
-                            connector.clearProviders(uri)
-                            if(connector.descriptionToProvider.empty){
-                                // remove source connector
-                                updater.connectedRegistry.removeSource(connector)
-                                updater.connectorMap.remove(connectorId)
+                try {
+                    if (oldDesc != null) {
+                        if(newDesc == null) {
+                            // delete
+                            val connector = updater.connectorMap.get(connectorId)
+                            if(connector != null){
+                                connector.clearProviders(uri)
+                                if(connector.descriptionToProvider.empty){
+                                    // remove source connector
+                                    updater.connectedRegistry.removeSource(connector)
+                                    updater.connectorMap.remove(connectorId)
+                                }
                             }
+                        } else {
+                            // update
+                            delta.processResourceDescription(newDesc, connectorId, projectName)
                         }
-                    } else {
-                        // update
-                        delta.processResourceDescription(newDesc, connectorId)
+                    } else if(newDesc != null && !newDesc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN).empty) {
+                        // create connector based on URI or update if project connector already exists
+                        delta.processResourceDescription(newDesc, connectorId, projectName)
                     }
-                } else if(newDesc != null && !newDesc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN).empty) {
-                    // create connector based on URI or update if project connector already exists
-                    delta.processResourceDescription(newDesc, connectorId)
+                } catch (Exception ex) {
+                    val logger = ViatraQueryLoggingUtil.getLogger(XtextIndexBasedRegistryUpdater)
+                    logger.error('''Could not update registry based on Xtext index for «uri»''', ex)
                 }
             ]
         }
         
-        def processResourceDescription(Delta delta, IResourceDescription desc, String connectorId) {
+        def processResourceDescription(Delta delta, IResourceDescription desc, String connectorId, String projectName) {
             if(updater.connectorMap.containsKey(connectorId)){
                 updater.workspaceListener.connectorsToUpdate.put(desc.URI, desc)
             } else {
@@ -173,8 +193,9 @@ class XtextIndexBasedRegistryUpdater {
                     val connector = new PatternDescriptionBasedSourceConnector(connectorId)
                     updater.connectorMap.put(connectorId, connector)
                     if(delta.haveEObjectDescriptionsChanged) {
+                        val resourceSet = updater.createResourceSet(projectName)
                         desc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN).forEach[
-                            val provider = new PatternDescriptionBasedSpecificationProvider(desc, it)
+                            val provider = new PatternDescriptionBasedSpecificationProvider(updater, desc, it, resourceSet)
                             connector.addProvider(desc.URI.toString, provider)
                         ]
                     }
@@ -188,8 +209,10 @@ class XtextIndexBasedRegistryUpdater {
     @FinalFieldsConstructor
     private static final class PatternDescriptionBasedSpecificationProvider implements IPatternBasedSpecificationProvider {
         
+        final XtextIndexBasedRegistryUpdater updater
         final IResourceDescription resourceDesc
         final IEObjectDescription description
+        final ResourceSet resourceSet
         IQuerySpecification<?> specification
         
         override getFullyQualifiedName() {
@@ -214,8 +237,7 @@ class XtextIndexBasedRegistryUpdater {
         def Pattern findPatternForDescription() {
             var pattern = description.EObjectOrProxy
             if(pattern.eIsProxy){
-                val rs = new ResourceSetImpl()
-                pattern = EcoreUtil.resolve(pattern, rs)
+                pattern = EcoreUtil.resolve(pattern, resourceSet)
             }
             if(pattern.eIsProxy){
                 throw new IllegalStateException('''Cannot load specification «fullyQualifiedName» from Xtext index''')
@@ -280,16 +302,22 @@ class XtextIndexBasedRegistryUpdater {
                 }
                 val update = ImmutableMap.copyOf(connectorsToUpdate)
                 update.forEach[ uri, descr | 
-                    connectorsToUpdate.remove(uri)
-                    val projectName = uri.segment(1)
-                    val connectorId = DYNAMIC_CONNECTOR_ID_PREFIX + projectName
-                    val connector = updater.connectorMap.get(connectorId)
-                    connector.clearProviders(uri.toString)
-                    val patternObjects = descr.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN)
-                    patternObjects.forEach[
-                        val provider = new PatternDescriptionBasedSpecificationProvider(descr, it)
-                        connector.addProvider(uri.toString, provider)
-                    ]
+                    try{
+                        connectorsToUpdate.remove(uri)
+                        val projectName = uri.segment(1)
+                        val connectorId = DYNAMIC_CONNECTOR_ID_PREFIX + projectName
+                        val connector = updater.connectorMap.get(connectorId)
+                        connector.clearProviders(uri.toString)
+                        val resourceSet = updater.createResourceSet(projectName)
+                        val patternObjects = descr.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN)
+                        patternObjects.forEach[
+                            val provider = new PatternDescriptionBasedSpecificationProvider(updater, descr, it, resourceSet)
+                            connector.addProvider(uri.toString, provider)
+                        ]
+                    } catch (Exception ex) {
+                        val logger = ViatraQueryLoggingUtil.getLogger(XtextIndexBasedRegistryUpdater)
+                        logger.error('''Could not update registry based on Xtext index for «uri»''', ex)
+                    }
                 ]
             }
         }

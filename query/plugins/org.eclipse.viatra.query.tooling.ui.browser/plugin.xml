@@ -10,6 +10,12 @@
             id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
             name="Query Registry">
       </view>
+      <view
+            class="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
+            icon="icons/rsz_viatra_logo.png"
+            id="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
+            name="Query Results">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -21,8 +27,17 @@
                relationship="bottom"
                relative="org.eclipse.ui.navigator.ProjectExplorer">
          </view>
+         <view
+               id="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.ui.views.ContentOutline">
+         </view>
          <viewShortcut
                id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
          </viewShortcut>
       </perspectiveExtension>
    </extension>
@@ -50,6 +65,55 @@
                </and>
             </with>
          </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadResourceSetHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.result.loadmodel">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra.query.tooling.ui.activedomaineditor">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadVqlPatternHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.result.loadmodel">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadQueriesHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.result.loadqueries">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeSource">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreePackage">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.UnloadModelHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.result.unloadmodel">
+      </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.WipeEngineHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.result.wipeengine">
       </handler>
    </extension>
    <extension
@@ -87,6 +151,40 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.result.loadqueries"
+               icon="icons/logo2.png"
+               id="org.eclipse.viatra.query.tooling.ui.result.loadqueriesmenu"
+               label="Load into Query Results"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.result.loadmodel"
+               icon="icons/load.gif"
+               id="org.eclipse.viatra.query.tooling.ui.result.loadmodelmenu"
+               label="Load from active editor"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.result.unloadmodel"
+               icon="icons/unload.gif"
+               label="Unload model"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.result.wipeengine"
+               icon="icons/reset.gif"
+               label="Remove loaded queries"
+               style="push">
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -95,6 +193,26 @@
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.registry.reset"
             name="Reset view">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.result.loadmodel"
+            name="Load from active editor">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.result.loadqueries"
+            name="Load into Query Results">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.result.unloadmodel"
+            name="Unload model">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.result.wipeengine"
+            name="Remove loaded queries">
       </command>
    </extension>
    <extension

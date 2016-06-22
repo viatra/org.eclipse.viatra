@@ -14,8 +14,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 
 /**
  * Listener implementation that propagates all changes to a set of listeners.
