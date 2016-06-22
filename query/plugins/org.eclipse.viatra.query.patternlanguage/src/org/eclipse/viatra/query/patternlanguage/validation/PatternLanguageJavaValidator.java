@@ -64,7 +64,6 @@ import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PureWhiteli
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PurityChecker;
 import org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
 import org.eclipse.xtext.common.types.util.Primitives.Primitive;
