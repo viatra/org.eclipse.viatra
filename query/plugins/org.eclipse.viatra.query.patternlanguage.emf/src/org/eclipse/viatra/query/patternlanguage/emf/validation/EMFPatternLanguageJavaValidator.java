@@ -361,6 +361,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         Iterable<Variable> parameterReferences = Iterables.filter(
                 CorePatternLanguageHelper.getLocalReferencesOfParameter(variable), Predicates.notNull());
         
+        IInputKey inferredType = typeInferrer.getType(variable);
         if (variable.getType() == null) {
             // Missing type validation
             Set<IInputKey> possibleTypes = Sets.newHashSet();
@@ -420,7 +421,8 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                             + "], specify one as the intended supertype.", variable, null,
                             EMFIssueCodes.PARAMETER_TYPE_AMBIGUOUS, issueData);
                 } else if (issueData.length > 0) {
-                    info("Type not defined for variable " + variable.getName() + ", inferred type " + typeSystem.typeString(typeInferrer.getType(variable)) + " is used instead.",
+                    String typeString = (inferredType == null) ? "(unknown)": typeSystem.typeString(inferredType);
+                    info("Type not defined for variable " + variable.getName() + ", inferred type " + typeString + " is used instead.",
                             PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
                             issueData);
                 }
@@ -435,11 +437,10 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 }
             }), Predicates.notNull());
             Set<IInputKey> aggregatedTypes = typeSystem.minimizeTypeInformation(Sets.newHashSet(referenceTypes), true);
-            IInputKey parameterType = typeInferrer.getType(variable);
-            if (aggregatedTypes.size() == 1 && parameterType != null) {
+            if (aggregatedTypes.size() == 1 && inferredType != null) {
                 IInputKey aggregatedType = aggregatedTypes.iterator().next();
-                if (!Objects.equals(parameterType, aggregatedType) && typeSystem.isConformant(parameterType, aggregatedType)) {
-                    warning("Declared type " + typeSystem.typeString(parameterType) + " is less specific then the type " + typeSystem.typeString(aggregatedType) + " inferred from bodies", variable, null,
+                if (!Objects.equals(inferredType, aggregatedType) && typeSystem.isConformant(inferredType, aggregatedType)) {
+                    warning("Declared type " + typeSystem.typeString(inferredType) + " is less specific then the type " + typeSystem.typeString(aggregatedType) + " inferred from bodies", variable, null,
                             EMFIssueCodes.PARAMETER_TYPE_INVALID);                
                 }
             }
