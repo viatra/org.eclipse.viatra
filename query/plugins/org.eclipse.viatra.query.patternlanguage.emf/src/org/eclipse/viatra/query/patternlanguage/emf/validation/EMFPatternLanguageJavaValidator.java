@@ -369,7 +369,9 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             for (Variable bodyVar : parameterReferences) {
                 possibleTypes.addAll(typeInferrer.getAllPossibleTypes(bodyVar));
             }
-            if (possibleTypes.size() == 1) {
+            if (possibleTypes.size() == 0) {
+                return;
+            } else if (possibleTypes.size() == 1) {
                     IInputKey type = possibleTypes.iterator().next();
                     if (type instanceof EClassTransitiveInstancesKey) {
                     EClass eClass = ((EClassTransitiveInstancesKey)type).getEmfKey();
@@ -421,8 +423,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                             + "], specify one as the intended supertype.", variable, null,
                             EMFIssueCodes.PARAMETER_TYPE_AMBIGUOUS, issueData);
                 } else if (issueData.length > 0) {
-                    String typeString = (inferredType == null) ? "(unknown)": typeSystem.typeString(inferredType);
-                    info("Type not defined for variable " + variable.getName() + ", inferred type " + typeString + " is used instead.",
+                    info("Type not defined for variable " + variable.getName() + ", inferred type " + reduced.getName() + " is used instead.",
                             PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
                             issueData);
                 }
