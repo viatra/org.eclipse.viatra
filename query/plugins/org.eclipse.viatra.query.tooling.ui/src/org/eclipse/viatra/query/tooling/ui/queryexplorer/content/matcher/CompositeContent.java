@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher;
 import java.util.Iterator;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 
 /**
@@ -50,9 +51,13 @@ public abstract class CompositeContent<ParentType, ChildType extends BaseContent
     public void updateHasChildren() {
         // only perform it for items which are not expanded, ClassCastException will be thrown otherwise
         // due to the lazy tree content provider
-        if (QueryExplorer.getInstance() != null
-                && !QueryExplorer.getInstance().getMatcherTreeViewer().getExpandedState(this)) {
-            QueryExplorer.getInstance().getMatcherTreeViewer().setHasChildren(this, getChildren().size() > 0);
+        if (QueryExplorer.getInstance() != null) {
+            TreeViewer viewer = QueryExplorer.getInstance().getMatcherTreeViewer();
+            if (!viewer.getExpandedState(this)) {
+                viewer.setHasChildren(this, getChildren().size() > 0);
+            }
+            //Bug 491506: This explicit refresh avoid display issues on Linux
+            viewer.refresh(this, true);
         }
     }
 
