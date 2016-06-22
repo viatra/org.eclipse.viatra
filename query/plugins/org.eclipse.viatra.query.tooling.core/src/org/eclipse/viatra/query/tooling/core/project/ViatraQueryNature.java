@@ -79,7 +79,7 @@ public class ViatraQueryNature implements IProjectNature {
         ICommand[] newCommandList = new ICommand[commands.length - 1];
         if (newCommandList.length > 0) {
             System.arraycopy(commands, 0, newCommandList, 0, index);
-            System.arraycopy(commands, index + 1, newCommandList, index, commands.length - index);
+            System.arraycopy(commands, index + 1, newCommandList, index, commands.length - index - 1);
         }
         desc.setBuildSpec(newCommandList);
         project.setDescription(desc, null);
