@@ -13,17 +13,14 @@ package org.eclipse.viatra.query.runtime.registry.impl;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.api.GenericQueryGroup;
 import org.eclipse.viatra.query.runtime.api.IQueryGroup;
-import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.LazyLoadingQueryGroup;
 import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * Registry view implementation that considers specifications relevant if they are included in default views.
@@ -47,19 +44,9 @@ public class GlobalRegistryView extends AbstractRegistryView implements IDefault
         return entry.includeInDefaultViews();
     }
     
-    /**
-     * Note that calling this method will perform class loading on all included IQuerySpecifications.
-     */
     @Override
     public IQueryGroup getQueryGroup() {
-        Iterable<IQuerySpecification<?>> querySpecifications = Iterables.transform(fqnToEntryMap.values(),
-                new Function<IQuerySpecificationRegistryEntry, IQuerySpecification<?>>() {
-                    @Override
-                    public IQuerySpecification<?> apply(IQuerySpecificationRegistryEntry entry) {
-                        return entry.get();
-                    }
-                });
-        IQueryGroup queryGroup = GenericQueryGroup.of(ImmutableSet.copyOf(querySpecifications));
+        IQueryGroup queryGroup = LazyLoadingQueryGroup.of(ImmutableSet.copyOf(fqnToEntryMap.values())); 
         return queryGroup;
     }
 
