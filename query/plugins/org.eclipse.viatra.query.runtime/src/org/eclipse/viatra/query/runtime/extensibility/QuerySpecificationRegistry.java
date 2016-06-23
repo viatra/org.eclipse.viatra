@@ -36,7 +36,7 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * into the registry by the {@link ExtensionBasedQuerySpecificationLoader} class.
  * 
  * @author Abel Hegedus
- * @deprecated Use {@link QuerySpecificationRegistryUtil#getRegistry()} and read notes on deprecated methods for usage.
+ * @deprecated Use {@link org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry#getInstance()} and read notes on deprecated methods for usage.
  */
 public final class QuerySpecificationRegistry {
 
