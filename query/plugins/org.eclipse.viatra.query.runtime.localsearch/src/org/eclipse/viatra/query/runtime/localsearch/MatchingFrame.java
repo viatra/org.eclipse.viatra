@@ -67,16 +67,25 @@ public class MatchingFrame extends Tuple implements Cloneable {
      * later than initialization (done by the {@link LocalSearchMatcher}.
      * 
      * @param keys
+     * @return 
      * @see {@linkplain #setParameterValues(Object[])} for setting the initial parameter
+     * @since 1.3
      */
-    public void setKeys(int[] keys) {
+    public boolean setKeys(int[] keys) {
         Preconditions.checkArgument(keys != null, KEYS_ARRAY_MUST_NOT_BE_NULL_MESSAGE);
         this.keys = Arrays.copyOf(keys, keys.length);
         if (parameterValues != null) {
             for (int i=0; i<parameterValues.length; i++) {
-                frame[keys[i]] = parameterValues[i];
+                if (parameterValues[i] != null){
+                    if (frame[keys[i]] != null && !frame[keys[i]].equals(parameterValues[i])){
+                        return false;
+                    }else{
+                        frame[keys[i]] = parameterValues[i];
+                    }
+                }
             }
         }
+        return true;
     }
 
 

@@ -114,7 +114,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
                             final SearchPlan plan = new SearchPlan();
                             plan.addOperations(input.getCompiledOperations());
 
-                            return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys(), input.getParameterKeys());
+                            return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys());
                         }
                     });
 

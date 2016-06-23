@@ -15,9 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.check.FrameInitializationCheck;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+
+import com.google.common.collect.Lists;
 
 /**
  * This class is responsible for storing the results of the planner and operation compiler for a selected body.
@@ -41,7 +44,9 @@ public class SearchPlanForBody {
         for (int i=0; i<parameters.size(); i++) {
             parameterKeys[i] = variableKeys.get(parameters.get(i));
         }
-        this.compiledOperations = compiledOperations;
+        this.compiledOperations = Lists.newArrayListWithCapacity(compiledOperations.size()+1);
+        this.compiledOperations.add(new FrameInitializationCheck(parameterKeys));
+        this.compiledOperations.addAll(compiledOperations);
     }
 
     public PBody getBody() {

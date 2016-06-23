@@ -14,7 +14,6 @@
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +46,6 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     private ISearchContext context;
     private Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
 	private BiMap<Integer,PVariable> variableMapping;
-	private int[] parameters;
 
 	public BiMap<Integer, PVariable> getVariableMapping() {
 		return variableMapping;
@@ -77,12 +75,11 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         }
     }
 
-    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping, int[] parameters) {
+    public SearchPlanExecutor(SearchPlan plan, ISearchContext context, Map<PVariable, Integer> variableMapping) {
 		Preconditions.checkArgument(context != null, "Context cannot be null");
         this.plan = plan;
         this.context = context;
         this.variableMapping = HashBiMap.<PVariable, Integer>create(variableMapping).inverse();
-        this.parameters = Arrays.copyOf(parameters, parameters.length);
         operations = plan.getOperations();
         this.currentOperation = -1;
 	}
@@ -92,7 +89,6 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     	if (currentOperation == -1) {
             currentOperation++;
             ISearchOperation operation = operations.get(currentOperation);
-            frame.setKeys(parameters);
             for (ILocalSearchAdapter adapter : adapters) {
             	adapter.executorInitializing(this,frame);
             }
