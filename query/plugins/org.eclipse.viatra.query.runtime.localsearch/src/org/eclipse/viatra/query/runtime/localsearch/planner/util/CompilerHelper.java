@@ -7,9 +7,11 @@
  *
  * Contributors:
  *   Marton Bur - initial API and implementation
+ *   Daniel Segesdi - bugfix and refactor
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner.util;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +21,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PApply;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.POperation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -62,53 +65,114 @@ public class CompilerHelper {
         return variableMapping;
     }
 
-    public static Map<PConstraint, Set<Integer>> cacheVariableBindings(SubPlan plan, Map<PVariable, Integer> variableMappings, Set<Integer> adornment) {
-        Map<PConstraint, Set<Integer>> variableBindings = Maps.newHashMap();
-        Map<PConstraint, Set<PVariable>> variableBindingsDebug = Maps.newHashMap();
+    public static Map<PConstraint, Set<Integer>> cacheVariableBindings(SubPlan plan,
+            Map<PVariable, Integer> variableMappings, Set<Integer> adornment) {
 
-        POperation operation;
-        while (plan.getParentPlans().size() > 0) {
-            // Get the operation
-            operation = plan.getOperation();
-            // Get bound variables from previous plan
-            plan = plan.getParentPlans().get(0);
+        Set<Integer> externallyBoundVariables = getVariableIndicesForParameterIndices(plan, variableMappings,
+                adornment);
+
+        Map<PConstraint, Set<Integer>> variableBindings = Maps.newHashMap();
+
+        List<SubPlan> allPlansInHierarchy = getAllParentPlans(plan);
+        for (SubPlan subPlan : allPlansInHierarchy) {
+            POperation operation = subPlan.getOperation();
 
             if (operation instanceof PApply) {
-                Set<PConstraint> enforcedConstraint = plan.getAllEnforcedConstraints();
-                Set<PVariable> allDeducedVariables = Sets.newHashSet();
-                for (PConstraint pConstraint : enforcedConstraint) {
-                    allDeducedVariables.addAll(pConstraint.getAffectedVariables());
-                }
-                
-                variableBindingsDebug.put(((PApply) operation).getPConstraint(), allDeducedVariables);
-                Set<Integer> boundVariables = Sets.newHashSet();
-                boundVariables.addAll(adornment);
-                for (PVariable pVariable : allDeducedVariables) {
-                    boundVariables.add(variableMappings.get(pVariable));
-                }
-                variableBindings.put(((PApply) operation).getPConstraint(), boundVariables);
+                PConstraint pConstraint = ((PApply) operation).getPConstraint();
+                Set<Integer> parametersBoundByParentPlan = getParametersBoundByParentPlan(variableMappings, subPlan);
+                Set<Integer> boundVariableIndices = Sets.union(externallyBoundVariables, parametersBoundByParentPlan);
+
+                variableBindings.put(pConstraint, boundVariableIndices);
             }
         }
-        operation = plan.getOperation();
-        if (operation instanceof PApply) {
-            Set<PVariable> allDeducedVariables = Sets.newHashSet();
-            allDeducedVariables.addAll(((PApply) operation).getPConstraint().getAffectedVariables());
-            variableBindingsDebug.put(((PApply) operation).getPConstraint(), allDeducedVariables);
-            Set<Integer> boundVariables = Sets.newHashSet();
-            boundVariables.addAll(adornment);
-            for (PVariable pVariable : allDeducedVariables) {
-                boundVariables.add(variableMappings.get(pVariable));
-            }
-            variableBindings.put(((PApply) operation).getPConstraint(), boundVariables);
+        return variableBindings;
+    }
+
+    /**
+     * Returns the list of variable indexes that are bound by the parent plan.
+     */
+    private static Set<Integer> getParametersBoundByParentPlan(Map<PVariable, Integer> variableMappings,
+            SubPlan subPlan) {
+        if (!subPlan.getParentPlans().isEmpty()) {
+            SubPlan parentPlan = subPlan.getParentPlans().get(0);
+            Set<PConstraint> enforcedConstraints = parentPlan.getAllEnforcedConstraints();
+            Set<PVariable> affectedVariables = getAffectedVariables(enforcedConstraints);
+            return getVariableIndices(variableMappings, affectedVariables);
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * @param plan
+     * @return all the ancestor plans including the given plan
+     */
+    private static List<SubPlan> getAllParentPlans(SubPlan plan) {
+        SubPlan currentPlan = plan;
+        List<SubPlan> allPlans = Lists.newArrayList(plan);
+        while (!currentPlan.getParentPlans().isEmpty()) {
+            // In the local search it is assumed that only a single parent exists
+            currentPlan = currentPlan.getParentPlans().get(0);
+            allPlans.add(currentPlan);
         }
 
-        return variableBindings;
+        return allPlans;
+    }
+
+    /**
+     * @param variableMappings
+     *            the mapping between variables and their indices
+     * @param variables
+     *            variables to get the indices for
+     * @return the set of variable indices for the given variables
+     */
+    private static Set<Integer> getVariableIndices(Map<PVariable, Integer> variableMappings,
+            Iterable<PVariable> variables) {
+        Set<Integer> variableIndices = Sets.newHashSet();
+        for (PVariable pVariable : variables) {
+            variableIndices.add(variableMappings.get(pVariable));
+        }
+        return variableIndices;
+    }
+
+    /**
+     * Returns all affected variables of the given PConstraints.
+     */
+    private static Set<PVariable> getAffectedVariables(Set<PConstraint> pConstraints) {
+        Set<PVariable> allDeducedVariables = Sets.newHashSet();
+        for (PConstraint pConstraint : pConstraints) {
+            allDeducedVariables.addAll(pConstraint.getAffectedVariables());
+        }
+        return allDeducedVariables;
+    }
+
+    /**
+     * Transforms the index of a parameter into the index of a variable of the normalized body.
+     * 
+     * @param plan
+     *            the SubPlan containing the original body and its parameters
+     * @param variableMappings
+     *            the mapping of PVariables to their indices
+     * @param parameterIndices
+     *            the index of a parameter
+     * @return the index of the variable corresponding to the parameter at the given index
+     */
+    private static Set<Integer> getVariableIndicesForParameterIndices(SubPlan plan,
+            Map<PVariable, Integer> variableMappings, Set<Integer> parameterIndices) {
+        Set<Integer> variableIndices = Sets.newHashSet();
+        List<ExportedParameter> symbolicParameters = plan.getBody().getSymbolicParameters();
+        for (Integer parameterIndex : parameterIndices) {
+            PVariable parameterVariable = symbolicParameters.get(parameterIndex).getParameterVariable();
+            Integer variableIndex = variableMappings.get(parameterVariable);
+            variableIndices.add(variableIndex);
+        }
+        return variableIndices;
     }
 
     /**
      * Extracts the operations from a SubPlan into a list of POperations in the order of execution
      * 
-     * @param plan the SubPlan from wich the POperations should be extracted
+     * @param plan
+     *            the SubPlan from wich the POperations should be extracted
      * @return list of POperations extracted from the <code>plan</code>
      */
     public static List<POperation> createOperationsList(SubPlan plan) {
