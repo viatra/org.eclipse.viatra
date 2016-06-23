@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.api.impl.BaseQueryGroup;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
-import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IRegistryViewFilter;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
@@ -109,7 +109,7 @@ public class PackageBasedQueryGroup extends BaseQueryGroup {
      * @author Abel Hegedus
      *
      */
-    private final class SpecificationSetUpdater implements IRegistryChangeListener {
+    private final class SpecificationSetUpdater implements IQuerySpecificationRegistryChangeListener {
         @Override
         public void entryAdded(IQuerySpecificationRegistryEntry entry) {
             querySpecifications.add(entry.get());

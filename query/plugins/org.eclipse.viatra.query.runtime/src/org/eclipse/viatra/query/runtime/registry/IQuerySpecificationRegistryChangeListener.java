@@ -18,7 +18,7 @@ package org.eclipse.viatra.query.runtime.registry;
  * @since 1.3
  *
  */
-public interface IRegistryChangeListener {
+public interface IQuerySpecificationRegistryChangeListener {
 
     /**
      * Called when a new entry is added to the registry.

@@ -27,7 +27,7 @@ import java.util.Set;
  * @since 1.3
  *
  */
-public interface IRegistryView extends IRegistryChangeListener {
+public interface IRegistryView extends IQuerySpecificationRegistryChangeListener {
 
     /**
      * @return an immutable copy of all entries found in the view
@@ -58,14 +58,14 @@ public interface IRegistryView extends IRegistryChangeListener {
      * 
      * @param listener that is added
      */
-    void addViewListener(IRegistryChangeListener listener);
+    void addViewListener(IQuerySpecificationRegistryChangeListener listener);
 
     /**
      * Removes a listener that was previously added to the view.
      * 
      * @param listener that is removed
      */
-    void removeViewListener(IRegistryChangeListener listener);
+    void removeViewListener(IQuerySpecificationRegistryChangeListener listener);
 
     /**
      * @return the registry underlying the view

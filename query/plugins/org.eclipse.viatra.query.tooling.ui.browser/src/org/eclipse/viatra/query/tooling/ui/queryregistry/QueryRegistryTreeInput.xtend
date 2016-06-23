@@ -16,10 +16,10 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntr
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.viatra.query.runtime.registry.IRegistryView
-import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener
 import org.eclipse.jface.viewers.TreePath
 import org.eclipse.xtend.lib.annotations.Data
 import org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener
 
 /** 
  * @author Abel Hegedus
@@ -198,7 +198,7 @@ class QueryRegistryTreeInputChange {
     QueryRegistryTreeSource source
 } 
 
-class QueryRegistryTreeViewListener implements IRegistryChangeListener {
+class QueryRegistryTreeViewListener implements IQuerySpecificationRegistryChangeListener {
     
     public QueryRegistryTreeInput input
     public QueryRegistryTreeContentProvider provider

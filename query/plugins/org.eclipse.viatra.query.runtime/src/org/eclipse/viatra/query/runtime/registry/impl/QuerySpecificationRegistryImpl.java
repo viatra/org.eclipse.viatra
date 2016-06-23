@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.IRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IRegistryViewFactory;
 import org.eclipse.viatra.query.runtime.registry.IRegistryViewFilter;
-import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener;
 import org.eclipse.viatra.query.runtime.registry.IRegistrySourceConnector;
 import org.eclipse.viatra.query.runtime.registry.data.QuerySpecificationStore;
 import org.eclipse.viatra.query.runtime.registry.data.RegistryEntryImpl;
@@ -106,7 +106,7 @@ public class QuerySpecificationRegistryImpl implements IQuerySpecificationRegist
         return registryView;
     }
 
-    protected void initializeChangeListener(IRegistryChangeListener listener) {
+    protected void initializeChangeListener(IQuerySpecificationRegistryChangeListener listener) {
         // send existing entries to aspect
         for (RegistrySourceImpl source : querySpecificationStore.getSources().values()) {
             Map<String, RegistryEntryImpl> entryMap = source.getFqnToEntryMap();

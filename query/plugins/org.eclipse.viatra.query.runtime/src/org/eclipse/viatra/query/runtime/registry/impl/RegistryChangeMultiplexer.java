@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
-import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener;
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener;
 
 /**
  * Listener implementation that propagates all changes to a set of listeners.
@@ -24,15 +24,15 @@ import org.eclipse.viatra.query.runtime.registry.IRegistryChangeListener;
  * @author Abel Hegedus
  *
  */
-public class RegistryChangeMultiplexer implements IRegistryChangeListener {
+public class RegistryChangeMultiplexer implements IQuerySpecificationRegistryChangeListener {
 
-    private Set<IRegistryChangeListener> listeners;
+    private Set<IQuerySpecificationRegistryChangeListener> listeners;
     
     /**
      * Creates a new instance of the multiplexer.
      */
     public RegistryChangeMultiplexer() {
-        this.listeners = Collections.newSetFromMap(new WeakHashMap<IRegistryChangeListener, Boolean>());
+        this.listeners = Collections.newSetFromMap(new WeakHashMap<IQuerySpecificationRegistryChangeListener, Boolean>());
     }
     
     /**
@@ -42,20 +42,20 @@ public class RegistryChangeMultiplexer implements IRegistryChangeListener {
      * @param listener
      * @return
      */
-    public boolean addListener(IRegistryChangeListener listener) {
+    public boolean addListener(IQuerySpecificationRegistryChangeListener listener) {
         return listeners.add(listener);
     }
     
     @Override
     public void entryAdded(IQuerySpecificationRegistryEntry entry) {
-        for (IRegistryChangeListener listener : listeners) {
+        for (IQuerySpecificationRegistryChangeListener listener : listeners) {
             listener.entryAdded(entry);
         }
     }
 
     @Override
     public void entryRemoved(IQuerySpecificationRegistryEntry entry) {
-        for (IRegistryChangeListener listener : listeners) {
+        for (IQuerySpecificationRegistryChangeListener listener : listeners) {
             listener.entryRemoved(entry);
         }
     }
