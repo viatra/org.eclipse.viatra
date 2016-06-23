@@ -58,9 +58,11 @@ import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.embedded.IEditedResourceProvider;
 import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider;
+import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
+import org.eclipse.xtext.xbase.ui.editor.XbaseResourceForEditorInputFactory;
 
 import com.google.inject.Binder;
 import com.google.inject.Provides;
@@ -214,5 +216,11 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
      */
     public Class<? extends IEditedResourceProvider> bindIEditedResourceProvider(){
         return SyntheticEditedResourceProvider.class;
+    }
+    
+
+    @Override
+    public Class<? extends IResourceForEditorInputFactory> bindIResourceForEditorInputFactory() {
+        return XbaseResourceForEditorInputFactory.class;
     }
 }
