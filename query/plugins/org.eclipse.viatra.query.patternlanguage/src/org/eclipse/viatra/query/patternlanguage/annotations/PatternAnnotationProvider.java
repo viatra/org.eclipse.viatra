@@ -18,13 +18,16 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParame
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
 public class PatternAnnotationProvider {
 
-    @Inject(optional=true)
+    private static final String UNKNOWN_ANNOTATION_MESSAGE = "Unknown annotation %s";
+    private static final String UNKNOWN_ANNOTATION_PARAMETER = "Unknown parameter %s";
+    @Inject(optional = true)
     private IAnnotationValidatorLoader loader;
     private Map<String, IPatternAnnotationValidator> annotationValidators;
 
@@ -75,10 +78,7 @@ public class PatternAnnotationProvider {
      * @return true, if a validator is defined
      */
     public boolean hasValidator(String annotationName) {
-        if (annotationValidators == null) {
-            initializeValidators();
-        }
-        return annotationValidators.containsKey(annotationName);
+        return getValidator(annotationName) != null;
     }
 
     public Set<String> getAllAnnotationNames() {
@@ -89,10 +89,11 @@ public class PatternAnnotationProvider {
     }
 
     public Iterable<String> getAnnotationParameters(String annotationName) {
-        if (annotationValidators == null) {
-            initializeValidators();
+        IPatternAnnotationValidator validator = getValidator(annotationName);
+        if (validator == null) {
+            return Sets.newHashSet();
         }
-        return annotationValidators.get(annotationName).getAllAvailableParameterNames();
+        return validator.getAllAvailableParameterNames();
     }
 
     public String getDescription(Annotation annotation) {
@@ -100,10 +101,11 @@ public class PatternAnnotationProvider {
     }
 
     public String getDescription(String annotationName) {
-        if (annotationValidators == null) {
-            initializeValidators();
+        IPatternAnnotationValidator validator = getValidator(annotationName);
+        if (validator == null) {
+            return String.format(UNKNOWN_ANNOTATION_MESSAGE, annotationName);
         }
-        return annotationValidators.get(annotationName).getDescription();
+        return validator.getDescription();
     }
 
     public String getDescription(AnnotationParameter parameter) {
@@ -112,11 +114,12 @@ public class PatternAnnotationProvider {
     }
 
     public String getDescription(String annotationName, String parameterName) {
-        if (annotationValidators == null) {
-            initializeValidators();
+        IPatternAnnotationValidator validator = getValidator(annotationName);
+        if (validator == null) {
+            return String.format(UNKNOWN_ANNOTATION_MESSAGE, annotationName);
         }
         if (!annotationValidators.containsKey(annotationName)) {
-            return "";
+            return String.format(UNKNOWN_ANNOTATION_PARAMETER, parameterName);
         }
         return annotationValidators.get(annotationName).getDescription(parameterName);
     }
@@ -126,11 +129,8 @@ public class PatternAnnotationProvider {
     }
 
     public boolean isDeprecated(String annotationName) {
-        if (annotationValidators == null) {
-            initializeValidators();
-        }
-        return annotationName != null && annotationValidators.containsKey(annotationName)
-                && annotationValidators.get(annotationName).isDeprecated();
+        IPatternAnnotationValidator validator = getValidator(annotationName);
+        return validator != null && annotationValidators.get(annotationName).isDeprecated();
     }
 
     public boolean isDeprecated(AnnotationParameter parameter) {
@@ -139,11 +139,8 @@ public class PatternAnnotationProvider {
     }
 
     public boolean isDeprecated(String annotationName, String parameterName) {
-        if (annotationValidators == null) {
-            initializeValidators();
-        }
-        return annotationValidators.containsKey(annotationName)
-                && annotationValidators.get(annotationName).isDeprecated(parameterName);
+        IPatternAnnotationValidator validator = getValidator(annotationName);
+        return validator != null && validator.isDeprecated(parameterName);
     }
 
 }
