@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.tooling.ui.queryregistry;
 
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -74,7 +75,19 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         FilteredTree filteredTree = new FilteredTree(queryRegistryContainer, SWT.BORDER | SWT.MULTI, patternFilter, true);
         queryTreeViewer = filteredTree.getViewer();
         filteredTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        queryTreeViewer.setComparator(new ViewerComparator());
+        queryTreeViewer.setComparator(new ViewerComparator() {
+
+            @Override
+            public int compare(Viewer viewer, Object e1, Object e2) {
+                if (e1 instanceof QueryRegistryTreeSource && e2 instanceof QueryRegistryTreeSource) {
+                    QueryRegistryTreeSource source1 = (QueryRegistryTreeSource) e1;
+                    QueryRegistryTreeSource source2 = (QueryRegistryTreeSource) e2;
+                    return source1.getSourceIdentifier().compareTo(source2.getSourceIdentifier());
+                }
+                return super.compare(viewer, e1, e2);
+            }
+            
+        });
         queryTreeViewer.setLabelProvider(new QueryRegistryTreeLabelProvider());
         queryTreeViewer.setContentProvider(new QueryRegistryTreeContentProvider());
         getSite().setSelectionProvider(queryTreeViewer);

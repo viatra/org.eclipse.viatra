@@ -14,6 +14,8 @@ import org.eclipse.swt.graphics.Image
 import org.eclipse.viatra.query.runtime.registry.ExtensionBasedQuerySpecificationLoader
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater
+import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.core.resources.IProject
 
 class QueryRegistryTreeLabelProvider extends ColumnLabelProvider {
     
@@ -28,7 +30,14 @@ class QueryRegistryTreeLabelProvider extends ColumnLabelProvider {
     }
     
     dispatch def Image getImageInternal(QueryRegistryTreeSource element) {
-        imageRegistry.get(ViatraQueryGUIPlugin.ICON_ROOT)
+        val sourceId = element.sourceIdentifier        
+        if (sourceId.startsWith(XtextIndexBasedRegistryUpdater.DYNAMIC_CONNECTOR_ID_PREFIX)) {
+            val member = ResourcesPlugin.workspace.root.findMember(sourceId.replace(XtextIndexBasedRegistryUpdater.DYNAMIC_CONNECTOR_ID_PREFIX, ""))
+            if (member instanceof IProject) {                
+                return imageRegistry.get(ViatraQueryGUIPlugin.ICON_PROJECT)
+            }
+        } 
+        return imageRegistry.get(ViatraQueryGUIPlugin.ICON_ROOT)
     }
     
     dispatch def Image getImageInternal(QueryRegistryTreePackage element) {
@@ -52,7 +61,7 @@ class QueryRegistryTreeLabelProvider extends ColumnLabelProvider {
         if(sourceId == ExtensionBasedQuerySpecificationLoader.CONNECTOR_ID){
             return "Registered queries"
         } else if(sourceId.startsWith(XtextIndexBasedRegistryUpdater.DYNAMIC_CONNECTOR_ID_PREFIX)){
-            val label = sourceId.replace(XtextIndexBasedRegistryUpdater.DYNAMIC_CONNECTOR_ID_PREFIX,"Project: ")
+            val label = sourceId.replace(XtextIndexBasedRegistryUpdater.DYNAMIC_CONNECTOR_ID_PREFIX,"")
             return label
         }
         return sourceId
