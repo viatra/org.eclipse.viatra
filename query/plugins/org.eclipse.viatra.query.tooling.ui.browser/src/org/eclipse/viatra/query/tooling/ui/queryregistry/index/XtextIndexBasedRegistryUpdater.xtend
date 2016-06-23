@@ -227,6 +227,10 @@ class XtextIndexBasedRegistryUpdater {
             resourceDesc.URI.segment(1)
         }
         
+        override getSpecificationSourceURI() {
+            description.EObjectURI
+        }
+        
     }
     
     private static final class PatternDescriptionBasedSourceConnector extends AbstractRegistrySourceConnector {

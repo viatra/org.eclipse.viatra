@@ -32,6 +32,25 @@
             class="org.eclipse.viatra.query.tooling.ui.queryregistry.handlers.ResetViewHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.registry.reset">
       </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryregistry.handlers.ShowLocationHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.showlocation">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <and>
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
+                     </instanceof>
+                  </iterate>
+               </and>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -43,6 +62,30 @@
                icon="icons/reset.gif"
                label="Reset view"
                style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any">
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.showlocation"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <and>
+                     <count
+                           value="1">
+                     </count>
+                     <iterate>
+                        <instanceof
+                              value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
+                        </instanceof>
+                     </iterate>
+                  </and>
+               </with>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>

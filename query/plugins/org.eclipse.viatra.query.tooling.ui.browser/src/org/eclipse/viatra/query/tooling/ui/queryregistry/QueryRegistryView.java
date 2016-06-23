@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryregistry;
 
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -18,6 +22,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.ViewPart;
@@ -93,6 +99,19 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         getSite().setSelectionProvider(queryTreeViewer);
         
         queryTreeViewer.setInput(queryRegistryTreeInput);
+        
+        // Create pop-up menu over the tree viewer
+        MenuManager menuManager = new MenuManager();
+        menuManager.setRemoveAllWhenShown(true);
+        menuManager.addMenuListener(new IMenuListener() {
+            @Override
+            public void menuAboutToShow(IMenuManager mgr) {
+                mgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+            }
+        });
+        Control control = queryTreeViewer.getControl();
+        control.setMenu(menuManager.createContextMenu(control));
+        getSite().registerContextMenu(ID,menuManager, queryTreeViewer);
     }
 
     @Override

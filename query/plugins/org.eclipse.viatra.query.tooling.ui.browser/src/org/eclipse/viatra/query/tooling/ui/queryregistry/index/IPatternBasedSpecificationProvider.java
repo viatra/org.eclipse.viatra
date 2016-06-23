@@ -13,6 +13,8 @@ package org.eclipse.viatra.query.tooling.ui.queryregistry.index;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.extensibility.IQuerySpecificationProvider;
+import org.eclipse.emf.common.util.URI;
+
 
 /**
  * @author Abel Hegedus
@@ -22,4 +24,10 @@ public interface IPatternBasedSpecificationProvider extends IQuerySpecificationP
 
     IQuerySpecification<?> getSpecification(SpecificationBuilder builder);
     
+    /**
+     * Returns the EMF URI the specification is initialized from.
+     * 
+     * @return the URI of the pattern the specification is built from, or null if not applicable
+     */
+    URI getSpecificationSourceURI();
 }
