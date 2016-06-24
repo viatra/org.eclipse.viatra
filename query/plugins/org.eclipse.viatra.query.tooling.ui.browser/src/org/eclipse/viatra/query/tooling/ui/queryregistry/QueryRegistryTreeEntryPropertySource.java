@@ -20,11 +20,13 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class QueryRegistryTreeEntryPropertySource implements IPropertySource {
 
+    private static final String PROPERTY_FQN = "fqn";
+    private static final String PROPERTY_LOADED = "loaded";
+    private static final String PROPERTY_PROJECT = "project";
+    private static final String PROPERTY_SOURCE = "source";
+    
     private final QueryRegistryTreeEntry entry;
     
-    /**
-     * @param adaptableObject
-     */
     public QueryRegistryTreeEntryPropertySource(QueryRegistryTreeEntry adaptableObject) {
         entry = adaptableObject;
     }
@@ -37,21 +39,25 @@ public class QueryRegistryTreeEntryPropertySource implements IPropertySource {
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
         return new IPropertyDescriptor[] { 
-                new PropertyDescriptor("fqn", "Fully qualified name"),
-                new PropertyDescriptor("source", "Source identifier"),
-                new PropertyDescriptor("loaded", "Query specification loaded")};
+                new PropertyDescriptor(PROPERTY_FQN, "Fully qualified name"),
+                new PropertyDescriptor(PROPERTY_SOURCE, "Source identifier"),
+                new PropertyDescriptor(PROPERTY_PROJECT, "Contributing project"),
+                new PropertyDescriptor(PROPERTY_LOADED, "Query specification loaded")};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        if (id.equals("fqn")) {
+        if (id.equals(PROPERTY_FQN)) {
             return entry.getEntry().getFullyQualifiedName();
           }
-          if (id.equals("source")) {
+          if (id.equals(PROPERTY_SOURCE)) {
             return entry.getEntry().getSourceIdentifier();
           }
-          if (id.equals("loaded")) {
+          if (id.equals(PROPERTY_LOADED)) {
               return entry.isLoaded();
+          }
+          if (id.equals(PROPERTY_PROJECT)) {
+              return entry.getEntry().getSourceProjectName();
           }
         return null;
     }
