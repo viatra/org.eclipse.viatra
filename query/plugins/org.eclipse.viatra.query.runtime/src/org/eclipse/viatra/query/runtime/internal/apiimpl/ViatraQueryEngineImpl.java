@@ -541,9 +541,9 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
     		Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
     		
     		final Set<IQuerySpecification<?>> specifications = new HashSet<IQuerySpecification<?>>(queryGroup.getSpecifications());
-            final Collection<PQuery> patterns = Collections2.transform(specifications, new Function<IQuerySpecification, PQuery>() {
+            final Collection<PQuery> patterns = Collections2.transform(specifications, new Function<IQuerySpecification<?>, PQuery>() {
             	@Override
-            	public PQuery apply(IQuerySpecification input) {
+            	public PQuery apply(IQuerySpecification<?> input) {
             		return input.getInternalQueryRepresentation();
             	}
             });
