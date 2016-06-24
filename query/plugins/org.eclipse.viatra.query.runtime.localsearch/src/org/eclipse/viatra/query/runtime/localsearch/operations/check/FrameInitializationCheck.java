@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,13 +27,13 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
  */
 public class FrameInitializationCheck extends CheckOperation {
 
-    private final int[] paremeterKeys;
+    private final int[] parameterKeys;
     
     /**
      * 
      */
-    public FrameInitializationCheck(int[] paremeterKeys) {
-       this.paremeterKeys = paremeterKeys;
+    public FrameInitializationCheck(int[] parameterKeys) {
+       this.parameterKeys = Arrays.copyOf(parameterKeys, parameterKeys.length);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class FrameInitializationCheck extends CheckOperation {
 
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        return frame.setKeys(this.paremeterKeys);
+        return frame.setKeys(this.parameterKeys);
     }
 
 }
