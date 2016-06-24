@@ -261,7 +261,7 @@ public class ExtensionBasedQuerySpecificationLoader {
             }
             return querySpecificationMap;
         }
-        
+
     }
     
     /**
@@ -305,5 +305,9 @@ public class ExtensionBasedQuerySpecificationLoader {
             return queryFQN;
         }
         
+        @Override
+        public String getSourceProjectName() {
+            return queryGroupProvider.element.getContributor().getName();
+        }
     }
 }

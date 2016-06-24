@@ -36,4 +36,9 @@ public class SingletonQuerySpecificationProvider extends SingletonInstanceProvid
         return get().getFullyQualifiedName();
     }
 
+    @Override
+    public String getSourceProjectName() {
+        return null;
+    }
+
 }

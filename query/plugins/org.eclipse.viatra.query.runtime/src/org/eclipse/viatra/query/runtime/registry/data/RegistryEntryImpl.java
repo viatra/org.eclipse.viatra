@@ -70,4 +70,14 @@ public class RegistryEntryImpl implements IQuerySpecificationRegistryEntry {
     public IQuerySpecificationProvider getProvider() {
         return provider;
     }
+
+    @Override
+    public boolean isFromProject() {
+        return provider.getSourceProjectName() != null;
+    }
+
+    @Override
+    public String getSourceProjectName() {
+        return provider.getSourceProjectName();
+    }
 }

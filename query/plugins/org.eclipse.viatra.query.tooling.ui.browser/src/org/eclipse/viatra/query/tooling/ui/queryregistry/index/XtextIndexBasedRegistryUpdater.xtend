@@ -69,19 +69,19 @@ class XtextIndexBasedRegistryUpdater {
     def connectIndexToRegistry(IQuerySpecificationRegistry registry) {
         if(connectedRegistry == null){
             connectedRegistry = registry
-            descriptions.allResourceDescriptions.forEach[
-                if (!it.URI.isPlatformResource) {
+            descriptions.allResourceDescriptions.forEach[resourceDesc |
+                if (!resourceDesc.URI.isPlatformResource) {
                     // only care about platform resources
                     return
                 }
-                val patternObjects = getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN)
+                val patternObjects = resourceDesc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN)
                 if (patternObjects.empty) {
                     // only care if there are patterns
                     return
                 }
                 // create connector based on URI
-                val uri = it.URI.toString
-                val projectName = it.URI.segment(1)
+                val uri = resourceDesc.URI.toString
+                val projectName = resourceDesc.URI.segment(1)
                 val projectExists = ResourcesPlugin.workspace.root.getProject(projectName).exists
                 if(!projectExists){
                     // only care about workspace projects
@@ -96,7 +96,7 @@ class XtextIndexBasedRegistryUpdater {
                 val conn = connector
                 // create specification providers based on patterns
                 patternObjects.forEach[
-                    val provider = new PatternDescriptionBasedSpecificationProvider(it)
+                    val provider = new PatternDescriptionBasedSpecificationProvider(resourceDesc, it)
                     conn.addProvider(uri, provider)
                 ]
             ]
@@ -174,7 +174,7 @@ class XtextIndexBasedRegistryUpdater {
                     updater.connectorMap.put(connectorId, connector)
                     if(delta.haveEObjectDescriptionsChanged) {
                         desc.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN).forEach[
-                            val provider = new PatternDescriptionBasedSpecificationProvider(it)
+                            val provider = new PatternDescriptionBasedSpecificationProvider(desc, it)
                             connector.addProvider(desc.URI.toString, provider)
                         ]
                     }
@@ -188,6 +188,7 @@ class XtextIndexBasedRegistryUpdater {
     @FinalFieldsConstructor
     private static final class PatternDescriptionBasedSpecificationProvider implements IPatternBasedSpecificationProvider {
         
+        final IResourceDescription resourceDesc
         final IEObjectDescription description
         IQuerySpecification<?> specification
         
@@ -221,6 +222,11 @@ class XtextIndexBasedRegistryUpdater {
             }
             return pattern as Pattern
         }
+        
+        override getSourceProjectName() {
+            resourceDesc.URI.segment(1)
+        }
+        
     }
     
     private static final class PatternDescriptionBasedSourceConnector extends AbstractRegistrySourceConnector {
@@ -277,7 +283,7 @@ class XtextIndexBasedRegistryUpdater {
                     connector.clearProviders(uri.toString)
                     val patternObjects = descr.getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN)
                     patternObjects.forEach[
-                        val provider = new PatternDescriptionBasedSpecificationProvider(it)
+                        val provider = new PatternDescriptionBasedSpecificationProvider(descr, it)
                         connector.addProvider(uri.toString, provider)
                     ]
                 ]

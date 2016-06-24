@@ -26,6 +26,19 @@ public interface IQuerySpecificationRegistryEntry extends IQuerySpecificationPro
      * @return the identifier of the registry source that contributed the specification
      */
     String getSourceIdentifier();
+    
+    /**
+     * Returns whether the query specification was provided by an identifiable project.
+     * @return
+     */
+    boolean isFromProject();
+    
+    /**
+     * Collects the name of the project that is registered this specification to the registry.
+     *  If {@link #getSourceIdentifier()} is false, it returns null.
+     * @return
+     */
+    String getSourceProjectName();
 
     /**
      * @return true if the entry should be included in default views (created without any filters)
