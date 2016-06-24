@@ -9,10 +9,14 @@
  */
 package org.eclipse.viatra.query.tooling.ui.queryresult
 
+import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.jface.viewers.ColumnLabelProvider
 import org.eclipse.swt.graphics.Image
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper
 
 /**
  * @author Abel Hegedus
@@ -20,6 +24,12 @@ import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     
     val imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry();
+    AdapterFactoryLabelProvider adapterFactoryLabelProvider
+    
+    new() {
+        val adapterFactory = new ReflectiveItemProviderAdapterFactory();
+        adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory);
+    }
     
     override Image getImage(Object element) {
         return element.imageInternal;
@@ -42,7 +52,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     }
     
     dispatch def Image getImageInternal(Object element) {
-        return super.getImage(element)
+        return adapterFactoryLabelProvider.getImage(element)
     }
     
     override String getText(Object element) {
@@ -69,11 +79,15 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     }
     
     dispatch def String getTextInternal(IPatternMatch element) {
+        val message = DisplayUtil.getMessage(element)
+        if(message != null) {
+            return ViatraQueryRuntimeHelper.getMessage(element, message)
+        }
         return element.prettyPrint
     }
     
     dispatch def String getTextInternal(Object element) {
-        super.getText(element)
+        adapterFactoryLabelProvider.getText(element)
     }
     
 }

@@ -287,24 +287,21 @@ public class DisplayUtil {
         }
 
         // No formatting annotation found
-        if (pattern != null) {
-            StringBuilder message = new StringBuilder();
-            if (pattern.getParameterNames().size() == 0) {
-                message.append("(Match)");
-            } else {
-                int i = 0;
-                for (String v : pattern.getParameterNames()) {
-                    if (i > 0) {
-                        message.append(", ");
-                    }
-                    message.append(String.format("%s=$%s$", v, v));
-                    i++;
+        StringBuilder message = new StringBuilder();
+        if (match.parameterNames().size() == 0) {
+            message.append("(Match)");
+        } else {
+            int i = 0;
+            for (String v : match.parameterNames()) {
+                if (i > 0) {
+                    message.append(", ");
                 }
+                message.append(String.format("%s=$%s$", v, v));
+                i++;
             }
-            return message.toString();
         }
+        return message.toString();
 
-        return null;
     }
 
     public PatternModel extractPatternModelFromResource(Resource resource) {

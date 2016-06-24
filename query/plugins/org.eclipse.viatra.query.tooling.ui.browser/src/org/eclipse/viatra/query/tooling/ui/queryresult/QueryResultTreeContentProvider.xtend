@@ -9,10 +9,12 @@
  */
 package org.eclipse.viatra.query.tooling.ui.queryresult
 
+import com.google.common.base.Preconditions
+import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider
 import org.eclipse.jface.viewers.ITreeContentProvider
 import org.eclipse.jface.viewers.TreeViewer
 import org.eclipse.jface.viewers.Viewer
-import com.google.common.base.Preconditions
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 
 /**
@@ -22,6 +24,12 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     
     protected TreeViewer viewer
     protected QueryResultTreeInput input
+    protected AdapterFactoryContentProvider adapterFactoryContentProvider
+    
+    new(){
+        val adapterFactory = new ReflectiveItemProviderAdapterFactory();
+        adapterFactoryContentProvider = new AdapterFactoryContentProvider(adapterFactory);
+    }
     
     override void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         Preconditions.checkArgument(viewer instanceof TreeViewer)
@@ -66,9 +74,16 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     }
     
     def dispatch Object[] getChildrenInternal(IPatternMatch inputElement) {
-        null
+        if(!inputElement.parameterNames.empty){
+            return inputElement.toArray
+        } else {
+            return null
+        }
     }
 
+    def dispatch Object[] getChildrenInternal(Object inputElement) {
+        return null
+    }
     override Object getParent(Object element) {
         return element.parentInternal
     }
@@ -83,6 +98,10 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
 
     def dispatch Object getParentInternal(IPatternMatch inputElement) {
         return input.matchers.get(inputElement.specification.fullyQualifiedName)
+    }
+    
+    def dispatch Object getParentInternal(Object inputElement) {
+        return null
     }
     
     override boolean hasChildren(Object element) {
@@ -101,7 +120,15 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     }
     
     def dispatch boolean hasChildrenInternal(IPatternMatch inputElement) {
-        false
+        if(!inputElement.parameterNames.empty){
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    def dispatch boolean hasChildrenInternal(Object inputElement) {
+        return false
     }
     
     override matcherAdded(QueryResultTreeMatcher matcher) {
@@ -132,7 +159,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     override matchUpdated(QueryResultTreeMatcher matcher, IPatternMatch match) {
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
-                viewer.update(match, null)
+                viewer.refresh(match)
                 viewer.update(matcher, null)
             }
         ]

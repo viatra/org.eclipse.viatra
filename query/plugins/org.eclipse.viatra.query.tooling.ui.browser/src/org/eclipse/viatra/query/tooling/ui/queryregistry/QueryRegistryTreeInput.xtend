@@ -11,15 +11,19 @@ package org.eclipse.viatra.query.tooling.ui.queryregistry
 
 import com.google.common.collect.Maps
 import java.util.Map
-import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry
-import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry
-import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
-import org.eclipse.viatra.query.runtime.registry.IRegistryView
+import org.eclipse.core.runtime.IStatus
+import org.eclipse.core.runtime.Status
 import org.eclipse.jface.viewers.TreePath
-import org.eclipse.xtend.lib.annotations.Data
-import org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry
+import org.eclipse.viatra.query.runtime.registry.IRegistryView
+import org.eclipse.viatra.query.runtime.registry.view.AbstractRegistryView
+import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
+import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin
+import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.xtend.lib.annotations.Data
+import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 
 /** 
  * @author Abel Hegedus
@@ -157,12 +161,18 @@ class QueryRegistryTreeEntry {
     
     def boolean load() {
         if(!loaded) {
-            // load specification class
-            val specification = entry.get
-            if(specification != null){
-                isLoaded = true
+            try{
+                // load specification class
+                val specification = entry.get
+                if(specification != null){
+                    isLoaded = true
+                }
+                return true
+            } catch (Exception ex) {
+                val logMessage = String.format("Query Registry has encountered an error during loading of query %s: %s", entry.fullyQualifiedName, ex.message)
+                ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(
+                        IStatus.ERROR, ViatraQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), logMessage, ex));
             }
-            return true
         }
         return false
     }

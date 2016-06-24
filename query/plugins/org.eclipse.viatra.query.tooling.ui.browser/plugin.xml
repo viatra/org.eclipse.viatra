@@ -225,6 +225,16 @@
       </propertyContributor>
    </extension>
    <extension
+         point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
+      <propertyContributor
+            contributorId="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
+            tabDescriptorProvider="org.eclipse.viatra.query.tooling.ui.queryresult.properties.QueryResultTreeTabDescriptorProvider">
+         <propertyCategory
+               category="org.eclipse.viatra.query.tooling.ui.result.propertiesCategory">
+         </propertyCategory>
+      </propertyContributor>
+   </extension>
+   <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
       <propertyTabs
             contributorId="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
@@ -247,7 +257,7 @@
       <propertySections
             contributorId="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
          <propertySection
-               class="org.eclipse.viatra.query.tooling.ui.queryregistry.QuerySpecificationPropertySection"
+               class="org.eclipse.viatra.query.tooling.ui.queryregistry.properties.QuerySpecificationPropertySection"
                enablesFor="1"
                id="org.eclipse.viatra.query.tooling.ui.properties.specification.section"
                tab="org.eclipse.viatra.query.tooling.ui.properties.specification">
@@ -270,7 +280,35 @@
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry"
-            class="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntryAdapterFactory">
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryBrowserAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry"
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryBrowserAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeMatcher"
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryBrowserAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.viatra.query.runtime.api.IPatternMatch"
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryBrowserAdapterFactory">
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.emf.ecore.EObject"
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryBrowserAdapterFactory">
          <adapter
                type="org.eclipse.ui.views.properties.IPropertySource">
          </adapter>

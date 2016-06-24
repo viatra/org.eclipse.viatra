@@ -10,35 +10,27 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryresult;
 
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.properties.IPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
+import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.ColumnLayout;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Tree;
 
 /**
  * @author Abel Hegedus
@@ -51,8 +43,15 @@ public class QueryResultView extends ViewPart {
     private TreeViewer queryResultTreeViewer;
     private QueryResultTreeInput input;
     private Label lblScopeDescription;
+    private ITabbedPropertySheetPageContributor propertyPageContributor;
 
     public QueryResultView() {
+        this.propertyPageContributor = new ITabbedPropertySheetPageContributor(){
+            @Override
+            public String getContributorId() {
+                return getSite().getId();
+            }
+        };
     }
 
     /**
@@ -74,9 +73,22 @@ public class QueryResultView extends ViewPart {
         queryResultTreeViewer = new TreeViewer(container, SWT.BORDER);
         Tree tree = queryResultTreeViewer.getTree();
         tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        queryResultTreeViewer.setComparator(new ViewerComparator());
+        queryResultTreeViewer.setComparator(new ViewerComparator() {
+            @Override
+            public int compare(Viewer viewer, Object e1, Object e2) {
+                if(e1 instanceof QueryResultTreeMatcher && e2 instanceof QueryResultTreeMatcher){
+                    return super.compare(viewer, e1, e2);
+                } else if(e1 instanceof IPatternMatch && e2 instanceof IPatternMatch){
+                    return super.compare(viewer, e1, e2);
+                } else {
+                    // pattern parameters should be in their original order
+                    return 0;
+                }
+            }
+        });
         queryResultTreeViewer.setLabelProvider(new QueryResultTreeLabelProvider());
         queryResultTreeViewer.setContentProvider(new QueryResultTreeContentProvider());
+        getSite().setSelectionProvider(queryResultTreeViewer);
         
     }
 
@@ -84,6 +96,15 @@ public class QueryResultView extends ViewPart {
     public void setFocus() {
         // Set the focus
         queryResultTreeViewer.getTree().setFocus();
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public Object getAdapter(Class adapter) {
+        if (adapter == IPropertySheetPage.class) {
+            return adapter.cast(new TabbedPropertySheetPage(this.propertyPageContributor));
+        }
+        return super.getAdapter(adapter);
     }
 
     public void loadModel(EMFModelConnector modelConnector, IModelConnectorTypeEnum scope) {

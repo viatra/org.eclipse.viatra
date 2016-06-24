@@ -41,6 +41,9 @@ class LoadQueriesHandler extends AbstractHandler {
                         QueryRegistryTreeSource : selectedQueries.addAll(it.packages.values.map[it.entries.values].flatten)
                     }
                 ]
+                selectedQueries.forEach [
+                    load
+                ]
                 queryResultView.loadQueriesIntoActiveEngine(selectedQueries.map[entry])
             }
         }
