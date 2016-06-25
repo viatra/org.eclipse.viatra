@@ -37,7 +37,7 @@ public class ShowLocationHandler extends AbstractHandler {
     @Inject
     IURIEditorOpener uriOpener;
     
-    private class LocationSearchRequestor extends SearchRequestor {
+    private static class LocationSearchRequestor extends SearchRequestor {
 
         private boolean opened = false;
 
