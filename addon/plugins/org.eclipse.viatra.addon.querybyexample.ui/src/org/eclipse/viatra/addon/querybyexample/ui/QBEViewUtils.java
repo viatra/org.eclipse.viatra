@@ -103,6 +103,10 @@ public class QBEViewUtils {
         return property.matches("[\\^]?[a-zA-Z0-9_]+");
     }
 
+    public static boolean validateQueryPackageName(String property) {
+        return property.matches("[\\^]?[a-zA-Z0-9_\\.]+");
+    }
+
     public static boolean checkVariableNameIsReserved(String variableName) {
         return reservedWords.contains(variableName);
     }

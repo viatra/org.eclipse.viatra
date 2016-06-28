@@ -65,7 +65,7 @@ public class QBEViewElementPackageProperties implements IPropertySource {
     @Override
     public void setPropertyValue(Object id, Object value) {
         String strValue = (String) value;
-        if (!QBEViewUtils.validatePropertyName(strValue)) {
+        if (!QBEViewUtils.validateQueryPackageName(strValue)) {
             MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), ERROR_DIALOG_TITLE,
                     ERROR_DIALOG_MAIN_TEXT);
             return;
