@@ -22,7 +22,7 @@ public class QBEViewElementAttributeProperties implements IPropertySource {
     private QBEViewElementAttribute element;
 
     private static final String PROPERTY_CHECKBOX = "org.eclipse.viatra.addon.querybyexample.view.model.properties.QBEViewElementAttributeProperties:checkbox";
-    private static final String IS_VISIBLE_PROPERTIES_LBL = "Visible";
+    private static final String IS_VISIBLE_PROPERTIES_LBL = "Included";
 
     public QBEViewElementAttributeProperties(QBEViewElementAttribute element) {
         this.element = element;

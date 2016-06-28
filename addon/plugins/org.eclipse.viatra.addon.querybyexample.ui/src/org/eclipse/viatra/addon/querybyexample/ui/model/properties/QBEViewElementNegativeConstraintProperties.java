@@ -27,7 +27,7 @@ public class QBEViewElementNegativeConstraintProperties implements IPropertySour
     private static final String PROPERTY_IS_VISIBLE_ID = "org.eclipse.viatra.addon.querybyexample.view.model.properties.QBEViewElementNegativeConstraintProperties:isVisible";
     private static final String PROPERTY_IS_CHECKED_ID = "org.eclipse.viatra.addon.querybyexample.view.model.properties.QBEViewElementNegativeConstraintProperties:checked";
     private static final String CONSTRAINT_NAME_PROPERTIES_LBL = "Constraint Name";
-    private static final String IS_VISIBLE_PROPERTIES_LBL = "Visible";
+    private static final String IS_VISIBLE_PROPERTIES_LBL = "Included";
     private static final String IS_CHECKED_PROPERTIES_LBL = "Checked in Query Explorer";
 
     public QBEViewElementNegativeConstraintProperties(QBEViewElementConstraint constraintElement) {

@@ -42,7 +42,7 @@ public class QBEViewElementVariableProperties implements IPropertySource {
     private static final String PROPERTY_CHECKBOX_INPUTVAR = "org.eclipse.viatra.addon.querybyexample.view.model.properties.QBEViewElementVariableProperties:checkboxinputvar";
     private static final String PROPERTY_COMBO = "org.eclipse.viatra.addon.querybyexample.view.model.properties.QBEViewElementVariableProperties:combo";
     private static final String VARIABLE_NAME_PROPERTIES_LBL = "Variable Name";
-    private static final String IS_VISIBLE_PROPERTIES_LBL = "Visible as local variable constraint";
+    private static final String IS_VISIBLE_PROPERTIES_LBL = "Included as local variable constraint";
     private static final String TYPE_PROPERTIES_LBL = "Type";
     private static final String INPUTVAR_PROPERTIES_LBL = "Local variable as input parameter";
     private static final String ERROR_DIALOG_TITLE = "Validation error";

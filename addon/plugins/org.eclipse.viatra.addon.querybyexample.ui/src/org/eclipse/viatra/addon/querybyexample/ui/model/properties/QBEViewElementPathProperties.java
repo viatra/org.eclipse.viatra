@@ -20,7 +20,7 @@ import org.eclipse.viatra.addon.querybyexample.ui.ui.CheckBoxPropertyDescriptor;
 public class QBEViewElementPathProperties implements IPropertySource {
 
     private static final String PROPERTY_CHECKBOX = "org.eclipse.viatra.addon.querybyexample.view.model.properties.QBEViewElementPathProperties:checkbox";
-    private static final String IS_VISIBLE_PROPERTIES_LBL = "Visible";
+    private static final String IS_VISIBLE_PROPERTIES_LBL = "Included";
 
     private QBEViewElementPath element;
 

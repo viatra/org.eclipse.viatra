@@ -19,22 +19,22 @@
 			id="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory">
 		</category>
 		<command
-			name="Start Query By Example"
+			name="Start - discover correspondence between selected elements"
 			categoryId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory"
 			id="org.eclipse.viatra.addon.querybyexample.ui.commands.qbemainactioncmd">
 		</command>
 		<command
-			name="Refresh Code"
+			name="Save - generate query code to new destination"
 			categoryId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory"
 			id="org.eclipse.viatra.addon.querybyexample.ui.commands.refreshcmd">
 		</command>
 		<command
-			name="Refresh Code to linked file"
+			name="Update - propagate changes to previously linked query file"
 			categoryId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory"
 			id="org.eclipse.viatra.addon.querybyexample.ui.commands.refreshlnkfilecmd">
 		</command>
 		<command
-			name="Auto Adjust"
+			name="Adjust exploration depth"
 			categoryId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory"
 			id="org.eclipse.viatra.addon.querybyexample.ui.commands.qbeautoadjustcmd">
 		</command>
