@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
@@ -49,13 +50,15 @@ class PConstraintInfoInferrer {
 
     private final boolean allowInverseNavigation;
     private final boolean useIndex;
+    private final Function<IConstraintEvaluationContext, Float> costFunction;
     
     /**
      * 
      */
-    public PConstraintInfoInferrer(boolean allowInverseNavigation, boolean useIndex) {
+    public PConstraintInfoInferrer(boolean allowInverseNavigation, boolean useIndex, Function<IConstraintEvaluationContext, Float> costFunction) {
         this.allowInverseNavigation = allowInverseNavigation;
         this.useIndex = useIndex;
+        this.costFunction = costFunction;
     }
     
     
@@ -189,7 +192,7 @@ class PConstraintInfoInferrer {
         Set<PConstraintInfo> sameWithDifferentBindings = Sets.newHashSet();
         for (Set<PVariable> boundVariables : bindings) {
             PConstraintInfo info = new PConstraintInfo(pConstraint, boundVariables, Sets.difference(
-                    affectedVariables, boundVariables), sameWithDifferentBindings, runtimeContext);
+                    affectedVariables, boundVariables), sameWithDifferentBindings, runtimeContext, costFunction);
             constraintInfos.add(info);
             sameWithDifferentBindings.add(info);
         }

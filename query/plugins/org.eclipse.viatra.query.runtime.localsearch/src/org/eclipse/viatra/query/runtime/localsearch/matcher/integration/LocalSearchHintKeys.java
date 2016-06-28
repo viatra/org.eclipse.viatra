@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
+
+import com.google.common.base.Function;
+
 /**
  * @author Marton Bur
  *
@@ -20,4 +25,10 @@ public class LocalSearchHintKeys {
 
     // This key can be used to influence the core planner algorithm
     public static final String PLANNER_TABLE_ROW_COUNT = "org.eclipse.viatra.query.runtime.localsearch - row count";
+    
+    /**
+     * Cost function to be used by the planner. Must implement {@link ICostFunction}
+     * @since 1.4
+     */
+    public static final String PLANNER_COST_FUNCTION = "org.eclipse.viatra.query.runtime.localsearch - cost function";
 }

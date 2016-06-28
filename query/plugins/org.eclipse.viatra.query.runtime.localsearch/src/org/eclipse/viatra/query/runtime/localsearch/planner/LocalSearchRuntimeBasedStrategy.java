@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintKeys;
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.OperationCostComparator;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
@@ -32,9 +33,9 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -57,12 +58,18 @@ public class LocalSearchRuntimeBasedStrategy {
 
 	private final PConstraintInfoInferrer pConstraintInfoInferrer;
 	
-    public LocalSearchRuntimeBasedStrategy() {
-        this(true,true);
+    /**
+     * @since 1.4
+     */
+    public LocalSearchRuntimeBasedStrategy(Function<IConstraintEvaluationContext, Float> costFunction) {
+        this(true,true, costFunction);
     }
 
-    public LocalSearchRuntimeBasedStrategy(final boolean allowInverseNavigation, boolean useIndex) {
-       this.pConstraintInfoInferrer = new PConstraintInfoInferrer(allowInverseNavigation, useIndex);
+    /**
+     * @since 1.4
+     */
+    public LocalSearchRuntimeBasedStrategy(final boolean allowInverseNavigation, boolean useIndex, Function<IConstraintEvaluationContext, Float> costFunction) {
+       this.pConstraintInfoInferrer = new PConstraintInfoInferrer(allowInverseNavigation, useIndex, costFunction);
     }
 	
     /**

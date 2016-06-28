@@ -36,6 +36,9 @@ import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner;
 import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy;
 import org.eclipse.viatra.query.runtime.localsearch.planner.POperationCompiler;
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBasedConstraintCostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
@@ -54,6 +57,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PQueryFlatten
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
@@ -85,6 +89,17 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
             this.query = query;
         }
 
+        
+        private ICostFunction createCostFunction(IQueryRuntimeContext runtimeContext, PQuery query){
+            Object object = hintProvider.getHints(query).get(LocalSearchHintKeys.PLANNER_COST_FUNCTION);
+            if (object != null){
+                Preconditions.checkArgument(object instanceof ICostFunction);
+                ICostFunction costFunction = (ICostFunction)object;
+                return costFunction;
+            }
+            return new IndexerBasedConstraintCostFunction();
+        }
+        
         public void createPlan(MatcherReference key, Logger logger, IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, final ISearchContext searchContext)
                 throws QueryProcessingException {
         	IFlattenCallPredicate flattenCallPredicate = new DefaultFlattenCallPredicate();
@@ -97,12 +112,19 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
             Boolean useBase = (Boolean) hints.get(LocalSearchHintKeys.USE_BASE_INDEX);
             useBase = useBase == null ? true : useBase; 
             
-            LocalSearchRuntimeBasedStrategy strategy = new LocalSearchRuntimeBasedStrategy(allowInverse,useBase);
+            final ICostFunction costFunction = createCostFunction(runtimeContext, key.getQuery());
+            
+            LocalSearchRuntimeBasedStrategy strategy = new LocalSearchRuntimeBasedStrategy(allowInverse,useBase,
+                    new Function<IConstraintEvaluationContext, Float>() {
+                        @Override
+                        public Float apply(IConstraintEvaluationContext input) {
+                            return costFunction.apply(input);
+                        }
+                    });
             compiler = new POperationCompiler(runtimeContext, backend, useBase);
 
             LocalSearchPlanner planner = new LocalSearchPlanner();
             planner.initializePlanner(flattener, logger, metaContext, runtimeContext, normalizer, strategy, compiler, hints);
-            
             
             compiledPlans = planner.plan(key.getQuery(), key.getAdornment());
 
