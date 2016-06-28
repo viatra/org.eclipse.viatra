@@ -99,9 +99,8 @@ public abstract class ViatraQueryEngine {
 
 	/**
 	 * Access a pattern matcher for the graph pattern with the given fully qualified name. 
-	 * Will succeed only if a matcher for this pattern has already been constructed in this engine, 
-	 *  or else if the matcher for the pattern has been generated and registered. 
-	 * Multiple calls will return the same matcher. 
+	 * Will succeed only if a query specification for this fully qualified name has been generated and registered. 
+	 * Multiple calls will return the same matcher unless the registered specification changes. 
 	 * 
 	 * @param patternFQN the fully qualified name of a VIATRA query specification
 	 * @return a pattern matcher corresponding to the specification
