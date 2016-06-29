@@ -162,6 +162,9 @@
       <menuContribution
             allPopups="false"
             locationURI="toolbar:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
+         <control
+               class="org.eclipse.viatra.query.tooling.ui.queryresult.BackendSelectionControl">
+         </control>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.loadmodel"
                icon="icons/load.gif"

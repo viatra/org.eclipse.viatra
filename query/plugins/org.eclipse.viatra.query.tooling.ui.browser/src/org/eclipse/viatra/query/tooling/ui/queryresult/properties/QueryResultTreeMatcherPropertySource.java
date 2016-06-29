@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryresult.properties;
 
-import java.util.Map;
-
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -24,6 +22,8 @@ import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeMatcher;
 public class QueryResultTreeMatcherPropertySource implements IPropertySource {
 
     private static final String FILTERS_ID = "filters";
+    private static final String BACKEND_ID = "backend";
+    private static final String HINTS_ID = "hints";
     private QueryResultTreeMatcher matcher;
 
     public QueryResultTreeMatcherPropertySource(QueryResultTreeMatcher matcher) {
@@ -38,14 +38,32 @@ public class QueryResultTreeMatcherPropertySource implements IPropertySource {
     @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
         String category = "Info";
+        PropertyDescriptor hintsProperty = new PropertyDescriptor(HINTS_ID, "Hints");
+        hintsProperty.setCategory(category);
+        PropertyDescriptor backendProperty = new PropertyDescriptor(BACKEND_ID, "Backend");
+        backendProperty.setCategory(category);
         PropertyDescriptor matchCountProperty = new PropertyDescriptor(FILTERS_ID, "Filters");
         matchCountProperty.setCategory(category);
         return new IPropertyDescriptor[] { 
+                backendProperty,
+                hintsProperty,
                 matchCountProperty};
     }
 
     @Override
     public Object getPropertyValue(Object id) {
+        if (id.equals(HINTS_ID)) {
+            if(matcher.getHint() != null) {
+                return new HintsPropertySource(matcher.getHint());
+            }
+            return "Unknown";
+        }
+        if (id.equals(BACKEND_ID)) {
+            if(matcher.getHint() != null){
+                return matcher.getHint().getQueryBackendFactory().getBackendClass().getSimpleName();
+            }
+            return "Unknown";
+        }
         if (id.equals(FILTERS_ID)) {
             // TODO return FiltersPropertySource 
             return "Filtering not yet supported";

@@ -21,11 +21,14 @@ import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
+import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -37,9 +40,11 @@ public enum QueryResultViewModel {
     INSTANCE;
     
     private Set<QueryResultTreeInput> inputs;
+    private QueryEvaluationHint defaultHint;
     
     private QueryResultViewModel() {
         this.inputs = Sets.newHashSet();
+        this.defaultHint = new QueryEvaluationHint(new ReteBackendFactory(), Maps.<String,Object>newHashMap());
     }
     
     protected QueryResultTreeInput createInput(IModelConnector connector, IModelConnectorTypeEnum type) throws ViatraQueryException {
@@ -64,8 +69,8 @@ public enum QueryResultViewModel {
      * @return
      */
     protected QueryResultTreeInput createInput(AdvancedViatraQueryEngine engine, boolean readOnlyEngine) {
-        QueryResultTreeInput input = new QueryResultTreeInput(engine, QuerySpecificationRegistry.getInstance(), readOnlyEngine);
-        // TODO initialize input
+        QueryResultTreeInput input = new QueryResultTreeInput(engine, QuerySpecificationRegistry.getInstance(),
+                readOnlyEngine, defaultHint);
         inputs.add(input);
         return input;
     }

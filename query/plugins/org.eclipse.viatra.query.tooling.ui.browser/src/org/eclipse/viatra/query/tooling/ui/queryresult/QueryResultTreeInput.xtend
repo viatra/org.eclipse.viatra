@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryresult
 
+import com.google.common.base.Preconditions
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Maps
+import com.google.common.collect.Multimap
 import com.google.common.collect.Sets
 import com.google.common.collect.Table
+import com.google.common.collect.TreeMultimap
 import java.util.Map
 import java.util.Set
 import org.eclipse.core.runtime.IStatus
@@ -21,10 +24,12 @@ import org.eclipse.core.runtime.Status
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
+import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.runtime.extensibility.IQuerySpecificationProvider
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryChangeListener
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry
@@ -44,8 +49,6 @@ import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEn
 import org.eclipse.viatra.transformation.evm.specific.resolver.InvertedDisappearancePriorityConflictResolver
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
-import com.google.common.collect.Multimap
-import com.google.common.collect.TreeMultimap
 
 /**
  * @author Abel Hegedus
@@ -71,10 +74,19 @@ class QueryResultTreeInput {
     RegistryChangeListener registryListener
     IRegistryView view
     
+    @Accessors(PUBLIC_GETTER)
+    QueryEvaluationHint hint
+    
     Set<IQueryResultViewModelListener> listeners
     
-    new(AdvancedViatraQueryEngine engine, IQuerySpecificationRegistry registry, boolean readOnlyEngine) {
+    new(
+        AdvancedViatraQueryEngine engine,
+        IQuerySpecificationRegistry registry,
+        boolean readOnlyEngine,
+        QueryEvaluationHint hint
+    ) {
         this.engine = engine
+        this.hint = hint
         this.readOnlyEngine = readOnlyEngine
         this.matchers = Maps.newTreeMap()
         this.loadedEntries = HashBasedTable.create
@@ -96,15 +108,22 @@ class QueryResultTreeInput {
         lifecycleListener = new EngineLifecycleListener(this)
         engine.addLifecycleListener(lifecycleListener)
         
-        registryListener = new RegistryChangeListener(this)
-        view = registry.createView[
-            return new AbstractRegistryView(registry, true) {
-                override protected isEntryRelevant(IQuerySpecificationRegistryEntry entry) {
-                    true
+        if(!readOnlyEngine) {
+            registryListener = new RegistryChangeListener(this)
+            view = registry.createView[
+                return new AbstractRegistryView(registry, true) {
+                    override protected isEntryRelevant(IQuerySpecificationRegistryEntry entry) {
+                        true
+                    }
                 }
-            }
-        ]
-        view.addViewListener(registryListener)
+            ]
+            view.addViewListener(registryListener)
+        }
+    }
+    
+    def setHint(QueryEvaluationHint hint) {
+        Preconditions.checkNotNull(hint);
+        this.hint = hint;
     }
     
     def createMatcher(ViatraQueryMatcher matcher) {
@@ -198,9 +217,8 @@ class QueryResultTreeInput {
             entry.removeMatcher
         }
         try{
-            val specification = entry.provider.specificationOfProvider
-            // TODO use hints for matcher initialization
-            val matcher = specification.getMatcher(engine)
+            val specification = entry.provider.specificationOfProvider as IQuerySpecification
+            val matcher = engine.getMatcher(specification, hint)
             val specificationFQN = specification.fullyQualifiedName
             val treeMatcher = matchers.get(specificationFQN)
             if(specificationFQN != entryFQN){
@@ -209,6 +227,7 @@ class QueryResultTreeInput {
                 matchers.put(entryFQN, treeMatcher)
             }
             treeMatcher.entry = entry
+            treeMatcher.hint = hint
             knownErrorEntries.remove(entry.sourceIdentifier, entryFQN)
             return treeMatcher
         } catch (Exception ex) {
@@ -252,7 +271,7 @@ class QueryResultTreeInput {
         engine = null
         resetMatchers()
         listeners.clear
-        view.removeViewListener(registryListener)
+        view?.removeViewListener(registryListener)
         view = null
     }
     
@@ -335,6 +354,9 @@ class QueryResultTreeMatcher {
     
     @Accessors(PUBLIC_GETTER)
     final ViatraQueryMatcher matcher
+    
+    @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
+    QueryEvaluationHint hint
     
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
     IQuerySpecificationRegistryEntry entry

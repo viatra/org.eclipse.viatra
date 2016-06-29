@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryresult;
 
+import java.util.HashMap;
+
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -30,7 +32,9 @@ import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
+import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 
 /**
  * @author Abel Hegedus
@@ -44,6 +48,7 @@ public class QueryResultView extends ViewPart {
     private QueryResultTreeInput input;
     private Label lblScopeDescription;
     private ITabbedPropertySheetPageContributor propertyPageContributor;
+    private QueryEvaluationHint hint;
 
     public QueryResultView() {
         this.propertyPageContributor = new ITabbedPropertySheetPageContributor(){
@@ -52,6 +57,7 @@ public class QueryResultView extends ViewPart {
                 return getSite().getId();
             }
         };
+        this.hint = new QueryEvaluationHint(new ReteBackendFactory(), new HashMap<String, Object>());
     }
 
     /**
@@ -113,6 +119,7 @@ public class QueryResultView extends ViewPart {
         
         try {
             input = QueryResultViewModel.INSTANCE.createInput(modelConnector, scope);
+            input.setHint(hint);
             queryResultTreeViewer.setInput(input);
             StringBuilder scopeDescriptionBuilder = new StringBuilder();
             scopeDescriptionBuilder
@@ -155,6 +162,20 @@ public class QueryResultView extends ViewPart {
     public void wipeEngine() {
         if(input != null && !input.isReadOnlyEngine()){
             input.resetInput();
+        }
+    }
+
+    public QueryEvaluationHint getHint() {
+        if(input != null){
+            return input.getHint();
+        }
+        return hint;
+    }
+    
+    public void setHint(QueryEvaluationHint hint) {
+        this.hint = hint;
+        if(input != null){
+            input.setHint(hint);
         }
     }
 }
