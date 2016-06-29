@@ -65,7 +65,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativeP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -151,14 +150,8 @@ public class POperationCompiler {
         if (pOperation instanceof PApply) {
             PApply pApply = (PApply) pOperation;
             PConstraint pConstraint = pApply.getPConstraint();
-
-            
-            Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
-            Set<Integer> varIndices = Sets.newHashSet();
-            for (PVariable variable : affectedVariables) {
-                varIndices.add(variableMapping.get(variable));
-            }
-            if (variableBindings.get(pConstraint).containsAll(varIndices)) {
+           
+            if (isCheck(pConstraint, variableMapping)) {
                 // check
                 createCheckDispatcher(pConstraint, variableMapping);
             } else {
@@ -175,8 +168,28 @@ public class POperationCompiler {
         }
 
     }
+    
+    private boolean isCheck(PConstraint pConstraint, Map<PVariable, Integer> variableMapping){
+        if (pConstraint instanceof NegativePatternCall){
+            return true;
+        }else if (pConstraint instanceof PatternMatchCounter){
+            PVariable outputvar = ((PatternMatchCounter) pConstraint).getResultVariable();
+            return variableBindings.get(pConstraint).contains(variableMapping.get(outputvar));
+        }else if (pConstraint instanceof ExpressionEvaluation){
+            PVariable outputvar = ((ExpressionEvaluation) pConstraint).getOutputVariable();
+            return outputvar == null || variableBindings.get(pConstraint).contains(variableMapping.get(outputvar));
+        } else {
+            // In other cases, all variables shall be bound to be a check
+            Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
+            Set<Integer> varIndices = Sets.newHashSet();
+            for (PVariable variable : affectedVariables) {
+                varIndices.add(variableMapping.get(variable));
+            }
+            return variableBindings.get(pConstraint).containsAll(varIndices);
+        }
+    }
 
-    private void createCheckDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping) {
+    private void createCheckDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
 
 
         // DeferredPConstraint subclasses
@@ -193,7 +206,7 @@ public class POperationCompiler {
             createCheck((ExpressionEvaluation) pConstraint, variableMapping);
         } else if (pConstraint instanceof ExportedParameter) {
             // Nothing to do here
-        } 
+        } else
         
         // EnumerablePConstraint subclasses
 
@@ -201,10 +214,11 @@ public class POperationCompiler {
             createCheck((BinaryTransitiveClosure) pConstraint, variableMapping);
         } else if (pConstraint instanceof ConstantValue) {
             createCheck((ConstantValue) pConstraint, variableMapping);
-        } else if (pConstraint instanceof PositivePatternCall) {
-            createCheck((PositivePatternCall) pConstraint, variableMapping);
         } else if (pConstraint instanceof TypeConstraint) {
             createCheck((TypeConstraint) pConstraint,variableMapping);
+        }  else {
+            String msg = "Unsupported Check constraint: "+pConstraint.toString();
+            throw new QueryProcessingException(msg, null, msg, null);
         }
 
     }
@@ -214,7 +228,7 @@ public class POperationCompiler {
         operations.add(new CheckConstant(position, constant.getSupplierKey()));
     }
 
-    private void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) {
+    private void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
     	final IInputKey inputKey = typeConstraint.getSupplierKey();
 		if (inputKey instanceof EClassTransitiveInstancesKey) {
 	        operations.add(new InstanceOfClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
@@ -227,11 +241,9 @@ public class POperationCompiler {
             operations.add(new InstanceOfDataTypeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)),
                     ((EDataTypeInSlotsKey) inputKey).getEmfKey()));
         } else {
-	    	throw new IllegalArgumentException("Unsupported type: " + inputKey);
+            String msg = "Unsupported type: " + inputKey;
+            throw new QueryProcessingException(msg, null, msg, null);
 	    }
-    }
-    private void createCheck(PositivePatternCall positivePatternCall, Map<PVariable, Integer> variableMapping) {
-        throw new UnsupportedOperationException("Pattern call not supported");
     }
 
     private void createCheck(BinaryTransitiveClosure binaryTransitiveColsure, Map<PVariable, Integer> variableMapping) {
@@ -286,8 +298,23 @@ public class POperationCompiler {
     }
     
     private void createCheck(NegativePatternCall negativePatternCall, Map<PVariable, Integer> variableMapping) {
-        // Technically same as extend
-        createExtend(negativePatternCall, variableMapping);
+        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
+        // Create frame mapping
+        Map<Integer,Integer> frameMapping = Maps.newHashMap();
+        int keySize = negativePatternCall.getActualParametersTuple().getSize();
+        Set<Integer> adornment = Sets.newHashSet();
+        final Set<Integer> bindings = variableBindings.get(negativePatternCall);
+        for (int i = 0; i < keySize; i++) {
+            PVariable parameter = (PVariable) negativePatternCall.getActualParametersTuple().get(i);
+            frameMapping.put(variableMapping.get(parameter), i);
+            if (bindings.contains(variableMapping.get(parameter))) {
+                adornment.add(i);
+            }
+            
+        }
+        PQuery referredQuery = negativePatternCall.getReferredQuery();
+        operations.add(new NACOperation(referredQuery, frameMapping));
+        dependencies.add(new MatcherReference(referredQuery, adornment));
     }
     
     private void createCheck(Inequality inequality, Map<PVariable, Integer> variableMapping) {
@@ -295,32 +322,29 @@ public class POperationCompiler {
     }
 
     
-    private void createExtendDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping) {
+    private void createExtendDispatcher(PConstraint pConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
 
         // DeferredPConstraint subclasses
         
         // Equalities are normalized
 
-        if (pConstraint instanceof Inequality) {
-            createExtend((Inequality) pConstraint, variableMapping);
-        } else if (pConstraint instanceof NegativePatternCall) {
-            createExtend((NegativePatternCall) pConstraint,variableMapping);
-        }  else if (pConstraint instanceof PatternMatchCounter) {
+        if (pConstraint instanceof PatternMatchCounter) {
             createExtend((PatternMatchCounter) pConstraint, variableMapping);
         } else if (pConstraint instanceof ExpressionEvaluation) {
             createExtend((ExpressionEvaluation) pConstraint, variableMapping);
         } else if (pConstraint instanceof ExportedParameter) {
-            createExtend((ExportedParameter) pConstraint, variableMapping);
-        }
+            // ExportedParameters are compiled to NOP
+        } else
         
         // EnumerablePConstraint subclasses
 
-        if (pConstraint instanceof BinaryTransitiveClosure) {
-            createExtend((BinaryTransitiveClosure) pConstraint, variableMapping);
-        } else if (pConstraint instanceof ConstantValue) {
+        if (pConstraint instanceof ConstantValue) {
             createExtend((ConstantValue) pConstraint, variableMapping);
         } else if (pConstraint instanceof TypeConstraint) {
             createExtend((TypeConstraint) pConstraint, variableMapping);
+        } else {
+            String msg = "Unsupported Extend constraint: "+pConstraint.toString();
+            throw new QueryProcessingException(msg, null, msg, null);
         }
     }
 
@@ -404,14 +428,6 @@ public class POperationCompiler {
 	    }        
     }
 
-    private void createExtend(BinaryTransitiveClosure binaryTransitiveClosure, Map<PVariable, Integer> variableMapping) {
-        throw new UnsupportedOperationException("Binary transitive closures must be checks");
-    }
-
-    private void createExtend(ExportedParameter exportedParameter, Map<PVariable, Integer> variableMapping) {
-        // Such PConstraints are only metadata
-    }
-
     private void createExtend(ExpressionEvaluation expressionEvaluation, Map<PVariable, Integer> variableMapping) {
         // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
         Iterable<String> inputParameterNames = expressionEvaluation.getEvaluator().getInputParameterNames();
@@ -450,30 +466,6 @@ public class POperationCompiler {
         dependencies.add(new MatcherReference(referredQuery, adornment));
     }
     
-    private void createExtend(NegativePatternCall negativePatternCall, Map<PVariable, Integer> variableMapping) {
-        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
-        // Create frame mapping
-        Map<Integer,Integer> frameMapping = Maps.newHashMap();
-        int keySize = negativePatternCall.getActualParametersTuple().getSize();
-        Set<Integer> adornment = Sets.newHashSet();
-        final Set<Integer> bindings = variableBindings.get(negativePatternCall);
-        for (int i = 0; i < keySize; i++) {
-            PVariable parameter = (PVariable) negativePatternCall.getActualParametersTuple().get(i);
-            frameMapping.put(variableMapping.get(parameter), i);
-            if (bindings.contains(variableMapping.get(parameter))) {
-                adornment.add(i);
-            }
-            
-        }
-        PQuery referredQuery = negativePatternCall.getReferredQuery();
-        operations.add(new NACOperation(referredQuery, frameMapping));
-        dependencies.add(new MatcherReference(referredQuery, adornment));
-    }
-
-    private void createExtend(Inequality pConstraint, Map<PVariable, Integer> variableMapping) {
-        throw new UnsupportedOperationException("Unsafe operation. Requires iteration over the entire domain");
-    }
-
     public Set<MatcherReference> getDependencies() {
         return dependencies;
     }

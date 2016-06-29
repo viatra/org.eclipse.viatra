@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -29,17 +28,24 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequalit
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 /**
  * @author Grill Balázs
  *
  */
 class PConstraintInfoInferrer {
+
+    private static final class VariableNotDeducablePredicate implements Predicate<PVariable> {
+        @Override
+        public boolean apply(PVariable input) {
+            return !input.isDeducable();
+        }
+    }
 
     private final boolean allowInverseNavigation;
     private final boolean useIndex;
@@ -78,7 +84,9 @@ class PConstraintInfoInferrer {
             createConstraintInfoInequality(resultList, runtimeContext, (Inequality) pConstraint);
         } else if (pConstraint instanceof ExpressionEvaluation){
             createConstraintInfoExpressionEvaluation(resultList, runtimeContext, (ExpressionEvaluation)pConstraint);
-        } else{
+        } else if (pConstraint instanceof PatternMatchCounter){
+            createConstraintInfoPatternMatchCounter(resultList, runtimeContext, (PatternMatchCounter) pConstraint);
+        } else {
             createConstraintInfoGeneric(resultList, runtimeContext, pConstraint);
         }
     }
@@ -102,49 +110,44 @@ class PConstraintInfoInferrer {
         doCreateConstraintInfos(runtimeContext, resultList, inequality, affectedVariables, Collections.singleton(affectedVariables));
     }
     
-    private void createConstraintInfoGeneric(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, PConstraint pConstraint){
-        // Create constraint infos so that only single use variables can be unbound
+    private void createConstraintInfoPatternMatchCounter(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, PatternMatchCounter pConstraint){
+        PVariable resultVariable = pConstraint.getResultVariable();
+       
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
         
-        Set<PVariable> singleUseVariables = Sets.newHashSet();
-        for (PVariable pVariable : affectedVariables) {
-            Set<PConstraint> allReferringConstraints = pVariable.getReferringConstraints();
-            // Filter out exported parameter constraints
-            Set<ExportedParameter> referringExportedParameters = pVariable.getReferringConstraintsOfType(ExportedParameter.class);
-            SetView<PConstraint> trueReferringConstraints = Sets.difference(allReferringConstraints, referringExportedParameters);
-            if(trueReferringConstraints.size() == 1){
-                singleUseVariables.add(pVariable);
-            }
-        }
-        SetView<PVariable> nonSingleUseVariables = Sets.difference(affectedVariables, singleUseVariables);
-        // Generate bindings by taking the unioning each element of the power set with the set of non-single use variables
-        Set<Set<PVariable>> singleUseVariablesPowerSet = Sets.powerSet(singleUseVariables);
-        Set<Set<PVariable>> bindings = Sets.newHashSet();
-        for (Set<PVariable> set : singleUseVariablesPowerSet) {
-            bindings.add(Sets.newHashSet(set));
-        }
-        for (Set<PVariable> set : bindings) {
-            set.addAll(nonSingleUseVariables);
-        }
+        // The only variables which can be unbound are the ones which cannot be deduced by any constraint and the result variable
+        Set<PVariable> canBeUnboundVariables = Sets.union(Collections.singleton(resultVariable), Sets.filter(affectedVariables, new VariableNotDeducablePredicate()));
+       
+        Set<Set<PVariable>> bindings = calculatePossibleBindings(canBeUnboundVariables, affectedVariables);
         
-        if(pConstraint instanceof PatternMatchCounter){
-            // in cases of this type, the deduced variables will contain only the result variable
-            final PVariable resultVariable = pConstraint.getDeducedVariables().iterator().next();
-            Set<Set<PVariable>> additionalBindings = Sets.newHashSet();
-            for (Set<PVariable> binding : bindings) {
-                if(binding.contains(resultVariable)){
-                    Collection<PVariable> filteredBinding = Collections2.filter(binding, new Predicate<PVariable>() {
-                        @Override
-                        public boolean apply(PVariable input) {
-                            return input != resultVariable;
-                        }
-                    });
-                    additionalBindings.add(Sets.newHashSet(filteredBinding));
-                }
-                
+        doCreateConstraintInfos(runtimeContext, resultList, pConstraint, affectedVariables, bindings);
+    }
+    
+    /**
+     * 
+     * @param canBeUnboundVariables Variables which are allowed to be unbound
+     * @param affectedVariables All affected variables
+     * @return The set of possible bound variable sets
+     */
+    private Set<Set<PVariable>> calculatePossibleBindings(Set<PVariable> canBeUnboundVariables, Set<PVariable> affectedVariables){
+        final Set<PVariable> mustBindVariables = Sets.difference(affectedVariables, canBeUnboundVariables);
+        return Sets.newHashSet(Iterables.transform(Sets.powerSet(canBeUnboundVariables), new Function<Set<PVariable>, Set<PVariable>>() {
+
+            @Override
+            public Set<PVariable> apply(Set<PVariable> input) {
+                // deducible variables shall need to be bound before executing this constraint
+                return Sets.union(input, mustBindVariables);
             }
-            bindings.addAll(additionalBindings);
-        }
+        }));
+    }
+    
+    private void createConstraintInfoGeneric(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, PConstraint pConstraint){
+        Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
+        
+        // The only variables which can be unbound are the ones which cannot be deduced by any constraint
+        Set<PVariable> canBeUnboundVariables = Sets.filter(affectedVariables, new VariableNotDeducablePredicate());
+       
+        Set<Set<PVariable>> bindings = calculatePossibleBindings(canBeUnboundVariables, affectedVariables);
         
         doCreateConstraintInfos(runtimeContext, resultList, pConstraint, affectedVariables, bindings);
     }

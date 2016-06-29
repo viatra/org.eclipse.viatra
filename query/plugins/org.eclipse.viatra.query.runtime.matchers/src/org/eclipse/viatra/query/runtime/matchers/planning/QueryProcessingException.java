@@ -90,7 +90,7 @@ public class QueryProcessingException extends Exception {
     private void initializeFields(String message, String[] context, String shortMessage, Object patternDescription) {
         this.patternDescription = patternDescription;
         this.templateMessage = message;
-        this.templateContext = Arrays.copyOf(context, context.length);
+        this.templateContext = context == null ? new String[0] : Arrays.copyOf(context, context.length);
         this.shortMessage = shortMessage;
     }
 
