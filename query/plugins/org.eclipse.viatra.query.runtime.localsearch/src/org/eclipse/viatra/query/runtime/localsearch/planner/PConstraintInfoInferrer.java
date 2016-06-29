@@ -77,7 +77,7 @@ class PConstraintInfoInferrer {
 
     private void createPConstraintInfoDispatch(List<PConstraintInfo> resultList, PConstraint pConstraint, IQueryRuntimeContext runtimeContext){
         if(pConstraint instanceof ExportedParameter){
-            // Do not create mask info for exported parameter, for it is only a symbolic constraint
+            createConstraintInfoExportedParameter(resultList, runtimeContext, (ExportedParameter) pConstraint);
         } else if(pConstraint instanceof TypeConstraint){
             createConstraintInfoTypeConstraint(resultList, runtimeContext, (TypeConstraint)pConstraint);
         } else if (pConstraint instanceof Inequality){
@@ -89,6 +89,13 @@ class PConstraintInfoInferrer {
         } else {
             createConstraintInfoGeneric(resultList, runtimeContext, pConstraint);
         }
+    }
+    
+    private void createConstraintInfoExportedParameter(List<PConstraintInfo> resultList,
+            IQueryRuntimeContext runtimeContext, ExportedParameter parameter) {
+        // In case of an exported parameter constraint, the parameter must be bound in order to execute
+        Set<PVariable> affectedVariables = parameter.getAffectedVariables();
+        doCreateConstraintInfos(runtimeContext, resultList, parameter, affectedVariables, Collections.singleton(affectedVariables));
     }
     
     private void createConstraintInfoExpressionEvaluation(List<PConstraintInfo> resultList,
