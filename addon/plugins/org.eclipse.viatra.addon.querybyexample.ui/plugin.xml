@@ -34,7 +34,7 @@
 			id="org.eclipse.viatra.addon.querybyexample.ui.commands.refreshlnkfilecmd">
 		</command>
 		<command
-			name="Adjust exploration depth"
+			name="Restore exploration depth"
 			categoryId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory"
 			id="org.eclipse.viatra.addon.querybyexample.ui.commands.qbeautoadjustcmd">
 		</command>

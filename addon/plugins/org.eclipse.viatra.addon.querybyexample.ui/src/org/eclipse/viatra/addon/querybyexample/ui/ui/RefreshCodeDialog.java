@@ -41,11 +41,11 @@ import org.eclipse.viatra.addon.querybyexample.ui.handlers.QBEViewMainSourceProv
 
 public class RefreshCodeDialog extends Dialog {
 
-    private static final String REFRESH_CODE_DIALOG_TITLE = "Insert code into...";
+    private static final String REFRESH_CODE_DIALOG_TITLE = "Save generated pattern to...";
     private static final String RADIO_LABEL_TWO = "New .vql file inside an existing VIATRA project";
-    private static final String RADIO_LABEL_THREE = "Existing .vql file";
+    private static final String RADIO_LABEL_THREE = "Existing .vql file (will be overwritten!)";
     private static final String RADIO_LABEL_FOUR = "Clipboard";
-    private static final String OPEN_RESOURCE_DIALOG_TITLE = "Choose vql file to insert code";
+    private static final String OPEN_RESOURCE_DIALOG_TITLE = "Choose existing .vql file to be overwritten";
     private static final String VQL_FILE_EXTENSION = "vql";
 
     private Button radioButtonOne;

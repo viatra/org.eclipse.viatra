@@ -22,7 +22,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 public class HelpHandler extends AbstractHandler {
 
-    private static final String HELP_TITLE = "VIATRA Query-by-Example - Help";
+    private static final String HELP_TITLE = "VIATRA Query by Example - Help";
     private static final String HELP_MAIN_TEXT;
 
     private static class HelpDialog extends MessageDialog {
@@ -42,65 +42,55 @@ public class HelpHandler extends AbstractHandler {
     }
 
     static {
-        StringBuilder sb = new StringBuilder("VIATRA Query-by-Example module!\n\n");
-        sb.append(
-                "This plugin can be used to automatically construct runnable patterns for the VIATRA framework, ");
-        sb.append("by an active selection in an EMF instance model (so called example).\n");
-        sb.append(
-                "First, the user has to designate this selection, and after that press the green play button (labeled as");
-        sb.append(
-                "'Start Query-by-Example') on the toolbar. If the user's selection was proper, a discovery will be performed by the plugin, ");
-        sb.append(
-                "on the given EMF model.\n A tree view visualizer is given to the plugin's user interface, where the user can follow up the ");
-        sb.append(
-                "status of the pattern, and make some fine tuning on it via the Properties view. If the user is finished with the fine tuning, ");
-        sb.append("the pattern's code could be generated with the buttons on the toolbar.\n");
-        sb.append("Below, the module's functions are described.\n\n");
-        sb.append(
-                "  - Start Query-by-Example: starts the exploration, if a proper active selection in an EMF model is present. The determination of ");
-        sb.append(
-                "the auto adjust minimum depth is also happening in the initial search, and will be visible in the 'Exploration depth' scale. At ");
-        sb.append("successful search, the tree view will be filled with initial data\n");
-        sb.append(
-                "  - Variables: there are two types of variables in this context: anchor points and discovered variables. Anchors are those, that are related to the ");
-        sb.append(
-                "user's given selection. These will be compulsory registered as input variables of the pattern. Discovered variables are those, that are not explicitly");
-        sb.append(
-                " selected by the user, but came up during a broader exploration, and are necessary for constructing a proper VIATRA pattern. These variables are by ");
-        sb.append(
-                "default represented as constraints in the pattern body, but can be also input parameters, or their declaration can be hidden from the pattern code\n");
-        sb.append(
-                "  - Edge constraints: basically a reference between two variables, but represented as a constraint in the pattern's body. Can be hidden in the code");
-        sb.append(" via hiding paths\n");
-        sb.append(
-                "  - Exploration depth: this value is represented by the scale under this name. At the value of 1, only the anchor points, and the direct edges between ");
-        sb.append(
-                "them will be considered. By increasing the depth, the range of the exploration will be broaden, and new variables will be registered to the pattern\n");
-        sb.append(
-                "  - Auto adjust: during the initial search, a minimum value is determined, that is about a minimum depth, the pattern will be connected on the given ");
-        sb.append("selection. Later, the user can return to this value, with the 'Auto adjust depth' button\n");
-        sb.append(
-                "  - Package, name space and other settings: package, pattern, variable and negative constraints' helper patterns' name can be set via the Eclipse ");
-        sb.append(
-                "Properties view. There are other fine tuning settings that can be performed on this view, so it is recommended to open the Properties view together ");
-        sb.append("with the QBE view\n");
-        sb.append(
-                "  - Negative constraints: the 'Find negative constraints' button is for finding those constraints that are in the metamodel, but not present in the ");
-        sb.append(
-                "instance model itself. This function is searching these not presented constraints between all registered variables in the pattern, but registers no ");
-        sb.append("new one. By default these constraints are hidden in the code\n");
-        sb.append(
-                "  - Attributes: all the EAttributes of the variables are registered as well in the constructing pattern. By default, all of them are hidden, so the ");
-        sb.append("user has to manually enable them to be visible in the pattern code\n");
-        sb.append(
-                "  - Paths: this section visualizes all of the paths, that are 'walked through' the exploration. The paths can be hidden, which means, the constraints ");
-        sb.append("on them are not present in the generated code\n");
-        sb.append(
-                "  - Code generation: if the user is finished with the fine tuning, the code can be generated to 3 destinations: 1. the user can create an entire new ");
-        sb.append(
-                ".eiq file, and the code goes there; 2. the user can insert the code to an already existing .eiq file in the workspace; 3. the user can put the ");
-        sb.append("generated code on the clipboards\n");
-        HELP_MAIN_TEXT = sb.toString();
+        HELP_MAIN_TEXT = 
+  "VIATRA Query-by-Example tool\n\n"
++ "This tool can be used to automatically construct query patterns for the VIATRA framework, "
++ "based on an example - a set of EMF instance objects selected in a model editor or viewer. "
++ "The tool will discover how the selected elements are related to each other in the model, "
++ " and generate a VQL query that will find groups of model elements that are arranged similarly.\n\n"
++ "To get started, the user has to select a few elements in the model, and then press the green play button (labeled as"
++ "'Start') on the toolbar of the Query by Example View. "
++ "If the selection was recognized to consist of EObjects, a model exploration will be performed on the given EMF model. "
++ "The Query by Example View will present the results of the model discovery, where the user can follow up the "
++ "status of the pattern being generated, and make some fine tuning on it via the Properties view. "
++ "If the user is finished with the fine tuning, the pattern's code could be generated to a .vql file with the Save button on the toolbar. "
++ "After subsequent fine tuning, the Update button can be used to propagate any changes made to the same .vql file.\n\n"
++ "Main UI elements are described below:\n"
++ "  - Start: starts the exploration / discovery, if a proper active selection in an EMF model is present. \n"
++ "  - Model exploration: The model discovery will start separately from each selected EObject (anchor element), "
++ "will traverse reference links up to a given exploration depth limit, "
++ "and collect all paths (not longer than the given depth) connecting two anchors. "
++ "Initially, the tool automatically selects the smallest exploration depth that makes all anchors connected by the paths discovered. \n"
++ "  - 'Exploration depth' slider: displays the depth used for discovery. "
++ "Can be used to increase the depth beyond its initial value, to find more remote connections between the anchors"
++ " - this will re-trigger the exploration. \n"
++  " - 'Restore exploration depth': use this button to return the exploration depth to its initial setting.\n"
++ "  - Variables: these represent the pattern variables of the query. "
++ "They include the anchor points (given by the user as part of the selection) as well as "
++ "additional objects discovered as intermediate points along the paths. "
++ "Anchors appear as pattern parameter; this is optional for the latter kind of variable, "
++ "which can be excluded from the parameter list or the pattern altogether. "
++ "One can set certain properties of these variables (such as their name) in the Properties view.\n"
++ "  - Edge constraints: basically a reference between two variables, represented as a constraint in the pattern's body. "
++ "If such a constraint is deemed irrelevant and should not be part of the query specification, "
++ "it be excluded from the pattern in the code by marking as excluded all discovered paths traversing it.\n"
++  "  - Attributes: all the EAttributes of the variables are collected, and offered as additional, "
++ "opt-in attribute value constraints that can be individually selected to be included in the query.\n" 
++  "  - Negative constraints: the 'Find negative constraints' button is for finding those references between pairs of variables "
++ "that are permitted in the metamodel, but not present in the instance model itself. "
++ "Such missing references will be offered as additional, opt-in 'neg find' constraints "
++ "that can be individually selected to be included in the query.\n"
++  "  - Paths: this section visualizes all of the paths from one anchor to another, "
++ "that were discovered during the exploration with the current depth limit. "
++ "All paths are included in the query by default, so that references traversed along the path will appear as edge constraints in the output query."
++ "However, paths can be manually excluded in the Properties view.\n"
++  "  - Query package, EPackage URI and other settings: use the Properties view to fine-tune these settings. \n"
++  "  - Save: if the user is finished with the fine tuning, the pattern code can be generated to 3 destinations: "
++ " (a) create a brand new .vql file for the pattern code; "
++ " (b) replace an already existing .vql file in the workspace; "
++ " (c) put the generated code on the clipboard.\n"
++  "  - Update: if a file was selected previously, changes can be propagated to it, replacing its obsolete contents.\n ";
+
     }
 
     public Object execute(ExecutionEvent event) throws ExecutionException {
