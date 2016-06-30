@@ -18,11 +18,16 @@
 			name="QBE Main Action Category"
 			id="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory">
 		</category>
-		<command
-			name="Start - discover correspondence between selected elements"
-			categoryId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory"
-			id="org.eclipse.viatra.addon.querybyexample.ui.commands.qbemainactioncmd">
-		</command>
+        <command
+            name="Start - discover correspondence between selected elements"
+            categoryId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory"
+            id="org.eclipse.viatra.addon.querybyexample.ui.commands.qbemainactioncmd">
+        </command>
+        <command
+            name="Expand - add current selection to previously selected anchors"
+            categoryId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory"
+            id="org.eclipse.viatra.addon.querybyexample.ui.commands.qbeexpandactioncmd">
+        </command>
 		<command
 			name="Save - generate query code to new destination"
 			categoryId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbetoolbarcategory"
@@ -90,6 +95,10 @@
 			class="org.eclipse.viatra.addon.querybyexample.ui.handlers.StartHandler">
 		</handler>
 		<handler
+			commandId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbeexpandactioncmd"
+			class="org.eclipse.viatra.addon.querybyexample.ui.handlers.ExpandSelectionHandler">
+		</handler>
+		<handler
 			commandId="org.eclipse.viatra.addon.querybyexample.ui.commands.helpcmd"
 			class="org.eclipse.viatra.addon.querybyexample.ui.handlers.HelpHandler">
 		</handler>
@@ -118,17 +127,19 @@
     </extension>
 
 	<extension point="org.eclipse.ui.menus">
-			
-		<!-- Start QBE menu -->
+	
 		<menuContribution allPopups="false"
             locationURI="toolbar:org.eclipse.viatra.addon.querybyexample.ui.qbeview">
+            
+        <!-- Start QBE menu -->
          <command
-         	commandId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbemainactioncmd"
-         	icon="icons/load.gif"
-         	id="org.eclipse.viatra.addon.querybyexample.ui.views.qbemainactionbtn"
-         	label="Start Query-by-Example"
-         	>
+               commandId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbemainactioncmd"
+               icon="icons/load.gif"
+               id="org.eclipse.viatra.addon.querybyexample.ui.menu.qbemain"
+               label="Start Query By Example"
+               style="pulldown">
          </command>
+
          <!-- Refresh code menuitem -->
          <command
          	commandId="org.eclipse.viatra.addon.querybyexample.ui.commands.refreshcmd"
@@ -168,6 +179,20 @@
          	style="push">
          </command>
       </menuContribution>
+      
+       <!-- Start QBE menu alternative items -->
+     <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.viatra.addon.querybyexample.ui.menu.qbemain">
+            
+         <command
+            commandId="org.eclipse.viatra.addon.querybyexample.ui.commands.qbeexpandactioncmd"
+               style="push"
+            icon="icons/qbe_var.gif">
+         </command>
+            
+      </menuContribution>
+            
       
 	</extension>
 </plugin>

@@ -12,6 +12,8 @@ package org.eclipse.viatra.addon.querybyexample.ui.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -136,10 +138,23 @@ public class QBEView extends ViewPart {
         viewer.getControl().setFocus();
     }
 
-    public void activateView(Collection<EObject> selection) {
+    public void start(Collection<EObject> selection) {
         if (this.service == null)
             this.service = new QBEServiceImpl();
         service.init(selection);
+        reInitialize();
+    }
+    public void expand(Collection<EObject> selection) {
+        if (this.service == null)
+            this.service = new QBEServiceImpl();
+        Collection<EObject> newSelection = new HashSet<EObject>();
+        newSelection.addAll(selection);
+        newSelection.addAll(service.getSelection());
+        service.init(newSelection);
+        reInitialize();
+    }
+
+    private void reInitialize() {
         this.codeGenerator = service.getCodeGenerator();
         int coherenceDepth = this.service.determineCoherenceMinimumDepth();
         this.defaultDepth = (coherenceDepth == 0 ? 1 : coherenceDepth);

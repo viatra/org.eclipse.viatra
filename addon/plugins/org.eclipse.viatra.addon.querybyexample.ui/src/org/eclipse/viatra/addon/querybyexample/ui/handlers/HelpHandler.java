@@ -57,6 +57,8 @@ public class HelpHandler extends AbstractHandler {
 + "After subsequent fine tuning, the Update button can be used to propagate any changes made to the same .vql file.\n\n"
 + "Main UI elements are described below:\n"
 + "  - Start: starts the exploration / discovery, if a proper active selection in an EMF model is present. \n"
++ "  - Expand (alternative action for the Start button): adds the current selection to previously selected elements, "
++ "and restarts exploration from the expanded set of anchors. \n"
 + "  - Model exploration: The model discovery will start separately from each selected EObject (anchor element), "
 + "will traverse reference links up to a given exploration depth limit, "
 + "and collect all paths (not longer than the given depth) connecting two anchors. "

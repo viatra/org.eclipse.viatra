@@ -12,6 +12,7 @@ package org.eclipse.viatra.addon.querybyexample.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -46,6 +47,7 @@ public class QBEServiceImpl implements IQBEService {
     private IExplorer explorer;
     private ICodeGenerator generator;
     private VariableRegister register;
+    private Set<EObject> selectionSet = Collections.emptySet();
 
     public QBEServiceImpl() {
     }
@@ -53,7 +55,6 @@ public class QBEServiceImpl implements IQBEService {
     @Override
     public void init(Collection<EObject> selection) {
 
-        Set<EObject> selectionSet;
         if (selection instanceof Set<?>) {
             selectionSet = (Set<EObject>) selection;
         } else {
@@ -73,6 +74,11 @@ public class QBEServiceImpl implements IQBEService {
             StatusManager.getManager().handle(new Status(IStatus.ERROR, QBEConstants.PLUGIN_ID,
                     IStatus.ERROR, iqbex.getMessage(), iqbex));
         }
+    }
+    
+    @Override
+    public Collection<EObject> getSelection() {
+        return selectionSet;
     }
 
     @Override

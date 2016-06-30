@@ -28,6 +28,8 @@ public interface IQBEService {
      * Collects the selected EObjects from a model
      */
     void init(Collection<EObject> selection);
+    
+    Collection<EObject> getSelection();
 
     String getPatternCode();
 
