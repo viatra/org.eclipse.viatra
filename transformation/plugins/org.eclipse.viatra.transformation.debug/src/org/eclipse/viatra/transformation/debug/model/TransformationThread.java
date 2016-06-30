@@ -16,6 +16,8 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -31,6 +33,7 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.debug.DebuggerActions;
 import org.eclipse.viatra.transformation.debug.ITransformationDebugListener;
 import org.eclipse.viatra.transformation.debug.TransformationDebugger;
+import org.eclipse.viatra.transformation.debug.activator.TransformationDebugActivator;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ConditionalTransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.util.BreakpointCacheUtil;
@@ -174,7 +177,11 @@ public class TransformationThread extends TransformationDebugElement implements 
             
             List<TransformationStackFrame> frames = Lists.newArrayList();
             for (Activation<?> act : startedFiring) {
-                frames.add(new TransformationStackFrame(this, act)); 
+                try{
+                    frames.add(new TransformationStackFrame(this, act)); 
+                }catch(Exception e){
+                    throw new DebugException(new Status(IStatus.ERROR, TransformationDebugActivator.PLUGIN_ID, "No transformation rules detected"));
+                }
             }
             return frames.toArray(new TransformationStackFrame[frames.size()]); 
         } else {
@@ -198,7 +205,7 @@ public class TransformationThread extends TransformationDebugElement implements 
         if (frames.length > 0) {
             return frames[frames.length-1];
         }
-        return null;
+        throw new DebugException(new Status(IStatus.ERROR, TransformationDebugActivator.PLUGIN_ID, "No transformation rules detected"));
     }
 
     @Override
