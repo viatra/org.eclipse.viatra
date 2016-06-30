@@ -112,9 +112,6 @@ public class LocalSearchRuntimeBasedStrategy {
             PConstraint pConstraint = pConstraintPlanInfo.getConstraint();
             plan = subPlanFactory.createSubPlan(new PApply(pConstraint), plan);
         }
-        for (ExportedParameter exportedParameter : pBody.getConstraintsOfType(ExportedParameter.class)) {
-            plan = subPlanFactory.createSubPlan(new PApply(exportedParameter), plan);
-        }
 
         return subPlanFactory.createSubPlan(new PProject(pBody.getSymbolicParameterVariables()), plan);
     }
