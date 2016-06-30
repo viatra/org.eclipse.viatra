@@ -43,7 +43,9 @@ import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
+import org.eclipse.xtext.resource.DefaultFragmentProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
+import org.eclipse.xtext.resource.IFragmentProvider;
 import org.eclipse.xtext.resource.IGlobalServiceProvider;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
@@ -155,5 +157,10 @@ public class EMFPatternLanguageRuntimeModule extends AbstractEMFPatternLanguageR
      */
     public Class<? extends IExpectedPackageNameProvider> bindIExpectedPackageNameProvider() {
         return NoExpectedPackageNameProvider.class;
+    }
+    
+    @Override
+    public Class<? extends IFragmentProvider> bindIFragmentProvider() {
+        return DefaultFragmentProvider.class;
     }
 }
