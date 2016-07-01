@@ -16,6 +16,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 
+import com.google.common.base.Function;
+
 /**
  * Helper functions for dealing with the EMF objects with VIATRA Queries.
  * 
@@ -25,7 +27,15 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
  */
 public class ViatraQueryRuntimeHelper {
 	
-	/**
+    private static final StringValueTransformer STRING_VALUE_TRANSFORMER = new StringValueTransformer();
+    private static final class StringValueTransformer implements Function<Object, String> {
+        @Override
+        public String apply(Object input) {
+            return input.toString();
+        }
+    }
+
+    /**
 	 * Gives a human-readable name of an EMF type. 
 	 */
     public static String prettyPrintEMFType(Object typeObject) {
@@ -63,19 +73,57 @@ public class ViatraQueryRuntimeHelper {
     }
 
     /**
-     * Returns the message for the given match using the given format. The format 
-     * string can refer to the value of parameter A of the match with $A$ and even access 
-     * features of A (if it's an EObject), e.g. $A.id$.
+     * Returns the message for the given match using the given format. The format string can refer to the value of
+     * parameter A of the match with $A$ and even access features of A (if it's an EObject), e.g. $A.id$.
      * 
-     * <p/> If the selected parameter does not exist, the string "[no such parameter]" is added
-    
-     * <p/> If no feature is defined, but A has a feature called "name", then its value is used.
+     * <p/>
+     * If the selected parameter does not exist, the string "[no such parameter]" is added
      * 
-     * <p/> If the selected feature does not exist, A.toString() is added. 
+     * <p/>
+     * If no feature is defined, but A has a feature called "name", then its value is used.
      * 
-     * <p/> If the selected feature is null, the string "null" is added.
+     * <p/>
+     * If the selected feature does not exist, A.toString() is added.
+     * 
+     * <p/>
+     * If the selected feature is null, the string "null" is added.
+     * 
+     * @param match
+     *            cannot be null!
+     * @param messageFormat
+     *            cannot be null!
      */
     public static String getMessage(IPatternMatch match, String messageFormat) {
+        return getMessage(match, messageFormat, STRING_VALUE_TRANSFORMER);
+    }
+    
+    /**
+     * Returns the message for the given match using the given format while transforming values with the given function.
+     * The format string can refer to the value of parameter A of the match with $A$ and even access features of A (if
+     * it's an EObject), e.g. $A.id$. The function will be called to compute the final string representation of the
+     * values selected by the message format.
+     * 
+     * <p/>
+     * If the selected parameter does not exist, the string "[no such parameter]" is added
+     * 
+     * <p/>
+     * If no feature is defined, but A has a feature called "name", then its value is passed to the function.
+     * 
+     * <p/>
+     * If the selected feature does not exist, A is passed to the function.
+     * 
+     * <p/>
+     * If the selected feature is null, the string "null" is added.
+     * 
+     * @param match
+     *            cannot be null!
+     * @param messageFormat
+     *            cannot be null!
+     * @param parameterValueTransformer
+     *            cannot be null!
+     * @since 1.3
+     */
+    public static String getMessage(IPatternMatch match, String messageFormat, Function<Object,String> parameterValueTransformer) {
         String[] tokens = messageFormat.split("\\$");
         StringBuilder newText = new StringBuilder();
     
@@ -100,12 +148,12 @@ public class ViatraQueryRuntimeHelper {
                     if (o != null && feature != null) {
                         Object value = ((EObject) o).eGet(feature);
                         if (value != null) {
-                            newText.append(value.toString());
+                            newText.append(parameterValueTransformer.apply(value));
                         } else {
                             newText.append("null");
                         }
                     } else if (o != null) {
-                        newText.append(o.toString());
+                        newText.append(parameterValueTransformer.apply(o));
                     }
                 } else {
                     newText.append("[no such parameter]");

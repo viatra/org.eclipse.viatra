@@ -81,7 +81,7 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     dispatch def String getTextInternal(IPatternMatch element) {
         val message = DisplayUtil.getMessage(element)
         if(message != null) {
-            return ViatraQueryRuntimeHelper.getMessage(element, message)
+            return ViatraQueryRuntimeHelper.getMessage(element, message, [adapterFactoryLabelProvider.getText(it)])
         }
         return element.prettyPrint
     }
