@@ -172,6 +172,10 @@
                label="Load from active editor"
                style="push">
          </command>
+         <command
+               commandId="org.eclipse.ui.navigate.collapseAll"
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -186,6 +190,14 @@
                commandId="org.eclipse.viatra.query.tooling.ui.result.wipeengine"
                icon="icons/reset.gif"
                label="Remove loaded queries"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
+         <command
+               commandId="org.eclipse.ui.navigate.collapseAll"
                style="push">
          </command>
       </menuContribution>

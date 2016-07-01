@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.handlers.CollapseAllHandler;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
@@ -49,6 +51,7 @@ public class QueryResultView extends ViewPart {
     private Label lblScopeDescription;
     private ITabbedPropertySheetPageContributor propertyPageContributor;
     private QueryEvaluationHint hint;
+    private CollapseAllHandler collapseHandler;
 
     public QueryResultView() {
         this.propertyPageContributor = new ITabbedPropertySheetPageContributor(){
@@ -96,8 +99,17 @@ public class QueryResultView extends ViewPart {
         queryResultTreeViewer.setContentProvider(new QueryResultTreeContentProvider());
         getSite().setSelectionProvider(queryResultTreeViewer);
         
+        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+        collapseHandler = new CollapseAllHandler(queryResultTreeViewer);
+        handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, collapseHandler);
     }
 
+    @Override
+    public void dispose() {
+        collapseHandler.dispose();
+        super.dispose();
+    }
+    
     @Override
     public void setFocus() {
         // Set the focus

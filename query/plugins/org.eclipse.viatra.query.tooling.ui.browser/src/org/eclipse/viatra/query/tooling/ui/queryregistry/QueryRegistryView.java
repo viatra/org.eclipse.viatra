@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.handlers.CollapseAllHandler;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
@@ -46,6 +48,7 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
     private TreeViewer queryTreeViewer;
     private QueryRegistryTreeInput queryRegistryTreeInput;
     private XtextIndexBasedRegistryUpdater updater;
+    private CollapseAllHandler collapseHandler;
 
     public QueryRegistryView() {
         Injector injector = EMFPatternLanguageActivator.getInstance().getInjector(EMFPatternLanguageActivator.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
@@ -58,6 +61,7 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
     @Override
     public void dispose() {
         updater.disconnectIndexFromRegistry();
+        collapseHandler.dispose();
         super.dispose();
     }
 
@@ -99,6 +103,10 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         
         queryTreeViewer.setInput(queryRegistryTreeInput);
         
+        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
+        collapseHandler = new CollapseAllHandler(queryTreeViewer);
+        handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, collapseHandler);
+        
         // Create pop-up menu over the tree viewer
         MenuManager menuManager = new MenuManager();
         menuManager.setRemoveAllWhenShown(true);
@@ -136,5 +144,9 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
     public void resetView() {
         updater.disconnectIndexFromRegistry();
         updater.connectIndexToRegistry(QuerySpecificationRegistry.getInstance());
+    }
+    
+    public void collapseAll() {
+        queryTreeViewer.collapseAll();
     }
 }
