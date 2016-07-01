@@ -20,7 +20,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintKeys;
+import org.eclipse.viatra.query.runtime.localsearch.plan.PlannerConfiguration;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.OperationCostComparator;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
@@ -52,7 +52,7 @@ import com.google.common.collect.Sets.SetView;
  * (DOI: 10.1007/s10270-013-0372-2)
  * 
  * @author Marton Bur
- *
+ * @noreference This class is not intended to be referenced by clients.
  */
 public class LocalSearchRuntimeBasedStrategy {
 
@@ -73,6 +73,16 @@ public class LocalSearchRuntimeBasedStrategy {
     }
 	
     /**
+     * 
+     * @deprecated use {@link #plan(PBody, Logger, Set, IQueryMetaContext, IQueryRuntimeContext, PlannerConfiguration)} instead
+     */
+    @Deprecated
+    public SubPlan plan(PBody pBody, Logger logger, Set<PVariable> initialBoundVariables,
+            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, Map<String, Object> hints){
+        return plan(pBody, logger, initialBoundVariables, metaContext, runtimeContext, new PlannerConfiguration(hints));
+    }
+    
+    /**
      * The implementation of a local search-based algorithm to create a search plan for a flattened (and normalized)
      * PBody
      * @param pBody for which the plan is to be created
@@ -80,11 +90,12 @@ public class LocalSearchRuntimeBasedStrategy {
      * @param initialBoundVariables variables that are known to have already assigned values
      * @param metaContext the metamodel related information
      * @param runtimeContext the instance model related information
-     * @param hints the optional hints for the plan creation
+     * @param configuration the planner configuration
      * @return the complete search plan for the given {@link PBody}
+     * @since 1.4
      */
     public SubPlan plan(PBody pBody, Logger logger, Set<PVariable> initialBoundVariables,
-            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, Map<String, Object> hints) {
+            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, PlannerConfiguration configuration) {
 
         // 1. INITIALIZATION
         // Create a starting plan
@@ -107,11 +118,7 @@ public class LocalSearchRuntimeBasedStrategy {
         // The characteristic function is represented as a set of set of variables
         // TODO this calculation is not not implemented yet, thus the contents of the returned set is not considered later
         List<Set<PVariable>> reachableBoundVariableSets = reachabilityAnalysis(pBody, constraintInfos);
-        int k = 4;
-        Integer rowCountHint= (Integer) hints.get(LocalSearchHintKeys.PLANNER_TABLE_ROW_COUNT);
-        if(rowCountHint != null){
-            k = rowCountHint;
-        }
+        int k = configuration.getRowCount();
         PlanState searchPlan = calculateSearchPlan(pBody, initialBoundVariables, k, reachableBoundVariableSets, constraintInfos);
 
         List<PConstraintInfo> operations = searchPlan.getOperations();

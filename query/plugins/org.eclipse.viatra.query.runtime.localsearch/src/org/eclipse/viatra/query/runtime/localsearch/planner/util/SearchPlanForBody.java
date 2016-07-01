@@ -11,9 +11,11 @@
 package org.eclipse.viatra.query.runtime.localsearch.planner.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.FrameInitializationCheck;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
@@ -32,9 +34,10 @@ public class SearchPlanForBody {
     private int[] parameterKeys;
     private SubPlan plan;
     private List<ISearchOperation> compiledOperations;
+    private Collection<MatcherReference> dependencies;
     
     public SearchPlanForBody(PBody body, Map<PVariable, Integer> variableKeys,
-            SubPlan plan, List<ISearchOperation> compiledOperations) {
+            SubPlan plan, List<ISearchOperation> compiledOperations, Collection<MatcherReference> dependencies) {
         super();
         this.body = body;
         this.variableKeys = variableKeys;
@@ -47,6 +50,8 @@ public class SearchPlanForBody {
         this.compiledOperations = Lists.newArrayListWithCapacity(compiledOperations.size()+1);
         this.compiledOperations.add(new FrameInitializationCheck(parameterKeys));
         this.compiledOperations.addAll(compiledOperations);
+        
+        this.dependencies = Lists.newArrayList(dependencies);
     }
 
     public PBody getBody() {
@@ -69,5 +74,8 @@ public class SearchPlanForBody {
         return plan;
     }
     
+    public Collection<MatcherReference> getDependencies() {
+        return dependencies;
+    }
     
 }

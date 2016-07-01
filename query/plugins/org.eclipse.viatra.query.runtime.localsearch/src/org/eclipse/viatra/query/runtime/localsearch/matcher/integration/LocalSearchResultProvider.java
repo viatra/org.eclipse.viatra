@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -31,34 +30,25 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendToES
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEClassInstances;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEDatatypeInstances;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEStructuralFeatureInstances;
+import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
+import org.eclipse.viatra.query.runtime.localsearch.plan.PlannerConfiguration;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
-import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner;
-import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy;
-import org.eclipse.viatra.query.runtime.localsearch.planner.POperationCompiler;
-import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
-import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
-import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBasedConstraintCostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.DefaultFlattenCallPredicate;
-import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
-import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer;
-import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PQueryFlattener;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -70,73 +60,27 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     private final IQueryBackend backend;
     private final IQueryBackendHintProvider hintProvider;
     private final PQuery query;
-	private Logger logger;
-	private IQueryRuntimeContext runtimeContext;
 	private IQueryCacheContext cacheContext;
+	private final PlannerConfiguration plannerConfiguration;
+	
+	private final IPlanProvider planProvider;
 
     private static class Planner {
 
 //        Map<List<ISearchOperation>, Map<PVariable, Integer>> operationListsWithVarMappings;
         Collection<SearchPlanForBody> compiledPlans;
-        private POperationCompiler compiler;
-        private IQueryBackend backend;
-        private IQueryBackendHintProvider hintProvider;
-        private PQuery query;
+        private final IQueryBackend backend;
+        private final PlannerConfiguration configuration;
 
-        public Planner(IQueryBackend backend, IQueryBackendHintProvider hintProvider, PQuery query) {
+        public Planner(IQueryBackend backend, PlannerConfiguration configuration) {
             this.backend = backend;
-            this.hintProvider = hintProvider;
-            this.query = query;
-        }
-
-        
-        private ICostFunction createCostFunction(IQueryRuntimeContext runtimeContext, PQuery query){
-            Object object = hintProvider.getHints(query).get(LocalSearchHintKeys.PLANNER_COST_FUNCTION);
-            if (object != null){
-                Preconditions.checkArgument(object instanceof ICostFunction);
-                ICostFunction costFunction = (ICostFunction)object;
-                return costFunction;
-            }
-            return new IndexerBasedConstraintCostFunction();
+            this.configuration = configuration;
         }
         
-        private IFlattenCallPredicate createFlattenCallPredicate(){
-            Object object = hintProvider.getHints(query).get(LocalSearchHintKeys.FLATTEN_CALL_PREDICATE);
-            if (object != null){
-                Preconditions.checkArgument(object instanceof IFlattenCallPredicate);
-                IFlattenCallPredicate predicate = (IFlattenCallPredicate)object;
-                return predicate;
-            }
-            return new DefaultFlattenCallPredicate();
-        }
-        
-        public void createPlan(MatcherReference key, Logger logger, IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, final ISearchContext searchContext)
+        public void createPlan(MatcherReference key, IPlanProvider planProvider, final ISearchContext searchContext)
                 throws QueryProcessingException {
-        	IFlattenCallPredicate flattenCallPredicate = createFlattenCallPredicate();
-            PQueryFlattener flattener = new PQueryFlattener(flattenCallPredicate);
-            PBodyNormalizer normalizer = new PBodyNormalizer(metaContext, false);
             
-            Map<String, Object> hints = hintProvider.getHints(query);
-            Boolean allowInverse = (Boolean) hints.get(LocalSearchHintKeys.ALLOW_INVERSE_NAVIGATION);
-            allowInverse = allowInverse == null ? true : allowInverse; 
-            Boolean useBase = (Boolean) hints.get(LocalSearchHintKeys.USE_BASE_INDEX);
-            useBase = useBase == null ? true : useBase; 
-            
-            final ICostFunction costFunction = createCostFunction(runtimeContext, key.getQuery());
-            
-            LocalSearchRuntimeBasedStrategy strategy = new LocalSearchRuntimeBasedStrategy(allowInverse,useBase,
-                    new Function<IConstraintEvaluationContext, Float>() {
-                        @Override
-                        public Float apply(IConstraintEvaluationContext input) {
-                            return costFunction.apply(input);
-                        }
-                    });
-            compiler = new POperationCompiler(runtimeContext, backend, useBase);
-
-            LocalSearchPlanner planner = new LocalSearchPlanner();
-            planner.initializePlanner(flattener, logger, metaContext, runtimeContext, normalizer, strategy, compiler, hints);
-            
-            compiledPlans = planner.plan(key.getQuery(), key.getAdornment());
+            compiledPlans = Lists.newArrayList(planProvider.getPlan((LocalSearchBackend)backend, configuration, key).getPlan());
 
             Collection<SearchPlanExecutor> executors = Collections2.transform(compiledPlans,
                     new Function<SearchPlanForBody, SearchPlanExecutor>() {
@@ -150,12 +94,12 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
                         }
                     });
 
-            final Collection<Integer> parameterSizes = Collections2.transform(planner.getNormalizedDisjunction()
-                    .getBodies(), new Function<PBody, Integer>() {
+            final Collection<Integer> parameterSizes = Collections2.transform(compiledPlans, new Function<SearchPlanForBody, Integer>() {
 
                 @Override
-                public Integer apply(PBody input) {
-                    return input.getUniqueVariables().size();
+                public Integer apply(SearchPlanForBody input) {
+                    PBody body = input.getBody();
+                    return body.getUniqueVariables().size();
 //                    return Math.max(input.getSymbolicParameters().size(), input.getUniqueVariables().size());
                 }
             });
@@ -185,21 +129,25 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         }
 
         public void collectDependencies(Set<MatcherReference> dependencies) {
-            dependencies.addAll(compiler.getDependencies());
-
+            for(SearchPlanForBody plan : compiledPlans){
+                dependencies.addAll(plan.getDependencies());
+            }
         }
 
     }
 
+    /**
+     * @since 1.4
+     */
     public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
-            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query) {
+            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query, IPlanProvider planProvider) {
         this.backend = backend;
-		this.logger = logger;
-		this.runtimeContext = runtimeContext;
 		this.cacheContext = cacheContext;
         this.hintProvider = hintProvider;
         this.query = query;
-
+        
+        this.planProvider = planProvider;
+        this.plannerConfiguration = new PlannerConfiguration(hintProvider.getHints(query));
     }
 
     private LocalSearchMatcher initializeMatcher(Object[] parameters) {
@@ -239,8 +187,8 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         
         while (!todo.isEmpty()) {
             final MatcherReference dependency = todo.iterator().next();
-            Planner planner = new Planner(backend, hintProvider, query);
-            planner.createPlan(dependency, logger, runtimeContext.getMetaContext(), runtimeContext, searchContext);
+            Planner planner = new Planner(backend, plannerConfiguration);
+            planner.createPlan(dependency, planProvider, searchContext);
             planner.collectElementsToIndex(classesToIndex, featuresToIndex, dataTypesToIndex);
             planner.collectDependencies(dependencies);
             processedDependencies.add(dependency);

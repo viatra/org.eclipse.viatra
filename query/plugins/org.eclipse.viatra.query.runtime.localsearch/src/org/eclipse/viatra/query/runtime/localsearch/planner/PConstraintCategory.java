@@ -16,7 +16,7 @@ package org.eclipse.viatra.query.runtime.localsearch.planner;
  * condition with respect to a given adornment.
  * 
  * @author Marton Bur
- *
+ * @noreference This enum is not intended to be referenced by clients.
  */
 public enum PConstraintCategory {
     /*

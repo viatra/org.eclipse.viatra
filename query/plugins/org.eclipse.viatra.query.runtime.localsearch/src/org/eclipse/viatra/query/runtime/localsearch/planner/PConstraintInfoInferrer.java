@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @author Grill Balázs
- *
+ * @noreference This class is not intended to be referenced by clients.
  */
 class PConstraintInfoInferrer {
 

@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEval
  * the affected variables also called application condition, and the cost of the enforcement, based on the meta and/or the runtime context.
  *  
  * @author Marton Bur
+ * @noreference This class is not intended to be referenced by clients.
  */
 class PConstraintInfo implements IConstraintEvaluationContext {
 

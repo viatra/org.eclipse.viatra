@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -20,14 +19,11 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
-import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOperation;
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

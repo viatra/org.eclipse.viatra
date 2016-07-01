@@ -18,6 +18,8 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.viatra.query.runtime.localsearch.plan.CachingPlanProvider;
+import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
@@ -38,6 +40,7 @@ public class LocalSearchBackend implements IQueryBackend {
 	IQueryRuntimeContext runtimeContext;
 	IQueryCacheContext queryCacheContext;
 	Logger logger;
+	IPlanProvider planProvider;
 	
 	// Cache
 	Table<EDataType, EClass, Set<EAttribute>> eAttributesByTypeForEClass;
@@ -50,13 +53,13 @@ public class LocalSearchBackend implements IQueryBackend {
 		this.queryCacheContext = queryCacheContext;
         this.hintProvider = hintProvider;
         this.eAttributesByTypeForEClass = HashBasedTable.create();
+        this.planProvider = new CachingPlanProvider(logger);
     }
 
 
     @Override
     public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException {
-        //TODO caching
-        return new LocalSearchResultProvider(this, logger, runtimeContext, queryCacheContext, hintProvider, query);
+        return new LocalSearchResultProvider(this, logger, runtimeContext, queryCacheContext, hintProvider, query, planProvider);
     }
 
     @Override
@@ -77,4 +80,18 @@ public class LocalSearchBackend implements IQueryBackend {
 	    return eAttributesByTypeForEClass;
 	}
 
+	/**
+	 * @since 1.4
+     */
+    public IQueryRuntimeContext getRuntimeContext() {
+        return runtimeContext;
+    }
+    
+    /**
+     * @since 1.4
+     */
+    public IQueryBackendHintProvider getHintProvider() {
+        return hintProvider;
+    }
+	
 }

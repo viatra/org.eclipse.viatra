@@ -28,7 +28,7 @@ import com.google.common.collect.Sets;
  * This class represents the state of the plan during planning
  * 
  * @author Marton Bur
- *
+ * @noreference This class is not intended to be referenced by clients.
  */
 public class PlanState {
 

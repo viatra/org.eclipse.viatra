@@ -16,7 +16,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.plan.PlannerConfiguration;
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
@@ -41,9 +44,9 @@ import com.google.common.collect.Sets;
 /**
  * 
  * @author Marton Bur
- *
+ * @noreference This class is not intended to be referenced by clients.
  */
-public class LocalSearchPlanner {
+public class LocalSearchPlanner{
 
     // Fields to track and debug the workflow
     // Internal data
@@ -70,26 +73,35 @@ public class LocalSearchPlanner {
     }
 
     // Externally set tools for planning
-    private PQueryFlattener flattener;
-    private LocalSearchRuntimeBasedStrategy plannerStrategy;
-    private PBodyNormalizer normalizer;
-    private POperationCompiler operationCompiler;
-    private Logger logger;
-    private IQueryMetaContext metaContext;
-    private IQueryRuntimeContext runtimeContext;
-    private Map<String, Object> hints;
+    private final PQueryFlattener flattener;
+    private final LocalSearchRuntimeBasedStrategy plannerStrategy;
+    private final PBodyNormalizer normalizer;
+    private final POperationCompiler operationCompiler;
+    private final Logger logger;
+    private final IQueryMetaContext metaContext;
+    private final IQueryRuntimeContext runtimeContext;
+    private final PlannerConfiguration configuration;
 
-    public void initializePlanner(PQueryFlattener pQueryFlattener, Logger logger, IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext,
-            PBodyNormalizer pBodyNormalizer, LocalSearchRuntimeBasedStrategy localSearchPlannerStrategy,
-            POperationCompiler pOperationCompiler, Map<String, Object> hints) {
-        this.flattener = pQueryFlattener;
+    /**
+     * @since 1.4
+     */
+    public LocalSearchPlanner(LocalSearchBackend backend, Logger logger, final PlannerConfiguration configuration) {
+        
+        this.runtimeContext = backend.getRuntimeContext();
+        this.configuration = configuration;
+        flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
+        normalizer = new PBodyNormalizer(runtimeContext.getMetaContext(), false);
+        
+        plannerStrategy = new LocalSearchRuntimeBasedStrategy(configuration.isAllowInverse(),configuration.isUseBase(), new Function<IConstraintEvaluationContext, Float>() {
+            @Override
+            public Float apply(IConstraintEvaluationContext input) {
+                return configuration.getCostFunction().apply(input);
+            }
+        });
+        operationCompiler = new POperationCompiler(runtimeContext, backend, configuration.isUseBase());
+        
         this.logger = logger;
-        this.metaContext = metaContext;
-        this.runtimeContext = runtimeContext;
-        this.normalizer = pBodyNormalizer;
-        this.plannerStrategy = localSearchPlannerStrategy;
-        this.operationCompiler = pOperationCompiler;
-        this.hints = hints;
+        this.metaContext = runtimeContext.getMetaContext();
     }
 
     /**
@@ -115,13 +127,13 @@ public class LocalSearchPlanner {
             // 2. Plan creation
             // Context has matchers for the referred Queries (IQuerySpecifications)
             Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundVarIndices, normalizedBody);
-            SubPlan plan = plannerStrategy.plan(normalizedBody, logger, boundVariables, metaContext, runtimeContext, hints);
+            SubPlan plan = plannerStrategy.plan(normalizedBody, logger, boundVariables, metaContext, runtimeContext, configuration);
             // 3. PConstraint -> POperation compilation step
             // TODO finish (revisit?) the implementation of the compile function
             // * Pay extra caution to extend operations, when more than one variables are unbound
             List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundVarIndices);
             // Store the variable mappings for the plans for debug purposes (traceability information)
-            SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody, operationCompiler.getVariableMappings(), plan, compiledOperations);
+            SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody, operationCompiler.getVariableMappings(), plan, compiledOperations, operationCompiler.getDependencies());
             
             plansForBodies.add(compiledPlan);
         }

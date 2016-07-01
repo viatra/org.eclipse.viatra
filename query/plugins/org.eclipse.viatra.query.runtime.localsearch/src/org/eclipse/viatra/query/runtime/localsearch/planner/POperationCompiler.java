@@ -75,7 +75,7 @@ import com.google.common.collect.Sets;
  * An EMF specific plan compiler for the local search-based pattern matcher
  * 
  * @author Marton Bur
- *
+ * @noreference This class is not intended to be referenced by clients.
  */
 public class POperationCompiler {
 
