@@ -219,11 +219,9 @@ class QueryRegistryTreeViewListener implements IQuerySpecificationRegistryChange
             provider.viewer.tree.display.asyncExec[
                 if(newEntry.sourceAffected){
                     provider.viewer.add(input, newEntry.source)
-                    provider.viewer.setExpandedState(newEntry.source, true)
                 }
                 if(newEntry.pckgAffected){
                     provider.viewer.add(newEntry.source, newEntry.pckg)
-                    provider.viewer.setExpandedState(newEntry.pckg, true)
                 }
                 provider.viewer.add(newEntry.pckg, newEntry.entry)
             ]
