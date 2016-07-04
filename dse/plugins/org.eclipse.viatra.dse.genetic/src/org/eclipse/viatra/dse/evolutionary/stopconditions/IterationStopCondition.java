@@ -31,11 +31,7 @@ public class IterationStopCondition implements IStopCondition {
     @Override
     public boolean checkStopCondition(Collection<TrajectoryFitness> survivedPopulation) {
         iterations--;
-        if (iterations > 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return iterations <= 0;
     }
 
 }

@@ -51,17 +51,17 @@ public class EvolutionaryStrategyLogAdapter implements IEvolutionaryStrategyAdap
 
         for (TrajectoryFitness trajectoryFitness : currentPopulation) {
 
-            row.add(DseCsvConstants.ConfigId, configId);
-            row.add(DseCsvConstants.RunId, runId);
-            row.add(DseCsvConstants.Iteration, iteration);
-            row.add(DseCsvConstants.RunTime, elapsedTime);
-            row.add(DseCsvConstants.Length, trajectoryFitness.trajectory.length);
+            row.add(DseCsvConstants.configId, configId);
+            row.add(DseCsvConstants.runId, runId);
+            row.add(DseCsvConstants.iteration, iteration);
+            row.add(DseCsvConstants.runTime, elapsedTime);
+            row.add(DseCsvConstants.length, trajectoryFitness.trajectory.length);
 
-            row.add(DseCsvConstants.Fitness, "\"" + trajectoryFitness.fitness + "\"");
-            row.add(DseCsvConstants.Trajectory, "\"" + Arrays.toString(trajectoryFitness.trajectory) + "\"");
+            row.add(DseCsvConstants.fitness, "\"" + trajectoryFitness.fitness + "\"");
+            row.add(DseCsvConstants.trajectory, "\"" + Arrays.toString(trajectoryFitness.trajectory) + "\"");
 
-            row.add(DseCsvConstants.Rank, trajectoryFitness.rank - 1);
-            row.add(DseCsvConstants.Survive, trajectoryFitness.survive);
+            row.add(DseCsvConstants.rank, trajectoryFitness.rank - 1);
+            row.add(DseCsvConstants.survive, trajectoryFitness.survive);
 
             csv.appendRow(row);
         }

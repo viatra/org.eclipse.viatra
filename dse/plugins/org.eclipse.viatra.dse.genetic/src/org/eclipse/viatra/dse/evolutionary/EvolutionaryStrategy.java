@@ -150,9 +150,9 @@ public class EvolutionaryStrategy implements IStrategy {
     private void savePopulationsAsSolutions(List<TrajectoryFitness> survivedPopulation) {
         for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
             if (trajectoryFitness.rank == 1) {
-                while(dsm.undoLastTransformation());
+                context.backtrackUntilRoot();
                 for (Object transition : trajectoryFitness.trajectory) {
-                    dsm.fireActivation(transition);
+                    context.executeAcitvationId(transition);
                 }
                 context.calculateFitness();
                 context.newSolution();

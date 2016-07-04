@@ -211,7 +211,7 @@ public class GlobalContext {
     private Set<BatchTransformationRule<?, ?>> transformations = new HashSet<BatchTransformationRule<?, ?>>();
     private IStateCoderFactory stateCoderFactory;
     private SolutionStore solutionStore = new SolutionStore(1);
-    private Object SharedObject;
+    private Object sharedObject;
     private List<IDesignSpaceVisualizer> visualizers;
 
     private ConflictResolver conflictResolver = ConflictResolvers.createArbitraryResolver();
@@ -305,11 +305,11 @@ public class GlobalContext {
     }
 
     public Object getSharedObject() {
-        return SharedObject;
+        return sharedObject;
     }
 
     public void setSharedObject(Object sharedObject) {
-        SharedObject = sharedObject;
+        this.sharedObject = sharedObject;
     }
 
     public ExplorationProcessState getState() {

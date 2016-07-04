@@ -63,7 +63,7 @@ public class ThreadContext implements IDseStrategyContext{
     private DesignSpaceManager designSpaceManager;
     private List<IObjective> objectives;
     private List<IGlobalConstraint> globalConstraints;
-    private Fitness fitness;
+    private Fitness lastFitness;
     private ObjectiveComparatorHelper objectiveComparatorHelper;
 
     /**
@@ -210,7 +210,7 @@ public class ThreadContext implements IDseStrategyContext{
             result.setSatisifiesHardObjectives(false);
         }
 
-        fitness = result;
+        lastFitness = result;
 
         return result;
     }
@@ -261,7 +261,7 @@ public class ThreadContext implements IDseStrategyContext{
     }
 
     public Fitness getLastFitness() {
-        return fitness;
+        return lastFitness;
     }
 
     public ObjectiveComparatorHelper getObjectiveComparatorHelper() {
