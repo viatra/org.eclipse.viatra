@@ -13,8 +13,6 @@ package org.eclipse.viatra.query.tooling.ui.wizards.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.internal.ui.packageview.DefaultElementComparer;
-import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
