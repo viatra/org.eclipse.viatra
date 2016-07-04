@@ -149,10 +149,10 @@
           name="org.eclipse.sdk.feature.group"/>
       <requirement
           name="org.eclipse.gef4.geometry.feature.group"
-          versionRange="[0.1.0.201406280202,0.1.0.201406280202]"/>
+          versionRange="[0.1.0.201607041345,0.1.0.201607041345]"/>
       <requirement
           name="org.eclipse.gef4.zest.sdk.feature.group"
-          versionRange="[0.1.0.201406280202,0.1.0.201406280202]"/>
+          versionRange="[0.1.0.201607041345,0.1.0.201607041345]"/>
       <requirement
           name="com.google.inject"
           versionRange="[3.0.0,4.0.0)"/>

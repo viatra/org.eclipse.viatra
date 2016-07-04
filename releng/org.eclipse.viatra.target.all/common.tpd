@@ -41,7 +41,7 @@ location "http://archive.eclipse.org/modeling/mdt/modisco/updates/release/0.13.0
     org.eclipse.modisco.infrastructure.feature.feature.group [0.13.0,0.14.0)
 }
 location "http://download.eclipse.org/viatra/dependency" {
-    org.eclipse.gef4.geometry.feature.group [0.1.0.201406280202,0.1.0.201406280202] 
-    org.eclipse.gef4.zest.sdk.feature.group [0.1.0.201406280202,0.1.0.201406280202]
+    org.eclipse.gef4.geometry.feature.group [0.1.0.201607041345,0.1.0.201607041345] 
+    org.eclipse.gef4.zest.sdk.feature.group [0.1.0.201607041345,0.1.0.201607041345]
 }
 

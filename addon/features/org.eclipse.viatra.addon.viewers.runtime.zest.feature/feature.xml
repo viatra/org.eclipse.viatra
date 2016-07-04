@@ -16,7 +16,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.gef4.zest.sdk" version="0.1.0.201406280202" match="perfect"/>
+      <import feature="org.eclipse.gef4.zest.sdk" version="0.1.0.201607041345" match="perfect"/>
       <import feature="org.eclipse.viatra.addon.viewers.runtime.feature"/>
    </requires>
 
