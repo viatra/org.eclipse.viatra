@@ -19,10 +19,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
-import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 import com.google.common.collect.Lists;
@@ -31,9 +29,7 @@ public class FixedPriorityStrategy implements IStrategy {
 
     private int maxDepth = Integer.MAX_VALUE;
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
-    private DesignSpaceManager dsm;
     private ThreadContext context;
-    private SolutionStore solutionStore;
 
     private Logger logger = Logger.getLogger(getClass());
     private Map<BatchTransformationRule<?, ?>, Integer> priorities = new HashMap<BatchTransformationRule<?, ?>, Integer>();
@@ -78,8 +74,6 @@ public class FixedPriorityStrategy implements IStrategy {
     @Override
     public void initStrategy(ThreadContext context) {
         this.context = context;
-        dsm = context.getDesignSpaceManager();
-        solutionStore = context.getGlobalContext().getSolutionStore();
 
         logger.info("Initied");
     }
@@ -91,7 +85,7 @@ public class FixedPriorityStrategy implements IStrategy {
 
             boolean globalConstraintsAreSatisfied = context.checkGlobalConstraints();
             if (!globalConstraintsAreSatisfied) {
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     logger.info("Global contraint is not satisifed and cannot backtrack.");
                     break;
@@ -103,8 +97,8 @@ public class FixedPriorityStrategy implements IStrategy {
 
             Fitness fitness = context.calculateFitness();
             if (fitness.isSatisifiesHardObjectives()) {
-                solutionStore.newSolution(context);
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                context.newSolution();
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     logger.info("Found a solution but cannot backtrack.");
                     break;
@@ -114,8 +108,8 @@ public class FixedPriorityStrategy implements IStrategy {
                 }
             }
 
-            if (dsm.getTrajectoryInfo().getDepth() >= maxDepth) {
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+            if (context.getDepth() >= maxDepth) {
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     logger.info("Reached max depth but cannot bactrack.");
                     break;
@@ -134,21 +128,21 @@ public class FixedPriorityStrategy implements IStrategy {
 
             do {
 
-                transitions = bestPriorityInState.get(dsm.getCurrentState());
+                transitions = bestPriorityInState.get(context.getCurrentStateId());
 
                 if (transitions == null) {
-                    Integer bestPriority = getBestPriority(dsm.getTransitionsFromCurrentState());
+                    Integer bestPriority = getBestPriority(context.getCurrentActivationIds());
                     transitions = Lists.newArrayList();
-                    for (Object iTransition : dsm.getTransitionsFromCurrentState()) {
-                        if (priorities.get(dsm.getRuleByActivationId(iTransition)).equals(bestPriority)) {
+                    for (Object iTransition : context.getCurrentActivationIds()) {
+                        if (priorities.get(context.getRuleByActivationId(iTransition)).equals(bestPriority)) {
                             transitions.add(iTransition);
                         }
                     }
-                    bestPriorityInState.put(dsm.getCurrentState(), transitions);
+                    bestPriorityInState.put(context.getCurrentStateId(), transitions);
                 }
 
                 if (transitions.isEmpty()) {
-                    boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                    boolean isSuccessfulUndo = context.backtrack();
                     if (!isSuccessfulUndo) {
                         logger.info("No more transitions from current state and cannot backtrack.");
                         break mainloop;
@@ -162,17 +156,17 @@ public class FixedPriorityStrategy implements IStrategy {
             int index = random.nextInt(transitions.size());
             Object transition = transitions.remove(index);
 
-            Object prevState = dsm.getCurrentState();
-            dsm.fireActivation(transition);
+            Object prevState = context.getCurrentStateId();
+            context.executeAcitvationId(transition);
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Transition " + transition + " fired from: " + prevState + " and reached: "
-                        + dsm.getCurrentState());
+                        + context.getCurrentStateId());
             }
 
-            boolean loopInTrajectory = dsm.isCurentStateInTrajectory();
+            boolean loopInTrajectory = context.isCurrentStateInTrajectory();
             if (loopInTrajectory) {
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     throw new DSEException(
                             "The new state is present in the trajectoy but cannot bactkrack. Should never happen!");
@@ -194,7 +188,7 @@ public class FixedPriorityStrategy implements IStrategy {
     private Integer getBestPriority(Collection<? extends Object> transitions) {
         Integer bestPriority = Integer.MIN_VALUE;
         for (Object iTransition : transitions) {
-            Integer priority = priorities.get(dsm.getRuleByActivationId(iTransition));
+            Integer priority = priorities.get(context.getRuleByActivationId(iTransition));
             if (priority > bestPriority) {
                 bestPriority = priority;
             }

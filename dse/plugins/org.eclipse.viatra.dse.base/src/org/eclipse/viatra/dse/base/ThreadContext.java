@@ -13,23 +13,31 @@ package org.eclipse.viatra.dse.base;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
+import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
+import org.eclipse.viatra.dse.solutionstore.SolutionStore;
+import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.util.EMFHelper;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
+import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSet;
@@ -43,7 +51,7 @@ import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransforma
  * @author Miklos Foldenyi
  * 
  */
-public class ThreadContext {
+public class ThreadContext implements IDseStrategyContext{
 
     private final GlobalContext globalContext;
     private final IStrategy strategy;
@@ -160,7 +168,7 @@ public class ThreadContext {
         // create the thread specific DesignSpaceManager
         this.domain = EMFHelper.createEditingDomain(model);
         designSpaceManager = new DesignSpaceManager(this, model, domain, globalContext.getStateCoderFactory(),
-                globalContext.getDesignSpace(), ruleEngine, queryEngine);
+                globalContext.getDesignSpace(), queryEngine);
 
         for (IObjective objective : objectives) {
             objective.init(this);
@@ -273,6 +281,151 @@ public class ThreadContext {
     
     public List<IGlobalConstraint> getGlobalConstraints() {
         return globalConstraints;
+    }
+
+    @Override
+    public SolutionStore getSolutionStore() {
+        return globalContext.getSolutionStore();
+    }
+
+    @Override
+    public void newSolution() {
+        globalContext.getSolutionStore().newSolution(this);
+    }
+
+    @Override
+    public Object getSharedObject() {
+        return globalContext.getSharedObject();
+    }
+
+    @Override
+    public void setSharedObject(Object sharedObject) {
+        globalContext.setSharedObject(sharedObject);
+    }
+
+    @Override
+    public Set<BatchTransformationRule<?, ?>> getRules() {
+        return globalContext.getTransformations();
+    }
+
+    @Override
+    public BatchTransformationRule<?, ?> getRuleByRuleSpecification(RuleSpecification<?> ruleSpecification) {
+        return globalContext.getSpecificationRuleMap().get(ruleSpecification);
+    }
+
+    @Override
+    public ExplorerThread tryStartNewThread(IStrategy strategy) {
+        return globalContext.tryStartNewThread(this, strategy);
+    }
+
+    @Override
+    public ExplorerThread tryStartNewThreadWithoutModelClone(IStrategy strategy) {
+        return globalContext.tryStartNewThreadWithoutModelClone(this, strategy);
+    }
+
+    @Override
+    public IStateCoder getStateCoder() {
+        return designSpaceManager.getStateCoder();
+    }
+
+    @Override
+    public IDesignSpace getDesignSpace() {
+        return globalContext.getDesignSpace();
+    }
+
+    @Override
+    public TrajectoryInfo getTrajectoryInfo() {
+        return designSpaceManager.getTrajectoryInfo();
+    }
+
+    @Override
+    public List<Object> getTrajectory() {
+        return designSpaceManager.getTrajectoryInfo().getTrajectory();
+    }
+
+    @Override
+    public List<Object> getTrajectoryCopied() {
+        return new ArrayList<Object>(getTrajectory());
+    }
+
+    @Override
+    public int getDepth() {
+        return designSpaceManager.getTrajectoryInfo().getDepth();
+    }
+
+    @Override
+    public Object getCurrentStateId() {
+        return designSpaceManager.getTrajectoryInfo().getCurrentStateId();
+    }
+
+    @Override
+    public Object getTransitionByActivation(Activation<?> activation) {
+        return designSpaceManager.getTransitionByActivation(activation);
+    }
+
+    @Override
+    public Activation<?> getActivationById(Object activationId) {
+        return designSpaceManager.getActivationById(activationId);
+    }
+
+    @Override
+    public BatchTransformationRule<?, ?> getRuleByActivation(Activation<?> activation) {
+        return designSpaceManager.getRuleByActivation(activation);
+    }
+
+    @Override
+    public BatchTransformationRule<?, ?> getRuleByActivationId(Object activationId) {
+        return designSpaceManager.getRuleByActivationId(activationId);
+    }
+
+    @Override
+    public Collection<Object> getCurrentActivationIds() {
+        return designSpaceManager.getTransitionsFromCurrentState();
+    }
+
+    @Override
+    public Collection<Object> getUntraversedActivationIds() {
+        return designSpaceManager.getUntraversedTransitionsFromCurrentState();
+    }
+
+    @Override
+    public void executeAcitvationId(Object activationId) {
+        designSpaceManager.fireActivation(activationId);
+    }
+
+    @Override
+    public boolean tryExecuteAcitvationId(Object activationId) {
+        return designSpaceManager.tryFireActivation(activationId);
+    }
+
+    @Override
+    public void executeTrajectory(Object[] activationIds) {
+        designSpaceManager.executeTrajectoryCheaply(activationIds);
+    }
+
+    @Override
+    public void executeTrajectory(Object[] activationIds, int excludedIndex) {
+        designSpaceManager.executeTrajectoryCheaply(activationIds, excludedIndex);
+    }
+
+    @Override
+    public boolean backtrack() {
+        return designSpaceManager.undoLastTransformation();
+    }
+
+    @Override
+    public void backtrackUntilRoot() {
+        designSpaceManager.undoUntilRoot();
+    }
+
+    @Override
+    public boolean isCurrentStateAlreadyTraversed() {
+        return designSpaceManager.isNewModelStateAlreadyTraversed();
+    }
+
+    @Override
+    public boolean isCurrentStateInTrajectory() {
+        return designSpaceManager.isCurentStateInTrajectory();
     }
     
 }

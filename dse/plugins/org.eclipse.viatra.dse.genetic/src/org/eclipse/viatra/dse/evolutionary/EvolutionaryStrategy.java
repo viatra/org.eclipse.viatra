@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
-import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IEvaluationStrategy;
@@ -31,7 +30,6 @@ import org.eclipse.viatra.dse.evolutionary.interfaces.IReproductionStrategy;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IStopCondition;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ISurvivalStrategy;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
-import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
 public class EvolutionaryStrategy implements IStrategy {
 
@@ -52,9 +50,7 @@ public class EvolutionaryStrategy implements IStrategy {
     
     // local variables
     private ThreadContext context;
-    private GlobalContext gc;
     private DesignSpaceManager dsm;
-    private SolutionStore solutionStore;
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
     private Random random = new Random();
     private Set<TrajectoryFitness> childPopulation;
@@ -62,9 +58,7 @@ public class EvolutionaryStrategy implements IStrategy {
     @Override
     public void initStrategy(ThreadContext context) {
         this.context = context;
-        gc = context.getGlobalContext();
         dsm = context.getDesignSpaceManager();
-        solutionStore = gc.getSolutionStore();
         childPopulation = new HashSet<>(childPopulationSize);
         
         evaluationStrategy.init(context);
@@ -161,7 +155,7 @@ public class EvolutionaryStrategy implements IStrategy {
                     dsm.fireActivation(transition);
                 }
                 context.calculateFitness();
-                solutionStore.newSolution(context);
+                context.newSolution();
             }
         }
     }

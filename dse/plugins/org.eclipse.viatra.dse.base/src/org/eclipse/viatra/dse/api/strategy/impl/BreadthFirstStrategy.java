@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -73,7 +72,6 @@ public class BreadthFirstStrategy implements IStrategy {
     private BfsSharedObject shared;
     private boolean isInterrupted = false;
     private ThreadContext context;
-    private DesignSpaceManager dsm;
     private Logger logger = Logger.getLogger(getClass());
     private SolutionStore solutionStore;
     private boolean isFirstThread = false;
@@ -88,7 +86,6 @@ public class BreadthFirstStrategy implements IStrategy {
     @Override
     public void initStrategy(ThreadContext context) {
         this.context = context;
-        this.dsm = context.getDesignSpaceManager();
         this.solutionStore = context.getGlobalContext().getSolutionStore();
 
         GlobalContext globalContext = context.getGlobalContext();
@@ -114,17 +111,16 @@ public class BreadthFirstStrategy implements IStrategy {
 
             Fitness fitness = context.calculateFitness();
             if (fitness.isSatisifiesHardObjectives()) {
-                solutionStore.newSolution(context);
+                context.newSolution();
                 logger.info("First state is a solution. Terminate.");
                 return;
             }
 
-            Object[] currentTrajectory = dsm.getTrajectoryInfo().getTrajectory().toArray(new Object[0]);
+            Object[] currentTrajectory = context.getTrajectory().toArray(new Object[0]);
 
             shared.push(currentTrajectory);
 
-            GlobalContext globalContext = context.getGlobalContext();
-            while (globalContext.tryStartNewThread(context, new BreadthFirstStrategy(maxDepth)) != null) {
+            while (context.tryStartNewThread(new BreadthFirstStrategy(maxDepth)) != null) {
             }
         } else {
             try {
@@ -148,42 +144,42 @@ public class BreadthFirstStrategy implements IStrategy {
                 next = shared.poll();
             }
 
-            dsm.undoUntilRoot();
+            context.backtrackUntilRoot();
 
-            for (Object t : next) {
-                dsm.fireActivation(t);
+            for (Object a : next) {
+                context.executeAcitvationId(a);
             }
 
-            Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
-            int i = transitions.size() - 1;
+            Collection<Object> activationIds = context.getCurrentActivationIds();
+            int i = activationIds.size() - 1;
 
             while (!isInterrupted && i >= 0) {
 
-                Iterator<Object> iterator = transitions.iterator();
+                Iterator<Object> iterator = activationIds.iterator();
                 int index = i--;
                 while (iterator.hasNext() && index > 0) {
                     index--;
                     iterator.next();
                 }
-                Object transitionToTry = iterator.next();
+                Object activationIdToTry = iterator.next();
 
-                dsm.fireActivation(transitionToTry);
+                context.executeAcitvationId(activationIdToTry);
 
-                if (dsm.isNewModelStateAlreadyTraversed()) {
+                if (context.isCurrentStateAlreadyTraversed()) {
                     logger.info("The new state is already visited.");
                 } else if (!context.checkGlobalConstraints()) {
                     logger.debug("Global contraint is not satisifed.");
                 } else if (context.calculateFitness().isSatisifiesHardObjectives()) {
                     solutionStore.newSolution(context);
                     logger.debug("Found a solution.");
-                } else if (maxDepth > 0 && dsm.getTrajectoryInfo().getDepth() >= maxDepth) {
+                } else if (maxDepth > 0 && context.getDepth() >= maxDepth) {
                     logger.debug("Reached max depth.");
                 } else {
-                    Object[] currentTrajectory = dsm.getTrajectoryInfo().getTrajectory().toArray(new Object[0]);
+                    Object[] currentTrajectory = context.getTrajectory().toArray(new Object[0]);
                     shared.push(currentTrajectory);
                 }
 
-                dsm.undoLastTransformation();
+                context.backtrack();
             }
 
         }

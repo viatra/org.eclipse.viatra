@@ -18,13 +18,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ExplorerThread;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
-import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
 public class RandomSearchStrategy implements IStrategy {
 
@@ -40,7 +38,6 @@ public class RandomSearchStrategy implements IStrategy {
         }
     }
 
-    private DesignSpaceManager dsm;
     private GlobalContext gc;
     private int maxDepth = -1;
     private Random rnd = new Random();
@@ -49,7 +46,6 @@ public class RandomSearchStrategy implements IStrategy {
     int nth;
     private ThreadContext context;
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
-    private SolutionStore solutionStore;
     private Logger logger = Logger.getLogger(getClass());
 
     public RandomSearchStrategy(int minDepth, int maxDepth, int numberOfTries) {
@@ -62,10 +58,8 @@ public class RandomSearchStrategy implements IStrategy {
     @Override
     public void initStrategy(ThreadContext context) {
         this.context = context;
-        dsm = context.getDesignSpaceManager();
-        trajectoryInfo = dsm.getTrajectoryInfo();
+        trajectoryInfo = context.getTrajectoryInfo();
         gc = context.getGlobalContext();
-        solutionStore = gc.getSolutionStore();
 
         Object sharedObject = gc.getSharedObject();
         if (sharedObject == null) {
@@ -88,7 +82,7 @@ public class RandomSearchStrategy implements IStrategy {
 
             boolean globalConstraintsAreSatisfied = context.checkGlobalConstraints();
             if (!globalConstraintsAreSatisfied) {
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     logger.info("Global contraint is not satisifed and cannot backtrack.");
                     break;
@@ -100,8 +94,8 @@ public class RandomSearchStrategy implements IStrategy {
 
             Fitness fitness = context.calculateFitness();
             if (fitness.isSatisifiesHardObjectives()) {
-                solutionStore.newSolution(context);
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                context.newSolution();
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     logger.info("Found a solution but cannot backtrack.");
                     break;
@@ -113,10 +107,10 @@ public class RandomSearchStrategy implements IStrategy {
 
             if (trajectoryInfo.getDepth() < maxDepth) {
 
-                Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
+                Collection<Object> transitions = context.getCurrentActivationIds();
                 int index = rnd.nextInt(transitions.size());
                 Object transition = getByIndex(transitions, index);
-                dsm.fireActivation(transition);
+                context.executeAcitvationId(transition);
 
             } else {
 
@@ -124,7 +118,7 @@ public class RandomSearchStrategy implements IStrategy {
                 logger.debug(nth + " tries left");
                 if (nth > 0) {
 
-                    dsm.undoUntilRoot();
+                    context.backtrackUntilRoot();
                     maxDepth = rnd.nextInt(shared.maxDepth - shared.minDepth) + shared.minDepth;
 
                 } else {
@@ -132,9 +126,9 @@ public class RandomSearchStrategy implements IStrategy {
                 }
             }
 
-            boolean loopInTrajectory = dsm.isCurentStateInTrajectory();
+            boolean loopInTrajectory = context.isCurrentStateInTrajectory();
             if (loopInTrajectory) {
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     throw new DSEException(
                             "The new state is present in the trajectoy but cannot bactkrack. Should never happen!");

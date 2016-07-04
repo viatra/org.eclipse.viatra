@@ -16,19 +16,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
-import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
 public class HillClimbingStrategy implements IStrategy {
 
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
-    private DesignSpaceManager dsm;
     private ThreadContext context;
-    private SolutionStore solutionStore;
 
     private Logger logger = Logger.getLogger(getClass());
 
@@ -47,8 +43,6 @@ public class HillClimbingStrategy implements IStrategy {
     @Override
     public void initStrategy(ThreadContext context) {
         this.context = context;
-        dsm = context.getDesignSpaceManager();
-        solutionStore = context.getGlobalContext().getSolutionStore();
         objectiveComparatorHelper = context.getObjectiveComparatorHelper();
         logger.info("Initied");
     }
@@ -58,7 +52,7 @@ public class HillClimbingStrategy implements IStrategy {
 
         boolean globalConstraintsAreSatisfied = context.checkGlobalConstraints();
         if (!globalConstraintsAreSatisfied) {
-            boolean isSuccessfulUndo = dsm.undoLastTransformation();
+            boolean isSuccessfulUndo = context.backtrack();
             if (!isSuccessfulUndo) {
                 logger.info("Global contraint is not satisifed and cannot backtrack.");
                 return;
@@ -69,9 +63,9 @@ public class HillClimbingStrategy implements IStrategy {
 
             Fitness previousFitness = context.calculateFitness();
 
-            logger.debug("Current depth: " + dsm.getTrajectoryFromRoot().size() + " Fitness: " + previousFitness);
+            logger.debug("Current depth: " + context.getDepth() + " Fitness: " + previousFitness);
 
-            Collection<Object> transitionsFromCurrentState = dsm.getTransitionsFromCurrentState();
+            Collection<Object> transitionsFromCurrentState = context.getCurrentActivationIds();
 
             while (transitionsFromCurrentState.isEmpty()) {
                 logger.debug("No transitions from current state: considered as a solution.");
@@ -89,23 +83,23 @@ public class HillClimbingStrategy implements IStrategy {
                 int index = random.nextInt(transitionsToTry.size());
                 Object transition = transitionsToTry.remove(index);
 
-                dsm.fireActivation(transition);
+                context.executeAcitvationId(transition);
 
                 if (!context.checkGlobalConstraints()) {
                     logger.debug("Global contraint is not satisifed, backtrack.");
-                    dsm.undoLastTransformation();
+                    context.backtrack();
                     continue;
                 }
-                if (dsm.isCurentStateInTrajectory()) {
+                if (context.isCurrentStateInTrajectory()) {
                     logger.debug("Current state is in trajectory, backtrack.");
-                    dsm.undoLastTransformation();
+                    context.backtrack();
                     continue;
                 }
 
                 Fitness fitness = context.calculateFitness();
                 objectiveComparatorHelper.addTrajectoryFitness(
-                        new TrajectoryFitness(dsm.getTrajectoryInfo().getLastActivationId(), fitness));
-                dsm.undoLastTransformation();
+                        new TrajectoryFitness(context.getTrajectoryInfo().getLastActivationId(), fitness));
+                context.backtrack();
             }
 
             if (objectiveComparatorHelper.getTrajectoryFitnesses().isEmpty()) {
@@ -125,7 +119,7 @@ public class HillClimbingStrategy implements IStrategy {
             } else {
                 previousFitness = randomBestFitness.fitness;
                 Object transition = randomBestFitness.trajectory[randomBestFitness.trajectory.length - 1];
-                dsm.fireActivation(transition);
+                context.executeAcitvationId(transition);
             }
 
         } while (!isInterrupted.get());
@@ -135,10 +129,10 @@ public class HillClimbingStrategy implements IStrategy {
 
     private void saveSolutionAndBacktrack() {
         context.calculateFitness();
-        solutionStore.newSolution(context);
-        logger.debug("Found solution: " + dsm.getTrajectoryInfo().toString());
+        context.newSolution();
+        logger.debug("Found solution: " + context.getTrajectoryInfo().toString());
         logger.debug("Backtrack for more solutions, if needed.");
-        dsm.undoUntilRoot();
+        context.backtrackUntilRoot();
     }
 
     @Override

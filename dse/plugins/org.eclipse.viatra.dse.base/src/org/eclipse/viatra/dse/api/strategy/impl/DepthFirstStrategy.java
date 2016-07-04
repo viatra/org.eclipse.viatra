@@ -17,19 +17,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
-import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
-import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
 public class DepthFirstStrategy implements IStrategy {
 
     private int maxDepth;
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
-    private DesignSpaceManager dsm;
     private ThreadContext context;
-    private SolutionStore solutionStore;
     
     private Logger logger = Logger.getLogger(getClass());
 
@@ -45,18 +40,13 @@ public class DepthFirstStrategy implements IStrategy {
     
     @Override
     public void initStrategy(ThreadContext context) {
-        GlobalContext globalContext = context.getGlobalContext();
-        if (globalContext.getSharedObject() == null) {
-            globalContext.setSharedObject(new Object());
-            int maxThreads = globalContext.getThreadPool().getMaximumPoolSize();
-            for (int i = 1; i < maxThreads; i++) {
-                globalContext.tryStartNewThread(context, new DepthFirstStrategy(maxDepth));
+        if (context.getSharedObject() == null) {
+            context.setSharedObject(new Object());
+            while (context.tryStartNewThread(new BreadthFirstStrategy(maxDepth)) != null) {
             }
         }
         
         this.context = context;
-        dsm = context.getDesignSpaceManager();
-        solutionStore = context.getGlobalContext().getSolutionStore();
         
         logger.info("Initied");
     }
@@ -68,7 +58,7 @@ public class DepthFirstStrategy implements IStrategy {
 
             boolean globalConstraintsAreSatisfied = context.checkGlobalConstraints();
             if (!globalConstraintsAreSatisfied) {
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     logger.info("Global contraint is not satisifed and cannot backtrack.");
                     break;
@@ -80,8 +70,8 @@ public class DepthFirstStrategy implements IStrategy {
             
             Fitness fitness = context.calculateFitness();
             if (fitness.isSatisifiesHardObjectives()) {
-                solutionStore.newSolution(context);
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                context.newSolution();
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     logger.info("Found a solution but cannot backtrack.");
                     break;
@@ -91,8 +81,8 @@ public class DepthFirstStrategy implements IStrategy {
                 }
             }
 
-            if (dsm.getTrajectoryInfo().getDepth() >= maxDepth) {
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+            if (context.getDepth() >= maxDepth) {
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     logger.info("Reached max depth but cannot bactrack.");
                     break;
@@ -107,13 +97,13 @@ public class DepthFirstStrategy implements IStrategy {
                 break;
             }
 
-            Object transition = null;
-            Collection<Object> transitions;
+            Object activationId = null;
+            Collection<Object> activationIds;
 
             do {
-                transitions = dsm.getUntraversedTransitionsFromCurrentState();
-                if (transitions.isEmpty()) {
-                    boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                activationIds = context.getUntraversedActivationIds();
+                if (activationIds.isEmpty()) {
+                    boolean isSuccessfulUndo = context.backtrack();
                     if (!isSuccessfulUndo) {
                         logger.info("No more transitions from current state and cannot backtrack.");
                         break mainloop;
@@ -122,31 +112,31 @@ public class DepthFirstStrategy implements IStrategy {
                         continue;
                     }
                 } 
-            } while (transitions.isEmpty());
+            } while (activationIds.isEmpty());
 
-            int index = random.nextInt(transitions.size());
+            int index = random.nextInt(activationIds.size());
             
-            Iterator<Object> iterator = transitions.iterator();
+            Iterator<Object> iterator = activationIds.iterator();
             while (index-- > 0) {
                 iterator.next();
             }
-            transition = iterator.next();
+            activationId = iterator.next();
                 
-            Object prevState = dsm.getCurrentState();
-            dsm.fireActivation(transition);
+            Object prevStateId = context.getCurrentStateId();
+            context.executeAcitvationId(activationId);
 
             if (logger.isDebugEnabled()) {
-                logger.debug("Transition "
-                        + transition
+                logger.debug("Activation id: "
+                        + activationId
                         + " fired from: "
-                        + prevState
+                        + prevStateId
                         + " and reached: "
-                        + dsm.getCurrentState());
+                        + context.getCurrentStateId());
             }
             
-            boolean loopInTrajectory = dsm.isCurentStateInTrajectory();
+            boolean loopInTrajectory = context.isCurrentStateInTrajectory();
             if (loopInTrajectory) {
-                boolean isSuccessfulUndo = dsm.undoLastTransformation();
+                boolean isSuccessfulUndo = context.backtrack();
                 if (!isSuccessfulUndo) {
                     throw new DSEException("The new state is present in the trajectoy but cannot bactkrack. Should never happen!");
                 } else {
@@ -154,17 +144,6 @@ public class DepthFirstStrategy implements IStrategy {
                 }
             }
             
-//            boolean isAlreadyTraversed = dsm.isNewModelStateAlreadyTraversed();
-//            if (isAlreadyTraversed) {
-//                boolean isSuccessfulUndo = dsm.undoLastTransformation();
-//                if (!isSuccessfulUndo) {
-//                    logger.info("Already traversed state but cannot backtrack.");
-//                    break;
-//                } else {
-//                    logger.debug("Already traversed state, backtrack.");
-//                }
-//            }
-
         } while (true);
         
         logger.info("Terminated.");

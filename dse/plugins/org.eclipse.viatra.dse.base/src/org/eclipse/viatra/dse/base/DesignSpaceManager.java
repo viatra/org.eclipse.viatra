@@ -34,7 +34,6 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
-import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
@@ -69,7 +68,7 @@ public class DesignSpaceManager {
     private ChangeableConflictSet conflictSet;
 
     public DesignSpaceManager(ThreadContext context, Notifier model, EditingDomain domain, IStateCoderFactory factory,
-            IDesignSpace designSpace, RuleEngine ruleEngine, ViatraQueryEngine engine) {
+            IDesignSpace designSpace, ViatraQueryEngine engine) {
         checkNotNull(designSpace, "Cannot initialize crawler on a null design space!");
         checkNotNull(domain, "Cannot initialize crawler on a null editing domain!");
         checkNotNull(factory, "Cannot initialize crawler without a serializer factory!");
