@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary;
 
-import org.eclipse.viatra.dse.designspace.api.IState;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
@@ -18,7 +17,7 @@ public class TrajectoryWithStateFitness extends TrajectoryFitness {
 
     public Object state;
 
-    public TrajectoryWithStateFitness(Object[] trajectory, IState state, Fitness fitness) {
+    public TrajectoryWithStateFitness(Object[] trajectory, Object state, Fitness fitness) {
         super(trajectory, fitness);
         this.state = state;
     }
