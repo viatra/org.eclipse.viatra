@@ -245,13 +245,11 @@ public class QueryResultTreeTabDescriptorProvider implements ITabDescriptorProvi
                             setInput(part, matcherSelection);
                             return;
                         }
-                    } else if (firstElement instanceof QueryResultTreeMatcher) {
-                        if(kind == PropertyKind.QUERY) {
-                            IQuerySpecificationRegistryEntry entry = ((QueryResultTreeMatcher) firstElement).getEntry();
-                            StructuredSelection structuredSelection = new StructuredSelection(entry);
-                            super.setInput(part, structuredSelection);
-                            return;
-                        }
+                    } else if (firstElement instanceof QueryResultTreeMatcher && kind == PropertyKind.QUERY) {
+                        IQuerySpecificationRegistryEntry entry = ((QueryResultTreeMatcher) firstElement).getEntry();
+                        StructuredSelection structuredSelection = new StructuredSelection(entry);
+                        super.setInput(part, structuredSelection);
+                        return;
                     }
                 }
             }

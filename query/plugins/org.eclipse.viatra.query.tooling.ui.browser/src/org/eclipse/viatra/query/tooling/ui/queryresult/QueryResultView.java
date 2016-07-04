@@ -125,31 +125,24 @@ public class QueryResultView extends ViewPart {
         return super.getAdapter(adapter);
     }
 
-    public void loadModel(EMFModelConnector modelConnector, IModelConnectorTypeEnum scope) {
+    public void loadModel(EMFModelConnector modelConnector, IModelConnectorTypeEnum scope) throws ViatraQueryException {
 
         unloadModel();
-        
-        try {
-            input = QueryResultViewModel.INSTANCE.createInput(modelConnector, scope);
-            input.setHint(hint);
-            queryResultTreeViewer.setInput(input);
-            StringBuilder scopeDescriptionBuilder = new StringBuilder();
-            scopeDescriptionBuilder
-                .append("Editor: ").append(modelConnector.getKey().getEditorPart().getTitle())
+
+        input = QueryResultViewModel.INSTANCE.createInput(modelConnector, scope);
+        input.setHint(hint);
+        queryResultTreeViewer.setInput(input);
+        StringBuilder scopeDescriptionBuilder = new StringBuilder();
+        scopeDescriptionBuilder.append("Editor: ").append(modelConnector.getKey().getEditorPart().getTitle())
                 .append("\nScope type: ").append(scope.name().toLowerCase());
-            if(scope == IModelConnectorTypeEnum.RESOURCE){
-                Notifier notifier = modelConnector.getNotifier(scope);
-                if(notifier instanceof Resource){
-                    scopeDescriptionBuilder
-                        .append("\nResource: ").append(((Resource) notifier).getURI().toString());
-                }
+        if (scope == IModelConnectorTypeEnum.RESOURCE) {
+            Notifier notifier = modelConnector.getNotifier(scope);
+            if (notifier instanceof Resource) {
+                scopeDescriptionBuilder.append("\nResource: ").append(((Resource) notifier).getURI().toString());
             }
-            lblScopeDescription.setText(scopeDescriptionBuilder.toString());
-        } catch (ViatraQueryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-        
+        lblScopeDescription.setText(scopeDescriptionBuilder.toString());
+
     }
     
     public void unloadModel() {

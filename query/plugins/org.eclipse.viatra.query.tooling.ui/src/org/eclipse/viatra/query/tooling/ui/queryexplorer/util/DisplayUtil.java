@@ -272,13 +272,10 @@ public class DisplayUtil {
 
     private static String getMessageForMatch(IPatternMatch match) {
         String patternName = match.patternName();
-        IQuerySpecification<?> pattern = null;
 
         // find PatternUI annotation
         for (IQuerySpecification<?> p : QueryExplorerPatternRegistry.getInstance().getActivePatterns()) {
             if (p.getFullyQualifiedName().matches(patternName)) {
-                pattern = p;
-
                 PAnnotation annotation = p.getFirstAnnotationByName(QueryExplorer.QUERY_EXPLORER_ANNOTATION);
                 if (annotation != null) {
                     return (String)annotation.getFirstValue("message");

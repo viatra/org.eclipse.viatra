@@ -14,7 +14,6 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
-import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
 
 /**
  * @author Abel Hegedus

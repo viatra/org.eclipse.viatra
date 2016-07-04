@@ -29,12 +29,11 @@ import com.google.common.collect.Lists;
 public class QueryResultTreeMatchPropertySource implements IPropertySource {
 
     private IPatternMatch match;
-    private ReflectiveItemProviderAdapterFactory adapterFactory;
     private AdapterFactoryLabelProvider adapterFactoryLabelProvider;
 
     public QueryResultTreeMatchPropertySource(IPatternMatch match) {
         this.match = match;
-        adapterFactory = new ReflectiveItemProviderAdapterFactory();
+        ReflectiveItemProviderAdapterFactory adapterFactory = new ReflectiveItemProviderAdapterFactory();
         adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory);
     }
 
@@ -62,11 +61,6 @@ public class QueryResultTreeMatchPropertySource implements IPropertySource {
         Object paramValue = match.get((String) id);
         if(paramValue instanceof EObject) {
             return adapterFactoryLabelProvider.getText(paramValue);
-//            IItemPropertySource propertySource = (IItemPropertySource) adapterFactory.adapt(paramValue, IItemPropertySource.class);
-//            if(propertySource != null){
-//                // TODO some parts throw exceptions
-//                return new PropertySource(paramValue, propertySource);
-//            }
         }
         return paramValue;
     }

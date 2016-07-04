@@ -19,21 +19,27 @@ import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.AdapterUtil
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 
 /** 
  * @author Abel Hegedus
  */
 class LoadResourceSetHandler extends AbstractHandler {
+    
     override Object execute(ExecutionEvent event) throws ExecutionException {
         var IEditorPart editorPart = HandlerUtil.getActiveEditorChecked(event)
         val resultView = HandlerUtil.getActiveSite(event).getPage().findView(QueryResultView.ID)
         if (resultView instanceof QueryResultView) {
-            var queryResultView = (resultView as QueryResultView)
-            var IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart)
-            if (modelConnector instanceof EMFModelConnector) {
-                var EMFModelConnector emfModelConnector = (modelConnector as EMFModelConnector)
-                modelConnector.loadModel(IModelConnectorTypeEnum.RESOURCESET)
-                queryResultView.loadModel(emfModelConnector, IModelConnectorTypeEnum.RESOURCESET)
+            try {
+                var queryResultView = (resultView as QueryResultView)
+                var IModelConnector modelConnector = AdapterUtil.getModelConnectorFromIEditorPart(editorPart)
+                if (modelConnector instanceof EMFModelConnector) {
+                    var EMFModelConnector emfModelConnector = (modelConnector as EMFModelConnector)
+                    modelConnector.loadModel(IModelConnectorTypeEnum.RESOURCESET)
+                    queryResultView.loadModel(emfModelConnector, IModelConnectorTypeEnum.RESOURCESET)
+                }
+            } catch (ViatraQueryException ex) {
+                throw new ExecutionException("Error while initializing Query Engine: " + ex.message, ex)
             }
         }
         return null

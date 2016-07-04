@@ -31,7 +31,7 @@ public class ViatraQueryRuntimeHelper {
     private static final class StringValueTransformer implements Function<Object, String> {
         @Override
         public String apply(Object input) {
-            return input.toString();
+            return (input == null) ? "(null)" : input.toString();
         }
     }
 
