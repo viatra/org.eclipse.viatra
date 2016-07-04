@@ -123,9 +123,9 @@ public class ThreadContext {
             final EMFScope scope = new EMFScope(model);
             queryEngine = ViatraQueryEngine.on(scope);
             ruleEngine = RuleEngines.createViatraQueryRuleEngine(queryEngine);
-            ConflictResolver conflictResolver = globalContext.getConflictResolver();
-            this.conflictResolver = new SingletonSetConflictResolver(conflictResolver);
-            ruleEngine.setConflictResolver(this.conflictResolver);
+            ConflictResolver conflictResolverToWrap = globalContext.getConflictResolver();
+            conflictResolver = new SingletonSetConflictResolver(conflictResolverToWrap);
+            ruleEngine.setConflictResolver(conflictResolver);
             for (BatchTransformationRule<?, ?> tr : globalContext.getTransformations()) {
                 ruleEngine.addRule(tr.getRuleSpecification(), (EventFilter<IPatternMatch>) tr.getFilter());
             }

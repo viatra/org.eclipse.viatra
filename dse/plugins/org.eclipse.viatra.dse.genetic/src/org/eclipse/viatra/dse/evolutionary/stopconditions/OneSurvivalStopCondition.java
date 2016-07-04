@@ -34,11 +34,7 @@ public class OneSurvivalStopCondition implements IStopCondition {
                 eldestInstance = trajectory.survive;
             }
         }
-        if (eldestInstance >= surviviedIterations) {
-            return true;
-        } else {
-            return false;
-        }
+        return eldestInstance >= surviviedIterations;
     }
 
 }

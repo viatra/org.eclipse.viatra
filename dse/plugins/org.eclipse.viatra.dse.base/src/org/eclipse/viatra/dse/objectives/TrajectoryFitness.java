@@ -12,7 +12,6 @@ package org.eclipse.viatra.dse.objectives;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 
 /**

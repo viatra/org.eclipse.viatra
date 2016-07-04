@@ -25,7 +25,6 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
@@ -46,7 +45,6 @@ public class DesignSpaceManager {
 
     private final IStateCoder stateCoder;
     private final IStateCoderFactory serializerFactory;
-    private final RuleEngine ruleEngine;
     private final EditingDomain domain;
     private Notifier model;
 
@@ -68,7 +66,6 @@ public class DesignSpaceManager {
     private ThreadContext context;
 
     private BiMap<Activation<?>, Object> activationIds;
-    private boolean generateActivationCodes = true;
     private ChangeableConflictSet conflictSet;
 
     public DesignSpaceManager(ThreadContext context, Notifier model, EditingDomain domain, IStateCoderFactory factory,
@@ -79,7 +76,6 @@ public class DesignSpaceManager {
 
         this.context = context;
         this.model = model;
-        this.ruleEngine = ruleEngine;
         this.designSpace = designSpace;
         this.domain = domain;
         this.serializerFactory = factory;
@@ -110,10 +106,13 @@ public class DesignSpaceManager {
         sb.append("\nSought transition: ");
         sb.append(transition);
         Object currentStateId = getCurrentState();
-        sb.append("\nCurrent known state: " + currentStateId);
+        sb.append("\nCurrent known state: ");
+        sb.append(currentStateId);
         Object actualStateId = stateCoder.createStateCode();
-        sb.append("\nActual state: " + (actualStateId.equals(currentStateId) ? "same as current" : actualStateId));
-        sb.append("\n" + trajectory);
+        sb.append("\nActual state: ");
+        sb.append((actualStateId.equals(currentStateId) ? "same as current" : actualStateId));
+        sb.append("\n");
+        sb.append(trajectory);
         sb.append("\nAvailable transitions:");
         for (Activation<?> act : conflictSet.getNextActivations()) {
             IPatternMatch match = (IPatternMatch) act.getAtom();
@@ -233,9 +232,6 @@ public class DesignSpaceManager {
 
     public Activation<?> getActivationById(Object activationId) {
         Activation<?> activation = activationIds.inverse().get(activationId);
-        if (activation == null) {
-            System.out.println();
-        }
         return activation;
     }
     

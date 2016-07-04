@@ -26,7 +26,7 @@ import com.google.common.base.Preconditions;
  */
 public class CompositeObjective extends BaseObjective {
 
-    public static final String DEFAULT_NAME = "CompositObjective";
+    public static final String DEFAULT_NAME = "CompositeObjective";
     protected List<IObjective> objectives;
     protected List<Double> weights;
     protected boolean hardObjective;
@@ -37,6 +37,7 @@ public class CompositeObjective extends BaseObjective {
         Preconditions.checkNotNull(weights, "The list of weights cannot be null.");
         Preconditions.checkState(objectives.size() == weights.size(), "The size of the objectives and weights must match.");
         this.objectives = objectives;
+        this.weights = weights;
     }
 
     public CompositeObjective(List<IObjective> objectives, List<Double> weights) {

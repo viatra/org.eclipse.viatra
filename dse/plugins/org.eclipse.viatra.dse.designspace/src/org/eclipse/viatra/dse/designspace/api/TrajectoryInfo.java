@@ -117,9 +117,9 @@ public class TrajectoryInfo implements Cloneable {
     public SolutionTrajectory createSolutionTrajectory(final IStateCoderFactory stateCoderFactory) {
 
         List<Object> activationIds = new ArrayList<>(trajectory);
-        List<BatchTransformationRule<?, ?>> rules = new ArrayList<>(this.rules);
+        List<BatchTransformationRule<?, ?>> copiedRules = new ArrayList<>(rules);
 
-        return new SolutionTrajectory(activationIds, rules, stateCoderFactory);
+        return new SolutionTrajectory(activationIds, copiedRules, stateCoderFactory);
     }
 
     public boolean canStepBack() {

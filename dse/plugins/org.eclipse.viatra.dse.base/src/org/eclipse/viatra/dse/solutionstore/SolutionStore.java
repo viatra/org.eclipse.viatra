@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
@@ -168,7 +169,7 @@ public class SolutionStore {
                 trajectories.remove(st);
                 Solution s = st.getSolution();
                 if (!s.getTrajectories().remove(st)) {
-                    throw new RuntimeException();
+                    throw new DSEException("Should not happen.");
                 }
                 if (s.getTrajectories().isEmpty()) {
                     Object stateCode = s.getStateCode();

@@ -184,10 +184,11 @@ public final class EMFHelper {
             return copier.copy(eObject);
         } else if (notifier instanceof Resource) {
             Resource resource = (Resource) notifier;
+            ResourceSet rSetTemp = resourceSetToCloneTo;
             if (resourceSetToCloneTo == null) {
-                resourceSetToCloneTo = new ResourceSetImpl();
+                rSetTemp = new ResourceSetImpl();
             }
-            Resource clonedResource = resourceSetToCloneTo.createResource(URI.createFileURI("dummy.dummyext"));
+            Resource clonedResource = rSetTemp.createResource(URI.createFileURI("dummy.dummyext"));
             
             for (EObject eObject : resource.getContents()) {
                 EObject clonedEObject = copier.copy(eObject);

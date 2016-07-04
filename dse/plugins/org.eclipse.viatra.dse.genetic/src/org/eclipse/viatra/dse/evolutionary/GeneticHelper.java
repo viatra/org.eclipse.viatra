@@ -12,10 +12,8 @@ package org.eclipse.viatra.dse.evolutionary;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
-import org.eclipse.viatra.dse.designspace.api.ITransition;
 
 public class GeneticHelper {
 

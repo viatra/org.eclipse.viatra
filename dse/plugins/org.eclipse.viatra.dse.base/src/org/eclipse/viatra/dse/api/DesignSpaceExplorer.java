@@ -328,12 +328,11 @@ public class DesignSpaceExplorer {
         if (waitForTermination) {
             Thread currentThread = Thread.currentThread();
             synchronized (currentThread) {
-                try {
-                    currentThread.wait();
-                } catch (InterruptedException e) {
-                }
-                if (!globalContext.isDone()) {
-                    logger.error("Main thread was notified, while explorer threads are still running.");
+                while (!globalContext.isDone()) {
+                    try {
+                        currentThread.wait();
+                    } catch (InterruptedException e) {
+                    }
                 }
                 timer.cancel();
                 logger.debug("Design space exploration has finished.");
