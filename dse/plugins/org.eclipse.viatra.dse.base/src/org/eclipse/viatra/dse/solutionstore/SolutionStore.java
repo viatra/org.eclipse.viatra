@@ -181,12 +181,12 @@ public class SolutionStore {
 
     }
 
-    private boolean acceptOnlyGoalSolutions = true;
-    private final Map<Object, Solution> solutions = new HashMap<Object, Solution>();
-    private ISolutionSaver solutionSaver = new SimpleSolutionSaver();
-    private List<ISolutionFoundHandler> solutionFoundHandlers = new ArrayList<ISolutionFoundHandler>(1);
+    protected boolean acceptOnlyGoalSolutions = true;
+    protected final Map<Object, Solution> solutions = new HashMap<Object, Solution>();
+    protected ISolutionSaver solutionSaver = new SimpleSolutionSaver();
+    protected List<ISolutionFoundHandler> solutionFoundHandlers = new ArrayList<ISolutionFoundHandler>(1);
 
-    private final IEnoughSolutions enoughSolutions;
+    protected final IEnoughSolutions enoughSolutions;
 
     public SolutionStore() {
         this(new IEnoughSolutions() {
@@ -213,11 +213,6 @@ public class SolutionStore {
         enoughSolutions = enoughSolutionsImpl;
     }
 
-    /**
-     * 
-     * @param context
-     * @return True if the solutions is not found previously.
-     */
     public synchronized void newSolution(ThreadContext context) {
         solutionSaver.setSolutionsCollection(solutions);
         Fitness fitness = context.getLastFitness();
