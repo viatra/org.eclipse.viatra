@@ -13,11 +13,14 @@ package org.eclipse.viatra.query.tooling.ui.wizards.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.internal.ui.packageview.DefaultElementComparer;
+import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -127,7 +130,7 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
             }
 
         });
-
+        tableViewer.setComparator(new ViewerComparator() {});
         tableViewer.setInput(elements);
     }
 
