@@ -266,5 +266,13 @@ public class ThreadContext {
     public IObjective[][] getLeveledObjectives() {
         return leveledObjectives;
     }
-
+    
+    public List<IObjective> getObjectives() {
+        return objectives;
+    }
+    
+    public List<IGlobalConstraint> getGlobalConstraints() {
+        return globalConstraints;
+    }
+    
 }

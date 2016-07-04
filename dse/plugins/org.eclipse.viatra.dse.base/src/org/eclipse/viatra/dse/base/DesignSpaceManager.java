@@ -413,5 +413,9 @@ public class DesignSpaceManager {
         }
         return false;
     }
+    
+    public IStateCoder getStateCoder() {
+        return stateCoder;
+    }
 
 }
