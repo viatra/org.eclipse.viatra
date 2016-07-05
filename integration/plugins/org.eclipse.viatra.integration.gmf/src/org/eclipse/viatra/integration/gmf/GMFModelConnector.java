@@ -18,6 +18,8 @@ import java.util.List;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.GraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
@@ -56,6 +58,9 @@ public class GMFModelConnector extends EMFModelConnector {
             } else if (editorPart instanceof IDiagramWorkbenchPart) {
                 IDiagramWorkbenchPart diagramWorkbenchPart = (IDiagramWorkbenchPart) editorPart;
                 return diagramWorkbenchPart.getDiagramEditPart().getEditingDomain().getResourceSet();
+            } else if (editorPart instanceof IEditingDomainProvider) {
+                EditingDomain editingDomain = ((IEditingDomainProvider) editorPart).getEditingDomain();
+                return editingDomain.getResourceSet();
             }
         } else if (IModelConnectorTypeEnum.RESOURCE.equals(modelConnectorTypeEnum)) {
             if (editorPart instanceof DiagramDocumentEditor) {
