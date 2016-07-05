@@ -21,7 +21,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
-import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.handlers.CreateBreakPointHandler;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView;
 
 import com.google.common.collect.Maps;

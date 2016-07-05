@@ -16,9 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.viatra.query.runtime.base.itc.alg.incscc.CollectionHelper;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.DFSPathFinder;
-import org.eclipse.viatra.query.runtime.base.itc.alg.misc.GraphHelper;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.IGraphPathFinder;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.ITcRelation;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;

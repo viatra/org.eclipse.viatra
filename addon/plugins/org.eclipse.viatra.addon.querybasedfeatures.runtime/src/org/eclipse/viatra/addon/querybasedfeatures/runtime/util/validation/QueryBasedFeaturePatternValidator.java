@@ -39,7 +39,6 @@ import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.inject.Inject;
-import com.google.inject.util.Types;
 
 /**
  * @author Abel Hegedus

@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.patternlanguage.typing;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;

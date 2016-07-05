@@ -31,7 +31,6 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.BasicEObjectImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
 import org.eclipse.viatra.query.patternlanguage.emf.ResolutionException;
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
