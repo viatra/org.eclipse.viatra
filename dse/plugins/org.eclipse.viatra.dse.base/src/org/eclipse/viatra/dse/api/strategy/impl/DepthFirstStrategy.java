@@ -42,7 +42,7 @@ public class DepthFirstStrategy implements IStrategy {
     public void initStrategy(ThreadContext context) {
         if (context.getSharedObject() == null) {
             context.setSharedObject(new Object());
-            while (context.tryStartNewThread(new BreadthFirstStrategy(maxDepth)) != null) {
+            while (context.tryStartNewThread(new DepthFirstStrategy(maxDepth)) != null) {
             }
         }
         

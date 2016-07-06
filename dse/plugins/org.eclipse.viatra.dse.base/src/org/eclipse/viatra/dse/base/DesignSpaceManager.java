@@ -260,7 +260,7 @@ public class DesignSpaceManager {
 
     public Collection<Object> getUntraversedTransitionsFromCurrentState() {
         if (designSpace == null) {
-            throw new DSEException("Unsopperted without a design space");
+            throw new DSEException("Unsupported without a design space");
         }
         Object currentState = trajectory.getCurrentStateId();
         Collection<Object> traversedIds = designSpace.getActivationIds(currentState);
