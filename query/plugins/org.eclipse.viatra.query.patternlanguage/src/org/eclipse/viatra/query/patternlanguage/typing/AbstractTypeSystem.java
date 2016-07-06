@@ -15,7 +15,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class AbstractTypeSystem implements ITypeSystem {
 

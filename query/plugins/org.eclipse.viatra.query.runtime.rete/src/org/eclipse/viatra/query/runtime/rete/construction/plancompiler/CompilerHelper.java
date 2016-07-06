@@ -135,8 +135,7 @@ public class CompilerHelper {
 		final ReteNodeRecipe parentRecipe = parentTrace.getRecipe();
 		if (parentRecipe instanceof IndexerBasedAggregatorRecipe || parentRecipe instanceof SingleColumnAggregatorRecipe) 
 			throw new IllegalArgumentException("Cannot take projection indexer of aggregator node at plan " + planToCompile);
-		IndexerRecipe recipe = RecipesHelper.projectionIndexerRecipe(parentRecipe, 
-				RecipesHelper.mask(mask.sourceWidth, mask.indices));
+		IndexerRecipe recipe = RecipesHelper.projectionIndexerRecipe(parentRecipe, toRecipeMask(mask));
 		// final List<PVariable> maskedVariables = mask.transform(parentTrace.getVariablesTuple());
 		return new PlanningTrace(planToCompile, 
 				/*maskedVariables*/ parentTrace.getVariablesTuple(), recipe, parentTrace);
@@ -244,7 +243,7 @@ public class CompilerHelper {
         	naturalJoinRecipe = FACTORY.createJoinRecipe();
         	naturalJoinRecipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
         	naturalJoinRecipe.setRightParent((IndexerRecipe) secondaryIndexer.getRecipe());
-    		naturalJoinRecipe.setRightParentComplementaryMask(RecipesHelper.mask(complementerMask.sourceWidth, complementerMask.indices));
+    		naturalJoinRecipe.setRightParentComplementaryMask(CompilerHelper.toRecipeMask(complementerMask));
         	
             naturalJoinVariablesTuple = new ArrayList<PVariable>(primaryCompiled.getVariablesTuple());
             for (int complementerIndex : complementerMask.indices)
@@ -284,6 +283,13 @@ public class CompilerHelper {
 			return naturalJoinVariablesTuple;
 		}
         
+    }
+
+    /**
+     * @since 1.4
+     */
+    public static Mask toRecipeMask(TupleMask mask) {
+        return RecipesHelper.mask(mask.sourceWidth, mask.indices);
     }
     
 }

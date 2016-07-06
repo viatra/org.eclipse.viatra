@@ -24,6 +24,9 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.BoundAggregator;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
@@ -38,6 +41,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.xbase.XExpression;
 
 import com.google.common.base.Function;
@@ -74,7 +78,7 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     public String createVirtualVariable() {
         return pBody.newVirtualVariable().getName();
     }
-    
+
     @Override
     public String createConstantVariable(Object value) {
         return pBody.newConstantVariable(value).getName();
@@ -126,7 +130,7 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
         });
         return new FlatTuple(pVariables.toArray());
     }
-    
+
     @Override
     public void acceptPositivePatternCall(List<String> argumentVariableNames, Pattern calledPattern) {
         Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
@@ -135,7 +139,8 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     }
 
     private PQuery findCalledPQuery(Pattern patternRef) {
-        IQuerySpecification<?> calledSpecification = patternMap.get(CorePatternLanguageHelper.getFullyQualifiedName(patternRef));
+        IQuerySpecification<?> calledSpecification = patternMap
+                .get(CorePatternLanguageHelper.getFullyQualifiedName(patternRef));
         if (calledSpecification == null) {
             // This should only happen in case of erroneous links, e.g. link to a proxy Pattern or similar
             // otherwise pattern would be found in the name map (see SpecificationBuilder logic)
@@ -178,7 +183,8 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     }
 
     @Override
-    public void acceptExpressionEvaluation(XExpression expression, String outputVariableName) throws SpecificationBuilderException {
+    public void acceptExpressionEvaluation(XExpression expression, String outputVariableName)
+            throws SpecificationBuilderException {
         XBaseEvaluator evaluator = new XBaseEvaluator(expression, pattern);
         PVariable outputPVariable = outputVariableName == null ? null : findPVariable(outputVariableName);
         new ExpressionEvaluation(pBody, evaluator, outputPVariable);
@@ -190,6 +196,43 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
         Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
         PQuery calledPQuery = findCalledPQuery(calledPattern);
         new PatternMatchCounter(pBody, pVariableTuple, calledPQuery, resultPVariable);
+    }
+    
+    @Override
+    public void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName, int aggregatedColumn) throws SpecificationBuilderException {
+        PVariable resultPVariable = findPVariable(resultVariableName);
+        Tuple pVariableTuple = getPVariableTuple(argumentVariableNames);
+        PQuery calledPQuery = findCalledPQuery(calledPattern);
+        
+        // TODO experimental, the method of demand loading should be discussed
+        // what about logging and Exception handling?
+        
+        // try loading the aggregator class
+        try {
+            //XXX Beware of Class.forName, it may cause surprises in Eclipse environments
+            Class<?> clazz = Class.forName(aggregatorType.getQualifiedName());
+            Object instance = clazz.newInstance();
+            if (instance instanceof IAggregatorFactory) {
+                //XXX Beware of Class.forName, it may cause surprises in Eclipse environments
+                Class<?> aggregatorDomainClass = Void.class;
+                if (aggregateParameterType != null) {
+                    aggregatorDomainClass = Class.forName(aggregateParameterType.getQualifiedName());
+                }
+                
+                BoundAggregator aggregatorBinding = ((IAggregatorFactory) instance).getAggregatorLogic(aggregatorDomainClass);
+                new AggregatorConstraint(aggregatorBinding, pBody, pVariableTuple, calledPQuery, resultPVariable, aggregatedColumn);
+            } else {
+                throw new SpecificationBuilderException("Invalid aggregator type {1}.",
+                        new String[] { instance.getClass().getName() }, "Invalid aggregator type.", pattern);
+            }
+        } catch (ClassNotFoundException e ) {
+            throw new SpecificationBuilderException("Aggregator class cannot be found.", new String[] {},
+                    "Aggregator class cannot be found.", pattern);
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new SpecificationBuilderException("Cannot instantiate aggregator.", new String[] {},
+                    "Cannot instantiate aggregator.", pattern);
+        }                
+        
     }
 
 }

@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.patternlanguage" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatorExpression">
+        <filter comment="EMF generated code" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatorExpression"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage_1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.CountAggregator">
+        <filter comment="EMF generated code" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.CountAggregator"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage_1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AggregatorExpressionImpl">
+        <filter comment="EMF generated code" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AggregatorExpressionImpl"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage_1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.CountAggregatorImpl">
+        <filter comment="EMF generated code" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.CountAggregatorImpl"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage_1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/parser/antlr/internal/InternalPatternLanguageLexer.java" type="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageLexer">
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageLexer"/>
+                <message_argument value="T__98"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageLexer"/>
+                <message_argument value="mT__98()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/parser/antlr/internal/InternalPatternLanguageParser.java" type="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser">
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="T__98"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa103"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa105"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa110"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa126"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa128"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa135"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa28"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa38"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa41"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa56"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa60"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa69"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa75"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="dfa97"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="entryRuleAggregatorExpression()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.parser.antlr.internal.InternalPatternLanguageParser"/>
+                <message_argument value="ruleAggregatorExpression()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="FOLLOW_102"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa100"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa104"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa108"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa111"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa127"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa129"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa136"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa29"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa39"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa42"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa59"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa61"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa70"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa77"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/AggregatedValue.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue">
+        <filter comment="EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue"/>
+                <message_argument value="getAggregateType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue"/>
+                <message_argument value="getAggregator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue"/>
+                <message_argument value="setAggregateType(JvmType)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue"/>
+                <message_argument value="setAggregator(JvmDeclaredType)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue"/>
+                <message_argument value="getAggregator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue"/>
+                <message_argument value="setAggregator(AggregatorExpression)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="getAggregateType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="getAggregator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="setAggregateType(JvmType)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="setAggregator(JvmDeclaredType)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/PatternLanguageFactory.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory">
+        <filter comment="EMF generated code" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory"/>
+                <message_argument value="createAggregatorExpression()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory"/>
+                <message_argument value="createCountAggregator()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/PatternLanguagePackage.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage">
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="AGGREGATED_VALUE"/>
+                <message_argument value="34"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="AGGREGATED_VALUE_FEATURE_COUNT"/>
+                <message_argument value="2"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="BOOL_VALUE"/>
+                <message_argument value="29"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="CHECK_CONSTRAINT"/>
+                <message_argument value="23"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="COMPARE_CONSTRAINT"/>
+                <message_argument value="22"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="COMPARE_FEATURE"/>
+                <message_argument value="36"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="DOUBLE_VALUE"/>
+                <message_argument value="30"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="ENTITY_TYPE"/>
+                <message_argument value="19"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="FUNCTION_EVALUATION_VALUE"/>
+                <message_argument value="33"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="INT_VALUE"/>
+                <message_argument value="27"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="LIST_VALUE"/>
+                <message_argument value="32"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="LOCAL_VARIABLE"/>
+                <message_argument value="18"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PARAMETER_REF"/>
+                <message_argument value="17"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATH_EXPRESSION_CONSTRAINT"/>
+                <message_argument value="24"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATH_EXPRESSION_HEAD"/>
+                <message_argument value="25"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATH_EXPRESSION_TAIL"/>
+                <message_argument value="26"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="PATTERN_COMPOSITION_CONSTRAINT"/>
+                <message_argument value="21"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="RELATION_TYPE"/>
+                <message_argument value="20"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="STRING_VALUE"/>
+                <message_argument value="28"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="VARIABLE_VALUE"/>
+                <message_argument value="31"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="VARIABLE_VALUE_FEATURE_COUNT"/>
+                <message_argument value="1"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="VARIABLE_VALUE__VALUE"/>
+                <message_argument value="0"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="AGGREGATED_VALUE__AGGREGATE_TYPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="VARIABLE_VALUE__AGGREGATE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="getAggregatedValue_AggregateType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="getVariableValue_Aggregate()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="AGGREGATOR_EXPRESSION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="AGGREGATOR_EXPRESSION_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="COUNT_AGGREGATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="COUNT_AGGREGATOR_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="getAggregatorExpression()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage"/>
+                <message_argument value="getCountAggregator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="AGGREGATED_VALUE__AGGREGATE_TYPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="VARIABLE_VALUE__AGGREGATE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="getAggregatedValue_AggregateType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="getVariableValue_Aggregate()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/PatternLanguagePackage.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage$Literals">
+        <filter comment="EMF generated code" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage.Literals"/>
+                <message_argument value="AGGREGATED_VALUE__AGGREGATE_TYPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage.Literals"/>
+                <message_argument value="VARIABLE_VALUE__AGGREGATE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage.Literals"/>
+                <message_argument value="AGGREGATOR_EXPRESSION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage.Literals"/>
+                <message_argument value="COUNT_AGGREGATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="AGGREGATED_VALUE__AGGREGATE_TYPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="VARIABLE_VALUE__AGGREGATE"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/VariableValue.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue">
+        <filter comment="EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue"/>
+                <message_argument value="isAggregate()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue"/>
+                <message_argument value="setAggregate(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="isAggregate()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1211105284">
+            <message_arguments>
+                <message_argument value="setAggregate(boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/impl/AggregatedValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AggregatedValueImpl">
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AggregatedValueImpl"/>
+                <message_argument value="basicSetAggregator(AggregatorExpression, NotificationChain)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AggregatedValueImpl"/>
+                <message_argument value="getAggregator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AggregatedValueImpl"/>
+                <message_argument value="setAggregator(AggregatorExpression)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="388161617">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AggregatedValueImpl"/>
+                <message_argument value="aggregator"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="aggregateType"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="basicGetAggregateType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="basicGetAggregator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getAggregateType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getAggregator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="setAggregateType(JvmType)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="setAggregator(JvmDeclaredType)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/impl/PatternLanguageFactoryImpl.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternLanguageFactoryImpl">
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternLanguageFactoryImpl"/>
+                <message_argument value="createAggregatorExpression()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternLanguageFactoryImpl"/>
+                <message_argument value="createCountAggregator()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/impl/PatternLanguagePackageImpl.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternLanguagePackageImpl">
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternLanguagePackageImpl"/>
+                <message_argument value="getAggregatorExpression()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.PatternLanguagePackageImpl"/>
+                <message_argument value="getCountAggregator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getAggregatedValue_AggregateType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getVariableValue_Aggregate()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/impl/VariableValueImpl.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.VariableValueImpl">
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="AGGREGATE_EDEFAULT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="aggregate"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="isAggregate()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="setAggregate(boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/util/PatternLanguageAdapterFactory.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageAdapterFactory">
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageAdapterFactory"/>
+                <message_argument value="createAggregatorExpressionAdapter()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageAdapterFactory"/>
+                <message_argument value="createCountAggregatorAdapter()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/patternLanguage/util/PatternLanguageSwitch.java" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageSwitch">
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageSwitch"/>
+                <message_argument value="caseAggregatorExpression(AggregatorExpression)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.util.PatternLanguageSwitch"/>
+                <message_argument value="caseCountAggregator(CountAggregator)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/serializer/AbstractPatternLanguageSemanticSequencer.java" type="org.eclipse.viatra.query.patternlanguage.serializer.AbstractPatternLanguageSemanticSequencer">
+        <filter comment="Xtext Generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.serializer.AbstractPatternLanguageSemanticSequencer"/>
+                <message_argument value="sequence_AggregatorExpression(ISerializationContext, CountAggregator)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/services/PatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess">
+        <filter comment="Xtext Generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess"/>
+                <message_argument value="getAggregatorExpressionAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext Generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess"/>
+                <message_argument value="getAggregatorExpressionRule()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="338886760">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess.AggregatorExpressionElements"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage_1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/services/PatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess$AggregatedValueElements">
+        <filter comment="Xtext Generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess.AggregatedValueElements"/>
+                <message_argument value="getAggregatorAggregatorExpressionParserRuleCall_1_0()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getAggregatorJvmDeclaredTypeCrossReference_1_0()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getAggregatorJvmDeclaredTypeValidIDParserRuleCall_1_0_1()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/services/PatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess$VariableValueElements">
+        <filter comment="Xtext Generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess.VariableValueElements"/>
+                <message_argument value="getValueAssignment_1()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext Generated code" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.services.PatternLanguageGrammarAccess.VariableValueElements"/>
+                <message_argument value="getValueVariableReferenceParserRuleCall_1_0()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getAggregateAssignment_1()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getAggregateNumberSignKeyword_1_0()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getValueAssignment_2()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code" id="1143996420">
+            <message_arguments>
+                <message_argument value="getValueVariableReferenceParserRuleCall_2_0()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

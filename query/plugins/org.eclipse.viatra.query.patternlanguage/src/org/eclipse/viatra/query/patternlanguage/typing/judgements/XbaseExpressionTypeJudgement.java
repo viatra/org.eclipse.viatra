@@ -52,7 +52,6 @@ public class XbaseExpressionTypeJudgement extends AbstractTypeJudgement {
 
     public IInputKey getExpressionType() {
         LightweightTypeReference expressionType = xbaseResolver.resolveTypes(xExpression).getReturnType(xExpression);
-        
         if (expressionType == null) {
              return new JavaTransitiveInstancesKey(Object.class);
         } else if (expressionType instanceof UnknownTypeReference) {

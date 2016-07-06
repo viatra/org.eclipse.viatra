@@ -22,10 +22,10 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.xbase.XExpression;
 
 /**
@@ -107,8 +107,13 @@ public interface PatternModelAcceptor<Result> {
     void acceptExpressionEvaluation(XExpression expression, String outputVariableName) throws SpecificationBuilderException;
 
     /**
-     * Accepts a {@link PatternMatchCounter}.
+     * Accepts a {@link AbstractAggregator}.
+     * @param aggregateParameterType TODO
+     * @since 1.4
      */
-    void acceptPatternMatchCounter(List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName);
+    void acceptAggregator(JvmType aggregatorType, JvmType aggregateParameterType, List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName, int aggregatedColumn) throws SpecificationBuilderException;
+
+    void acceptPatternMatchCounter(List<String> argumentVariableNames, Pattern calledPattern,
+            String resultVariableName);
 
 }

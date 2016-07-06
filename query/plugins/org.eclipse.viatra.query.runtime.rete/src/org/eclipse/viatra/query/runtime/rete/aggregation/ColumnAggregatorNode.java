@@ -31,35 +31,36 @@ import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
 
 /**
- * Groups incoming tuples by the given mask, and aggregates values at a specific index in each group. 
+ * Groups incoming tuples by the given mask, and aggregates values at a specific index in each group.
  * 
  * <p>
  * Direct children are nor supported, use via outer join indexers instead.
  * 
- * <p> 
+ * <p>
+ * 
  * @author Gabor Bergmann
  * @since 1.4
  */
-public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends SingleInputNode implements Clearable, IAggregatorNode {
+public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends SingleInputNode
+        implements Clearable, IAggregatorNode {
 
     private IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator;
     private TupleMask groupByMask;
     private int aggregableColumnIndex;
     private int sourceWidth;
     private IQueryRuntimeContext runtimeContext;
-    
+
     // invariant: neutral values are not stored
     Map<Tuple, Accumulator> accumulatorsByGroup = CollectionsFactory.getMap();
-    
+
     AggregatorOuterIndexer aggregatorOuterIndexer = null;
     ColumnAggregatorNode.AggregatorOuterIdentityIndexer[] aggregatorOuterIdentityIndexers = null;
 
     /**
      * @param reteContainer
      */
-    public ColumnAggregatorNode(ReteContainer reteContainer, 
-            IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator,
-            TupleMask groupByMask,
+    public ColumnAggregatorNode(ReteContainer reteContainer,
+            IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, TupleMask groupByMask,
             int aggregableColumnIndex) {
         super(reteContainer);
         this.operator = operator;
@@ -67,7 +68,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         this.aggregableColumnIndex = aggregableColumnIndex;
 
         sourceWidth = groupByMask.indices.length;
-        runtimeContext = reteContainer.getNetwork().getEngine().getRuntimeContext();        
+        runtimeContext = reteContainer.getNetwork().getEngine().getRuntimeContext();
         reteContainer.registerClearable(this);
     }
 
@@ -75,16 +76,17 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     public void pullInto(Collection<Tuple> collector) {
         // DIRECT CHILDREN NOT SUPPORTED
         throw new UnsupportedOperationException();
-//        for (Entry<Tuple, Accumulator> group : accumulatorsByGroup.entrySet()) {
-//            tupleFromAccumulator(groupTuple, accumulator)
-//        }
+        // for (Entry<Tuple, Accumulator> group : accumulatorsByGroup.entrySet()) {
+        // tupleFromAccumulator(groupTuple, accumulator)
+        // }
     }
+
     @Override
     public void appendChild(Receiver receiver) {
         // DIRECT CHILDREN NOT SUPPORTED
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public Indexer getAggregatorOuterIndexer() {
         if (aggregatorOuterIndexer == null) {
@@ -97,8 +99,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     @Override
     public Indexer getAggregatorOuterIdentityIndexer(int resultPositionInSignature) {
         if (aggregatorOuterIdentityIndexers == null)
-            aggregatorOuterIdentityIndexers = 
-                new ColumnAggregatorNode.AggregatorOuterIdentityIndexer[sourceWidth + 1];
+            aggregatorOuterIdentityIndexers = new ColumnAggregatorNode.AggregatorOuterIdentityIndexer[sourceWidth + 1];
         if (aggregatorOuterIdentityIndexers[resultPositionInSignature] == null) {
             aggregatorOuterIdentityIndexers[resultPositionInSignature] = new AggregatorOuterIdentityIndexer(
                     resultPositionInSignature);
@@ -106,42 +107,37 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         }
         return aggregatorOuterIdentityIndexers[resultPositionInSignature];
     }
-    
 
     @Override
     public void update(Direction direction, Tuple updateElement) {
         Tuple updateGroup = groupByMask.transform(updateElement);
-        
+
         Accumulator oldAccumulator = getCurrentAccumulator(updateGroup);
-        
-        Domain aggregableValue = 
-                (Domain) runtimeContext.unwrapElement(updateElement.get(aggregableColumnIndex));
-        
+        AggregateResult oldAggregateResult = operator.getAggregate(oldAccumulator);
+
+        Domain aggregableValue = (Domain) runtimeContext.unwrapElement(updateElement.get(aggregableColumnIndex));
+
         boolean isInsertion = direction == Direction.INSERT;
-        Accumulator newAccumulator = 
-                operator.update(oldAccumulator, aggregableValue, isInsertion);
-        
+        Accumulator newAccumulator = operator.update(oldAccumulator, aggregableValue, isInsertion);
+
         if (operator.isNeutral(newAccumulator))
             accumulatorsByGroup.remove(updateGroup);
-        else 
+        else
             accumulatorsByGroup.put(updateGroup, newAccumulator);
-        
-        
-        AggregateResult oldAggregateResult = operator.getAggregate(oldAccumulator);
+
         AggregateResult newAggregateResult = operator.getAggregate(newAccumulator);
 
-        
         if (Objects.equals(oldAggregateResult, newAggregateResult)) {
             // no actual difference in aggregates, no need to propagate
             return;
-        } else {            
+        } else {
             Tuple oldResultTuple = tupleFromAggregateResult(updateGroup, oldAggregateResult);
             Tuple newResultTuple = tupleFromAggregateResult(updateGroup, newAggregateResult);
-            
+
             // No direct children to notify!
-//        if (oldResultTuple != null) propagateUpdate(Direction.REVOKE, oldResultTuple);
-//        if (newResultTuple != null) propagateUpdate(Direction.INSERT, newResultTuple);
-            
+            // if (oldResultTuple != null) propagateUpdate(Direction.REVOKE, oldResultTuple);
+            // if (newResultTuple != null) propagateUpdate(Direction.INSERT, newResultTuple);
+
             if (aggregatorOuterIndexer != null)
                 aggregatorOuterIndexer.propagate(updateGroup, oldResultTuple, newResultTuple);
             if (aggregatorOuterIdentityIndexers != null)
@@ -149,19 +145,20 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
                     if (aggregatorOuterIdentityIndexer != null)
                         aggregatorOuterIdentityIndexer.propagate(updateGroup, oldResultTuple, newResultTuple);
         }
-    
+
     }
 
     @Override
     public void clear() {
         accumulatorsByGroup.clear();
     }
-    
+
     public Tuple getAggregateTuple(Tuple groupTuple) {
         Accumulator accumulator = getCurrentAccumulator(groupTuple);
         AggregateResult aggregateResult = operator.getAggregate(accumulator);
         return tupleFromAggregateResult(groupTuple, aggregateResult);
     }
+
     public AggregateResult getAggregateResult(Tuple groupTuple) {
         Accumulator accumulator = getCurrentAccumulator(groupTuple);
         return operator.getAggregate(accumulator);
@@ -169,16 +166,17 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
 
     private Accumulator getCurrentAccumulator(Tuple groupTuple) {
         Accumulator accumulator = accumulatorsByGroup.get(groupTuple);
-        if (accumulator == null) accumulator = operator.createNeutral();
+        if (accumulator == null)
+            accumulator = operator.createNeutral();
         return accumulator;
     }
 
-    
-//    protected Tuple tupleFromAccumulator(Tuple groupTuple, Accumulator accumulator) {
-//        return tupleFromAggregateResult(groupTuple, aggregateResult);
-//    }
+    // protected Tuple tupleFromAccumulator(Tuple groupTuple, Accumulator accumulator) {
+    // return tupleFromAggregateResult(groupTuple, aggregateResult);
+    // }
     protected Tuple tupleFromAggregateResult(Tuple groupTuple, AggregateResult aggregateResult) {
-        if (aggregateResult == null) return null;
+        if (aggregateResult == null)
+            return null;
         Object[] resultArray = { runtimeContext.wrapElement(aggregateResult) };
         return new LeftInheritanceTuple(groupTuple, resultArray);
     }
@@ -199,14 +197,14 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         @Override
         public Collection<Tuple> get(Tuple signature) {
             Tuple aggregateTuple = getAggregateTuple(signature);
-            return aggregateTuple == null ? 
-                    null :
-                    Collections.singleton(aggregateTuple);
+            return aggregateTuple == null ? null : Collections.singleton(aggregateTuple);
         }
 
         public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple) {
-            if (oldTuple != null) propagate(Direction.REVOKE, oldTuple, signature, true);
-            if (newTuple != null) propagate(Direction.INSERT, newTuple, signature, true);
+            if (oldTuple != null)
+                propagate(Direction.REVOKE, oldTuple, signature, true);
+            if (newTuple != null)
+                propagate(Direction.INSERT, newTuple, signature, true);
         }
 
         @Override
@@ -224,13 +222,13 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
      * @author Gabor Bergmann
      */
 
-    class AggregatorOuterIdentityIndexer extends StandardIndexer /* implements Receiver */{
+    class AggregatorOuterIdentityIndexer extends StandardIndexer /* implements Receiver */ {
         int resultPositionInSignature;
         TupleMask pruneResult;
         TupleMask reorder;
 
         public AggregatorOuterIdentityIndexer(int resultPositionInSignature) {
-            super(ColumnAggregatorNode.this.reteContainer, 
+            super(ColumnAggregatorNode.this.reteContainer,
                     TupleMask.displace(sourceWidth, resultPositionInSignature, sourceWidth + 1));
             this.parent = ColumnAggregatorNode.this;
             this.resultPositionInSignature = resultPositionInSignature;
@@ -252,8 +250,10 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         }
 
         public void propagate(Tuple signature, Tuple oldTuple, Tuple newTuple) {
-            if (oldTuple != null) propagate(Direction.REVOKE, reorder(oldTuple), signature, true);
-            if (newTuple != null) propagate(Direction.INSERT, reorder(newTuple), signature, true);
+            if (oldTuple != null)
+                propagate(Direction.REVOKE, reorder(oldTuple), signature, true);
+            if (newTuple != null)
+                propagate(Direction.INSERT, reorder(newTuple), signature, true);
         }
 
         private Tuple reorder(Tuple signatureWithResult) {
@@ -270,6 +270,5 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
             return ColumnAggregatorNode.this;
         }
     }
-   
-    
+
 }

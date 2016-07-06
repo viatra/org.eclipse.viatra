@@ -356,7 +356,10 @@ public class EMFTypeSystem extends AbstractTypeSystem {
 
         override typeString(IInputKey type) {
             switch(type) {
-                EClassTransitiveInstancesKey : '''«type.emfKey.EPackage.nsURI»::«type.emfKey.name»''' 
+                case type == null : "«null»"
+                case type instanceof EClassTransitiveInstancesKey && !(type as EClassTransitiveInstancesKey).emfKey.eIsProxy: 
+                    '''«(type as EClassTransitiveInstancesKey).emfKey.EPackage.nsURI»::«(type as EClassTransitiveInstancesKey).emfKey.name»''' 
+                EClassTransitiveInstancesKey : '''«type.emfKey.toString»''' 
                 EDataTypeInSlotsKey : '''«type.emfKey.EPackage.nsURI»::«type.emfKey.name»'''
                 default: super.typeString(type)
             }

@@ -5,7 +5,7 @@
     modelPluginID="org.eclipse.viatra.query.tooling.generator.model" forceOverwrite="true"
     modelName="GeneratorModel" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="7.0" copyrightFields="false" editPluginID="org.eclipse.viatra.query.tooling.generator.model.edit"
-    editorPluginID="org.eclipse.viatra.query.tooling.generator.model.editor" runtimeVersion="2.11"
+    editorPluginID="org.eclipse.viatra.query.tooling.generator.model.editor" runtimeVersion="2.12"
     usedGenPackages="platform:/resource/org.eclipse.emf.codegen.ecore/model/GenModel.genmodel#//genmodel platform:/resource/org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore">
   <genPackages prefix="GeneratorModel" basePackage="org.eclipse.viatra.query.tooling.generator.model"
       disposableProviderFactory="true" ecorePackage="GeneratorModel.ecore#/">

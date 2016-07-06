@@ -1,0 +1,35 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Zoltan Ujhelyi - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.matchers.aggregators;
+
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AggregatorType;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.BoundAggregator;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
+
+/**
+ * An aggregator to count the number of matches a pattern has. The return of the aggregator is an non-negative integer
+ * number.
+ * 
+ * @since 1.4
+ *
+ */
+@AggregatorType(parameterTypes = {Void.class}, returnTypes = {Integer.class})
+public final class count implements IAggregatorFactory {
+
+    @Override
+    public BoundAggregator getAggregatorLogic(Class<?> domainClass) {
+        if (Void.class.equals(domainClass))
+            return new BoundAggregator(null, Void.class, Integer.class);
+        else throw new IllegalArgumentException();
+    }
+
+
+}

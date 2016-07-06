@@ -58,15 +58,21 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReferenc
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
+import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil;
 import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.validation.VariableReferenceCount.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PureWhitelistExtensionLoader;
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PurityChecker;
 import org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
+import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.common.types.JvmIdentifiableElement;
 import org.eclipse.xtext.common.types.JvmOperation;
+import org.eclipse.xtext.common.types.JvmTypeReference;
 import org.eclipse.xtext.common.types.util.Primitives.Primitive;
+import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.IContainer;
@@ -121,6 +127,30 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     public static final String TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION = "Transitive closure of %s is currently only allowed in simple positive pattern calls (no negation or aggregation).";
     public static final String UNUSED_PRIVATE_PATTERN_MESSAGE = "The pattern '%s' is never used locally.";
     public static final String RECURSIVE_PATTERN_CALL = "Recursive pattern call: %s";
+    /**
+     * @since 1.4
+     */
+    public static final String INVALID_AGGREGATE_MESSAGE = "Aggregate variables can only be used in aggregators.";
+    /**
+     * @since 1.4
+     */
+    public static final String UNEXPECTED_AGGREGATE_MESSAGE = "Aggregate variable %s not expected in aggregator %s.";
+    /**
+     * @since 1.4
+     */
+    public static final String EXACTLY_ONE_AGGREGATE_MESSAGE = "Exactly one variable must be aggregate for the aggregator %s.";
+    /**
+     * @since 1.4
+     */
+    public static final String MISSING_AGGREGATE_MESSAGE = "Missing aggregate parameter for the aggregator %s.";
+    /**
+     * @since 1.4
+     */
+    public static final String VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_SINGLEUSE = "Dubius variable naming: Single use variable %s shares its name with the variable %s";
+    /**
+     * @since 1.4
+     */
+    public static final String VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_AGGREGATE = "Dubius variable naming: Aggregate variable %s shares its name with the variable %s";
 
     @Inject
     private PatternAnnotationProvider annotationProvider;
@@ -147,6 +177,76 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private IContainer.Manager containerManager;
     @Inject
     private IExpectedPackageNameProvider packageNameProvider;
+    @Inject
+    private TypeReferences typeReferences;
+    
+    /**
+     * Checks if an aggregate {@link VariableReference} is used only in the right context, that is, in an
+     * {@link AggregatedValue} with an aggregator requiring aggregator parameters.
+     * 
+     * @param value
+     *            the {@link VariableReference} instance
+     * @since 1.4
+     */
+    @Check
+    public void checkValueReference(VariableReference value) {
+        if (value.isAggregator()) {
+            AggregatedValue container = EcoreUtil2.getContainerOfType(value, AggregatedValue.class);
+            if (container == null) {
+                error(INVALID_AGGREGATE_MESSAGE, PatternLanguagePackage.Literals.VARIABLE_REFERENCE__AGGREGATOR,
+                        IssueCodes.INVALID_AGGREGATE_CONTEXT);
+            }
+        }
+    }
+
+    /**
+     * Checks if an aggregator expression has the correct number (0 or 1) aggregate variables.
+     * 
+     * @param expression
+     *            the aggregator expression
+     * @since 1.4
+     */
+    @Check
+    public void checkAggregatorExpression(AggregatedValue expression) {
+        JvmDeclaredType aggregator = expression.getAggregator();
+        final Class<IAggregatorFactory> clazz = IAggregatorFactory.class;
+        if (aggregator != null && !aggregator.eIsProxy()) {
+            if (typeReferences.is(aggregator, clazz)) {
+                return;
+            }
+            Iterator<JvmTypeReference> it = aggregator.getSuperTypes().iterator();
+            if (Iterators.all(it, new Predicate<JvmTypeReference>() {
+
+                @Override
+                public boolean apply(JvmTypeReference input) {
+                    return input == null || input.eIsProxy() || !typeReferences.is(input, clazz);
+                }
+            })) {
+                error(String.format("%s is not an aggregator definition.", aggregator.getSimpleName()),
+                        PatternLanguagePackage.Literals.AGGREGATED_VALUE__AGGREGATOR, IssueCodes.INVALID_AGGREGATOR);
+                return;
+            }
+            List<VariableValue> values = AggregatorUtil.getAllAggregatorVariables(expression);
+            if (AggregatorUtil.mustHaveAggregatorVariables(expression)) {
+                if (values.size() == 0) {
+                    error(String.format(MISSING_AGGREGATE_MESSAGE, aggregator.getSimpleName()), expression, PatternLanguagePackage.Literals.AGGREGATED_VALUE__CALL,
+                            IssueCodes.INVALID_AGGREGATOR_PARAMETER);
+                }
+                if (values.size() > 1) {
+                    for (VariableValue value : values) {
+                        error(String.format(EXACTLY_ONE_AGGREGATE_MESSAGE, aggregator.getSimpleName()), value, null,
+                                IssueCodes.INVALID_AGGREGATOR_PARAMETER);
+                    }
+                }
+            } else {
+                for (VariableValue value : values) {
+                    error(String.format(UNEXPECTED_AGGREGATE_MESSAGE, value.getValue().getVar(), aggregator.getSimpleName()), value, null,
+                            IssueCodes.INVALID_AGGREGATOR_PARAMETER);
+                }
+            }
+            
+        }
+    }
 
     @Check
     public void checkPatternParameters(Pattern pattern) {
@@ -218,9 +318,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             if (patternRef.getParameters() != null) {
                 final int arity = patternRef.getParameters().size();
                 if (2 != arity) {
-                    error(String
-                            .format(TRANSITIVE_CLOSURE_ARITY_IN_PATTERNCALL, getFormattedPattern(patternRef), arity),
-                            PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
+                    error(String.format(TRANSITIVE_CLOSURE_ARITY_IN_PATTERNCALL, getFormattedPattern(patternRef),
+                            arity), PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
                             IssueCodes.TRANSITIVE_PATTERNCALL_ARITY);
                 } else {
 
@@ -235,9 +334,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                     }
                 }
             }
-            if (eContainer != null
-                    && (!(eContainer instanceof PatternCompositionConstraint) || ((PatternCompositionConstraint) eContainer)
-                            .isNegative())) {
+            if (eContainer != null && (!(eContainer instanceof PatternCompositionConstraint)
+                    || ((PatternCompositionConstraint) eContainer).isNegative())) {
                 error(String.format(TRANSITIVE_CLOSURE_ONLY_IN_POSITIVE_COMPOSITION, getFormattedPattern(patternRef)),
                         PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
                         IssueCodes.TRANSITIVE_PATTERNCALL_NOT_APPLICABLE);
@@ -255,20 +353,32 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             // (number and type of pattern parameters)
             for (Pattern pattern : model.getPatterns()) {
                 QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
-                final Iterable<IEObjectDescription> shadowingPatternDescriptions = resourceDescriptions.getExportedObjects(PatternLanguagePackage.Literals.PATTERN, fullyQualifiedName, true);
+                final Iterable<IEObjectDescription> shadowingPatternDescriptions = resourceDescriptions
+                        .getExportedObjects(PatternLanguagePackage.Literals.PATTERN, fullyQualifiedName, true);
                 for (IEObjectDescription shadowingPatternDescription : shadowingPatternDescriptions) {
                     EObject shadowingPattern = shadowingPatternDescription.getEObjectOrProxy();
                     if (shadowingPattern != pattern) {
                         URI resourceUri = pattern.eResource().getURI();
-                        URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment(); // not using shadowingPattern because it might be proxy
-                        IResourceDescription resourceDescription = resourceDescriptions.getResourceDescription(resourceUri);
-                        IResourceDescription otherResourceDescription = resourceDescriptions.getResourceDescription(otherResourceUri);
-                        List<IContainer> visible = containerManager.getVisibleContainers(resourceDescription, resourceDescriptions);
-                        List<IContainer> visibleFromOther = containerManager.getVisibleContainers(otherResourceDescription, resourceDescriptions);
-                        if (Iterables.any(visible, contains(otherResourceDescription)) || Iterables.any(visibleFromOther, contains(resourceDescription))) {
-                            String otherResourcePath = Objects.firstNonNull(otherResourceUri.toPlatformString(true), otherResourceUri.toFileString());
-                            error(String.format(DUPLICATE_PATTERN_DEFINITION_MESSAGE, fullyQualifiedName, otherResourcePath), pattern,
-                                    PatternLanguagePackage.Literals.PATTERN__NAME, IssueCodes.DUPLICATE_PATTERN_DEFINITION);
+                        URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment(); // not using
+                                                                                                           // shadowingPattern
+                                                                                                           // because it
+                                                                                                           // might be
+                                                                                                           // proxy
+                        IResourceDescription resourceDescription = resourceDescriptions
+                                .getResourceDescription(resourceUri);
+                        IResourceDescription otherResourceDescription = resourceDescriptions
+                                .getResourceDescription(otherResourceUri);
+                        List<IContainer> visible = containerManager.getVisibleContainers(resourceDescription,
+                                resourceDescriptions);
+                        List<IContainer> visibleFromOther = containerManager
+                                .getVisibleContainers(otherResourceDescription, resourceDescriptions);
+                        if (Iterables.any(visible, contains(otherResourceDescription))
+                                || Iterables.any(visibleFromOther, contains(resourceDescription))) {
+                            String otherResourcePath = Objects.firstNonNull(otherResourceUri.toPlatformString(true),
+                                    otherResourceUri.toFileString());
+                            error(String.format(DUPLICATE_PATTERN_DEFINITION_MESSAGE, fullyQualifiedName,
+                                    otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
+                                    IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                         }
                     }
                 }
@@ -324,21 +434,23 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                         && !expectedParameterType.isAssignableFrom(parameter.getValue().getClass())) {
                     error(String.format(ANNOTATION_PARAMETER_TYPE_ERROR, getTypeName(parameter.getValue().getClass()),
                             getTypeName(expectedParameterType)), parameter,
-                            PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME, annotation.getParameters()
-                                    .indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                            PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__NAME,
+                            annotation.getParameters().indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
                 } else if (parameter.getValue() instanceof VariableValue) {
                     VariableValue value = (VariableValue) parameter.getValue();
                     if (value.getValue().getVariable() == null) {
                         error(String.format("Unknown variable %s", value.getValue().getVar()), parameter,
-                                PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__VALUE, annotation.getParameters()
-                                        .indexOf(parameter), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                                PatternLanguagePackage.Literals.ANNOTATION_PARAMETER__VALUE,
+                                annotation.getParameters().indexOf(parameter),
+                                IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
                     }
                 } else if (parameter.getValue() instanceof ListValue) {
                     ListValue listValue = (ListValue) (parameter.getValue());
                     for (VariableValue value : Iterables.filter(listValue.getValues(), VariableValue.class)) {
                         if (value.getValue().getVariable() == null) {
                             error(String.format("Unknown variable %s", value.getValue().getVar()), listValue,
-                                    PatternLanguagePackage.Literals.LIST_VALUE__VALUES, listValue.getValues().indexOf(value), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
+                                    PatternLanguagePackage.Literals.LIST_VALUE__VALUES,
+                                    listValue.getValues().indexOf(value), IssueCodes.MISTYPED_ANNOTATION_PARAMETER);
                         }
                     }
                 }
@@ -392,8 +504,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Check
     public void checkRecursivePatternCall(PatternCall call) {
-        Map<PatternCall, Set<PatternCall>> graph = cache.get(call.eResource(), call.eResource(), new CallGraphProvider(
-                call.eResource()));
+        Map<PatternCall, Set<PatternCall>> graph = cache.get(call.eResource(), call.eResource(),
+                new CallGraphProvider(call.eResource()));
 
         LinkedList<PatternCall> result = dfsCheckCycle(call, graph);
 
@@ -425,15 +537,13 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         path.add(source);
         return dfsCheckCycle(source, path, new HashSet<PatternCall>(), graph);
     }
-    
+
     /**
-     * Contract:
-     * (1) path is the current path from source to the last element in path
-     * (2) the first element of path is source
-     * (3) seen is maintained globally within the recursive calls of dfsCheckCycle
+     * Contract: (1) path is the current path from source to the last element in path (2) the first element of path is
+     * source (3) seen is maintained globally within the recursive calls of dfsCheckCycle
      */
-    private LinkedList<PatternCall> dfsCheckCycle(PatternCall source, LinkedList<PatternCall> path, Set<PatternCall> seen,
-            Map<PatternCall, Set<PatternCall>> graph) {
+    private LinkedList<PatternCall> dfsCheckCycle(PatternCall source, LinkedList<PatternCall> path,
+            Set<PatternCall> seen, Map<PatternCall, Set<PatternCall>> graph) {
         PatternCall current = path.getLast();
 
         if (!seen.contains(current)) {
@@ -457,14 +567,14 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     private boolean isNegativePatternCall(PatternCall call) {
-        return (call.eContainer() instanceof PatternCompositionConstraint && ((PatternCompositionConstraint) call
-                .eContainer()).isNegative());
+        return (call.eContainer() instanceof PatternCompositionConstraint
+                && ((PatternCompositionConstraint) call.eContainer()).isNegative());
     }
 
     private String prettyPrintPatternCall(PatternCall call) {
         return (isNegativePatternCall(call) ? "neg " : "") + call.getPatternRef().getName();
     }
-    
+
     private static final Comparator<PatternCall> patternCallComparator = new Comparator<PatternCall>() {
         @Override
         public int compare(PatternCall p1, PatternCall p2) {
@@ -484,10 +594,9 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         public Map<PatternCall, Set<PatternCall>> get() {
             Map<PatternCall, Set<PatternCall>> graph = new HashMap<PatternCall, Set<PatternCall>>();
             TreeIterator<EObject> resourceIterator = resource.getAllContents();
-            Set<PatternCall> knownCalls = 
-                    Sets.newHashSet(Iterators.filter(resourceIterator, PatternCall.class));
-            Set<PatternCall> unprocessedCalls = Sets.difference(knownCalls, graph.keySet()); 
-                    
+            Set<PatternCall> knownCalls = Sets.newHashSet(Iterators.filter(resourceIterator, PatternCall.class));
+            Set<PatternCall> unprocessedCalls = Sets.difference(knownCalls, graph.keySet());
+
             while (!unprocessedCalls.isEmpty()) {
                 PatternCall source = unprocessedCalls.iterator().next();
                 Set<PatternCall> targets = new TreeSet<PatternCall>(patternCallComparator);
@@ -588,19 +697,16 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     public void checkPackageDeclaration(PatternModel model) {
         String declaredPackage = packageNameProvider.getExpectedPackageName(model);
         String actualPackage = model.getPackageName();
-        
+
         if (declaredPackage != null && !Strings.equal(actualPackage, declaredPackage)) {
-            error(String.format(
-                    "The package declaration '%s' does not match the container '%s'",
-                    Strings.emptyIfNull(declaredPackage),
-                    Strings.emptyIfNull(actualPackage)),
-                    PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
-                    IssueCodes.PACKAGE_NAME_MISMATCH);
+            error(String.format("The package declaration '%s' does not match the container '%s'",
+                    Strings.emptyIfNull(declaredPackage), Strings.emptyIfNull(actualPackage)),
+                    PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_MISMATCH);
         }
 
         if (actualPackage != null && !actualPackage.equals(actualPackage.toLowerCase())) {
-            error("Only lowercase package names supported",
-                    PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME, IssueCodes.PACKAGE_NAME_MISMATCH);
+            error("Only lowercase package names supported", PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
+                    IssueCodes.PACKAGE_NAME_MISMATCH);
         }
     }
 
@@ -628,18 +734,18 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                 }
             }
             if (otherVar != null) {
-                if (var1.eContainer() instanceof PatternBody && !var1.getReferences().isEmpty()) {
-                    // Local variables do not have source location
-                    warning(String.format(
-                            "Dubius variable naming: Single use variable %s shares its name with the variable %s",
-                            var1.getSimpleName(), otherVar.getSimpleName()), var1.getReferences().get(0),
+                boolean isAggregate = CorePatternLanguageHelper.hasAggregateReference(var1);
+                // Local variables do not have source location
+                if (isAggregate) {
+                    error(String.format(VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_AGGREGATE, var1.getSimpleName(),
+                            otherVar.getSimpleName()), var1.getReferences().get(0),
                             PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE,
                             IssueCodes.DUBIUS_VARIABLE_NAME);
                 } else {
-                    warning(String.format(
-                            "Dubius variable naming: Single use variable %s shares its name with the variable %s",
-                            var1.getSimpleName(), otherVar.getSimpleName()), var1,
-                            PatternLanguagePackage.Literals.VARIABLE__NAME, IssueCodes.DUBIUS_VARIABLE_NAME);
+                    warning(String.format(VARIABLE_NAME_DUBIUS_REUSE_MESSAGE_SINGLEUSE, var1.getSimpleName(),
+                            otherVar.getSimpleName()), var1.getReferences().get(0),
+                            PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE,
+                            IssueCodes.DUBIUS_VARIABLE_NAME);
                 }
             }
         }
@@ -687,8 +793,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                 && !isUnnamedSingleUseVariable(var)) {
             warning(String.format(
                     "Local variable '%s' is referenced only once. Is it mistyped? Start its name with '_' if intentional.",
-                    var.getName()), var.getReferences().get(0),
-                    PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR, IssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
+                    var.getName()), var.getReferences().get(0), PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
+                    IssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
         } else if (individualCounter.getReferenceCount() > 1 && isNamedSingleUse(var)) {
             for (VariableReference ref : var.getReferences()) {
                 error(String.format("Named single-use variable %s used multiple times.", var.getName()), ref,
@@ -756,8 +862,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                 for (Variable var : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(expression,
                         associations)) {
                     individualRefCounters.get(var).incrementCounter(ReferenceType.READ_ONLY);
-                    unifiedRefCounters.get(variableUnions.getPartition(var)).incrementCounter(
-                            ReferenceType.READ_ONLY);
+                    unifiedRefCounters.get(variableUnions.getPartition(var)).incrementCounter(ReferenceType.READ_ONLY);
                 }
                 it.prune();
             }
@@ -795,14 +900,14 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     private String getPatternBodyName(PatternBody patternBody) {
-        return (patternBody.getName() != null) ? patternBody.getName() : String.format("#%d",
-                ((Pattern) patternBody.eContainer()).getBodies().indexOf(patternBody) + 1);
+        return (patternBody.getName() != null) ? patternBody.getName()
+                : String.format("#%d", ((Pattern) patternBody.eContainer()).getBodies().indexOf(patternBody) + 1);
     }
 
     private ReferenceType classifyReference(VariableReference ref) {
         EObject parent = ref;
-        while (parent != null
-                && !(parent instanceof Constraint || parent instanceof AggregatedValue || parent instanceof FunctionEvaluationValue)) {
+        while (parent != null && !(parent instanceof Constraint || parent instanceof AggregatedValue
+                || parent instanceof FunctionEvaluationValue)) {
             parent = parent.eContainer();
         }
 
@@ -858,7 +963,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
      */
     public boolean isNamedSingleUse(Variable variable) {
         String name = variable.getName();
-        return name != null && name.startsWith("_") && !name.contains("<");
+        return CorePatternLanguageHelper.hasAggregateReference(variable) ||
+                (name != null && name.startsWith("_") && !name.contains("<"));
     }
 
     /**
@@ -884,7 +990,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private void checkForImpureJavaCallsInternal(XExpression xExpression, EStructuralFeature feature) {
         Set<String> elementsWithWarnings = new HashSet<String>();
         if (xExpression != null) {
-            Iterator<EObject> eAllContents = Iterators.concat(Iterators.singletonIterator(xExpression), xExpression.eAllContents());
+            Iterator<EObject> eAllContents = Iterators.concat(Iterators.singletonIterator(xExpression),
+                    xExpression.eAllContents());
             while (eAllContents.hasNext()) {
                 EObject nextEObject = eAllContents.next();
                 if (nextEObject instanceof XMemberFeatureCall) {
@@ -902,8 +1009,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         if (!elementsWithWarnings.isEmpty()) {
             warning("There is at least one potentially problematic java call in the check()/eval() expression. Custom java calls "
                     + "are considered unsafe in VIATRA Query unless they are annotated with @"
-                    + Pure.class.getSimpleName()
-                    + " or registered with the "
+                    + Pure.class.getSimpleName() + " or registered with the "
                     + PureWhitelistExtensionLoader.EXTENSION_ID
                     + " extension point. The possible erroneous calls are the following: " + elementsWithWarnings + ".",
                     xExpression.eContainer(), feature, IssueCodes.CHECK_WITH_IMPURE_JAVA_CALLS);
@@ -912,26 +1018,26 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Check(CheckType.NORMAL)
     public void checkNegativeCallParameters(PatternCompositionConstraint constraint) {
-    	Predicate<ValueReference> isSingleUseVariable = new Predicate<ValueReference>() {
+        Predicate<ValueReference> isSingleUseVariable = new Predicate<ValueReference>() {
 
-			@Override
-			public boolean apply(ValueReference input) {
-				if (input instanceof VariableValue) {
-					VariableValue variableValue = (VariableValue) input;
-					return variableValue.getValue().getVar().startsWith("_");
-				} else {
-					return false;
-				}
-			}
-			
-		};
-		if (constraint.isNegative() && Iterables.all(constraint.getCall().getParameters(), isSingleUseVariable)) {
-    		warning("This negative pattern call is a global constraint: "
-					+ "it expresses that there are no matches of the called pattern at all. "
-    				+ "Make sure this is intentional!",
-    				PatternLanguagePackage.Literals.PATTERN_COMPOSITION_CONSTRAINT__CALL,
-    				IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES);
-    	}
+            @Override
+            public boolean apply(ValueReference input) {
+                if (input instanceof VariableValue) {
+                    VariableValue variableValue = (VariableValue) input;
+                    return variableValue.getValue().getVar().startsWith("_");
+                } else {
+                    return false;
+                }
+            }
+
+        };
+        if (constraint.isNegative() && Iterables.all(constraint.getCall().getParameters(), isSingleUseVariable)) {
+            warning("This negative pattern call is a global constraint: "
+                    + "it expresses that there are no matches of the called pattern at all. "
+                    + "Make sure this is intentional!",
+                    PatternLanguagePackage.Literals.PATTERN_COMPOSITION_CONSTRAINT__CALL,
+                    IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES);
+        }
     }
 
     @Override

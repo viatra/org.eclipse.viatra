@@ -6,7 +6,8 @@ Bundle-Version: 1.4.0.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: org.eclipse.viatra.query.runtime.matchers.algorithms,
+Export-Package: org.eclipse.viatra.query.runtime.matchers.aggregators,
+ org.eclipse.viatra.query.runtime.matchers.algorithms,
  org.eclipse.viatra.query.runtime.matchers.backend,
  org.eclipse.viatra.query.runtime.matchers.context,
  org.eclipse.viatra.query.runtime.matchers.context.common,
@@ -15,7 +16,14 @@ Export-Package: org.eclipse.viatra.query.runtime.matchers.algorithms,
  org.eclipse.viatra.query.runtime.matchers.planning.helpers,
  org.eclipse.viatra.query.runtime.matchers.planning.operations,
  org.eclipse.viatra.query.runtime.matchers.psystem,
- org.eclipse.viatra.query.runtime.matchers.psystem.aggregations,
+ org.eclipse.viatra.query.runtime.matchers.psystem.aggregations;
+  x-friends:="org.eclipse.viatra.query.patternlanguage,
+   org.eclipse.viatra.query.runtime,
+   org.eclipse.viatra.query.runtime.localsearch,
+   org.eclipse.viatra.query.runtime.rete,
+   org.eclipse.viatra.query.patternlanguage.emf,
+   org.eclipse.viatra.query.patternlanguage.emf.ui,
+   org.eclipse.viatra.query.patternlanguage.ui",
  org.eclipse.viatra.query.runtime.matchers.psystem.annotations,
  org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred,
  org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables,

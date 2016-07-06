@@ -17,58 +17,60 @@ import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
 /**
- * Incrementally computes the minimum of java.lang.Comparable values, using the default comparison
+ * Incrementally computes the minimum of java.lang.T values, using the default comparison
+ * 
  * @author Gabor Bergmann
  * @since 1.4
  */
-public class MinimumOperator
-    extends AbstractMultisetAggregationOperator<Comparable, SortedMultiset<Comparable>, Comparable> {
-    
-    public static MinimumOperator INSTANCE = new MinimumOperator();
+public class MinimumOperator<T extends Comparable<T>>
+        extends AbstractMultisetAggregationOperator<T, SortedMultiset<T>, T> {
+
+    private static MinimumOperator INSTANCE = new MinimumOperator();
+
+    public static <T extends Comparable<T>> MinimumOperator<T> getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public String getShortDescription() {
-        return "min incrementally computes the minimum of java.lang.Comparable values, using the default comparison";
+        return "min incrementally computes the minimum of java.lang.T values, using the default comparison";
     }
+
     @Override
     public String getName() {
         return "min";
     }
 
     @Override
-    public SortedMultiset<Comparable> createNeutral() {
+    public SortedMultiset<T> createNeutral() {
         return TreeMultiset.create();
     }
 
     @Override
-    public boolean isNeutral(SortedMultiset<Comparable> result) {
+    public boolean isNeutral(SortedMultiset<T> result) {
         return result.isEmpty();
     }
 
     @Override
-    public SortedMultiset<Comparable> update(SortedMultiset<Comparable> oldResult, Comparable updateValue,
-            boolean isInsertion) 
-    {
-        if (isInsertion)
+    public SortedMultiset<T> update(SortedMultiset<T> oldResult, T updateValue, boolean isInsertion) {
+        if (isInsertion) {
             oldResult.add(updateValue);
-        else
+        } else {
             oldResult.remove(updateValue);
+        }
         return oldResult;
     }
 
     @Override
-    public Comparable getAggregate(SortedMultiset<Comparable> result) {
-        return result.isEmpty() ?
-                null :
-                result.firstEntry().getElement();
+    public T getAggregate(SortedMultiset<T> result) {
+        return result.isEmpty() ? null : result.firstEntry().getElement();
     }
-    
 
     @Override
-    public Comparable aggregateStatelessly(Collection<Comparable> aggregableValues) {
+    public T aggregateStatelessly(Collection<T> aggregableValues) {
         if (aggregableValues.isEmpty())
             return null;
-        else 
-            return Collections.min(aggregableValues);
+        else
+            return Collections.<T> min(aggregableValues);
     }
 }

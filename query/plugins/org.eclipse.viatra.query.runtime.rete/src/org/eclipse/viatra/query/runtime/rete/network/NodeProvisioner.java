@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
+import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.OnetimeIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
@@ -283,7 +284,7 @@ public class NodeProvisioner {
         ProjectionIndexerRecipe projectionIndexerRecipe = resultSeedRecipes.get(parentRecipe, mask);
         if (projectionIndexerRecipe == null) {
             projectionIndexerRecipe = RecipesHelper.projectionIndexerRecipe(parentRecipe,
-                    RecipesHelper.mask(mask.sourceWidth, mask.indices));
+                    CompilerHelper.toRecipeMask(mask));
             resultSeedRecipes.put(parentRecipe, mask, projectionIndexerRecipe);
         }
         return projectionIndexerRecipe;

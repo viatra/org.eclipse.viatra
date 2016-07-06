@@ -18,6 +18,8 @@ import java.util.Objects;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
@@ -30,18 +32,33 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageP
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
+import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil;
+import org.eclipse.xtext.common.types.JvmType;
+import org.eclipse.xtext.common.types.JvmTypeReference;
+import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.resource.DerivedStateAwareResource;
 import org.eclipse.xtext.xbase.jvmmodel.JvmModelAssociator;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 
 public class PatternLanguageJvmModelAssociator extends JvmModelAssociator {
 
+    @Inject
+    private ITypeInferrer typeInferrer;
+    @Inject
+    private TypeReferences typeReferences;
+    
     @Override
     public void installDerivedState(DerivedStateAwareResource resource, boolean preIndexingPhase) {
         calculateDerivedVariableObjects(resource);
         super.installDerivedState(resource, preIndexingPhase);
+        if (!preIndexingPhase) {
+            calculateAggregateTypes(resource);
+        }
     }
 
     protected void calculateDerivedVariableObjects(DerivedStateAwareResource resource) {
@@ -111,9 +128,16 @@ public class PatternLanguageJvmModelAssociator extends JvmModelAssociator {
                 if (obj instanceof VariableReference) {
                     VariableReference varRef = (VariableReference) obj;
                     String varName = varRef.getVar();
+                    if (Strings.isNullOrEmpty(varName)) {
+                        //This can happen only in invalid patterns or in unnamed aggregates
+                        varName = String.format("#<%d>", unnamedCounter);
+                        unnamedCounter++;
+                    }
                     if ("_".equals(varName)) {
                         varName = String.format("_<%d>", unnamedCounter);
                         unnamedCounter++;
+                    } else if (CorePatternLanguageHelper.isAggregateReference(varRef)) {
+                        varName = CorePatternLanguageHelper.AGGREGATE_VARIABLE_PREFIX + varName;
                     }
                     Variable var;
                     if (parameterMap.containsKey(varName)) {
@@ -146,5 +170,29 @@ public class PatternLanguageJvmModelAssociator extends JvmModelAssociator {
         // refVar.setType(var.getType());
         refVar.setReferredParam(var);
         return refVar;
+    }
+    
+    /**
+     * @since 1.4
+     */
+    protected void calculateAggregateTypes(DerivedStateAwareResource resource) {
+        TreeIterator<EObject> it = resource.getAllContents();
+        while (it.hasNext()) {
+            EObject obj = it.next();
+            if (obj instanceof AggregatedValue) {
+                AggregatedValue aggregatedValue = (AggregatedValue) obj;
+                if (AggregatorUtil.mustHaveAggregatorVariables(aggregatedValue)) {
+                    VariableValue aggregateParameter = AggregatorUtil.getAggregatorVariable(aggregatedValue);
+                    if (aggregateParameter == null) {
+                        aggregatedValue.setAggregateType(typeReferences.findDeclaredType(Void.class, aggregatedValue));
+                    } else {
+                        JvmTypeReference jvmType = typeInferrer.getJvmType(aggregateParameter, aggregatedValue);
+                        aggregatedValue.setAggregateType(jvmType.getType());
+                    }
+                }
+            } else if (obj instanceof JvmType) {
+                it.prune();
+            }
+        }
     }
 }

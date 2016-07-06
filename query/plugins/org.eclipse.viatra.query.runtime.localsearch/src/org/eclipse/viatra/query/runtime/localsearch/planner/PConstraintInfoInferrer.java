@@ -23,10 +23,10 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 
@@ -88,8 +88,8 @@ class PConstraintInfoInferrer {
             createConstraintInfoInequality(resultList, runtimeContext, (Inequality) pConstraint);
         } else if (pConstraint instanceof ExpressionEvaluation){
             createConstraintInfoExpressionEvaluation(resultList, runtimeContext, (ExpressionEvaluation)pConstraint);
-        } else if (pConstraint instanceof PatternMatchCounter){
-            createConstraintInfoPatternMatchCounter(resultList, runtimeContext, (PatternMatchCounter) pConstraint);
+        } else if (pConstraint instanceof AggregatorConstraint){
+            createConstraintInfoAggregatorConstraint(resultList, runtimeContext, (AggregatorConstraint) pConstraint);
         } else if (pConstraint instanceof PositivePatternCall){
             createConstraintInfoPositivePatternCall(resultList, runtimeContext, (PositivePatternCall) pConstraint);
         } else{
@@ -137,7 +137,7 @@ class PConstraintInfoInferrer {
         doCreateConstraintInfos(runtimeContext, resultList, inequality, affectedVariables, Collections.singleton(affectedVariables));
     }
     
-    private void createConstraintInfoPatternMatchCounter(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, PatternMatchCounter pConstraint){
+    private void createConstraintInfoAggregatorConstraint(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, AggregatorConstraint pConstraint){
         PVariable resultVariable = pConstraint.getResultVariable();
        
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();

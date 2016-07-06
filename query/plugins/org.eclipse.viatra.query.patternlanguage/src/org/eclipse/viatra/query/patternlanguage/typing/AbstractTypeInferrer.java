@@ -10,16 +10,19 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.typing;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.CountAggregator;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
+import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.JvmTypeReference;
 
 import com.google.inject.Inject;
@@ -62,9 +65,10 @@ public abstract class AbstractTypeInferrer implements ITypeInferrer {
                 return typeSystem.extractTypeDescriptor(type);
             } 
         } else if (ex instanceof AggregatedValue) {
-            AggregatedValue aggregatedValue = (AggregatedValue) ex;
-            if (aggregatedValue.getAggregator() instanceof CountAggregator) {
-                return new JavaTransitiveInstancesKey(Integer.class);
+            List<JvmType> returnTypes = AggregatorUtil.getReturnTypes(((AggregatedValue) ex).getAggregator());
+            if (returnTypes.size() == 1) {
+                JvmType jvmType = returnTypes.get(0);
+                return new JavaTransitiveInstancesKey(jvmType.getIdentifier());
             }
         }
         return null;
