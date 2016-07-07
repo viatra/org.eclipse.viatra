@@ -34,7 +34,6 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry
 import org.eclipse.viatra.query.runtime.registry.connector.AbstractRegistrySourceConnector
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
-import org.eclipse.xtext.resource.DerivedStateAwareResource
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.resource.IResourceDescription
 import org.eclipse.xtext.resource.IResourceDescription.Delta
@@ -89,8 +88,9 @@ class XtextIndexBasedRegistryUpdater {
                 // create connector based on URI
                 val uri = resourceDesc.URI.toString
                 val projectName = resourceDesc.URI.segment(1)
-                val projectExists = ResourcesPlugin.workspace.root.getProject(projectName).exists
-                if(!projectExists){
+                val project = ResourcesPlugin.workspace.root.getProject(projectName)
+                val projectExists = project.exists
+                if(!projectExists || !project.open){
                     // only care about workspace projects
                     return
                 }
@@ -149,7 +149,8 @@ class XtextIndexBasedRegistryUpdater {
                     return
                 }
                 val projectName = delta.uri.segment(1)
-                val projectExists = ResourcesPlugin.workspace.root.getProject(projectName).exists
+                val project = ResourcesPlugin.workspace.root.getProject(projectName)
+                val projectExists = project.exists
                 if(!projectExists){
                     // only care about workspace projects
                     return
@@ -158,7 +159,7 @@ class XtextIndexBasedRegistryUpdater {
                 
                 try {
                     if (oldDesc != null) {
-                        if(newDesc == null) {
+                        if(newDesc == null || !project.open) {
                             // delete
                             val connector = updater.connectorMap.get(connectorId)
                             if(connector != null){
