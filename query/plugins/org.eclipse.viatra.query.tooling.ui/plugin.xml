@@ -194,6 +194,9 @@
          <newWizardShortcut
                id="org.eclipse.ui.wizards.new.file">
          </newWizardShortcut>
+         <actionSet
+               id="org.eclipse.debug.ui.launchActionSet">
+         </actionSet>
       </perspectiveExtension>
    </extension>
    <extension
