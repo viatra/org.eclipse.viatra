@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.viatra.query.browser.feature"
-      label="VIATRA Query Browser (Incubation)"
+      id="org.eclipse.viatra.query.sdk.extensions.feature"
+      label="VIATRA Query and Transformation SDK Extensions (Incubation)"
       version="0.13.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
