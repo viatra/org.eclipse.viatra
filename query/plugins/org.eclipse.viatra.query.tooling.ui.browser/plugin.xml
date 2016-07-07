@@ -157,6 +157,26 @@
                id="org.eclipse.viatra.query.tooling.ui.result.loadqueriesmenu"
                label="Load into Query Results"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeSource">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreePackage">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
