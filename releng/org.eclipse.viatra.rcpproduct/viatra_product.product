@@ -311,15 +311,15 @@
    </plugins>
 
    <features>
-      <feature id="org.eclipse.viatra.addon.databinding.runtime.feature" version="1.3.0.qualifier"/>
-      <feature id="org.eclipse.viatra.addon.querybasedfeatures.runtime.feature" version="1.3.0.qualifier"/>
-      <feature id="org.eclipse.viatra.addon.validation.runtime.feature" version="1.3.0.qualifier"/>
-      <feature id="org.eclipse.viatra.integration.uml.feature" version="1.3.0.qualifier"/>
-      <feature id="org.eclipse.viatra.query.language.feature" version="1.3.0.qualifier"/>
-      <feature id="org.eclipse.viatra.query.runtime.feature" version="1.3.0.qualifier"/>
-      <feature id="org.eclipse.viatra.query.sdk.feature" version="1.3.0.qualifier"/>
-      <feature id="org.eclipse.viatra.transformation.evm.transactions.feature" version="1.3.0.qualifier"/>
-      <feature id="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.3.0.qualifier"/>
+      <feature id="org.eclipse.viatra.addon.databinding.runtime.feature" version="1.4.0.qualifier"/>
+      <feature id="org.eclipse.viatra.addon.querybasedfeatures.runtime.feature" version="1.4.0.qualifier"/>
+      <feature id="org.eclipse.viatra.addon.validation.runtime.feature" version="1.4.0.qualifier"/>
+      <feature id="org.eclipse.viatra.integration.uml.feature" version="1.4.0.qualifier"/>
+      <feature id="org.eclipse.viatra.query.language.feature" version="1.4.0.qualifier"/>
+      <feature id="org.eclipse.viatra.query.runtime.feature" version="1.4.0.qualifier"/>
+      <feature id="org.eclipse.viatra.query.sdk.feature" version="1.4.0.qualifier"/>
+      <feature id="org.eclipse.viatra.transformation.evm.transactions.feature" version="1.4.0.qualifier"/>
+      <feature id="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.4.0.qualifier"/>
       <feature id="org.eclipse.platform"/>
       <feature id="org.eclipse.help"/>
       <feature id="org.eclipse.pde"/>

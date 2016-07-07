@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EVM Integration Tests (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.cep.tests.integration;singleton:=true
-Bundle-Version: 0.13.0.qualifier
+Bundle-Version: 0.14.0.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Export-Package: org.eclipse.viatra.cep.tests.integration.model,
  org.eclipse.viatra.cep.tests.integration.model.events,
