@@ -20,7 +20,6 @@ import org.eclipse.xtext.resource.IFragmentProvider;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
 /**
