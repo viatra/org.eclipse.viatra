@@ -79,9 +79,9 @@ public class POperationCompiler {
     private Set<MatcherReference> dependencies = Sets.newHashSet();
     private Map<PConstraint, Set<Integer>> variableBindings;
 	private Map<PVariable, Integer> variableMappings;
-    private boolean baseIndexAvailable;
-    private EMFQueryRuntimeContext runtimeContext;
-    private IQueryBackend backend;
+    private final boolean baseIndexAvailable;
+    private final EMFQueryRuntimeContext runtimeContext;
+    private final IQueryBackend backend;
 
     public POperationCompiler(IQueryRuntimeContext runtimeContext, IQueryBackend backend) {
         this(runtimeContext, backend, false);
@@ -90,6 +90,7 @@ public class POperationCompiler {
     public POperationCompiler(IQueryRuntimeContext runtimeContext, IQueryBackend backend, boolean baseIndexAvailable) {
         this.backend = backend;
         this.runtimeContext = (EMFQueryRuntimeContext) runtimeContext;
+        this.baseIndexAvailable = baseIndexAvailable;
     }
 
 	/**
