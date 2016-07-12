@@ -14,19 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext;
-import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckConstant;
@@ -87,7 +81,6 @@ public class POperationCompiler {
 	private Map<PVariable, Integer> variableMappings;
     private boolean baseIndexAvailable;
     private EMFQueryRuntimeContext runtimeContext;
-    private Set<EObject> allModelContents;
     private IQueryBackend backend;
 
     public POperationCompiler(IQueryRuntimeContext runtimeContext, IQueryBackend backend) {
@@ -97,29 +90,6 @@ public class POperationCompiler {
     public POperationCompiler(IQueryRuntimeContext runtimeContext, IQueryBackend backend, boolean baseIndexAvailable) {
         this.backend = backend;
         this.runtimeContext = (EMFQueryRuntimeContext) runtimeContext;
-        this.baseIndexAvailable = baseIndexAvailable;
-        if(!baseIndexAvailable){
-            // TODO obtain here the contents of the scope and pass it to operations that need it
-            allModelContents = Sets.newHashSet();
-            EMFScope emfScope = this.runtimeContext.getEmfScope();
-            Set<? extends Notifier> scopeRoots = emfScope.getScopeRoots();
-            for (Notifier notifier : scopeRoots) {
-                if(notifier instanceof ResourceSet){
-                    EList<Resource> allResources = ((ResourceSet) notifier).getResources();
-                    for (Resource resource : allResources) {
-                           storeAllEObjects(resource);
-                    }
-                }
-                else if(notifier instanceof Resource){
-                    storeAllEObjects((Resource) notifier);
-                }
-            }
-        }
-    }
-
-    private void storeAllEObjects(Resource resource) {
-        TreeIterator<EObject> allContents = resource.getAllContents();
-        this.allModelContents.addAll(Sets.newHashSet(allContents));
     }
 
 	/**
@@ -362,7 +332,7 @@ public class POperationCompiler {
                 int position = variableMapping.get(typeConstraint.getVariableInTuple(0));
                 operations
                         .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.IterateOverEDatatypeInstances(position,
-                                ((EDataTypeInSlotsKey) inputKey).getEmfKey(), allModelContents, backend));
+                                ((EDataTypeInSlotsKey) inputKey).getEmfKey(), runtimeContext.getEmfScope(), (LocalSearchBackend) backend));
                 operations.add(new ScopeCheck(position, runtimeContext.getEmfScope()));
             }
     	} else if (inputKey instanceof EClassTransitiveInstancesKey) {
@@ -374,7 +344,7 @@ public class POperationCompiler {
                 operations
                         .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.IterateOverEClassInstances(
                                 position,
-                                ((EClassTransitiveInstancesKey) inputKey).getEmfKey(), allModelContents));
+                                ((EClassTransitiveInstancesKey) inputKey).getEmfKey(), runtimeContext.getEmfScope()));
                 operations.add(new ScopeCheck(position, runtimeContext.getEmfScope()));
             }
 	    } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
@@ -414,7 +384,7 @@ public class POperationCompiler {
                 } else {
                     operations
                             .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.IterateOverEClassInstances(
-                                    sourcePosition, feature.getEContainingClass(), allModelContents));
+                                    sourcePosition, feature.getEContainingClass(), runtimeContext.getEmfScope()));
                     operations.add(new ScopeCheck(sourcePosition, runtimeContext.getEmfScope()));
                     operations
                             .add(new org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase.ExtendToEStructuralFeatureTarget(

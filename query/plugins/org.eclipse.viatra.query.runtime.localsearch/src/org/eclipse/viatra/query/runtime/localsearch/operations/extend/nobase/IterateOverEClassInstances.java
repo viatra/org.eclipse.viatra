@@ -10,18 +10,17 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOperation;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 /**
@@ -29,29 +28,24 @@ import com.google.common.collect.Lists;
  * 
  * @author Zoltan Ujhelyi
  */
-public class IterateOverEClassInstances extends ExtendOperation<EObject> {
+public class IterateOverEClassInstances extends AbstractIteratingExtendOperation<EObject> {
 
     private EClass clazz;
-    private Collection<EObject> contents;
 
-    public IterateOverEClassInstances(int position, EClass clazz, Collection<EObject> allModelContents) {
-        super(position);
+    public IterateOverEClassInstances(int position, EClass clazz, EMFScope scope) {
+        super(position, scope);
         this.clazz = clazz;
-        contents = Collections2.filter(allModelContents, new Predicate<EObject>() {
-            @Override
-            public boolean apply(EObject input) {
-                return IterateOverEClassInstances.this.clazz.isSuperTypeOf(input.eClass());
-            }
-        });
     }
 
     public EClass getClazz() {
         return clazz;
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        it = contents.iterator();
+        // The resulting iterator can be safely casted to EObject iterator as its content is filtered to an EClass
+        it = (Iterator<EObject>) Iterators.filter(getModelContents(), clazz.getInstanceClass()) ;
     }
     
     @Override

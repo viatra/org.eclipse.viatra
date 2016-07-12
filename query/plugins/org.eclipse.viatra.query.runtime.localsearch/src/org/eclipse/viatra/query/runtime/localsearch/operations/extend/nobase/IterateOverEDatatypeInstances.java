@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations.extend.nobase;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -19,13 +20,18 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendOperation;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
@@ -34,36 +40,29 @@ import com.google.common.collect.Table;
  * Iterates over all {@link EDataType} instances without using an {@link NavigationHelper VIATRA Base indexer}.
  * 
  */
-public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
+public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperation<Object> {
 
     private EDataType dataType;
-    private Collection<Object> contents;
-
-    public IterateOverEDatatypeInstances(int position, EDataType dataType, Collection<EObject> allModelContents, IQueryBackend backend) {
-        super(position);
+    private final LocalSearchBackend backend;
+    
+    public IterateOverEDatatypeInstances(int position, EDataType dataType, EMFScope scope, LocalSearchBackend backend) {
+        super(position, scope);
         this.dataType = dataType;
-
-        for (EObject eObject : allModelContents) {
-            EDataType type = IterateOverEDatatypeInstances.this.dataType;
-            LocalSearchBackend lsBackend = (LocalSearchBackend) backend;
-            Table<EDataType, EClass, Set<EAttribute>> cache = lsBackend.geteAttributesByTypeForEClass();
-            if(!cache.contains(type, eObject.eClass())){
-                EList<EAttribute> eAllAttributes = eObject.eClass().getEAllAttributes();
-                for (EAttribute eAttribute : eAllAttributes) {
-                    if (eAttribute.getEType().equals(type)) {
-                        cache.put(type, eObject.eClass(), Sets.<EAttribute>newHashSet());
-                    }
+        this.backend = backend;
+    }
+    
+    protected Iterator<EAttribute> doGetEAttributes(EClass eclass){
+        Table<EDataType, EClass, Set<EAttribute>> cache = backend.geteAttributesByTypeForEClass();
+        if(!cache.contains(dataType, eclass)){
+            EList<EAttribute> eAllAttributes = eclass.getEAllAttributes();
+            cache.put(dataType, eclass, Sets.filter(Sets.newHashSet(eAllAttributes), new Predicate<EAttribute>() {
+                @Override
+                public boolean apply(EAttribute input) {
+                    return input.getEType().equals(dataType);
                 }
-            }
-            Set<EAttribute> eAttributes = cache.get(type, eObject.eClass());
-            for (EAttribute eAttribute : eAttributes) {                
-                if (eAttribute.isMany()) {
-                    contents.addAll((Collection<?>) eObject.eGet(eAttribute));
-                } else {
-                    contents.add(eObject.eGet(eAttribute));
-                }
-            }
+            }));
         }
+        return cache.get(dataType, eclass).iterator();
     }
 
     public EDataType getDataType() {
@@ -72,7 +71,28 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) {
-        it = contents.iterator();
+        it = Iterators.concat(Iterators.transform(Iterators.filter(getModelContents(), EObject.class), new Function<EObject, Iterator<Object>>(){
+
+            @Override
+            public Iterator<Object> apply(final EObject input) {
+                Iterator<EAttribute> features = doGetEAttributes(input.eClass());
+                return Iterators.concat(
+                        Iterators.transform(features, new Function<EAttribute, Iterator<?>>() {
+
+                            @Override
+                            public Iterator<?> apply(EAttribute attribute) {
+                                if (attribute.isMany()){
+                                    return ((List<?>)input.eGet(attribute)).iterator();
+                                }else{
+                                    Object o = input.eGet(attribute);
+                                    return o == null ? Iterators.emptyIterator() : Iterators.singletonIterator(o);
+                                }
+                            }
+                        })
+                    );
+            }
+            
+        }));
     }
     
     
