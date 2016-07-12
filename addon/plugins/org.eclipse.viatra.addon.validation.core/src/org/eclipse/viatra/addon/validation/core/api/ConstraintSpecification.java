@@ -50,8 +50,8 @@ public class ConstraintSpecification implements IConstraintSpecification {
 
         List<PParameter> parameters = querySpecification.getParameters();
 
-        if (!builder.keyNames.isEmpty()) {
-            this.keyNames = builder.keyNames;
+        if (!builder.keys.isEmpty()) {
+            this.keyNames = builder.keys;
         } else {
             this.keyNames = new ArrayList<String>();
             for (PParameter parameter : parameters) {
@@ -136,22 +136,16 @@ public class ConstraintSpecification implements IConstraintSpecification {
         private final IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification;
         private final String messageFormat;
         private final Severity severity;
-        private List<String> keyNames;
+        private List<String> keys;
         private Set<List<String>> symmetricParameterNames;
 
-        /**
-         * 
-         * @param querySpecification
-         * @param messageFormat
-         * @param severity
-         */
         public ConstraintSpecificationBuilder(
                 IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> querySpecification,
                 String messageFormat, Severity severity) {
             this.querySpecification = querySpecification;
             this.messageFormat = messageFormat;
             this.severity = severity;
-            this.keyNames = new ArrayList<String>();
+            this.keys = new ArrayList<String>();
             this.symmetricParameterNames = new HashSet<List<String>>();
 
             if (this.querySpecification == null) {
@@ -162,21 +156,11 @@ public class ConstraintSpecification implements IConstraintSpecification {
             }
         }
 
-        /**
-         * 
-         * @param keyNames
-         * @return
-         */
         public ConstraintSpecificationBuilder keyNames(List<String> keyNames) {
-            this.keyNames = keyNames;
+            this.keys = keyNames;
             return this;
         }
 
-        /**
-         * 
-         * @param symmetricParameters
-         * @return
-         */
         public ConstraintSpecificationBuilder symmetricParameters(List<String> symmetricParameters) {
 
             List<PParameter> parameters = querySpecification.getParameters();
@@ -193,9 +177,9 @@ public class ConstraintSpecification implements IConstraintSpecification {
                 }
             }
 
-            if (!keyNames.containsAll(symmetricParameters)) {
+            if (!keys.containsAll(symmetricParameters)) {
                 for (String symmetricParameter : symmetricParameters) {
-                    if (keyNames.contains(symmetricParameter)) {
+                    if (keys.contains(symmetricParameter)) {
                         throw new IllegalStateException(
                                 "The provided symmetric parameter names must be either all key parameters or neither of them can be a key parameter!");
                     }
@@ -206,10 +190,6 @@ public class ConstraintSpecification implements IConstraintSpecification {
             return this;
         }
 
-        /**
-         * 
-         * @return
-         */
         public ConstraintSpecification build() {
             ConstraintSpecification constraintSpecification = new ConstraintSpecification(this);
 

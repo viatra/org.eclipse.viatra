@@ -103,10 +103,8 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
             // at least one of them has to specify this feature
             for (PAnnotation annotation : qbfAnnotations) {
                 Object featureParam = annotation.getFirstValue("feature");
-                if (featureParam instanceof String) {
-                    if(eStructuralFeature.getName().equals(featureParam)) {
-                        processQBFAnnotation(annotation);
-                    }
+                if (featureParam instanceof String && eStructuralFeature.getName().equals(featureParam)) {
+                    processQBFAnnotation(annotation);
                 }
             }
         }
@@ -162,10 +160,6 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
         initializeSettingDelegateInternal(rootNotifier);
     }
 
-    /**
-     * @param notifierForSource
-     * @return
-     */
     private QueryBasedFeature initializeSettingDelegateInternal(Notifier notifierForSource) {
         AdvancedViatraQueryEngine engine = null;
         try {
@@ -184,7 +178,7 @@ public class QueryBasedFeatureSettingDelegate extends BasicSettingDelegate.State
             }
         }
         
-        if (!queryBasedFeature.isInitialized()) {
+        if (queryBasedFeature != null && !queryBasedFeature.isInitialized()) {
             initializeQueryBasedFeature(engine, queryBasedFeature);
         }
         return queryBasedFeature;

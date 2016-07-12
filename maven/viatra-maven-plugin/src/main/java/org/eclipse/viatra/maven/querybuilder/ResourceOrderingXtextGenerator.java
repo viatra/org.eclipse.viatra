@@ -147,13 +147,13 @@ public class ResourceOrderingXtextGenerator extends AbstractMojo {
     }
 
     protected void internalExecute() throws MojoExecutionException, MojoFailureException {
-        Map<String, LanguageAccess> languages = new LanguageAccessFactory().createLanguageAccess(getLanguages(), this
+        Map<String, LanguageAccess> languageMap = new LanguageAccessFactory().createLanguageAccess(getLanguages(), this
                 .getClass().getClassLoader());
         Iterable<String> classPathEntries = filter(getClasspathElements(), emptyStringFilter());
         Injector injector = Guice.createInjector(new StandaloneBuilderModule());
         ResourceOrderingStandaloneBuilder builder = injector.getInstance(ResourceOrderingStandaloneBuilder.class); // XXX StandaloneBuilder has been changed to ResourceOrderingStandaloneBuilder
         builder.setBaseDir(project.getBasedir().getAbsolutePath());
-        builder.setLanguages(languages);
+        builder.setLanguages(languageMap);
         builder.setEncoding(encoding);
         builder.setClassPathEntries(classPathEntries);
         builder.setClassPathLookUpFilter(classPathLookupFilter);

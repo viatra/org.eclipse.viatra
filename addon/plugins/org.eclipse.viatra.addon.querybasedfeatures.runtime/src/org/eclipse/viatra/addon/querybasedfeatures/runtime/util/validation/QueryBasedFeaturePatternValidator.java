@@ -88,7 +88,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         if (source != null) {
             sourceType = typeInferrer.getType(source);
         }
-        if (sourceType == null || !(sourceType instanceof EClassTransitiveInstancesKey)) {
+        if (!(sourceType instanceof EClassTransitiveInstancesKey)) {
             validator.error("The 'source' parameter must be EClass.", source,
                     PatternLanguagePackage.Literals.VARIABLE__TYPE, PATTERN_ISSUE_CODE);
             return;

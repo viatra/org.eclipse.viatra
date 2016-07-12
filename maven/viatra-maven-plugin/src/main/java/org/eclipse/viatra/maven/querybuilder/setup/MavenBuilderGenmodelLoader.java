@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.IGenmodelMappingLoader;
 
 public class MavenBuilderGenmodelLoader implements IGenmodelMappingLoader {
 
-    protected static MavenBuilderGenmodelLoader genmodelLoader = new MavenBuilderGenmodelLoader();
+    protected static final MavenBuilderGenmodelLoader genmodelLoader = new MavenBuilderGenmodelLoader();
 
     private Map<String, String> genModels;
 

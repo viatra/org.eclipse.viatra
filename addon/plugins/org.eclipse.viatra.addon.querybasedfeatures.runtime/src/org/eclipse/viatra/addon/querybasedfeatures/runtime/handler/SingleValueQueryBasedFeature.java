@@ -12,6 +12,7 @@ package org.eclipse.viatra.addon.querybasedfeatures.runtime.handler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -31,11 +32,6 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
     private final Map<InternalEObject, Object> singleRefMemory = new HashMap<InternalEObject, Object>();
     private final Map<InternalEObject, Object> updateMemory = new HashMap<InternalEObject, Object>();
         
-    /**
-     * @param feature
-     * @param kind
-     * @param keepCache
-     */
     protected SingleValueQueryBasedFeature(EStructuralFeature feature, boolean keepCache) {
         super(feature, keepCache);
     }
@@ -108,10 +104,12 @@ public class SingleValueQueryBasedFeature extends QueryBasedFeature {
     
     protected void afterUpdate() {
         if (!updateMemory.isEmpty()) {
-            for (InternalEObject source : updateMemory.keySet()) {
+            for (Entry<InternalEObject, Object> entry : updateMemory.entrySet()) {
+                InternalEObject source = entry.getKey();
+                Object target = entry.getValue();
                 appendNotificationToList(new ENotificationImpl(source, Notification.SET, getFeature(), null,
-                        updateMemory.get(source)));
-                setSingleRefMemory(source, updateMemory.get(source));
+                        target));
+                setSingleRefMemory(source, target);
             }
             updateMemory.clear();
         }

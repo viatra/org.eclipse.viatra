@@ -13,6 +13,7 @@
 package org.eclipse.viatra.addon.validation.core;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -99,8 +100,8 @@ public class Constraint implements IConstraint {
         try {
             matcher = validationEngine.getQueryEngine().getMatcher(specification.getQuerySpecification());
         } catch (ViatraQueryException e) {
-            e.printStackTrace();
-            return null;
+            logger.error(e.getMessage(), e);
+            return Collections.emptyList();
         }
 
         Map<ViolationKey, Violation> violationMap = new HashMap<ViolationKey, Violation>();
@@ -118,8 +119,8 @@ public class Constraint implements IConstraint {
         try {
             matcher = validationEngine.getQueryEngine().getMatcher(specification.getQuerySpecification());
         } catch (ViatraQueryException e) {
-            e.printStackTrace();
-            return null;
+            logger.error(e.getMessage(), e);
+            return Collections.emptyList();
         }
 
         Map<ViolationKey, Violation> violationMap = new HashMap<ViolationKey, Violation>();

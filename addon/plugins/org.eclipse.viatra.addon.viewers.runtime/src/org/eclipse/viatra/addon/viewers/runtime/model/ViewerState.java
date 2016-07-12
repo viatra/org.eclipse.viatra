@@ -81,11 +81,7 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
             manager.setEngine(model.getEngine());
             manager.setRules(collectRules(model));
             manager.initialize();
-        } catch (ViatraQueryException e) {
-            ViatraQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
-        } catch (QueryInitializationException e) {
-            ViatraQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
-        } catch (ViatraBaseException e) {
+        } catch (ViatraQueryException | QueryInitializationException | ViatraBaseException e) {
             ViatraQueryLoggingUtil.getLogger(getClass()).error(e.getMessage());
         }
     }
@@ -133,7 +129,7 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
 
     protected Collection<IViewerStateListener> stateListeners = Lists.newArrayList();
     protected Collection<IViewerLabelListener> labelListeners = Lists.newArrayList();
-    private boolean isDisposed;
+    private boolean disposed;
 
     public final void itemAppeared(Item item) {
         for (IViewerStateListener l : stateListeners) {
@@ -251,11 +247,11 @@ public class ViewerState implements IViewerStateListener, IViewerLabelListener {
         if(!hasExternalViewerDataModel)
             model.dispose();
         
-        isDisposed = true;
+        disposed = true;
     }
 
     public boolean isDisposed() {
-        return isDisposed;
+        return disposed;
     }
 
 }

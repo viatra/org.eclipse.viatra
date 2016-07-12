@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.validators;
 
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
-import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
-
-
 /**
- * A validator for Item objects
+ * A validator for Edge objects
  * 
  * <p/>Note that this class uses the optional dependency org.eclipse.viatra.query.patternlanguage.emf!
  * 
@@ -23,11 +19,5 @@ import org.eclipse.viatra.query.patternlanguage.validation.IIssueCallback;
  * 
  */
 public class EdgeValidator extends AbstractAnnotationValidator {
-
-    @Override
-    public void executeAdditionalValidation(Annotation annotation, IIssueCallback validator) {
-        // Label validation is handled in parent class
-        super.executeAdditionalValidation(annotation, validator);
-    }
 
 }
