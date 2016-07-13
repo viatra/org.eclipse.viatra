@@ -6,13 +6,13 @@
       <view
             category="org.eclipse.viatra.query.tooling.ui"
             class="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
-            icon="icons/rsz_viatra_logo.png"
+            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
             name="Query Registry">
       </view>
       <view
             class="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
-            icon="icons/rsz_viatra_logo.png"
+            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
             name="Query Results">
       </view>
@@ -123,7 +123,7 @@
             locationURI="menu:org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.registry.reset"
-               icon="icons/reset.gif"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/reset.gif"
                label="Reset view"
                style="push">
          </command>
@@ -133,6 +133,7 @@
             locationURI="popup:org.eclipse.ui.popup.any">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.showlocation"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/forward_nav.gif"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -153,7 +154,7 @@
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.loadqueries"
-               icon="icons/logo2.png"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
                id="org.eclipse.viatra.query.tooling.ui.result.loadqueriesmenu"
                label="Load into Query Results"
                style="push">
@@ -187,7 +188,7 @@
          </control>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.loadmodel"
-               icon="icons/load.gif"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/load.gif"
                id="org.eclipse.viatra.query.tooling.ui.result.loadmodelmenu"
                label="Load from active editor"
                style="push">
@@ -202,13 +203,13 @@
             locationURI="menu:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.unloadmodel"
-               icon="icons/unload.gif"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/unload.gif"
                label="Unload model"
                style="push">
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.wipeengine"
-               icon="icons/reset.gif"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/reset.gif"
                label="Remove loaded queries"
                style="push">
          </command>

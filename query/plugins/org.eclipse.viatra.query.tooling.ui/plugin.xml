@@ -505,13 +505,13 @@
                label="Patterns viewer presentation">
             <command
                   commandId="org.eclipse.viatra.query.tooling.ui.pattern.hierarchical"
-                  icon="icons/hierarchicalLayout.gif"
+                  icon="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/hierarchicalLayout.png"
                   label="Hierarchical"
                   style="push">
             </command>
             <command
                   commandId="org.eclipse.viatra.query.tooling.ui.pattern.flat"
-                  icon="icons/flatLayout.gif"
+                  icon="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/flatLayout.png"
                   label="Flat"
                   style="push">
             </command>
