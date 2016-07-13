@@ -13,7 +13,7 @@ package org.eclipse.viatra.addon.viewers.tooling.ui.views.tabs;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -33,15 +33,19 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
 
     @Override
     public void setSelection(ISelection selection) {
-        StructuredViewer viewer = getViewer();
+        Viewer viewer = getViewer();
         if (viewer != null && !(viewer.getControl().isDisposed())) {
-            viewer.setSelection(selection);
+            try {
+                viewer.setSelection(selection);
+            } catch (Exception e) {
+                // Selection is set on a best-effort basis
+            }
         }
     }
 
     @Override
     public ISelection getSelection() {
-        StructuredViewer viewer = getViewer();
+        Viewer viewer = getViewer();
         if (viewer != null && !(viewer.getControl().isDisposed())) {
             return viewer.getSelection();
         } else {
@@ -53,7 +57,7 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
     public void createPartControl(CTabFolder folder) {
         CTabItem tab = new CTabItem(folder, SWT.NONE);
         tab.setText(getTabTitle());
-        StructuredViewer viewer = createViewer(folder);
+        Viewer viewer = createViewer(folder);
         tab.setControl(viewer.getControl());
     }
     
@@ -63,8 +67,8 @@ public abstract class AbstractViewerSandboxTab implements IViewerSandboxTab {
     	// getViewer().dispose();
     }
 
-    protected abstract StructuredViewer getViewer();
+    protected abstract Viewer getViewer();
     
     
-    protected abstract StructuredViewer createViewer(Composite parent);
+    protected abstract Viewer createViewer(Composite parent);
 }

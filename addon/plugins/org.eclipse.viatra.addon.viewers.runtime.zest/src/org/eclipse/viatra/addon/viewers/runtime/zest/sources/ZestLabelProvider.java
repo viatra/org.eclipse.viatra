@@ -14,29 +14,21 @@ package org.eclipse.viatra.addon.viewers.runtime.zest.sources;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.draw2d.BendpointConnectionRouter;
-import org.eclipse.draw2d.ConnectionRouter;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.gef4.zest.core.viewers.IConnectionStyleProvider;
-import org.eclipse.gef4.zest.core.viewers.IEntityStyleProvider;
-import org.eclipse.gef4.zest.core.widgets.ZestStyles;
-import org.eclipse.gef4.zest.core.widgets.decoration.IConnectionDecorator;
+import org.eclipse.gef.zest.fx.ZestProperties;
+import org.eclipse.gef.zest.fx.jface.IGraphAttributesProvider;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
-import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
-import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
 import org.eclipse.viatra.addon.viewers.runtime.notation.FormattableElement;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.addon.viewers.runtime.sources.QueryLabelProvider;
 import org.eclipse.viatra.addon.viewers.runtime.util.FormatParser;
-import org.eclipse.viatra.query.runtime.rete.network.Node;
 
 import com.google.common.collect.Maps;
+
+import javafx.scene.shape.Polygon;
 
 
 /**
@@ -45,8 +37,14 @@ import com.google.common.collect.Maps;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyleProvider, IConnectionStyleProvider {
+public class ZestLabelProvider extends QueryLabelProvider implements IColorProvider, IGraphAttributesProvider {
 
+    static class DiamondHead extends Polygon {
+        public DiamondHead() {
+            super(-15.0, 0.0, -7.5, -3.75, -7.5, 3.75, -15.0, 0.0);
+        }
+    }
+    
     private Map<RGB, Color> colorMap = Maps.newHashMap();
 
     public ZestLabelProvider(ViewerState state, Display display) {
@@ -88,33 +86,7 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
     }
 
 	@Override
-	public Color getNodeHighlightColor(Object entity) {
-        return null;
-	}
-
-	@Override
-    public Color getBorderColor(Object entity) {
-        if (entity instanceof Item) {
-            return getColorProperty((FormattableElement) entity, FormatParser.LINE_COLOR);
-        }
-        return null;
-    }
-
-	@Override
-	public Color getBorderHighlightColor(Object entity) {
-        return null;
-	}
-
-	@Override
-	public int getBorderWidth(Object entity) {
-        if (entity instanceof Node) {
-            return getIntProperty((FormattableElement) entity, FormatParser.LINE_WIDTH);
-        }
-        return -1;
-	}
-
-	@Override
-	public Color getBackgroundColour(Object entity) {
+	public Color getBackground(Object entity) {
         if (entity instanceof Item) {
             return getColorProperty((FormattableElement) entity, FormatParser.COLOR);
         }
@@ -122,42 +94,13 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
 	}
 
 	@Override
-	public Color getForegroundColour(Object entity) {
+	public Color getForeground(Object entity) {
         if (entity instanceof Item) {
             return getColorProperty((FormattableElement) entity, FormatParser.TEXT_COLOR);
         }
         return null;
 	}
-
-	@Override
-	public IFigure getTooltip(Object entity) {
-        if (!(entity instanceof Item)) {
-            return null;
-        }
-        final Object entityObject = ((Item) entity).getParamObject();
-        if (!(entityObject instanceof EObject)) {
-            return null;
-        }
-		EObject eobj = (EObject) entityObject;
-		String text = "";
-		for (EStructuralFeature feature : eobj.eClass().getEAllAttributes()) {
-			text = text.concat(feature.getName() + ": ");
-			Object obj = eobj.eGet(feature);
-			if (obj == null) {
-				text = text.concat("\n");
-			} else {
-				text = text.concat(eobj.eGet(feature).toString() + "\n");
-			}
-		}
-		Label label = new Label(text);
-		return label;
-	}
-
-	@Override
-	public boolean fisheyeNode(Object entity) {
-		return false;
-	}
-
+	
     @Override
     public void dispose() {
         for (Entry<RGB, Color> colorEntry : colorMap.entrySet()) {
@@ -169,59 +112,42 @@ public class ZestLabelProvider extends QueryLabelProvider implements IEntityStyl
         super.dispose();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider#getEdgeAttributes(java.lang.Object, java.lang.Object)
+     */
     @Override
-    public int getConnectionStyle(Object rel) {
-    	// handle containments specially
-    	if (rel instanceof Containment) {
-    		return ZestStyles.CONNECTIONS_DOT | ZestStyles.CONNECTIONS_DIRECTED;
-    	}
-    	// handle lineStyle property
-    	if (rel instanceof FormattableElement) {
-    		String lS = getStringProperty((FormattableElement) rel, FormatParser.LINE_STYLE);
-    		if ("dashed".equalsIgnoreCase(lS)) {
-    			return ZestStyles.CONNECTIONS_DASH | ZestStyles.CONNECTIONS_DIRECTED;
-    		}
-    		else if ("dotted".equalsIgnoreCase(lS)) {
-    			return ZestStyles.CONNECTIONS_DOT | ZestStyles.CONNECTIONS_DIRECTED;
-    		}
-    		else if ("dashdot".equalsIgnoreCase(lS)) {
-    			return ZestStyles.CONNECTIONS_DASH_DOT | ZestStyles.CONNECTIONS_DIRECTED;
-    		}
-    	}
-    	// default
-        return ZestStyles.CONNECTIONS_SOLID | ZestStyles.CONNECTIONS_DIRECTED;
+    public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode) {
+        // TODO Auto-generated method stub
+        Map<String, Object> attributes = Maps.newHashMap();
+        attributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
+        return attributes;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider#getGraphAttributes()
+     */
     @Override
-    public Color getColor(Object rel) {
-        if (rel instanceof Edge) {
-            return getColorProperty((FormattableElement) rel, FormatParser.LINE_COLOR);
-        }
-        return null;
+    public Map<String, Object> getGraphAttributes() {
+        return Maps.newHashMap();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider#getNestedGraphAttributes(java.lang.Object)
+     */
     @Override
-    public Color getHighlightColor(Object rel) {
-        return null;
+    public Map<String, Object> getNestedGraphAttributes(Object nestingNode) {
+        // TODO Auto-generated method stub
+        return Maps.newHashMap();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider#getNodeAttributes(java.lang.Object)
+     */
     @Override
-    public int getLineWidth(Object rel) {
-        if (rel instanceof Edge) {
-            return getIntProperty((FormattableElement) rel, FormatParser.LINE_WIDTH);
-        }
-        return -1;
+    public Map<String, Object> getNodeAttributes(Object node) {
+        // TODO Auto-generated method stub
+        return Maps.newHashMap();
     }
 
-    @Override
-    public ConnectionRouter getRouter(Object rel) {
-        return new BendpointConnectionRouter();
-    }
-
-	@Override
-	public IConnectionDecorator getConnectionDecorator(Object rel) {
-		// TODO implement connection decorator
-		return null;
-	}
 
 }

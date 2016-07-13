@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.zest.sources;
 
-import org.eclipse.gef4.zest.core.viewers.IGraphContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
+import java.util.Collection;
 
-import com.google.common.collect.Iterables;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
+import org.eclipse.viatra.addon.viewers.runtime.model.listeners.AbstractViewerStateListener;
+import org.eclipse.viatra.addon.viewers.runtime.notation.Containment;
+import org.eclipse.viatra.addon.viewers.runtime.notation.Edge;
+import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
+import org.eclipse.viatra.integration.zest.viewer.IGraphEdgeContentProvider;
+import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Content provider for Zest graphs. The implementation is more performant than
@@ -24,8 +31,12 @@ import com.google.common.collect.Iterables;
  * @author Zoltan Ujhelyi
  * 
  */
-public class ZestContentProvider extends AbstractZestContentProvider implements IGraphContentProvider {
+public class ZestContentProvider extends AbstractViewerStateListener implements IGraphEdgeContentProvider {
 
+    protected ModifiableZestContentViewer viewer;
+    protected ViewerState state;
+    protected boolean displayContainment;
+    
     public ZestContentProvider() {
     	this(false);
     }
@@ -35,52 +46,109 @@ public class ZestContentProvider extends AbstractZestContentProvider implements 
     }
 
     @Override
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        super.inputChanged(viewer, oldInput, newInput);
-    }
-
-    @Override
-    public Object[] getElements(Object inputElement) {
+    public Object[] getNodes() {
         if (state!=null) {
-        	Iterable<Edge> it = (displayContainment) 
-        			? Iterables.concat(state.getEdges(), state.getContainments())
-        			: state.getEdges();        		
-			return Iterables.toArray(it, Edge.class);
+            Collection<Item> items = state.getItems();
+            return items.toArray(new Item[items.size()]);
         }
         else return new Object[]{};
     }
     
     @Override
-    public Object getSource(Object rel) {
-    	return ((Edge)rel).getSource();
+    public Object[] getNestedGraphNodes(Object node) {
+        return new Object[0];
     }
-    
+
     @Override
-    public Object getDestination(Object rel) {
-    	return ((Edge)rel).getTarget();
+    public boolean hasNestedGraph(Object node) {
+        return false;
     }
-    
+
+    @Override
+    public Object[] getEdges() {
+        if (state!=null) {
+            Collection<Edge> items = state.getEdges();
+            return items.toArray(new Edge[items.size()]);
+        }
+        else return new Object[]{};
+    }
+
+    @Override
+    public Object getSource(Object edge) {
+        if (edge instanceof Edge) {
+            return ((Edge) edge).getSource();
+        }
+        return null;
+    }
+
+    @Override
+    public Object getTarget(Object edge) {
+        if (edge instanceof Edge) {
+            return ((Edge) edge).getTarget();
+        }
+        return null;
+    }
+
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    	Preconditions.checkArgument(viewer instanceof ModifiableZestContentViewer);
+    	this.viewer = (ModifiableZestContentViewer) viewer;
+    	if (oldInput instanceof ViewerState) {
+    		((ViewerState) oldInput).removeStateListener(this);
+    	}
+    	if (newInput == null) {
+    		this.state = null;
+    	} else if (newInput instanceof ViewerState) {
+    		this.state = (ViewerState) newInput;
+    		if (this.state.isDisposed()) {
+    			this.state = null;
+    		} else {
+    			state.addStateListener(this);
+    		}
+    	} else {
+    		throw new IllegalArgumentException(String.format("Invalid input type %s for Zest Viewer.", newInput
+                    .getClass().getName()));
+    	}
+    }
+
+    @Override
+    public void itemAppeared(final Item item) {
+        viewer.addNode(item);
+    }
+
+    @Override
+    public void itemDisappeared(final Item item) {
+        viewer.removeNode(item);
+    }
+
     @Override
     public void edgeAppeared(final Edge edge) {
-        viewer.getGraphControl().getDisplay().syncExec(new Runnable() {
-            
-            @Override
-            public void run() {
-                viewer.addRelationship(edge, edge.getSource(), edge.getTarget());
-            }
-        });
+        viewer.addEdge(edge);
     }
 
     @Override
     public void edgeDisappeared(final Edge edge) {
-        viewer.getGraphControl().getDisplay().syncExec(new Runnable() {
-            
-            @Override
-            public void run() {
-                viewer.removeGraphModelConnection(edge);
-                viewer.removeRelationship(edge);
-            }
-        });
+        viewer.removeEdge(edge);
+    }
+    
+    @Override
+    public void containmentAppeared(Containment containment) {
+    	if (displayContainment) {
+    		edgeAppeared(containment);
+    	}
+    }
+
+    @Override
+    public void containmentDisappeared(Containment containment) {
+    	if (displayContainment) {
+    		edgeDisappeared(containment);
+    	}
+    }
+
+    public void dispose() {
+    	if (state != null) {
+    		state.removeStateListener(this);
+    	}
+    	
     }
 
 }

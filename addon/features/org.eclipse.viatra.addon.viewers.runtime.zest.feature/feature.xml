@@ -17,9 +17,9 @@
 
    <requires>
       <import feature="org.eclipse.viatra.addon.viewers.runtime.feature"/>
-      <import feature="org.eclipse.gef4.graph" />
-      <import feature="org.eclipse.gef4.layout" />
-      <import feature="org.eclipse.gef4.zest.fx.jface" />
+      <import feature="org.eclipse.gef.graph"/>
+      <import feature="org.eclipse.gef.layout"/>
+      <import feature="org.eclipse.gef.zest.fx.jface"/>
    </requires>
 
    <plugin

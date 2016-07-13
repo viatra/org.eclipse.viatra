@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.runtime.zest;
 
-import org.eclipse.gef4.zest.core.viewers.GraphViewer;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestContentProvider;
-import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestContentWithIsolatedNodesProvider;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestLabelProvider;
+import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
 
 /**
  * API to bind the result of model queries to Zest {@link GraphViewer} widgets.
@@ -32,7 +31,7 @@ public class ViatraGraphViewers {
 	 * performant. If the graph contains isolated nodes, use
 	 * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState)} instead.
 	 */
-	public static void bind(GraphViewer viewer, ViewerState state) {
+	public static void bind(ModifiableZestContentViewer viewer, ViewerState state) {
 		viewer.setContentProvider(new ZestContentProvider());
 		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
 				.getControl().getDisplay()));
@@ -44,7 +43,7 @@ public class ViatraGraphViewers {
 	 * performant. If the graph contains isolated nodes, use
 	 * {@link #bindWithIsolatedNodes(GraphViewer, ViewerState, boolean)} instead.
 	 */
-	public static void bind(GraphViewer viewer, ViewerState state,
+	public static void bind(ModifiableZestContentViewer viewer, ViewerState state,
 			boolean displayContainment) {
 		viewer.setContentProvider(new ZestContentProvider(displayContainment));
 		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
@@ -52,21 +51,6 @@ public class ViatraGraphViewers {
 		viewer.setInput(state);
 	}
 
-	public static void bindWithIsolatedNodes(GraphViewer viewer,
-			ViewerState state) {
-		viewer.setContentProvider(new ZestContentWithIsolatedNodesProvider());
-		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
-				.getControl().getDisplay()));
-		viewer.setInput(state);
-	}
 
-	public static void bindWithIsolatedNodes(GraphViewer viewer,
-			ViewerState state, boolean displayContainment) {
-		viewer.setContentProvider(new ZestContentWithIsolatedNodesProvider(
-				displayContainment));
-		viewer.setLabelProvider(new ZestLabelProvider(state, viewer
-				.getControl().getDisplay()));
-		viewer.setInput(state);
-	}
 
 }

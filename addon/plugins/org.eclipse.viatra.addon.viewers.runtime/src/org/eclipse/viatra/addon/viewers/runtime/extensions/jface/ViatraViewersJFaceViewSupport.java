@@ -15,11 +15,11 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.ViatraViewerSupport;
@@ -43,9 +43,9 @@ import com.google.common.collect.ImmutableSet;
  */
 public class ViatraViewersJFaceViewSupport extends ViatraViewersViewSupport implements ISelectionProvider {
 
-	protected StructuredViewer jfaceViewer;
+	protected ContentViewer jfaceViewer;
 	
-	public ViatraViewersJFaceViewSupport(IViewPart _owner, ViewersComponentConfiguration _config, IModelConnectorTypeEnum _scope, StructuredViewer _jfaceViewer) {
+	public ViatraViewersJFaceViewSupport(IViewPart _owner, ViewersComponentConfiguration _config, IModelConnectorTypeEnum _scope, ContentViewer _jfaceViewer) {
 		super(_owner, _config, _scope);
 		this.jfaceViewer = _jfaceViewer;
 	}

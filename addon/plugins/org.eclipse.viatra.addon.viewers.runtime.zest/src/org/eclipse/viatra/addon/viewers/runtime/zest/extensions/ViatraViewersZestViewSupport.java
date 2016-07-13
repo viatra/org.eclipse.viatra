@@ -11,18 +11,14 @@
 package org.eclipse.viatra.addon.viewers.runtime.zest.extensions;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.gef4.layout.LayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.CompositeLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.HorizontalShiftAlgorithm;
-import org.eclipse.gef4.layout.algorithms.RadialLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.SpringLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.SugiyamaLayoutAlgorithm;
-import org.eclipse.gef4.layout.algorithms.TreeLayoutAlgorithm;
-import org.eclipse.gef4.zest.core.viewers.GraphViewer;
-import org.eclipse.gef4.zest.core.viewers.IZoomableWorkbenchPart;
-import org.eclipse.gef4.zest.core.viewers.ZoomContributionViewItem;
-import org.eclipse.gef4.zest.core.widgets.ZestStyles;
+import org.eclipse.gef.layout.ILayoutAlgorithm;
+import org.eclipse.gef.layout.algorithms.CompositeLayoutAlgorithm;
+import org.eclipse.gef.layout.algorithms.HorizontalShiftAlgorithm;
+import org.eclipse.gef.layout.algorithms.RadialLayoutAlgorithm;
+import org.eclipse.gef.layout.algorithms.SpaceTreeLayoutAlgorithm;
+import org.eclipse.gef.layout.algorithms.SpringLayoutAlgorithm;
+import org.eclipse.gef.layout.algorithms.SugiyamaLayoutAlgorithm;
+import org.eclipse.gef.layout.algorithms.TreeLayoutAlgorithm;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -34,6 +30,7 @@ import org.eclipse.viatra.addon.viewers.runtime.extensions.jface.ViatraViewersJF
 import org.eclipse.viatra.addon.viewers.runtime.model.ViatraViewerDataModel;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState.ViewerStateFeature;
 import org.eclipse.viatra.addon.viewers.runtime.zest.ViewersZestPlugin;
+import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
 import org.eclipse.viatra.addon.viewers.runtime.zest.ViatraGraphViewers;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
@@ -48,9 +45,9 @@ import com.google.common.collect.ImmutableSet;
 public class ViatraViewersZestViewSupport extends
 		ViatraViewersJFaceViewSupport {
 
-	private final GraphViewer graphViewer;
+	private final ModifiableZestContentViewer graphViewer;
 	
-    public GraphViewer getGraphViewer() {
+    public ModifiableZestContentViewer getGraphViewer() {
         return graphViewer;
     }
     
@@ -58,7 +55,7 @@ public class ViatraViewersZestViewSupport extends
 			IViewPart _owner,
 			ViewersComponentConfiguration _config,
 			IModelConnectorTypeEnum _scope,
-			GraphViewer _graphViewer) {
+			ModifiableZestContentViewer _graphViewer) {
 		super(_owner, _config, _scope, _graphViewer);
 		this.graphViewer = _graphViewer;
 	}
@@ -66,7 +63,7 @@ public class ViatraViewersZestViewSupport extends
 	@Override
 	protected void init() {
 		super.init();
-		this.getGraphViewer().setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
+		//this.getGraphViewer().setConnectionStyle(ZestStyles.CONNECTIONS_DIRECTED);
 		this.getGraphViewer().setLayoutAlgorithm(new RadialLayoutAlgorithm());
 	}
 	
@@ -85,7 +82,7 @@ public class ViatraViewersZestViewSupport extends
 	    			this.configuration.getPatterns(), 
 	    			this.configuration.getFilter(),  
 	    			ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
-			ViatraGraphViewers.bindWithIsolatedNodes(((GraphViewer)jfaceViewer), state);
+			ViatraGraphViewers.bind((graphViewer), state);
 		}
 	}
 	
@@ -97,11 +94,11 @@ public class ViatraViewersZestViewSupport extends
         toolBarManager.removeAll();
         toolBarManager.add(refreshGraph);
         toolBarManager.add(clearGraph);
-        if (owner instanceof IZoomableWorkbenchPart) {
-	        ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem((IZoomableWorkbenchPart)owner);
-	        toolBarManager.add(toolbarZoomContributionViewItem);
-	        toolBarManager.update(true);
-        }
+//        if (owner instanceof IZoomableWorkbenchPart) {
+//	        ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem((IZoomableWorkbenchPart)owner);
+//	        toolBarManager.add(toolbarZoomContributionViewItem);
+//	        toolBarManager.update(true);
+//        }
         IMenuManager menuManager = getOwner().getViewSite().getActionBars().getMenuManager();
         menuManager.removeAll();
         menuManager.add(createLayoutMenu());
@@ -115,7 +112,7 @@ public class ViatraViewersZestViewSupport extends
         mgr.add(createLayoutAction("SpaceTree", new SpaceTreeLayoutAlgorithm()));
         SugiyamaLayoutAlgorithm sugiyamaAlgorithm = new SugiyamaLayoutAlgorithm();
         HorizontalShiftAlgorithm shiftAlgorithm = new HorizontalShiftAlgorithm();
-        mgr.add(createLayoutAction("Sugiyama (unstable)", new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {
+        mgr.add(createLayoutAction("Sugiyama (unstable)", new CompositeLayoutAlgorithm(new ILayoutAlgorithm[] {
                 sugiyamaAlgorithm, shiftAlgorithm })));
         return mgr;
     }
@@ -123,7 +120,6 @@ public class ViatraViewersZestViewSupport extends
     protected Action refreshGraph = new Action("Refresh Graph") {
         @Override
         public void run() {
-            getGraphViewer().applyLayout();
             getGraphViewer().refresh();
         }
     };
@@ -135,12 +131,12 @@ public class ViatraViewersZestViewSupport extends
         }
     };
 
-    protected Action createLayoutAction(final String name, final LayoutAlgorithm lay) {
+    protected Action createLayoutAction(final String name, final ILayoutAlgorithm lay) {
         return new Action(name) {
             @Override
             public void run() {
                 getGraphViewer().setLayoutAlgorithm(lay);
-                getGraphViewer().applyLayout();
+                getGraphViewer().refresh();
             }
         };
     }

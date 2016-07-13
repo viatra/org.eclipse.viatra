@@ -11,6 +11,9 @@
     </parent>
 	<artifactId>org.eclipse.viatra.addon.viewers.runtime.zest.feature</artifactId>
 	<packaging>eclipse-feature</packaging>
+	<properties>
+	   <target.classifier>luna</target.classifier>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>

@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.viewers.tooling.ui.zest.views.tabs;
 
-import org.eclipse.gef4.layout.algorithms.SpaceTreeLayoutAlgorithm;
+import org.eclipse.gef.layout.algorithms.SpaceTreeLayoutAlgorithm;
 
 public class CustomSpaceTreeLayoutAlgorithm extends SpaceTreeLayoutAlgorithm {
 
 	public CustomSpaceTreeLayoutAlgorithm(int bottomUp, boolean b) {
-		super(bottomUp, b);
+		super(bottomUp);
 		customStuff();
 	}
 
