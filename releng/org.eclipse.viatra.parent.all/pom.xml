@@ -13,7 +13,6 @@
 		<module>../../releng/org.eclipse.viatra.target.rcp</module>
 		<module>../../releng/org.eclipse.viatra.update</module>
 		<module>../../releng/org.eclipse.viatra.docs</module>
-		<module>../../releng/org.eclipse.viatra.rcpproduct</module>
 		<module>../../releng/org.eclipse.viatra.parent.incubation</module>
 
 		<!-- Query -->
