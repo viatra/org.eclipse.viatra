@@ -100,9 +100,19 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
             return new IndexerBasedConstraintCostFunction();
         }
         
+        private IFlattenCallPredicate createFlattenCallPredicate(){
+            Object object = hintProvider.getHints(query).get(LocalSearchHintKeys.FLATTEN_CALL_PREDICATE);
+            if (object != null){
+                Preconditions.checkArgument(object instanceof IFlattenCallPredicate);
+                IFlattenCallPredicate predicate = (IFlattenCallPredicate)object;
+                return predicate;
+            }
+            return new DefaultFlattenCallPredicate();
+        }
+        
         public void createPlan(MatcherReference key, Logger logger, IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, final ISearchContext searchContext)
                 throws QueryProcessingException {
-        	IFlattenCallPredicate flattenCallPredicate = new DefaultFlattenCallPredicate();
+        	IFlattenCallPredicate flattenCallPredicate = createFlattenCallPredicate();
             PQueryFlattener flattener = new PQueryFlattener(flattenCallPredicate);
             PBodyNormalizer normalizer = new PBodyNormalizer(metaContext, false);
             

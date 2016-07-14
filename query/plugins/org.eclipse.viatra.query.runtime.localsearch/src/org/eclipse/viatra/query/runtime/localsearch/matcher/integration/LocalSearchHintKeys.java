@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
-import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
-
-import com.google.common.base.Function;
+import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
 
 /**
  * @author Marton Bur
@@ -31,4 +29,10 @@ public class LocalSearchHintKeys {
      * @since 1.4
      */
     public static final String PLANNER_COST_FUNCTION = "org.eclipse.viatra.query.runtime.localsearch - cost function";
+    
+    /**
+     * Predicate to decide whether to flatten specific positive pattern calls {@link IFlattenCallPredicate}
+     * @since 1.4
+     */
+    public static final String FLATTEN_CALL_PREDICATE = "org.eclipse.viatra.query.runtime.localsearch - flatten call predicate";
 }
