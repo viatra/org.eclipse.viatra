@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
@@ -29,6 +30,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
 
 /**
  * 
@@ -48,51 +50,54 @@ public class StartLocalSearchHandler extends AbstractHandler {
             final ISelection selection = HandlerUtil.getCurrentSelection(event);
             if (selection instanceof IStructuredSelection) {
                 final Object obj = ((IStructuredSelection) selection).iterator().next();
-                PatternMatcherContent content = (PatternMatcherContent) obj;
-                final IQuerySpecification<?> specification = content.getSpecification();
-                final AdvancedViatraQueryEngine engine = content.getParent().getKey().getEngine();
-                final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE);
-                final Object[] adornment = content.getFilter();
-
-                final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend
-                        .getResultProvider(specification.getInternalQueryRepresentation());
-
-                
-                // Create and start the matcher thread
-                Runnable planExecutorRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            final LocalSearchMatcher localSearchMatcher = lsResultProvider.newLocalSearchMatcher(adornment);
-                            LocalSearchDebugger debugger = new LocalSearchDebugger();
-                            localSearchMatcher.addAdapter(debugger);
-                            debugger.setStartHandlerCalled(true);
-
-                            // Initiate the matching
-                            localSearchMatcher.getAllMatches();
-                        } catch (final Exception e) {
-                            final Shell shell = HandlerUtil.getActiveShell(event);
-                            shell.getDisplay().asyncExec(new Runnable() {
+                if(obj instanceof IFilteredMatcherContent){
+                    IFilteredMatcherContent content = (IFilteredMatcherContent) obj;
+                    ViatraQueryMatcher<?> matcher = content.getMatcher();
+                    final IQuerySpecification<?> specification = matcher.getSpecification();
+                    final AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.from(matcher.getEngine());
+                    final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE);
+                    final Object[] adornment = content.getFilterMatch().toArray();
+                    
+                    final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend
+                            .getResultProvider(specification.getInternalQueryRepresentation());
+                    
+                    
+                    // Create and start the matcher thread
+                    Runnable planExecutorRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                final LocalSearchMatcher localSearchMatcher = lsResultProvider.newLocalSearchMatcher(adornment);
+                                LocalSearchDebugger debugger = new LocalSearchDebugger();
+                                localSearchMatcher.addAdapter(debugger);
+                                debugger.setStartHandlerCalled(true);
                                 
-                                @Override
-                                public void run() {
-                                    MessageDialog.open(MessageDialog.ERROR, shell, "Local search debugger", "Error while initializing local search debugger: " + e.getMessage(), SWT.SHEET);
+                                // Initiate the matching
+                                localSearchMatcher.getAllMatches();
+                            } catch (final Exception e) {
+                                final Shell shell = HandlerUtil.getActiveShell(event);
+                                shell.getDisplay().asyncExec(new Runnable() {
                                     
-                                }
-                            });
-                            throw new RuntimeException(e);
+                                    @Override
+                                    public void run() {
+                                        MessageDialog.open(MessageDialog.ERROR, shell, "Local search debugger", "Error while initializing local search debugger: " + e.getMessage(), SWT.SHEET);
+                                        
+                                    }
+                                });
+                                throw new RuntimeException(e);
+                            }
                         }
+                    };
+                    
+                    if (planExecutorThread == null || !planExecutorThread.isAlive()) {
+                        // Start the matching process if not started or in progress yet
+                        planExecutorThread = new Thread(planExecutorRunnable);
+                        planExecutorThread.start();
+                    } else if(planExecutorThread.isAlive()){
+                        planExecutorThread.interrupt();
+                        planExecutorThread = new Thread(planExecutorRunnable);
+                        planExecutorThread.start();
                     }
-                };
-
-                if (planExecutorThread == null || !planExecutorThread.isAlive()) {
-                    // Start the matching process if not started or in progress yet
-                    planExecutorThread = new Thread(planExecutorRunnable);
-                    planExecutorThread.start();
-                } else if(planExecutorThread.isAlive()){
-                    planExecutorThread.interrupt();
-                    planExecutorThread = new Thread(planExecutorRunnable);
-                    planExecutorThread.start();
                 }
             }
         } catch (ViatraQueryException|QueryProcessingException e ) {

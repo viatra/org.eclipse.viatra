@@ -11,9 +11,7 @@
 package org.eclipse.viatra.query.testing.ui.handlers;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -43,7 +41,10 @@ import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot;
 import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 /**
@@ -73,7 +74,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 		Object obj = selection.getFirstElement();
 		
 		IEditorPart editor = null;
-		List<PatternMatcherContent> matchers = new ArrayList<PatternMatcherContent>();
+		Set<IFilteredMatcherContent> matchers = Sets.newHashSet();
 		ViatraQueryEngine engine = null;
 		if(obj instanceof PatternMatcherContent) {
 		    PatternMatcherContent observablePatternMatcher = (PatternMatcherContent) obj;
@@ -98,6 +99,14 @@ public class SaveSnapshotHandler extends AbstractHandler {
                     engine = matcher.getEngine();
                 }
 			}
+		} else if(selection instanceof IStructuredSelection){
+            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+		    Iterator<IFilteredMatcherContent> filteredMatchers = Iterators.filter(structuredSelection.iterator(), IFilteredMatcherContent.class);
+		    while (filteredMatchers.hasNext()) {
+                IFilteredMatcherContent selectedElement = filteredMatchers.next();
+                matchers.add(selectedElement);
+                engine = selectedElement.getMatcher().getEngine();
+            }
 		}
 		if(engine == null) {
 			logger.error("Cannot save snapshot without ViatraQueryEngine!");
@@ -141,9 +150,9 @@ public class SaveSnapshotHandler extends AbstractHandler {
 				return;
 			}
 		} 
-		for (PatternMatcherContent matcher : matchers) {
+		for (IFilteredMatcherContent matcher : matchers) {
 			if(matcher.getMatcher() != null) {
-				IPatternMatch filter = matcher.getMatcher().newMatch(matcher.getFilter());
+				IPatternMatch filter = matcher.getFilterMatch();
 			    helper.saveMatchesToSnapshot(matcher.getMatcher(), filter, snapshot);
 			}
 		}

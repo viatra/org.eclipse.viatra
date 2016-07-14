@@ -194,10 +194,33 @@
          <perspectiveExtension
                targetID="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
             <view
+                  id="org.eclipse.viatra.transformation.ui.debug.TransformationViewer"
+                  minimized="false"
+                  relationship="stack"
+                  relative="org.eclipse.ui.views.PropertySheet"
+                  visible="false">
+            </view>
+            <viewShortcut
+                  id="org.eclipse.viatra.transformation.ui.debug.TransformationViewer">
+            </viewShortcut>
+            <view
                   id="org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser"
                   minimized="false"
                   relationship="stack"
-                  relative="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
+                  relative="org.eclipse.ui.views.ContentOutline"
+                  visible="false">
+            </view>
+            <viewShortcut
+                  id="org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser">
+            </viewShortcut>
+         </perspectiveExtension>
+         <perspectiveExtension
+               targetID="org.eclipse.debug.ui.DebugPerspective">
+            <view
+                  id="org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser"
+                  minimized="false"
+                  relationship="stack"
+                  relative="org.eclipse.ui.views.ContentOutline"
                   visible="false">
             </view>
             <viewShortcut
@@ -207,7 +230,7 @@
                   id="org.eclipse.viatra.transformation.ui.debug.TransformationViewer"
                   minimized="false"
                   relationship="stack"
-                  relative="org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer"
+                  relative="org.eclipse.debug.ui.VariableView"
                   visible="false">
             </view>
             <viewShortcut

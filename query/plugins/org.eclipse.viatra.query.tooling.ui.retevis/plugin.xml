@@ -44,7 +44,7 @@
               id="org.eclipse.viatra.query.tooling.ui.retevis.views.ReteVisualizer"
               minimized="false"
               relationship="stack"
-              relative="org.eclipse.ui.views.ContentOutline"
+              relative="org.eclipse.ui.views.PropertySheet"
               visible="false">
         </view>
         <viewShortcut

@@ -54,6 +54,7 @@ import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
 import org.eclipse.viatra.query.tooling.ui.retevis.preference.ReteVisualizationPreferenceConstants;
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -104,9 +105,9 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
 
         Set<ReteNodeRecipe> recipeSet = Sets.newHashSet();
         
-        for (PatternMatcherContent patternMatcherContent : Iterables.filter(objects, PatternMatcherContent.class)) {
+        for (IFilteredMatcherContent patternMatcherContent : Iterables.filter(objects, IFilteredMatcherContent.class)) {
             try {
-                ViatraQueryMatcher<IPatternMatch> matcher = patternMatcherContent.getMatcher();
+                ViatraQueryMatcher<?> matcher = patternMatcherContent.getMatcher();
                 if (matcher == null)
                     continue;
                 final ReteEngine reteEngine = (ReteEngine) ((AdvancedViatraQueryEngine) matcher.getEngine())

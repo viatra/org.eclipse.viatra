@@ -195,4 +195,20 @@
             
       
 	</extension>
+ <extension
+       point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension
+          targetID="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
+       <view
+             id="org.eclipse.viatra.addon.querybyexample.ui.qbeview"
+             minimized="false"
+             relationship="stack"
+             relative="org.eclipse.ui.views.ContentOutline"
+             visible="false">
+       </view>
+       <viewShortcut
+             id="org.eclipse.viatra.addon.querybyexample.ui.qbeview">
+       </viewShortcut>
+    </perspectiveExtension>
+ </extension>
 </plugin>

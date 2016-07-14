@@ -5,7 +5,7 @@
          point="org.eclipse.ui.menus">
      <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
+            locationURI="popup:org.eclipse.ui.popup.any">
          <command
                commandId="org.eclipse.viatra.query.testing.ui.snapshot"
                label="Save VIATRA Query snapshot"
@@ -18,6 +18,9 @@
                     </reference>
                     <reference
                        definitionId="org.eclipse.viatra.query.tooling.ui.root">
+                    </reference>
+                    <reference
+                          definitionId="org.eclipse.viatra.query.tooling.ui.filteredmatchercontent">
                     </reference>
                   </or>
             </visibleWhen>

@@ -34,6 +34,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQuerySt
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 
 /**
@@ -44,7 +45,7 @@ import org.eclipse.viatra.transformation.evm.api.RuleEngine;
  * 
  */
 @SuppressWarnings({ "unchecked" })
-public class PatternMatcherContent extends CompositeContent<PatternMatcherRootContent, PatternMatchContent> {
+public class PatternMatcherContent extends CompositeContent<PatternMatcherRootContent, PatternMatchContent> implements IFilteredMatcherContent {
 
     private static final String KEY_ATTRIBUTE_OF_ORDER_BY_ANNOTATION = "The key attribute of OrderBy annotation must look like \"ClassName.AttributeName\"!";
     private final boolean generated;
@@ -238,6 +239,14 @@ public class PatternMatcherContent extends CompositeContent<PatternMatcherRootCo
      */
     public Object[] getFilter() {
         return parameterFilter;
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Override
+    public IPatternMatch getFilterMatch() {
+        return matcher.newMatch(parameterFilter);
     }
 
     /**

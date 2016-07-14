@@ -12,5 +12,21 @@
             restorable="true">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <viewShortcut
+               id="org.eclipse.viatra.query.tooling.debug.variables.Viatra.QueryVariablesView">
+         </viewShortcut>
+         <view
+               id="org.eclipse.viatra.query.tooling.debug.variables.Viatra.QueryVariablesView"
+               minimized="false"
+               relationship="stack"
+               relative="org.eclipse.debug.ui.VariableView"
+               visible="false">
+         </view>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>

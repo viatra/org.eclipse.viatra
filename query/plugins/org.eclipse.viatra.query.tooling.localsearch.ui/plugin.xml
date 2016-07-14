@@ -39,17 +39,9 @@
             class="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.handlers.StartLocalSearchHandler"
             commandId="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.start">
          <enabledWhen>
-            <with
-                  variable="selection">
-               <count
-                     value="1">
-               </count>
-               <iterate>
-                  <instanceof
-                        value="org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent">
-                  </instanceof>
-               </iterate>
-            </with>
+            <reference
+                  definitionId="org.eclipse.viatra.query.tooling.ui.filteredmatchercontent">
+            </reference>
          </enabledWhen>
       </handler>
       <handler
@@ -168,7 +160,7 @@
                id="org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView"
                minimized="false"
                relationship="stack"
-               relative="org.eclipse.ui.views.ContentOutline"
+               relative="org.eclipse.ui.views.ProblemView"
                visible="false">
          </view>
       </perspectiveExtension>

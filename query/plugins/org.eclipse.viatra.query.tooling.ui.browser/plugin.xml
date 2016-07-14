@@ -11,6 +11,7 @@
             name="Query Registry">
       </view>
       <view
+            category="org.eclipse.viatra.query.tooling.ui"
             class="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
             icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
@@ -24,14 +25,14 @@
          <view
                id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
                minimized="false"
-               relationship="bottom"
+               relationship="stack"
                relative="org.eclipse.ui.navigator.ProjectExplorer">
          </view>
          <view
                id="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
                minimized="false"
-               relationship="stack"
-               relative="org.eclipse.ui.views.ContentOutline">
+               relationship="bottom"
+               relative="org.eclipse.ui.navigator.ProjectExplorer">
          </view>
          <viewShortcut
                id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
@@ -59,10 +60,17 @@
       <handler
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadResourceSetHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.result.loadmodel">
+         <enabledWhen>
+           <reference
+                 definitionId="org.eclipse.viatra.query.tooling.ui.activedomaineditor">
+           </reference>
+         </enabledWhen>
          <activeWhen>
-            <reference
-                  definitionId="org.eclipse.viatra.query.tooling.ui.activedomaineditor">
-            </reference>
+            <not>
+               <reference
+                     definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
+               </reference>
+            </not>
          </activeWhen>
       </handler>
       <handler
@@ -86,10 +94,32 @@
       <handler
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.UnloadModelHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.result.unloadmodel">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
+               </instanceof>
+               <test
+                     property="org.eclipse.viatra.query.tooling.ui.browser.result.activeengine">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.WipeEngineHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.result.wipeengine">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
+               </instanceof>
+               <test
+                     property="org.eclipse.viatra.query.tooling.ui.browser.result.activeengine">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryregistry.handlers.ShowLocationHandler"
@@ -349,5 +379,15 @@
            </iterate>
         </with>
       </definition>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.viatra.query.tooling.ui.queryresult.internal.ActiveEnginePropertyTester"
+            id="org.eclipse.viatra.query.tooling.ui.browser.result"
+            namespace="org.eclipse.viatra.query.tooling.ui.browser.result"
+            properties="activeengine"
+            type="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
+      </propertyTester>
    </extension>
 </plugin>

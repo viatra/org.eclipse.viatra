@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRe
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.ui.editor.XtextEditor
+import org.eclipse.jface.dialogs.MessageDialog
 
 /**
  * @author Abel Hegedus
@@ -57,6 +58,10 @@ class LoadVqlPatternHandler extends AbstractHandler {
                     return sourceSame && fqnRelevant
                 ]
                 queryResultView.loadQueriesIntoActiveEngine(view.entries)
+            } else {
+                MessageDialog.openError(queryResultView.site.shell, "Query loading failed",
+                    "Please load a model into the Query Results view before loading queries!"
+                )
             }
         }
         return null

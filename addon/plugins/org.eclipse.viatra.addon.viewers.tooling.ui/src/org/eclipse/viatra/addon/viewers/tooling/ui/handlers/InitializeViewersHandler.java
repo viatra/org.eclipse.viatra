@@ -1,31 +1,29 @@
 package org.eclipse.viatra.addon.viewers.tooling.ui.handlers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
-import org.eclipse.viatra.addon.viewers.tooling.ui.views.ViewersToolingViewsUtil;
+import org.eclipse.viatra.addon.viewers.tooling.ui.views.ViewersMultiSandboxView;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherContent;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContent;
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection;
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public abstract class InitializeViewersHandler extends AbstractHandler {
 
@@ -39,30 +37,28 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
-        ISelection selection = HandlerUtil.getActiveMenuSelection(event);
+        ISelection selection = HandlerUtil.getCurrentSelection(event);
         if (selection instanceof TreeSelection) {
-            PatternMatcherRootContent root = getSelectedMatcherRoot(selection);
-
+            Object firstElement = ((TreeSelection) selection).getFirstElement();
             try {
-                IEditorPart editorPart = root.getEditorPart();
-                if (editorPart instanceof IEditingDomainProvider) {
-                    IEditingDomainProvider providerEditor = (IEditingDomainProvider) editorPart;
-                    ResourceSet resourceSet = providerEditor.getEditingDomain().getResourceSet();
-                    if (resourceSet.getResources().size() > 0) {
-
-                        // calculate patterns that need to be passed to the ZestView
-
-                        ArrayList<IQuerySpecification<?>> patterns = Lists.newArrayList();
-                        Iterator<PatternMatcherContent> iterator = root.getChildrenIterator();
-                        while (iterator.hasNext()) {
-                            patterns.add(iterator.next().getMatcher().getSpecification());
+                if (firstElement instanceof IFilteredMatcherContent) {
+                    IFilteredMatcherContent matcherContent = (IFilteredMatcherContent) firstElement;
+                    ViatraQueryMatcher<?> matcher = matcherContent.getMatcher();
+                    EMFScope scope = (EMFScope) matcher.getEngine().getScope();
+                    
+                    IFilteredMatcherCollection parent = matcherContent.getParent();
+                    initializeViewersSandboxOnCollection(scope, parent);
+                } else if(firstElement instanceof IFilteredMatcherCollection) {
+                    IFilteredMatcherCollection parent = (IFilteredMatcherCollection) firstElement;
+                    
+                    Iterable<IFilteredMatcherContent> filteredMatchers = parent.getFilteredMatchers();
+                    if(filteredMatchers != null){
+                        Iterator<IFilteredMatcherContent> iterator = filteredMatchers.iterator();
+                        if(iterator != null && iterator.hasNext()) {
+                            IFilteredMatcherContent matcherContent = iterator.next();
+                            EMFScope scope = (EMFScope) matcherContent.getMatcher().getEngine().getScope();
+                            initializeViewersSandboxOnCollection(scope, parent);
                         }
-
-                        // if (ViewersSandboxView.getInstance() != null) {
-                        ViewerDataFilter filter = prepareFilterInformation(root);
-                        // calculate the single resource that is of interest
-                        EMFModelConnector emc = new EMFModelConnector(editorPart);
-                        ViewersToolingViewsUtil.initializeContentsOnView(emc.getNotifier(type), patterns, filter);
                     }
                 }
             } catch (ViatraQueryException e) {
@@ -75,31 +71,24 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
         return null;
     }
 
-    protected PatternMatcherRootContent getSelectedMatcherRoot(ISelection selection) {
-        Object firstElement = ((TreeSelection) selection).getFirstElement();
-        if (firstElement instanceof PatternMatcherRootContent) {
-            return (PatternMatcherRootContent) firstElement;
-        } else if (firstElement instanceof PatternMatcherContent) {
-            return ((PatternMatcherContent) firstElement).getParent();
-        } else {
-            throw new IllegalArgumentException("Selection should contain an Pattern match from the query explorer");
-        }
-    }
-
-    protected ViewerDataFilter prepareFilterInformation(PatternMatcherRootContent root) {
+    private void initializeViewersSandboxOnCollection(EMFScope scope, IFilteredMatcherCollection parent) throws ViatraQueryException {
+        Iterable<IFilteredMatcherContent> filteredMatchers = parent.getFilteredMatchers();
+        
+        // collect specifications from matchers
+        // construct viewer filter from filters 
+        Set<IQuerySpecification<?>> specifications = Sets.newHashSet();
         ViewerDataFilter dataFilter = new ViewerDataFilter();
-        Iterator<PatternMatcherContent> iterator = root.getChildrenIterator();
-
-        while (iterator.hasNext()) {
-            PatternMatcherContent matcher = iterator.next();
-            final Object[] filter = matcher.getFilter();
-            if (Iterables.any(Arrays.asList(filter), Predicates.notNull())) {
-                final IPatternMatch filterMatch = matcher.getMatcher().newMatch(filter);
-                dataFilter.addSingleFilter(matcher.getMatcher().getSpecification(), filterMatch);
+        for (IFilteredMatcherContent filteredMatcherContent : filteredMatchers) {
+            IQuerySpecification<?> specification = filteredMatcherContent.getMatcher().getSpecification();
+            specifications.add(specification);
+            IPatternMatch filter = filteredMatcherContent.getFilterMatch();
+            if (Iterables.any(Arrays.asList(filter.toArray()), Predicates.notNull())) {
+                dataFilter.addSingleFilter(specification, filter);
             }
         }
-
-        return dataFilter;
+        
+        ViewersMultiSandboxView.ensureOpen();
+        ViewersMultiSandboxView.getInstance().initializeContents(scope, specifications, dataFilter);
     }
 
 }

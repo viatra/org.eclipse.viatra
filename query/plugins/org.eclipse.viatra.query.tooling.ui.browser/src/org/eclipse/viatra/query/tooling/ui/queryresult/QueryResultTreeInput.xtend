@@ -49,12 +49,14 @@ import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEn
 import org.eclipse.viatra.transformation.evm.specific.resolver.InvertedDisappearancePriorityConflictResolver
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection
 
 /**
  * @author Abel Hegedus
  *
  */
-class QueryResultTreeInput {
+class QueryResultTreeInput implements IFilteredMatcherCollection {
     
     @Accessors(PUBLIC_GETTER)
     AdvancedViatraQueryEngine engine
@@ -341,13 +343,18 @@ class QueryResultTreeInput {
         val emfScope = engine.scope as EMFScope
         return emfScope.options
     }
+    
+    override getFilteredMatchers() {
+        return matchers.values.filter(IFilteredMatcherContent)
+    }
+    
 }
 
 /**
  * @author Abel Hegedus
  */
 @FinalFieldsConstructor
-class QueryResultTreeMatcher {
+class QueryResultTreeMatcher implements IFilteredMatcherContent {
     
     @Accessors(PUBLIC_GETTER)
     final QueryResultTreeInput parent
@@ -355,6 +362,9 @@ class QueryResultTreeMatcher {
     @Accessors(PUBLIC_GETTER)
     final ViatraQueryMatcher matcher
     
+    @Accessors(PROTECTED_SETTER)
+    IPatternMatch filterMatch
+
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
     QueryEvaluationHint hint
     
@@ -366,6 +376,13 @@ class QueryResultTreeMatcher {
     
     @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
     Exception exception;
+    
+    override def getFilterMatch() {
+        if(filterMatch == null) {
+            filterMatch = matcher.newEmptyMatch
+        }
+        return filterMatch
+    }
 }
 
 /**

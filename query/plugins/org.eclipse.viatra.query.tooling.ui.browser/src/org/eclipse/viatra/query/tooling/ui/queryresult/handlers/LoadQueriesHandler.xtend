@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection
 import org.eclipse.ui.handlers.HandlerUtil
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil
+import org.eclipse.jface.dialogs.MessageDialog
 
 /**
  * @author Abel Hegedus
@@ -38,6 +39,10 @@ class LoadQueriesHandler extends AbstractHandler {
                     load
                 ]
                 queryResultView.loadQueriesIntoActiveEngine(selectedQueries.map[entry])
+            } else {
+                MessageDialog.openError(queryResultView.site.shell, "Query loading failed",
+                    "Please load a model into the Query Results view before loading queries!"
+                )
             }
         }
         return null

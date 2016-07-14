@@ -11,12 +11,15 @@
 package org.eclipse.viatra.query.tooling.ui.queryresult;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -24,35 +27,33 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
+import org.eclipse.viatra.query.tooling.ui.queryresult.internal.ActiveEnginePropertyTester;
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 
 /**
  * @author Abel Hegedus
@@ -95,7 +96,7 @@ public class QueryResultView extends ViewPart {
         
         lblScopeDescription = new Label(grpScope, SWT.NONE);
         lblScopeDescription.setText(SCOPE_UNINITIALIZED_MSG);
-        queryResultTreeViewer = new TreeViewer(container, SWT.BORDER);
+        queryResultTreeViewer = new TreeViewer(container, SWT.BORDER | SWT.MULTI);
         Tree tree = queryResultTreeViewer.getTree();
         tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         queryResultTreeViewer.setComparator(new ViewerComparator() {
@@ -144,6 +145,19 @@ public class QueryResultView extends ViewPart {
         
         getSite().setSelectionProvider(queryResultTreeViewer);
         
+        // Create pop-up menu over the tree viewer
+        MenuManager menuManager = new MenuManager();
+        menuManager.setRemoveAllWhenShown(true);
+        menuManager.addMenuListener(new IMenuListener() {
+            @Override
+            public void menuAboutToShow(IMenuManager mgr) {
+                mgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+            }
+        });
+        Control control = queryResultTreeViewer.getControl();
+        control.setMenu(menuManager.createContextMenu(control));
+        getSite().registerContextMenu(ID,menuManager, queryResultTreeViewer);
+        
         IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
         collapseHandler = new CollapseAllHandler(queryResultTreeViewer);
         handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, collapseHandler);
@@ -187,7 +201,17 @@ public class QueryResultView extends ViewPart {
             }
         }
         lblScopeDescription.setText(scopeDescriptionBuilder.toString());
+        activeEnginePropertyChanged();
 
+    }
+
+    /**
+     * @since 1.4
+     */
+    private void activeEnginePropertyChanged() {
+        //Casting is required for backward compatibility with old platform versions
+        IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
+        service.requestEvaluation(ActiveEnginePropertyTester.ACTIVE_ENGINE_ID);
     }
     
     public void unloadModel() {
@@ -196,6 +220,7 @@ public class QueryResultView extends ViewPart {
             input = null;
             queryResultTreeViewer.setInput(null);
             lblScopeDescription.setText(SCOPE_UNINITIALIZED_MSG);
+            activeEnginePropertyChanged();
         }
     }
     

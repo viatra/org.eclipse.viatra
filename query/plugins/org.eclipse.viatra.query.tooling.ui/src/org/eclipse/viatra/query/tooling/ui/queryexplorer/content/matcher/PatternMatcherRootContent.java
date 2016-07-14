@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -37,11 +38,16 @@ import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection;
+import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.specific.ExecutionSchemas;
 import org.eclipse.viatra.transformation.evm.specific.Schedulers;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * A top level element in the {@link QueryExplorer}'s tree viewer, which is actually displayed. Instances of this class
@@ -51,7 +57,7 @@ import com.google.common.collect.Maps;
  * @author Tamas Szabo (itemis AG)
  * 
  */
-public class PatternMatcherRootContent extends CompositeContent<RootContent, PatternMatcherContent> {
+public class PatternMatcherRootContent extends CompositeContent<RootContent, PatternMatcherContent> implements IFilteredMatcherCollection {
 
     private final Map<String, PatternMatcherContent> mapping;
     private ContentChildren<PatternMatcherContent> children;
@@ -235,6 +241,18 @@ public class PatternMatcherRootContent extends CompositeContent<RootContent, Pat
     @Override
     public IObservableList getChildren() {
         return children;
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Override
+    public Iterable<IFilteredMatcherContent> getFilteredMatchers() {
+        Builder<IFilteredMatcherContent> builder = ImmutableSet.<IFilteredMatcherContent>builder();
+        for (PatternMatcherContent matcher : children.getElements()) {
+            builder.add(matcher);
+        }
+        return builder.build();
     }
 
     @Override
