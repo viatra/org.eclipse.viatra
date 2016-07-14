@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryregistry;
 
+import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,6 +41,8 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater;
+import org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadQueriesHandler;
+import org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener;
 
 import com.google.inject.Injector;
 
@@ -99,6 +107,30 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         });
         queryTreeViewer.setLabelProvider(new QueryRegistryTreeLabelProvider());
         queryTreeViewer.setContentProvider(new QueryRegistryTreeContentProvider());
+        
+        queryTreeViewer.addDoubleClickListener(new CommandInvokingDoubleClickListener(LoadQueriesHandler.COMMAND_ID, "Exception when activating load queries!"));
+        
+        int operations = DND.DROP_COPY | DND.DROP_MOVE;
+        Transfer[] transferTypes = new Transfer[]{LocalTransfer.getInstance()};
+        queryTreeViewer.addDragSupport(operations, transferTypes, new DragSourceListener() {
+            
+            @Override
+            public void dragStart(DragSourceEvent event) {
+            }
+            
+            @Override
+            public void dragSetData(DragSourceEvent event) {
+                ISelection selection = queryTreeViewer.getSelection();
+                if(LocalTransfer.getInstance().isSupportedType(event.dataType)) {
+                    event.data = selection;
+                }
+            }
+            
+            @Override
+            public void dragFinished(DragSourceEvent event) {
+            }
+        });
+        
         getSite().setSelectionProvider(queryTreeViewer);
         
         queryTreeViewer.setInput(queryRegistryTreeInput);

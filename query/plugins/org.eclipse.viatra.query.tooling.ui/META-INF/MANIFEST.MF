@@ -54,6 +54,7 @@ Export-Package: org.eclipse.viatra.query.tooling.ui,
  org.eclipse.viatra.query.tooling.ui.queryexplorer.content.patternsviewer,
  org.eclipse.viatra.query.tooling.ui.queryexplorer.handlers,
  org.eclipse.viatra.query.tooling.ui.queryexplorer.preference,
- org.eclipse.viatra.query.tooling.ui.queryexplorer.util
+ org.eclipse.viatra.query.tooling.ui.queryexplorer.util,
+ org.eclipse.viatra.query.tooling.ui.util
 Import-Package: org.apache.log4j;version="1.2.15"
 

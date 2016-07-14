@@ -15,15 +15,15 @@ import org.eclipse.core.commands.ExecutionEvent
 import org.eclipse.core.commands.ExecutionException
 import org.eclipse.jface.viewers.IStructuredSelection
 import org.eclipse.ui.handlers.HandlerUtil
-import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry
-import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreePackage
-import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeSource
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView
+import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil
 
 /**
  * @author Abel Hegedus
  */
 class LoadQueriesHandler extends AbstractHandler {
+
+    public static final String COMMAND_ID = "org.eclipse.viatra.query.tooling.ui.result.loadqueries";
 
     override Object execute(ExecutionEvent event) throws ExecutionException {
         val selection = HandlerUtil.getCurrentSelection(event)
@@ -33,14 +33,7 @@ class LoadQueriesHandler extends AbstractHandler {
             val active = queryResultView.hasActiveEngine
             
             if (active && selection instanceof IStructuredSelection) {
-                val selectedQueries = newHashSet()
-                (selection as IStructuredSelection).iterator.forEach[
-                    switch it {
-                        QueryRegistryTreeEntry : selectedQueries.add(it)
-                        QueryRegistryTreePackage : selectedQueries.addAll(it.entries.values)
-                        QueryRegistryTreeSource : selectedQueries.addAll(it.packages.values.map[it.entries.values].flatten)
-                    }
-                ]
+                val selectedQueries = QueryResultViewUtil.getRegistryEntriesFromSelection(selection as IStructuredSelection)
                 selectedQueries.forEach [
                     load
                 ]

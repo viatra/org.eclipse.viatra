@@ -51,19 +51,9 @@
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryregistry.handlers.ShowLocationHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.showlocation">
          <activeWhen>
-            <with
-                  variable="selection">
-               <and>
-                  <count
-                        value="1">
-                  </count>
-                  <iterate>
-                     <instanceof
-                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
-                     </instanceof>
-                  </iterate>
-               </and>
-            </with>
+            <reference
+                  definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.registryentry">
+            </reference>
          </activeWhen>
       </handler>
       <handler
@@ -88,23 +78,9 @@
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadQueriesHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.result.loadqueries">
          <activeWhen>
-            <with
-                  variable="selection">
-               <iterate
-                     ifEmpty="false">
-                  <or>
-                     <instanceof
-                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeSource">
-                     </instanceof>
-                     <instanceof
-                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreePackage">
-                     </instanceof>
-                     <instanceof
-                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
-                     </instanceof>
-                  </or>
-               </iterate>
-            </with>
+            <reference
+                  definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.registrycontent">
+            </reference>
          </activeWhen>
       </handler>
       <handler
@@ -114,6 +90,15 @@
       <handler
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.WipeEngineHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.result.wipeengine">
+      </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryregistry.handlers.ShowLocationHandler"
+            commandId="org.eclipse.jdt.ui.edit.text.java.open.editor">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.registryentry">
+            </reference>
+         </activeWhen>
       </handler>
    </extension>
    <extension
@@ -130,26 +115,16 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.ui.popup.any">
+            locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.showlocation"
                icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/forward_nav.gif"
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="selection">
-                  <and>
-                     <count
-                           value="1">
-                     </count>
-                     <iterate>
-                        <instanceof
-                              value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
-                        </instanceof>
-                     </iterate>
-                  </and>
-               </with>
+               <reference
+               		 definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.registryentry">
+               </reference>
             </visibleWhen>
          </command>
          <command
@@ -160,23 +135,9 @@
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                  variable="selection">
-               <iterate
-                     ifEmpty="false">
-                  <or>
-                     <instanceof
-                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeSource">
-                     </instanceof>
-                     <instanceof
-                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreePackage">
-                     </instanceof>
-                     <instanceof
-                           value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
-                     </instanceof>
-                  </or>
-               </iterate>
-            </with>
+               <reference
+                     definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.registrycontent">
+               </reference>
             </visibleWhen>
          </command>
       </menuContribution>
@@ -349,5 +310,44 @@
                type="org.eclipse.ui.views.properties.IPropertySource">
          </adapter>
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.viatra.query.tooling.ui.browser.selection.registryentry">
+        <with
+           variable="selection">
+        <and>
+              <count
+                    value="1">
+              </count>
+              <iterate>
+                 <instanceof
+                       value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
+                 </instanceof>
+              </iterate>
+           </and>
+        </with>
+      </definition>
+      <definition
+            id="org.eclipse.viatra.query.tooling.ui.browser.selection.registrycontent">
+        <with
+              variable="selection">
+           <iterate
+                 ifEmpty="false">
+              <or>
+                 <instanceof
+                       value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeSource">
+                 </instanceof>
+                 <instanceof
+                       value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreePackage">
+                 </instanceof>
+                 <instanceof
+                       value="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry">
+                 </instanceof>
+              </or>
+           </iterate>
+        </with>
+      </definition>
    </extension>
 </plugin>

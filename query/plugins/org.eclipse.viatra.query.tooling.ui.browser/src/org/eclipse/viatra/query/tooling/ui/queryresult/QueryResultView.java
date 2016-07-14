@@ -11,13 +11,23 @@
 package org.eclipse.viatra.query.tooling.ui.queryresult;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -36,6 +46,12 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
+import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
+import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 
 /**
@@ -97,6 +113,35 @@ public class QueryResultView extends ViewPart {
         });
         queryResultTreeViewer.setLabelProvider(new QueryResultTreeLabelProvider());
         queryResultTreeViewer.setContentProvider(new QueryResultTreeContentProvider());
+        
+        int operations = DND.DROP_COPY | DND.DROP_MOVE;
+        Transfer[] transferTypes = new Transfer[]{LocalTransfer.getInstance()};
+        queryResultTreeViewer.addDropSupport(operations, transferTypes, new ViewerDropAdapter(queryResultTreeViewer) {
+
+            @Override
+            public boolean performDrop(Object data) {
+                if(data instanceof IStructuredSelection){
+                    boolean active = hasActiveEngine();
+                    if (active) {
+                        Set<QueryRegistryTreeEntry> selectedQueries = QueryResultViewUtil.getRegistryEntriesFromSelection((IStructuredSelection) data);
+                        for (QueryRegistryTreeEntry queryRegistryTreeEntry : selectedQueries) {
+                            queryRegistryTreeEntry.load();
+                        }
+                        loadQueriesIntoActiveEngine(QueryResultViewUtil.unwrapEntries(selectedQueries));
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public boolean validateDrop(Object target, int operation, TransferData transferType) {
+                boolean active = hasActiveEngine();
+                boolean supportedType = LocalTransfer.getInstance().isSupportedType(transferType);
+                return active && supportedType;
+            }
+        });
+        
         getSite().setSelectionProvider(queryResultTreeViewer);
         
         IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
