@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSea
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckConstant;
+import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CountCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.ExpressionCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.ExpressionEvalCheck;
@@ -36,6 +37,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.check.nobase.Scop
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExpressionEval;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendConstant;
+import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendPositivePatternCall;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureSource;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendToEStructuralFeatureTarget;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEClassInstances;
@@ -59,9 +61,11 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativeP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -143,6 +147,15 @@ public class POperationCompiler {
     private boolean isCheck(PConstraint pConstraint, Map<PVariable, Integer> variableMapping){
         if (pConstraint instanceof NegativePatternCall){
             return true;
+        }else if (pConstraint instanceof PositivePatternCall){
+            // Positive pattern call is check if all non-single used variables are bound
+            return variableBindings.get(pConstraint).containsAll(Sets.filter(pConstraint.getAffectedVariables(), new Predicate<PVariable>() {
+
+                @Override
+                public boolean apply(PVariable input) {
+                    return input.getReferringConstraints().size() > 1;
+                }
+            }));
         }else if (pConstraint instanceof PatternMatchCounter){
             PVariable outputvar = ((PatternMatchCounter) pConstraint).getResultVariable();
             return variableBindings.get(pConstraint).contains(variableMapping.get(outputvar));
@@ -169,6 +182,8 @@ public class POperationCompiler {
 
         if (pConstraint instanceof Inequality) {
             createCheck((Inequality) pConstraint, variableMapping);
+        } else if (pConstraint instanceof PositivePatternCall){
+            createCheck((PositivePatternCall) pConstraint, variableMapping);
         } else if (pConstraint instanceof NegativePatternCall) {
             createCheck((NegativePatternCall) pConstraint,variableMapping);
         } else if (pConstraint instanceof PatternMatchCounter) {
@@ -192,6 +207,27 @@ public class POperationCompiler {
             throw new QueryProcessingException(msg, null, msg, null);
         }
 
+    }
+
+    /**
+     * @param pConstraint
+     * @param variableMapping
+     */
+    private void createCheck(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
+        Map<Integer, Integer> frameMapping = Maps.newHashMap();
+        Set<Integer> adornment = Sets.newHashSet();
+        final Set<Integer> bindings = variableBindings.get(pCall);
+        int keySize = pCall.getVariablesTuple().getSize();
+        for (int i = 0; i < keySize; i++) {
+            PVariable parameter = (PVariable) pCall.getVariablesTuple().get(i);
+            frameMapping.put(variableMapping.get(parameter), i);
+            if (bindings.contains(variableMapping.get(parameter))) {
+                adornment.add(i);
+            }
+        }
+        
+        operations.add(new CheckPositivePatternCall(pCall.getReferredQuery(), frameMapping));
+        dependencies.add(new MatcherReference(pCall.getReferredQuery(), adornment));
     }
 
     private void createCheck(ConstantValue constant, Map<PVariable, Integer> variableMapping) {
@@ -298,8 +334,9 @@ public class POperationCompiler {
         // DeferredPConstraint subclasses
         
         // Equalities are normalized
-
-        if (pConstraint instanceof PatternMatchCounter) {
+        if (pConstraint instanceof PositivePatternCall) {
+            createExtend((PositivePatternCall)pConstraint, variableMapping);
+        } else if (pConstraint instanceof PatternMatchCounter) {
             createExtend((PatternMatchCounter) pConstraint, variableMapping);
         } else if (pConstraint instanceof ExpressionEvaluation) {
             createExtend((ExpressionEvaluation) pConstraint, variableMapping);
@@ -317,6 +354,27 @@ public class POperationCompiler {
             String msg = "Unsupported Extend constraint: "+pConstraint.toString();
             throw new QueryProcessingException(msg, null, msg, null);
         }
+    }
+
+    /**
+     * @param pConstraint
+     * @param variableMapping
+     */
+    private void createExtend(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
+        Map<Integer, Integer> frameMapping = Maps.newHashMap();
+        Set<Integer> adornment = Sets.newHashSet();
+        final Set<Integer> bindings = variableBindings.get(pCall);
+        int keySize = pCall.getVariablesTuple().getSize();
+        for (int i = 0; i < keySize; i++) {
+            PVariable parameter = (PVariable) pCall.getVariablesTuple().get(i);
+            frameMapping.put(variableMapping.get(parameter), i);
+            if (bindings.contains(variableMapping.get(parameter))) {
+                adornment.add(i);
+            }
+        }
+        
+        operations.add(new ExtendPositivePatternCall(pCall.getReferredQuery(), frameMapping));
+        dependencies.add(new MatcherReference(pCall.getReferredQuery(), adornment));
     }
 
     private void createExtend(ConstantValue constant, Map<PVariable, Integer> variableMapping) {

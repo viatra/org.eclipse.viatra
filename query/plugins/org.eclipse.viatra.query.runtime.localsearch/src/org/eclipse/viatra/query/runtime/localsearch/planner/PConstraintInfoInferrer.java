@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 
 import com.google.common.base.Function;
@@ -89,11 +90,27 @@ class PConstraintInfoInferrer {
             createConstraintInfoExpressionEvaluation(resultList, runtimeContext, (ExpressionEvaluation)pConstraint);
         } else if (pConstraint instanceof PatternMatchCounter){
             createConstraintInfoPatternMatchCounter(resultList, runtimeContext, (PatternMatchCounter) pConstraint);
-        } else {
+        } else if (pConstraint instanceof PositivePatternCall){
+            createConstraintInfoPositivePatternCall(resultList, runtimeContext, (PositivePatternCall) pConstraint);
+        } else{
             createConstraintInfoGeneric(resultList, runtimeContext, pConstraint);
         }
     }
     
+    /**
+     * @param resultList
+     * @param runtimeContext
+     * @param pConstraint
+     */
+    private void createConstraintInfoPositivePatternCall(List<PConstraintInfo> resultList,
+            IQueryRuntimeContext runtimeContext, PositivePatternCall pCall) {
+        // A pattern call can have any of its variables unbound
+        Set<PVariable> affectedVariables = pCall.getAffectedVariables();
+        Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
+        doCreateConstraintInfos(runtimeContext, resultList, pCall, affectedVariables, bindings);
+    }
+
+
     private void createConstraintInfoExportedParameter(List<PConstraintInfo> resultList,
             IQueryRuntimeContext runtimeContext, ExportedParameter parameter) {
         // In case of an exported parameter constraint, the parameter must be bound in order to execute
