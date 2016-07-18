@@ -34,7 +34,7 @@ public abstract class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
 
 	@Override
 	public void pullInto(Collection<Tuple> collector) {
-		Collection<Tuple> parentTuples = new ArrayList<Tuple>(collector);
+		Collection<Tuple> parentTuples = new ArrayList<Tuple>();
 		propagatePullInto(parentTuples);
 		for (Tuple incomingTuple : parentTuples) {
 			collector.add(tupleFromResult(incomingTuple, evaluateTerm(incomingTuple)));
