@@ -17,14 +17,17 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode;
+import org.eclipse.viatra.query.runtime.rete.aggregation.CountNode;
+import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
+import org.eclipse.viatra.query.runtime.rete.aggregation.IndexerBasedAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputStatelessFilterNode;
 import org.eclipse.viatra.query.runtime.rete.eval.CachedFunctionEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.eval.CachedPredicateEvaluatorNode;
-import org.eclipse.viatra.query.runtime.rete.index.AggregatorNode;
-import org.eclipse.viatra.query.runtime.rete.index.CountNode;
 import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.JoinNode;
@@ -47,6 +50,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.SemiJoinRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TransitiveClosureRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TransparentRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TrimmerRecipe;
@@ -85,7 +89,14 @@ class NodeFactory {
 			return parentNode.constructIndex(toMask(recipe.getMask()), traces);
 			// already traced
 		} else if (recipe instanceof AggregatorIndexerRecipe) {
-			final Indexer result = ((AggregatorNode)parentNode).getAggregatorOuterIndexer();
+		    int indexOfAggregateResult = recipe.getParent().getArity();
+		    int resultPosition = recipe.getMask().getSourceIndices().lastIndexOf(indexOfAggregateResult);
+		    
+			IAggregatorNode aggregatorNode = (IAggregatorNode)parentNode;
+            final Indexer result = (resultPosition == -1) ? 
+                    aggregatorNode.getAggregatorOuterIndexer() :
+                    aggregatorNode.getAggregatorOuterIdentityIndexer(resultPosition);
+                    
 			for (TraceInfo traceInfo : traces) 
 				result.assignTraceInfo(traceInfo);
 			return result;
@@ -136,8 +147,10 @@ class NodeFactory {
 			return instantiateNode(reteContainer, (CheckRecipe)recipe);
 		if (recipe instanceof EvalRecipe) 
 			return instantiateNode(reteContainer, (EvalRecipe)recipe);
-		if (recipe instanceof CountAggregatorRecipe) 
-			return instantiateNode(reteContainer, (CountAggregatorRecipe)recipe);
+        if (recipe instanceof CountAggregatorRecipe) 
+            return instantiateNode(reteContainer, (CountAggregatorRecipe)recipe);
+        if (recipe instanceof SingleColumnAggregatorRecipe) 
+            return instantiateNode(reteContainer, (SingleColumnAggregatorRecipe)recipe);
 		
 		// MultiParentNodeRecipe
 		if (recipe instanceof UniquenessEnforcerRecipe) 
@@ -193,6 +206,11 @@ class NodeFactory {
 		final Map<String, Integer> posMapping = toStringIndexMap(recipe.getMappedIndices());
 		return new CachedPredicateEvaluatorNode(reteContainer, logger, evaluator, posMapping, recipe.getParent().getArity());
 	}
+
+    private Supplier instantiateNode(ReteContainer reteContainer, SingleColumnAggregatorRecipe recipe) {
+        IMultisetAggregationOperator operator = (IMultisetAggregationOperator) recipe.getMultisetAggregationOperator();
+        return new ColumnAggregatorNode(reteContainer, operator, toMask(recipe.getGroupByMask()), recipe.getAggregableIndex());
+    }
 
 
 	private Supplier instantiateNode(ReteContainer reteContainer, TransitiveClosureRecipe recipe) {

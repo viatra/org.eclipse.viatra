@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.query.runtime.rete.index;
+package org.eclipse.viatra.query.runtime.rete.aggregation;
 
 import java.util.Collection;
 
@@ -20,9 +20,9 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
  * An aggregation node that simply counts the number of tuples conforming to the signature.
  * 
  * @author Gabor Bergmann
- * 
+ * @since 1.4
  */
-public class CountNode extends AggregatorNode {
+public class CountNode extends IndexerBasedAggregatorNode {
 
     public CountNode(ReteContainer reteContainer) {
         super(reteContainer);

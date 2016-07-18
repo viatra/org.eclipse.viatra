@@ -15,22 +15,23 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.rete.aggregation.IndexerBasedAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
-import org.eclipse.viatra.query.runtime.rete.index.AggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.index.DualInputNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.IterableIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
-import org.eclipse.viatra.query.runtime.rete.recipes.AggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.BetaRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ConstantRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionEnforcerRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.IndexerBasedAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.InputRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.MultiParentNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.SingleParentNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TransitiveClosureRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.UniquenessEnforcerRecipe;
@@ -54,7 +55,8 @@ class ConnectionFactory {
 	private boolean isStateful(ReteNodeRecipe recipe) {
 		return 
 				recipe instanceof ProjectionIndexerRecipe ||
-				recipe instanceof AggregatorRecipe ||
+                recipe instanceof IndexerBasedAggregatorRecipe ||
+                recipe instanceof SingleColumnAggregatorRecipe ||
 				recipe instanceof ExpressionEnforcerRecipe ||
 				recipe instanceof TransitiveClosureRecipe ||
 				recipe instanceof ProductionRecipe ||
@@ -93,9 +95,9 @@ class ConnectionFactory {
 //	        final Indexer rightParent = resolveIndexer(betaRecipe.getRightParent());
 			Slots slots = avoidActiveNodeConflict(parentTraces.get(0), parentTraces.get(1));
 			beta.connectToIndexers(slots.primary, slots.secondary);
-		} else if (recipe instanceof AggregatorRecipe) {
-			final AggregatorNode aggregator = (AggregatorNode) freshNode;
-			final AggregatorRecipe aggregatorRecipe = (AggregatorRecipe) recipe;
+		} else if (recipe instanceof IndexerBasedAggregatorRecipe) {
+			final IndexerBasedAggregatorNode aggregator = (IndexerBasedAggregatorNode) freshNode;
+			final IndexerBasedAggregatorRecipe aggregatorRecipe = (IndexerBasedAggregatorRecipe) recipe;
 			aggregator.initializeWith((ProjectionIndexer) resolveIndexer(aggregatorRecipe.getParent()));
 		}
 		// TODO Beta nodes are already connected?

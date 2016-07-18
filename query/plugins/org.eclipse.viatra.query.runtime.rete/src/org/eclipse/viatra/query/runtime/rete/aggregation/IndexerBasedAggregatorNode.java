@@ -9,7 +9,7 @@
  *    Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.viatra.query.runtime.rete.index;
+package org.eclipse.viatra.query.runtime.rete.aggregation;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +19,10 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+import org.eclipse.viatra.query.runtime.rete.index.DefaultIndexerListener;
+import org.eclipse.viatra.query.runtime.rete.index.Indexer;
+import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
+import org.eclipse.viatra.query.runtime.rete.index.StandardIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -30,12 +34,12 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
  * the aggregates of non-empty groups. Use the outer indexers to circumvent.
  * 
  * @author Gabor Bergmann
- * 
+ * @since 1.4
  */
-public abstract class AggregatorNode extends StandardNode {
+public abstract class IndexerBasedAggregatorNode extends StandardNode implements IAggregatorNode {
 
     ProjectionIndexer projection;
-    AggregatorNode me;
+    IndexerBasedAggregatorNode me;
     int sourceWidth;
     Map<Tuple, Object> mainAggregates;
 
@@ -45,7 +49,7 @@ public abstract class AggregatorNode extends StandardNode {
     /**
      * MUST call initializeWith() afterwards!
      */
-    public AggregatorNode(ReteContainer reteContainer) {
+    public IndexerBasedAggregatorNode(ReteContainer reteContainer) {
         super(reteContainer);
         this.me = this;
         mainAggregates = //new HashMap<Tuple, Object>();
@@ -90,7 +94,8 @@ public abstract class AggregatorNode extends StandardNode {
         return packResult(signature, aggregateGroup(signature, group));
     }
 
-    public AggregatorOuterIndexer getAggregatorOuterIndexer() {
+    @Override
+    public Indexer getAggregatorOuterIndexer() {
         if (aggregatorOuterIndexer == null) {
             aggregatorOuterIndexer = new AggregatorOuterIndexer();
             // reteContainer.connectAndSynchronize(this, aggregatorOuterIndexer);
@@ -98,7 +103,8 @@ public abstract class AggregatorNode extends StandardNode {
         return aggregatorOuterIndexer;
     }
 
-    public AggregatorOuterIdentityIndexer getAggregatorOuterIdentityIndexer(int resultPositionInSignature) {
+    @Override
+    public Indexer getAggregatorOuterIdentityIndexer(int resultPositionInSignature) {
         if (aggregatorOuterIdentityIndexers == null)
             aggregatorOuterIdentityIndexers = new AggregatorOuterIdentityIndexer[sourceWidth + 1];
         if (aggregatorOuterIdentityIndexers[resultPositionInSignature] == null) {

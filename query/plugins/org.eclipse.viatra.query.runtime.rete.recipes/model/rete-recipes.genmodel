@@ -104,9 +104,9 @@
     <genClasses ecoreClass="recipes.ecore#//EvalRecipe">
       <genOperations ecoreOperation="recipes.ecore#//EvalRecipe/getArity"/>
     </genClasses>
-    <genClasses image="false" ecoreClass="recipes.ecore#//AggregatorRecipe">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//AggregatorRecipe/parent"/>
-      <genOperations ecoreOperation="recipes.ecore#//AggregatorRecipe/getArity"/>
+    <genClasses image="false" ecoreClass="recipes.ecore#//IndexerBasedAggregatorRecipe">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//IndexerBasedAggregatorRecipe/parent"/>
+      <genOperations ecoreOperation="recipes.ecore#//IndexerBasedAggregatorRecipe/getArity"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//CountAggregatorRecipe"/>
     <genClasses ecoreClass="recipes.ecore#//JoinRecipe">
@@ -122,6 +122,12 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputFilterRecipe/inputKey"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//InputFilterRecipe/keyID"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//InputFilterRecipe/mask"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//SingleColumnAggregatorRecipe">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//SingleColumnAggregatorRecipe/groupByMask"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//SingleColumnAggregatorRecipe/aggregableIndex"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//SingleColumnAggregatorRecipe/multisetAggregationOperator"/>
+      <genOperations ecoreOperation="recipes.ecore#//SingleColumnAggregatorRecipe/getArity"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

@@ -27,8 +27,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
-import org.eclipse.viatra.query.runtime.rete.recipes.AggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.EqualityFilterRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.IndexerBasedAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.JoinRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.Mask;
@@ -36,6 +36,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TrimmerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.helper.RecipesHelper;
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery;
@@ -132,7 +133,7 @@ public class CompilerHelper {
 	 */
     public static RecipeTraceInfo makeIndexerTrace(SubPlan planToCompile, PlanningTrace parentTrace, TupleMask mask) {
 		final ReteNodeRecipe parentRecipe = parentTrace.getRecipe();
-		if (parentRecipe instanceof AggregatorRecipe) 
+		if (parentRecipe instanceof IndexerBasedAggregatorRecipe || parentRecipe instanceof SingleColumnAggregatorRecipe) 
 			throw new IllegalArgumentException("Cannot take projection indexer of aggregator node at plan " + planToCompile);
 		IndexerRecipe recipe = RecipesHelper.projectionIndexerRecipe(parentRecipe, 
 				RecipesHelper.mask(mask.sourceWidth, mask.indices));

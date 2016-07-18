@@ -135,8 +135,8 @@ pattern projectionIndexerRecipe(recipe : ProjectionIndexerRecipe, mask : Mask) {
 
 @Edge(source = parent, target = recipe)
 @QueryExplorer(checked = false)
-pattern aggregatorRecipeParent(recipe: AggregatorRecipe, parent: ProjectionIndexerRecipe) {
-	AggregatorRecipe.parent(recipe, parent);	
+pattern aggregatorRecipeParent(recipe: IndexerBasedAggregatorRecipe, parent: ProjectionIndexerRecipe) {
+	IndexerBasedAggregatorRecipe.parent(recipe, parent);	
 }
 
 @Edge(source = parent, target = recipe, label = "left")
