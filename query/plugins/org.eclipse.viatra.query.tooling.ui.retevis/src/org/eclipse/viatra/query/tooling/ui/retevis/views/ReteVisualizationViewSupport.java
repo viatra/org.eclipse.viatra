@@ -44,8 +44,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
-import org.eclipse.viatra.query.runtime.rete.recipes.AggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.BetaRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.IndexerBasedAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.MultiParentNodeRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
@@ -213,8 +213,8 @@ public class ReteVisualizationViewSupport extends ViatraViewersZestViewSupport {
      */
     private Set<ReteNodeRecipe> getImmediateParentsOfRecipe(ReteNodeRecipe recipe, boolean isRootRecipe) {
         Set<ReteNodeRecipe> nextParentsToCollect = Sets.newHashSet();
-        if (recipe instanceof AggregatorRecipe) {
-            ReteNodeRecipe aggregatorParent = ((AggregatorRecipe) recipe).getParent();
+        if (recipe instanceof IndexerBasedAggregatorRecipe) {
+            ReteNodeRecipe aggregatorParent = ((IndexerBasedAggregatorRecipe) recipe).getParent();
             nextParentsToCollect.add(aggregatorParent);
         } else if (recipe instanceof BetaRecipe) {
             ReteNodeRecipe leftParent = ((BetaRecipe) recipe).getLeftParent();
