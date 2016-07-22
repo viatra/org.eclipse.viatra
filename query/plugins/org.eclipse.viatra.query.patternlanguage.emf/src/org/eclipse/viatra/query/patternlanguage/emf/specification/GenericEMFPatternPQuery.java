@@ -36,7 +36,8 @@ import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * This is a generic (i.e. not pattern-specific) class for the internal representation of VIATRA queries, for "interpretative" query execution. 
@@ -49,6 +50,7 @@ import com.google.common.collect.Lists;
 public class GenericEMFPatternPQuery extends BasePQuery implements InitializablePQuery {
 
     private Pattern pattern;
+    private ImmutableList<PParameter> parameters;
 	
     /**
      * Initializes a generic query representation for a given pattern. </p>
@@ -108,29 +110,32 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
 
     @Override
     public List<PParameter> getParameters() {
-        return Lists.transform(pattern.getParameters(), new Function<Variable, PParameter>() {
-
-            @Override
-            public PParameter apply(Variable var) {
-                if (var == null) {
-                    return new PParameter("", "");
-                } else {
-                    ITypeInferrer typeProvider = XtextInjectorProvider.INSTANCE.getInjector().getInstance(ITypeInferrer.class);
-                    JvmTypeReference ref = typeProvider.getJvmType(var, var);
-                    // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
-                    String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
-                            .getQualifiedName();
-                    
-                    IInputKey unaryDeclaredType = null; 
-                    Type type = var.getType();
-					if (type instanceof ClassType) 
-                    	unaryDeclaredType = PatternBodyTransformer.classifierToInputKey(((ClassType) type).getClassname());
-                    
-					return new PParameter(var.getName(), clazz, unaryDeclaredType);
+        if (parameters == null) {
+            parameters = ImmutableList.copyOf(Iterables.transform(pattern.getParameters(), new Function<Variable, PParameter>() {
+    
+                @Override
+                public PParameter apply(Variable var) {
+                    if (var == null) {
+                        return new PParameter("", "");
+                    } else {
+                        ITypeInferrer typeProvider = XtextInjectorProvider.INSTANCE.getInjector().getInstance(ITypeInferrer.class);
+                        JvmTypeReference ref = typeProvider.getJvmType(var, var);
+                        // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
+                        String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
+                                .getQualifiedName();
+                        
+                        IInputKey unaryDeclaredType = null; 
+                        Type type = var.getType();
+    					if (type instanceof ClassType) 
+                        	unaryDeclaredType = PatternBodyTransformer.classifierToInputKey(((ClassType) type).getClassname());
+                        
+    					return new PParameter(var.getName(), clazz, unaryDeclaredType);
+                    }
                 }
-            }
-
-        });
+    
+            }));
+        }
+        return parameters;
     }
 
     @Override

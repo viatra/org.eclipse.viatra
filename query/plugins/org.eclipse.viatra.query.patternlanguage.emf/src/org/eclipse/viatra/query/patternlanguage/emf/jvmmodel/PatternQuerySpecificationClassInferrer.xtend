@@ -47,6 +47,7 @@ import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem
+import com.google.common.collect.ImmutableList
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -191,14 +192,19 @@ class PatternQuerySpecificationClassInferrer {
 			annotations += annotationRef(typeof(Override))
 			body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»"«param.name»"«ENDFOR»);'''
 		]
+		pQueryClass.members += pattern.toField("parameters", typeRef(typeof(List), typeRef(typeof(PParameter))))[
+		    visibility = JvmVisibility::PRIVATE
+		]
 		pQueryClass.members += pattern.toMethod("getParameters",
 			typeRef(typeof(List), typeRef(typeof(PParameter)))) [
 			visibility = JvmVisibility::PUBLIC
 			annotations += annotationRef(typeof(Override))
-			body = '''return «Arrays».asList(
-			 «FOR param : pattern.parameters SEPARATOR ''',
-			 '''»«param.parameterInstantiation»«ENDFOR»
-			);'''
+			body = '''
+			if (parameters == null) {
+			     parameters = «Arrays».asList(
+			     «FOR param : pattern.parameters SEPARATOR ",\n"»«param.parameterInstantiation»«ENDFOR»
+			);}
+			return parameters;'''
 		]
 		pQueryClass.members += pattern.toMethod("doGetContainedBodies",
 			typeRef(typeof(Set), typeRef(typeof(PBody)))) [
