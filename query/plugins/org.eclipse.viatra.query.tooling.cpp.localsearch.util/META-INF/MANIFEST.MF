@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: C++ Code Generation Utilities (Incubation)
+Bundle-SymbolicName: org.eclipse.viatra.query.tooling.cpp.localsearch.util
+Bundle-Version: 0.14.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.eclipse.viatra.query.tooling.cpp.localsearch.util.fs,
+ org.eclipse.viatra.query.tooling.cpp.localsearch.util.generators
+Require-Bundle: com.google.guava,
+ org.eclipse.xtend.lib,
+ org.eclipse.emf.ecore;bundle-version="2.11.0"
+Bundle-Vendor: Eclipse VIATRA Project
+

@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VIATRA Localsearch C++ Codegenerator UI (Incubation)
+Bundle-SymbolicName: org.eclipse.viatra.query.tooling.cpp.localsearch.ui;singleton:=true
+Bundle-Version: 0.14.0.qualifier
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.macro,
+ com.google.inject;bundle-version="3.0.0",
+ org.eclipse.xtext;bundle-version="2.8.4",
+ org.eclipse.core.resources;bundle-version="3.10.1",
+ org.eclipse.xtext.builder;bundle-version="2.8.4",
+ org.eclipse.xtext.ui;bundle-version="2.8.4",
+ org.eclipse.viatra.query.patternlanguage.emf;bundle-version="[1.4.0,1.5.0)",
+ org.eclipse.viatra.query.runtime.matchers;bundle-version="[1.4.0,1.5.0)",
+ org.eclipse.viatra.query.runtime;bundle-version="[1.4.0,1.5.0)",
+ org.eclipse.viatra.query.patternlanguage.emf.ui;bundle-version="[1.4.0,1.5.0)",
+ org.eclipse.viatra.query.tooling.cpp.localsearch;bundle-version="[0.14.0,0.15.0)",
+ org.eclipse.viatra.query.tooling.cpp.localsearch.util;bundle-version="[0.14.0,0.15.0)"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Eclipse VIATRA Project
+Bundle-Activator: org.eclipse.viatra.query.tooling.cpp.localsearch.ui.CPPQueryToolingPlugin

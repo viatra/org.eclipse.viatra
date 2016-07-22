@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ECore Generator API (Incubation)
+Bundle-SymbolicName: org.eclipse.viatra.addon.cpp.ecore.generator;singleton:=true
+Bundle-Version: 0.14.0.qualifier
+Require-Bundle: org.eclipse.xtext;bundle-version="2.7.3",
+ org.eclipse.xtext.xbase;bundle-version="2.7.3",
+ org.eclipse.viatra.query.tooling.cpp.localsearch.util;bundle-version="[0.14.0,0.15.0)"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.eclipse.viatra.tooling.cpp.ecore.generator,
+ org.eclipse.viatra.tooling.cpp.ecore.generator.common,
+ org.eclipse.viatra.tooling.cpp.ecore.generator.ecore
+Bundle-Vendor: Eclipse VIATRA Project

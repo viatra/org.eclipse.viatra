@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	  <extension
+        point="org.eclipse.ui.menus">
+     <menuContribution
+           allPopups="false"
+           locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+        <menu
+              label="Generate query code...">
+           <command
+                 commandId="org.eclipse.viatra.query.tooling.cpp.localsearch.ui.generateRuntime"
+                 style="push">
+              <visibleWhen>
+                 <with
+                       variable="selection">
+                    <iterate
+                          ifEmpty="false">
+                       <reference
+                             definitionId="org.eclipse.viatra.query.tooling.cpp.localsearch.ui.testVqlExtension">
+                       </reference>
+                    </iterate>
+                 </with>
+              </visibleWhen>
+           </command>
+           <command
+                 commandId="org.eclipse.viatra.query.tooling.cpp.localsearch.ui.generateIterator"
+                 style="push">
+              <visibleWhen>
+                 <with
+                       variable="selection">
+                    <iterate
+                          ifEmpty="false">
+                       <reference
+                             definitionId="org.eclipse.viatra.query.tooling.cpp.localsearch.ui.testVqlExtension">
+                       </reference>
+                    </iterate>
+                 </with>
+              </visibleWhen>
+           </command>
+        </menu>
+     </menuContribution>
+  </extension>
+  <extension
+        point="org.eclipse.core.expressions.definitions">
+     <definition
+           id="org.eclipse.viatra.query.tooling.cpp.localsearch.ui.testVqlExtension">
+        <adapt
+              type="org.eclipse.core.resources.IResource">
+           <test
+                 property="org.eclipse.core.resources.extension"
+                 value="vql">
+           </test>
+        </adapt>
+     </definition>
+  </extension>
+  <extension
+        point="org.eclipse.ui.commands">
+     <command
+           defaultHandler="org.eclipse.viatra.query.tooling.cpp.localsearch.ui.GeneratorExecutableExtensionFactory:org.eclipse.viatra.query.tooling.cpp.localsearch.ui.handler.RuntimeGeneratorHandler"
+           id="org.eclipse.viatra.query.tooling.cpp.localsearch.ui.generateRuntime"
+           name="Runtime based">
+     </command>
+     <command
+           defaultHandler="org.eclipse.viatra.query.tooling.cpp.localsearch.ui.GeneratorExecutableExtensionFactory:org.eclipse.viatra.query.tooling.cpp.localsearch.ui.handler.IteratorGeneratorHandler"
+           id="org.eclipse.viatra.query.tooling.cpp.localsearch.ui.generateIterator"
+           name="Iterator based">
+     </command>
+  </extension>
+</plugin>
