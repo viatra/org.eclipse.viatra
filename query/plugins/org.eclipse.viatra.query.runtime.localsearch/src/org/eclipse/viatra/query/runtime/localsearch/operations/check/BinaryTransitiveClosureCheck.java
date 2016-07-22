@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -37,13 +38,12 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IMat
 
     private PQuery calledQuery;
     private LocalSearchMatcher matcher;
-    private int sourcePosition;
-    private int targetPosition;
+    private final int sourcePosition;
+    private final int targetPosition;
+    private final ImmutableSet<PParameter> adornment;
 
     @Override
 	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
-		//Second parameter is NOT bound during execution, but the first is
-        ImmutableSet<Integer> adornment = ImmutableSet.of(0);
         matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
         return matcher;
 	}
@@ -65,6 +65,8 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IMat
         this.calledQuery = calledQuery;
         this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
+        // Second parameter is NOT bound during execution, but the first is
+        this.adornment = ImmutableSet.of(calledQuery.getParameters().get(0));
     }
 
     public PQuery getCalledQuery() {

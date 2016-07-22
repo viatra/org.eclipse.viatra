@@ -12,13 +12,14 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 public class MatcherReference {
     final PQuery query;
-    final Set<Integer> adornment;
-    
-    public MatcherReference(PQuery query, Set<Integer> adornment) {
+    final Set<PParameter> adornment;
+        
+    public MatcherReference(PQuery query, Set<PParameter> adornment) {
         super();
         this.query = query;
         this.adornment = adornment;
@@ -26,7 +27,7 @@ public class MatcherReference {
     public PQuery getQuery() {
         return query;
     }
-    public Set<Integer> getAdornment() {
+    public Set<PParameter> getAdornment() {
         return adornment;
     }
     @Override

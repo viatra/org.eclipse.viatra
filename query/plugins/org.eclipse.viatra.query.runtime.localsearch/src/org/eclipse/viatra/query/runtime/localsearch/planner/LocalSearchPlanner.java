@@ -28,8 +28,10 @@ import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer;
@@ -109,15 +111,14 @@ public class LocalSearchPlanner{
      * <code>initializePlanner()</code> methods before calling this method.
      * 
      * @param querySpec
-     * @param boundVarIndices
-     *            a set of integers representing the variables that are bound
+     * @param boundParameters
+     *            a set of bound parameters
      * @return a mapping between ISearchOperation list and a mapping, that holds a PVariable-Integer mapping for the
      *         list of ISearchOperations
      * @throws QueryProcessingException
      */
-    public Collection<SearchPlanForBody> plan(PQuery querySpec, Set<Integer> boundVarIndices)
+    public Collection<SearchPlanForBody> plan(PQuery querySpec, Set<PParameter> boundParameters)
             throws QueryProcessingException {
-
         // 1. Preparation
         Set<PBody> normalizedBodies = prepareNormalizedBodies(querySpec);
 
@@ -126,12 +127,12 @@ public class LocalSearchPlanner{
         for (PBody normalizedBody : normalizedBodies) {
             // 2. Plan creation
             // Context has matchers for the referred Queries (IQuerySpecifications)
-            Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundVarIndices, normalizedBody);
+            Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundParameters, normalizedBody);
             SubPlan plan = plannerStrategy.plan(normalizedBody, logger, boundVariables, metaContext, runtimeContext, configuration);
             // 3. PConstraint -> POperation compilation step
             // TODO finish (revisit?) the implementation of the compile function
             // * Pay extra caution to extend operations, when more than one variables are unbound
-            List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundVarIndices);
+            List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundParameters);
             // Store the variable mappings for the plans for debug purposes (traceability information)
             SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody, operationCompiler.getVariableMappings(), plan, compiledOperations, operationCompiler.getDependencies());
             
@@ -192,10 +193,14 @@ public class LocalSearchPlanner{
         }
     }
 
-    private Set<PVariable> calculatePatternAdornmentForPlanner(Set<Integer> boundVarIndices, PBody normalizedBody) {
-        Set<PVariable> boundVariables = Sets.<PVariable> newHashSet();
-        for (Integer i : boundVarIndices) {
-            boundVariables.add(normalizedBody.getSymbolicParameterVariables().get(i));
+    private Set<PVariable> calculatePatternAdornmentForPlanner(Set<PParameter> boundParameters, PBody normalizedBody) {
+        Map<PParameter, PVariable> parameterMapping = Maps.newHashMap();
+        for (ExportedParameter constraint : normalizedBody.getSymbolicParameters()) {
+            parameterMapping.put(constraint.getPatternParameter(), constraint.getParameterVariable());
+        }
+        Set<PVariable> boundVariables = Sets.newHashSet();
+        for (PParameter parameter : boundParameters) {
+            boundVariables.add(parameterMapping.get(parameter));
         }
         return boundVariables;
     }

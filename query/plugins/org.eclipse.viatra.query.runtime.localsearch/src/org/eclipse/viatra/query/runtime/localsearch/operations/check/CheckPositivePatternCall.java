@@ -16,6 +16,7 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.AbstractPositivePatternCallOperation;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -42,20 +43,11 @@ public class CheckPositivePatternCall extends AbstractPositivePatternCallOperati
         return executed;
     }
     
-    /**
-     * @param frame
-     * @return
-     * @throws LocalSearchException 
-     */
     private boolean check(MatchingFrame frame) throws LocalSearchException {
         return getCalledMatcher().hasMatch(mapFrame(frame));
     }
 
-    /**
-     * @param calledQuery
-     * @param frameMapping
-     */
-    public CheckPositivePatternCall(PQuery calledQuery, Map<Integer, Integer> frameMapping) {
+    public CheckPositivePatternCall(PQuery calledQuery, Map<Integer, PParameter> frameMapping) {
         super(calledQuery, frameMapping);
     }
 
