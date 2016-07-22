@@ -17,12 +17,13 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public class CrowdedTournementParentSelector implements IParentSelectionStrategy {
 
-    private Random rnd = new Random();
+    private Random rnd;
     private List<TrajectoryFitness> parentPopulation;
 
     @Override
     public void init(List<TrajectoryFitness> actualParentPopulation) {
         this.parentPopulation = actualParentPopulation;
+        rnd = new Random();
     }
 
     @Override
@@ -46,6 +47,11 @@ public class CrowdedTournementParentSelector implements IParentSelectionStrategy
                 return parentCandidate1;
             }
         }
+    }
+
+    @Override
+    public IParentSelectionStrategy createNew() {
+        return new CrowdedTournementParentSelector();
     }
 
 }

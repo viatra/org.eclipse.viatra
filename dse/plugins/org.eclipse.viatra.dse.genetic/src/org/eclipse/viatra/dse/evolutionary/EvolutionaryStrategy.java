@@ -14,8 +14,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.log4j.Logger;
+import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -31,123 +36,219 @@ import org.eclipse.viatra.dse.evolutionary.interfaces.IStopCondition;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ISurvivalStrategy;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
+import com.google.common.util.concurrent.AtomicDouble;
+
 public class EvolutionaryStrategy implements IStrategy {
 
-    // configs
-    protected int initialPopulationSize = -1;
-    protected int childPopulationSize = -1;
-    protected IInitialPopulationSelector initialPopulationSelector;
-    protected IEvaluationStrategy evaluationStrategy;
-    protected ISurvivalStrategy survivalStrategy;
-    protected IReproductionStrategy reproductionStrategy;
-    protected IParentSelectionStrategy parentSelectionStrategy;
-    protected IStopCondition stopCondition;
-    protected IMutationRate mutationRate;
-    protected List<ICrossover> crossovers = new ArrayList<>();
-    protected List<IMutation> mutations = new ArrayList<>();
+    public static class EvolutionaryStrategySharedObject {
+        // configs
+        public int initialPopulationSize = -1;
+        public int childPopulationSize = -1;
+        public IInitialPopulationSelector initialPopulationSelector;
+        public IEvaluationStrategy evaluationStrategy;
+        public ISurvivalStrategy survivalStrategy;
+        public IReproductionStrategy reproductionStrategy;
+        public IParentSelectionStrategy parentSelectionStrategy;
+        public IStopCondition stopCondition;
+        public IMutationRate mutationRate;
+        public List<ICrossover> crossovers = new ArrayList<>();
+        public List<IMutation> mutations = new ArrayList<>();
+
+        // multi thread
+        public CyclicBarrier barrierBeforeChildGeneration;
+        public CyclicBarrier barrierAfterChildGeneration;
+        public AtomicDouble mutationChance = new AtomicDouble(1);
+        public Set<TrajectoryFitness> childPopulation;
+        public AtomicReference<List<TrajectoryFitness>> parentPopulation = new AtomicReference<List<TrajectoryFitness>>();
+    }
+
+    protected EvolutionaryStrategySharedObject so;
 
     protected List<IEvolutionaryStrategyAdapter> adapters = new ArrayList<>();
-    
+
     // local variables
-    private ThreadContext context;
-    private DesignSpaceManager dsm;
-    private AtomicBoolean isInterrupted = new AtomicBoolean(false);
-    private Random random = new Random();
-    private Set<TrajectoryFitness> childPopulation;
+    protected ThreadContext context;
+    protected DesignSpaceManager dsm;
+    protected AtomicBoolean isInterrupted = new AtomicBoolean(false);
+    protected Random random = new Random();
+
+    protected IParentSelectionStrategy localParentSelector;
+    protected boolean isFirstThread = false;
+
+    public EvolutionaryStrategy() {
+        so = new EvolutionaryStrategySharedObject();
+    }
 
     @Override
     public void initStrategy(ThreadContext context) {
         this.context = context;
         dsm = context.getDesignSpaceManager();
-        childPopulation = new HashSet<>(childPopulationSize);
-        
-        evaluationStrategy.init(context);
-        for (IEvolutionaryStrategyAdapter adapter : adapters) {
-            adapter.init(context);
+
+        if (context.getSharedObject() == null) {
+
+            isFirstThread = true;
+
+            so.childPopulation = new HashSet<>(so.childPopulationSize);
+
+            for (IEvolutionaryStrategyAdapter adapter : adapters) {
+                adapter.init(context);
+            }
+
+            context.setSharedObject(so);
+            so.evaluationStrategy.init(context);
+            localParentSelector = so.parentSelectionStrategy;
+        } else {
+            so = (EvolutionaryStrategySharedObject) context.getSharedObject();
+            localParentSelector = so.parentSelectionStrategy.createNew();
         }
+
     }
 
     @Override
     public void explore() {
+        try {
+            if (isFirstThread) {
+                mainThread();
+            } else {
+                while (true) {
+                    so.barrierBeforeChildGeneration.await();
+                    if (isInterrupted.get()) {
+                        return;
+                    }
+                    generateChildren();
+                    so.barrierAfterChildGeneration.await();
+                }
+            }
+        } catch (InterruptedException | BrokenBarrierException e) {
+            Logger.getLogger(DesignSpaceExplorer.class).error(e.toString());
+        }
+    }
+
+    protected void mainThread() throws InterruptedException, BrokenBarrierException {
 
         // initial population selection
-        initialPopulationSelector.setPopulationSize(initialPopulationSize);
-        initialPopulationSelector.initStrategy(context);
-        initialPopulationSelector.explore();
-        List<TrajectoryFitness> currentPopulation = initialPopulationSelector.getInitialPopulation();
+        so.initialPopulationSelector.setPopulationSize(so.initialPopulationSize);
+        so.initialPopulationSelector.initStrategy(context);
+        so.initialPopulationSelector.explore();
+        List<TrajectoryFitness> currentPopulation = so.initialPopulationSelector.getInitialPopulation();
 
         dsm.setDesignSpace(null);
-        
+
         if (isInterrupted.get()) {
             savePopulationsAsSolutions(currentPopulation);
             return;
         }
-        
+
+        int threads = context.getGlobalContext().getThreadPool().getMaximumPoolSize();
+        so.barrierBeforeChildGeneration = new CyclicBarrier(threads);
+        so.barrierAfterChildGeneration = new CyclicBarrier(threads);
+        startThreads();
+
         while (true) {
-            
-            List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation = evaluationStrategy.evaluatePopulation(currentPopulation);
-            
-            List<TrajectoryFitness> survivedPopulation = survivalStrategy.selectSurvivedPopulation(frontsOfCurrentPopulation);
-            
+
+            List<? extends List<TrajectoryFitness>> frontsOfCurrentPopulation = so.evaluationStrategy.evaluatePopulation(currentPopulation);
+
+            List<TrajectoryFitness> survivedPopulation = so.survivalStrategy.selectSurvivedPopulation(frontsOfCurrentPopulation);
+
             for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
                 trajectoryFitness.survive++;
             }
-            
-            boolean stop = stopCondition.checkStopCondition(survivedPopulation);
+
+            boolean stop = so.stopCondition.checkStopCondition(survivedPopulation);
 
             if (!adapters.isEmpty()) {
                 for (IEvolutionaryStrategyAdapter adapter : adapters) {
                     adapter.iterationCompleted(currentPopulation, frontsOfCurrentPopulation, survivedPopulation, stop);
                 }
             }
-            
+
             if (stop || isInterrupted.get()) {
                 savePopulationsAsSolutions(survivedPopulation);
+                context.getGlobalContext().stopAllThreads();
+                so.barrierBeforeChildGeneration.await();
                 return;
             }
 
             // get potential parents
-            List<TrajectoryFitness> parentPopulation = reproductionStrategy.getParentPopulation(currentPopulation, frontsOfCurrentPopulation, survivedPopulation);
-            
-            // child generation and duplication check
-            parentSelectionStrategy.init(parentPopulation);
-            
-            double mutationChance = mutationRate.getMutationChance(currentPopulation, survivedPopulation, parentPopulation);
-            
-            childPopulation.clear();
-            for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
-                childPopulation.add(trajectoryFitness);
-            }
-            // implicit duplication check - same if very same trajectory 
-            while (childPopulationSize > childPopulation.size()) {
+            so.parentPopulation.set(so.reproductionStrategy.getParentPopulation(currentPopulation, frontsOfCurrentPopulation, survivedPopulation));
 
-                if (childPopulation.size() == childPopulationSize - 1 || random.nextDouble() < mutationChance) {
-                    int index = random.nextInt(mutations.size());
-                    IMutation mutation = mutations.get(index);
-                    TrajectoryFitness parent = parentSelectionStrategy.getNextParent();
-                    TrajectoryFitness child = mutation.mutate(parent, context);
-                    if (child != null) {
-                        childPopulation.add(child);
+            so.mutationChance.set(so.mutationRate.getMutationChance(currentPopulation, survivedPopulation, so.parentPopulation.get()));
+
+            so.childPopulation.clear();
+            for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
+                so.childPopulation.add(trajectoryFitness);
+            }
+
+            // child generation
+            so.barrierBeforeChildGeneration.await();
+            generateChildren();
+            so.barrierAfterChildGeneration.await();
+
+            currentPopulation = new ArrayList<TrajectoryFitness>(so.childPopulation);
+        }
+
+    }
+
+    protected void startThreads() {
+        while (context.tryStartNewThread(new EvolutionaryStrategy()) != null);
+    }
+
+    protected void generateChildren() {
+
+        localParentSelector.init(so.parentPopulation.get());
+
+        while (so.childPopulationSize > so.childPopulation.size()) {
+
+            // TODO no sync between child generation => may generate children unnecessarily => performance issues
+
+            if (random.nextDouble() < so.mutationChance.get()) {
+                int index = random.nextInt(so.mutations.size());
+                IMutation mutation = so.mutations.get(index);
+                TrajectoryFitness parent = localParentSelector.getNextParent();
+                TrajectoryFitness child = mutation.mutate(parent, context);
+                if (child != null) {
+                    boolean shouldBreak = addToChildren(child);
+                    if (shouldBreak) {
+                        break;
                     }
-                } else {
-                    int index = random.nextInt(crossovers.size());
-                    ICrossover crossover = crossovers.get(index);
-                    TrajectoryFitness parent1 = parentSelectionStrategy.getNextParent();
-                    TrajectoryFitness parent2 = parentSelectionStrategy.getNextParent();
-                    TrajectoryFitness[] children = crossover.mutate(parent1, parent2, context);
-                    if (children != null) {
-                        childPopulation.add(children[0]);
-                        childPopulation.add(children[1]);
+                }
+            } else {
+                int index = random.nextInt(so.crossovers.size());
+                ICrossover crossover = so.crossovers.get(index);
+                TrajectoryFitness parent1 = localParentSelector.getNextParent();
+                TrajectoryFitness parent2 = localParentSelector.getNextParent();
+                TrajectoryFitness[] children = crossover.mutate(parent1, parent2, context);
+                if (children != null) {
+                    boolean shouldBreak = addToChildren(children[0]);
+                    if (shouldBreak) {
+                        break;
+                    }
+                    shouldBreak = addToChildren(children[1]);
+                    if (shouldBreak) {
+                        break;
                     }
                 }
             }
-            
-            currentPopulation = new ArrayList<TrajectoryFitness>(childPopulation);
         }
-        
     }
 
-    private void savePopulationsAsSolutions(List<TrajectoryFitness> survivedPopulation) {
+    /**
+     * 
+     * @param child
+     * @return True, if children population is full.
+     */
+    protected boolean addToChildren(TrajectoryFitness child) {
+        synchronized (so.barrierBeforeChildGeneration) {
+            if (so.childPopulationSize > so.childPopulation.size()) {
+                so.childPopulation.add(child);
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    protected void savePopulationsAsSolutions(List<TrajectoryFitness> survivedPopulation) {
         for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
             if (trajectoryFitness.rank == 1) {
                 context.backtrackUntilRoot();
@@ -162,7 +263,7 @@ public class EvolutionaryStrategy implements IStrategy {
 
     @Override
     public void interruptStrategy() {
-        initialPopulationSelector.interruptStrategy();
+        so.initialPopulationSelector.interruptStrategy();
         isInterrupted.set(true);
     }
 

@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary;
 
+import org.eclipse.viatra.dse.evolutionary.EvolutionaryStrategy.EvolutionaryStrategySharedObject;
 import org.eclipse.viatra.dse.evolutionary.crossovers.CutAndSpliceCrossover;
 import org.eclipse.viatra.dse.evolutionary.crossovers.SwapTransitionCrossover;
 import org.eclipse.viatra.dse.evolutionary.evaluation.FrontsAndCrowdingDistanceEvaluationStrategy;
@@ -100,79 +101,83 @@ public class EvolutionaryStrategyBuilder {
     }
 
     public EvolutionaryStrategy build() {
-        Preconditions.checkNotNull(strategy.initialPopulationSelector, "Initial population selector is not set!");
-        Preconditions.checkNotNull(strategy.evaluationStrategy, "Evaluation strategy is not set!");
-        Preconditions.checkNotNull(strategy.survivalStrategy, "Survival strategy is not set!");
-        Preconditions.checkNotNull(strategy.reproductionStrategy, "Reproductions strategy is not set!");
-        Preconditions.checkNotNull(strategy.parentSelectionStrategy, "Parent selection strategy is not set!");
-        Preconditions.checkNotNull(strategy.stopCondition, "Stop condition is not set!");
-        Preconditions.checkNotNull(strategy.mutationRate, "Mutation rate is not set!");
-        Preconditions.checkArgument(!(strategy.mutations.isEmpty() && strategy.crossovers.isEmpty()),
+        Preconditions.checkNotNull(strategy.so.initialPopulationSelector, "Initial population selector is not set!");
+        Preconditions.checkNotNull(strategy.so.evaluationStrategy, "Evaluation strategy is not set!");
+        Preconditions.checkNotNull(strategy.so.survivalStrategy, "Survival strategy is not set!");
+        Preconditions.checkNotNull(strategy.so.reproductionStrategy, "Reproductions strategy is not set!");
+        Preconditions.checkNotNull(strategy.so.parentSelectionStrategy, "Parent selection strategy is not set!");
+        Preconditions.checkNotNull(strategy.so.stopCondition, "Stop condition is not set!");
+        Preconditions.checkNotNull(strategy.so.mutationRate, "Mutation rate is not set!");
+        Preconditions.checkArgument(!(strategy.so.mutations.isEmpty() && strategy.so.crossovers.isEmpty()),
                 "No mutation nor crossover operations added!");
-        Preconditions.checkArgument(strategy.initialPopulationSize > 0,
+        Preconditions.checkArgument(strategy.so.initialPopulationSize > 0,
                 "Initial population size is not set correctly!");
-        Preconditions.checkArgument(strategy.childPopulationSize > 0, "Child population size is not set correctly!");
+        Preconditions.checkArgument(strategy.so.childPopulationSize > 0, "Child population size is not set correctly!");
 
         return strategy;
     }
 
     public void setInitialPopulationSize(int populationSize) {
-        strategy.initialPopulationSize = populationSize;
+        strategy.so.initialPopulationSize = populationSize;
     }
 
     public void setChildPopulationSize(int childPopulationSize) {
-        strategy.childPopulationSize = childPopulationSize;
+        strategy.so.childPopulationSize = childPopulationSize;
     }
 
     public void setInitialPopulationSelector(IInitialPopulationSelector initialPopulationSelector) {
-        strategy.initialPopulationSelector = initialPopulationSelector;
+        strategy.so.initialPopulationSelector = initialPopulationSelector;
     }
 
     public void setEvaluationStrategy(IEvaluationStrategy evaluationStrategy) {
-        strategy.evaluationStrategy = evaluationStrategy;
+        strategy.so.evaluationStrategy = evaluationStrategy;
     }
 
     public void setSurvivalStrategy(ISurvivalStrategy survivalStrategy) {
-        strategy.survivalStrategy = survivalStrategy;
+        strategy.so.survivalStrategy = survivalStrategy;
     }
 
     public void setReproductionStrategy(IReproductionStrategy reproductionStrategy) {
-        strategy.reproductionStrategy = reproductionStrategy;
+        strategy.so.reproductionStrategy = reproductionStrategy;
     }
 
     public void setParentSelectionStrategy(IParentSelectionStrategy parentSelectionStrategy) {
-        strategy.parentSelectionStrategy = parentSelectionStrategy;
+        strategy.so.parentSelectionStrategy = parentSelectionStrategy;
     }
 
     public void setStopCondition(IStopCondition stopCondition) {
-        strategy.stopCondition = stopCondition;
+        strategy.so.stopCondition = stopCondition;
     }
 
     public void setMutationRate(IMutationRate mutationRate) {
-        strategy.mutationRate = mutationRate;
+        strategy.so.mutationRate = mutationRate;
     }
 
     public void addCrossover(ICrossover crossover) {
-        strategy.crossovers.add(crossover);
+        strategy.so.crossovers.add(crossover);
     }
 
     public void addCrossover(ICrossover crossover, int weight) {
         for (; weight > 0; weight--) {
-            strategy.crossovers.add(crossover);
+            strategy.so.crossovers.add(crossover);
         }
     }
 
     public void addMutation(IMutation mutation) {
-        strategy.mutations.add(mutation);
+        strategy.so.mutations.add(mutation);
     }
 
     public void addMutation(IMutation mutation, int weight) {
         for (; weight > 0; weight--) {
-            strategy.mutations.add(mutation);
+            strategy.so.mutations.add(mutation);
         }
     }
 
     public void addStrategyAdapter(IEvolutionaryStrategyAdapter adapter) {
         strategy.adapters.add(adapter);
+    }
+    
+    public EvolutionaryStrategySharedObject getConfigurationObject() {
+        return strategy.so;
     }
 }

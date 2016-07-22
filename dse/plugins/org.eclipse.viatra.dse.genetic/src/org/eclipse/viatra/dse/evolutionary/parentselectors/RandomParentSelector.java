@@ -31,4 +31,9 @@ public class RandomParentSelector implements IParentSelectionStrategy {
         return parentPopulation.get(index);
     }
 
+    @Override
+    public IParentSelectionStrategy createNew() {
+        return new RandomParentSelector();
+    }
+
 }

@@ -17,5 +17,6 @@ public interface IParentSelectionStrategy {
 
     void init(List<TrajectoryFitness> actualParentPopulation);
     TrajectoryFitness getNextParent();
+    IParentSelectionStrategy createNew();
 
 }
