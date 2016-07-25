@@ -11,6 +11,8 @@ package org.eclipse.viatra.dse.api;
 
 import org.eclipse.viatra.dse.objectives.impl.CompositeObjective;
 import org.eclipse.viatra.dse.objectives.impl.ConstraintsObjective;
+import org.eclipse.viatra.dse.objectives.impl.DummyHardObjective;
+import org.eclipse.viatra.dse.objectives.impl.MinimalDepthHardObjective;
 import org.eclipse.viatra.dse.objectives.impl.NoRuleActivationsHardObjective;
 import org.eclipse.viatra.dse.objectives.impl.TrajectoryCostSoftObjective;
 
@@ -80,6 +82,54 @@ public class Objectives {
      */
     public static CompositeObjective createCompositeObjective(String name) {
         return new CompositeObjective(name);
+    }
+
+    /**
+     * This hard objective is fulfilled in any circumstances. Use it if all states should be regarded as a valid
+     * solution.
+     * 
+     * @return The objective.
+     * @see DummyHardObjective
+     */
+    public static DummyHardObjective createDummyHardObjective() {
+        return new DummyHardObjective();
+    }
+
+    /**
+     * This hard objective is fulfilled in any circumstances. Use it if all states should be regarded as a valid
+     * solution.
+     * 
+     * @param name
+     * @return The objective.
+     * @see DummyHardObjective
+     */
+    public static DummyHardObjective createDummyHardObjective(String name) {
+        return new DummyHardObjective(name);
+    }
+
+    /**
+     * This hard objective is fulfilled if the trajectory is longer than a predefined number.
+     * 
+     * @param minDepth
+     *            0 means all trajectory will be regarded as a solution.
+     * @return The objective.
+     * @see MinimalDepthHardObjective
+     */
+    public static MinimalDepthHardObjective createMinimalDepthHardObjective(int minDepth) {
+        return new MinimalDepthHardObjective(minDepth);
+    }
+
+    /**
+     * This hard objective is fulfilled if the trajectory is longer than a predefined number.
+     * 
+     * @param name
+     * @param minDepth
+     *            0 means all trajectory will be regarded as a solution.
+     * @return The objective.
+     * @see MinimalDepthHardObjective
+     */
+    public static MinimalDepthHardObjective createMinimalDepthHardObjective(String name, int minDepth) {
+        return new MinimalDepthHardObjective(name, minDepth);
     }
 
 }
