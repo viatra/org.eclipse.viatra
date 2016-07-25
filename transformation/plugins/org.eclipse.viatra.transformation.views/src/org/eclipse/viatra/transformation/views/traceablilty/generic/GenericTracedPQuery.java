@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra.transformation.views.traceablilty.generic;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,8 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.views.traceability.patterns.util.TraceQuerySpecification;
 
+import com.google.common.collect.Lists;
+
 /**
  * This PQuery class defines an extended query for the given referenced query with the additional trace object.
  * <pre>pattern baseQuery&lt;referenced&gt;&lt;traced&gt;(&lt;base parameters&gt;, &lt;referenced parameters&gt;, &lt;trace&gt;)</pre>
@@ -43,6 +46,7 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
     private static final String DEFAULT_SUBPACKAGE = "traced";
     private static final String DEFAULT_POSTFIX = "<traced>";
     public static final String TRACE_PARAMETER = "<trace>";
+    final PParameter traceParameter = new PParameter(TRACE_PARAMETER);
     
     private String traceabilityId;
     
@@ -56,14 +60,14 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
     @Override
     protected Set<PBody> doGetContainedBodies() throws QueryInitializationException {
         PBody body = super.doGetContainedBodies().iterator().next();
-        PVariable var_trace = body.getOrCreateVariableByName(TRACE_PARAMETER);
+        final PVariable var_trace = body.getOrCreateVariableByName(TRACE_PARAMETER);
         PVariable var_id = body.getOrCreateVariableByName(referencedQuery.getFullyQualifiedName());
         PVariable var_su = body.getOrCreateVariableByName("_");
         PVariable var_traceability = body.newConstantVariable(traceabilityId);
         
         List<ExportedParameter> symbolicParameters = body.getSymbolicParameters();
         Collection<String> baseParameters = getBaseParameters();
-        symbolicParameters.add(new ExportedParameter(body, var_trace, var_trace.getName()));
+        symbolicParameters.add(new ExportedParameter(body, var_trace, traceParameter));
         getParameters().add(new PParameter(var_trace.getName()));
         body.setSymbolicParameters(symbolicParameters);
         
@@ -82,6 +86,13 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
         return Collections.<PBody> singleton(body);
     }
     
+    @Override
+    public List<PParameter> getParameters() {
+        ArrayList<PParameter> parameters = Lists.newArrayList(super.getParameters());
+        parameters.add(traceParameter);
+        return parameters;
+    }
+
     @Override
     public String getFullyQualifiedName() {
         String fqn = referencedQuery.getFullyQualifiedName();

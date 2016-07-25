@@ -18,6 +18,10 @@ import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingExcepti
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.VariableDeferredPConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+
+import com.google.common.base.Preconditions;
 
 /**
  * @author Gabor Bergmann
@@ -25,13 +29,31 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.VariableDeferredPConstr
  */
 public class ExportedParameter extends VariableDeferredPConstraint {
     PVariable parameterVariable;
-    String parameterName;
-
+    final String parameterName;
+    final PParameter patternParameter;
+    
+    /**
+     * @since 1.4
+     */
+    public ExportedParameter(PBody pBody, PVariable parameterVariable,
+            PParameter patternParameter) {
+        super(pBody, Collections.singleton(parameterVariable));
+        this.parameterVariable = parameterVariable;
+        this.patternParameter = patternParameter;
+        parameterName = patternParameter.getName();
+    }
+    
+    
+    /**
+     * @deprecated Use {@link #ExportedParameter(PBody, PVariable, PParameter)} instead
+     */
+    @Deprecated
     public ExportedParameter(PBody pBody, PVariable parameterVariable,
             String parameterName) {
         super(pBody, Collections.singleton(parameterVariable));
         this.parameterVariable = parameterVariable;
         this.parameterName = parameterVariable.getName();
+        this.patternParameter = null;
     }
 
     @Override
@@ -51,6 +73,12 @@ public class ExportedParameter extends VariableDeferredPConstraint {
         return Collections.emptySet();
     }
 
+    /**
+     * The name of the parameter; usually, it is expected that {@link #getParameterVariable()} is more useful, except
+     * maybe for debugging purposes.
+     * 
+     * @return a non-null name of the parameter
+     */
     public String getParameterName() {
         return parameterName;
     }
@@ -59,6 +87,23 @@ public class ExportedParameter extends VariableDeferredPConstraint {
         return parameterVariable;
     }
 
+    /**
+     * @since 1.4
+     */
+    public PParameter getPatternParameter() {
+        if (patternParameter == null) {
+            PQuery query = pBody.getPattern();
+            Integer index = query.getPositionOfParameter(parameterName);
+            if (index == null) {
+                throw new IllegalStateException(String.format("Pattern %s does not have a parameter named %s",
+                        query.getFullyQualifiedName(), parameterName));
+            }
+            return query.getParameters().get(index);
+        } else {
+            return patternParameter;
+        }
+    }
+    
     @Override
     public Set<PVariable> getDeferringVariables() {
         return Collections.singleton(parameterVariable);

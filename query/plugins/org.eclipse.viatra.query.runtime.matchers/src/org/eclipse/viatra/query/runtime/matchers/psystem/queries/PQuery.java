@@ -33,6 +33,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
  * 
  * @author Zoltan Ujhelyi
  * @since 0.8.0
+ * @noimplement This interface is not intended to be implemented by clients. Use {@link BasePQuery} as a base class instead.
  */
 public interface PQuery extends PQueryHeader {
 
@@ -48,6 +49,11 @@ public interface PQuery extends PQueryHeader {
          * Marks that the query definition is not initialized
          */
         UNINITIALIZED,
+        /**
+         * Marks that the query definition is being initialized
+         * @since 1.4
+         */
+        INITIALIZING,
         /**
          * The query definition was successfully initialized
          */
@@ -129,7 +135,7 @@ public interface PQuery extends PQueryHeader {
 	 * @return a non-null set of type judgements that the query guarantees for its matches
 	 */
 	public Set<TypeJudgement> getTypeGuarantees();
-	
+
 	/**
 	 * If the query definition is uninitialized, initializes it.
 	 * @throws QueryInitializationException if initialization of query specification fails

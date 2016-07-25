@@ -140,7 +140,7 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
 
     @Override
     public PDisjunction getDisjunctBodies() {
-        Preconditions.checkState(!getStatus().equals(PQueryStatus.UNINITIALIZED), "Query %s is not initialized.", getFullyQualifiedName());
+        Preconditions.checkState(!isMutable(), "Query %s is not initialized.", getFullyQualifiedName());
         Preconditions.checkState(!getStatus().equals(PQueryStatus.ERROR), "Query %s contains errors.", getFullyQualifiedName());
         return super.getDisjunctBodies();
     }
@@ -168,7 +168,7 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
      */
     @Override
     public void initializeBodies(Set<PBody> bodies) throws QueryInitializationException {
-        Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The bodies can only be set for uninitialized queries.");
+        Preconditions.checkState(isMutable(), "The bodies can only be set for uninitialized queries.");
         if (bodies.isEmpty()) {
             addError(new PProblem("No bodies specified for query"));
         } else {
@@ -178,13 +178,13 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
     
     @Override
 	public final void setStatus(PQueryStatus newStatus) {
-        Preconditions.checkState(getStatus().equals(PQueryStatus.UNINITIALIZED), "The status of the specification can only be set for uninitialized queries.");
+        Preconditions.checkState(isMutable(), "The status of the specification can only be set for uninitialized queries.");
         super.setStatus(newStatus);
     }
 	@Override
 	public void addError(PProblem problem) {
         Preconditions.checkState(
-        		getStatus().equals(PQueryStatus.UNINITIALIZED) || getStatus().equals(PQueryStatus.ERROR), 
+                isMutable() || getStatus().equals(PQueryStatus.ERROR), 
         		"Errors can only be added to unitialized or erroneous queries.");
         super.addError(problem);
 	}

@@ -31,6 +31,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Binary
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IConstraintFilter.AllowAllFilter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IVariableRenamer.SameName;
@@ -155,7 +156,13 @@ public class PBodyCopier {
 
     protected ExportedParameter copyExportedParameterConstraint(ExportedParameter exportedParameter) {
         PVariable mappedPVariable = variableMapping.get(exportedParameter.getParameterVariable());
-        ExportedParameter newExportedParameter = new ExportedParameter(body, mappedPVariable, exportedParameter.getParameterName());
+        PParameter parameter = exportedParameter.getPatternParameter();
+        ExportedParameter newExportedParameter;
+        if (parameter == null) {
+            newExportedParameter = new ExportedParameter(body, mappedPVariable, exportedParameter.getParameterName());
+        } else {
+            newExportedParameter = new ExportedParameter(body, mappedPVariable, parameter);
+        }
         body.getSymbolicParameters().add(newExportedParameter);
         return newExportedParameter;
     }

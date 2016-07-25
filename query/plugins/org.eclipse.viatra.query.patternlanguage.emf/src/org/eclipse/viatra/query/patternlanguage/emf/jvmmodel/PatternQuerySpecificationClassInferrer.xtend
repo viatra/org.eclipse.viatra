@@ -176,7 +176,19 @@ class PatternQuerySpecificationClassInferrer {
 		pQueryClass.members += pattern.toField("INSTANCE", typeRef(pQueryClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
 			final = true
 			static = true
-			initializer = '''new «pattern.querySpecificationPQueryClassName»()''';
+			initializer = '''new «pattern.querySpecificationPQueryClassName»()'''
+		]
+		for (parameter : pattern.parameters) {
+		    pQueryClass.members += pattern.toField(parameter.PParameterName, typeRef(typeof(PParameter)))[
+		        final = true
+		        visibility = JvmVisibility::PRIVATE
+		        initializer = parameter.parameterInstantiation
+		    ]
+		}
+		pQueryClass.members += pattern.toField("parameters", typeRef(typeof(List), typeRef(typeof(PParameter))))[
+	        final = true
+		    visibility = JvmVisibility::PRIVATE
+		    initializer = '''«Arrays».asList(«FOR param : pattern.parameters SEPARATOR ", "»«param.PParameterName»«ENDFOR»)'''
 		]
 		
 		pQueryClass.members += pattern.toMethod("getFullyQualifiedName", typeRef(typeof (String))) [
@@ -192,19 +204,11 @@ class PatternQuerySpecificationClassInferrer {
 			annotations += annotationRef(typeof(Override))
 			body = '''return «Arrays».asList(«FOR param : pattern.parameters SEPARATOR ","»"«param.name»"«ENDFOR»);'''
 		]
-		pQueryClass.members += pattern.toField("parameters", typeRef(typeof(List), typeRef(typeof(PParameter))))[
-		    visibility = JvmVisibility::PRIVATE
-		]
 		pQueryClass.members += pattern.toMethod("getParameters",
 			typeRef(typeof(List), typeRef(typeof(PParameter)))) [
 			visibility = JvmVisibility::PUBLIC
 			annotations += annotationRef(typeof(Override))
-			body = '''
-			if (parameters == null) {
-			     parameters = «Arrays».asList(
-			     «FOR param : pattern.parameters SEPARATOR ",\n"»«param.parameterInstantiation»«ENDFOR»
-			);}
-			return parameters;'''
+			body = '''return parameters;'''
 		]
 		pQueryClass.members += pattern.toMethod("doGetContainedBodies",
 			typeRef(typeof(Set), typeRef(typeof(PBody)))) [

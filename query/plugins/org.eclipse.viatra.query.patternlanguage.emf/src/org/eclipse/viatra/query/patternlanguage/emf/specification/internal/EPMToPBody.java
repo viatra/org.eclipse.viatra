@@ -33,6 +33,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMa
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
@@ -40,6 +41,9 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.xtext.xbase.XExpression;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -80,9 +84,21 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     public void acceptExportedParameters(List<Variable> parameters) {
         List<ExportedParameter> exportedParameters = Lists.newArrayList();
         for (Variable parameter : parameters) {
-            String parameterName = parameter.getName();
+            final String parameterName = parameter.getName();
             PVariable pVariable = findPVariable(parameterName);
-            ExportedParameter exportedParameter = new ExportedParameter(pBody, pVariable, parameterName);
+            PParameter param = Iterables.tryFind(pBody.getPattern().getParameters(), new Predicate<PParameter>() {
+
+                @Override
+                public boolean apply(PParameter input) {
+                    return input != null && Objects.equal(input.getName(), parameterName);
+                }
+                
+            }).orNull();
+            if (param == null) {
+                // TODO better, localized error reporting
+                throw new IllegalStateException(String.format("Pattern %s does not have a parameter %s", pBody.getPattern().getFullyQualifiedName(), parameterName));
+            }
+            ExportedParameter exportedParameter = new ExportedParameter(pBody, pVariable, param);
             exportedParameters.add(exportedParameter);
         }
         pBody.setSymbolicParameters(exportedParameters);

@@ -435,6 +435,12 @@ class EMFPatternLanguageJvmModelInferrerUtil {
     }
     
     /**
+     * Calculates the name of the variable that stores a PParameter for a pattern
+     * @since 1.4
+     */
+    public def String getPParameterName(Variable parameter) '''parameter_«parameter.parameterName»'''
+    
+    /**
      * Output code is intended for generated query specification classes, 
      *  since it depends on 'getFeatureLiteral()' / 'getClassifierLiteral()'
      * 
