@@ -28,7 +28,8 @@ public class DepthFirstStrategy implements IStrategy {
     
     private Logger logger = Logger.getLogger(getClass());
 
-    private Random random = new Random(); 
+    private Random random = new Random();
+    private boolean backTrackIfSolution = true; 
     
     public DepthFirstStrategy(int maxDepth) {
         if (maxDepth <= 0) {
@@ -37,7 +38,12 @@ public class DepthFirstStrategy implements IStrategy {
             this.maxDepth = maxDepth;
         }
     }
-    
+
+    public DepthFirstStrategy continueIfHardObjectivesFulfilled() {
+        backTrackIfSolution = false;
+        return this;
+    }
+
     @Override
     public void initStrategy(ThreadContext context) {
         if (context.getSharedObject() == null) {
@@ -71,13 +77,15 @@ public class DepthFirstStrategy implements IStrategy {
             Fitness fitness = context.calculateFitness();
             if (fitness.isSatisifiesHardObjectives()) {
                 context.newSolution();
-                boolean isSuccessfulUndo = context.backtrack();
-                if (!isSuccessfulUndo) {
-                    logger.info("Found a solution but cannot backtrack.");
-                    break;
-                } else {
-                    logger.debug("Found a solution, backtrack.");
-                    continue;
+                if (backTrackIfSolution) {
+                    boolean isSuccessfulUndo = context.backtrack();
+                    if (!isSuccessfulUndo) {
+                        logger.info("Found a solution but cannot backtrack.");
+                        break;
+                    } else {
+                        logger.debug("Found a solution, backtrack.");
+                        continue;
+                    }
                 }
             }
 
