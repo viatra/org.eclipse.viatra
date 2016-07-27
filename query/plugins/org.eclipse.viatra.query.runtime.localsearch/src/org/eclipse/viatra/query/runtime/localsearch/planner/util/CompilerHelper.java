@@ -167,6 +167,10 @@ public class CompilerHelper {
         Set<Integer> variableIndices = Sets.newHashSet();
         for (PParameter parameter : parameters) {
             PVariable parameterVariable = parameterMapping.get(parameter);
+            if (parameterVariable == null) {
+                // XXX In case of older (pre-1.4) VIATRA versions, PParameters were not stable, see bug 498348
+                parameterVariable = plan.getBody().getVariableByNameChecked(parameter.getName());
+            }
             Integer variableIndex = variableMappings.get(parameterVariable);
             variableIndices.add(variableIndex);
         }

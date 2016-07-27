@@ -200,7 +200,12 @@ public class LocalSearchPlanner{
         }
         Set<PVariable> boundVariables = Sets.newHashSet();
         for (PParameter parameter : boundParameters) {
-            boundVariables.add(parameterMapping.get(parameter));
+            PVariable mappedParameter = parameterMapping.get(parameter);
+            if (mappedParameter == null) {
+                // XXX In case of older (pre-1.4) VIATRA versions, PParameters were not stable, see bug 498348
+                mappedParameter = normalizedBody.getVariableByNameChecked(parameter.getName());
+            }
+            boundVariables.add(mappedParameter);
         }
         return boundVariables;
     }
