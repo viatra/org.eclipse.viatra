@@ -39,7 +39,7 @@
 		<module>../../cep/features/org.eclipse.viatra.cep.feature</module>
 
 		<!-- DSE -->
-		<module>../../dse/plugins/org.eclipse.viatra.dse.base</module>
+		<module>../../dse/plugins/org.eclipse.viatra.dse</module>
 		<module>../../dse/plugins/org.eclipse.viatra.dse.genetic</module>
 		<module>../../dse/features/org.eclipse.viatra.dse.feature</module>
 
