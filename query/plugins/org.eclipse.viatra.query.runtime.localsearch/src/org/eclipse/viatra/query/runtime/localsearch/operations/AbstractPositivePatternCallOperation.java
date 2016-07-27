@@ -66,7 +66,7 @@ public abstract class AbstractPositivePatternCallOperation implements ISearchOpe
         filledVariables = Sets.newHashSet();
         Multimap<Integer, Integer> backMap = Multimaps.invertFrom(Multimaps.forMap(frameMapping), ArrayListMultimap.<Integer, Integer>create());
         for(int i=0;i<tuple.getSize();i++){
-            if (!adornment.contains(i)){
+            if (!adornment.contains(calledQuery.getParameters().get(i))){
                 Object value = null;
                 for(Integer j : backMap.get(i)){
                     Object filledValue = tuple.get(i);

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.queries;
 
+import java.util.Objects;
+
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 /**
@@ -65,8 +67,20 @@ public class PParameter {
 	public IInputKey getDeclaredUnaryType() {
 		return declaredUnaryType;
 	}
-    
-    
 
+	@Override
+	public boolean equals(Object obj) {
+	    if (obj instanceof PParameter) {
+	        return Objects.equals(name, ((PParameter) obj).name)
+	            && Objects.equals(typeName, ((PParameter) obj).typeName)
+	            && Objects.equals(declaredUnaryType, ((PParameter) obj).declaredUnaryType);
+	    }
+	    return false;
+	}
+	
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, typeName, declaredUnaryType);
+    }
 
 }

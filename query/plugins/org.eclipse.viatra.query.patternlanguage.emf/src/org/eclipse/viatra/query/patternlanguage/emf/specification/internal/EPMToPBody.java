@@ -86,16 +86,16 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
         for (Variable parameter : parameters) {
             final String parameterName = parameter.getName();
             PVariable pVariable = findPVariable(parameterName);
-            PParameter param = Iterables.tryFind(pBody.getPattern().getParameters(), new Predicate<PParameter>() {
+            // param should always exist as PParameters are created from the input Variable list of this method
+            PParameter param = Iterables.find(pBody.getPattern().getParameters(), new Predicate<PParameter>() {
 
                 @Override
                 public boolean apply(PParameter input) {
                     return input != null && Objects.equal(input.getName(), parameterName);
                 }
                 
-            }).orNull();
+            });
             if (param == null) {
-                // TODO better, localized error reporting
                 throw new IllegalStateException(String.format("Pattern %s does not have a parameter %s", pBody.getPattern().getFullyQualifiedName(), parameterName));
             }
             ExportedParameter exportedParameter = new ExportedParameter(pBody, pVariable, param);
