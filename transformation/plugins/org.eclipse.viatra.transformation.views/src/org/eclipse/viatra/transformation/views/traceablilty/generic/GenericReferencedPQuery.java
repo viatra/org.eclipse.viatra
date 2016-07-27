@@ -112,7 +112,7 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
 
         for (PParameter originalParam : originalParams) {
             PVariable var_param = body.getOrCreateVariableByName(originalParam.getName());
-            symbolicParameters.add(new ExportedParameter(body, var_param, var_param.getName()));
+            symbolicParameters.add(new ExportedParameter(body, var_param, originalParam));
             newVariables.add(var_param);
         }
 
@@ -136,7 +136,7 @@ public class GenericReferencedPQuery extends BaseGeneratedEMFPQuery {
 
     private void insertTraceCall(PBody body, PParameter pTarget) throws ViatraQueryException {
         PVariable var_target = body.getOrCreateVariableByName(pTarget.getName());
-        body.getSymbolicParameters().add(new ExportedParameter(body, var_target, var_target.getName()));
+        body.getSymbolicParameters().add(new ExportedParameter(body, var_target, pTarget));
 
         PVariable var_id = null;
         if (traceIds.containsKey(pTarget))

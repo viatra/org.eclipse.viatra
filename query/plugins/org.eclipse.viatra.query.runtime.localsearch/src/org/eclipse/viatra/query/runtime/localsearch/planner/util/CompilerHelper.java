@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.POperation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -66,9 +67,9 @@ public class CompilerHelper {
     }
 
     public static Map<PConstraint, Set<Integer>> cacheVariableBindings(SubPlan plan,
-            Map<PVariable, Integer> variableMappings, Set<Integer> adornment) {
+            Map<PVariable, Integer> variableMappings, Set<PParameter> adornment) {
 
-        Set<Integer> externallyBoundVariables = getVariableIndicesForParameterIndices(plan, variableMappings,
+        Set<Integer> externallyBoundVariables = getVariableIndicesForParameters(plan, variableMappings,
                 adornment);
 
         Map<PConstraint, Set<Integer>> variableBindings = Maps.newHashMap();
@@ -152,16 +153,20 @@ public class CompilerHelper {
      *            the SubPlan containing the original body and its parameters
      * @param variableMappings
      *            the mapping of PVariables to their indices
-     * @param parameterIndices
-     *            the index of a parameter
+     * @param parameters
+     *            a set of parameters
      * @return the index of the variable corresponding to the parameter at the given index
      */
-    private static Set<Integer> getVariableIndicesForParameterIndices(SubPlan plan,
-            Map<PVariable, Integer> variableMappings, Set<Integer> parameterIndices) {
+    private static Set<Integer> getVariableIndicesForParameters(SubPlan plan,
+            Map<PVariable, Integer> variableMappings, Set<PParameter> parameters) {
+        Map<PParameter, PVariable> parameterMapping = Maps.newHashMap();
+        for (ExportedParameter constraint : plan.getBody().getSymbolicParameters()) {
+            parameterMapping.put(constraint.getPatternParameter(), constraint.getParameterVariable());
+        }
+        
         Set<Integer> variableIndices = Sets.newHashSet();
-        List<ExportedParameter> symbolicParameters = plan.getBody().getSymbolicParameters();
-        for (Integer parameterIndex : parameterIndices) {
-            PVariable parameterVariable = symbolicParameters.get(parameterIndex).getParameterVariable();
+        for (PParameter parameter : parameters) {
+            PVariable parameterVariable = parameterMapping.get(parameter);
             Integer variableIndex = variableMappings.get(parameterVariable);
             variableIndices.add(variableIndex);
         }

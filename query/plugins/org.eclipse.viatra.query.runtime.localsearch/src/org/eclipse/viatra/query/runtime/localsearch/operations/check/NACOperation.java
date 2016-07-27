@@ -20,7 +20,9 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Preconditions;
@@ -35,11 +37,13 @@ public class NACOperation extends CheckOperation implements IMatcherBasedOperati
 
     PQuery calledQuery;
     LocalSearchMatcher matcher;
+    final Map<Integer, Integer> frameMapping;
+    final Map<Integer, PParameter> parameterMapping;
     
 	@Override
 	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
-		Set<Integer> adornment = Sets.newHashSet();
-		for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+		Set<PParameter> adornment = Sets.newHashSet();
+		for (Entry<Integer, PParameter> mapping : parameterMapping.entrySet()) {
 		    Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
             Preconditions.checkNotNull(mapping.getValue(), "Mapping frame must not contain null values");
 			Integer source = mapping.getKey();
@@ -56,12 +60,12 @@ public class NACOperation extends CheckOperation implements IMatcherBasedOperati
 		return matcher;
 	}
 
-    Map<Integer, Integer> frameMapping;
 
-    public NACOperation(PQuery calledQuery, Map<Integer, Integer> frameMapping) {
+    public NACOperation(PQuery calledQuery, Map<Integer, PParameter> parameterMapping) {
         super();
         this.calledQuery = calledQuery;
-        this.frameMapping = frameMapping;
+        this.parameterMapping = parameterMapping;
+        this.frameMapping = CallOperationHelper.calculateFrameMapping(calledQuery, parameterMapping);
     }
     
     public PQuery getCalledQuery() {

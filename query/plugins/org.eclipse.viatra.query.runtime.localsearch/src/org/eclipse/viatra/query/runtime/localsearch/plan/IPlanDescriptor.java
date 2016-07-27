@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.plan;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
@@ -40,6 +41,6 @@ public interface IPlanDescriptor {
      * The set of parameters this plan assumes to be bound
      * @return
      */
-    public Set<Integer> getAdornment();
+    public Set<PParameter> getAdornment();
     
 }

@@ -125,7 +125,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 parameters.forEach[parameter, index |
                     target.append('''   new ''')
                     target.append(ExportedParameter)
-                    target.append('''(body, «parameter.name.escape», "«parameter.name»")''')
+                    target.append('''(body, «parameter.name.escape», «parameter.PParameterName»)''')
                     if (index < parameters.length - 1) { // XXX separator logic
                         target.append(',')
                     }

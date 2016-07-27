@@ -43,6 +43,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -173,10 +174,10 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         Set<EStructuralFeature> featuresToIndex = Sets.newHashSet();
         Set<EDataType> dataTypesToIndex = Sets.newHashSet();
         
-        final Set<Integer> adornment = Sets.newHashSet();
+        final Set<PParameter> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i] != null) {
-                adornment.add(Integer.valueOf(i));
+                adornment.add(query.getParameters().get(i));
             }
         }
         

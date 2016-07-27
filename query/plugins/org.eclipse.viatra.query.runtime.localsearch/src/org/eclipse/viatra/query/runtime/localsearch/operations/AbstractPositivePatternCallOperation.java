@@ -20,6 +20,7 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -38,14 +39,17 @@ import com.google.common.collect.Sets;
 public abstract class AbstractPositivePatternCallOperation implements ISearchOperation, IMatcherBasedOperation {
 
     private final PQuery calledQuery;
+    private final Map<Integer, PParameter> parameterMapping;
     private final Map<Integer, Integer> frameMapping;
     LocalSearchMatcher matcher;
-    Set<Integer> adornment;
+    Set<PParameter> adornment;
     Set<Integer> filledVariables;
     
-    protected AbstractPositivePatternCallOperation(PQuery calledQuery, Map<Integer, Integer> frameMapping) {
+    protected AbstractPositivePatternCallOperation(PQuery calledQuery, Map<Integer, PParameter> parameterMapping) {
         this.calledQuery = calledQuery;
-        this.frameMapping = frameMapping;
+        this.parameterMapping = parameterMapping;
+        
+        frameMapping = CallOperationHelper.calculateFrameMapping(calledQuery, parameterMapping);
     }
     
     protected MatchingFrame mapFrame(MatchingFrame frameInCaller){
@@ -92,7 +96,7 @@ public abstract class AbstractPositivePatternCallOperation implements ISearchOpe
     @Override
     public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
         adornment = Sets.newHashSet();
-        for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+        for (Entry<Integer, PParameter> mapping : parameterMapping.entrySet()) {
             Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
             Preconditions.checkNotNull(mapping.getValue(), "Mapping frame must not contain null values");
             Integer source = mapping.getKey();

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Lists;
@@ -29,9 +30,9 @@ public class PlanDescriptor implements IPlanDescriptor {
 
     private final PQuery pquery;
     private final List<SearchPlanForBody> plan;
-    private final Set<Integer> adornment;
+    private final Set<PParameter> adornment;
     
-    public PlanDescriptor(PQuery pquery, Collection<SearchPlanForBody> plan, Set<Integer> adornment) {
+    public PlanDescriptor(PQuery pquery, Collection<SearchPlanForBody> plan, Set<PParameter> adornment) {
         this.pquery = pquery;
         this.plan = Collections.unmodifiableList(Lists.newArrayList(plan));
         this.adornment = adornment;
@@ -48,7 +49,7 @@ public class PlanDescriptor implements IPlanDescriptor {
     }
 
     @Override
-    public Set<Integer> getAdornment() {
+    public Set<PParameter> getAdornment() {
         return adornment;
     }
 

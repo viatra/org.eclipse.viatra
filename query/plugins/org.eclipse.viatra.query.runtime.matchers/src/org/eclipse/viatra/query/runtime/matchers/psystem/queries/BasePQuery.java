@@ -85,7 +85,7 @@ public abstract class BasePQuery implements PQuery {
 
 	@Override
 	public boolean isMutable() {
-	    return status.equals(PQueryStatus.UNINITIALIZED);
+	    return status.equals(PQueryStatus.UNINITIALIZED) || status.equals(PQueryStatus.INITIALIZING);
 	}
 
 	@Override
@@ -187,6 +187,7 @@ public abstract class BasePQuery implements PQuery {
 	public final void ensureInitialized() throws QueryInitializationException {
 	    try {
             if (status.equals(PQueryStatus.UNINITIALIZED)) {
+                setStatus(PQueryStatus.INITIALIZING);
                 setBodies(doGetContainedBodies());
                 setStatus(PQueryStatus.OK);
             }

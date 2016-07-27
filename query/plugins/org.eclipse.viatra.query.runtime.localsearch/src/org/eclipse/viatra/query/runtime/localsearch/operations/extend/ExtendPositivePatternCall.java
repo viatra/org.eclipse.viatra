@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.operations.AbstractPositivePatternCallOperation;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -29,10 +30,7 @@ public class ExtendPositivePatternCall extends AbstractPositivePatternCallOperat
 
     private Iterator<Tuple> matches = null;
     
-    /**
-     * @param position
-     */
-    public ExtendPositivePatternCall(PQuery calledQuery, Map<Integer, Integer> frameMapping) {
+    public ExtendPositivePatternCall(PQuery calledQuery, Map<Integer, PParameter> frameMapping) {
        super(calledQuery, frameMapping);
     }
 

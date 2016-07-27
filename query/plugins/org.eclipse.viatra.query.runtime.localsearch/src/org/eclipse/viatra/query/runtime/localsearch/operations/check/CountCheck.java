@@ -20,7 +20,9 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Preconditions;
@@ -37,13 +39,14 @@ public class CountCheck extends CheckOperation implements IMatcherBasedOperation
 
     private PQuery calledQuery;
     private LocalSearchMatcher matcher;
+    Map<Integer, PParameter> parameterMapping;
     Map<Integer, Integer> frameMapping;
     private int position;
     
 	@Override
 	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
-		Set<Integer> adornment = Sets.newHashSet();
-		for (Entry<Integer, Integer> mapping : frameMapping.entrySet()) {
+		Set<PParameter> adornment = Sets.newHashSet();
+		for (Entry<Integer, PParameter> mapping : parameterMapping.entrySet()) {
 		    Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
 		    Preconditions.checkNotNull(mapping.getValue(), "Mapping frame must not contain null values");
 			Integer source = mapping.getKey();
@@ -60,10 +63,11 @@ public class CountCheck extends CheckOperation implements IMatcherBasedOperation
 		return matcher;
 	}
     
-    public CountCheck(PQuery calledQuery, Map<Integer, Integer> frameMapping, int position) {
+    public CountCheck(PQuery calledQuery, Map<Integer, PParameter> parameterMapping, int position) {
         super();
         this.calledQuery = calledQuery;
-        this.frameMapping = frameMapping;
+        this.parameterMapping = parameterMapping;
+        this.frameMapping = CallOperationHelper.calculateFrameMapping(calledQuery, parameterMapping);
         this.position = position;
     }
 
