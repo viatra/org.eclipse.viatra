@@ -26,6 +26,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 /**
@@ -51,12 +52,27 @@ public class CompilerHelper {
             }
         }
 
-        // Reason for complexity here: not all variables were given back for call plan.getAllDeducedVariables();
-        Set<PVariable> allVariables = Sets.newHashSet();
-        Set<PConstraint> allEnforcedConstraints = plan.getAllEnforcedConstraints();
-        for (PConstraint pConstraint : allEnforcedConstraints) {
-            allVariables.addAll(pConstraint.getAffectedVariables());
-        }
+        List<PVariable> allVariables =
+        new Ordering<PVariable>() {
+
+            private boolean isUserSpecified(PVariable var) {
+                return !var.isVirtual() && !var.getName().startsWith("_"); 
+            }
+            
+            @Override
+            public int compare(PVariable left, PVariable right) {
+                boolean leftUserSpecified = isUserSpecified(left);
+                boolean rightUserSpecified = isUserSpecified(right);
+                if (leftUserSpecified && !rightUserSpecified) {
+                    return -1;
+                } else if (!leftUserSpecified && rightUserSpecified) {
+                    return +1;
+                } else {
+                    return left.getName().compareTo(right.getName());
+                }
+            }
+            
+        }.sortedCopy(plan.getBody().getUniqueVariables());
         for (PVariable pVariable : allVariables) {
             if (!variableMapping.containsKey(pVariable)) {
                 variableMapping.put(pVariable, variableNumber++);
