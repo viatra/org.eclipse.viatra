@@ -13,12 +13,15 @@ package org.eclipse.viatra.dse.api;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.viatra.dse.base.DseIdPoolHelper;
+import org.eclipse.viatra.dse.base.DseIdPoolHelper.IGetRuleExecutions;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
@@ -89,6 +92,20 @@ public class SolutionTrajectory {
         stateCoder = stateCoderFactory.createStateCoder();
         stateCoder.init(model);
         currentIndex = 0;
+        DseIdPoolHelper.INSTANCE.disposeByThread();
+        DseIdPoolHelper.INSTANCE.registerRules(new IGetRuleExecutions() {
+            
+            @Override
+            public int getRuleExecutions(BatchTransformationRule<?, ?> rule) {
+                int id = 0;
+                for (BatchTransformationRule<?,?> r : transformationRules.subList(0, currentIndex)) {
+                    if (r.equals(rule)) {
+                        id ++;
+                    }
+                }
+                return id;
+            }
+        }, new HashSet<BatchTransformationRule<?,?>>(transformationRules));
     }
 
     /**
@@ -157,7 +174,8 @@ public class SolutionTrajectory {
         if (currentIndex >= activationCodes.size()) {
             return false;
         } else {
-            doNextTransformation(currentIndex++);
+            doNextTransformation(currentIndex);
+            currentIndex++;
             return true;
         }
     }

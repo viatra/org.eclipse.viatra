@@ -9,58 +9,54 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.base;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 public enum DseIdPoolHelper {
 
     INSTANCE;
+    
+    public static interface IGetRuleExecutions {
+        int getRuleExecutions(BatchTransformationRule<?, ?> rule);
+    }
 
     public static class IdProvider {
 
         private final BatchTransformationRule<?, ?> rule;
-        private List<BatchTransformationRule<?, ?>> rulesTrajectory;
+        private IGetRuleExecutions getRuleExecutions;
 
-        public IdProvider(ThreadContext context, BatchTransformationRule<?, ?> rule) {
+        public IdProvider(IGetRuleExecutions getRuleExecutions, BatchTransformationRule<?, ?> rule) {
+            this.getRuleExecutions = getRuleExecutions;
             this.rule = rule;
-
-            rulesTrajectory = context.getDesignSpaceManager().getTrajectoryInfo().getRules();
         }
 
         public int getId() {
-            int nextId = 0;
-            for (BatchTransformationRule<?, ?> r : rulesTrajectory) {
-                if (r.equals(this.rule)) {
-                    nextId++;
-                }
-            }
-            return nextId;
+            return getRuleExecutions.getRuleExecutions(rule);
         }
 
     }
 
     private ConcurrentHashMap<Thread, HashMap<BatchTransformationRule<?, ?>, IdProvider>> idProviders = new ConcurrentHashMap<>();
-    private AtomicInteger fallBackId = new AtomicInteger();
 
     public int getId(BatchTransformationRule<?, ?> rule) {
         Thread currentThread = Thread.currentThread();
         HashMap<BatchTransformationRule<?, ?>, IdProvider> ruleMap = idProviders.get(currentThread);
         if (ruleMap == null) {
-            return fallBackId.getAndIncrement();
+            throw new DSEException("There is no registered id provider");
         }
         IdProvider idProvider = ruleMap.get(rule);
         return idProvider.getId();
     }
 
-    public void registerRules(ThreadContext context) {
+    public void registerRules(IGetRuleExecutions getRuleExecutions, Collection<BatchTransformationRule<?, ?>> rules) {
         Thread currentThread = Thread.currentThread();
         HashMap<BatchTransformationRule<?, ?>, IdProvider> ruleMap = new HashMap<>();
-        for (BatchTransformationRule<?, ?> rule : context.getGlobalContext().getTransformations()) {
-            IdProvider idProvider = new IdProvider(context, rule);
+        for (BatchTransformationRule<?, ?> rule : rules) {
+            IdProvider idProvider = new IdProvider(getRuleExecutions, rule);
             ruleMap.put(rule, idProvider);
         }
         idProviders.put(currentThread, ruleMap);
@@ -69,9 +65,5 @@ public enum DseIdPoolHelper {
     public void disposeByThread() {
         Thread currentThread = Thread.currentThread();
         idProviders.remove(currentThread);
-    }
-
-    public void resetFallBackId() {
-        fallBackId.set(0);
     }
 }

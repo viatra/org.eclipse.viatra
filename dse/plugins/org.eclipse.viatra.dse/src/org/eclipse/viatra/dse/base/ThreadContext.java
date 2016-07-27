@@ -75,6 +75,27 @@ public class ThreadContext implements IDseStrategyContext{
     private IObjective[][] leveledObjectives;
     private boolean isThereHardObjective;
     
+    private static class GetRuleExecutionsImpl implements DseIdPoolHelper.IGetRuleExecutions {
+
+        private List<BatchTransformationRule<?, ?>> executedRules;
+
+        public GetRuleExecutionsImpl(List<BatchTransformationRule<?, ?>> executedRulesView) {
+            this.executedRules = executedRulesView;
+        }
+        
+        @Override
+        public int getRuleExecutions(BatchTransformationRule<?, ?> rule) {
+            int nextId = 0;
+            for (BatchTransformationRule<?, ?> r : executedRules) {
+                if (r.equals(rule)) {
+                    nextId ++;
+                }
+            }
+            return nextId;
+        }
+        
+    }
+    
     private SingletonSetConflictResolver conflictResolver;
     
     public SingletonSetConflictResolver getConflictResolver() {
@@ -180,7 +201,7 @@ public class ThreadContext implements IDseStrategyContext{
             globalConstraint.init(this);
         }
 
-        DseIdPoolHelper.INSTANCE.registerRules(this);
+        DseIdPoolHelper.INSTANCE.registerRules(new GetRuleExecutionsImpl(getDesignSpaceManager().getTrajectoryInfo().getRules()), getRules());
 
         globalContext.initVisualizersForThread(this);
 
