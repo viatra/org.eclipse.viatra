@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.4.0,1.5.0)";
  org.eclipse.equinox.registry,
  org.eclipse.osgi,
  org.eclipse.core.runtime,
- org.eclipse.viatra.transformation.runtime.emf
+ org.eclipse.viatra.transformation.runtime.emf;visibility:=reexport
 Export-Package: org.eclipse.viatra.dse.api,
  org.eclipse.viatra.dse.api.strategy.impl,
  org.eclipse.viatra.dse.api.strategy.interfaces,
