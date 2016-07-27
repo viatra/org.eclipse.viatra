@@ -40,8 +40,6 @@
 
 		<!-- DSE -->
 		<module>../../dse/plugins/org.eclipse.viatra.dse.base</module>
-		<module>../../dse/plugins/org.eclipse.viatra.dse.api</module>
-		<module>../../dse/plugins/org.eclipse.viatra.dse.designspace</module>
 		<module>../../dse/plugins/org.eclipse.viatra.dse.genetic</module>
 		<module>../../dse/features/org.eclipse.viatra.dse.feature</module>
 
