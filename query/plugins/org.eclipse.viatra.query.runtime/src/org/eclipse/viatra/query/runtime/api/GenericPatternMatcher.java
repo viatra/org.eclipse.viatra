@@ -34,7 +34,10 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  */
 public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
 	
-
+    /**
+     * @deprecated use {@link #GenericPatternMatcher(GenericQuerySpecification)} instead
+     */
+    @Deprecated
     protected GenericPatternMatcher(
     		ViatraQueryEngine engine, 
     		GenericQuerySpecification<? extends GenericPatternMatcher> specification) 
@@ -42,6 +45,14 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
     {
         super(engine, specification);
     }    
+    
+    /**
+     * @since 1.4
+     */
+    public GenericPatternMatcher(GenericQuerySpecification<? extends GenericPatternMatcher> specification) 
+            throws ViatraQueryException {
+        super(specification);
+    }
 
     @Override
     public GenericPatternMatch arrayToMatch(Object[] parameters) {
@@ -62,8 +73,15 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
     public GenericQuerySpecification<? extends GenericPatternMatcher> getSpecification() {
         return (GenericQuerySpecification<? extends GenericPatternMatcher>)querySpecification;
     }
-    
-    
+
+    /**
+     * Internal method for {@link GenericQuerySpecification}
+     * @noreference
+     */
+    static <Matcher extends GenericPatternMatcher> GenericPatternMatcher instantiate(GenericQuerySpecification<Matcher> querySpecification) throws ViatraQueryException {
+        return new GenericPatternMatcher(querySpecification);
+    }
+  
     /**
      * Internal method for {@link GenericQuerySpecification}
      * @noreference
@@ -72,8 +90,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
 		// check if matcher already exists
 		GenericPatternMatcher matcher = engine.getExistingMatcher(querySpecification);
         if (matcher == null) {
-        	matcher = new GenericPatternMatcher(engine, querySpecification);
-        	// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it
+        	matcher = engine.getMatcher(querySpecification);
         } 	
         return matcher;
 	}

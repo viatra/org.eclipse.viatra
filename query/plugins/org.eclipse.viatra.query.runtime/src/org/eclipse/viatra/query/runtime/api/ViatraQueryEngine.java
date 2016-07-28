@@ -47,7 +47,7 @@ import com.google.common.collect.Sets;
  * 
  * 
  * @author Bergmann Gábor
- * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class ViatraQueryEngine {
     
@@ -74,6 +74,30 @@ public abstract class ViatraQueryEngine {
 	public static ViatraQueryEngine on(QueryScope scope) throws ViatraQueryException {
 		return ViatraQueryEngineManager.getInstance().getQueryEngine(scope);
 	}
+	
+	/**
+     * Obtain a (managed) {@link ViatraQueryEngine} to evaluate queries over a given scope specified by an {@link QueryScope}.
+     * 
+     * <p> For a given matcher scope, the same engine will be returned to any client. 
+     * This facilitates the reuse of internal caches of the engine, greatly improving performance.  
+     * 
+     * <p> The lifecycle of this engine is centrally managed, and will not be disposed as long as the model is retained in memory. 
+     * The engine will be garbage collected along with the model. 
+     * 
+     * <p>
+     * Advanced users: see {@link AdvancedViatraQueryEngine#createUnmanagedEngine(QueryScope)} to obtain a private, 
+     * unmanaged engine that is not shared with other clients and allows tight control over its lifecycle. 
+     * 
+     * @param scope 
+     *      the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
+     *      Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
+     * @return a (managed) {@link ViatraQueryEngine} instance
+     * @throws ViatraQueryException on initialization errors.
+	 * @since 1.4
+     */
+    public static ViatraQueryEngine on(QueryScope scope, ViatraQueryEngineOptions options) throws ViatraQueryException {
+        return ViatraQueryEngineManager.getInstance().getQueryEngine(scope, options);
+    }
 
     /**
      * Provides access to the internal base index component of the engine, responsible for keeping track of basic

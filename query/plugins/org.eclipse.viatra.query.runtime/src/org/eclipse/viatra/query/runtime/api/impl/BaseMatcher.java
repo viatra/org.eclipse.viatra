@@ -23,12 +23,13 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;
 import org.eclipse.viatra.query.runtime.internal.apiimpl.QueryResultWrapper;
+import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;
+import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Preconditions;
@@ -46,7 +47,35 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
 
     protected ViatraQueryEngine engine;
     protected IQuerySpecification<? extends BaseMatcher<Match>> querySpecification;
+    private IMatcherCapability capabilities;
 
+    /**
+     * @since 1.4
+     */
+    public BaseMatcher(IQuerySpecification<? extends BaseMatcher<Match>> querySpecification) throws ViatraQueryException{
+        this.querySpecification = querySpecification;
+        try {
+            this.querySpecification.getInternalQueryRepresentation().ensureInitialized();
+        } catch (QueryInitializationException e) {
+            throw new ViatraQueryException(e);
+        }
+    }
+    
+    /**
+     * @since 1.4
+     */
+    @Override
+    protected
+    void setBackend(ViatraQueryEngine engine, IQueryResultProvider resultProvider, IMatcherCapability capabilities){
+        this.backend = resultProvider;
+        this.engine = engine;
+        this.capabilities = capabilities;
+    }
+    
+    /**
+     * @deprecated Since 1.4, generated code uses {@link #BaseMatcher(IQuerySpecification)}
+     */
+    @Deprecated
     public BaseMatcher(ViatraQueryEngine engine,
     		IQuerySpecification<? extends BaseMatcher<Match>> querySpecification)
             throws ViatraQueryException {
@@ -61,6 +90,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
 		}
         this.backend = accessMatcher(engineImpl, querySpecification);
         engineImpl.reportMatcherInitialized(querySpecification, this);
+        this.capabilities = engineImpl.getQueryEvaluationHint(querySpecification.getInternalQueryRepresentation()).calculateRequiredCapability(querySpecification.getInternalQueryRepresentation());
     }
 
     // HELPERS
@@ -358,4 +388,11 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
 	public String getPatternName() {
 	    return querySpecification.getFullyQualifiedName();
 	}
+
+    /**
+     * @since 1.4
+     */
+    public IMatcherCapability getCapabilities() {
+        return capabilities;
+    }
 }

@@ -77,4 +77,13 @@ public interface IQuerySpecification<Matcher extends ViatraQueryMatcher<? extend
      */
     public PQuery getInternalQueryRepresentation();
     
+    /**
+     * Creates a new uninitialized matcher, which is not functional until an engine initializes it. Clients
+     * should not call this method, it is used by the {@link ViatraQueryEngine} instance to instantiate matchers.
+     * @throws ViatraQueryException 
+     * @noreference This method is not intended to be referenced by clients.
+     * @since 1.4
+     */
+    public Matcher instantiate() throws ViatraQueryException;
+    
 }

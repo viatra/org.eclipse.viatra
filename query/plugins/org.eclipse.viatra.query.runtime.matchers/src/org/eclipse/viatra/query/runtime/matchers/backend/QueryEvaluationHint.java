@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.backend;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * Provides VIATRA Query with additional hints on how a query should be evaluated. The same hint can be provided to multiple queries. 
@@ -57,9 +60,36 @@ public class QueryEvaluationHint {
 	public Map<String, Object> getBackendHints() {
 		return backendHints;
 	}
-	
-	
-	
 
-
+	/**
+	 * Override values in this hint and return a consolidated instance.
+	 * 
+	 * @param overridingHint
+	 * @return
+	 * @since 1.4
+	 */
+	public QueryEvaluationHint overrideBy(QueryEvaluationHint overridingHint){
+	    if (overridingHint == null)
+            return this;
+        
+        IQueryBackendFactory queryBackendFactory = 
+                this.getQueryBackendFactory();
+        if (overridingHint.getQueryBackendFactory() != null)
+            queryBackendFactory = overridingHint.getQueryBackendFactory();
+        
+        Map<String, Object> backendHints = 
+                new HashMap<String, Object>(this.getBackendHints());
+        if (overridingHint.getBackendHints() != null)
+            backendHints.putAll(overridingHint.getBackendHints());
+        
+        return new QueryEvaluationHint(queryBackendFactory, backendHints);
+	}
+	
+	/**
+	 * Extract the requested capabilities
+     * @since 1.4
+     */
+	public IMatcherCapability calculateRequiredCapability(PQuery query){
+	    return queryBackendFactory.calculateRequiredCapability(query, this);
+	}
 }

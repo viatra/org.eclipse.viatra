@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
-import java.util.Collections;
-import java.util.Objects;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -26,13 +25,27 @@ public class MatcherReference {
     final Set<PParameter> adornment;
     // XXX In case of older (pre-1.4) VIATRA versions, PParameters were not stable, see bug 498348
     final Set<String> boundParameterNames;
+    
+    /**
+     * Hints that can override the callee's own hints. This field is intentionally left out from hashCode and equals
+     */
+    final QueryEvaluationHint hints;
         
-    public MatcherReference(PQuery query, Set<PParameter> adornment) {
+    /**
+     * @since 1.4
+     */
+    public MatcherReference(PQuery query, Set<PParameter> adornment, QueryEvaluationHint hints) {
         super();
         this.query = query;
         this.adornment = adornment;
         this.boundParameterNames = Sets.newHashSet(Iterables.transform(adornment, PQueries.parameterNameFunction()));
+        this.hints = hints;
     }
+    
+    public MatcherReference(PQuery query, Set<PParameter> adornment){
+        this(query, adornment, null);
+    }
+    
     public PQuery getQuery() {
         return query;
     }
@@ -70,5 +83,12 @@ public class MatcherReference {
         return true;
     }
     
+    /**
+     * @return the hints to override the called reference's own hints with. Can be null.
+     * @since 1.4
+     */
+    public QueryEvaluationHint getHints() {
+        return hints;
+    }
     
 }

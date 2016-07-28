@@ -92,4 +92,9 @@ public class GenericReferencedQuerySpecification extends
         
         return this.newMatch(objs.toArray());
     }
+    
+    @Override
+    public GenericPatternMatcher instantiate() throws ViatraQueryException {
+        return new GenericPatternMatcher(this);
+    }
 }

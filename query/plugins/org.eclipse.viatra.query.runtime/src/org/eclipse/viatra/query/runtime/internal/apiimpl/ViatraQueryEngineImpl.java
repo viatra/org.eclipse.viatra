@@ -16,7 +16,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +30,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineLifecycleListener;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineManager;
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryModelUpdateListener;
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher;
@@ -41,6 +41,7 @@ import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.internal.engine.LifecycleProvider;
 import org.eclipse.viatra.query.runtime.internal.engine.ModelUpdateProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
@@ -57,24 +58,24 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.registry.IDefaultRegistryView;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
-import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 /**
  * A VIATRA Query engine back-end (implementation)
  * 
  * @author Bergmann Gábor
- * 
  */
-public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements IQueryBackendHintProvider, IQueryCacheContext {
-	
+public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements IQueryBackendHintProvider, IQueryCacheContext {
+    
     /**
      * The engine manager responsible for this engine. Null if this engine is unmanaged.
      */
@@ -87,34 +88,23 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
     /**
      * The context of the engine, provided by the scope.
      */
-    private IEngineContext engineContext;
-    
-    /**
-     * Query evaluation options registered for each query. Must have non-null fields if stored here.
-     */
-    private final Map<PQuery, QueryEvaluationHint> hints
-    		= Maps.newHashMap();    
+    private IEngineContext engineContext; 
     
     /**
      * Initialized matchers for each query
      */
-    private final Map<IQuerySpecification<? extends ViatraQueryMatcher<?>>, ViatraQueryMatcher<?>> matchers
-    		= Maps.newHashMap();
+    private final Multimap<IQuerySpecification<? extends ViatraQueryMatcher<?>>, ViatraQueryMatcher<?>> matchers
+    		= ArrayListMultimap.create();
     
 	/**
      * The RETE and other pattern matcher implementations of the VIATRA Query Engine.
      */
     private volatile Map<IQueryBackendFactory, IQueryBackend> queryBackends = Maps.newHashMap();
     
-    
     /**
-     * Default backend implementation. TODO: move to engine options.
+     * The current engine default hints
      */
-    private IQueryBackendFactory defaultBackendFactory = new ReteBackendFactory();
-    /**
-     * Default caching backend implementation (in case the regular default is non-caching). TODO: move to engine options.
-     */
-    private IQueryBackendFactory defaultCachingBackendFactory = new ReteBackendFactory();
+    private final ViatraQueryEngineOptions engineOptions;
     
     private final LifecycleProvider lifecycleProvider;
     private final ModelUpdateProvider modelUpdateProvider;
@@ -126,16 +116,38 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
      * @param manager
      *            null if unmanaged
      * @param scope
+     * @param engineDefaultHint
      * @throws ViatraQueryException
      *             if the emf root is invalid
+     * @since 1.4
      */
-    public ViatraQueryEngineImpl(ViatraQueryEngineManager manager, QueryScope scope) throws ViatraQueryException {
+    public ViatraQueryEngineImpl(ViatraQueryEngineManager manager, QueryScope scope, ViatraQueryEngineOptions engineOptions) throws ViatraQueryException {
         super();
         this.manager = manager;
         this.scope = scope;
         this.lifecycleProvider = new LifecycleProvider(this, getLogger());
         this.modelUpdateProvider = new ModelUpdateProvider(this, getLogger());
         this.engineContext = scope.createEngineContext(this, taintListener, getLogger());
+        
+        if (engineOptions != null){
+           this.engineOptions = engineOptions;
+        } else {
+            this.engineOptions = ViatraQueryEngineOptions.DEFAULT;
+        }
+        
+
+    }
+    
+    /**
+     * @param manager
+     *            null if unmanaged
+     * @param scope
+     * @param engineDefaultHint
+     * @throws ViatraQueryException
+     *             if the emf root is invalid
+     */
+    public ViatraQueryEngineImpl(ViatraQueryEngineManager manager, QueryScope scope) throws ViatraQueryException {
+        this(manager, scope, ViatraQueryEngineOptions.DEFAULT);
     }
     
     @Override
@@ -145,7 +157,7 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
     
     @Override
 	public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws ViatraQueryException {
-        return querySpecification.getMatcher(this);
+        return getMatcher(querySpecification, getQueryEvaluationHint(querySpecification.getInternalQueryRepresentation()));
     }
     
     @Override
@@ -154,14 +166,37 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
     		QueryEvaluationHint optionalEvaluationHints) 
     	throws ViatraQueryException 
     {
-    	overrideKnownHints(querySpecification.getInternalQueryRepresentation(), optionalEvaluationHints);
-        return getMatcher(querySpecification);
+        Matcher matcher = querySpecification.instantiate();
+        if (matcher == null){
+            // Backward compatibility, generated code before 1.4 does not provide method to create uninitialized matchers
+            // In this case, we lose hint information.
+            return querySpecification.getMatcher(this);
+        }
+        
+        BaseMatcher<?> baseMatcher = (BaseMatcher<?>) matcher;
+        IMatcherCapability capability = getRequestedCapability(querySpecification, optionalEvaluationHints);
+        try {
+            ((QueryResultWrapper)baseMatcher).setBackend(this, getResultProvider(querySpecification, optionalEvaluationHints), capability);
+        } catch (QueryProcessingException e) {
+           throw new ViatraQueryException(e);
+        }
+        internalRegisterMatcher(querySpecification, baseMatcher);
+        return matcher;
     }
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification) {
-		return (Matcher) matchers.get(querySpecification);
+		return getExistingMatcher(querySpecification, null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification, QueryEvaluationHint optionalOverrideHints) {
+	    IMatcherCapability requestedCapability = getRequestedCapability(querySpecification, optionalOverrideHints);
+	    for(ViatraQueryMatcher<?> matcher : matchers.get(querySpecification)){
+	        BaseMatcher<?> baseMatcher = (BaseMatcher<?>)matcher;
+	        if (baseMatcher.getCapabilities().canBeSubstitute(requestedCapability)) return (Matcher) matcher;
+	    }
+	    return null;
 	}
     
     @Override
@@ -203,17 +238,16 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
      * @param matcher the {@link ViatraQueryMatcher} that has finished its initialization process
      * 
      * TODO make it package-only visible when implementation class is moved to impl package
+     * @deprecated generated code after 1.4 will not need this method
      */
+	@Deprecated
     public void reportMatcherInitialized(IQuerySpecification<?> querySpecification, ViatraQueryMatcher<?> matcher) {
-        if(matchers.containsKey(querySpecification)) {
-            // TODO simply dropping the matcher can cause problems
-            logger.debug("Query " + 
-                    querySpecification.getFullyQualifiedName() + 
-                    " already initialized in ViatraQueryEngine!");
-        } else {
-            matchers.put(querySpecification, matcher);
-            lifecycleProvider.matcherInstantiated(matcher);
-        }
+        internalRegisterMatcher(querySpecification, matcher);
+    }
+    
+    private void internalRegisterMatcher(IQuerySpecification<?> querySpecification, ViatraQueryMatcher<?> matcher) {
+        matchers.put(querySpecification, matcher);
+        lifecycleProvider.matcherInstantiated(matcher);
     }
 
     /**
@@ -275,7 +309,6 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
 			}
             queryBackends.clear();
         }
-        hints.clear();
         matchers.clear();
         lifecycleProvider.engineWiped();
     }
@@ -430,21 +463,35 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
 	{
 		Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
         
-		return getResultProviderInternal(query);
+		return getResultProviderInternal(query, getQueryEvaluationHint(query.getInternalQueryRepresentation()));
 	}
+	
+	/**
+     * Returns an internal interface towards the query backend to feed the matcher with results. 
+     * 
+     * @param query the pattern for which the result provider should be delivered
+     * 
+     * @throws QueryProcessingException
+     * @throws ViatraQueryException
+     */
+    public IQueryResultProvider getResultProvider(IQuerySpecification<?> query, QueryEvaluationHint hint) 
+        throws QueryProcessingException, ViatraQueryException 
+    {
+        Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
+        
+        return getResultProviderInternal(query, hint);
+    }
 
-	private IQueryResultProvider getResultProviderInternal(IQuerySpecification<?> query) 
-		throws QueryProcessingException, ViatraQueryException 
-	{
-		final IQueryBackend backend = getQueryBackend(query.getInternalQueryRepresentation());
-		return backend.getResultProvider(query.getInternalQueryRepresentation());
-	}
+    private IQueryResultProvider getResultProviderInternal(IQuerySpecification<?> query, QueryEvaluationHint hint) throws ViatraQueryException, QueryProcessingException{
+        final IQueryBackend backend = getQueryBackend(query.getInternalQueryRepresentation());
+        return backend.getResultProvider(query.getInternalQueryRepresentation(), hint);
+    }
 	
 	/**
 	 * Returns the query backend (influenced by the hint system), even if it is a non-caching backend.
 	 */
 	private IQueryBackend getQueryBackend(PQuery query) throws ViatraQueryException {
-		return getQueryBackend(getCurrentHint(query).getQueryBackendFactory());
+		return getQueryBackend(getQueryEvaluationHint(query).getQueryBackendFactory());
 	}
 	/**
 	 * Returns a caching query backend (influenced by the hint system).
@@ -454,7 +501,7 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
 		if (regularBackend.isCaching()) 
 			return regularBackend; 
 		else
-			return getQueryBackend(defaultCachingBackendFactory);
+			return getQueryBackend(engineOptions.getDefaultCachingBackendFactory());
 	}
 	
 	@Override
@@ -484,53 +531,21 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
 	
 	@Override
 	public Map<String, Object> getHints(PQuery query) {
-		return getCurrentHint(query).getBackendHints();
+	    QueryEvaluationHint hints = query.getEvaluationHints();
+		return hints.getBackendHints();
 	}
-
-	/**
-	 * @return hint with non-null fields
-	 */
-	private QueryEvaluationHint getCurrentHint(PQuery query) {
-		QueryEvaluationHint hint = hints.get(query);
-		if (hint == null) {
-			// global default
-			hint = new QueryEvaluationHint(defaultBackendFactory, new HashMap<String, Object>());
-			hints.put(query, hint);
-			
-			// overrides provided in query specification
-			QueryEvaluationHint providedHint = query.getEvaluationHints();
-			if (providedHint != null) 
-				hint = overrideKnownHints(query, providedHint);
-		}
-		return hint;
+	
+	private QueryEvaluationHint getEngineDefaultHint(){
+	    return engineOptions.getEngineDefaultHints();
 	}
-			
-	/**
-	 * @pre current hint exists with non-null fields
-	 */
-	private QueryEvaluationHint overrideKnownHints(
-			PQuery query, 
-			QueryEvaluationHint overridingHint) 
-	{
-		final QueryEvaluationHint currentHint = getCurrentHint(query);
-		if (overridingHint == null)
-			return currentHint;
-		
-		IQueryBackendFactory queryBackendFactory = 
-				currentHint.getQueryBackendFactory();
-		if (overridingHint.getQueryBackendFactory() != null)
-			queryBackendFactory = overridingHint.getQueryBackendFactory();
-		
-		Map<String, Object> backendHints = 
-				new HashMap<String, Object>(currentHint.getBackendHints());
-		if (overridingHint.getBackendHints() != null)
-			backendHints.putAll(overridingHint.getBackendHints());
-		
-		QueryEvaluationHint consolidatendHint = 
-				new QueryEvaluationHint(queryBackendFactory, backendHints);
-		hints.put(query, consolidatendHint);
-		return consolidatendHint;
-      
+	
+	@Override
+	public QueryEvaluationHint getQueryEvaluationHint(PQuery query) {
+	    return getEngineDefaultHint().overrideBy(query.getEvaluationHints());
+	}
+	
+	private IMatcherCapability getRequestedCapability(IQuerySpecification<?> querySpecification, QueryEvaluationHint optionalOverrideHints){
+	    return getQueryEvaluationHint(querySpecification.getInternalQueryRepresentation()).overrideBy(optionalOverrideHints).calculateRequiredCapability(querySpecification.getInternalQueryRepresentation());
 	}
 	
 	@Override
@@ -561,11 +576,8 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
     			engineContext.getBaseIndex().coalesceTraversals(new Callable<Void>() {
     				@Override
     				public Void call() throws Exception {
-   					for (IQuerySpecification<?> query : specifications) {
-   							overrideKnownHints(query.getInternalQueryRepresentation(), optionalEvaluationHints);
-    					}
     					for (IQuerySpecification<?> query : specifications) {
-    						getResultProviderInternal(query);
+    						getResultProviderInternal(query, optionalEvaluationHints);
     					}
     					return null;
     				}
@@ -590,7 +602,7 @@ public class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements 
 	public QueryScope getScope() {
 		return scope;
 	}
-
+	
     // /**
     // * EXPERIMENTAL: Creates a VIATRA Query Engine that executes post-commit, or retrieves an already existing one.
     // * @param emfRoot the EMF root where this engine should operate

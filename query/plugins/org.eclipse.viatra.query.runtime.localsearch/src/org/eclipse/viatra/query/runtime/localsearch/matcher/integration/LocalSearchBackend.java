@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -59,7 +60,16 @@ public class LocalSearchBackend implements IQueryBackend {
 
     @Override
     public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException {
-        return new LocalSearchResultProvider(this, logger, runtimeContext, queryCacheContext, hintProvider, query, planProvider);
+        return getResultProvider(query, null);
+    }
+    
+    /**
+     * @since 1.4
+     */
+    @Override
+    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints)
+            throws QueryProcessingException {
+        return new LocalSearchResultProvider(this, logger, runtimeContext, queryCacheContext, hintProvider, query, planProvider, hints);
     }
 
     @Override

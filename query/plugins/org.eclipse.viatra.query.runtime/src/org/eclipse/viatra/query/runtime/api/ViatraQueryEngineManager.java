@@ -87,9 +87,28 @@ public class ViatraQueryEngineManager {
      * @throws ViatraQueryException
      */
     public ViatraQueryEngine getQueryEngine(QueryScope scope) throws ViatraQueryException {
-    	ViatraQueryEngineImpl engine = getEngineInternal(scope);
+    	return getQueryEngine(scope, ViatraQueryEngineOptions.DEFAULT);
+    }
+    
+    /**
+     * Creates a managed VIATRA Query Engine at a given scope (e.g. an EMF Resource or ResourceSet, as in {@link EMFScope}) 
+     * or retrieves an already existing one. Repeated invocations for a single model root will return the same engine. 
+     * Consequently, the engine will be reused between different clients querying the same model, providing performance benefits.
+     * 
+     * <p>
+     * The match set of any patterns will be incrementally refreshed upon updates from this scope.
+     * 
+     * @param scope 
+     *      the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
+     *      Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
+     * @return a new or previously existing engine
+     * @throws ViatraQueryException
+     * @since 1.4
+     */
+    public ViatraQueryEngine getQueryEngine(QueryScope scope, ViatraQueryEngineOptions options) throws ViatraQueryException {
+        ViatraQueryEngineImpl engine = getEngineInternal(scope);
         if (engine == null) {
-            engine = new ViatraQueryEngineImpl(this, scope);
+            engine = new ViatraQueryEngineImpl(this, scope, options);
             engines.put(scope, new WeakReference<ViatraQueryEngineImpl>(engine));
             notifyInitializationListeners(engine);
         }

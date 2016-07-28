@@ -15,6 +15,7 @@ import java.util.Collection;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -40,7 +41,7 @@ public class CachingPlanProvider implements IPlanProvider {
     }
     
     @Override
-    public IPlanDescriptor getPlan(LocalSearchBackend backend, final PlannerConfiguration configuration, MatcherReference key)
+    public IPlanDescriptor getPlan(LocalSearchBackend backend, final LocalSearchHints configuration, MatcherReference key)
             throws QueryProcessingException {
         
         if (cache.containsKey(key)){

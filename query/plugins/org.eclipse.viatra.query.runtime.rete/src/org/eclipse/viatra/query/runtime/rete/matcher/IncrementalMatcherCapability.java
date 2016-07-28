@@ -8,20 +8,25 @@
  * Contributors:
  *   Grill Balázs - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.localsearch.plan;
+package org.eclipse.viatra.query.runtime.rete.matcher;
 
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 
 /**
  * @author Grill Balázs
  * @since 1.4
  *
  */
-public interface IPlanProvider {
+public class IncrementalMatcherCapability implements IMatcherCapability {
 
-    public IPlanDescriptor getPlan(LocalSearchBackend backend, LocalSearchHints configuration, MatcherReference key) throws QueryProcessingException;
-    
+    @Override
+    public boolean canBeSubstitute(IMatcherCapability capability) {
+        /*
+         * TODO: for now, as we are only prepared for Rete and LS, we can assume that
+         * a matcher created with Rete can always be a substitute for a matcher created
+         * by any backend.
+         */
+        return true;
+    }
+
 }

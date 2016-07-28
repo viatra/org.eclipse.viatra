@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.matchers.backend;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * A Query Backend Factory identifies a query evaluator implementation, and can create an evaluator instance (an {@link IQueryBackend}) tied to a specific VIATRA Query engine upon request. 
@@ -41,4 +42,11 @@ public interface IQueryBackendFactory {
 	 */
 	public Class<? extends IQueryBackend> getBackendClass();
 
+	/**
+	 * Calculate the required capabilities, which are needed to execute the given pattern
+	 * 
+	 * @since 1.4
+	 */
+	public IMatcherCapability calculateRequiredCapability(PQuery query, QueryEvaluationHint hint);
+	
 }

@@ -8,20 +8,24 @@
  * Contributors:
  *   Grill Balázs - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.localsearch.plan;
-
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+package org.eclipse.viatra.query.runtime.matchers.backend;
 
 /**
+ * Implementations of this interface can be used to decide whether a matcher created by an arbitrary backend can
+ * potentially be used as a substitute for another matcher.
+ * 
  * @author Grill Balázs
  * @since 1.4
  *
  */
-public interface IPlanProvider {
+public interface IMatcherCapability {
 
-    public IPlanDescriptor getPlan(LocalSearchBackend backend, LocalSearchHints configuration, MatcherReference key) throws QueryProcessingException;
+    /**
+     * Returns true if matchers of this capability can be used as a substitute for a matcher implementing the given capability
+     * 
+     * @param capability
+     * @return
+     */
+    public boolean canBeSubstitute(IMatcherCapability capability);
     
 }

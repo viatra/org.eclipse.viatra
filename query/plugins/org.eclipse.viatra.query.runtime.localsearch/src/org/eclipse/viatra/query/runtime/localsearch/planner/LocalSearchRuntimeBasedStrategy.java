@@ -20,10 +20,12 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.viatra.query.runtime.localsearch.plan.PlannerConfiguration;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.OperationCostComparator;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
@@ -59,12 +61,12 @@ public class LocalSearchRuntimeBasedStrategy {
 	
     /**
      * 
-     * @deprecated use {@link #plan(PBody, Logger, Set, IQueryMetaContext, IQueryRuntimeContext, PlannerConfiguration)} instead
+     * @deprecated use {@link #plan(PBody, Logger, Set, IQueryMetaContext, IQueryRuntimeContext, LocalSearchHints)} instead
      */
     @Deprecated
     public SubPlan plan(PBody pBody, Logger logger, Set<PVariable> initialBoundVariables,
             IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, Map<String, Object> hints){
-        return plan(pBody, logger, initialBoundVariables, metaContext, runtimeContext, new PlannerConfiguration(hints));
+        return plan(pBody, logger, initialBoundVariables, metaContext, runtimeContext, LocalSearchHints.getDefaultOverriddenBy(new QueryEvaluationHint(LocalSearchBackendFactory.INSTANCE, hints)));
     }
     
     /**
@@ -80,7 +82,7 @@ public class LocalSearchRuntimeBasedStrategy {
      * @since 1.4
      */
     public SubPlan plan(PBody pBody, Logger logger, Set<PVariable> initialBoundVariables,
-            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, PlannerConfiguration configuration) {
+            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, LocalSearchHints configuration) {
 
         final ICostFunction costFunction = configuration.getCostFunction();
         PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(configuration.isAllowInverse(), configuration.isUseBase(), 

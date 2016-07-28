@@ -72,4 +72,9 @@ public class GenericTracedQuerySpecification extends GenericQuerySpecification<G
     public GenericReferencedQuerySpecification getReferencedSpecification() {
         return referencedQuerySpecification;
     }
+    
+    @Override
+    public GenericPatternMatcher instantiate() throws ViatraQueryException {
+        return new GenericPatternMatcher(this);
+    }
 }

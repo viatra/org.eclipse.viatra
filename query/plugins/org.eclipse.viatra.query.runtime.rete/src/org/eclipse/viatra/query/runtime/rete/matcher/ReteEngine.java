@@ -20,6 +20,7 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -489,6 +490,16 @@ public class ReteEngine implements IQueryBackend {
     @Override
     public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException {
     	return accessMatcher(query);
+    }
+    
+    /**
+     * @since 1.4
+     */
+    @Override
+    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints)
+            throws QueryProcessingException {
+        // TODO Take user hints into account
+        return accessMatcher(query);
     }
 
     @Override

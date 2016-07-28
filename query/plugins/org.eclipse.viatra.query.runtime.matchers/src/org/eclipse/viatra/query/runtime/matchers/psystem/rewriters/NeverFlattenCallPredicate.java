@@ -8,20 +8,21 @@
  * Contributors:
  *   Grill Balázs - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.localsearch.plan;
+package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 
 /**
  * @author Grill Balázs
  * @since 1.4
  *
  */
-public interface IPlanProvider {
+public class NeverFlattenCallPredicate implements IFlattenCallPredicate {
 
-    public IPlanDescriptor getPlan(LocalSearchBackend backend, LocalSearchHints configuration, MatcherReference key) throws QueryProcessingException;
-    
+
+    @Override
+    public boolean shouldFlatten(PositivePatternCall positivePatternCall) {
+        return false;
+    }
+
 }

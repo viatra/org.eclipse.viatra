@@ -20,4 +20,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/internal/apiimpl/ViatraQueryEngineImpl.java" type="org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl">
+        <filter comment="The interface is allowed to be implemented in org.eclipse.viatra.query.runtime" id="574619656">
+            <message_arguments>
+                <message_argument value="IQueryBackendHintProvider"/>
+                <message_argument value="ViatraQueryEngineImpl"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

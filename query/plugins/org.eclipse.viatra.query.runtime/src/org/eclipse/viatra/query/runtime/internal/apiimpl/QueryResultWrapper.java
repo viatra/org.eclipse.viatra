@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.internal.apiimpl;
 
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 
 /**
@@ -23,8 +25,10 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
  * @author Bergmann Gabor
  *
  */
-public class QueryResultWrapper {
+public abstract class QueryResultWrapper {
 
 	protected IQueryResultProvider backend;
 
+	protected abstract void setBackend(ViatraQueryEngine engine, IQueryResultProvider resultProvider, IMatcherCapability capabilities);
+	
 }

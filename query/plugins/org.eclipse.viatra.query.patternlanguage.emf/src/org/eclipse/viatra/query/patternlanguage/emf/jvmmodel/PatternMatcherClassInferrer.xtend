@@ -116,12 +116,20 @@ class PatternMatcherClassInferrer {
 				// check if matcher already exists
 				«matcherClass.simpleName» matcher = engine.getExistingMatcher(querySpecification());
 				if (matcher == null) {
-					matcher = new «matcherClass.simpleName»(engine);
-					// do not have to "put" it into engine.matchers, reportMatcherInitialized() will take care of it
+					matcher = («matcherClass.simpleName»)engine.getMatcher(querySpecification());
 				}
 				return matcher;
 			'''
    		]
+   		matcherClass.members += pattern.toMethod("create", typeRef(matcherClass)) [
+            static = true
+            visibility = JvmVisibility::PUBLIC
+            documentation = pattern.javadocMatcherStaticOnEngine.toString
+            exceptions += typeRef(typeof (ViatraQueryException))
+            body = '''
+                return new «matcherClass.simpleName»();
+            '''
+        ]
    	}
 
 
@@ -135,9 +143,8 @@ class PatternMatcherClassInferrer {
 			simpleName = pattern.matcherClassName
 			visibility = JvmVisibility::PRIVATE
 			documentation = pattern.javadocMatcherConstructorEngine.toString
-			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
 			exceptions += typeRef(typeof (ViatraQueryException))
-			body = '''super(engine, querySpecification());'''
+			body = '''super(querySpecification());'''
 		]
    	}
 

@@ -61,6 +61,12 @@ public class GenericQuerySpecification
 		return EMFScope.class;
 	}
 
-	
+	/**
+     * @since 1.4
+     */
+	@Override
+	public GenericPatternMatcher instantiate() throws ViatraQueryException {
+	    return new GenericPatternMatcher(this);
+	}
     
 }

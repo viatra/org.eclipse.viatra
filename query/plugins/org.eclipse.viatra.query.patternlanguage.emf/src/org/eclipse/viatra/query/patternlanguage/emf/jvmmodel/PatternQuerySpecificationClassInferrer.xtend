@@ -20,13 +20,18 @@ import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationB
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference
@@ -38,16 +43,10 @@ import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.common.types.JvmUnknownTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
-import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
-import org.eclipse.xtext.diagnostics.Severity
-import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem
-import com.google.common.collect.ImmutableList
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -146,6 +145,16 @@ class PatternQuerySpecificationClassInferrer {
 				'''throw new «UnsupportedOperationException»();'''
 			}
 		]
+		querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
+            visibility = JvmVisibility::PUBLIC
+            annotations += annotationRef(typeof (Override))
+            exceptions += typeRef(typeof (ViatraQueryException))
+            body = if (isPublic) { 
+                '''return «pattern.matcherClassName».create();'''
+            } else {
+                '''throw new «UnsupportedOperationException»();'''
+            }
+        ]
 		querySpecificationClass.members += pattern.toMethod("newEmptyMatch",
 			if (isPublic) typeRef(matchClass) else typeRef(typeof(IPatternMatch))) 
 		[

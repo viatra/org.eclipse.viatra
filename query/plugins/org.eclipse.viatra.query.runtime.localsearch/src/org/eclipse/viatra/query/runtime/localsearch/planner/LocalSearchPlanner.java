@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
-import org.eclipse.viatra.query.runtime.localsearch.plan.PlannerConfiguration;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
@@ -82,12 +82,12 @@ public class LocalSearchPlanner{
     private final Logger logger;
     private final IQueryMetaContext metaContext;
     private final IQueryRuntimeContext runtimeContext;
-    private final PlannerConfiguration configuration;
+    private final LocalSearchHints configuration;
 
     /**
      * @since 1.4
      */
-    public LocalSearchPlanner(LocalSearchBackend backend, Logger logger, final PlannerConfiguration configuration) {
+    public LocalSearchPlanner(LocalSearchBackend backend, Logger logger, final LocalSearchHints configuration) {
         
         this.runtimeContext = backend.getRuntimeContext();
         this.configuration = configuration;

@@ -32,12 +32,21 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> implements
         IQuerySpecification<Matcher> {
 
-    
 	protected final PQuery wrappedPQuery;
 	
     protected abstract Matcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException;
 
-    
+    /**
+     * For backward compatibility of code generated with previous versions of viatra query, this method has a default
+     * implementation returning null, indicating that a matcher can only be created using the old method, which ignores
+     * the hints provided by the user.
+     * 
+     * @since 1.4
+     */
+    @Override
+    public Matcher instantiate() throws ViatraQueryException{
+        return null;
+    }
     
     
     /**

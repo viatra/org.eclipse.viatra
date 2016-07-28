@@ -31,7 +31,6 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOve
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEDatatypeInstances;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.IterateOverEStructuralFeatureInstances;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
-import org.eclipse.viatra.query.runtime.localsearch.plan.PlannerConfiguration;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
@@ -39,6 +38,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -61,94 +61,99 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     private final IQueryBackend backend;
     private final IQueryBackendHintProvider hintProvider;
     private final PQuery query;
-	private IQueryCacheContext cacheContext;
-	private final PlannerConfiguration plannerConfiguration;
-	
-	private final IPlanProvider planProvider;
+    private IQueryCacheContext cacheContext;
+    private final QueryEvaluationHint userHints;
 
-    private static class Planner {
+    private final IPlanProvider planProvider;
 
-//        Map<List<ISearchOperation>, Map<PVariable, Integer>> operationListsWithVarMappings;
-        Collection<SearchPlanForBody> compiledPlans;
-        private final IQueryBackend backend;
-        private final PlannerConfiguration configuration;
+    private Collection<SearchPlanForBody> createPlan(MatcherReference key, IPlanProvider planProvider,
+            final ISearchContext searchContext) throws QueryProcessingException {
 
-        public Planner(IQueryBackend backend, PlannerConfiguration configuration) {
-            this.backend = backend;
-            this.configuration = configuration;
-        }
-        
-        public void createPlan(MatcherReference key, IPlanProvider planProvider, final ISearchContext searchContext)
-                throws QueryProcessingException {
-            
-            compiledPlans = Lists.newArrayList(planProvider.getPlan((LocalSearchBackend)backend, configuration, key).getPlan());
+        LocalSearchHints configuration = LocalSearchHints
+                .parse(hintProvider.getQueryEvaluationHint(key.getQuery()).overrideBy(userHints));
 
-            Collection<SearchPlanExecutor> executors = Collections2.transform(compiledPlans,
-                    new Function<SearchPlanForBody, SearchPlanExecutor>() {
+        Collection<SearchPlanForBody> compiledPlans = Lists
+                .newArrayList(planProvider.getPlan((LocalSearchBackend) backend, configuration, key).getPlan());
 
-                        @Override
-                        public SearchPlanExecutor apply(SearchPlanForBody input) {
-                            final SearchPlan plan = new SearchPlan();
-                            plan.addOperations(input.getCompiledOperations());
+        Collection<SearchPlanExecutor> executors = Collections2.transform(compiledPlans,
+                new Function<SearchPlanForBody, SearchPlanExecutor>() {
 
-                            return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys());
-                        }
-                    });
+                    @Override
+                    public SearchPlanExecutor apply(SearchPlanForBody input) {
+                        final SearchPlan plan = new SearchPlan();
+                        plan.addOperations(input.getCompiledOperations());
 
-            final Collection<Integer> parameterSizes = Collections2.transform(compiledPlans, new Function<SearchPlanForBody, Integer>() {
-
-                @Override
-                public Integer apply(SearchPlanForBody input) {
-                    PBody body = input.getBody();
-                    return body.getUniqueVariables().size();
-//                    return Math.max(input.getSymbolicParameters().size(), input.getUniqueVariables().size());
-                }
-            });
-
-            final LocalSearchMatcher matcher = new LocalSearchMatcher(key.getQuery(), executors, Collections.max(parameterSizes));
-            searchContext.loadMatcher(key, matcher);
-        }
-
-        public void collectElementsToIndex(Set<EClass> classesToIndex, Set<EStructuralFeature> featuresToIndex,
-                Set<EDataType> dataTypesToIndex) {
-            for (SearchPlanForBody plan : compiledPlans) {
-                for (ISearchOperation operation : plan.getCompiledOperations()) {
-                    if (operation instanceof ExtendToEStructuralFeatureSource) {
-                        featuresToIndex.add(((ExtendToEStructuralFeatureSource) operation).getFeature());
-                    } else if (operation instanceof IterateOverEClassInstances) {
-                        classesToIndex.add(((IterateOverEClassInstances) operation).getClazz());
-                    } else if (operation instanceof IterateOverEDatatypeInstances) {
-                        dataTypesToIndex.add(((IterateOverEDatatypeInstances) operation).getDataType());
-                    } else if (operation instanceof IterateOverEStructuralFeatureInstances) {
-                        featuresToIndex.add(((IterateOverEStructuralFeatureInstances) operation).getFeature());
-                    } else {
-                        // No indexing required
+                        return new SearchPlanExecutor(plan, searchContext, input.getVariableKeys());
                     }
+                });
+
+        final Collection<Integer> parameterSizes = Collections2.transform(compiledPlans,
+                new Function<SearchPlanForBody, Integer>() {
+
+                    @Override
+                    public Integer apply(SearchPlanForBody input) {
+                        PBody body = input.getBody();
+                        return body.getUniqueVariables().size();
+                        // return Math.max(input.getSymbolicParameters().size(), input.getUniqueVariables().size());
+                    }
+                });
+
+        final LocalSearchMatcher matcher = new LocalSearchMatcher(key.getQuery(), executors,
+                Collections.max(parameterSizes));
+        searchContext.loadMatcher(key, matcher);
+        return compiledPlans;
+    }
+
+    private void collectElementsToIndex(Collection<SearchPlanForBody> compiledPlans, Set<EClass> classesToIndex,
+            Set<EStructuralFeature> featuresToIndex, Set<EDataType> dataTypesToIndex) {
+        for (SearchPlanForBody plan : compiledPlans) {
+            for (ISearchOperation operation : plan.getCompiledOperations()) {
+                if (operation instanceof ExtendToEStructuralFeatureSource) {
+                    featuresToIndex.add(((ExtendToEStructuralFeatureSource) operation).getFeature());
+                } else if (operation instanceof IterateOverEClassInstances) {
+                    classesToIndex.add(((IterateOverEClassInstances) operation).getClazz());
+                } else if (operation instanceof IterateOverEDatatypeInstances) {
+                    dataTypesToIndex.add(((IterateOverEDatatypeInstances) operation).getDataType());
+                } else if (operation instanceof IterateOverEStructuralFeatureInstances) {
+                    featuresToIndex.add(((IterateOverEStructuralFeatureInstances) operation).getFeature());
+                } else {
+                    // No indexing required
                 }
             }
-
         }
 
-        public void collectDependencies(Set<MatcherReference> dependencies) {
-            for(SearchPlanForBody plan : compiledPlans){
-                dependencies.addAll(plan.getDependencies());
+    }
+
+    private void collectDependencies(Collection<SearchPlanForBody> compiledPlans, Set<MatcherReference> dependencies) {
+        for (SearchPlanForBody plan : compiledPlans) {
+            for (MatcherReference dependency : plan.getDependencies()) {
+                dependencies.add(new MatcherReference(dependency.getQuery(), dependency.getAdornment(), userHints));
             }
         }
-
     }
 
     /**
      * @since 1.4
      */
     public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
-            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query, IPlanProvider planProvider) {
+            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query,
+            IPlanProvider planProvider) {
+        this(backend, logger, runtimeContext, cacheContext, hintProvider, query, planProvider, null);
+    }
+
+    /**
+     * @since 1.4
+     */
+    public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
+            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query,
+            IPlanProvider planProvider, QueryEvaluationHint userHints) {
         this.backend = backend;
-		this.cacheContext = cacheContext;
+        this.cacheContext = cacheContext;
         this.hintProvider = hintProvider;
         this.query = query;
-        
+
         this.planProvider = planProvider;
-        this.plannerConfiguration = new PlannerConfiguration(hintProvider.getHints(query));
+        this.userHints = userHints;
     }
 
     private LocalSearchMatcher initializeMatcher(Object[] parameters) {
@@ -162,36 +167,34 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     }
 
-    public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters) throws ViatraQueryException,
-            QueryProcessingException {
+    public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters)
+            throws ViatraQueryException, QueryProcessingException {
         // XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
         ViatraQueryEngine engine = (ViatraQueryEngine) hintProvider;
 
         final ISearchContext searchContext = new ISearchContext.SearchContext(engine.getBaseIndex());
-        
-        
+
         Set<EClass> classesToIndex = Sets.newHashSet();
         Set<EStructuralFeature> featuresToIndex = Sets.newHashSet();
         Set<EDataType> dataTypesToIndex = Sets.newHashSet();
-        
+
         final Set<PParameter> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.length; i++) {
             if (parameters[i] != null) {
                 adornment.add(query.getParameters().get(i));
             }
         }
-        
+
         final MatcherReference reference = new MatcherReference(query, adornment);
         Set<MatcherReference> dependencies = Sets.newHashSet(reference);
         Set<MatcherReference> processedDependencies = Sets.newHashSet();
         Set<MatcherReference> todo = Sets.difference(dependencies, processedDependencies);
-        
+
         while (!todo.isEmpty()) {
             final MatcherReference dependency = todo.iterator().next();
-            Planner planner = new Planner(backend, plannerConfiguration);
-            planner.createPlan(dependency, planProvider, searchContext);
-            planner.collectElementsToIndex(classesToIndex, featuresToIndex, dataTypesToIndex);
-            planner.collectDependencies(dependencies);
+            Collection<SearchPlanForBody> compiledPlans = createPlan(dependency, planProvider, searchContext);
+            collectElementsToIndex(compiledPlans, classesToIndex, featuresToIndex, dataTypesToIndex);
+            collectDependencies(compiledPlans, dependencies);
             processedDependencies.add(dependency);
         }
 
@@ -210,7 +213,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
             throw new RuntimeException(e);
         }
     }
-    
+
     @Override
     public int countMatches(Object[] parameters) {
         try {

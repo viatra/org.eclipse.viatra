@@ -44,11 +44,9 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
  * </ul>
  * 
  * @author Bergmann Gabor
- * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
-
-
    
     /**
      * Creates a new unmanaged VIATRA Query engine to evaluate queries over a given scope specified by an {@link QueryScope}.
@@ -74,6 +72,32 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
     public static AdvancedViatraQueryEngine createUnmanagedEngine(QueryScope scope)
             throws ViatraQueryException {
         return new ViatraQueryEngineImpl(null, scope);
+    }
+    
+    /**
+     * Creates a new unmanaged VIATRA Query engine to evaluate queries over a given scope specified by an {@link QueryScope}.
+     * 
+     * <p> Repeated invocations will return different instances, so other clients are unable to independently access 
+     * and influence the returned engine. Note that unmanaged engines do not benefit from some performance improvements 
+     * that stem from sharing incrementally maintained indices and caches between multiple clients using the same managed 
+     * engine instance.
+     * 
+     * <p>
+     * Client is responsible for the lifecycle of the returned engine, hence the usage of the advanced interface
+     * {@link AdvancedViatraQueryEngine}.
+     * 
+     * <p>
+     * The match set of any patterns will be incrementally refreshed upon updates from this scope.
+     * 
+     * @param scope 
+     *      the scope of query evaluation; the definition of the set of model elements that this engine is operates on. 
+     *      Provide e.g. a {@link EMFScope} for evaluating queries on an EMF model.
+     * @return the advanced interface to a newly created unmanaged engine
+     * @since 1.4
+     */
+    public static AdvancedViatraQueryEngine createUnmanagedEngine(QueryScope scope, ViatraQueryEngineOptions options)
+            throws ViatraQueryException {
+        return new ViatraQueryEngineImpl(null, scope, options);
     }
 
     /**
@@ -167,7 +191,9 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
     
 	/**
 	 * Access a pattern matcher based on a {@link IQuerySpecification}, overriding some of the default query evaluation hints. 
-	 * Multiple calls will return the same matcher.
+	 * Multiple calls may return the same matcher depending on the actual evaluation hints. It is guaranteed that this method
+	 * always return a matcher instance which is functionally compatible to the requested functionality in hints.
+	 * 
 	 * <p> Hints are only effective the first time a matcher is created.
 	 * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query
 	 * @return a pattern matcher corresponding to the specification
@@ -282,6 +308,13 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
 	public abstract IQueryBackend getQueryBackend(IQueryBackendFactory iQueryBackendFactory)
 			throws ViatraQueryException;
 
-
+	/**
+	 * Access an existing pattern matcher based on a {@link IQuerySpecification}, and optional hints override.
+     * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query specification
+     * @param optionalOverrideHints a {@link QueryEvaluationHint} that may override the pattern hints
+     * @return a pattern matcher corresponding to the specification, <code>null</code> if a matcher does not exist yet.
+     * @since 1.4
+     */
+	public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification, QueryEvaluationHint optionalOverrideHints);
 	
 }
