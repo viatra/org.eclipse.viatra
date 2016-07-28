@@ -18,6 +18,8 @@ import java.util.Set
 import java.util.concurrent.atomic.AtomicInteger
 import org.apache.log4j.Logger
 import org.eclipse.viatra.query.runtime.emf.EMFQueryMetaContext
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints
+import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference
@@ -27,11 +29,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.DefaultFlatte
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PQueryFlattener
 import org.eclipse.viatra.query.tooling.cpp.localsearch.model.PatternDescriptor
-import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy
-import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.VariableBindingBasedCostFunction
-import org.eclipse.viatra.query.runtime.localsearch.plan.PlannerConfiguration
-import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintKeys
-import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction
 
 /**
  * @author Robert Doczi
@@ -43,27 +40,24 @@ class PlanCompiler {
 	val Map<PQuery, List<PBody>> compiledBodies
 	val Set<MatcherReference> dependencies
 	val MatchingFrameRegistry frameRegistry
-    val PlannerConfiguration configuration
+    val LocalSearchHints configuration
 	
 	extension val	LocalSearchRuntimeBasedStrategy strategy	
 	extension val POperationCompiler compiler
     
 	
 	new () {
-		this.flattener = new PQueryFlattener(new DefaultFlattenCallPredicate)
+		val flattenCallPredicate = new DefaultFlattenCallPredicate
+        this.flattener = new PQueryFlattener(flattenCallPredicate)
 		this.normalizer = new PBodyNormalizer(null, false)
 		this.compiledBodies = newHashMap
 		this.dependencies = newHashSet
 		this.frameRegistry = new MatchingFrameRegistry
-		this.configuration = new PlannerConfiguration(#{
-		    LocalSearchHintKeys.ALLOW_INVERSE_NAVIGATION -> false,
-		    LocalSearchHintKeys.USE_BASE_INDEX -> false,
-		    LocalSearchHintKeys.PLANNER_COST_FUNCTION -> new VariableBindingBasedCostFunction
-		})
-		
-		this.strategy = new LocalSearchRuntimeBasedStrategy(configuration.allowInverse, configuration.useBase) [ context |
-		    configuration.costFunction.apply(context)
-		]
+		this.configuration = LocalSearchHints::default_nobase
+		// this should not matter as flattening is done by the the compiler bellow, it's done for the sake of consistency
+		this.configuration.flattenCallPredicate = flattenCallPredicate
+				
+		this.strategy = new LocalSearchRuntimeBasedStrategy()
 		this.compiler = new POperationCompiler
 	}
 	
