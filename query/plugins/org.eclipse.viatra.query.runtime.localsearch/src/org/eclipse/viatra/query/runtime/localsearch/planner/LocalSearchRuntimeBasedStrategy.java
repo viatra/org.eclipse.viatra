@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.query.runtime.localsearch.plan.PlannerConfiguration;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
+import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.OperationCostComparator;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
@@ -55,22 +56,6 @@ import com.google.common.collect.Sets.SetView;
  * @noreference This class is not intended to be referenced by clients.
  */
 public class LocalSearchRuntimeBasedStrategy {
-
-	private final PConstraintInfoInferrer pConstraintInfoInferrer;
-	
-    /**
-     * @since 1.4
-     */
-    public LocalSearchRuntimeBasedStrategy(Function<IConstraintEvaluationContext, Float> costFunction) {
-        this(true,true, costFunction);
-    }
-
-    /**
-     * @since 1.4
-     */
-    public LocalSearchRuntimeBasedStrategy(final boolean allowInverseNavigation, boolean useIndex, Function<IConstraintEvaluationContext, Float> costFunction) {
-       this.pConstraintInfoInferrer = new PConstraintInfoInferrer(allowInverseNavigation, useIndex, costFunction);
-    }
 	
     /**
      * 
@@ -97,6 +82,16 @@ public class LocalSearchRuntimeBasedStrategy {
     public SubPlan plan(PBody pBody, Logger logger, Set<PVariable> initialBoundVariables,
             IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, PlannerConfiguration configuration) {
 
+        final ICostFunction costFunction = configuration.getCostFunction();
+        PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(configuration.isAllowInverse(), configuration.isUseBase(), 
+                new Function<IConstraintEvaluationContext, Float>() {
+
+                    @Override
+                    public Float apply(IConstraintEvaluationContext input) {
+                        return costFunction.apply(input);
+                    }
+                });
+        
         // 1. INITIALIZATION
         // Create a starting plan
         SubPlanFactory subPlanFactory = new SubPlanFactory(pBody);
