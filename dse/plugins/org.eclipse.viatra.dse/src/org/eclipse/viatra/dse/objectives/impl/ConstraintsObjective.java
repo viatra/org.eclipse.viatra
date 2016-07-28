@@ -225,10 +225,10 @@ public class ConstraintsObjective extends BaseObjective {
         softMatchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>(softConstraints.size());
         hardMatches = new ArrayList<Integer>(hardConstraints.size());
         hardMatchers = new ArrayList<ViatraQueryMatcher<? extends IPatternMatch>>(hardConstraints.size());
-        for (QueryConstraint qc : softConstraints) {
+        for (int i = 0; i < softConstraints.size(); i++) {
             softMatches.add(0);
         }
-        for (QueryConstraint qc : hardConstraints) {
+        for (int i = 0; i < hardConstraints.size(); i++) {
             hardMatches.add(0);
         }
 
@@ -307,8 +307,8 @@ public class ConstraintsObjective extends BaseObjective {
         return hardMatches;
     }
 
-    public ArrayList<String> getSoftNames() {
-        ArrayList<String> softNames = new ArrayList<>(softConstraints.size());
+    public List<String> getSoftNames() {
+        List<String> softNames = new ArrayList<>(softConstraints.size());
         for (QueryConstraint qc : softConstraints) {
             softNames.add(qc.name);
         }

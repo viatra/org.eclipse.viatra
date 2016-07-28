@@ -57,6 +57,15 @@ public final class EMFHelper {
     private EMFHelper() {
     }
 
+    public static class EmfHelperException extends RuntimeException {
+        public EmfHelperException(String string) {
+            super(string);
+        }
+        public EmfHelperException(String string, Throwable e) {
+            super(string, e);
+        }
+    }
+
     /**
      * Gets the {@link EditingDomain} of either an {@link EObject}, {@link Resource} or {@link ResourceSet}.
      * @param notifier The {@link Notifier}.
@@ -116,7 +125,7 @@ public final class EMFHelper {
             if (resourceSet != null) {
                 return new AdapterFactoryEditingDomain(null, new BasicCommandStack(), resourceSet);
             } else {
-                domain = new AdapterFactoryEditingDomain(null, new BasicCommandStack(), resourceSet);
+                domain = new AdapterFactoryEditingDomain(null, new BasicCommandStack(), (ResourceSet) null);
                 resourceSet = domain.getResourceSet();
                 domain.getCommandStack().execute(new AddCommand(domain, resourceSet.getResources(), resource));
                 return domain;
@@ -125,7 +134,7 @@ public final class EMFHelper {
         } else if (notifier instanceof ResourceSet) {
             return new AdapterFactoryEditingDomain(null, new BasicCommandStack(), (ResourceSet) notifier);
         } else {
-            throw new RuntimeException("Not supported argument type.");
+            throw new EmfHelperException("Not supported argument type.");
         }
     }
 
@@ -206,7 +215,7 @@ public final class EMFHelper {
             
             return clonedResourceSet;
         } else {
-            throw new RuntimeException("Not supported argument type.");
+            throw new EmfHelperException("Not supported argument type.");
         }
     }
 

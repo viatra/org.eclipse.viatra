@@ -22,6 +22,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -176,7 +177,8 @@ public class ThreadContext implements IDseStrategyContext{
             for (int i = 0; i < leveledObjectivesToCopy.length; i++) {
                 leveledObjectives[i] = new IObjective[leveledObjectivesToCopy[i].length];
                 for (int j = 0; j < leveledObjectivesToCopy[i].length; j++) {
-                    objectives.add(leveledObjectives[i][j] = leveledObjectivesToCopy[i][j].createNew());
+                    leveledObjectives[i][j] = leveledObjectivesToCopy[i][j].createNew();
+                    objectives.add(leveledObjectives[i][j]);
                 }
             }
 
@@ -342,6 +344,11 @@ public class ThreadContext implements IDseStrategyContext{
     @Override
     public ExplorerThread tryStartNewThreadWithoutModelClone(IStrategy strategy) {
         return globalContext.tryStartNewThreadWithoutModelClone(this, strategy);
+    }
+
+    @Override
+    public void startAllThreads(IStrategyFactory strategyFactory) {
+        globalContext.startAllThreads(this, strategyFactory);
     }
 
     @Override

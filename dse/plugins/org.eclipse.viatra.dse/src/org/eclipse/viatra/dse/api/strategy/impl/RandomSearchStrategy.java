@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
-import org.eclipse.viatra.dse.base.ExplorerThread;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -64,8 +64,7 @@ public class RandomSearchStrategy implements IStrategy {
         Object sharedObject = gc.getSharedObject();
         if (sharedObject == null) {
             gc.setSharedObject(shared);
-            while (tryStartNewThread(context) != null) {
-            }
+            startThreads();
         } else {
             shared = (SharedData) sharedObject;
         }
@@ -147,8 +146,13 @@ public class RandomSearchStrategy implements IStrategy {
         isInterrupted.set(true);
     }
 
-    private ExplorerThread tryStartNewThread(ThreadContext context) {
-        return gc.tryStartNewThread(context, new RandomSearchStrategy());
+    private void startThreads() {
+        context.startAllThreads(new IStrategyFactory() {
+            @Override
+            public IStrategy createStrategy() {
+                return new RandomSearchStrategy();
+            }
+        });
     }
 
     private static Object getByIndex(Collection<Object> availableTransitions, int index) {

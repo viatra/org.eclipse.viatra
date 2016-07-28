@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -120,8 +121,7 @@ public class BreadthFirstStrategy implements IStrategy {
 
             shared.push(currentTrajectory);
 
-            while (context.tryStartNewThread(new BreadthFirstStrategy(maxDepth)) != null) {
-            }
+            startThreads();
         } else {
             try {
                 shared.barrier.await();
@@ -183,6 +183,15 @@ public class BreadthFirstStrategy implements IStrategy {
             }
 
         }
+    }
+
+    private void startThreads() {
+        context.startAllThreads(new IStrategyFactory() {
+            @Override
+            public IStrategy createStrategy() {
+                return new BreadthFirstStrategy(maxDepth);
+            }
+        });
     }
 
     @Override

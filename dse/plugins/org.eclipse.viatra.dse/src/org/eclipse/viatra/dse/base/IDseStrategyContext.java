@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -62,6 +63,7 @@ public interface IDseStrategyContext {
     BatchTransformationRule<?, ?> getRuleByRuleSpecification(RuleSpecification<?> ruleSpecification);
     ExplorerThread tryStartNewThread(IStrategy strategy); /*IDseStrategyContext originalContext*/
     ExplorerThread tryStartNewThreadWithoutModelClone(IStrategy strategy);
+    void startAllThreads(IStrategyFactory strategyFactory);
     Object getSharedObject();
     void setSharedObject(Object sharedObject);
     

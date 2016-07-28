@@ -26,7 +26,6 @@ import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 public class ExplorerThread implements Runnable {
 
     private final ThreadContext threadContext;
-    private GlobalContext globalContext;
 
     private final Logger logger = Logger.getLogger(this.getClass());
     private IStrategy strategy;
@@ -48,11 +47,11 @@ public class ExplorerThread implements Runnable {
      * Starts the design space exploration. Returns only when the {@link IStrategy#explore()} method returns.
      */
     public void run() {
+        GlobalContext globalContext = threadContext.getGlobalContext();
         try {
             
             threadContext.init();
 
-            globalContext = threadContext.getGlobalContext();
             DesignSpaceManager dsm = threadContext.getDesignSpaceManager();
 
             strategy.initStrategy(threadContext);

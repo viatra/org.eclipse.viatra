@@ -38,7 +38,7 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
     protected Map<BatchTransformationRule<?, ?>, Double> fixCosts;
     protected Map<BatchTransformationRule<?, ?>, ActivationFitnessProcessor> activationCostProcessors;
     protected double trajectoryLengthWeight = 0.0;
-    protected boolean withTrajectoryLengthWeight;
+    protected boolean calculateTrajectoryLengthWeight;
 
     public TrajectoryCostSoftObjective(String name) {
         super(name);
@@ -94,7 +94,7 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
      */
     public TrajectoryCostSoftObjective withTrajectoryLengthWeight(double trajectoryLengthWeight) {
         this.trajectoryLengthWeight = trajectoryLengthWeight;
-        this.withTrajectoryLengthWeight = true;
+        this.calculateTrajectoryLengthWeight = true;
         return this;
     }
 
@@ -125,7 +125,7 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
             }
         }
 
-        if (withTrajectoryLengthWeight) {
+        if (calculateTrajectoryLengthWeight) {
             result += trajectory.size() * trajectoryLengthWeight;
         }
 

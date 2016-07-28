@@ -133,7 +133,7 @@ public class SolutionTrajectory {
      */
     public void doTransformation(Notifier modelRoot) throws ViatraQueryException {
         setModel(modelRoot);
-        while (doNextTransformation());
+        doTransformation();
     }
 
     /**
@@ -148,7 +148,7 @@ public class SolutionTrajectory {
      */
     public void doTransformationUndoable(Notifier modelRoot) throws ViatraQueryException {
         setModelWithEditingDomain(modelRoot);
-        while (doNextTransformation());
+        doTransformation();
     }
 
     /**

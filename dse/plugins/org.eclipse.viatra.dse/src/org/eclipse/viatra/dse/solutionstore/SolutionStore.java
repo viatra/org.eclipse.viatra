@@ -53,23 +53,23 @@ public class SolutionStore {
     public static class ANumberOfEnoughSolutions implements IEnoughSolutions {
 
         private final AtomicInteger foundSolutions;
-        private final AtomicBoolean enoughSolutions;
+        private final AtomicBoolean foundEnoughSolutions;
 
         public ANumberOfEnoughSolutions(int number) {
             foundSolutions = new AtomicInteger(number);
-            enoughSolutions = new AtomicBoolean(false);
+            foundEnoughSolutions = new AtomicBoolean(false);
         }
 
         @Override
         public boolean enoughSolutions() {
-            return enoughSolutions.get();
+            return foundEnoughSolutions.get();
         }
 
         @Override
         public void solutionFound(ThreadContext context, SolutionTrajectory trajectory) {
             int solutionsToFind = foundSolutions.decrementAndGet();
             if (solutionsToFind == 0) {
-                enoughSolutions.set(true);
+                foundEnoughSolutions.set(true);
             }
         }
 

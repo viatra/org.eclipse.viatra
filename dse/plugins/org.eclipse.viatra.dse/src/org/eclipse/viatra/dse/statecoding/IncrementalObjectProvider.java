@@ -25,7 +25,6 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 public class IncrementalObjectProvider implements IObjectsProvider {
 
-    private ViatraQueryEngine queryEngine;
     private Logger logger = Logger.getLogger(getClass());
     private NavigationHelper baseIndex;
 
@@ -34,7 +33,7 @@ public class IncrementalObjectProvider implements IObjectsProvider {
 
         try {
             EMFScope scope = new EMFScope(notifier);
-            queryEngine = ViatraQueryEngine.on(scope);
+            ViatraQueryEngine queryEngine = ViatraQueryEngine.on(scope);
 
             Set<EClass> classes = new HashSet<EClass>();
 //          Set<EReference> references = new HashSet<EReference>();

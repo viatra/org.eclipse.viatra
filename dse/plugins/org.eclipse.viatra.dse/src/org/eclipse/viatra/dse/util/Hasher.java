@@ -58,7 +58,7 @@ public final class Hasher {
     private String alternateHashThirdBest(String data) {
         md.update(data.getBytes(), 0, data.length());
         byte[] array = md.digest();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < array.length; i++) {
             sb.append(Integer.toHexString((int) array[i]));
         }

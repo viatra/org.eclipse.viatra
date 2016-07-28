@@ -45,7 +45,6 @@ public class SimpleStateCoder implements IStateCoder {
 
     private Set<EClass> classes;
     private Set<EStructuralFeature> features;
-    private ViatraQueryEngine queryEngine;
     private NavigationHelper navigationHelper;
     private MetaModelElements metaModelElements;
 
@@ -68,7 +67,7 @@ public class SimpleStateCoder implements IStateCoder {
     public void init(Notifier notifier) {
         try {
             EMFScope scope = new EMFScope(notifier);
-            queryEngine = ViatraQueryEngine.on(scope);
+            ViatraQueryEngine queryEngine = ViatraQueryEngine.on(scope);
             EMFBaseIndexWrapper baseIndex = (EMFBaseIndexWrapper) queryEngine.getBaseIndex();
             navigationHelper = baseIndex.getNavigationHelper();
             navigationHelper.registerObservedTypes(classes, null, features);

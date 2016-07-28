@@ -15,6 +15,8 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
+import org.eclipse.viatra.dse.api.DesignSpaceExplorer;
 import org.eclipse.viatra.dse.base.ExplorerThread;
 
 /**
@@ -45,6 +47,7 @@ public class DSEThreadPool extends ThreadPoolExecutor {
         try {
             submit(strategy);
         } catch (RejectedExecutionException e) {
+            Logger.getLogger(DesignSpaceExplorer.class).info("Couldn't start new thread.", e);
             return false;
         }
 

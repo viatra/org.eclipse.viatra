@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.multithreading.DSEThreadPool;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
@@ -145,6 +146,12 @@ public class GlobalContext {
     public synchronized ExplorerThread startFirstThreadWithoutModelClone(IStrategy strategy, Notifier model) {
         Preconditions.checkState(!isAlreadyInited, "First thread is already started.");
         return tryStartNewThread(null, model, strategy);
+    }
+    
+    public synchronized void startAllThreads(ThreadContext originalThreadContext, IStrategyFactory strategyFactory) {
+        while (canStartNewThread()) {
+            tryStartNewThread(originalThreadContext, strategyFactory.createStrategy());
+        }
     }
 
     /**
