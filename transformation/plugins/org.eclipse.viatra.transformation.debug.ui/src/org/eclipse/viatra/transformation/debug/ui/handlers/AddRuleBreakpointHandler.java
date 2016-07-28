@@ -21,19 +21,18 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
-import org.eclipse.viatra.transformation.debug.model.TransformationThreadFactory;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.RuleBreakpoint;
-import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
+import org.eclipse.viatra.transformation.debug.util.ViatraDebuggerUtil;
 
 public class AddRuleBreakpointHandler extends AbstractHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         try {
             ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
-            if (selection instanceof IStructuredSelection
-                    && ((IStructuredSelection) selection).getFirstElement() instanceof AdaptableEVM) {
-                TransformationThread thread = TransformationThreadFactory.getInstance().getTransformationThread(
-                        ((AdaptableEVM) ((IStructuredSelection) selection).getFirstElement()).getIdentifier());
+            if (selection instanceof IStructuredSelection && ((IStructuredSelection) selection).getFirstElement() instanceof TransformationState) {
+                TransformationState state = (TransformationState)((IStructuredSelection) selection).getFirstElement(); 
+                TransformationThread thread = ViatraDebuggerUtil.getThread(state);
 
                 // Open a dialog to define rule name
                 InputDialog dialog = new InputDialog(HandlerUtil.getActiveShellChecked(event), "Create Rule Breakpoint",

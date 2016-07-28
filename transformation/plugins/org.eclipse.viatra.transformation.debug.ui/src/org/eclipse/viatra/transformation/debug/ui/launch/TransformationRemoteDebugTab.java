@@ -41,18 +41,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.viatra.transformation.debug.communication.DebuggerEndpointService;
+import org.eclipse.viatra.transformation.debug.communication.IDebuggerTargetEndpoint;
 import org.eclipse.viatra.transformation.debug.launch.TransformationLaunchConfigurationDelegate;
 import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
-import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
-import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVMFactory;
+
+import com.google.common.collect.Lists;
 
 @SuppressWarnings("restriction")
 public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab {
-    private AdaptableEVM selectedEVM;
-
     private ComboViewer comboViewer;
     private Text transformationTypeText;
     private String projectName;
+    private String selectedID;
 
     /**
      * @wbp.parser.entryPoint
@@ -134,33 +135,33 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
         comboViewer.setLabelProvider(new LabelProvider() {
             @Override
             public String getText(Object element) {
-                if (element instanceof AdaptableEVM) {
-                    return ((AdaptableEVM) element).getIdentifier();
+                if (element instanceof IDebuggerTargetEndpoint) {
+                    return ((IDebuggerTargetEndpoint) element).getID();
                 }
                 return "";
             }
         });
 
-        List<AdaptableEVM> adaptableEVMInstances = AdaptableEVMFactory.getInstance().getAdaptableEVMInstances();
+        List<IDebuggerTargetEndpoint> targetEndpoints = Lists.newArrayList(DebuggerEndpointService.getInstance().getTargetEndpoints());
 
-        comboViewer.setInput(adaptableEVMInstances);
+        comboViewer.setInput(targetEndpoints);
 
         comboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
-                selectedEVM = (AdaptableEVM) ((StructuredSelection) comboViewer.getSelection()).getFirstElement();
+                selectedID = ((IDebuggerTargetEndpoint) ((StructuredSelection) comboViewer.getSelection()).getFirstElement()).getID();
                 getLaunchConfigurationDialog().updateButtons();
             }
         });
 
-        if (!adaptableEVMInstances.isEmpty()) {
-            comboViewer.setSelection(new StructuredSelection(adaptableEVMInstances.get(0)));
+        if (!targetEndpoints.isEmpty()) {
+            comboViewer.setSelection(new StructuredSelection(targetEndpoints.get(0)));
         }
 
     }
 
-    public AdaptableEVM getSelectedEVM() {
-        return selectedEVM;
+    public String getTargetID() {
+        return selectedID;
     }
 
     @Override
@@ -175,9 +176,9 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
 
     @Override
     public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-        if (getSelectedEVM() != null) {
-            configuration.setAttribute(TransformationLaunchConfigurationDelegate.ADAPTABLE_EVM_ATTR,
-                    getSelectedEVM().getIdentifier());
+        if (getTargetID() != null) {
+            configuration.setAttribute(TransformationLaunchConfigurationDelegate.SELECTED_TARGET,
+                    getTargetID());
             configuration.setAttribute(TransformationLaunchConfigurationDelegate.TRANSFORMATION_ATTR,
                     transformationTypeText.getText());
             configuration.setAttribute(TransformationLaunchConfigurationDelegate.PROJECT_NAME, projectName);

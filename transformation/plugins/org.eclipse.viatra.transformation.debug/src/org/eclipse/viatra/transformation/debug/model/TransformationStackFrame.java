@@ -18,8 +18,8 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.ActivationParameter;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
 
 import com.google.common.collect.Lists;
 
@@ -29,29 +29,23 @@ public class TransformationStackFrame extends TransformationDebugElement impleme
     private IVariable[] variables;
     
     
-    public TransformationStackFrame(TransformationThread thread, Activation<?> activation) throws DebugException {
+    public TransformationStackFrame(TransformationThread thread, RuleActivation activation) throws DebugException {
         super((TransformationDebugTarget) thread.getDebugTarget());
         this.thread = thread;
-        this.name = activation.getInstance().getSpecification().getName()+" : "+activation.getState();
+        this.name = activation.getRuleName()+" : "+activation.getState();
                 
         List<TransformationVariable> transformationVariables = Lists.newArrayList();
-        Object atom = activation.getAtom();
-        if(atom instanceof IPatternMatch){
-            IPatternMatch match = (IPatternMatch) atom;
-            transformationVariables.addAll(createVariables(match));
-        }
+        transformationVariables.addAll(createVariables(activation));
         
         this.variables = (IVariable[]) transformationVariables.toArray(new TransformationVariable[0]); 
     }
     
-    private List<TransformationVariable> createVariables(IPatternMatch match){
+    private List<TransformationVariable> createVariables(RuleActivation activation){
         List<TransformationVariable> createdVariables = Lists.newArrayList();
-        List<String> parameterNames = match.parameterNames();
 
-        for (String parameterName : parameterNames) {
-            Object parameter = match.get(parameterName);
-            TransformationValue value = new TransformationValue((TransformationDebugTarget) getDebugTarget(), parameter);
-            TransformationVariable variable = new TransformationVariable((TransformationDebugTarget) getDebugTarget(), parameterName, value);
+        for (ActivationParameter parameter : activation.getParameters()) {
+            TransformationValue value = new TransformationValue((TransformationDebugTarget) getDebugTarget(), parameter.getValue());
+            TransformationVariable variable = new TransformationVariable((TransformationDebugTarget) getDebugTarget(), parameter.getName(), value);
             createdVariables.add(variable);
         }
         return createdVariables;

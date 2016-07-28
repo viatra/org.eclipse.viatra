@@ -21,19 +21,19 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.viatra.transformation.debug.communication.DebuggerEndpointService;
+import org.eclipse.viatra.transformation.debug.communication.impl.DebuggerHostEndpoint;
 import org.eclipse.viatra.transformation.debug.model.TransformationDebugTarget;
-import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
-import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVMFactory;
 
 public class TransformationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
-    public static final String ADAPTABLE_EVM_ATTR = "org.eclipse.viatra.transformation.debug.launch.AdaptableEVMAttribute";
+    public static final String SELECTED_TARGET = "org.eclipse.viatra.transformation.debug.launch.SelectedTarget";
     public static final String TRANSFORMATION_ATTR = "org.eclipse.viatra.transformation.debug.launch.TransformationClass";
     public static final String PROJECT_NAME = "org.eclipse.viatra.transformation.debug.launch.TransformationProject";
 
     @Override
     public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
             throws CoreException {
-        String evmAttr = configuration.getAttribute(ADAPTABLE_EVM_ATTR, "");
+        String endpointID = configuration.getAttribute(SELECTED_TARGET, "");
         String transformationClassName = configuration.getAttribute(TRANSFORMATION_ATTR, "");
         String projectName = configuration.getAttribute(PROJECT_NAME, "");
 
@@ -41,12 +41,14 @@ public class TransformationLaunchConfigurationDelegate implements ILaunchConfigu
         if (project.hasNature(JavaCore.NATURE_ID)) {
             IJavaProject javaProject = JavaCore.create(project);
             IType transformationType = javaProject.findType(transformationClassName);
-
-            AdaptableEVM vm = AdaptableEVMFactory.getInstance().getAdaptableEVMInstance(evmAttr);
-
-            if (mode.equals(ILaunchManager.DEBUG_MODE) && vm != null) {
-                TransformationDebugTarget target = new TransformationDebugTarget(launch, vm, transformationType,
-                        vm.getIdentifier());
+            
+            //Create new debugger host AGENT
+            //connect to the target agent via using the specified parameter
+            DebuggerHostEndpoint agent = new DebuggerHostEndpoint(endpointID);
+            DebuggerEndpointService.getInstance().registerHostEndpoint(endpointID, agent);
+            if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+                
+                TransformationDebugTarget target = new TransformationDebugTarget(launch, agent, transformationType, endpointID);
                 launch.addDebugTarget(target);
             }
         }

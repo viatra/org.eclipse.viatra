@@ -11,10 +11,9 @@
 package org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.viatra.transformation.debug.model.TransformationState;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
 import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 import org.eclipse.viatra.transformation.debug.ui.views.model.CompositeItem;
-import org.eclipse.viatra.transformation.evm.api.Activation;
 
 public class ConflictSetLabelProvider extends RuleBrowserLabelProvider {
 
@@ -24,17 +23,16 @@ public class ConflictSetLabelProvider extends RuleBrowserLabelProvider {
 
     @Override
     public String getText(Object element) {
-        if (element instanceof Activation) {
-            Activation<?> activation = (Activation<?>) element;
-            TransformationState state = view.getStateForActivation(activation);
-            if(state.getNewActivations().contains(activation)){
-                return "<<NEW>> "+ activation.getInstance().getSpecification().getName()+" Activation, State: " + activation.getState().toString()+ activation.getAtom().toString();
-            }else{
-                return activation.getInstance().getSpecification().getName()+" Activation, State: " + activation.getState().toString()+ activation.getAtom().toString();
-            }
-        }else if (element instanceof CompositeItem) {
+        if (element instanceof RuleActivation) {
+            RuleActivation activation = (RuleActivation) element;
+            // TransformationState state = view.getStateForActivation(activation);
+
+            return activation.getRuleName() + " Activation, State: " + activation.getState()
+                    + activation.getParameters();
+
+        } else if (element instanceof CompositeItem) {
             return ((CompositeItem) element).getName();
-        }else{
+        } else {
             return super.getText(element);
         }
     }

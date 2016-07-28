@@ -8,20 +8,17 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  */
-package org.eclipse.viatra.transformation.debug;
+package org.eclipse.viatra.transformation.debug.communication;
 
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 
-public interface ITransformationDebugListener {
-    public void started() throws DebugException;
-    
+public interface IDebuggerTargetAgent {
     public void suspended();
     
     public void breakpointHit(ITransformationBreakpoint breakpoint);
@@ -33,6 +30,8 @@ public interface ITransformationDebugListener {
     public void activationFired(Activation<?> activation);
     
     public void activationFiring(Activation<?> activation);
+    
+    public void nextActivationChanged(Activation<?> activation);
 
     public void addedRule(RuleSpecification<?> specification, EventFilter<?> filter);
 

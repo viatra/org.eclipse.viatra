@@ -17,8 +17,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
-import org.eclipse.viatra.transformation.debug.ui.util.DebugUIUtil;
-import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
+import org.eclipse.viatra.transformation.debug.util.ViatraDebuggerUtil;
 
 public class SelectNextActivationHandler extends AbstractHandler {
     @Override
@@ -26,11 +26,12 @@ public class SelectNextActivationHandler extends AbstractHandler {
 
         ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
         if (selection instanceof IStructuredSelection
-                && ((IStructuredSelection) selection).getFirstElement() instanceof Activation<?>) {
-            TransformationThread thread = DebugUIUtil
-                    .getActivationThread((Activation<?>) ((IStructuredSelection) selection).getFirstElement());
+                && ((IStructuredSelection) selection).getFirstElement() instanceof RuleActivation) {
+            
+            RuleActivation act = (RuleActivation)((IStructuredSelection) selection).getFirstElement(); 
+            TransformationThread thread = ViatraDebuggerUtil.getThread(act.getTransformationState());
             if (thread != null) {
-                thread.setNextActivation((Activation<?>) ((IStructuredSelection) selection).getFirstElement());
+                thread.setNextActivation(act);
             }
         }
 

@@ -11,25 +11,19 @@
 package org.eclipse.viatra.transformation.debug.model;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.viatra.transformation.debug.TransformationDebugger;
-import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
+import org.eclipse.viatra.transformation.debug.communication.IDebuggerHostAgent;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 
 public class TransformationThreadFactory {
     private static TransformationThreadFactory instance;
     private List<TransformationThread> threads;
-    private Multimap<String, ITransformationStateListener> listenersToAdd;
     
     protected TransformationThreadFactory(){
         threads = Lists.newArrayList();
-        listenersToAdd = ArrayListMultimap.create();
     }
 
     public static TransformationThreadFactory getInstance() {
@@ -39,13 +33,9 @@ public class TransformationThreadFactory {
         return instance;
     }
     
-    public TransformationThread createTransformationThread(TransformationDebugTarget target, TransformationDebugger debugger, AdaptableEVM evm, IType transformationType){
-        TransformationThread thread = new TransformationThread(target, debugger, evm, transformationType);
-        
-        for(ITransformationStateListener listener : listenersToAdd.get(evm.getIdentifier())){
-            thread.registerTransformationStateListener(listener);
-        }
-        
+    public TransformationThread createTransformationThread(String name, IDebuggerHostAgent agent, TransformationDebugTarget target, IType transformationClass){
+        TransformationThread thread = new TransformationThread(name, agent, target, transformationClass);
+                
         threads.add(thread);
         return thread;
     }
@@ -68,37 +58,7 @@ public class TransformationThreadFactory {
             threads.remove(thread);
         }
     }
-    
-    public void registerListener(ITransformationStateListener listener, String id) throws NoSuchElementException, DebugException{
-        try {
-            TransformationThread transformationThread = getTransformationThread(id);
-            if(transformationThread != null){
-                transformationThread.registerTransformationStateListener(listener);
-            }
-            listenersToAdd.put(id, listener);
-        } catch (NoSuchElementException | DebugException e) {
-            throw e;
-        }
-        if(!listenersToAdd.containsEntry(id, listener)){
-            listenersToAdd.put(id, listener);
-        }
         
-    }
-    
-    public void unRegisterListener(ITransformationStateListener listener){
-        for (TransformationThread transformationThread : threads) {
-            transformationThread.unRegisterTransformationStateListener(listener);
-        }
-        List<String> idsToRemove = Lists.newArrayList();
-        for(String id : listenersToAdd.keySet()){
-            idsToRemove.add(id);
-        }
-        
-        for (String id : idsToRemove) {
-            listenersToAdd.remove(id, listener);
-        }
-    }
-    
     public List<TransformationThread> getTransformationThreads(){
         return threads;
     }

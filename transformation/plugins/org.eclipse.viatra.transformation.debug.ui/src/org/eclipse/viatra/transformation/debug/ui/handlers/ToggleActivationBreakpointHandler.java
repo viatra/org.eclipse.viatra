@@ -22,8 +22,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.TransformationBreakpoint;
-import org.eclipse.viatra.transformation.debug.ui.util.DebugUIUtil;
-import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
+import org.eclipse.viatra.transformation.debug.util.ViatraDebuggerUtil;
 
 public class ToggleActivationBreakpointHandler extends AbstractHandler {
     @Override
@@ -31,12 +31,12 @@ public class ToggleActivationBreakpointHandler extends AbstractHandler {
         try {
             ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
             if (selection instanceof IStructuredSelection
-                    && ((IStructuredSelection) selection).getFirstElement() instanceof Activation<?>) {
-                TransformationThread thread = DebugUIUtil
-                        .getActivationThread((Activation<?>) ((IStructuredSelection) selection).getFirstElement());
+                    && ((IStructuredSelection) selection).getFirstElement() instanceof RuleActivation) {
+                RuleActivation act = (RuleActivation)((IStructuredSelection) selection).getFirstElement(); 
+                TransformationThread thread = ViatraDebuggerUtil.getThread(act.getTransformationState());
                 if (thread != null) {
                     TransformationBreakpoint transformationBreakpoint = new TransformationBreakpoint(
-                            (Activation<?>) ((IStructuredSelection) selection).getFirstElement());
+                            ((RuleActivation) ((IStructuredSelection) selection).getFirstElement()).getTrace());
                     transformationBreakpoint.setMarker(thread.getTransformationType().getResource()
                             .createMarker(transformationBreakpoint.getMarkerIdentifier()));
                     transformationBreakpoint.setEnabled(true);

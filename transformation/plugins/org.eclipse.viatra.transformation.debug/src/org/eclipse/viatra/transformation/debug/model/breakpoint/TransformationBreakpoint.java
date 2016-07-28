@@ -25,19 +25,17 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
  *
  */
 public class TransformationBreakpoint extends Breakpoint implements ITransformationBreakpoint{
-    private DefaultActivationCoder activationCoder;
+    private DefaultActivationCoder activationCoder = new DefaultActivationCoder();
     private ActivationTrace trace;
-    private Activation<?> activation;
+    //private Activation<?> activation;
 
     public ActivationTrace getTrace() {
         return trace;
     }
     
-    public TransformationBreakpoint(Activation<?> activation){
+    public TransformationBreakpoint(ActivationTrace trace){
         super();
-        this.activation = activation;
-        activationCoder = new DefaultActivationCoder();
-        trace = activationCoder.createActivationCode(activation);
+        this.trace = trace;
     }
     
     /**
@@ -51,10 +49,6 @@ public class TransformationBreakpoint extends Breakpoint implements ITransformat
         return ActivationTraceUtil.compareActivationCodes(trace, activationCoder.createActivationCode(a));
     }
    
-    public Activation<?> getActivation(){
-        return activation;
-    }
-
     @Override
     public String getModelIdentifier() {
         return TransformationDebugElement.MODEL_ID;
@@ -68,7 +62,7 @@ public class TransformationBreakpoint extends Breakpoint implements ITransformat
     @Override
     public boolean equals(Object item) {
         if(item instanceof TransformationBreakpoint){
-            return ((TransformationBreakpoint) item).getActivation().equals(activation);
+            return ((TransformationBreakpoint) item).getTrace().equals(trace);
         }else{
             return false;
         }
@@ -76,6 +70,6 @@ public class TransformationBreakpoint extends Breakpoint implements ITransformat
     
     @Override
     public int hashCode() {
-        return activation.hashCode();
+        return trace.hashCode();
     }
 }

@@ -1,9 +1,10 @@
 package org.eclipse.viatra.transformation.debug.ui.util;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
 import org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser;
-import org.eclipse.viatra.transformation.evm.api.Activation;
-import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
+
 
 public class ViatraDebuggerPropertyTester extends PropertyTester {
 
@@ -17,12 +18,9 @@ public class ViatraDebuggerPropertyTester extends PropertyTester {
 
             switch (property) {
             case ACTIVATION_SELECTED:
-                return (debugView.getSelection() instanceof Activation<?>);
+                return debugView.getSelection() instanceof RuleActivation;
             case ADAPTABLE_EVM_DEBUGGING:
-                if (debugView.getSelection() instanceof AdaptableEVM) {
-                    return debugView.isUnderDebugging((AdaptableEVM) debugView.getSelection());
-                }
-                return false;
+                return debugView.getSelection() instanceof TransformationState;
             default:
                 return false;
             }

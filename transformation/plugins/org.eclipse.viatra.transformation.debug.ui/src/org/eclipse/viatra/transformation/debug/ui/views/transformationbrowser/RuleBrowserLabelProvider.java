@@ -13,13 +13,10 @@ package org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.viatra.transformation.debug.model.TransformationState;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationRule;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
 import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
-import org.eclipse.viatra.transformation.evm.api.Activation;
-import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
-import org.eclipse.viatra.transformation.evm.api.adapter.AdaptableEVM;
-import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
-import org.eclipse.xtext.xbase.lib.Pair;
 
 public class RuleBrowserLabelProvider extends LabelProvider {
     protected AdaptableTransformationBrowser view;
@@ -32,54 +29,28 @@ public class RuleBrowserLabelProvider extends LabelProvider {
 
     @Override
     public String getText(Object element) {
-        if (element instanceof AdaptableEVM) {
-            AdaptableEVM vm = (AdaptableEVM) element;
-            return vm.getIdentifier();
-        } else if (element instanceof Pair<?, ?>) {
-            Object key = ((Pair<?, ?>) element).getKey();
-            Object value = ((Pair<?, ?>) element).getValue();
-            if (key instanceof RuleSpecification<?> && value instanceof EventFilter<?>) {
-                if (value.equals(((RuleSpecification<?>) key).createEmptyFilter())) {
-                    return ((RuleSpecification<?>) key).getName();
-                } else {
-                    return ((RuleSpecification<?>) key).getName() + " FILTERED";
-                }
-            }
-        } else if (element instanceof RuleSpecification) {
-            RuleSpecification<?> spec = (RuleSpecification<?>) element;
-            return spec.getName();
-        } else if (element instanceof Activation) {
-            Activation<?> activation = (Activation<?>) element;
-            TransformationState state = view.getStateForActivation(activation);
-            if (state.getNewActivations().contains(activation)) {
-                return "<<NEW>> Activation, State: " + activation.getState().toString()+ activation.getAtom().toString();
+        if (element instanceof TransformationState) {
+            return ((TransformationState) element).getID();
+        } else if (element instanceof TransformationRule) {
+            if (((TransformationRule) element).isFiltered()) {
+                return ((TransformationRule) element).getRuleName() + " FILTERED";
             } else {
-                return "Activation, State: " + activation.getState().toString()+ activation.getAtom().toString();
+                return ((TransformationRule) element).getRuleName();
             }
-
+        } else if (element instanceof RuleActivation) {
+            return element.toString();
         }
         return element.getClass().getName() + " Hash: " + element.hashCode();
     }
 
     @Override
     public Image getImage(Object element) {
-        if (element instanceof AdaptableEVM) {
-            if (view.isUnderDebugging((AdaptableEVM) element)) {
-                return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_DEBUG_LOGO);
-                
-            } else {
-                return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_LOGO);
-            }
-        } else if (element instanceof Pair<?, ?>) {
-            Object key = ((Pair<?, ?>) element).getKey();
-            Object value = ((Pair<?, ?>) element).getValue();
-            if (key instanceof RuleSpecification<?> && value instanceof EventFilter<?>) {
-                return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_ATOM);
-            }
-        } else if (element instanceof Activation) {
-            TransformationState state = view.getStateForActivation((Activation<?>) element);
-
-            if (element.equals(state.getNextActivation())) {
+        if (element instanceof TransformationState) {
+            return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_DEBUG_LOGO);
+        } else if (element instanceof TransformationRule) {
+            return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_ATOM);
+        } else if (element instanceof RuleActivation) {
+            if (((RuleActivation) element).isNextActivation()) {
                 return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_ACT_STOPPED);
             } else {
                 return imageRegistry.get(TransformationDebugUIActivator.ICON_VIATRA_ACTIVATION);

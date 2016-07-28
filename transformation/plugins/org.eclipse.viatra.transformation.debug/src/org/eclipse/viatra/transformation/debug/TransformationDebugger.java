@@ -17,8 +17,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
-import org.eclipse.viatra.transformation.debug.model.TransformationState;
+import org.eclipse.viatra.transformation.debug.activationcoder.DefaultActivationCoder;
+import org.eclipse.viatra.transformation.debug.communication.IDebuggerTargetAgent;
+import org.eclipse.viatra.transformation.debug.communication.impl.DebuggerTargetEndpoint;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.ConditionalTransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
+import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.ActivationTrace;
+import org.eclipse.viatra.transformation.debug.transformationtrace.util.ActivationTraceUtil;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMListener;
@@ -41,23 +46,34 @@ import com.google.common.collect.Sets;
  */
 public class TransformationDebugger extends AbstractEVMListener implements IEVMAdapter {
     private String id;
-    private List<ITransformationDebugListener> listeners = Lists.newArrayList();
+    private List<IDebuggerTargetAgent> agents = Lists.newArrayList();
     private ViatraQueryEngine engine;
-    
-    //Debug functions
+
+    // Debug functions
     private List<ITransformationBreakpoint> breakpoints = Lists.newArrayList();
     private Set<Pair<RuleSpecification<?>, EventFilter<?>>> rules = Sets.newHashSet();
     private Set<Activation<?>> nextActivations = Sets.newHashSet();
     private Set<Activation<?>> conflictingActivations = Sets.newHashSet();
-    
+
     private Activation<?> nextActivation;
-    
+
     private DebuggerActions action = DebuggerActions.Continue;
-    private boolean firstRun = true;
     private boolean actionSet = false;
-    
+    private DefaultActivationCoder activationCoder = new DefaultActivationCoder();
+
     public TransformationDebugger(String id) {
         this.id = id;
+        registerTransformationDebugListener(new DebuggerTargetEndpoint(id, this));
+        
+        while (!actionSet) {
+            try {
+                Thread.sleep(25);
+            } catch (InterruptedException e) {
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+            }
+        }
+        
+        
     }
 
     public String getId() {
@@ -71,20 +87,12 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     @Override
     public void initializeListener(ViatraQueryEngine engine) {
         this.engine = engine;
-        for (ITransformationDebugListener listener : listeners) {
-            try {
-                listener.started();
-            } catch (Exception e) {
-                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
-                listeners.remove(listener);
-            }
-        }
     }
-    
+
     @Override
     public void addedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
         rules.add(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
-        for (ITransformationDebugListener listener : listeners) {
+        for (IDebuggerTargetAgent listener : agents) {
             listener.addedRule(specification, filter);
         }
     }
@@ -92,51 +100,58 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     @Override
     public void removedRule(RuleSpecification<?> specification, EventFilter<?> filter) {
         rules.remove(new Pair<RuleSpecification<?>, EventFilter<?>>(specification, filter));
-        for (ITransformationDebugListener listener : listeners) {
+        for (IDebuggerTargetAgent listener : agents) {
             listener.removedRule(specification, filter);
-            
+
         }
     }
-    
+
     @Override
     public void afterFiring(Activation<?> activation) {
-        for (ITransformationDebugListener listener : listeners) {
+        for (IDebuggerTargetAgent listener : agents) {
             listener.activationFired(activation);
         }
     }
 
     @Override
     public void disposeListener() {
-        for (ITransformationDebugListener listener : listeners) {
+        List<IDebuggerTargetAgent> listenersToRemove = Lists.newArrayList();
+        
+        for (IDebuggerTargetAgent listener : agents) {
             try {
                 listener.terminated();
+                listenersToRemove.add(listener);
+                
             } catch (CoreException e) {
                 ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
             }
         }
+        
+        for (IDebuggerTargetAgent iDebuggerTargetAgent : listenersToRemove) {
+            unRegisterTransformationDebugListener(iDebuggerTargetAgent);
+        }
         breakpoints.clear();
-        listeners.clear();
+        agents.clear();
     }
 
     @Override
     public ChangeableConflictSet getConflictSet(ChangeableConflictSet set) {
         return new TransformationDebuggerConflictSet(set);
     }
-    
+
     @Override
     public Iterator<Activation<?>> getExecutableActivations(Iterator<Activation<?>> iterator) {
         return new TransformationDebuggerIterator(iterator);
     }
-    
+
     public class TransformationDebuggerConflictSet implements ChangeableConflictSet {
         private final ChangeableConflictSet delegatedSet;
-        
-        
-        public TransformationDebuggerConflictSet(ChangeableConflictSet delegatedSet){
+
+        public TransformationDebuggerConflictSet(ChangeableConflictSet delegatedSet) {
             this.delegatedSet = delegatedSet;
             conflictSetChanged(this);
         }
-        
+
         @Override
         public Activation<?> getNextActivation() {
             return delegatedSet.getNextActivation();
@@ -162,7 +177,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
             boolean result = delegatedSet.addActivation(activation);
             conflictSetChanged(this);
             return result;
-                    
+
         }
 
         @Override
@@ -171,7 +186,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
             conflictSetChanged(this);
             return result;
         }
-        
+
     }
 
     public class TransformationDebuggerIterator implements Iterator<Activation<?>> {
@@ -188,17 +203,17 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
 
         @Override
         public Activation<?> next() {
-                                    
+
             nextActivation = delegatedIterator.next();
-            
-            for (ITransformationDebugListener listener : listeners) {
+
+            for (IDebuggerTargetAgent listener : agents) {
                 listener.activationFiring(nextActivation);
-                
+
             }
-            
+
             if (nextActivation != null && (hasBreakpoint(nextActivation) || action == DebuggerActions.Step)) {
 
-                for (ITransformationDebugListener listener : listeners) {
+                for (IDebuggerTargetAgent listener : agents) {
                     listener.suspended();
                 }
 
@@ -211,7 +226,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
                 }
                 actionSet = false;
             }
-            
+
             return nextActivation;
         }
 
@@ -227,7 +242,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         for (ITransformationBreakpoint breakpoint : breakpoints) {
             try {
                 if (breakpoint.isEnabled() && breakpoint.shouldBreak(activation)) {
-                    for (ITransformationDebugListener listener : listeners) {
+                    for (IDebuggerTargetAgent listener : agents) {
                         listener.breakpointHit(breakpoint);
                     }
                     return true;
@@ -237,29 +252,68 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
                 return false;
             }
         }
-        if (breakpoints.isEmpty() && firstRun) {
-            firstRun = false;
-            return true;
-        }
         return false;
     }
 
-    public TransformationState registerTransformationDebugListener(ITransformationDebugListener listener) {
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
+    private void registerTransformationDebugListener(IDebuggerTargetAgent listener) {
+        if (!agents.contains(listener)) {
+            agents.add(listener);
         }
-        return new TransformationState(id, engine, nextActivations, conflictingActivations, rules, nextActivation);
     }
 
-    public void unRegisterTransformationDebugListener(ITransformationDebugListener listener) {
-        if (listeners.contains(listener)) {
-            listeners.remove(listener);
+    public void disconnect() {
+        for (IDebuggerTargetAgent listener : agents) {
+            try {
+                listener.terminated();
+                unRegisterTransformationDebugListener(listener);
+            } catch (CoreException e) {
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+            }
+        }
+        breakpoints.clear();
+        setDebuggerAction(DebuggerActions.Continue);
+    }
+
+    private void unRegisterTransformationDebugListener(IDebuggerTargetAgent listener) {
+        if (agents.contains(listener)) {
+            agents.remove(listener);
+        }
+    }
+
+    private void conflictSetChanged(TransformationDebuggerConflictSet set) {
+        nextActivations = Sets.newHashSet(set.getNextActivations());
+        conflictingActivations = Sets.newHashSet(set.getConflictingActivations());
+        for (IDebuggerTargetAgent listener : agents) {
+            listener.conflictSetChanged(nextActivations, conflictingActivations);
         }
     }
 
     public void addBreakpoint(ITransformationBreakpoint breakpoint) {
         if (!breakpoints.contains(breakpoint)) {
+            if (breakpoint instanceof ConditionalTransformationBreakpoint) {
+                ((ConditionalTransformationBreakpoint) breakpoint).setEngine(engine);
+            }
             breakpoints.add(breakpoint);
+        }
+    }
+
+    public void disableBreakpoint(ITransformationBreakpoint breakpoint) {
+        if (breakpoints.contains(breakpoint)) {
+            try {
+                breakpoint.setEnabled(false);
+            } catch (CoreException e) {
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+            }
+        }
+    }
+
+    public void enableBreakpoint(ITransformationBreakpoint breakpoint) {
+        if (breakpoints.contains(breakpoint)) {
+            try {
+                breakpoint.setEnabled(true);
+            } catch (CoreException e) {
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+            }
         }
     }
 
@@ -273,16 +327,16 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         this.action = action;
         actionSet = true;
     }
-    
-    public void setNextActivation(Activation<?> activation) {
-        this.nextActivation = activation;
-    }
-            
-    private void conflictSetChanged(TransformationDebuggerConflictSet set){
-        nextActivations = Sets.newHashSet(set.getNextActivations());
-        conflictingActivations = Sets.newHashSet(set.getConflictingActivations());
-        for (ITransformationDebugListener listener : listeners) {
-            listener.conflictSetChanged(nextActivations, conflictingActivations);
+
+    public void setNextActivation(ActivationTrace trace) {
+        for (Activation<?> act : conflictingActivations) {
+            if (ActivationTraceUtil.compareActivationCodes(trace, activationCoder.createActivationCode(act))) {
+                this.nextActivation = act;
+                for (IDebuggerTargetAgent listener : agents) {
+                    listener.nextActivationChanged(nextActivation);
+                }
+                return;
+            }
         }
     }
 

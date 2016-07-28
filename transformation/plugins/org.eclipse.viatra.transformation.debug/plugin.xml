@@ -8,7 +8,7 @@
             id="org.eclipse.viatra.transformation.debug.launchViatraTransformation"
             modes="debug"
             name="VIATRA Transformation Remote Debugging"
-            public="false">
+            public="true">
       </launchConfigurationType>
    </extension>
    <extension
