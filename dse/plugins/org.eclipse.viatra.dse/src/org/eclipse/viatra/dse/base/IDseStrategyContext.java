@@ -89,10 +89,15 @@ public interface IDseStrategyContext {
 
     void executeAcitvationId(Object activationId);
     boolean tryExecuteAcitvationId(Object activationId);
+    boolean executeRandomActivationId();
     void executeTrajectory(Object[] activationIds);
     void executeTrajectory(Object[] activationIds, int excludedIndex);
- // TODO boolean tryExecuteTrajectory(Object[] activationIds);
- // TODO boolean tryExecuteTrajectory(Object[] activationIds, int excludedIndex);
+    int executeTrajectoryByTrying(Object[] activationIds);
+    int executeTrajectoryByTrying(Object[] activationIds, int excludedIndex);
+    int executeTrajectoryWithoutStateCoding(Object[] activationIds);
+    int executeTrajectoryWithoutStateCoding(Object[] activationIds, int excludedIndex);
+    int executeTrajectoryByTryingWithoutStateCoding(Object[] activationIds);
+    int executeTrajectoryByTryingWithoutStateCoding(Object[] activationIds, int excludedIndex);
 
     boolean backtrack();
  // TODO int backtrack(int times);

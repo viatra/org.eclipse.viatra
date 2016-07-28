@@ -23,7 +23,6 @@ public class GeneticHelper {
         while (iterator.hasNext()) {
             Object transition = iterator.next();
             if (i == index) {
-                // TODO check global constraint?
                 return transition;
             } else {
                 ++i;

@@ -146,9 +146,7 @@ public class BreadthFirstStrategy implements IStrategy {
 
             context.backtrackUntilRoot();
 
-            for (Object a : next) {
-                context.executeAcitvationId(a);
-            }
+            context.executeTrajectory(next);
 
             Collection<Object> activationIds = context.getCurrentActivationIds();
             int i = activationIds.size() - 1;

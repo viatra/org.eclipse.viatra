@@ -427,13 +427,48 @@ public class ThreadContext implements IDseStrategyContext{
     }
 
     @Override
+    public boolean executeRandomActivationId() {
+        return designSpaceManager.executeRandomActivationId();
+    }
+
+    @Override
     public void executeTrajectory(Object[] activationIds) {
-        designSpaceManager.executeTrajectoryCheaply(activationIds);
+        designSpaceManager.executeTrajectory(activationIds);
     }
 
     @Override
     public void executeTrajectory(Object[] activationIds, int excludedIndex) {
-        designSpaceManager.executeTrajectoryCheaply(activationIds, excludedIndex);
+        designSpaceManager.executeTrajectory(activationIds, excludedIndex);
+    }
+
+    @Override
+    public int executeTrajectoryByTrying(Object[] activationIds) {
+        return designSpaceManager.executeTrajectoryByTrying(activationIds);
+    }
+
+    @Override
+    public int executeTrajectoryByTrying(Object[] activationIds, int excludedIndex) {
+        return designSpaceManager.executeTrajectoryByTrying(activationIds, excludedIndex);
+    }
+
+    @Override
+    public int executeTrajectoryWithoutStateCoding(Object[] activationIds) {
+        return designSpaceManager.executeTrajectoryWithoutStateCoding(activationIds);
+    }
+
+    @Override
+    public int executeTrajectoryWithoutStateCoding(Object[] activationIds, int excludedIndex) {
+        return designSpaceManager.executeTrajectoryWithoutStateCoding(activationIds, excludedIndex);
+    }
+
+    @Override
+    public int executeTrajectoryByTryingWithoutStateCoding(Object[] activationIds) {
+        return designSpaceManager.executeTrajectoryByTryingWithoutStateCoding(activationIds);
+    }
+
+    @Override
+    public int executeTrajectoryByTryingWithoutStateCoding(Object[] activationIds, int excludedIndex) {
+        return designSpaceManager.executeTrajectoryByTryingWithoutStateCoding(activationIds, excludedIndex);
     }
 
     @Override
@@ -455,5 +490,5 @@ public class ThreadContext implements IDseStrategyContext{
     public boolean isCurrentStateInTrajectory() {
         return designSpaceManager.isCurentStateInTrajectory();
     }
-    
+
 }

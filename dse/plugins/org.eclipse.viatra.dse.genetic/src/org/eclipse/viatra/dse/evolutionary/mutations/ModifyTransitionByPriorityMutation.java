@@ -43,7 +43,7 @@ public class ModifyTransitionByPriorityMutation implements IMutation {
         int trajectorySize = trajectory.length;
         int index = rnd.nextInt(trajectorySize);
 
-        dsm.executeTrajectoryCheaply(trajectory, index);
+        dsm.executeTrajectoryWithoutStateCoding(trajectory, index);
 
         Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int transitionsSize = transitions.size();

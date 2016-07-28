@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
+import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
@@ -140,5 +141,18 @@ public class TrajectoryInfo implements Cloneable {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    /**
+     * This method is only used by the {@link DesignSpaceManager}.
+     * @param stateCode 
+     * @return false if the initial state code is the last one, otherwise true.
+     */
+    public boolean modifyLastStateCode(Object stateCode) {
+        if (stateIds.size() == 1) {
+            return false;
+        }
+        stateIds.set(stateIds.size() - 1, stateCode);
+        return true;
     }
 }

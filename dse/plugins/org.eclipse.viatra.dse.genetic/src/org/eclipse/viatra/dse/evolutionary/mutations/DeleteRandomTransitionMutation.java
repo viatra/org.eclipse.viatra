@@ -9,12 +9,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.mutations;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
-import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -33,11 +33,11 @@ public class DeleteRandomTransitionMutation implements IMutation {
         int trajectorySize = trajectory.length;
         int index = rnd.nextInt(trajectorySize);
         
-        dsm.executeTrajectoryCheaply(trajectory, index);
+        dsm.executeTrajectoryWithoutStateCoding(trajectory, index);
 
-        for (int i = index + 1; i < trajectorySize; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, trajectory[i]);
-        }
+        Object[] trajectoryEnd = Arrays.copyOfRange(trajectory, index + 1, trajectory.length);
+        
+        dsm.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd);
 
         Fitness calculateFitness = context.calculateFitness();
         TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();

@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.crossovers;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
@@ -49,20 +50,18 @@ public class OnePointCrossover implements ICrossover {
         int minSize = Math.min(p1Size, p2Size);
         int index = random.nextInt(minSize - 1) + 1;
 
-        dsm.executeTrajectoryCheaply(parent1t, index);
-        for (int i = index; i < p2Size; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, parent2t[i]);
-        }
+        dsm.executeTrajectoryWithoutStateCoding(parent1t, index);
+        Object[] trajectoryEnd1 = Arrays.copyOfRange(parent2t, index, p2Size);
+        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd1);
 
         Fitness fitness = context.calculateFitness();
         children[0] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);
 
         dsm.undoUntilRoot();
 
-        dsm.executeTrajectoryCheaply(parent2t, index);
-        for (int i = index; i < p1Size; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, parent1t[i]);
-        }
+        dsm.executeTrajectory(parent2t, index);
+        Object[] trajectoryEnd2 = Arrays.copyOfRange(parent1t, index, p1Size);
+        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd2);
 
         fitness = context.calculateFitness();
         children[1] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);

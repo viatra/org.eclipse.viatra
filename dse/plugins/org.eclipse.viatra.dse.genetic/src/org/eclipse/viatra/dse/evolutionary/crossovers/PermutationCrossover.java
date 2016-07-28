@@ -51,7 +51,7 @@ public class PermutationCrossover implements ICrossover {
         int minSize = Math.min(p1Size, p2Size);
         int index = random.nextInt(minSize);
 
-        dsm.executeTrajectoryCheaply(parent1t, index);
+        dsm.executeTrajectoryWithoutStateCoding(parent1t, index);
         addPermutation(dsm, trajectoryInfo, parent2t);
 
         Fitness fitness = context.calculateFitness();
@@ -59,7 +59,7 @@ public class PermutationCrossover implements ICrossover {
 
         dsm.undoUntilRoot();
 
-        dsm.executeTrajectoryCheaply(parent2t, index);
+        dsm.executeTrajectoryWithoutStateCoding(parent2t, index);
         addPermutation(dsm, trajectoryInfo, parent1t);
 
         fitness = context.calculateFitness();

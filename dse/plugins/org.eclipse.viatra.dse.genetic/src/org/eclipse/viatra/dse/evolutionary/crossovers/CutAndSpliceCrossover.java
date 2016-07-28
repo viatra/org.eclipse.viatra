@@ -9,11 +9,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.crossovers;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -49,20 +49,18 @@ public class CutAndSpliceCrossover implements ICrossover {
         int index1 = random.nextInt(p1Size - 1) + 1;
         int index2 = random.nextInt(p2Size - 1) + 1;
 
-        dsm.executeTrajectoryCheaply(parent1t, index1);
-        for (int i = index2; i < p2Size; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, parent2t[i]);
-        }
+        dsm.executeTrajectoryWithoutStateCoding(parent1t, index1);
+        Object[] trajectoryEnd1 = Arrays.copyOfRange(parent2t, index2, p2Size);
+        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd1);
 
         Fitness fitness = context.calculateFitness();
         children[0] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);
 
         dsm.undoUntilRoot();
 
-        dsm.executeTrajectoryCheaply(parent2t, index2);
-        for (int i = index1; i < p1Size; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, parent1t[i]);
-        }
+        dsm.executeTrajectory(parent2t, index2);
+        Object[] trajectoryEnd2 = Arrays.copyOfRange(parent1t, index1, p1Size);
+        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd2);
 
         fitness = context.calculateFitness();
         children[1] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);

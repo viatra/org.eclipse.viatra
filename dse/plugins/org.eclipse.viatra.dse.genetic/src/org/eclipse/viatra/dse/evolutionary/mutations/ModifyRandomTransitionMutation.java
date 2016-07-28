@@ -9,13 +9,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.mutations;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Random;
 
-import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
-import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
 import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
 import org.eclipse.viatra.dse.objectives.Fitness;
@@ -28,34 +26,27 @@ public class ModifyRandomTransitionMutation implements IMutation {
     @Override
     public TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context) {
 
-        DesignSpaceManager dsm = context.getDesignSpaceManager();
         Object[] trajectory = parent.trajectory;
 
         int trajectorySize = trajectory.length;
         int index = rnd.nextInt(trajectorySize);
 
-        dsm.executeTrajectoryCheaply(trajectory, index);
+        context.executeTrajectoryWithoutStateCoding(trajectory, index);
 
-        Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
-        int transitionsSize = transitions.size();
-        if (transitionsSize == 0) {
-            dsm.undoUntilRoot();
+        boolean succesful = context.executeRandomActivationId();
+        if (!succesful) {
+            context.backtrackUntilRoot();
             return null;
         }
-        index = rnd.nextInt(transitionsSize);
-        Object transition = GeneticHelper.getByIndex(transitions, index);
-
-        dsm.fireActivation(transition);
-
-        for (int i = index + 1; i < trajectorySize; i++) {
-            GeneticHelper.tryFireRightTransition(dsm, trajectory[i]);
-        }
+        
+        Object[] trajectoryEnd = Arrays.copyOfRange(trajectory, index + 1, trajectory.length);
+        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd);
 
         Fitness calculateFitness = context.calculateFitness();
-        TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
+        TrajectoryInfo trajectoryInfo = context.getTrajectoryInfo();
         TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
 
-        dsm.undoUntilRoot();
+        context.backtrackUntilRoot();
 
         return child;
     }

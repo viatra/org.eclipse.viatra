@@ -15,8 +15,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
@@ -66,6 +68,8 @@ public class DesignSpaceManager {
 
     private BiMap<Activation<?>, Object> activationIds;
     private ChangeableConflictSet conflictSet;
+    
+    private Random random = new Random();
 
     public DesignSpaceManager(ThreadContext context, Notifier model, EditingDomain domain, IStateCoderFactory factory,
             IDesignSpace designSpace, ViatraQueryEngine engine) {
@@ -179,20 +183,74 @@ public class DesignSpaceManager {
         
         return true;
     }
-    
-    public int executeTrajectoryCheaply(Object[] trajectoryToExecute) {
-        return executeTrajectoryCheaply(trajectoryToExecute, trajectoryToExecute.length);
+
+    public boolean executeRandomActivationId() {
+        Collection<Object> transitions = getTransitionsFromCurrentState();
+        int size = transitions.size();
+        if (size == 0) {
+            return false;
+        }
+
+        int index = random.nextInt(size);
+        Iterator<Object> iterator = transitions.iterator();
+        for (int i = 0; i < index; ++i) {
+            iterator.next();
+        }
+        Object transition = iterator.next();
+
+        fireActivation(transition);
+        return true;
     }
 
-    public int executeTrajectoryCheaply(Object[] trajectoryToExecute, int excludedIndex) {
+    public int executeTrajectory(Object[] trajectoryToExecute) {
+        return executeTrajectory(trajectoryToExecute, trajectoryToExecute.length, false, true);
+    }
+
+    public int executeTrajectory(Object[] trajectoryToExecute, int excludedIndex) {
+        return executeTrajectory(trajectoryToExecute, excludedIndex, false, true);
+    }
+
+    public int executeTrajectoryByTrying(Object[] trajectoryToExecute) {
+        return executeTrajectory(trajectoryToExecute, trajectoryToExecute.length, true, true);
+    }
+
+    public int executeTrajectoryByTrying(Object[] trajectoryToExecute, int excludedIndex) {
+        return executeTrajectory(trajectoryToExecute, excludedIndex, true, true);
+    }
+
+    public int executeTrajectoryWithoutStateCoding(Object[] trajectoryToExecute) {
+        return executeTrajectory(trajectoryToExecute, trajectoryToExecute.length, false, false);
+    }
+
+    public int executeTrajectoryWithoutStateCoding(Object[] trajectoryToExecute, int excludedIndex) {
+        return executeTrajectory(trajectoryToExecute, excludedIndex, false, false);
+    }
+
+    public int executeTrajectoryByTryingWithoutStateCoding(Object[] trajectoryToExecute) {
+        return executeTrajectory(trajectoryToExecute, trajectoryToExecute.length, true, false);
+    }
+
+    public int executeTrajectoryByTryingWithoutStateCoding(Object[] trajectoryToExecute, int excludedIndex) {
+        return executeTrajectory(trajectoryToExecute, excludedIndex, true, false);
+    }
+
+    private int executeTrajectory(Object[] trajectoryToExecute, int excludedIndex, boolean tryAllActivations, boolean createStateCode) {
         int unsuccesfulIndex = -1;
+        if (tryAllActivations) {
+            unsuccesfulIndex = 0;
+        }
         for (int i = 0; i < excludedIndex; i++) {
             Object activationId = trajectoryToExecute[i];
             final Activation<?> activation = getActivationByIdFromConflictSet(activationId);
 
             if (activation == null) {
-                unsuccesfulIndex = i;
-                break;
+                if (tryAllActivations) {
+                    unsuccesfulIndex++;
+                    continue;
+                } else {
+                    unsuccesfulIndex = i;
+                    break;
+                }
             }
 
             BatchTransformationRule<?, ?> rule = getRuleByActivation(activation);
@@ -216,9 +274,15 @@ public class DesignSpaceManager {
             };
             domain.getCommandStack().execute(rc);
 
-            Object newStateId = stateCoder.createStateCode();
+            Object newStateId = null;
+            if (createStateCode) {
+                newStateId = stateCoder.createStateCode();
+            }
 
             trajectory.addStep(activationId, rule, newStateId, measureCosts);
+        }
+        if (!createStateCode) {
+            trajectory.modifyLastStateCode(stateCoder.createStateCode());
         }
         generateTransitions();
         return unsuccesfulIndex;
