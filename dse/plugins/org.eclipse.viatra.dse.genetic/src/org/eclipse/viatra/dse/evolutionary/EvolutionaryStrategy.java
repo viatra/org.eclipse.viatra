@@ -76,6 +76,8 @@ public class EvolutionaryStrategy implements IStrategy {
     protected IParentSelectionStrategy localParentSelector;
     protected boolean isFirstThread = false;
 
+    protected Logger logger = Logger.getLogger(IStrategy.class);
+
     public EvolutionaryStrategy() {
         so = new EvolutionaryStrategySharedObject();
     }
@@ -98,6 +100,8 @@ public class EvolutionaryStrategy implements IStrategy {
             context.setSharedObject(so);
             so.evaluationStrategy.init(context);
             localParentSelector = so.parentSelectionStrategy;
+            
+            logger.info("Evolutionary exploration strategy is inited.");
         } else {
             so = (EvolutionaryStrategySharedObject) context.getSharedObject();
             localParentSelector = so.parentSelectionStrategy.createNew();
@@ -133,6 +137,8 @@ public class EvolutionaryStrategy implements IStrategy {
         so.initialPopulationSelector.explore();
         List<TrajectoryFitness> currentPopulation = so.initialPopulationSelector.getInitialPopulation();
 
+        logger.info("Initial population has been generated.");
+        
         dsm.setDesignSpace(null);
 
         if (isInterrupted.get()) {

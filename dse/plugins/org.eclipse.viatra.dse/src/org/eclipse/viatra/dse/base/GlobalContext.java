@@ -81,7 +81,7 @@ public class GlobalContext {
         mainThread = Thread.currentThread();
     }
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(IStrategy.class);
 
     private boolean isAlreadyInited;
 
@@ -119,9 +119,7 @@ public class GlobalContext {
                 state = ExplorationProcessState.RUNNING;
                 ++numberOfStartedThreads;
 
-                if (logger.isDebugEnabled()) {
-                    logger.debug("New worker started, active workers: " + runningThreads.size());
-                }
+                logger.info("New thread started, active threads: " + runningThreads.size());
 
                 return explorerThread;
             }
@@ -168,9 +166,7 @@ public class GlobalContext {
     public synchronized void strategyFinished(ExplorerThread strategy) {
         runningThreads.remove(strategy);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Worker finished, active workers: " + runningThreads.size());
-        }
+        logger.info("Thread finished, active threads: " + runningThreads.size());
 
         // is the first part necessary?
         if (runningThreads.size() == 0) {
@@ -198,7 +194,7 @@ public class GlobalContext {
     public synchronized void stopAllThreads() {
         if (state == ExplorationProcessState.RUNNING) {
             state = ExplorationProcessState.STOPPING;
-            logger.debug("Stopping all threads.");
+            logger.info("Stopping all threads.");
             for (ExplorerThread strategy : runningThreads) {
                 strategy.stopRunning();
             }

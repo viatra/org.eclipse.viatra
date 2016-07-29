@@ -31,7 +31,7 @@ public class FixedPriorityStrategy implements IStrategy {
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
     private ThreadContext context;
 
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = Logger.getLogger(IStrategy.class);
     private Map<BatchTransformationRule<?, ?>, Integer> priorities = new HashMap<BatchTransformationRule<?, ?>, Integer>();
 
     private Random random = new Random();
@@ -75,7 +75,7 @@ public class FixedPriorityStrategy implements IStrategy {
     public void initStrategy(ThreadContext context) {
         this.context = context;
 
-        logger.info("Initied");
+        logger.info("Fixed priority exploration strategy is initied.");
     }
 
     @Override
@@ -156,13 +156,7 @@ public class FixedPriorityStrategy implements IStrategy {
             int index = random.nextInt(transitions.size());
             Object transition = transitions.remove(index);
 
-            Object prevState = context.getCurrentStateId();
             context.executeAcitvationId(transition);
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("Transition " + transition + " fired from: " + prevState + " and reached: "
-                        + context.getCurrentStateId());
-            }
 
             boolean loopInTrajectory = context.isCurrentStateInTrajectory();
             if (loopInTrajectory) {

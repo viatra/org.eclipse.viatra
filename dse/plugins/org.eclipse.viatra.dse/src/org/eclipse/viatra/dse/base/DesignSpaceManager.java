@@ -96,7 +96,7 @@ public class DesignSpaceManager {
 
         this.trajectory = new TrajectoryInfo(initialStateId);
 
-        logger.debug("DesignSpaceManager initialized with root (" + initialStateId + ")");
+        logger.debug("DesignSpaceManager initialized with initial model: " + initialStateId);
     }
 
     public void fireActivation(final Object transition) {
@@ -178,7 +178,7 @@ public class DesignSpaceManager {
             }
         }
 
-        logger.debug("Fired Transition (" + transition + ") from " + previousState + " to "
+        logger.debug("Executed activation: " + transition + " from state: " + previousState + " to "
                 + newStateId);
         
         return true;
@@ -235,6 +235,7 @@ public class DesignSpaceManager {
     }
 
     private int executeTrajectory(Object[] trajectoryToExecute, int excludedIndex, boolean tryAllActivations, boolean createStateCode) {
+        logger.debug("Executing trajectory.");
         int unsuccesfulIndex = -1;
         if (tryAllActivations) {
             unsuccesfulIndex = 0;
@@ -244,11 +245,13 @@ public class DesignSpaceManager {
             final Activation<?> activation = getActivationByIdFromConflictSet(activationId);
 
             if (activation == null) {
+                logger.debug("Couldn't execute activation: " + activationId);
                 if (tryAllActivations) {
                     unsuccesfulIndex++;
                     continue;
                 } else {
                     unsuccesfulIndex = i;
+                    logger.debug("Trajectory execution stopped at index " + i + "/" + trajectoryToExecute.length);
                     break;
                 }
             }
@@ -280,11 +283,14 @@ public class DesignSpaceManager {
             }
 
             trajectory.addStep(activationId, rule, newStateId, measureCosts);
+
+            logger.debug("Activation executed: " + activationId);
         }
         if (!createStateCode) {
             trajectory.modifyLastStateCode(stateCoder.createStateCode());
         }
         generateTransitions();
+        logger.debug("Trajectory execution finished.");
         return unsuccesfulIndex;
 
     }
@@ -349,7 +355,6 @@ public class DesignSpaceManager {
 
         generateTransitions();
         Object lastActivationId = trajectory.getLastActivationId();
-        Object lastStateId = trajectory.getLastStateId();
 
         trajectory.backtrack();
 
@@ -359,8 +364,7 @@ public class DesignSpaceManager {
             }
         }
 
-        logger.debug("Successul undo from " + lastStateId + " transition "
-                + lastActivationId + " to " + trajectory.getLastStateId());
+        logger.debug("Backtrack.");
 
         return true;
     }

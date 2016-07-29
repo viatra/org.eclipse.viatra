@@ -20,11 +20,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
+import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.GlobalContext;
 import org.eclipse.viatra.dse.designspace.api.DesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
@@ -317,7 +320,7 @@ public class DesignSpaceExplorer {
             TimerTask timerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    logger.debug("Timeout, stopping threads...");
+                    logger.info("Timeout, stopping threads...");
                     globalContext.stopAllThreads();
                     wasTimeout.set(true);
                 }
@@ -335,11 +338,11 @@ public class DesignSpaceExplorer {
                     }
                 }
                 timer.cancel();
-                logger.debug("Design space exploration has finished.");
+                logger.info("Design space exploration has finished.");
                 return wasTimeout.get();
             }
         } else {
-            logger.debug("Design space exploration started asynchronously.");
+            logger.info("Design space exploration started asynchronously.");
         }
 
         return wasTimeout.get();
@@ -360,7 +363,7 @@ public class DesignSpaceExplorer {
             globalContext.setStateCoderFactory(new SimpleStateCoderFactory(getMetaModelPackages()));
         }
 
-        logger.debug("DesignSpaceExplorer started exploration.");
+        logger.info("DesignSpaceExplorer started exploration.");
 
         if (deepCopyModel) {
             globalContext.startFirstThread(strategy, model);
@@ -485,6 +488,47 @@ public class DesignSpaceExplorer {
      */
     public void setConflictResolver(ConflictResolver conflictResolver) {
         globalContext.setConflictResolver(conflictResolver);
+    }
+
+    public static enum DseLoggingLevel {
+        OFF, WARN, BASIC, VERBOSE_STRATEGY, VERBOSE_FULL
+    }
+
+    public static void turnOnLogging(DseLoggingLevel dseLoggingLevel) {
+        switch (dseLoggingLevel) {
+        case OFF:
+            Logger.getLogger(DesignSpaceExplorer.class).setLevel(Level.OFF);
+            Logger.getLogger(IStrategy.class).setLevel(Level.OFF);
+            Logger.getLogger(DesignSpaceManager.class).setLevel(Level.OFF);
+            break;
+        case WARN:
+            Logger.getLogger(DesignSpaceExplorer.class).setLevel(Level.WARN);
+            Logger.getLogger(IStrategy.class).setLevel(Level.WARN);
+            Logger.getLogger(DesignSpaceManager.class).setLevel(Level.WARN);
+            break;
+        case BASIC:
+            Logger.getLogger(DesignSpaceExplorer.class).setLevel(Level.INFO);
+            Logger.getLogger(IStrategy.class).setLevel(Level.INFO);
+            Logger.getLogger(DesignSpaceManager.class).setLevel(Level.WARN);
+            break;
+        case VERBOSE_STRATEGY:
+            Logger.getLogger(DesignSpaceExplorer.class).setLevel(Level.DEBUG);
+            Logger.getLogger(IStrategy.class).setLevel(Level.DEBUG);
+            Logger.getLogger(DesignSpaceManager.class).setLevel(Level.WARN);
+            break;
+        case VERBOSE_FULL:
+            Logger.getLogger(DesignSpaceExplorer.class).setLevel(Level.DEBUG);
+            Logger.getLogger(IStrategy.class).setLevel(Level.DEBUG);
+            Logger.getLogger(DesignSpaceManager.class).setLevel(Level.DEBUG);
+            break;
+        default:
+            throw new DSEException("Not supported logging level.");
+        }
+    }
+
+    public static void turnOnLoggingWithBasicConfig(DseLoggingLevel dseLoggingLevel) {
+        BasicConfigurator.configure();
+        turnOnLogging(dseLoggingLevel);
     }
 
 }

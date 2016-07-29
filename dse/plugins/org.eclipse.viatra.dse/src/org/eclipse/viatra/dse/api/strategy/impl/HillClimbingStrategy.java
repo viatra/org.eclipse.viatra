@@ -26,7 +26,7 @@ public class HillClimbingStrategy implements IStrategy {
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
     private ThreadContext context;
 
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = Logger.getLogger(IStrategy.class);
 
     private Random random = new Random();
     private double percentOfOpenedStates;
@@ -44,7 +44,7 @@ public class HillClimbingStrategy implements IStrategy {
     public void initStrategy(ThreadContext context) {
         this.context = context;
         objectiveComparatorHelper = context.getObjectiveComparatorHelper();
-        logger.info("Initied");
+        logger.info("Hill climbing exploration strategy is initied.");
     }
 
     @Override

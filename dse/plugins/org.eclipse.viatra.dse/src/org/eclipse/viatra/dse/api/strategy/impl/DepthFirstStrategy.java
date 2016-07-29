@@ -27,7 +27,7 @@ public class DepthFirstStrategy implements IStrategy {
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
     private ThreadContext context;
     
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = Logger.getLogger(IStrategy.class);
 
     private Random random = new Random();
     private boolean backTrackIfSolution = true; 
@@ -51,10 +51,10 @@ public class DepthFirstStrategy implements IStrategy {
 
         if (context.getSharedObject() == null) {
             context.setSharedObject(new Object());
+            logger.info("Depth-first exploration strategy is initied.");
             startThreads();
         }
         
-        logger.info("Initied");
     }
 
     private void startThreads() {
@@ -139,18 +139,8 @@ public class DepthFirstStrategy implements IStrategy {
             }
             activationId = iterator.next();
                 
-            Object prevStateId = context.getCurrentStateId();
             context.executeAcitvationId(activationId);
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Activation id: "
-                        + activationId
-                        + " fired from: "
-                        + prevStateId
-                        + " and reached: "
-                        + context.getCurrentStateId());
-            }
-            
             boolean loopInTrajectory = context.isCurrentStateInTrajectory();
             if (loopInTrajectory) {
                 boolean isSuccessfulUndo = context.backtrack();

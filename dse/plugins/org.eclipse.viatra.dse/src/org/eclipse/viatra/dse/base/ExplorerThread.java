@@ -27,7 +27,6 @@ public class ExplorerThread implements Runnable {
 
     private final ThreadContext threadContext;
 
-    private final Logger logger = Logger.getLogger(this.getClass());
     private IStrategy strategy;
 
     public ExplorerThread(final ThreadContext context) {
@@ -52,18 +51,12 @@ public class ExplorerThread implements Runnable {
             
             threadContext.init();
 
-            DesignSpaceManager dsm = threadContext.getDesignSpaceManager();
-
             strategy.initStrategy(threadContext);
-
-            logger.debug("Strategy started with state: " + dsm.getCurrentState());
 
             strategy.explore();
 
-            logger.debug("Strategy stopped on Thread " + Thread.currentThread());
-            return;
         } catch (Throwable e) {
-            logger.error("Thread stopped unexpectedly!", e);
+            Logger.getLogger(IStrategy.class).error("Thread stopped unexpectedly!", e);
             globalContext.registerException(e);
         } finally {
             globalContext.strategyFinished(this);

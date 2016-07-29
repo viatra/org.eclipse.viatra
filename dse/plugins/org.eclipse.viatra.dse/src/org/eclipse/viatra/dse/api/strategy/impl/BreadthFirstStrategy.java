@@ -73,7 +73,7 @@ public class BreadthFirstStrategy implements IStrategy {
     private BfsSharedObject shared;
     private boolean isInterrupted = false;
     private ThreadContext context;
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = Logger.getLogger(IStrategy.class);
     private SolutionStore solutionStore;
     private boolean isFirstThread = false;
 
@@ -94,6 +94,7 @@ public class BreadthFirstStrategy implements IStrategy {
             isFirstThread = true;
             shared = new BfsSharedObject(globalContext.getThreadPool().getMaximumPoolSize());
             globalContext.setSharedObject(shared);
+            logger.info("Breadth-first exploration strategy is inited.");
         } else {
             shared = (BfsSharedObject) globalContext.getSharedObject();
         }

@@ -46,7 +46,7 @@ public class RandomSearchStrategy implements IStrategy {
     int nth;
     private ThreadContext context;
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
-    private Logger logger = Logger.getLogger(getClass());
+    private Logger logger = Logger.getLogger(IStrategy.class);
 
     public RandomSearchStrategy(int minDepth, int maxDepth, int numberOfTries) {
         shared = new SharedData(minDepth, maxDepth, numberOfTries);
@@ -64,6 +64,7 @@ public class RandomSearchStrategy implements IStrategy {
         Object sharedObject = gc.getSharedObject();
         if (sharedObject == null) {
             gc.setSharedObject(shared);
+            logger.info("Random exploration strategy is initied.");
             startThreads();
         } else {
             shared = (SharedData) sharedObject;
@@ -71,7 +72,6 @@ public class RandomSearchStrategy implements IStrategy {
 
         maxDepth = rnd.nextInt(shared.maxDepth - shared.minDepth) + shared.minDepth;
 
-        logger.info("Initied");
     }
 
     @Override

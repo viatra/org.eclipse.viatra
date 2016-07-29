@@ -80,14 +80,16 @@ public class SolutionStore {
 
     public static class LogSolutionHandler implements ISolutionFoundHandler {
 
+        Logger logger = Logger.getLogger(LogSolutionHandler.class);
+
         @Override
         public void solutionFound(ThreadContext context, SolutionTrajectory trajectory) {
-            Logger.getLogger(LogSolutionHandler.class).info("Solution registered: " + trajectory.toPrettyString());
+            logger.info("Solution registered: " + trajectory.toPrettyString());
         }
 
         @Override
         public void solutionTriedToSave(ThreadContext context, SolutionTrajectory trajectory) {
-            Logger.getLogger(LogSolutionHandler.class).info("Not good enough solution: " + trajectory.toPrettyString());
+            logger.debug("Not good enough solution: " + trajectory.toPrettyString());
         }
     }
 
