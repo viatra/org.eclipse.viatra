@@ -1498,17 +1498,17 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public int countDataTypeInstances(EDataType dataType) {
-        return statsStore.countInstances(dataType);
+        return statsStore.countInstances(toKey(dataType));
     }
 
     @Override
     public int countFeatureTargets(EObject seedSource, EStructuralFeature feature) {
-        return statsStore.countFeatures(seedSource, feature);
+        return statsStore.countFeatures(seedSource, toKey(feature));
     }
 
     @Override
     public int countFeatures(EStructuralFeature feature) {
-        return statsStore.countFeatures(feature);
+        return statsStore.countFeatures(toKey(feature));
     }
 
     @Override

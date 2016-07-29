@@ -38,11 +38,13 @@ public class EMFBaseIndexStatisticsStore {
     private final Table<Object, Object, Integer> featureStats = HashBasedTable.create();
     
     public void addFeature(Object element, Object feature){
+        addInstance(feature);
         Integer v = featureStats.get(feature, element);
         featureStats.put(feature, element, v == null ? 1 : v+1);
     }
     
     public void removeFeature(Object element, Object feature){
+        removeInstance(feature);
         Integer v = featureStats.get(feature, element);
         Preconditions.checkArgument(v != null && v > 0, "No instances of %s -> %s is registered before calling removeFeature method.", element, feature);
         if (v.intValue() == 1){
@@ -78,15 +80,12 @@ public class EMFBaseIndexStatisticsStore {
     }
     
     public void removeType(Object key){
+        featureStats.row(key).clear();
         stats.remove(key);
     }
 
-    public int countFeatures(EStructuralFeature feature) {
-        int result = 0;
-        for (Integer count : featureStats.row(feature).values()){
-            result += count;
-        }
-        return result;
+    public int countFeatures(Object feature) {
+        return countInstances(feature);
     }
     
 }

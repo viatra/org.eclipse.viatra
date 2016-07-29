@@ -232,11 +232,15 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
     @Override
     public boolean pruneFeature(EStructuralFeature feature) {
-        if (observesFeature(toKey(feature))) {
+        Object featureKey = toKey(feature);
+        if (observesFeature(featureKey) || countsFeature(featureKey)) {
             return false;
         }
-        if (feature instanceof EAttribute && observesDataType(toKey(((EAttribute) feature).getEAttributeType()))) {
-            return false;
+        if (feature instanceof EAttribute){
+            Object dataTypeKey = toKey(((EAttribute) feature).getEAttributeType());
+            if (observesDataType(dataTypeKey) || countsDataType(dataTypeKey)) {
+                return false;
+            }
         }
         if (isInsertion && navigationHelper.isExpansionAllowed() && feature instanceof EReference
                 && !((EReference) feature).isContainment()) {
