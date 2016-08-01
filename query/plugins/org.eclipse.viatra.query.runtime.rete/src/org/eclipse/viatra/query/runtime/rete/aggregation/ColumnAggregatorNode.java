@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.rete.aggregation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
@@ -116,27 +117,38 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
         Domain aggregableValue = 
                 (Domain) runtimeContext.unwrapElement(updateElement.get(aggregableColumnIndex));
         
+        boolean isInsertion = direction == Direction.INSERT;
         Accumulator newAccumulator = 
-                operator.update(oldAccumulator, aggregableValue, direction == Direction.INSERT);
+                operator.update(oldAccumulator, aggregableValue, isInsertion);
         
         if (operator.isNeutral(newAccumulator))
             accumulatorsByGroup.remove(updateGroup);
         else 
             accumulatorsByGroup.put(updateGroup, newAccumulator);
         
-        Tuple oldResultTuple = tupleFromAccumulator(updateGroup, oldAccumulator);
-        Tuple newResultTuple = tupleFromAccumulator(updateGroup, newAccumulator);
         
-        // No direct children to notify!
+        AggregateResult oldAggregateResult = operator.getAggregate(oldAccumulator);
+        AggregateResult newAggregateResult = operator.getAggregate(newAccumulator);
+
+        
+        if (Objects.equals(oldAggregateResult, newAggregateResult)) {
+            // no actual difference in aggregates, no need to propagate
+            return;
+        } else {            
+            Tuple oldResultTuple = tupleFromAggregateResult(updateGroup, oldAggregateResult);
+            Tuple newResultTuple = tupleFromAggregateResult(updateGroup, newAggregateResult);
+            
+            // No direct children to notify!
 //        if (oldResultTuple != null) propagateUpdate(Direction.REVOKE, oldResultTuple);
 //        if (newResultTuple != null) propagateUpdate(Direction.INSERT, newResultTuple);
-
-        if (aggregatorOuterIndexer != null)
-            aggregatorOuterIndexer.propagate(updateGroup, oldResultTuple, newResultTuple);
-        if (aggregatorOuterIdentityIndexers != null)
-            for (AggregatorOuterIdentityIndexer aggregatorOuterIdentityIndexer : aggregatorOuterIdentityIndexers)
-                if (aggregatorOuterIdentityIndexer != null)
-                    aggregatorOuterIdentityIndexer.propagate(updateGroup, oldResultTuple, newResultTuple);
+            
+            if (aggregatorOuterIndexer != null)
+                aggregatorOuterIndexer.propagate(updateGroup, oldResultTuple, newResultTuple);
+            if (aggregatorOuterIdentityIndexers != null)
+                for (AggregatorOuterIdentityIndexer aggregatorOuterIdentityIndexer : aggregatorOuterIdentityIndexers)
+                    if (aggregatorOuterIdentityIndexer != null)
+                        aggregatorOuterIdentityIndexer.propagate(updateGroup, oldResultTuple, newResultTuple);
+        }
     
     }
 
@@ -147,7 +159,8 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     
     public Tuple getAggregateTuple(Tuple groupTuple) {
         Accumulator accumulator = getCurrentAccumulator(groupTuple);
-        return tupleFromAccumulator(groupTuple, accumulator);
+        AggregateResult aggregateResult = operator.getAggregate(accumulator);
+        return tupleFromAggregateResult(groupTuple, aggregateResult);
     }
     public AggregateResult getAggregateResult(Tuple groupTuple) {
         Accumulator accumulator = getCurrentAccumulator(groupTuple);
@@ -161,11 +174,10 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     }
 
     
-    protected Tuple tupleFromAccumulator(Tuple groupTuple, Accumulator accumulator) {
-        AggregateResult aggregateResult = operator.getAggregate(accumulator);
+//    protected Tuple tupleFromAccumulator(Tuple groupTuple, Accumulator accumulator) {
 //        return tupleFromAggregateResult(groupTuple, aggregateResult);
 //    }
-//    protected Tuple tupleFromAggregateResult(Tuple groupTuple, AggregateResult aggregateResult) {
+    protected Tuple tupleFromAggregateResult(Tuple groupTuple, AggregateResult aggregateResult) {
         if (aggregateResult == null) return null;
         Object[] resultArray = { runtimeContext.wrapElement(aggregateResult) };
         return new LeftInheritanceTuple(groupTuple, resultArray);
