@@ -52,6 +52,23 @@
 				</executions>
 			</plugin>
 			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                </configuration>
+            </plugin>
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-packaging-plugin</artifactId>
 				<version>${tycho.version}</version>
@@ -59,6 +76,11 @@
 					<sourceReferences>
 						<generate>true</generate>
 					</sourceReferences>
+					<archive>
+					    <manifestEntries>
+					       <SCM-Revision>${buildNumber}</SCM-Revision>
+					    </manifestEntries>
+					</archive>
 				</configuration>
 				<dependencies>
 					<dependency>
