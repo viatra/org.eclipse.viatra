@@ -21,7 +21,6 @@ import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -194,7 +193,7 @@ class PConstraintInfoInferrer {
             if(inputKey instanceof EStructuralFeatureInstancesKey){
                 final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
                 if(feature instanceof EReference){
-                    if(!useIndex || !runtimeContext.isIndexed(inputKey, IndexingService.INSTANCES)){                        
+                    if(!useIndex){                        
                         bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
                     }
                 } else {
