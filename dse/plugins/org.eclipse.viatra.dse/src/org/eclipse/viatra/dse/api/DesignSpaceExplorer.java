@@ -329,18 +329,8 @@ public class DesignSpaceExplorer {
         }
 
         if (waitForTermination) {
-            Thread currentThread = Thread.currentThread();
-            synchronized (currentThread) {
-                while (!globalContext.isDone()) {
-                    try {
-                        currentThread.wait();
-                    } catch (InterruptedException e) {
-                    }
-                }
-                timer.cancel();
-                logger.info("Design space exploration has finished.");
-                return wasTimeout.get();
-            }
+            waitForTerminaition();
+            timer.cancel();
         } else {
             logger.info("Design space exploration started asynchronously.");
         }
@@ -490,10 +480,28 @@ public class DesignSpaceExplorer {
         globalContext.setConflictResolver(conflictResolver);
     }
 
+    /**
+     * Enumeration for different use cases of logging, including:
+     * <ul>
+     * <li>OFF - no error messages.</li>
+     * <li>WARN - only error and warn messages.</li>
+     * <li>BASIC - logs basic information on how the exploration is going.</li>
+     * <li>VERBOSE_STRATEGY - logs everything the exploration strategy is prepared for.</li>
+     * <li>VERBOSE_FULL - logs every transformation.</li>
+     * </ul>
+     * 
+     * @author Andras Szabolcs Nagy
+     *
+     */
     public static enum DseLoggingLevel {
         OFF, WARN, BASIC, VERBOSE_STRATEGY, VERBOSE_FULL
     }
 
+    /**
+     * Changes the level of logging. See {@link DseLoggingLevel} for details.
+     * 
+     * @param dseLoggingLevel
+     */
     public static void turnOnLogging(DseLoggingLevel dseLoggingLevel) {
         switch (dseLoggingLevel) {
         case OFF:
@@ -526,9 +534,51 @@ public class DesignSpaceExplorer {
         }
     }
 
+    /**
+     * Changes the level of logging. See {@link DseLoggingLevel} for details.
+     * 
+     * Also configures a basic console appender for log4j.
+     * 
+     * @param dseLoggingLevel
+     */
     public static void turnOnLoggingWithBasicConfig(DseLoggingLevel dseLoggingLevel) {
         BasicConfigurator.configure();
         turnOnLogging(dseLoggingLevel);
     }
 
+    /**
+     * Stops the exploration and waits for termination. It has no effect if the exploration is already terminated or not
+     * even started.
+     */
+    public void stopExploration() {
+        if (globalContext.isDone()) {
+            logger.info("Cannot stop exploration - design space exploration has already finished.");
+        } else if (globalContext.isNotStarted()) {
+            logger.info("Cannot stop exploration - design space exploration has not been started.");
+        } else {
+            globalContext.stopAllThreads();
+            waitForTerminaition();
+        }
+    }
+
+    /**
+     * Stops the exploration asynchronously. It has no effect if the exploration is already terminated or not even
+     * started.
+     */
+    public void stopExplorationAsync() {
+        if (globalContext.isDone()) {
+            logger.info("Cannot stop exploration - design space exploration has already finished.");
+        } else if (globalContext.isNotStarted()) {
+            logger.info("Cannot stop exploration - design space exploration has not been started.");
+        } else {
+            globalContext.stopAllThreads();
+        }
+    }
+
+    /**
+     * Waits for termination.
+     */
+    public void waitForTerminaition() {
+        globalContext.waitForTermination();
+    }
 }

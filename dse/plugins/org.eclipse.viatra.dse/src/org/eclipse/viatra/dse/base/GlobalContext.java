@@ -72,18 +72,22 @@ public class GlobalContext {
 
     private Map<RuleSpecification<?>, BatchTransformationRule<?,?>> specificationRuleMap;
 
-    /**
-     * The DesignSpaceExplorer's thread.
-     */
-    private final Thread mainThread;
-
-    public GlobalContext() {
-        mainThread = Thread.currentThread();
-    }
+    private Object terminationSnycObject = new Object();
 
     private Logger logger = Logger.getLogger(IStrategy.class);
 
     private boolean isAlreadyInited;
+
+    public void waitForTermination() {
+        synchronized (terminationSnycObject) {
+            while (!isDone()) {
+                try {
+                    terminationSnycObject.wait();
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+    }
 
     /**
      * Starts a new thread to explore the design space.
@@ -175,8 +179,9 @@ public class GlobalContext {
 
             // if the main thread (which started the exploration)
             // is waiting for the solution, than wake it up
-            synchronized (mainThread) {
-                mainThread.notify();
+            synchronized (terminationSnycObject) {
+                terminationSnycObject.notify();
+                logger.info("Exploration terminated.");
             }
 
         }
@@ -184,6 +189,10 @@ public class GlobalContext {
 
     public synchronized boolean isDone() {
         return state == ExplorationProcessState.COMPLETED && runningThreads.size() == 0;
+    }
+
+    public synchronized boolean isNotStarted() {
+        return state == ExplorationProcessState.NOT_STARTED;
     }
 
     public boolean canStartNewThread() {
