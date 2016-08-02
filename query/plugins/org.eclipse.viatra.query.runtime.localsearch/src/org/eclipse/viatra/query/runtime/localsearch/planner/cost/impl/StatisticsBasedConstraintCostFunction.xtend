@@ -61,14 +61,7 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
             if (freeMaskVariables.contains(srcVariable) && boundMaskVariables.contains(dstVariable)) {
                 isInverse = true
             }
-            if (freeMaskVariables.contains(srcVariable) || freeMaskVariables.contains(dstVariable)) {
-                // This case it is not a check
-                // at least one of the variables are free, so calculate cost based on the meta or/and the runtime context
-                return calculateBinaryExtendCost(supplierKey, srcVariable, dstVariable, isInverse, edgeCount, input)
-            } else {
-                // It is a check operation, both variables are bound
-                return 1.0f
-            }
+            return calculateBinaryExtendCost(supplierKey, srcVariable, dstVariable, isInverse, edgeCount, input)
         } else {
             // n-ary constraint
             throw new RuntimeException('''Cost calculation for arity «arity» is not implemented yet''')
@@ -143,12 +136,12 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
         if (input.boundVariables.contains(variable)) {
             return 0.9f
         } else {
-            return countTuples(input, constraint.supplierKey)
+            return countTuples(input, constraint.supplierKey)+DEFAULT_COST
         }
     }
 
     def dispatch float calculateCost(ExportedParameter exportedParam, IConstraintEvaluationContext input) {
-        return MAX_COST;
+        return 1.0f;
     }
 
     /**
