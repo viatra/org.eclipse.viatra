@@ -53,6 +53,7 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.FrameVi
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.MatchesTableLabelProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.OperationListLabelProvider;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.internal.LocalSearchDebuggerPropertyTester;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -90,7 +91,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 		this.debugger = localSearchDebugger;
 		//Casting is required for backward compatibility with old platform versions
 		IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
-		service.requestEvaluation("org.eclipse.viatra.query.tooling.localsearch.ui.debugger.operational");
+		service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
 	}
 	public LocalSearchDebugger getDebugger() {
 		return this.debugger;

@@ -7,6 +7,10 @@ import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearc
 public class LocalSearchDebuggerPropertyTester extends PropertyTester {
 
     private final String IS_DEBUGGER_RUNNING = "operational";
+    /**
+     * @since 1.4
+     */
+    public static final String DEBUGGER_RUNNING = "org.eclipse.viatra.query.tooling.localsearch.ui.debugger.operational";
 
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
