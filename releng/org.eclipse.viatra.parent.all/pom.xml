@@ -22,6 +22,7 @@
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.generator.model.ui</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.core</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui</module>
+		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.browser</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.debug</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.migrator</module>
 		<module>../../query/tests/org.eclipse.viatra.query.patternlanguage.tests</module>

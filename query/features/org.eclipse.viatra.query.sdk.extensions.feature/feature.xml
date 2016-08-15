@@ -19,14 +19,7 @@
       <import feature="org.eclipse.jdt"/>
       <import feature="org.eclipse.pde"/>
       <import feature="org.eclipse.xtext.ui" version="2.10.0" match="compatible"/>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="1.3.0.qualifier"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature"/>
    </requires>
-
-   <plugin
-         id="org.eclipse.viatra.query.tooling.ui.browser"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>
