@@ -50,10 +50,13 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CommandConstants;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
 import org.eclipse.viatra.query.tooling.ui.queryresult.internal.ActiveEnginePropertyTester;
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil;
+import org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener;
 
 /**
  * @author Abel Hegedus
@@ -114,6 +117,8 @@ public class QueryResultView extends ViewPart {
         });
         queryResultTreeViewer.setLabelProvider(new QueryResultTreeLabelProvider());
         queryResultTreeViewer.setContentProvider(new QueryResultTreeContentProvider());
+        queryResultTreeViewer.addDoubleClickListener(new CommandInvokingDoubleClickListener(CommandConstants.SHOW_LOCATION_COMMAND_ID, "Exception when activating show location!"));
+        
         
         int operations = DND.DROP_COPY | DND.DROP_MOVE;
         Transfer[] transferTypes = new Transfer[]{LocalTransfer.getInstance()};
@@ -252,5 +257,15 @@ public class QueryResultView extends ViewPart {
         if(input != null){
             input.setHint(hint);
         }
+    }
+    
+    /**
+     * @since 1.4
+     */
+    public IModelConnector getModelConnector() {
+        if(input != null) {
+            return input.getModelConnector();
+        }
+        return null;
     }
 }

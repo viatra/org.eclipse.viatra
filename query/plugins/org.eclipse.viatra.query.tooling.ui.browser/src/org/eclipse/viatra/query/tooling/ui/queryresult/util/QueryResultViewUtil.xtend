@@ -31,7 +31,7 @@ class QueryResultViewUtil {
     
     static def Set<QueryRegistryTreeEntry> getRegistryEntriesFromSelection(IStructuredSelection selection) {
     	val selectedQueries = newHashSet()
-        (selection as IStructuredSelection).iterator.forEach[
+        selection.iterator.forEach[
             switch it {
                 QueryRegistryTreeEntry : selectedQueries.add(it)
                 QueryRegistryTreePackage : selectedQueries.addAll(it.entries.values)

@@ -60,7 +60,9 @@ public enum QueryResultViewModel {
         QueryScope scope = new EMFScope(notifier, options);
         
         AdvancedViatraQueryEngine engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
-        return createInput(engine, false);
+        QueryResultTreeInput input = createInput(engine, false);
+        input.setModelConnector(connector);
+        return input;
     }
 
     /**

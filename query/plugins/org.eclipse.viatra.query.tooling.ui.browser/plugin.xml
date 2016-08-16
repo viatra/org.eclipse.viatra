@@ -130,6 +130,35 @@
             </reference>
          </activeWhen>
       </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.ShowMatcherLocationHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.showlocation">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.resultmatcher">
+            </reference>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.ShowMatchLocationHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.showlocation">
+         <activeWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <or>
+                     <instanceof
+                           value="org.eclipse.emf.ecore.EObject">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.viatra.query.runtime.api.IPatternMatch">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -211,6 +240,21 @@
          <command
                commandId="org.eclipse.ui.navigate.collapseAll"
                style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.showlocation"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/forward_nav.gif"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.resultcontent">
+               </reference>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
@@ -378,6 +422,42 @@
               </or>
            </iterate>
         </with>
+      </definition>
+      <definition
+            id="org.eclipse.viatra.query.tooling.ui.browser.selection.resultcontent">
+         <with
+               variable="selection">
+            <iterate
+                  ifEmpty="false">
+               <or>
+                  <instanceof
+                        value="org.eclipse.emf.ecore.EObject">
+                  </instanceof>
+                  <instanceof
+                        value="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeMatcher">
+                  </instanceof>
+                  <instanceof
+                        value="org.eclipse.viatra.query.runtime.api.IPatternMatch">
+                  </instanceof>
+               </or>
+            </iterate>
+         </with>
+      </definition>
+      <definition
+            id="org.eclipse.viatra.query.tooling.ui.browser.selection.resultmatcher">
+         <with
+               variable="selection">
+            <and>
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <instanceof
+                        value="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeMatcher">
+                  </instanceof>
+               </iterate>
+            </and>
+         </with>
       </definition>
    </extension>
    <extension

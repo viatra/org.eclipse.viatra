@@ -51,6 +51,7 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector
 
 /**
  * @author Abel Hegedus
@@ -66,6 +67,12 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     
     @Accessors(PUBLIC_GETTER)
     Map<String, QueryResultTreeMatcher> matchers
+    
+    /**
+     * @since 1.4
+     */
+    @Accessors(PUBLIC_GETTER, PROTECTED_SETTER)
+    IModelConnector modelConnector
     
     Table<String, String, IQuerySpecificationRegistryEntry> loadedEntries
     Multimap<String, String> knownErrorEntries 
