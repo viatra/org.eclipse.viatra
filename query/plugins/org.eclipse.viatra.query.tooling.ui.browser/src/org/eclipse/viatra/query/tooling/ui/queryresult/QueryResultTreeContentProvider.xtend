@@ -10,12 +10,12 @@
 package org.eclipse.viatra.query.tooling.ui.queryresult
 
 import com.google.common.base.Preconditions
-import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryContentProvider
 import org.eclipse.jface.viewers.ITreeContentProvider
 import org.eclipse.jface.viewers.TreeViewer
 import org.eclipse.jface.viewers.Viewer
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
+import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil
 
 /**
  * @author Abel Hegedus
@@ -27,8 +27,8 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
     protected AdapterFactoryContentProvider adapterFactoryContentProvider
     
     new(){
-        val adapterFactory = new ReflectiveItemProviderAdapterFactory();
-        adapterFactoryContentProvider = new AdapterFactoryContentProvider(adapterFactory);
+        val adapterFactory = QueryResultViewUtil.getGenericAdapterFactory()
+        adapterFactoryContentProvider = new AdapterFactoryContentProvider(adapterFactory)
     }
     
     override void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -70,7 +70,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         if(inputElement.exception != null) {
             return null
         }
-        inputElement.matcher.allMatches
+        inputElement.matcher.getAllMatches(inputElement.filterMatch)
     }
     
     def dispatch Object[] getChildrenInternal(IPatternMatch inputElement) {
@@ -116,7 +116,7 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         if(inputElement.exception != null) {
             return false
         }
-        return inputElement.matcher.countMatches > 0
+        return inputElement.matcher.countMatches(inputElement.filterMatch) > 0
     }
     
     def dispatch boolean hasChildrenInternal(IPatternMatch inputElement) {
@@ -135,6 +135,14 @@ package class QueryResultTreeContentProvider implements ITreeContentProvider, IQ
         viewer.tree.display.asyncExec[
             if(!viewer.tree.isDisposed){
                 viewer.add(matcher.parent, matcher)
+            }
+        ]
+    }
+     
+    override matcherFilterUpdated(QueryResultTreeMatcher matcher) {
+        viewer.tree.display.asyncExec[
+            if(!viewer.tree.isDisposed){
+                viewer.refresh(matcher)
             }
         ]
     }

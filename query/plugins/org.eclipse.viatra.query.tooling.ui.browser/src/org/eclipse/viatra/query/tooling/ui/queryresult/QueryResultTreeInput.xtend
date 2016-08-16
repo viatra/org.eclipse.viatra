@@ -355,6 +355,11 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         return matchers.values.filter(IFilteredMatcherContent)
     }
     
+    def matcherFilterUpdated(QueryResultTreeMatcher matcher) {
+        listeners.forEach[
+            it.matcherFilterUpdated(matcher)
+        ]
+    }
 }
 
 /**
@@ -390,6 +395,22 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
         }
         return filterMatch
     }
+    
+    def resetFilter() {
+        filterMatch = matcher.newEmptyMatch
+        filterMatch.filterUpdated
+    }
+    
+    def filterUpdated(IPatternMatch filterMatch) {
+        if(filterMatch !== this.filterMatch){
+            this.filterMatch = filterMatch
+        }
+        parent.matcherFilterUpdated(this)
+    }
+    
+    def isFiltered() {
+        return getFilterMatch.toArray.exists[it != null]
+    }
 }
 
 /**
@@ -399,6 +420,8 @@ interface IQueryResultViewModelListener {
     
     def void matcherAdded(QueryResultTreeMatcher matcher)
     
+    def void matcherFilterUpdated(QueryResultTreeMatcher matcher)
+
     def void matcherRemoved(QueryResultTreeMatcher matcher)
     
     def void matchAdded(QueryResultTreeMatcher matcher, IPatternMatch match)

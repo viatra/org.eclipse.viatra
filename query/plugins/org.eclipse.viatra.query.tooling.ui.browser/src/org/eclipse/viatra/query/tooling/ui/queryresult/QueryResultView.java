@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -118,7 +119,18 @@ public class QueryResultView extends ViewPart {
         queryResultTreeViewer.setLabelProvider(new QueryResultTreeLabelProvider());
         queryResultTreeViewer.setContentProvider(new QueryResultTreeContentProvider());
         queryResultTreeViewer.addDoubleClickListener(new CommandInvokingDoubleClickListener(CommandConstants.SHOW_LOCATION_COMMAND_ID, "Exception when activating show location!"));
-        
+        queryResultTreeViewer.addFilter(new ViewerFilter() {
+            @Override
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if(parentElement instanceof QueryResultTreeMatcher && element instanceof IPatternMatch) {
+                    QueryResultTreeMatcher queryResultTreeMatcher = (QueryResultTreeMatcher) parentElement;
+                    IPatternMatch patternMatch = (IPatternMatch) element;
+                    boolean compatibleWith = queryResultTreeMatcher.getFilterMatch().isCompatibleWith(patternMatch);
+                    return compatibleWith;
+                }
+                return true;
+            }
+        });
         
         int operations = DND.DROP_COPY | DND.DROP_MOVE;
         Transfer[] transferTypes = new Transfer[]{LocalTransfer.getInstance()};

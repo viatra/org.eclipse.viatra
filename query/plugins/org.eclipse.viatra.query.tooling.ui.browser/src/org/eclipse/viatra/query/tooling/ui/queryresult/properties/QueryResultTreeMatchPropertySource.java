@@ -12,13 +12,14 @@ package org.eclipse.viatra.query.tooling.ui.queryresult.properties;
 
 import java.util.List;
 
+import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
+import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil;
 
 import com.google.common.collect.Lists;
 
@@ -33,7 +34,7 @@ public class QueryResultTreeMatchPropertySource implements IPropertySource {
 
     public QueryResultTreeMatchPropertySource(IPatternMatch match) {
         this.match = match;
-        ReflectiveItemProviderAdapterFactory adapterFactory = new ReflectiveItemProviderAdapterFactory();
+        AdapterFactory adapterFactory = QueryResultViewUtil.getGenericAdapterFactory();
         adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory);
     }
 

@@ -9,26 +9,26 @@
  */
 package org.eclipse.viatra.query.tooling.ui.queryresult
 
-import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.jface.viewers.ColumnLabelProvider
 import org.eclipse.swt.graphics.Image
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
+import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil
-import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper
+import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil
 
 /**
  * @author Abel Hegedus
  */
 package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
     
-    val imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry();
+    val imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry()
     AdapterFactoryLabelProvider adapterFactoryLabelProvider
     
     new() {
-        val adapterFactory = new ReflectiveItemProviderAdapterFactory();
-        adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory);
+        val adapterFactory = QueryResultViewUtil.getGenericAdapterFactory()
+        adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(adapterFactory)
     }
     
     override Image getImage(Object element) {
@@ -68,14 +68,18 @@ package class QueryResultTreeLabelProvider extends ColumnLabelProvider {
             return '''«element.entry?.fullyQualifiedName» - «element.exception.message»'''
         }
         val matcher = element.matcher
-        val count = matcher.countMatches
+        val count = matcher.countMatches(element.filterMatch)
         val countMsg = switch count {
             case 0 : "No matches"
             case 1 : "1 match"
             default : '''«count» matches'''
         }
-        
-        return '''«matcher.specification.fullyQualifiedName» - «countMsg»'''
+        val filterMsg = if (element.filtered) {
+            " (Filtered)"
+        } else {
+            ""
+        }
+        return '''«matcher.specification.fullyQualifiedName» - «countMsg»«filterMsg»'''
     }
     
     dispatch def String getTextInternal(IPatternMatch element) {

@@ -65,19 +65,24 @@ public class QueryResultTreeMatcherPropertySource implements IPropertySource {
             return "Unknown";
         }
         if (id.equals(FILTERS_ID)) {
-            // TODO return FiltersPropertySource 
-            return "Filtering not yet supported";
+            return new MatcherFiltersPropertySource(matcher);
         }
         return null;
     }
 
     @Override
     public boolean isPropertySet(Object id) {
+        if (id.equals(FILTERS_ID)) {
+            return matcher.isFiltered();
+        }
         return false;
     }
 
     @Override
     public void resetPropertyValue(Object id) {
+        if (id.equals(FILTERS_ID)) {
+            matcher.resetFilter();
+        }
     }
 
     @Override

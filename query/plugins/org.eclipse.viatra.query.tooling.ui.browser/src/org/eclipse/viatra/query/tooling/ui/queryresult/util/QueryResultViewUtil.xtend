@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryresult.util
 
+import java.util.Set
+import org.eclipse.emf.common.notify.AdapterFactory
+import org.eclipse.emf.edit.provider.ComposedAdapterFactory
 import org.eclipse.jface.viewers.IStructuredSelection
+import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreePackage
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeSource
-import java.util.Set
-import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntry
 
 /**
  * @author Abel Hegedus
@@ -43,5 +45,13 @@ class QueryResultViewUtil {
     
     static def Iterable<IQuerySpecificationRegistryEntry> unwrapEntries(Set<QueryRegistryTreeEntry> entries) {
         return entries.map[entry]
+    }
+    
+    /**
+     * @since 1.4
+     */
+    static def AdapterFactory getGenericAdapterFactory() {
+        val adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE)
+        return adapterFactory
     }
 }
