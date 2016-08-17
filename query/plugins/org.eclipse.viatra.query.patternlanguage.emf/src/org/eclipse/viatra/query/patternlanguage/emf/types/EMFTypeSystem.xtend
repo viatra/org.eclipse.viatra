@@ -89,7 +89,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
             val EClassifier classifier = (type as ClassType).getClassname()
             return classifierToInputKey(classifier)
         } else if (type instanceof ReferenceType) {
-            return type.refname.EType.classifierToInputKey
+            return type.refname?.EType.classifierToInputKey
         }
         // Never executed
         throw new UnsupportedOperationException()
