@@ -94,12 +94,7 @@ public class LocalSearchPlanner{
         flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
         normalizer = new PBodyNormalizer(runtimeContext.getMetaContext(), false);
         
-        plannerStrategy = new LocalSearchRuntimeBasedStrategy(configuration.isAllowInverse(),configuration.isUseBase(), new Function<IConstraintEvaluationContext, Float>() {
-            @Override
-            public Float apply(IConstraintEvaluationContext input) {
-                return configuration.getCostFunction().apply(input);
-            }
-        });
+        plannerStrategy = new LocalSearchRuntimeBasedStrategy();
         operationCompiler = new POperationCompiler(runtimeContext, backend, configuration.isUseBase());
         
         this.logger = logger;
