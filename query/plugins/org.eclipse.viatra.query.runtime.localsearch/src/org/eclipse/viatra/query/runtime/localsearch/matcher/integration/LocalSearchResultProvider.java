@@ -34,6 +34,7 @@ import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlan;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
+import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
@@ -253,4 +254,11 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         // throw new UnsupportedOperationException(UPDATE_LISTENER_NOT_SUPPORTED);
     }
 
+    /**
+     * @since 1.4
+     */
+    public IMatcherCapability getCapabilites() {
+        return hintProvider.getQueryEvaluationHint(query).overrideBy(userHints).calculateRequiredCapability(query);
+    }
+    
 }

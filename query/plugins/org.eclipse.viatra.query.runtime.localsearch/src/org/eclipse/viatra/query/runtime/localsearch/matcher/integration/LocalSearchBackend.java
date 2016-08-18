@@ -12,14 +12,13 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import java.util.Set;
 
-import com.google.common.collect.*;
-
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.viatra.query.runtime.localsearch.plan.CachingPlanProvider;
 import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
@@ -29,6 +28,9 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Table;
 
 /**
@@ -46,7 +48,8 @@ public class LocalSearchBackend implements IQueryBackend {
 	// Cache
 	Table<EDataType, EClass, Set<EAttribute>> eAttributesByTypeForEClass;
     
-
+	private final Multimap<PQuery, LocalSearchResultProvider> resultProviderCache = ArrayListMultimap.create();
+	
     public LocalSearchBackend(Logger logger, IQueryRuntimeContext runtimeContext, IQueryCacheContext queryCacheContext, IQueryBackendHintProvider hintProvider) {
         super();
 		this.logger = logger;
@@ -69,11 +72,23 @@ public class LocalSearchBackend implements IQueryBackend {
     @Override
     public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints)
             throws QueryProcessingException {
-        return new LocalSearchResultProvider(this, logger, runtimeContext, queryCacheContext, hintProvider, query, planProvider, hints);
+        
+        IMatcherCapability requestedCapability = hintProvider.getQueryEvaluationHint(query).overrideBy(hints).calculateRequiredCapability(query);
+        for(LocalSearchResultProvider existingResultProvider : resultProviderCache.get(query)){
+            if (requestedCapability.canBeSubstitute(existingResultProvider.getCapabilites())){
+                return existingResultProvider;
+            }
+        }
+        
+        LocalSearchResultProvider resultProvider = new LocalSearchResultProvider(this, logger, runtimeContext, queryCacheContext, hintProvider, query, planProvider, hints);
+        resultProviderCache.put(query, resultProvider);
+        return resultProvider;
     }
-
+    
     @Override
-    public void dispose() {        
+    public void dispose() {  
+        eAttributesByTypeForEClass.clear();
+        resultProviderCache.clear();
     }
 
 	@Override
