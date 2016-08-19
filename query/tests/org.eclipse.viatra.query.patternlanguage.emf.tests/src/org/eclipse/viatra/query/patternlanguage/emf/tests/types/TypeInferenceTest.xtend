@@ -433,6 +433,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		model.assertNoErrors
 		tester.validate(model).assertOK
 	}
+
 	@Test
 	def supertypeAsParameter3() {
 		val model = parseHelper.parse('''
@@ -488,6 +489,22 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
+	
+	@Test
+    def supertypeAsParameter6() {
+        // EInt is not less specific then Integer
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern t3(n : EInt) {
+                n == eval(Integer.parseInt("2"));
+                check(n > 2);
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertOK
+    }
 	
 	@Test
     def ambiguousParameterType1() {
