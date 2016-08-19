@@ -117,6 +117,12 @@ pattern trimmerRecipe(recipe : TrimmerRecipe, mask : Mask) {
 	TrimmerRecipe.mask(recipe, mask);
 }
 
+@Item(item = recipe)
+@QueryExplorer(checked = false)
+pattern aggregatorRecipe(recipe : SingleColumnAggregatorRecipe) {
+	SingleColumnAggregatorRecipe(recipe);
+}
+
 @Item(item = recipe, label = "Aggregator Indexer: $mask.sourceIndices$/$mask.sourceArity$")
 @Format(textColor = "#000000", color = "#FFFFFF")
 @QueryExplorer(checked = false)
