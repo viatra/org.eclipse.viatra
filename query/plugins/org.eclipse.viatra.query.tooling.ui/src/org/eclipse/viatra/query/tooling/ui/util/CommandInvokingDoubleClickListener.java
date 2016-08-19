@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -57,9 +58,18 @@ public class CommandInvokingDoubleClickListener implements IDoubleClickListener 
             try {
                 handlerService.executeCommand(commandId, null);
             } catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
-                logger.error(exceptionMessage, e);
+                handleException(e);
             }
         }
+    }
+
+    /**
+     * Subclasses may add additional error handling when the command invocation was not successful
+     * 
+     * @param e the exception that occured while executing the command
+     */
+    protected void handleException(CommandException e) {
+        logger.error(exceptionMessage, e);
     }
 
 }

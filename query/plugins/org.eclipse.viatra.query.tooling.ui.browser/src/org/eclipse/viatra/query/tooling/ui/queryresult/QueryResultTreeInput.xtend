@@ -52,6 +52,7 @@ import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent
 import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherCollection
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus
 
 /**
  * @author Abel Hegedus
@@ -227,32 +228,42 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
         }
         try{
             val specification = entry.provider.specificationOfProvider as IQuerySpecification
-            val matcher = engine.getMatcher(specification, hint)
-            val specificationFQN = specification.fullyQualifiedName
-            val treeMatcher = matchers.get(specificationFQN)
-            if(specificationFQN != entryFQN){
-                // inconsistent state during Xtext index update
-                matchers.remove(specificationFQN)
-                matchers.put(entryFQN, treeMatcher)
+            if(specification.internalQueryRepresentation.status == PQueryStatus.ERROR){
+                entry.addErroneousMatcher(new IllegalArgumentException("Query definition contains errors"))
+            } else {
+                val matcher = engine.getMatcher(specification, hint)
+                val specificationFQN = specification.fullyQualifiedName
+                val treeMatcher = matchers.get(specificationFQN)
+                if(specificationFQN != entryFQN){
+                    // inconsistent state during Xtext index update
+                    matchers.remove(specificationFQN)
+                    matchers.put(entryFQN, treeMatcher)
+                }
+                treeMatcher.entry = entry
+                treeMatcher.hint = hint
+                knownErrorEntries.remove(entry.sourceIdentifier, entryFQN)
+                return treeMatcher
             }
-            treeMatcher.entry = entry
-            treeMatcher.hint = hint
-            knownErrorEntries.remove(entry.sourceIdentifier, entryFQN)
-            return treeMatcher
         } catch (Exception ex) {
-            val treeMatcher = new QueryResultTreeMatcher(this, null)
-            treeMatcher.exception = ex
-            treeMatcher.entry = entry
-            matchers.put(entryFQN, treeMatcher)
-            listeners.forEach[
-                it.matcherAdded(treeMatcher)
-            ]
-            if(knownErrorEntries.put(entry.sourceIdentifier, entryFQN)){
-                val logMessage = String.format("Query Explorer has encountered an error during evaluation of query %s%s", entryFQN, ex.message)
-                ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(
-                        IStatus.ERROR, ViatraQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), logMessage, ex));
-            }
+            return entry.addErroneousMatcher(ex)
         }
+    }
+    
+    private def addErroneousMatcher(IQuerySpecificationRegistryEntry entry, Exception ex) {
+        val entryFQN = entry.fullyQualifiedName
+        val treeMatcher = new QueryResultTreeMatcher(this, null)
+        treeMatcher.exception = ex
+        treeMatcher.entry = entry
+        matchers.put(entryFQN, treeMatcher)
+        listeners.forEach[
+            it.matcherAdded(treeMatcher)
+        ]
+        if(knownErrorEntries.put(entry.sourceIdentifier, entryFQN)){
+            val logMessage = String.format("Query Explorer has encountered an error during evaluation of query %s: %s", entryFQN, ex.message)
+            ViatraQueryToolingBrowserPlugin.getDefault().getLog().log(new Status(
+                    IStatus.ERROR, ViatraQueryGUIPlugin.getDefault().getBundle().getSymbolicName(), logMessage, ex));
+        }
+        return treeMatcher
     }
     
     private def getSpecificationOfProvider(IQuerySpecificationProvider provider) {

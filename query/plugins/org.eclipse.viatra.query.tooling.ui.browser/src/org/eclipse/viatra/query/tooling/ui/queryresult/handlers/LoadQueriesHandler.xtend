@@ -18,6 +18,7 @@ import org.eclipse.ui.handlers.HandlerUtil
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil
 import org.eclipse.jface.dialogs.MessageDialog
+import org.eclipse.swt.widgets.Shell
 
 /**
  * @author Abel Hegedus
@@ -40,11 +41,15 @@ class LoadQueriesHandler extends AbstractHandler {
                 ]
                 queryResultView.loadQueriesIntoActiveEngine(selectedQueries.map[entry])
             } else {
-                MessageDialog.openError(queryResultView.site.shell, "Query loading failed",
-                    "Please load a model into the Query Results view before loading queries!"
-                )
+                queryResultView.site.shell.queryLoadingFailed
             }
         }
         return null
+    }
+    
+    def static queryLoadingFailed(Shell parent) {
+        MessageDialog.openError(parent, "Query loading failed",
+            "Please load a model into the Query Results view before loading queries!"
+        )
     }
 }

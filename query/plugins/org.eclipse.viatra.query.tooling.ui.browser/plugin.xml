@@ -5,14 +5,14 @@
          point="org.eclipse.ui.views">
       <view
             category="org.eclipse.viatra.query.tooling.ui"
-            class="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
             icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
             name="Query Registry">
       </view>
       <view
             category="org.eclipse.viatra.query.tooling.ui"
-            class="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
             icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
             name="Query Results">
@@ -75,21 +75,37 @@
       </handler>
       <handler
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadVqlPatternHandler"
-            commandId="org.eclipse.viatra.query.tooling.ui.result.loadmodel">
+            commandId="org.eclipse.viatra.query.tooling.ui.result.loadvqlqueries">
          <activeWhen>
             <reference
-                  definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
+                 definitionId="org.eclipse.viatra.query.tooling.ui.activepatterneditor">
             </reference>
          </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeEditor">
+               <test
+                     property="org.eclipse.viatra.query.tooling.ui.browser.result.activeengine">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadQueriesHandler"
             commandId="org.eclipse.viatra.query.tooling.ui.result.loadqueries">
          <activeWhen>
             <reference
-                  definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.registrycontent">
+              definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.registrycontent">
             </reference>
          </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <test
+                     property="org.eclipse.viatra.query.tooling.ui.browser.result.activeengine">
+               </test>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.UnloadModelHandler"
@@ -188,7 +204,7 @@
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.loadqueries"
-               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
+               icon="icons/load_query.png"
                id="org.eclipse.viatra.query.tooling.ui.result.loadqueriesmenu"
                label="Load into Query Results"
                style="push">
@@ -208,9 +224,15 @@
          </control>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.loadmodel"
-               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/load.gif"
+               icon="icons/load_model.png"
                id="org.eclipse.viatra.query.tooling.ui.result.loadmodelmenu"
-               label="Load from active editor"
+               label="Load model from active editor"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.result.loadvqlqueries"
+               icon="icons/load_query.png"
+               label="Load queries from active editor"
                style="push">
          </command>
          <command
@@ -268,7 +290,12 @@
       <command
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.result.loadmodel"
-            name="Load from active editor">
+            name="Load model from active editor">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.result.loadvqlqueries"
+            name="Load queries from active editor">
       </command>
       <command
             categoryId="org.eclipse.viatra.query.tooling.category"
@@ -467,7 +494,7 @@
             id="org.eclipse.viatra.query.tooling.ui.browser.result"
             namespace="org.eclipse.viatra.query.tooling.ui.browser.result"
             properties="activeengine"
-            type="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
+            type="java.lang.Object">
       </propertyTester>
    </extension>
 </plugin>

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryregistry;
 
+import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
@@ -44,6 +45,7 @@ import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRe
 import org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadQueriesHandler;
 import org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
@@ -52,6 +54,9 @@ import com.google.inject.Injector;
  */
 public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetPageContributor {
 
+    @Inject
+    private Injector injector;
+    
     public static final String ID = "org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"; //$NON-NLS-1$
     private TreeViewer queryTreeViewer;
     private QueryRegistryTreeInput queryRegistryTreeInput;
@@ -107,8 +112,14 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         });
         queryTreeViewer.setLabelProvider(new QueryRegistryTreeLabelProvider());
         queryTreeViewer.setContentProvider(new QueryRegistryTreeContentProvider());
-        
-        queryTreeViewer.addDoubleClickListener(new CommandInvokingDoubleClickListener(LoadQueriesHandler.COMMAND_ID, "Exception when activating load queries!"));
+        CommandInvokingDoubleClickListener loadQueriesListener = new CommandInvokingDoubleClickListener(LoadQueriesHandler.COMMAND_ID, "Exception when activating load queries!"){
+            @Override
+            protected void handleException(CommandException e) {
+                LoadQueriesHandler.queryLoadingFailed(getSite().getShell());
+            }
+        };
+        injector.injectMembers(loadQueriesListener);
+        queryTreeViewer.addDoubleClickListener(loadQueriesListener);
         
         int operations = DND.DROP_COPY | DND.DROP_MOVE;
         Transfer[] transferTypes = new Transfer[]{LocalTransfer.getInstance()};

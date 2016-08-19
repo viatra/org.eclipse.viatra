@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.tooling.ui.queryresult.internal;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView;
 
 /**
@@ -26,10 +27,12 @@ public class ActiveEnginePropertyTester extends PropertyTester {
 
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-        if (ACTIVE_ENGINE.equals(property) && receiver instanceof IViewPart) {
-            if (receiver instanceof QueryResultView) {
-                QueryResultView queryResultView = (QueryResultView) receiver;
-                return queryResultView.hasActiveEngine();
+        if (ACTIVE_ENGINE.equals(property) && receiver instanceof IWorkbenchPart) {
+            IViewPart view = ((IWorkbenchPart) receiver).getSite().getPage().findView(QueryResultView.ID);
+            if (view instanceof QueryResultView) {
+                QueryResultView queryResultView = (QueryResultView) view;
+                boolean activeEngine = queryResultView.hasActiveEngine();
+                return activeEngine;
             }
         }
         return false;

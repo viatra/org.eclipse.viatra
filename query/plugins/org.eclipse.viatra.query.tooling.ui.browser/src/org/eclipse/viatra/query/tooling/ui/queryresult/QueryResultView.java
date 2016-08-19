@@ -60,11 +60,17 @@ import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil;
 import org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener;
 import org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 /**
  * @author Abel Hegedus
  *
  */
 public class QueryResultView extends ViewPart {
+    
+    @Inject
+    private Injector injector;
     
     private static final String SCOPE_UNINITIALIZED_MSG = "Scope uninitialized!\r\nPress the \"Load from active editor\" button on the toolbar!";
     public static final String ID = "org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"; //$NON-NLS-1$
@@ -126,7 +132,9 @@ public class QueryResultView extends ViewPart {
         });
         queryResultTreeViewer.setLabelProvider(new QueryResultTreeLabelProvider());
         queryResultTreeViewer.setContentProvider(new QueryResultTreeContentProvider());
-        queryResultTreeViewer.addDoubleClickListener(new CommandInvokingDoubleClickListener(CommandConstants.SHOW_LOCATION_COMMAND_ID, "Exception when activating show location!"));
+        CommandInvokingDoubleClickListener showLocationListener = new CommandInvokingDoubleClickListener(CommandConstants.SHOW_LOCATION_COMMAND_ID, "Exception when activating show location!");
+        injector.injectMembers(showLocationListener);
+        queryResultTreeViewer.addDoubleClickListener(showLocationListener);
         queryResultTreeViewer.addFilter(new ViewerFilter() {
             @Override
             public boolean select(Viewer viewer, Object parentElement, Object element) {
@@ -237,7 +245,9 @@ public class QueryResultView extends ViewPart {
     private void activeEnginePropertyChanged() {
         //Casting is required for backward compatibility with old platform versions
         IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
-        service.requestEvaluation(ActiveEnginePropertyTester.ACTIVE_ENGINE_ID);
+        if(service != null){
+            service.requestEvaluation(ActiveEnginePropertyTester.ACTIVE_ENGINE_ID);
+        }
     }
     
     public void unloadModel() {
@@ -248,8 +258,10 @@ public class QueryResultView extends ViewPart {
                 emfModelConnector.removeListener(connectorListener);
             }
             input = null;
-            queryResultTreeViewer.setInput(null);
-            lblScopeDescription.setText(SCOPE_UNINITIALIZED_MSG);
+            if(!queryResultTreeViewer.getControl().isDisposed()){
+                queryResultTreeViewer.setInput(null);
+                lblScopeDescription.setText(SCOPE_UNINITIALIZED_MSG);
+            }
             activeEnginePropertyChanged();
         }
     }
