@@ -14,7 +14,6 @@ package org.eclipse.viatra.query.tooling.ui.queryexplorer.util;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
-import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 
 /**
  * The PartListener is used to observe {@link IEditorPart} close actions.
@@ -22,7 +21,7 @@ import org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer;
 public class ModelEditorPartListener extends BasePartListener {
 
     private final IModelConnector modelConnector;
-
+    
     public ModelEditorPartListener(IModelConnector modelConnector) {
         this.modelConnector = modelConnector;
     }
@@ -31,8 +30,8 @@ public class ModelEditorPartListener extends BasePartListener {
     public void partClosed(IWorkbenchPart part) {
         if (part instanceof IEditorPart) {
             // also check if the closed editor belongs to our model connector
-            if (part.equals(this.modelConnector.getOwner()) && QueryExplorer.getInstance() != null) {
-                QueryExplorer.getInstance().unload(modelConnector);
+            if (part.equals(this.modelConnector.getOwner())) {
+                modelConnector.unloadModel();
             }
         }
     }

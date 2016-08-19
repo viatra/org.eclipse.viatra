@@ -74,8 +74,8 @@ public class GraphitiModelConnector extends EMFModelConnector {
     public void showLocation(Object[] locationObjects) {
         // reflective set selection is not needed
         IStructuredSelection preparedSelection = prepareSelection(locationObjects);
-        navigateToElements(getKey().getEditorPart(), preparedSelection);
-        workbenchPage.bringToTop(getKey().getEditorPart());
+        navigateToElements((IEditorPart) getOwner(), preparedSelection);
+        workbenchPage.bringToTop(getOwner());
         // reflectiveSetSelection(key.getEditorPart(), preparedSelection);
     }
 

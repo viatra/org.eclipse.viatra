@@ -50,6 +50,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
+import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.detail.DetailsViewerUtil;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.flyout.FlyoutControlComposite;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.flyout.FlyoutPreferences;
@@ -73,6 +74,7 @@ import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CheckStateProvider
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DoubleClickListener;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.QueryExplorerPatternRegistry;
 import org.eclipse.viatra.query.tooling.ui.registry.QueryBackendRegistry;
+import org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -120,6 +122,7 @@ public class QueryExplorer extends ViewPart {
     private final PatternsViewerFlatLabelProvider flatLP;
     private final PatternsViewerHierarchicalContentProvider hierarchicalCP;
     private final PatternsViewerHierarchicalLabelProvider hierarchicalLP;
+    private final IModelConnectorListener listener;
 
     @Inject
     private Injector injector;
@@ -131,6 +134,7 @@ public class QueryExplorer extends ViewPart {
 
     private QueryEvaluationHint hints;
     
+    
     public QueryExplorer() {
         modelConnectorMap = new HashMap<PatternMatcherRootContentKey, IModelConnector>();
         modelConnectorMapReversed = new HashMap<IModelConnector, PatternMatcherRootContentKey>();
@@ -141,6 +145,12 @@ public class QueryExplorer extends ViewPart {
         hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
         hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
         hints = new QueryEvaluationHint(QueryBackendRegistry.getInstance().getDefaultBackend(), new HashMap<String, Object>());
+        listener = new IModelConnectorListener() {
+            @Override
+            public void modelUnloaded(IModelConnector modelConnector) {
+                unload(modelConnector);
+            }
+        };
     }
     
     /**
@@ -168,6 +178,9 @@ public class QueryExplorer extends ViewPart {
             this.modelConnectorMap.put(key, modelConnector);
             this.modelConnectorMapReversed.put(modelConnector, key);
             treeViewerRootContent.addPatternMatcherRoot(key, getHints());
+            if(modelConnector instanceof EMFModelConnector) {
+                ((EMFModelConnector) modelConnector).addListener(listener);
+            }
         }
     }
 
@@ -175,6 +188,9 @@ public class QueryExplorer extends ViewPart {
         this.modelConnectorMapReversed.remove(modelConnector);
         this.modelConnectorMap.remove(key);
         treeViewerRootContent.removePatternMatcherRoot(key);
+        if(modelConnector instanceof EMFModelConnector) {
+            ((EMFModelConnector) modelConnector).removeListener(listener);
+        }
         modelConnector.unloadModel();
     }
 

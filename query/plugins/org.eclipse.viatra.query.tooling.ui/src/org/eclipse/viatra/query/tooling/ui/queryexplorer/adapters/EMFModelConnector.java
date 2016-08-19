@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
@@ -42,9 +43,12 @@ import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher.PatternMatcherRootContentKey;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.ModelEditorPartListener;
+import org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Model connector implementation for the default EMF generated model editors.
@@ -60,11 +64,14 @@ public class EMFModelConnector implements IModelConnector {
     protected IWorkbenchPage workbenchPage;
 
     private ModelEditorPartListener modelEditorPartListener;
+    
+    private Set<IModelConnectorListener> listeners;
 
     public EMFModelConnector(IEditorPart editorPart) {
         super();
         this.logger = ViatraQueryGUIPlugin.getDefault().getLog();
         this.editorPart = editorPart;
+        this.listeners = Sets.newHashSet();
     }
 
     @Override
@@ -80,6 +87,9 @@ public class EMFModelConnector implements IModelConnector {
 
     @Override
     public void unloadModel() {
+        for (IModelConnectorListener listener : listeners) {
+            listener.modelUnloaded(this);
+        }
         workbenchPage.removePartListener(modelEditorPartListener);
     }
 
@@ -97,6 +107,10 @@ public class EMFModelConnector implements IModelConnector {
     }
 
     // XXX This is only needed for the current QueryExplorer. In the future these should be removed.
+    /**
+     * @deprecated
+     * @noreference This method is only used by the Query Explorer
+     */
     public PatternMatcherRootContentKey getKey() {
         return key;
     }
@@ -202,4 +216,17 @@ public class EMFModelConnector implements IModelConnector {
             return Collections.emptyList();
         }
     }
+    
+    public boolean addListener(IModelConnectorListener listener) {
+        Preconditions.checkArgument(listener != null, "Listener cannot be null!");
+        boolean added = listeners.add(listener);
+        return added;
+    }
+
+    public boolean removeListener(IModelConnectorListener listener) {
+        Preconditions.checkArgument(listener != null, "Listener cannot be null!");
+        boolean removed = listeners.remove(listener);
+        return removed;
+    }
+    
 }

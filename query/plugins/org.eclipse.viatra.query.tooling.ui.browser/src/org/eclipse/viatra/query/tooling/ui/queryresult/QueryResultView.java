@@ -58,6 +58,7 @@ import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
 import org.eclipse.viatra.query.tooling.ui.queryresult.internal.ActiveEnginePropertyTester;
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil;
 import org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener;
+import org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener;
 
 /**
  * @author Abel Hegedus
@@ -73,6 +74,7 @@ public class QueryResultView extends ViewPart {
     private ITabbedPropertySheetPageContributor propertyPageContributor;
     private QueryEvaluationHint hint;
     private CollapseAllHandler collapseHandler;
+    private IModelConnectorListener connectorListener;
 
     public QueryResultView() {
         this.propertyPageContributor = new ITabbedPropertySheetPageContributor(){
@@ -82,6 +84,12 @@ public class QueryResultView extends ViewPart {
             }
         };
         this.hint = new QueryEvaluationHint(new ReteBackendFactory(), new HashMap<String, Object>());
+        this.connectorListener = new IModelConnectorListener() {
+            @Override
+            public void modelUnloaded(IModelConnector modelConnector) {
+                unloadModel();
+            }
+        };
     }
 
     /**
@@ -208,8 +216,9 @@ public class QueryResultView extends ViewPart {
         input = QueryResultViewModel.INSTANCE.createInput(modelConnector, scope);
         input.setHint(hint);
         queryResultTreeViewer.setInput(input);
+        modelConnector.addListener(connectorListener);
         StringBuilder scopeDescriptionBuilder = new StringBuilder();
-        scopeDescriptionBuilder.append("Editor: ").append(modelConnector.getKey().getEditorPart().getTitle())
+        scopeDescriptionBuilder.append("Editor: ").append(modelConnector.getOwner().getTitle())
                 .append("\nScope type: ").append(scope.name().toLowerCase());
         if (scope == IModelConnectorTypeEnum.RESOURCE) {
             Notifier notifier = modelConnector.getNotifier(scope);
@@ -234,6 +243,10 @@ public class QueryResultView extends ViewPart {
     public void unloadModel() {
         if(input != null) {
             QueryResultViewModel.INSTANCE.removeInput(input);
+            if(input.getModelConnector() instanceof EMFModelConnector) {
+                EMFModelConnector emfModelConnector = (EMFModelConnector) input.getModelConnector();
+                emfModelConnector.removeListener(connectorListener);
+            }
             input = null;
             queryResultTreeViewer.setInput(null);
             lblScopeDescription.setText(SCOPE_UNINITIALIZED_MSG);

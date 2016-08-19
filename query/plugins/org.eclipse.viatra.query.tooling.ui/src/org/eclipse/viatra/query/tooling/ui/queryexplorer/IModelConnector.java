@@ -18,14 +18,14 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 
 /**
- * This interface provides all api calls for an instance model registered in the Query Explorer. Implementations of this
+ * This interface provides all API calls for a connector that can provide an instance model. Implementations of this
  * interface should contain the editor specific handling of loadModel, unloadModel, getNotifier and showLocation
  * methods.
  */
 public interface IModelConnector {
 
     /**
-     * Loads the instance model into the {@link QueryExplorer}.
+     * Loads the instance model into the model connector with the given type.
      * 
      * @param modelConnectorTypeEnum
      *            The model type which should be loaded.
@@ -33,7 +33,7 @@ public interface IModelConnector {
     public abstract void loadModel(IModelConnectorTypeEnum modelConnectorTypeEnum);
 
     /**
-     * Unloads the instance model from the {@link QueryExplorer}.
+     * Unloads the instance model from the model connector.
      */
     public abstract void unloadModel();
 

@@ -16,6 +16,7 @@ import org.eclipse.gmt.modisco.infra.browser.editors.EcoreBrowser;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.adapters.EMFModelConnector;
 
@@ -53,7 +54,7 @@ public class FacetModelConnector extends EMFModelConnector {
 
     @Override
     public void showLocation(Object[] locationObjects) {
-        IEditorPart editorPart = getKey().getEditorPart();
+        IWorkbenchPart editorPart = getOwner();
         if (editorPart instanceof EcoreBrowser) {
             EcoreBrowser ecoreBrowser = (EcoreBrowser) editorPart;
             if (locationObjects.length > 0) {
