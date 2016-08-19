@@ -273,11 +273,11 @@
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.getBytes(String)"
+           fully-qualified-name="java.lang.String.getBytes(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.getBytes(Charset)"
+           fully-qualified-name="java.lang.String.getBytes(java.nio.Charset)"
            type="method">
      </pure-element>
      <pure-element
@@ -285,47 +285,47 @@
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.equals(Object)"
+           fully-qualified-name="java.lang.String.equals(java.lang.Object)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.contentEquals(StringBuffer)"
+           fully-qualified-name="java.lang.String.contentEquals(java.lang.StringBuffer)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.contentEquals(CharSequence)"
+           fully-qualified-name="java.lang.String.contentEquals(java.lang.CharSequence)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.equalsIgnoreCase(String)"
+           fully-qualified-name="java.lang.String.equalsIgnoreCase(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.compareTo(String)"
+           fully-qualified-name="java.lang.String.compareTo(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.compareToIgnoreCase(String)"
+           fully-qualified-name="java.lang.String.compareToIgnoreCase(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.regionMatches(int, String, int, int)"
+           fully-qualified-name="java.lang.String.regionMatches(int, java.lang.String, int, int)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.regionMatches(boolean, int, String, int, int)"
+           fully-qualified-name="java.lang.String.regionMatches(boolean, int, java.lang.String, int, int)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.startsWith(String, int)"
+           fully-qualified-name="java.lang.String.startsWith(java.lang.String, int)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.startsWith(String)"
+           fully-qualified-name="java.lang.String.startsWith(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.endsWith(String)"
+           fully-qualified-name="java.lang.String.endsWith(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
@@ -345,19 +345,19 @@
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.indexOf(String)"
+           fully-qualified-name="java.lang.String.indexOf(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.indexOf(String, int)"
+           fully-qualified-name="java.lang.String.indexOf(java.lang.String, int)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.lastIndexOf(String)"
+           fully-qualified-name="java.lang.String.lastIndexOf(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.lastIndexOf(String, int)"
+           fully-qualified-name="java.lang.String.lastIndexOf(java.lang.String, int)"
            type="method">
      </pure-element>
      <pure-element
@@ -373,7 +373,7 @@
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.concat(String)"
+           fully-qualified-name="java.lang.String.concat(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
@@ -381,35 +381,35 @@
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.matches(String)"
+           fully-qualified-name="java.lang.String.matches(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.contains(CharSequence)"
+           fully-qualified-name="java.lang.String.contains(java.lang.CharSequence)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.replaceFirst(String, String)"
+           fully-qualified-name="java.lang.String.replaceFirst(java.lang.String, java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.replaceAll(String, String)"
+           fully-qualified-name="java.lang.String.replaceAll(java.lang.String, java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.replace(CharSequence, CharSequence)"
+           fully-qualified-name="java.lang.String.replace(java.lang.CharSequence, java.lang.CharSequence)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.split(String, int)"
+           fully-qualified-name="java.lang.String.split(java.lang.String, int)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.split(String)"
+           fully-qualified-name="java.lang.String.split(java.lang.String)"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.toLowerCase(Locale)"
+           fully-qualified-name="java.lang.String.toLowerCase(java.util.Locale)"
            type="method">
      </pure-element>
      <pure-element
@@ -417,7 +417,7 @@
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.toUpperCase(Locale)"
+           fully-qualified-name="java.lang.String.toUpperCase(java.util.Locale)"
            type="method">
      </pure-element>
      <pure-element
@@ -433,15 +433,15 @@
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.format(String, Object...)"
+           fully-qualified-name="java.lang.String.format(java.lang.String, java.lang.Object[])"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.format(Locale, String, Object...)"
+           fully-qualified-name="java.lang.String.format(java.util.Locale, java.lang.String, java.lang.Object[])"
            type="method">
      </pure-element>
      <pure-element
-           fully-qualified-name="java.lang.String.valueOf(Object)"
+           fully-qualified-name="java.lang.String.valueOf(java.lang.Object)"
            type="method">
      </pure-element>
      <pure-element
@@ -482,6 +482,26 @@
      </pure-element>
      <pure-element
            fully-qualified-name="java.lang.String.valueOf(double)"
+           type="method">
+     </pure-element>
+     <pure-element
+           fully-qualified-name="java.lang.Integer.parseInt(java.lang.String)"
+           type="method">
+     </pure-element>
+     <pure-element
+           fully-qualified-name="java.lang.Integer.parseInt(java.lang.String, int)"
+           type="method">
+     </pure-element>
+     <pure-element
+           fully-qualified-name="java.lang.Integer.valueOf(int)"
+           type="method">
+     </pure-element>
+     <pure-element
+           fully-qualified-name="java.lang.Integer.valueOf(java.lang.String)"
+           type="method">
+     </pure-element>
+     <pure-element
+           fully-qualified-name="java.lang.Integer.valueOf(java.lang.String, int)"
            type="method">
      </pure-element>
   </extension>

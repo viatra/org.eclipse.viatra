@@ -24,7 +24,6 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Ignore
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -72,6 +71,48 @@ class CheckConstraintTest {
 			pattern name(D) = {
 				EDouble(D);
 				check(Math::max(0,D) < 3);
+			}
+		')
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	@Test
+	def whitelistedMethodCheck3() {
+		val model = parseHelper.parse('
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern name(S) = {
+				EString(S);
+				check(Integer.parseInt(S) < 3);
+			}
+		')
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	@Test
+	def whitelistedMethodCheck4() {
+		val model = parseHelper.parse('
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern name(S) = {
+				EString(S);
+				check(S.contains("abc"));
+			}
+		')
+		model.assertNoErrors
+		tester.validate(model).assertOK
+	}
+	@Test
+	def whitelistedMethodCheck5() {
+		val model = parseHelper.parse('
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern name(S) = {
+				EClass.name(_, name);
+				S == eval(String.format("Name: %s", name));
 			}
 		')
 		model.assertNoErrors
