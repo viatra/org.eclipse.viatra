@@ -26,11 +26,13 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
+import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
 import org.eclipse.xtend2.lib.StringConcatenation
 import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtend2.lib.StringConcatenationClient.TargetStringConcatenation
@@ -43,8 +45,8 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
-import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
+import org.eclipse.xtext.diagnostics.Severity
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -57,7 +59,8 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	@Inject Logger logger
 	@Inject ITypeInferrer typeInferrer
 	@Inject var IJvmModelAssociations associations
-    @Inject EMFPatternLanguageGrammarAccess grammar;
+    @Inject EMFPatternLanguageGrammarAccess grammar
+    @Inject IErrorFeedback feedback
 	/**
 	 * This method returns the pattern name.
 	 * If the pattern name contains the package (any dot),
@@ -77,12 +80,20 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	}
 
 	def modelFileName(EObject object) {
-		val name = object.eResource?.URI.trimFileExtension.lastSegment
-		if (!(name.validClassName)) {
-			throw new IllegalAccessError("The file name " + name + " is not a valid Java type name. Please, rename the file!")
-		}
-		name
-	}
+        val eResource = object.eResource
+        if (eResource != null) {
+            val name = eResource.URI.trimFileExtension.lastSegment
+            if (!(name.validClassName)) {
+                feedback.reportErrorNoLocation(object,
+                    String.format("The file name %s is not a valid Java type name. Please, rename the file!", name),
+                    EMFIssueCodes::OTHER_ISSUE, Severity.ERROR, IErrorFeedback::JVMINFERENCE_ERROR_TYPE)
+            }
+            return name
+        } else {
+            return ""
+        }
+    }
+    
 	/**
 	 * Returns the QuerySpecificationClass name based on the Pattern's name
 	 */
