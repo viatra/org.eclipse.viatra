@@ -34,7 +34,6 @@ import com.google.common.collect.Sets;
  * Calculates the count of matches for a called matcher
  * 
  * @author Zoltan Ujhelyi
- *
  */
 public class CountOperation extends ExtendOperation<Integer> implements IMatcherBasedOperation{
 
