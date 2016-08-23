@@ -19,6 +19,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
@@ -146,6 +147,8 @@ public class PBodyCopier {
             copyBinaryTransitiveClosureConstraint((BinaryTransitiveClosure) constraint);
         } else if (constraint instanceof PatternMatchCounter) {
             copyPatternMatchCounterConstraint((PatternMatchCounter) constraint);
+        } else if (constraint instanceof AggregatorConstraint) {
+            copyAggregatorConstraint((AggregatorConstraint) constraint);
         } else if (constraint instanceof ExpressionEvaluation) {
             copyExpressionEvaluationConstraint((ExpressionEvaluation) constraint);
         } else {
@@ -220,6 +223,16 @@ public class PBodyCopier {
         PVariable mappedResultVariable = variableMapping.get(patternMatchCounter.getResultVariable());
         FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
         new PatternMatchCounter(body, variablesTuple, patternMatchCounter.getReferredQuery(), mappedResultVariable);
+    }
+    
+    /**
+     * @since 1.4
+     */
+    protected void copyAggregatorConstraint(AggregatorConstraint constraint) {
+        PVariable[] mappedVariables = extractMappedVariables(constraint);
+        PVariable mappedResultVariable = variableMapping.get(constraint.getResultVariable());
+        FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
+        new AggregatorConstraint(constraint.getAggregator(), body, variablesTuple, constraint.getReferredQuery(), mappedResultVariable, constraint.getAggregatedColumn());
     }
 
 

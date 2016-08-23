@@ -70,4 +70,21 @@ public final class IssueCodes {
     public static final String NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES = ISSUE_CODE_PREFIX + "negative_pattern_call_with_only_single_use_variables";
 
     public static final String RECURSIVE_PATTERN_CALL = ISSUE_CODE_PREFIX + "recursive_pattern_call";
+    
+    /**
+     * @since 1.4
+     */
+    public static final String INVALID_AGGREGATE_CONTEXT = ISSUE_CODE_PREFIX + "invalid_aggregate_context";
+    /**
+     * @since 1.4
+     */
+    public static final String INVALID_AGGREGATOR = ISSUE_CODE_PREFIX + "invalid_aggregator";
+    /**
+     * @since 1.4
+     */
+    public static final String INVALID_AGGREGATOR_PARAMETER = ISSUE_CODE_PREFIX + "invalid_aggregator_parameter";
+    /**
+     * @since 1.4
+     */
+    public static final String UNEXPECTED_AGGREGATE = ISSUE_CODE_PREFIX + "unexpected_aggregate";
 }

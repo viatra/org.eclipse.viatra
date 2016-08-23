@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.types;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
@@ -34,11 +36,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveIn
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.util.IResourceScopeCache;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -62,22 +60,9 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
      */
     @Override
     public IInputKey getInferredType(Expression var) {
-        if (CorePatternLanguageHelper.isParameter(var)) {
-            return getInferredParameterType((Variable) var);
-        } else {
-            final Pattern containingPattern = EcoreUtil2.getContainerOfType(var, Pattern.class);
-            TypeInformation information = collectConstraints(containingPattern);
-            return information.getType(var);
-        }
-    }
-
-    private IInputKey getInferredParameterType(Variable var) {
-        Set<IInputKey> possibleTypes = typeSystem.minimizeTypeInformation(getAllPossibleParameterTypes(var), true);
-        if (possibleTypes.size() == 1) {
-            return possibleTypes.iterator().next();
-        } else {
-            return null;
-        }
+        final Pattern containingPattern = EcoreUtil2.getContainerOfType(var, Pattern.class);
+        TypeInformation information = collectConstraints(containingPattern);
+        return information.getType(var);
     }
 
     /**
@@ -109,26 +94,13 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
      */
     @Override
     public Set<IInputKey> getAllPossibleTypes(Expression var) {
+        final Pattern containingPattern = EcoreUtil2.getContainerOfType(var, Pattern.class);
+        TypeInformation information = collectConstraints(containingPattern);
         if (CorePatternLanguageHelper.isParameter(var)) {
-            return getAllPossibleParameterTypes((Variable) var);
+            return ImmutableSet.of(information.getType((Variable) var));
         } else {
-            final Pattern containingPattern = EcoreUtil2.getContainerOfType(var, Pattern.class);
-            TypeInformation information = collectConstraints(containingPattern);
             return information.getAllTypes(var);
         }
-    }
-
-    private Set<IInputKey> getAllPossibleParameterTypes(Variable var) {
-        Preconditions.checkArgument(CorePatternLanguageHelper.isParameter(var), "Variable must represent a pattern parameter.");
-        return Sets.newHashSet(Iterables
-                .filter(Iterables.transform(CorePatternLanguageHelper.getLocalReferencesOfParameter(var),
-                        new Function<Variable, IInputKey>() {
-
-                            @Override
-                            public IInputKey apply(Variable input) {
-                                return getType(input);
-                            }
-                        }), Predicates.notNull()));
     }
 
     private TypeInformation collectConstraints(final Pattern pattern) {
@@ -140,9 +112,10 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
             }
         });
 
-        final Set<Pattern> patternsToCheck = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern);
+        // XXX requiring an ordered call graph might be expensive, but it avoids inconsistent errors during type inference
+        final Set<Pattern> patternsToCheck = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern, true);
         patternsToCheck.add(pattern);
-
+        
         for (Pattern patternToCheck : patternsToCheck) {
             if (!types.isProcessed(patternToCheck)) {
                 rules.inferTypes(patternToCheck, types);

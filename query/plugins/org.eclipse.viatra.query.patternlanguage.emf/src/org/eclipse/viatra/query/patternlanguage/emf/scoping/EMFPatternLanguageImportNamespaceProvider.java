@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternImport;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.impl.ImportNormalizer;
 import org.eclipse.xtext.xbase.scoping.XImportSectionNamespaceScopeProvider;
@@ -30,6 +31,19 @@ import com.google.common.collect.Lists;
 @SuppressWarnings("restriction")
 public class EMFPatternLanguageImportNamespaceProvider extends XImportSectionNamespaceScopeProvider {
 
+    private static final QualifiedName VIATRA_AGGREGATORS = QualifiedName.create("org","eclipse","viatra","query","runtime","matchers","aggregators");
+    
+    /**
+     * @since 1.4
+     */
+    @Override
+    protected List<ImportNormalizer> getImplicitImports(boolean ignoreCase) {
+        return Lists.<ImportNormalizer>newArrayList(
+                doCreateImportNormalizer(JAVA_LANG, true, false),
+                doCreateImportNormalizer(XBASE_LIB, true, false),
+                doCreateImportNormalizer(VIATRA_AGGREGATORS, true, false));
+    }
+    
     @Override
     protected IScope internalGetScope(IScope parent, IScope globalScope, EObject context, EReference reference) {
         if (context instanceof PatternImport) {

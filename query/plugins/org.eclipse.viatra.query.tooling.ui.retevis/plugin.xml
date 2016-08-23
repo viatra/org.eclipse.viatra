@@ -22,6 +22,7 @@
       <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.transparentRecipe"/>
       <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.transitiveClosureRecipe"/>
       <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.trimmerRecipe"/>
+      <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.aggregatorRecipe"/>
       <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.aggregatorIndexerRecipe"/>
       <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.projectionIndexerRecipe"/>
       <query-specification fqn="org.eclipse.viatra.query.tooling.ui.retevis.aggregatorRecipeParent"/>
@@ -36,20 +37,10 @@
       <keywordReference id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage"/>
     </page>
   </extension>
-  <extension
-        point="org.eclipse.ui.perspectiveExtensions">
-     <perspectiveExtension
-           targetID="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
-        <view
-              id="org.eclipse.viatra.query.tooling.ui.retevis.views.ReteVisualizer"
-              minimized="false"
-              relationship="stack"
-              relative="org.eclipse.ui.views.PropertySheet"
-              visible="false">
-        </view>
-        <viewShortcut
-              id="org.eclipse.viatra.query.tooling.ui.retevis.views.ReteVisualizer">
-        </viewShortcut>
-     </perspectiveExtension>
+  <extension point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension targetID="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
+      <view id="org.eclipse.viatra.query.tooling.ui.retevis.views.ReteVisualizer" minimized="false" relationship="stack" relative="org.eclipse.ui.views.PropertySheet" visible="false"/>
+      <viewShortcut id="org.eclipse.viatra.query.tooling.ui.retevis.views.ReteVisualizer"/>
+    </perspectiveExtension>
   </extension>
 </plugin>

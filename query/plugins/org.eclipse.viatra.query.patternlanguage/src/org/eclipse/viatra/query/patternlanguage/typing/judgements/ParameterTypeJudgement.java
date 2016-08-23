@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.typing.judgements;
 
+import java.util.Set;
+
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Zoltan Ujhelyi
@@ -20,11 +25,21 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
 public class ParameterTypeJudgement extends TypeConformJudgement {
 
     /**
-     * @param expression
-     * @param conformsTo
+     * @deprecated Use {@link #ParameterTypeJudgement(Expression, Variable)} instead
      */
     public ParameterTypeJudgement(Expression expression, Expression conformsTo) {
         super(expression, conformsTo);
+    }
+    /**
+     * @since 1.4
+     */
+    public ParameterTypeJudgement(Expression expression, Variable conformsTo) {
+        super(expression, conformsTo);
+    }
+    
+    @Override
+    public Set<Expression> getDependingExpressions() {
+        return ImmutableSet.of();
     }
 
 }

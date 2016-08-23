@@ -13,11 +13,13 @@ package org.eclipse.viatra.query.patternlanguage.helper;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -50,6 +52,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReferenc
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference;
 import org.eclipse.xtext.common.types.JvmFormalParameter;
+import org.eclipse.xtext.util.OnChangeEvictingCache;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
@@ -66,12 +69,18 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.inject.Provider;
 
 public final class CorePatternLanguageHelper {
 
     private CorePatternLanguageHelper() {
     }
 
+    /**
+     * @since 1.4
+     */
+    public static final String AGGREGATE_VARIABLE_PREFIX = "#";
+    
     /**
      * Returns the name of the container package of the selected pattern
      * @return a name of the pattern; never null, but may be empty string
@@ -230,7 +239,7 @@ public final class CorePatternLanguageHelper {
             if (element instanceof PatternCall) {
                 PatternCall call = (PatternCall) element;
                 final Pattern patternRef = call.getPatternRef();
-                if (patternRef != null) {
+                if (patternRef != null && !patternRef.eIsProxy()) {
                     result.add(patternRef);
                 }
             }
@@ -238,8 +247,53 @@ public final class CorePatternLanguageHelper {
         return result;
     }
 
+    private static class CallComparator implements Comparator<Pattern> {
+        
+        OnChangeEvictingCache cache = new OnChangeEvictingCache();
+        
+        private Set<Pattern> getReferences(final Pattern pattern) {
+            if (pattern.eResource() == null) {
+                return getReferencedPatterns(pattern);
+            } else {
+                return cache.get(pattern, pattern.eResource(), new Provider<Set<Pattern>>() {
+    
+                    @Override
+                    public Set<Pattern> get() {
+                        return getReferencedPatterns(pattern);
+                    }
+                });
+            }
+        }
+        
+        public int compare(Pattern left, Pattern right) {
+            boolean rightCalled = getReferences(left).contains(right);
+            boolean leftCalled = getReferences(right).contains(left);
+            
+            if (leftCalled && !rightCalled) {
+                return -1;
+            } else if (!leftCalled && rightCalled) {
+                return +1;
+            } else {
+                return getFullyQualifiedName(left).compareTo(getFullyQualifiedName(right));
+            }
+            
+          }
+    };
+    
     public static Set<Pattern> getReferencedPatternsTransitive(Pattern pattern) {
-        Set<Pattern> referencedPatterns = new HashSet<Pattern>();
+        return getReferencedPatternsTransitive(pattern, false);
+    }
+    
+    /**
+     * @since 1.4
+     */
+    public static Set<Pattern> getReferencedPatternsTransitive(Pattern pattern, boolean orderPatterns) {
+        Set<Pattern> referencedPatterns = null;
+        if (orderPatterns) {
+             referencedPatterns = new TreeSet<>(new CallComparator());
+        } else {
+            referencedPatterns = new HashSet<>();
+        }
         calculateReferencedPatternsTransitive(pattern, referencedPatterns);
         return referencedPatterns;
     }
@@ -436,14 +490,14 @@ public final class CorePatternLanguageHelper {
         if (valueReference != null) {
             if (valueReference instanceof VariableValue) {
                 Variable variable = ((VariableValue) valueReference).getValue().getVariable();
-                if (variable.getName().startsWith("_") && !onlyFromAggregatedValues) {
+                if ((variable.getName().startsWith("_") || hasAggregateReference(variable)) && !onlyFromAggregatedValues) {
                     resultSet.add(variable);
                 }
             } else if (valueReference instanceof AggregatedValue) {
                 AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
                 for (ValueReference valueReferenceInner : aggregatedValue.getCall().getParameters()) {
                     for (Variable variable : getUnnamedVariablesFromValueReference(valueReferenceInner, false)) {
-                        if (variable.getName().startsWith("_")) {
+                        if (variable.getName().startsWith("_") || hasAggregateReference(variable)) {
                             resultSet.add(variable);
                         }
                     }
@@ -536,5 +590,28 @@ public final class CorePatternLanguageHelper {
                     }
                 }, null);
             }}), Predicates.notNull()));
+    }
+    
+    /**
+     * Returns whether a variable reference is an aggregate reference (e.g. is started in the grammar with a '#' symbol).
+     * @since 1.4
+     */
+    public static boolean isAggregateReference(VariableReference reference) {
+        return reference.isAggregator(); 
+    }
+    
+    /**
+     * Returns whether a variable has an aggregate reference.
+     * @since 1.4
+     */
+    public static boolean hasAggregateReference(Variable var) {
+        return Iterables.any(var.getReferences(), new Predicate<VariableReference>() {
+
+            @Override
+            public boolean apply(VariableReference input) {
+                return input != null && isAggregateReference(input);
+            }
+            
+        });
     }
 }

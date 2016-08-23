@@ -41,6 +41,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
@@ -59,6 +61,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PDisjunctionR
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.SurrogateQueryRewriter;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
 import org.eclipse.viatra.query.runtime.rete.recipes.AntiJoinRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ConstantRecipe;
@@ -74,6 +77,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.Mask;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProjectionIndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.RecipesFactory;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TransitiveClosureRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TrimmerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.UniquenessEnforcerRecipe;
@@ -95,8 +99,8 @@ import com.google.common.collect.Multimap;
  *
  */
 public class ReteRecipeCompiler {
-	
-	private IQueryPlannerStrategy plannerStrategy;
+
+    private IQueryPlannerStrategy plannerStrategy;
 	private IQueryMetaContext metaContext;
 	private IQueryBackendHintProvider hintProvider;
 	private IQueryCacheContext queryCacheContext;
@@ -301,6 +305,8 @@ public class ReteRecipeCompiler {
             return compileDeferred((NegativePatternCall)constraint, plan, parentPlan, parentCompiled);
         } else if (constraint instanceof PatternMatchCounter) {
             return compileDeferred((PatternMatchCounter)constraint, plan, parentPlan, parentCompiled);
+        } else if (constraint instanceof AggregatorConstraint) {
+            return compileDeferred((AggregatorConstraint)constraint, plan, parentPlan, parentCompiled);
         } else if (constraint instanceof ExpressionEvaluation) {
             return compileDeferred((ExpressionEvaluation)constraint, plan, parentPlan, parentCompiled);
         } else if (constraint instanceof TypeFilterConstraint) {
@@ -414,7 +420,65 @@ public class ReteRecipeCompiler {
 		
 		return new CompiledSubPlan(plan, parentCompiled.getVariablesTuple(), antiJoinRecipe, primaryIndexer, secondaryIndexer);
     }
+    
     private CompiledSubPlan compileDeferred(PatternMatchCounter constraint, 
+            SubPlan plan, SubPlan parentPlan, CompiledSubPlan parentCompiled) throws QueryProcessingException  
+    {
+        final PlanningTrace callTrace = 
+                referQuery(constraint.getReferredQuery(), plan, constraint.getActualParametersTuple());
+        
+        // hack: use some mask computations (+ the indexers) from a fake natural join against the called query
+        JoinHelper fakeJoinHelper = new JoinHelper(plan, parentCompiled, callTrace);
+        final RecipeTraceInfo primaryIndexer = fakeJoinHelper.getPrimaryIndexer();
+        final RecipeTraceInfo callProjectionIndexer = fakeJoinHelper.getSecondaryIndexer();
+
+        final List<PVariable> sideVariablesTuple = fakeJoinHelper.getSecondaryMask().transform(callTrace.getVariablesTuple());
+        /*if (!booleanCheck)*/ sideVariablesTuple.add(constraint.getResultVariable());
+
+        CountAggregatorRecipe aggregatorRecipe = FACTORY.createCountAggregatorRecipe();
+        aggregatorRecipe.setParent((ProjectionIndexerRecipe) callProjectionIndexer.getRecipe());
+        PlanningTrace aggregatorTrace = 
+                new PlanningTrace(plan, sideVariablesTuple, aggregatorRecipe, callProjectionIndexer);
+        
+        IndexerRecipe aggregatorIndexerRecipe = FACTORY.createAggregatorIndexerRecipe();
+        aggregatorIndexerRecipe.setParent(aggregatorRecipe);
+        aggregatorIndexerRecipe.setMask(RecipesHelper.mask(
+                sideVariablesTuple.size(), 
+                //use same indices as in the projection indexer 
+                // EVEN if result variable already visible in left parent
+                fakeJoinHelper.getSecondaryMask().indices 
+        ));
+        PlanningTrace aggregatorIndexerTrace = 
+                new PlanningTrace(plan, sideVariablesTuple, aggregatorIndexerRecipe, aggregatorTrace);
+        
+        JoinRecipe naturalJoinRecipe = FACTORY.createJoinRecipe();
+        naturalJoinRecipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
+        naturalJoinRecipe.setRightParent(aggregatorIndexerRecipe);
+        naturalJoinRecipe.setRightParentComplementaryMask(RecipesHelper.mask(
+                sideVariablesTuple.size(), 
+                // extend with last element only - the computation value
+                sideVariablesTuple.size() - 1
+        ));
+        
+        // what if the new variable already has a value?
+        boolean alreadyKnown = parentPlan.getVisibleVariables().contains(constraint.getResultVariable());
+        final List<PVariable> aggregatedVariablesTuple = new ArrayList<PVariable>(parentCompiled.getVariablesTuple());      
+        if (!alreadyKnown) aggregatedVariablesTuple.add(constraint.getResultVariable());
+
+        PlanningTrace joinTrace = new PlanningTrace(plan,
+            aggregatedVariablesTuple, 
+            naturalJoinRecipe, 
+            primaryIndexer, aggregatorIndexerTrace);
+
+        return CompilerHelper.checkAndTrimEqualVariables(plan, joinTrace).cloneFor(plan);
+//      if (!alreadyKnown) {
+//          return joinTrace.cloneFor(plan);
+//      } else {
+//          //final Integer equalsWithIndex = parentCompiled.getPosMapping().get(parentCompiled.getVariablesTuple());
+//      }
+    }
+    
+    private CompiledSubPlan compileDeferred(AggregatorConstraint constraint, 
     		SubPlan plan, SubPlan parentPlan, CompiledSubPlan parentCompiled) throws QueryProcessingException  
     {
 		final PlanningTrace callTrace = 
@@ -423,15 +487,22 @@ public class ReteRecipeCompiler {
 		// hack: use some mask computations (+ the indexers) from a fake natural join against the called query
 		JoinHelper fakeJoinHelper = new JoinHelper(plan, parentCompiled, callTrace);
 		final RecipeTraceInfo primaryIndexer = fakeJoinHelper.getPrimaryIndexer();
-		final RecipeTraceInfo callProjectionIndexer = fakeJoinHelper.getSecondaryIndexer();
+		TupleMask callGroupMask = fakeJoinHelper.getSecondaryMask();
 
-		final List<PVariable> sideVariablesTuple = fakeJoinHelper.getSecondaryMask().transform(callTrace.getVariablesTuple());
+        final List<PVariable> sideVariablesTuple = callGroupMask.transform(callTrace.getVariablesTuple());
 		/*if (!booleanCheck)*/ sideVariablesTuple.add(constraint.getResultVariable());
 
-		CountAggregatorRecipe aggregatorRecipe = FACTORY.createCountAggregatorRecipe();
-		aggregatorRecipe.setParent((ProjectionIndexerRecipe) callProjectionIndexer.getRecipe());
-		PlanningTrace aggregatorTrace = 
-				new PlanningTrace(plan, sideVariablesTuple, aggregatorRecipe, callProjectionIndexer);
+		IMultisetAggregationOperator<?, ?, ?> operator = constraint.getAggregator().getOperator();
+
+	    SingleColumnAggregatorRecipe columnAggregatorRecipe = FACTORY.createSingleColumnAggregatorRecipe();
+	    columnAggregatorRecipe.setParent(callTrace.getRecipe());
+	    
+	    columnAggregatorRecipe.setMultisetAggregationOperator(operator);
+        columnAggregatorRecipe.setAggregableIndex(constraint.getAggregatedColumn());
+        columnAggregatorRecipe.setGroupByMask(CompilerHelper.toRecipeMask(callGroupMask));
+        
+        ReteNodeRecipe aggregatorRecipe = columnAggregatorRecipe;
+        PlanningTrace aggregatorTrace = new PlanningTrace(plan, sideVariablesTuple, aggregatorRecipe, callTrace);
 		
 		IndexerRecipe aggregatorIndexerRecipe = FACTORY.createAggregatorIndexerRecipe();
 		aggregatorIndexerRecipe.setParent(aggregatorRecipe);
@@ -439,7 +510,7 @@ public class ReteRecipeCompiler {
 				sideVariablesTuple.size(), 
 				//use same indices as in the projection indexer 
 				// EVEN if result variable already visible in left parent
-				fakeJoinHelper.getSecondaryMask().indices 
+				callGroupMask.indices 
 		));
 		PlanningTrace aggregatorIndexerTrace = 
 				new PlanningTrace(plan, sideVariablesTuple, aggregatorIndexerRecipe, aggregatorTrace);

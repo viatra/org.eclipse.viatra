@@ -98,6 +98,18 @@ class PatternValidationTest extends AbstractValidatorTest {
 	}
 	
 	@Test
+	def dubiusSingleUseVariable2() {
+		val model = parseHelper.parse('''
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+			pattern unusedPrivatePattern(p : Pattern) {
+				Pattern.name(_, _p);
+			}
+		''')
+		tester.validate(model).assertAll(getWarningCode(IssueCodes::DUBIUS_VARIABLE_NAME), getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NEVER_REFERENCED), getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING))
+	}
+	
+	@Test
 	def dubiusSingleUseVariableCapitalization() {
 		val model = parseHelper.parse('''
 			package org.eclipse.viatra.query.patternlanguage.emf.tests

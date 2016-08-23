@@ -23,13 +23,12 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EClassifi
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.helper.JavaTypesHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatorExpression;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.CountAggregator;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
@@ -47,9 +46,11 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
+import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.viatra.query.runtime.matchers.aggregators.count;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.xtext.xbase.XExpression;
@@ -61,6 +62,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Transforms a {@link PatternBody}.
+ * 
  * @since 1.1
  */
 public class PatternBodyTransformer {
@@ -75,11 +77,11 @@ public class PatternBodyTransformer {
     }
 
     /**
-     * Traverses the given {@link PatternBody},
-     * making proper calls to the given {@link PatternModelAcceptor} during the traversal,
-     * then returns the result of the acceptor.
+     * Traverses the given {@link PatternBody}, making proper calls to the given {@link PatternModelAcceptor} during the
+     * traversal, then returns the result of the acceptor.
      */
-    public <Result> Result transform(PatternBody body, PatternModelAcceptor<Result> acceptor) throws QueryInitializationException {
+    public <Result> Result transform(PatternBody body, PatternModelAcceptor<Result> acceptor)
+            throws QueryInitializationException {
         try {
             preprocessVariables(body, acceptor);
             preprocessParameters(body, acceptor);
@@ -110,14 +112,14 @@ public class PatternBodyTransformer {
     }
 
     public static IInputKey classifierToInputKey(EClassifier classifier) {
-        IInputKey key = classifier == null ? null :
-        		classifier instanceof EClass ?
-	                new EClassTransitiveInstancesKey((EClass) classifier) :
-	                new EDataTypeInSlotsKey((EDataType) classifier);
+        IInputKey key = classifier == null ? null
+                : classifier instanceof EClass ? new EClassTransitiveInstancesKey((EClass) classifier)
+                        : new EDataTypeInSlotsKey((EDataType) classifier);
         return key;
     }
 
-    private void gatherBodyConstraints(PatternBody body, PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+    private void gatherBodyConstraints(PatternBody body, PatternModelAcceptor<?> acceptor)
+            throws SpecificationBuilderException {
         EList<Constraint> constraints = body.getConstraints();
         for (Constraint constraint : constraints) {
             acceptor.acceptConstraint(constraint);
@@ -125,7 +127,8 @@ public class PatternBodyTransformer {
         }
     }
 
-    private void gatherConstraint(Constraint constraint, PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+    private void gatherConstraint(Constraint constraint, PatternModelAcceptor<?> acceptor)
+            throws SpecificationBuilderException {
         if (constraint instanceof EClassifierConstraint) { // EMF-specific
             EClassifierConstraint classifierConstraint = (EClassifierConstraint) constraint;
             gatherClassifierConstraint(classifierConstraint, acceptor);
@@ -142,19 +145,20 @@ public class PatternBodyTransformer {
             final CheckConstraint check = (CheckConstraint) constraint;
             gatherCheckConstraint(check, acceptor);
         } else {
-            throw new SpecificationBuilderException("Unsupported constraint type {1} in pattern {2}.", new String[] {
-                    constraint.eClass().getName(), patternFQN }, "Unsupported constraint type", pattern);
+            throw new SpecificationBuilderException("Unsupported constraint type {1} in pattern {2}.",
+                    new String[] { constraint.eClass().getName(), patternFQN }, "Unsupported constraint type", pattern);
         }
     }
 
-    private void gatherPathExpression(PathExpressionConstraint pathExpression, PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+    private void gatherPathExpression(PathExpressionConstraint pathExpression, PatternModelAcceptor<?> acceptor)
+            throws SpecificationBuilderException {
         PathExpressionHead head = pathExpression.getHead();
         VariableReference src = head.getSrc();
         ValueReference dst = head.getDst();
         if (src == null || dst == null) {
             return;
         }
-        
+
         String currentSrcName = getVariableName(src, acceptor);
         String finalDstName = getVariableName(dst, acceptor);
         PathExpressionTail currentTail = head.getTail();
@@ -184,14 +188,16 @@ public class PatternBodyTransformer {
         acceptor.acceptEquality(currentSrcName, finalDstName);
     }
 
-    private void gatherPathSegment(Type segmentType, String srcName, String trgName, PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+    private void gatherPathSegment(Type segmentType, String srcName, String trgName, PatternModelAcceptor<?> acceptor)
+            throws SpecificationBuilderException {
         if (segmentType instanceof ReferenceType) { // EMF-specific
             EStructuralFeature typeObject = ((ReferenceType) segmentType).getRefname();
-            acceptor.acceptTypeConstraint(ImmutableList.of(srcName, trgName), new EStructuralFeatureInstancesKey(typeObject));
+            acceptor.acceptTypeConstraint(ImmutableList.of(srcName, trgName),
+                    new EStructuralFeatureInstancesKey(typeObject));
         } else
-            throw new SpecificationBuilderException("Unsupported path segment type {1} in pattern {2}: {3}", new String[] {
-                    segmentType.eClass().getName(), patternFQN, typeStr(segmentType) }, "Unsupported navigation step",
-                    pattern);
+            throw new SpecificationBuilderException("Unsupported path segment type {1} in pattern {2}: {3}",
+                    new String[] { segmentType.eClass().getName(), patternFQN, typeStr(segmentType) },
+                    "Unsupported navigation step", pattern);
     }
 
     /**
@@ -201,7 +207,8 @@ public class PatternBodyTransformer {
         return type.getTypename() == null ? "(null)" : type.getTypename();
     }
 
-    private void gatherCompareConstraint(CompareConstraint compare, PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+    private void gatherCompareConstraint(CompareConstraint compare, PatternModelAcceptor<?> acceptor)
+            throws SpecificationBuilderException {
         String left = getVariableName(compare.getLeftOperand(), acceptor);
         String right = getVariableName(compare.getRightOperand(), acceptor);
         switch (compare.getFeature()) {
@@ -246,7 +253,8 @@ public class PatternBodyTransformer {
         acceptor.acceptTypeConstraint(ImmutableList.of(variableName), inputKey);
     }
 
-    private void gatherCheckConstraint(final CheckConstraint check, PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+    private void gatherCheckConstraint(final CheckConstraint check, PatternModelAcceptor<?> acceptor)
+            throws SpecificationBuilderException {
         XExpression expression = check.getExpression();
         acceptor.acceptExpressionEvaluation(expression, null);
     }
@@ -264,23 +272,24 @@ public class PatternBodyTransformer {
             return variable.getName();
         }
     }
-    
-    private List<String> getVariableNames(List<? extends ValueReference> valueReferences, final PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
-        return ImmutableList.copyOf( // XXX transformation must be performed eagerly because it can cause side effects 
-            Lists.transform(valueReferences, new Function<ValueReference, String>() {
-                @Override
-                public String apply(ValueReference valueReference) {
-                    try {
-                        return getVariableName(valueReference, acceptor);
-                    } catch (SpecificationBuilderException e) {
-                        throw Throwables.propagate(e);
+
+    private List<String> getVariableNames(List<? extends ValueReference> valueReferences,
+            final PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+        return ImmutableList.copyOf( // XXX transformation must be performed eagerly because it can cause side effects
+                Lists.transform(valueReferences, new Function<ValueReference, String>() {
+                    @Override
+                    public String apply(ValueReference valueReference) {
+                        try {
+                            return getVariableName(valueReference, acceptor);
+                        } catch (SpecificationBuilderException e) {
+                            throw Throwables.propagate(e);
+                        }
                     }
-                }
-            })
-        );
+                }));
     }
 
-    private String getVariableName(ValueReference reference, PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+    private String getVariableName(ValueReference reference, PatternModelAcceptor<?> acceptor)
+            throws SpecificationBuilderException {
         if (reference instanceof VariableValue)
             return getVariableName(((VariableValue) reference).getValue(), acceptor);
         else if (reference instanceof AggregatedValue)
@@ -302,10 +311,12 @@ public class PatternBodyTransformer {
                     "Unsupported value reference of type {1} from EPackage {2} currently unsupported by pattern builder in pattern {3}.",
                     new String[] { reference != null ? reference.eClass().getName() : "(null)",
                             reference != null ? reference.eClass().getEPackage().getNsURI() : "(null)",
-                            pattern.getName() }, "Unsupported value expression", pattern);
+                            pattern.getName() },
+                    "Unsupported value expression", pattern);
     }
 
-    private String eval(FunctionEvaluationValue eval, PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+    private String eval(FunctionEvaluationValue eval, PatternModelAcceptor<?> acceptor)
+            throws SpecificationBuilderException {
         String outputVariableName = acceptor.createVirtualVariable();
 
         XExpression expression = eval.getExpression();
@@ -314,20 +325,17 @@ public class PatternBodyTransformer {
         return outputVariableName;
     }
 
-    private String aggregate(AggregatedValue reference, PatternModelAcceptor<?> acceptor) throws SpecificationBuilderException {
+    private String aggregate(AggregatedValue reference, PatternModelAcceptor<?> acceptor)
+            throws SpecificationBuilderException {
         String resultVariableName = acceptor.createVirtualVariable();
-
         PatternCall call = reference.getCall();
         Pattern patternRef = call.getPatternRef();
         List<String> variableNames = getVariableNames(call.getParameters(), acceptor);
-
-        AggregatorExpression aggregator = reference.getAggregator();
-        if (aggregator instanceof CountAggregator) {
+        if (JavaTypesHelper.is(reference.getAggregator(), count.class)) {
             acceptor.acceptPatternMatchCounter(variableNames, patternRef, resultVariableName);
         } else {
-            throw new SpecificationBuilderException("Unsupported aggregator expression type {1} in pattern {2}.",
-                    new String[] { aggregator.eClass().getName(), patternFQN }, "Unsupported aggregator expression",
-                    pattern);
+            acceptor.acceptAggregator(reference.getAggregator(), reference.getAggregateType(), variableNames,
+                        patternRef, resultVariableName, AggregatorUtil.getAggregateVariableIndex(reference));
         }
         return resultVariableName;
     }

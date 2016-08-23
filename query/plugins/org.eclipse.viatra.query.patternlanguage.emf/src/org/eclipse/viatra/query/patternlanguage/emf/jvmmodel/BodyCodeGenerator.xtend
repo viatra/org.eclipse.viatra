@@ -16,6 +16,7 @@ import org.eclipse.emf.common.util.Enumerator
 import org.eclipse.emf.ecore.EEnumLiteral
 import org.eclipse.viatra.query.patternlanguage.emf.specification.XBaseEvaluator
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer
+import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternModelAcceptor
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint
@@ -27,12 +28,12 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.psystem.IExpressionEvaluator
 import org.eclipse.viatra.query.runtime.matchers.psystem.IValueProvider
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall
@@ -40,12 +41,13 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeCo
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple
 import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtend2.lib.StringConcatenationClient.TargetStringConcatenation
+import org.eclipse.xtext.common.types.JvmType
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
-
-import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternModelAcceptor
+import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -261,6 +263,26 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append(''', «resultVariableName.escape»);
                 ''')
             }
+            
+            override acceptAggregator(JvmType aggregatorFactoryType, JvmType aggregatorParameterType, List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName, int aggregatedColumn) {
+                target.append('''new ''')
+                target.append(AggregatorConstraint)
+                target.append('''(''')
+                target.append('''new ''')
+                target.append(aggregatorFactoryType)
+                target.append('''().getAggregatorLogic(''')
+                if (aggregatorParameterType == null) {
+                    target.append(Void)
+                } else {
+                    target.append(aggregatorParameterType)
+                }
+                target.append('''.class), body, new ''')
+                target.append(FlatTuple)
+                target.append('''(«argumentVariableNames.output»), ''')
+                referPQuery(calledPattern, pattern, target)
+                target.append(''', «resultVariableName.escape», «aggregatedColumn»);
+                ''')
+            }
                     
         } // PatternModelAcceptor
         new PatternBodyTransformer(pattern).transform(body, acceptor)
@@ -277,7 +299,7 @@ class BodyCodeGenerator extends StringConcatenationClient {
     }
 
     private static def escape(String name) {
-        "var_" + name.replaceAll("[\\.\\{\\}<>]","_")
+        "var_" + name.replaceAll("[\\.\\{\\}<>#]","_")
     }
 
 }

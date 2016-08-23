@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EcoreFactory
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.xtext.GeneratedMetamodel
 import org.eclipse.xtext.xtext.ecoreInference.IXtext2EcorePostProcessor
+import org.eclipse.xtext.common.types.TypesPackage
 
 class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProcessor {
 
@@ -37,6 +38,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 	   var EClass pathExpressionHead
 	   var EClass pathExpressionTail
 	   var EClass type
+	   var EClass aggregatedValue
 		for (c : p.EClassifiers.filter(typeof(EClass))) {
            switch c.name {
            	 case "Pattern": patternClass = c
@@ -49,6 +51,7 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
            	 case "PathExpressionHead": pathExpressionHead = c
            	 case "PathExpressionTail": pathExpressionTail = c
            	 case "Type": type = c
+           	 case "AggregatedValue": aggregatedValue = c
            }
        }
        bodyClass.generateEReference(varClass)
@@ -63,8 +66,9 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
        varRefClass.addWarningComment
 
        type.updateTypeClass
+       
+       aggregatedValue.addDerivedAggregatorType
 	}
-
 
 	def addJvmIdentifiableOperations(EClass varClass) {
 		val getSimpleNameOp = EcoreFactory::eINSTANCE.createEOperation
@@ -168,4 +172,30 @@ class BasePatternLanguageGeneratorPostProcessor implements IXtext2EcorePostProce
 		val ref = paramRefClass.EAllReferences.findFirst(r | r.name == "referredParam")
 		ref.transient = true
 	}
+	
+	    
+    /* 
+     * This method adds the aggregateType field to the aggregators, filled during JVM model inference with the
+     * calculated input parameter type of the selected aggregator.
+     */
+    private def void addDerivedAggregatorType(EClass aggregator) {
+        val aggregateTypeRef = EcoreFactory::eINSTANCE.createEReference
+        aggregateTypeRef.name = "aggregateType"
+        aggregateTypeRef.EType = TypesPackage.Literals.JVM_TYPE
+        aggregateTypeRef.lowerBound = 0
+        aggregateTypeRef.upperBound = 1
+        aggregateTypeRef.derived = true
+        aggregateTypeRef.transient = true
+        aggregateTypeRef.containment = false
+        
+        val annotation = EcoreFactory::eINSTANCE.createEAnnotation
+        annotation.source = "http://www.eclipse.org/emf/2002/GenModel"
+        annotation.details.put("documentation",
+        '''<p>This feature contains the aggregate parameter type inferred for this aggregator.''');
+        aggregateTypeRef.EAnnotations += annotation
+        
+        
+        aggregator.EStructuralFeatures += aggregateTypeRef
+    }
+	
 }

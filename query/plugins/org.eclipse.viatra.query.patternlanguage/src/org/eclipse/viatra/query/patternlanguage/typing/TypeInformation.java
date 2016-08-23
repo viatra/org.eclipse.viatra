@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.typing.judgements.AbstractTypeJudgement;
+import org.eclipse.viatra.query.patternlanguage.typing.judgements.ConditionalJudgement;
 import org.eclipse.viatra.query.patternlanguage.typing.judgements.ParameterTypeJudgement;
 import org.eclipse.viatra.query.patternlanguage.typing.judgements.TypeConformJudgement;
 import org.eclipse.viatra.query.patternlanguage.typing.judgements.TypeJudgement;
@@ -29,7 +30,11 @@ import org.eclipse.viatra.query.patternlanguage.typing.judgements.XbaseExpressio
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.xtext.EcoreUtil2;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -54,14 +59,14 @@ public class TypeInformation {
         }
     }
     
-    Map<Expression, IInputKey> typeDeclarations = Maps.newHashMap();
-    SetMultimap<Expression, AbstractTypeJudgement> dependencies = Multimaps.newSetMultimap(
+    final Map<Expression, IInputKey> typeDeclarations = Maps.newHashMap();
+    final SetMultimap<Expression, AbstractTypeJudgement> dependencies = Multimaps.newSetMultimap(
             Maps.<Expression, Collection<AbstractTypeJudgement>> newHashMap(),
             new HashSetSupplier<AbstractTypeJudgement>());
-    SetMultimap<Expression, AbstractTypeJudgement> typeJudgements = Multimaps.newSetMultimap(
+    final SetMultimap<Expression, AbstractTypeJudgement> typeJudgements = Multimaps.newSetMultimap(
             Maps.<Expression, Collection<AbstractTypeJudgement>> newHashMap(),
             new HashSetSupplier<AbstractTypeJudgement>());
-    Set<Pattern> processedPatterns = Sets.newHashSet();
+    final Set<Pattern> processedPatterns = Sets.newHashSet();
     
     private SetMultimap<Expression, IInputKey> expressionTypes = Multimaps.newSetMultimap(
             Maps.<Expression, Collection<IInputKey>> newHashMap(), 
@@ -110,9 +115,7 @@ public class TypeInformation {
         
         typeJudgements.put(expression, constraint);
         for (Expression dependency : constraint.getDependingExpressions()) {
-            if (!CorePatternLanguageHelper.isParameter(dependency)) {
-                dependencies.put(replaceVariableReferences(dependency), constraint);
-            }
+            dependencies.put(replaceVariableReferences(dependency), constraint);
         }
 
         processConstraint(constraint, expression);
@@ -127,7 +130,9 @@ public class TypeInformation {
             processConstraint((TypeConformJudgement) constraint, expression);
         } else if (constraint instanceof XbaseExpressionTypeJudgement) {
             processConstraint((XbaseExpressionTypeJudgement) constraint, expression);
-        }
+        } else if (constraint instanceof ConditionalJudgement) {
+            processConstraint((ConditionalJudgement) constraint, expression);
+        } 
     }
 
     private void processConstraint(TypeJudgement constraint, Expression expression) {
@@ -140,6 +145,24 @@ public class TypeInformation {
         }
     }
 
+    private void processConstraint(ConditionalJudgement constraint, Expression expression) {
+        final Set<IInputKey> knownTypes = expressionTypes.get(expression);
+        
+        Expression condition = constraint.getConditionExpression();
+        Set<IInputKey> conditionTypes = getMinimizedTypes(condition);
+        if (conditionTypes.size() != 1) {
+            return;
+        }
+        IInputKey actualConditionType = conditionTypes.iterator().next();
+        IInputKey conditionType = constraint.getConditionType();
+        boolean conforms = typeSystem.isConformant(conditionType, actualConditionType);
+        if (conforms) {
+            final Set<IInputKey> mergedTypeInformation = typeSystem.addTypeInformation(knownTypes, constraint.getType());
+            dependencies.remove(expression, constraint);
+            updateTypes(expression, mergedTypeInformation);
+        }
+    }
+    
     private void processConstraint(TypeConformJudgement constraint, Expression expression) {
         final Set<IInputKey> knownTypes = expressionTypes.get(expression);
         final Set<IInputKey> newType = expressionTypes.get(replaceVariableReferences(constraint.getConformsTo()));
@@ -162,6 +185,15 @@ public class TypeInformation {
     }
 
     private void processConstraint(XbaseExpressionTypeJudgement constraint, Expression expression) {
+        if (Iterables.any(constraint.getDependingExpressions(), new Predicate<Expression>() {
+
+            @Override
+            public boolean apply(Expression input) {
+                return getMinimizedTypes(input).size() != 1;
+            }
+        })) {
+            return;
+        }
         final Set<IInputKey> knownTypes = expressionTypes.get(expression);
         final IInputKey newType = constraint.getExpressionType();
         if (newType != null) {
@@ -184,12 +216,16 @@ public class TypeInformation {
         }
     }
     
-    public IInputKey getType(Expression expression) {
+    private Set<IInputKey> getMinimizedTypes(Expression expression) {
         Expression escapedExpression = replaceVariableReferences(expression);
         if (typeDeclarations.containsKey(escapedExpression)) {
-            return typeDeclarations.get(escapedExpression);
+            return ImmutableSet.of(typeDeclarations.get(escapedExpression));
         }
-        final Set<IInputKey> allTypes = typeSystem.minimizeTypeInformation(getAllTypes(escapedExpression), true);
+        return typeSystem.minimizeTypeInformation(getAllTypes(escapedExpression), true);
+    }
+    
+    public IInputKey getType(Expression expression) {
+        final Set<IInputKey> allTypes = getMinimizedTypes(expression);
         if (allTypes.size() == 1) {
             return allTypes.iterator().next();
         } else {
@@ -198,6 +234,9 @@ public class TypeInformation {
     }
     
     public Set<IInputKey> getAllTypes(Expression expression) {
+        if (CorePatternLanguageHelper.isParameter(expression)) {
+            return getAllPossibleParameterTypes((Variable) expression);
+        }
         Expression escapedExpression = replaceVariableReferences(expression);
         Set<IInputKey> existingInformation = expressionTypes.get(escapedExpression);
         if (existingInformation == null || existingInformation.isEmpty()) {
@@ -208,16 +247,34 @@ public class TypeInformation {
         }
         return existingInformation;
     }
+    
+    /**
+     * @since 1.4
+     */
+    public Set<IInputKey> getAllPossibleParameterTypes(Variable parameter) {
+        Preconditions.checkArgument(CorePatternLanguageHelper.isParameter(parameter), "Variable must represent a pattern parameter.");
+        return Sets.newHashSet(Iterables
+                .filter(Iterables.transform(CorePatternLanguageHelper.getLocalReferencesOfParameter(parameter),
+                        new Function<Variable, IInputKey>() {
+
+                            @Override
+                            public IInputKey apply(Variable input) {
+                                return getType(input);
+                            }
+                        }), Predicates.notNull()));
+    }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Judgements: \n");
         for (AbstractTypeJudgement judgement : typeJudgements.values()) {
+            appendExpression(judgement.getExpression(), sb);
+            sb.append(" :\n  ");
             appendJudgement(judgement, sb);
             sb.append("\n");
         }
-        sb.append("Variables: \n");
+        sb.append("\n Variables: \n");
         for (Variable ex : Iterables.filter(expressionTypes.keySet(), Variable.class)) {
             appendVariableName(ex, sb);
             sb.append(" |- ");
@@ -226,6 +283,15 @@ public class TypeInformation {
             Joiner.on(" /\\ ").appendTo(sb, getAllTypes(ex));
             sb.append(") ");
             sb.append("\n");
+        }
+        sb.append("\n Dependencies: \n");
+        for (Variable var : Iterables.filter(dependencies.keySet(), Variable.class)) {
+            for (AbstractTypeJudgement judgement : dependencies.get(var)) {
+                appendVariableName(var, sb);
+                sb.append(" --> ");
+                appendJudgement(judgement, sb);
+                sb.append("\n");
+            }
         }
         
         return sb.toString();
@@ -252,10 +318,20 @@ public class TypeInformation {
             appendExpression(typeConformJudgement.getConformsTo(), sb);
         } else if (judgement instanceof XbaseExpressionTypeJudgement) {
             XbaseExpressionTypeJudgement expressionTypeJudgement = (XbaseExpressionTypeJudgement) judgement;
-            sb.append("Xbase");
+            sb.append("Xbase ");
             appendExpression(expressionTypeJudgement.getExpression(), sb);
             sb.append(" :- ");
             sb.append(typeSystem.typeString(expressionTypeJudgement.getExpressionType()));
+        } else if (judgement instanceof ConditionalJudgement) {
+            ConditionalJudgement conditional = (ConditionalJudgement) judgement;
+            sb.append("if (");
+            appendExpression(conditional.getConditionExpression(), sb);
+            sb.append(" :- ");
+            sb.append(typeSystem.typeString(conditional.getConditionType()));
+            sb.append(") -> ");
+            appendExpression(conditional.getExpression(), sb);
+            sb.append(" :- ");
+            sb.append(typeSystem.typeString(conditional.getType()));
         }
     }
     
@@ -278,6 +354,6 @@ public class TypeInformation {
             sb.append("#");
             sb.append(p.getBodies().indexOf(b));
         }
-        sb.append(") ");
+        sb.append(")");
     }
 }

@@ -23,6 +23,7 @@
   <genPackages prefix="Recipes" basePackage="org.eclipse.viatra.query.runtime.rete"
       disposableProviderFactory="true" ecorePackage="recipes.ecore#/">
     <genDataTypes ecoreDataType="recipes.ecore#//Index"/>
+    <genDataTypes ecoreDataType="recipes.ecore#//AggregationOperator"/>
     <genClasses ecoreClass="recipes.ecore#//ReteRecipe">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//ReteRecipe/recipeNodes"/>
     </genClasses>

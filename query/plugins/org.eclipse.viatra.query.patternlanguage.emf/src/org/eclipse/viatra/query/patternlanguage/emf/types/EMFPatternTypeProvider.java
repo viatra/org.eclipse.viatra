@@ -41,7 +41,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstrain
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareFeature;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ComputationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.CountAggregator;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
@@ -451,9 +450,10 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
             }
         } else if (valueReference instanceof AggregatedValue) {
             AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
-            if (aggregatedValue.getAggregator() instanceof CountAggregator) {
-                return EcorePackage.Literals.EINT;
-            }
+//            if (aggregatedValue.getAggregator() instanceof CountAggregator) {
+//                return EcorePackage.Literals.EINT;
+//            }
+            return EcorePackage.Literals.EINT;
         } else if (valueReference instanceof FunctionEvaluationValue) {
             FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
             final XExpression xExpression = eval.getExpression();

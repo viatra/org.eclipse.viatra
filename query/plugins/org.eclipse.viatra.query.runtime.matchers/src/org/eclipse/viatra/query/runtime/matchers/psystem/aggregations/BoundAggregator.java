@@ -1,0 +1,63 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Gabor Bergmann, IncQueryLabs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Gabor Bergmann - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.viatra.query.runtime.matchers.psystem.aggregations;
+
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
+
+/**
+ * Augments an aggregator operator with type bindings for the type of values being aggregated and the aggregate result.
+ * <p> In case of <em>count</em>, the operator should be null.
+ * @author Gabor Bergmann
+ * @since 1.4
+ */
+public class BoundAggregator {
+    private final IMultisetAggregationOperator<?, ?, ?> operator;
+    private final Class<?> domainType;
+    private final Class<?> aggregateResultType;
+
+    public BoundAggregator(IMultisetAggregationOperator<?, ?, ?> operator, 
+            Class<?> domainType,
+            Class<?> aggregateResultType) {
+        super();
+        this.operator = operator;
+        this.domainType = domainType;
+        this.aggregateResultType = aggregateResultType;
+    }
+
+    public IMultisetAggregationOperator<?, ?, ?> getOperator() {
+        return operator;
+    }
+
+    public Class<?> getDomainType() {
+        return domainType;
+    }
+
+    public Class<?> getAggregateResultType() {
+        return aggregateResultType;
+    }
+
+    public IInputKey getDomainTypeAsInputKey() {
+        return toJavaInputKey(domainType);
+    }
+
+    public IInputKey getAggregateResultTypeAsInputKey() {
+        return toJavaInputKey(aggregateResultType);
+    }
+
+    private static IInputKey toJavaInputKey(Class<?> type) {
+        if (type==null) {
+            return null;
+        } else { 
+            return new JavaTransitiveInstancesKey(type);
+        }
+    }
+}

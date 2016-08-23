@@ -17,9 +17,9 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEval
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 
@@ -50,7 +50,7 @@ public class VariableBindingBasedCostFunction implements ICostFunction {
     private static int exportedParameterCost = MAX - 20;
     private static int binaryTransitiveClosureCost = MAX - 50;
     private static int nacCost = MAX - 100;
-    private static int countCost = MAX - 200;
+    private static int aggregatorCost = MAX - 200;
     private static int constantCost = 0;
     
     @Override
@@ -72,8 +72,8 @@ public class VariableBindingBasedCostFunction implements ICostFunction {
             cost = binaryTransitiveClosureCost;
         } else if (constraint instanceof NegativePatternCall) {
             cost = nacCost;
-        } else if (constraint instanceof PatternMatchCounter) {
-            cost = countCost;
+        } else if (constraint instanceof AggregatorConstraint) {
+            cost = aggregatorCost;
         } else if (constraint instanceof ExportedParameter) {
             cost = exportedParameterCost;
         } else {

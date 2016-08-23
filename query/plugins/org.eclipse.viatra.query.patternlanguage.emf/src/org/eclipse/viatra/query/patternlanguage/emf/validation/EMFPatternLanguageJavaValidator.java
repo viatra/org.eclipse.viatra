@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.validation;
 import static org.eclipse.xtext.xbase.validation.IssueCodes.IMPORT_UNUSED;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -374,7 +375,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     IInputKey type = possibleTypes.iterator().next();
                     if (type instanceof EClassTransitiveInstancesKey) {
                     EClass eClass = ((EClassTransitiveInstancesKey)type).getEmfKey();
-                    String[] issueData = new String[]{eClass.getName()};
+                    String[] issueData = (eClass.getName() == null) ? null : new String[]{eClass.getName()};
                     info("Type not defined for variable " + variable.getName() + ", inferred type " + typeSystem.typeString(type) + " is used instead.",
                             PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
                             issueData);

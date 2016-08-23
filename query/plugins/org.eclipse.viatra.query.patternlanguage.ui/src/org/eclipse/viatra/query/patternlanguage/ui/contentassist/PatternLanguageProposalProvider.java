@@ -14,14 +14,20 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.viatra.query.patternlanguage.annotations.PatternAnnotationProvider;
+import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.CrossReference;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.RuleCall;
+import org.eclipse.xtext.common.types.JvmType;
+import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
+import org.eclipse.xtext.common.types.xtext.ui.ITypesProposalProvider;
+import org.eclipse.xtext.common.types.xtext.ui.TypeMatchFilters;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
@@ -34,6 +40,7 @@ import org.eclipse.xtext.xbase.typesystem.IExpressionScope.Anchor;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 /**
@@ -49,7 +56,35 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
     private ReferenceProposalCreator crossReferenceProposalCreator;
     @Inject
     private ValidFeatureDescription featureDescriptionPredicate;
+    @Inject
+    private IJvmTypeProvider.Factory jvmTypeProviderFactory;
+    @Inject
+    private ITypesProposalProvider typeProposalProvider;
 
+    private class ReferenceableVariable implements Predicate<Variable> {
+
+        @Override
+        public boolean apply(Variable v) {
+            return v!= null && !v.eIsProxy() && 
+                    !v.getName().startsWith("_") && !CorePatternLanguageHelper.hasAggregateReference(v);
+        }
+        
+    }
+    
+    private class ReferenceableVariableDescription implements Predicate<IEObjectDescription> {
+        
+        @Override
+        public boolean apply(IEObjectDescription desc) {
+            if (desc != null && EcoreUtil2.isAssignableFrom(PatternLanguagePackage.Literals.VARIABLE, desc.getEClass())) {
+                Variable v = (Variable) desc.getEObjectOrProxy();
+                return v!= null && !v.eIsProxy() && 
+                        !v.getName().startsWith("_") && !CorePatternLanguageHelper.hasAggregateReference(v);
+            }
+            return false;
+        }
+        
+    }
+    
     @Override
     public void complete_Annotation(EObject model, RuleCall ruleCall, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
@@ -106,7 +141,7 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
         IScope scope = scopeProvider.getScope(model, PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE);
         crossReferenceProposalCreator.lookupCrossReference(scope, model,
                 PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VARIABLE, acceptor,
-                Predicates.<IEObjectDescription> alwaysTrue(),
+                new ReferenceableVariableDescription(),
                 getProposalFactory(ruleCall.getRule().getName(), context));
 
     }
@@ -120,11 +155,9 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
         }
 
         final PatternBody body = EcoreUtil2.getContainerOfType(context, PatternBody.class);
-        for (Variable v : body.getVariables()) {
-            if (!v.getName().startsWith("_")) {
-                ICompletionProposal proposal = createCompletionProposal(v.getName(), contentAssistContext);
-                acceptor.accept(proposal);
-            }
+        for (Variable v : Iterables.filter(body.getVariables(), new ReferenceableVariable())) {
+            ICompletionProposal proposal = createCompletionProposal(v.getName(), contentAssistContext);
+            acceptor.accept(proposal);
         }
 
         Function<IEObjectDescription, ICompletionProposal> proposalFactory = getProposalFactory(
@@ -132,6 +165,9 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
         proposeDeclaringTypeForStaticInvocation(context, null /* ignore */, contentAssistContext, acceptor);
     }
 
+    /**
+     * @since 1.4
+     */
     @Override
     public void completePatternCall_PatternRef(EObject model, Assignment assignment, ContentAssistContext context,
             ICompletionProposalAcceptor acceptor) {
@@ -149,4 +185,19 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
                     }
                 }));
     }
+    
+    /**
+     * @since 1.4
+     */
+    @Override
+    public void completeAggregatedValue_Aggregator(EObject model, Assignment assignment, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        final IJvmTypeProvider jvmTypeProvider = jvmTypeProviderFactory
+                .createTypeProvider(model.eResource().getResourceSet());
+        final JvmType interfaceToImplement = jvmTypeProvider.findTypeByName(IAggregatorFactory.class.getName());
+        typeProposalProvider.createSubTypeProposals(interfaceToImplement, this, context,
+                PatternLanguagePackage.Literals.AGGREGATED_VALUE__AGGREGATOR, TypeMatchFilters.canInstantiate(),
+                acceptor);
+    }
+    
 }

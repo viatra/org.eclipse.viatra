@@ -24,12 +24,10 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageIm
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatorExpression;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareFeature;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.CountAggregator;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
@@ -126,7 +124,7 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
     }
 
     String text(AggregatedValue aggregate) {
-        String aggregator = getAggregatorText(aggregate.getAggregator());
+        String aggregator = getAggregatorText(aggregate);
         String call = text(aggregate.getCall());
         return String.format(/* "aggregate %s %s" */"%s %s", aggregator, call);
     }
@@ -146,11 +144,8 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
     //
     // }
 
-    private String getAggregatorText(AggregatorExpression aggregator) {
-        if (aggregator instanceof CountAggregator) {
-            return String.format("count");
-        } else
-            return aggregator.toString();
+    private String getAggregatorText(AggregatedValue aggregator) {
+        return aggregator.getAggregator().getSimpleName();
     }
 
     String getValueText(ValueReference ref) {

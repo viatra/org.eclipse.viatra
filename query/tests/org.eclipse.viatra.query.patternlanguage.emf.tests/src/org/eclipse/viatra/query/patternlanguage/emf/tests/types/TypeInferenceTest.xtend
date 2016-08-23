@@ -310,6 +310,76 @@ class TypeInferenceTest extends AbstractValidatorTest {
 	}
 	
 	@Test
+	def parameterTest3() {
+		val model = parseHelper.parse('''
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern relatedClasses(src : EClass, trg : EClass) {
+			    find feature+(src, trg);
+			}
+
+			pattern feature(cl : EClass, f) {
+			    EClass.eStructuralFeatures(cl, f);
+			} or {
+			    EClass.eSuperTypes(cl, f);
+			}
+		''')
+		
+		val srcParam = model.patterns.get(0).parameters.get(0)
+		val trgParam = model.patterns.get(0).parameters.get(1)
+		val clParam = model.patterns.get(1).parameters.get(0)
+		val fParam = model.patterns.get(1).parameters.get(1)
+		
+		val srcType = typeInferrer.getType(srcParam)
+		val trgType = typeInferrer.getInferredType(trgParam)
+		val clType = typeInferrer.getInferredType(clParam)
+		val fType = typeInferrer.getInferredType(fParam)
+		assertEquals(classifierToInputKey(EClass), srcType)
+		assertEquals(classifierToInputKey(EClass), trgType)
+		assertEquals(classifierToInputKey(EClass), clType)
+		assertEquals(classifierToInputKey(ENamedElement), fType)
+		
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
+	}
+	
+	@Test
+	def parameterTest4() {
+		val model = parseHelper.parse('''
+			import "http://www.eclipse.org/emf/2002/Ecore"
+
+			pattern call(h : EAttribute) {
+			    find testInheritance(h, _);
+			}
+			
+			pattern testInheritance(a, b) {
+			    EAttribute.eAttributeType(a, b);
+			} or {
+			    EReference.eReferenceType(a, b);
+			}
+		''')
+		
+		val hParam = model.patterns.get(0).parameters.get(0)
+		val aParam = model.patterns.get(1).parameters.get(0)
+		val bParam = model.patterns.get(1).parameters.get(1)
+		
+		val hType = typeInferrer.getType(hParam)
+		val aType = typeInferrer.getInferredType(aParam)
+		val bType = typeInferrer.getInferredType(bParam)
+		assertEquals(classifierToInputKey(EAttribute), hType)
+		assertEquals(classifierToInputKey(EStructuralFeature), aType)
+		assertEquals(classifierToInputKey(EClassifier), bType)
+		
+		tester.validate(model).assertAll(
+		    getWarningCode(EMFIssueCodes::FEATURE_NOT_REPRESENTABLE),
+		    getWarningCode(EMFIssueCodes::FEATURE_NOT_REPRESENTABLE),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
+	}
+	
+	@Test
 	def intLiteralType() {
 		val model = parseHelper.parse('
 			package org.eclipse.viatra.query.patternlanguage.emf.tests
