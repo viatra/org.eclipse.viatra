@@ -39,9 +39,9 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
-import org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdater;
+import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdaterFactory;
 import org.eclipse.viatra.query.tooling.ui.queryresult.handlers.LoadQueriesHandler;
 import org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener;
 
@@ -64,16 +64,12 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
     private CollapseAllHandler collapseHandler;
 
     public QueryRegistryView() {
-        Injector injector = EMFPatternLanguageActivator.getInstance().getInjector(EMFPatternLanguageActivator.ORG_ECLIPSE_VIATRA_QUERY_PATTERNLANGUAGE_EMF_EMFPATTERNLANGUAGE);
-        updater = injector.getInstance(XtextIndexBasedRegistryUpdater.class);
-        updater.connectIndexToRegistry(QuerySpecificationRegistry.getInstance());
-
+        updater = XtextIndexBasedRegistryUpdaterFactory.INSTANCE.getUpdater(QuerySpecificationRegistry.getInstance());
         queryRegistryTreeInput = new QueryRegistryTreeInput(QuerySpecificationRegistry.getInstance());
     }
     
     @Override
     public void dispose() {
-        updater.disconnectIndexFromRegistry();
         collapseHandler.dispose();
         super.dispose();
     }

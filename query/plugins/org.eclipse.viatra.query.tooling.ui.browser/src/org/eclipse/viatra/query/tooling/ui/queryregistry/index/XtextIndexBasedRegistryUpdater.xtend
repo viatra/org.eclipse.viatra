@@ -42,6 +42,7 @@ import org.eclipse.xtext.resource.IResourceDescription.Event.Listener
 import org.eclipse.xtext.resource.IResourceDescriptions
 import org.eclipse.xtext.ui.notification.IStateChangeEventBroker
 import org.eclipse.xtext.ui.resource.IResourceSetProvider
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * @author Abel Hegedus
@@ -58,7 +59,10 @@ class XtextIndexBasedRegistryUpdater {
     private final QueryRegistryUpdaterListener listener
     private final Map<String,PatternDescriptionBasedSourceConnector> connectorMap
     private final WorkspaceBuildCompletedListener workspaceListener
+    
+    @Accessors(PROTECTED_GETTER)
     private IQuerySpecificationRegistry connectedRegistry
+    
     private Map<IProject, ResourceSet> resourceSetMap = new WeakHashMap<IProject, ResourceSet>();
     
     @Inject

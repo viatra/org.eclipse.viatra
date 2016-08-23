@@ -26,6 +26,7 @@ import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.ui.editor.XtextEditor
 import org.eclipse.jface.dialogs.MessageDialog
+import org.eclipse.viatra.query.tooling.ui.queryregistry.index.XtextIndexBasedRegistryUpdaterFactory
 
 /**
  * @author Abel Hegedus
@@ -52,6 +53,10 @@ class LoadVqlPatternHandler extends AbstractHandler {
                     ]
                     return fqns
                 ]
+                
+                // make sure Xtext index patterns are loaded into query registry
+                XtextIndexBasedRegistryUpdaterFactory.INSTANCE.getUpdater(QuerySpecificationRegistry.instance)
+                
                 val view = QuerySpecificationRegistry.instance.createView[IQuerySpecificationRegistryEntry entry |
                     val sourceSame = entry.sourceIdentifier == sourceId
                     val fqnRelevant = patternFQNs.exists[it == entry.fullyQualifiedName]
