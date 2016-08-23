@@ -33,6 +33,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
 import org.eclipse.viatra.query.patternlanguage.emf.tests.pltest.PltestPackage
+import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -634,6 +635,32 @@ class TypeInferenceTest extends AbstractValidatorTest {
         val type = typeInferrer.getType(param)
         assertEquals("parameter", param.name) 
         assertEquals(classifierToInputKey(interface), type) 
+    }
+    
+	@Test
+    def recursiveParameterTypeInference() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            
+            pattern recursive(cl, name) {
+                EClass.name(cl, name);
+            } or {
+                EStructuralFeature.name(cl, name);
+            } or {
+                EClass.eSuperTypes(cl, parent);
+                find recursive(parent, name);
+            }
+        ''')
+        tester.validate(model).assertAll(
+            getWarningCode(IssueCodes::RECURSIVE_PATTERN_CALL),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
+        
+        val param = model.patterns.get(0).parameters.get(0)
+        val type = typeInferrer.getType(param)
+        assertEquals("cl", param.name) 
+        assertEquals(classifierToInputKey(ENamedElement), type) 
     }
     
 	@Test

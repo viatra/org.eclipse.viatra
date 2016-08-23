@@ -225,8 +225,13 @@ public class TypeInformation {
     }
     
     public IInputKey getType(Expression expression) {
+        if (CorePatternLanguageHelper.isParameter(expression)) {
+            if (((Variable)expression).getType() != null) {
+                return typeSystem.extractTypeDescriptor(((Variable)expression).getType());
+            }
+        }
         final Set<IInputKey> allTypes = getMinimizedTypes(expression);
-        if (allTypes.size() == 1) {
+        if (allTypes.size() >= 1) {
             return allTypes.iterator().next();
         } else {
             return null;
@@ -234,9 +239,6 @@ public class TypeInformation {
     }
     
     public Set<IInputKey> getAllTypes(Expression expression) {
-        if (CorePatternLanguageHelper.isParameter(expression)) {
-            return getAllPossibleParameterTypes((Variable) expression);
-        }
         Expression escapedExpression = replaceVariableReferences(expression);
         Set<IInputKey> existingInformation = expressionTypes.get(escapedExpression);
         if (existingInformation == null || existingInformation.isEmpty()) {
