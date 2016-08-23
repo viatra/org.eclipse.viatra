@@ -185,25 +185,29 @@ class QueryResultTreeInput implements IFilteredMatcherCollection {
     def removeMatcher(IQuerySpecificationRegistryEntry entry) {
         val treeMatcher = matchers.get(entry.fullyQualifiedName)
         if(treeMatcher != null && treeMatcher.entry.sourceIdentifier == entry.sourceIdentifier) {
-            matchers.remove(entry.fullyQualifiedName)
-            listeners.forEach[
-                it.matcherRemoved(treeMatcher)
-            ]
-            if(treeMatcher.ruleSpec != null){
-                schema.removeRule(treeMatcher.ruleSpec)
-            }
-            if(treeMatcher.matcher != null){
-                // TODO deal with duplicates and dependencies
-                builder.forgetSpecificationTransitively(treeMatcher.matcher.specification)
-            } else {
-                val spec = builder.getSpecification(treeMatcher.entry.fullyQualifiedName)
-                if(spec != null) {
-                    builder.forgetSpecificationTransitively(spec)
-                }
-            }
-            return treeMatcher
+            return treeMatcher.removeMatcher
         }
         return null
+    }
+    
+    def removeMatcher(QueryResultTreeMatcher matcher) {
+        matchers.remove(matcher.entry.fullyQualifiedName)
+        listeners.forEach[
+            it.matcherRemoved(matcher)
+        ]
+        if(matcher.ruleSpec != null){
+            schema.removeRule(matcher.ruleSpec)
+        }
+        if(matcher.matcher != null){
+            // TODO deal with duplicates and dependencies
+            builder.forgetSpecificationTransitively(matcher.matcher.specification)
+        } else {
+            val spec = builder.getSpecification(matcher.entry.fullyQualifiedName)
+            if(spec != null) {
+                builder.forgetSpecificationTransitively(spec)
+            }
+        }
+        return matcher
     }
     
     def loadQueries(Iterable<IQuerySpecificationRegistryEntry> entries) {
@@ -421,6 +425,10 @@ class QueryResultTreeMatcher implements IFilteredMatcherContent {
     
     def isFiltered() {
         return getFilterMatch.toArray.exists[it != null]
+    }
+    
+    def remove() {
+        parent.removeMatcher(this)
     }
 }
 

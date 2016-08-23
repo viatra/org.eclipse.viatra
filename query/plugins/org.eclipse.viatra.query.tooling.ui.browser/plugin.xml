@@ -175,6 +175,15 @@
             </with>
          </activeWhen>
       </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.RemoveQueryHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.result.removequery">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.resultmatchers">
+            </reference>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -278,6 +287,18 @@
                </reference>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.result.removequery"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/unload.gif"
+               label="Remove query"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.viatra.query.tooling.ui.browser.selection.resultmatchers">
+               </reference>
+            </visibleWhen>
+         </command>
       </menuContribution>
    </extension>
    <extension
@@ -311,6 +332,11 @@
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.result.wipeengine"
             name="Remove loaded queries">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.result.removequery"
+            name="Remove query">
       </command>
    </extension>
    <extension
@@ -478,6 +504,19 @@
                <count
                      value="1">
                </count>
+               <iterate>
+                  <instanceof
+                        value="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeMatcher">
+                  </instanceof>
+               </iterate>
+            </and>
+         </with>
+      </definition>
+      <definition
+            id="org.eclipse.viatra.query.tooling.ui.browser.selection.resultmatchers">
+         <with
+               variable="selection">
+            <and>
                <iterate>
                   <instanceof
                         value="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultTreeMatcher">
