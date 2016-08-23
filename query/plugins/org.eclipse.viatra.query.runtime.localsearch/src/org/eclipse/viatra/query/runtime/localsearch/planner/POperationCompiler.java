@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.check.AggregatorCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.BinaryTransitiveClosureCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckConstant;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.CheckPositivePatternCall;
@@ -34,6 +35,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.check.InstanceOfD
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.StructuralFeatureCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.nobase.ScopeCheck;
+import org.eclipse.viatra.query.runtime.localsearch.operations.extend.AggregatorExtend;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.CountOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExpressionEval;
 import org.eclipse.viatra.query.runtime.localsearch.operations.extend.ExtendConstant;
@@ -59,6 +61,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -68,7 +71,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -161,6 +163,9 @@ public class POperationCompiler {
         }else if (pConstraint instanceof AggregatorConstraint){
             PVariable outputvar = ((AggregatorConstraint) pConstraint).getResultVariable();
             return variableBindings.get(pConstraint).contains(variableMapping.get(outputvar));
+        }else if (pConstraint instanceof PatternMatchCounter){
+            PVariable outputvar = ((PatternMatchCounter) pConstraint).getResultVariable();
+            return variableBindings.get(pConstraint).contains(variableMapping.get(outputvar));
         }else if (pConstraint instanceof ExpressionEvaluation){
             PVariable outputvar = ((ExpressionEvaluation) pConstraint).getOutputVariable();
             return outputvar == null || variableBindings.get(pConstraint).contains(variableMapping.get(outputvar));
@@ -190,6 +195,8 @@ public class POperationCompiler {
             createCheck((NegativePatternCall) pConstraint,variableMapping);
         } else if (pConstraint instanceof AggregatorConstraint) {
             createCheck((AggregatorConstraint) pConstraint, variableMapping);
+        } else if (pConstraint instanceof PatternMatchCounter) {
+            createCheck((PatternMatchCounter) pConstraint, variableMapping);
         } else if (pConstraint instanceof ExpressionEvaluation) {
             createCheck((ExpressionEvaluation) pConstraint, variableMapping);
         } else if (pConstraint instanceof ExportedParameter) {
@@ -209,6 +216,31 @@ public class POperationCompiler {
             throw new QueryProcessingException(msg, null, msg, null);
         }
 
+    }
+
+    /**
+     * @param pConstraint
+     * @param variableMapping
+     */
+    private void createCheck(PatternMatchCounter counter, Map<PVariable, Integer> variableMapping) {
+        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
+        // Create frame mapping
+        Map<Integer, PParameter> frameMapping = Maps.newHashMap();
+        Set<PParameter> adornment = Sets.newHashSet();
+        final Set<Integer> bindings = variableBindings.get(counter);
+        int keySize = counter.getActualParametersTuple().getSize();
+        for (int i = 0; i < keySize; i++) {
+            PParameter symbolicParameter = counter.getReferredQuery().getParameters().get(i);
+            PVariable parameter = (PVariable) counter.getActualParametersTuple().get(i);
+            frameMapping.put(variableMapping.get(parameter), symbolicParameter);
+            if (bindings.contains(variableMapping.get(parameter))) {
+                adornment.add(symbolicParameter);
+            }
+        }
+
+        PQuery referredQuery = counter.getReferredQuery();
+        operations.add(new CountCheck(referredQuery, frameMapping, variableMapping.get(counter.getResultVariable())));
+        dependencies.add(new MatcherReference(referredQuery, adornment));
     }
 
     private void createCheck(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
@@ -283,24 +315,24 @@ public class POperationCompiler {
         }
     }    
     
-    private void createCheck(AggregatorConstraint patternMatchCounter, Map<PVariable, Integer> variableMapping) {
+    private void createCheck(AggregatorConstraint aggregator, Map<PVariable, Integer> variableMapping) {
         // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
         // Create frame mapping
         Map<Integer, PParameter> frameMapping = Maps.newHashMap();
         Set<PParameter> adornment = Sets.newHashSet();
-        final Set<Integer> bindings = variableBindings.get(patternMatchCounter);
-        int keySize = patternMatchCounter.getActualParametersTuple().getSize();
+        final Set<Integer> bindings = variableBindings.get(aggregator);
+        int keySize = aggregator.getActualParametersTuple().getSize();
         for (int i = 0; i < keySize; i++) {
-            PParameter symbolicParameter = patternMatchCounter.getReferredQuery().getParameters().get(i);
-            PVariable parameter = (PVariable) patternMatchCounter.getActualParametersTuple().get(i);
+            PParameter symbolicParameter = aggregator.getReferredQuery().getParameters().get(i);
+            PVariable parameter = (PVariable) aggregator.getActualParametersTuple().get(i);
             frameMapping.put(variableMapping.get(parameter), symbolicParameter);
             if (bindings.contains(variableMapping.get(parameter))) {
                 adornment.add(symbolicParameter);
             }
         }
         
-        PQuery referredQuery = patternMatchCounter.getReferredQuery();
-        operations.add(new CountCheck(referredQuery, frameMapping, variableMapping.get(patternMatchCounter.getResultVariable())));
+        PQuery referredQuery = aggregator.getReferredQuery();
+        operations.add(new AggregatorCheck(referredQuery, aggregator, frameMapping, variableMapping.get(aggregator.getResultVariable())));
         dependencies.add(new MatcherReference(referredQuery, adornment));
     }
     
@@ -339,6 +371,8 @@ public class POperationCompiler {
             createExtend((PositivePatternCall)pConstraint, variableMapping);
         } else if (pConstraint instanceof AggregatorConstraint) {
             createExtend((AggregatorConstraint) pConstraint, variableMapping);
+        } else if (pConstraint instanceof PatternMatchCounter) {
+            createExtend((PatternMatchCounter) pConstraint, variableMapping);
         } else if (pConstraint instanceof ExpressionEvaluation) {
             createExtend((ExpressionEvaluation) pConstraint, variableMapping);
         } else if (pConstraint instanceof ExportedParameter) {
@@ -473,7 +507,28 @@ public class POperationCompiler {
         }
     }
     
-    private void createExtend(AggregatorConstraint patternMatchCounter, Map<PVariable, Integer> variableMapping) {
+    private void createExtend(AggregatorConstraint aggregator, Map<PVariable, Integer> variableMapping) {
+        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
+        // Create frame mapping
+        Map<Integer, PParameter> frameMapping = Maps.newHashMap();
+        Set<PParameter> adornment = Sets.newHashSet();
+        final Set<Integer> bindings = variableBindings.get(aggregator);
+        int keySize = aggregator.getActualParametersTuple().getSize();
+        for (int i = 0; i < keySize; i++) {
+            PParameter symbolicParameter = aggregator.getReferredQuery().getParameters().get(i);
+            PVariable parameter = (PVariable) aggregator.getActualParametersTuple().get(i);
+            frameMapping.put(variableMapping.get(parameter), symbolicParameter);
+            if (bindings.contains(variableMapping.get(parameter))) {
+                adornment.add(symbolicParameter);
+            }
+        }
+        
+        PQuery referredQuery = aggregator.getReferredQuery();
+        operations.add(new AggregatorExtend(referredQuery, aggregator, frameMapping, variableMapping.get(aggregator.getResultVariable())));
+        dependencies.add(new MatcherReference(referredQuery, adornment));
+    }
+    
+    private void createExtend(PatternMatchCounter patternMatchCounter, Map<PVariable, Integer> variableMapping) {
         // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
         // Create frame mapping
         Map<Integer, PParameter> frameMapping = Maps.newHashMap();

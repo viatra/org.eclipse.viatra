@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2010-2013, Zoltan Ujhelyi, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2016, Grill Balázs, IncQuery Labs Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Zoltan Ujhelyi - initial API and implementation
+ *   Grill Balázs - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.localsearch.operations.check;
+package org.eclipse.viatra.query.runtime.localsearch.operations.extend;
 
 import java.util.List;
 import java.util.Map;
@@ -22,25 +22,31 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Calculates the count of matches for a called matcher
+ * Calculates the aggregated value of a column based on the given {@link AggregatorConstraint}
  * 
- * @author Zoltan Ujhelyi
+ * @author Balázs Grill
+ * @since 1.4
  */
-public class CountCheck extends CheckOperation implements IMatcherBasedOperation{
+public class AggregatorExtend extends ExtendOperation<Object> implements IMatcherBasedOperation{
 
     private PQuery calledQuery;
     private LocalSearchMatcher matcher;
     Map<Integer, PParameter> parameterMapping;
     Map<Integer, Integer> frameMapping;
     private int position;
+    private final AggregatorConstraint aggregator;
     
 	@Override
 	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
@@ -62,12 +68,12 @@ public class CountCheck extends CheckOperation implements IMatcherBasedOperation
 		return matcher;
 	}
     
-    public CountCheck(PQuery calledQuery, Map<Integer, PParameter> parameterMapping, int position) {
-        super();
+	public AggregatorExtend(PQuery calledQuery, AggregatorConstraint aggregator, Map<Integer, PParameter> parameterMapping, int position) {
+        super(position);
         this.calledQuery = calledQuery;
         this.parameterMapping = parameterMapping;
         this.frameMapping = CallOperationHelper.calculateFrameMapping(calledQuery, parameterMapping);
-        this.position = position;
+        this.aggregator = aggregator;
     }
 
     public PQuery getCalledQuery() {
@@ -75,21 +81,26 @@ public class CountCheck extends CheckOperation implements IMatcherBasedOperation
     }
 
     @Override
-	public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-		super.onInitialize(frame, context);
-		getAndPrepareCalledMatcher(frame, context);
-	}
-
-    @Override
-    protected boolean check(MatchingFrame frame) throws LocalSearchException {
+    public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
+        getAndPrepareCalledMatcher(frame, context);
         final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
         Object[] parameterValues = new Object[matcher.getParameterCount()];
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             parameterValues[entry.getValue()] = frame.getValue(entry.getKey());
         }
         mappedFrame.setParameterValues(parameterValues);
-        int count = matcher.countMatches(mappedFrame);
-        return ((Integer)frame.getValue(position)) == count;
+        it = Iterators.<Object>singletonIterator(doAggregate(aggregator.getAggregator().getOperator(), mappedFrame));
+        
+    }
+    
+    private <Domain, Accumulator, AggregateResult> AggregateResult doAggregate(IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, MatchingFrame initialFrame) throws LocalSearchException{
+        Accumulator accumulator = operator.createNeutral();
+        for(Tuple match : matcher.getAllMatches(initialFrame)){
+            @SuppressWarnings("unchecked")
+            Domain column = (Domain) match.get(aggregator.getAggregatedColumn());
+            accumulator = operator.update(accumulator, column, true);
+        }
+        return operator.getAggregate(accumulator);
     }
 
     @Override
