@@ -41,6 +41,7 @@ public class ViatraQueryGUIPlugin extends AbstractUIPlugin {
     public static final String ICON_ARROW_BOTTOM = "arrow_bottom";
     public static final String ICON_EPACKAGE = "epackage";
     public static final String ICON_VQL = "vql";
+    public static final String ICON_VIATRA = "viatra";
     /**
      * @since 1.3
      */
@@ -86,6 +87,7 @@ public class ViatraQueryGUIPlugin extends AbstractUIPlugin {
         reg.put(ICON_ARROW_BOTTOM, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_bottom.gif"));
         reg.put(ICON_EPACKAGE, imageDescriptorFromPlugin(PLUGIN_ID, "icons/epackage.gif"));
         reg.put(ICON_VQL, imageDescriptorFromPlugin(PLUGIN_ID, "icons/logo2.png"));
+        reg.put(ICON_VIATRA, imageDescriptorFromPlugin(PLUGIN_ID, "icons/rsz_viatra_logo.png"));
         reg.put(ICON_PROJECT, imageDescriptorFromPlugin("org.eclipse.ui.ide", "icons/full/obj16/prj_obj.png"));
     }
 

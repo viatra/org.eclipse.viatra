@@ -13,8 +13,6 @@ package org.eclipse.viatra.query.tooling.ui.queryresult;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.ui.dnd.LocalTransfer;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
@@ -27,16 +25,15 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -45,6 +42,7 @@ import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IModelConnectorTypeEnum;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -57,6 +55,8 @@ import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.CommandConstants;
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry;
 import org.eclipse.viatra.query.tooling.ui.queryresult.internal.ActiveEnginePropertyTester;
 import org.eclipse.viatra.query.tooling.ui.queryresult.util.QueryResultViewUtil;
+import org.eclipse.viatra.query.tooling.ui.queryresult.util.ViatraQueryEngineContentProvider;
+import org.eclipse.viatra.query.tooling.ui.queryresult.util.ViatraQueryEngineLabelProvider;
 import org.eclipse.viatra.query.tooling.ui.util.CommandInvokingDoubleClickListener;
 import org.eclipse.viatra.query.tooling.ui.util.IModelConnectorListener;
 
@@ -72,7 +72,7 @@ public class QueryResultView extends ViewPart {
     @Inject
     private Injector injector;
     
-    private static final String SCOPE_UNINITIALIZED_MSG = "Scope uninitialized!\r\nPress the \"Load from active editor\" button on the toolbar!";
+    private static final String SCOPE_UNINITIALIZED_MSG = "Scope uninitialized!\r\nPress the \"Load model from active editor\" button on the toolbar!";
     public static final String ID = "org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"; //$NON-NLS-1$
     private TreeViewer queryResultTreeViewer;
     private QueryResultTreeInput input;
@@ -81,6 +81,10 @@ public class QueryResultView extends ViewPart {
     private QueryEvaluationHint hint;
     private CollapseAllHandler collapseHandler;
     private IModelConnectorListener connectorListener;
+
+    private TreeViewer engineDetailsTreeViewer;
+
+    private StackLayout engineDetailsStackLayout;
 
     public QueryResultView() {
         this.propertyPageContributor = new ITabbedPropertySheetPageContributor(){
@@ -103,20 +107,29 @@ public class QueryResultView extends ViewPart {
      * @param parent
      */
     @Override
-    public void createPartControl(Composite parent) {
-        Composite container = new Composite(parent, SWT.NONE);
-        container.setLayout(new GridLayout(1, false));
+    public void createPartControl(final Composite parent) {
+        CommandInvokingDoubleClickListener showLocationListener = new CommandInvokingDoubleClickListener(CommandConstants.SHOW_LOCATION_COMMAND_ID, "Exception when activating show location!");
+        injector.injectMembers(showLocationListener);
         
-        Group grpScope = new Group(container, SWT.NONE);
-        grpScope.setLayout(new GridLayout(1, false));
-        grpScope.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-        grpScope.setText("Scope");
+        int operations = DND.DROP_COPY | DND.DROP_MOVE;
+        Transfer[] transferTypes = new Transfer[]{LocalTransfer.getInstance()};
         
-        lblScopeDescription = new Label(grpScope, SWT.NONE);
+        SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+        
+        Group grpScope = new Group(sashForm, SWT.NONE);
+        grpScope.setText("Engine details");
+        engineDetailsStackLayout = new StackLayout();
+        grpScope.setLayout(engineDetailsStackLayout);
+
+        engineDetailsTreeViewer = new TreeViewer(grpScope, SWT.BORDER);
+        engineDetailsTreeViewer.setLabelProvider(new ViatraQueryEngineLabelProvider());
+        engineDetailsTreeViewer.setContentProvider(new ViatraQueryEngineContentProvider());
+        
+        lblScopeDescription = new Label(grpScope, SWT.NONE | SWT.WRAP);
         lblScopeDescription.setText(SCOPE_UNINITIALIZED_MSG);
-        queryResultTreeViewer = new TreeViewer(container, SWT.BORDER | SWT.MULTI);
-        Tree tree = queryResultTreeViewer.getTree();
-        tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        engineDetailsStackLayout.topControl = lblScopeDescription;
+        
+        queryResultTreeViewer = new TreeViewer(sashForm, SWT.BORDER | SWT.MULTI);
         queryResultTreeViewer.setComparator(new ViewerComparator() {
             @Override
             public int compare(Viewer viewer, Object e1, Object e2) {
@@ -132,8 +145,6 @@ public class QueryResultView extends ViewPart {
         });
         queryResultTreeViewer.setLabelProvider(new QueryResultTreeLabelProvider());
         queryResultTreeViewer.setContentProvider(new QueryResultTreeContentProvider());
-        CommandInvokingDoubleClickListener showLocationListener = new CommandInvokingDoubleClickListener(CommandConstants.SHOW_LOCATION_COMMAND_ID, "Exception when activating show location!");
-        injector.injectMembers(showLocationListener);
         queryResultTreeViewer.addDoubleClickListener(showLocationListener);
         queryResultTreeViewer.addFilter(new ViewerFilter() {
             @Override
@@ -147,9 +158,6 @@ public class QueryResultView extends ViewPart {
                 return true;
             }
         });
-        
-        int operations = DND.DROP_COPY | DND.DROP_MOVE;
-        Transfer[] transferTypes = new Transfer[]{LocalTransfer.getInstance()};
         queryResultTreeViewer.addDropSupport(operations, transferTypes, new ViewerDropAdapter(queryResultTreeViewer) {
 
             @Override
@@ -175,9 +183,10 @@ public class QueryResultView extends ViewPart {
                 return active && supportedType;
             }
         });
+        sashForm.setWeights(new int[] {1, 4});
         
         getSite().setSelectionProvider(queryResultTreeViewer);
-        
+        Control control = queryResultTreeViewer.getControl();
         // Create pop-up menu over the tree viewer
         MenuManager menuManager = new MenuManager();
         menuManager.setRemoveAllWhenShown(true);
@@ -187,12 +196,10 @@ public class QueryResultView extends ViewPart {
                 mgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
             }
         });
-        Control control = queryResultTreeViewer.getControl();
         control.setMenu(menuManager.createContextMenu(control));
         getSite().registerContextMenu(ID,menuManager, queryResultTreeViewer);
-        
-        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
         collapseHandler = new CollapseAllHandler(queryResultTreeViewer);
+        IHandlerService handlerService = (IHandlerService) getSite().getService(IHandlerService.class);
         handlerService.activateHandler(CollapseAllHandler.COMMAND_ID, collapseHandler);
     }
 
@@ -217,6 +224,25 @@ public class QueryResultView extends ViewPart {
         return super.getAdapter(adapter);
     }
 
+    private void loadEngineDetails(AdvancedViatraQueryEngine engine) {
+        engineDetailsTreeViewer.setInput(engine);
+        engineDetailsStackLayout.topControl = engineDetailsTreeViewer.getTree();
+        requestLayoutInternal(engineDetailsTreeViewer.getControl());
+    }
+    
+    private void removeEngineDetails() {
+        engineDetailsStackLayout.topControl = lblScopeDescription;
+        engineDetailsTreeViewer.setInput(null);
+        requestLayoutInternal(lblScopeDescription);
+    }
+    
+    /**
+     * Copy implementation from newer framework version of {@link Control#requestLayout()}.
+     */
+    private void requestLayoutInternal(Control control) {
+        control.getShell().layout(new Control[] {control}, SWT.DEFER);
+    }
+    
     public void loadModel(EMFModelConnector modelConnector, IModelConnectorTypeEnum scope) throws ViatraQueryException {
 
         unloadModel();
@@ -225,20 +251,23 @@ public class QueryResultView extends ViewPart {
         input.setHint(hint);
         queryResultTreeViewer.setInput(input);
         modelConnector.addListener(connectorListener);
-        StringBuilder scopeDescriptionBuilder = new StringBuilder();
-        scopeDescriptionBuilder.append("Editor: ").append(modelConnector.getOwner().getTitle())
-                .append("\nScope type: ").append(scope.name().toLowerCase());
-        if (scope == IModelConnectorTypeEnum.RESOURCE) {
-            Notifier notifier = modelConnector.getNotifier(scope);
-            if (notifier instanceof Resource) {
-                scopeDescriptionBuilder.append("\nResource: ").append(((Resource) notifier).getURI().toString());
-            }
-        }
-        lblScopeDescription.setText(scopeDescriptionBuilder.toString());
+        loadEngineDetails(input.getEngine());
         activeEnginePropertyChanged();
 
     }
 
+    /**
+     * @since 1.4
+     */
+    public void loadExistingEngine(AdvancedViatraQueryEngine engine) {
+        unloadModel();
+
+        input = QueryResultViewModel.INSTANCE.createInput(engine, true);
+        queryResultTreeViewer.setInput(input);
+        loadEngineDetails(engine);
+        activeEnginePropertyChanged();
+    }
+    
     /**
      * @since 1.4
      */
@@ -260,7 +289,7 @@ public class QueryResultView extends ViewPart {
             input = null;
             if(!queryResultTreeViewer.getControl().isDisposed()){
                 queryResultTreeViewer.setInput(null);
-                lblScopeDescription.setText(SCOPE_UNINITIALIZED_MSG);
+                removeEngineDetails();
             }
             activeEnginePropertyChanged();
         }

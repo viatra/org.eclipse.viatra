@@ -184,6 +184,10 @@
             </reference>
          </activeWhen>
       </handler>
+      <handler
+            class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.handlers.OpenManagedEngineHandler"
+            commandId="org.eclipse.viatra.query.tooling.ui.result.openmanaged">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -264,6 +268,12 @@
                label="Remove loaded queries"
                style="push">
          </command>
+         <command
+               commandId="org.eclipse.viatra.query.tooling.ui.result.openmanaged"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
+               label="Open managed engine"
+               style="push">
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"
@@ -312,6 +322,11 @@
             categoryId="org.eclipse.viatra.query.tooling.category"
             id="org.eclipse.viatra.query.tooling.ui.result.loadmodel"
             name="Load model from active editor">
+      </command>
+      <command
+            categoryId="org.eclipse.viatra.query.tooling.category"
+            id="org.eclipse.viatra.query.tooling.ui.result.openmanaged"
+            name="Open managed engine">
       </command>
       <command
             categoryId="org.eclipse.viatra.query.tooling.category"
