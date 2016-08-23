@@ -33,8 +33,7 @@ public class ViatraQueryEventSource<Match extends IPatternMatch> extends EventSo
     
     protected ViatraQueryEventSource(ViatraQueryEventRealm realm, ViatraQueryEventSourceSpecification<Match> sourceDefinition) throws ViatraQueryException {
         super(sourceDefinition, realm);
-        IQuerySpecification<? extends ViatraQueryMatcher<Match>> factory = sourceDefinition.getQuerySpecification();
-        ViatraQueryMatcher<Match> _matcher = factory.getMatcher(realm.getEngine());
+        ViatraQueryMatcher<Match> _matcher = sourceDefinition.getMatcher(realm.getEngine());
         this.matcher = _matcher;
     }
 
