@@ -53,7 +53,7 @@ class PlanCompiler {
 		this.compiledBodies = newHashMap
 		this.dependencies = newHashSet
 		this.frameRegistry = new MatchingFrameRegistry
-		this.configuration = LocalSearchHints::default_nobase
+		this.configuration = LocalSearchHints::defaultNoBase
 		// this should not matter as flattening is done by the the compiler bellow, it's done for the sake of consistency
 		this.configuration.flattenCallPredicate = flattenCallPredicate
 				
