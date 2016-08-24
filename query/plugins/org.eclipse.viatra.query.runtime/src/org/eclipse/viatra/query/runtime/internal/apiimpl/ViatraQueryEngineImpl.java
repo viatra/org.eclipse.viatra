@@ -602,6 +602,11 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
 	public QueryScope getScope() {
 		return scope;
 	}
+
+    @Override
+    public ViatraQueryEngineOptions getEngineOptions() {
+        return engineOptions;
+    }
 	
     // /**
     // * EXPERIMENTAL: Creates a VIATRA Query Engine that executes post-commit, or retrieves an already existing one.

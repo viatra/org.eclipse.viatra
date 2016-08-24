@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.api;
 
+import java.util.AbstractMap;
 import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 
 /**
  * This class is intended to provide options to a created {@link ViatraQueryEngine} instance. The {@link #DEFAULT}
@@ -129,4 +134,22 @@ public final class ViatraQueryEngineOptions {
         return defaultCachingBackendFactory;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if(!Objects.equal(engineDefaultHints, DEFAULT.engineDefaultHints)) {
+            sb.append("backend: ").append(engineDefaultHints.getQueryBackendFactory().getBackendClass().getSimpleName());
+            Map<String, Object> backendHints = engineDefaultHints.getBackendHints();
+            sb.append("hints: ");
+            if(backendHints instanceof AbstractMap){
+                sb.append(backendHints.toString());
+            } else {
+                // we have to iterate on the contents
+                String joinedHintMap = Joiner.on(", ").withKeyValueSeparator("=").join(backendHints);
+                sb.append('{').append(joinedHintMap).append('}');
+            }
+        }
+        final String result = sb.toString();
+        return result.isEmpty() ? "defaults" : result;
+    }
 }

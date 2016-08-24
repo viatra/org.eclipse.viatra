@@ -317,4 +317,11 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
      */
 	public abstract <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getExistingMatcher(IQuerySpecification<Matcher> querySpecification, QueryEvaluationHint optionalOverrideHints);
 	
+	/**
+	 * Returns the immutable {@link ViatraQueryEngineOptions} of the engine.
+	 * 
+	 * @return the engine options
+	 * @since 1.4
+	 */
+	public abstract ViatraQueryEngineOptions getEngineOptions();
 }
