@@ -248,26 +248,10 @@ public final class CorePatternLanguageHelper {
     }
 
     private static class CallComparator implements Comparator<Pattern> {
-        
-        OnChangeEvictingCache cache = new OnChangeEvictingCache();
-        
-        private Set<Pattern> getReferences(final Pattern pattern) {
-            if (pattern.eResource() == null) {
-                return getReferencedPatterns(pattern);
-            } else {
-                return cache.get(pattern, pattern.eResource(), new Provider<Set<Pattern>>() {
-    
-                    @Override
-                    public Set<Pattern> get() {
-                        return getReferencedPatterns(pattern);
-                    }
-                });
-            }
-        }
-        
+
         public int compare(Pattern left, Pattern right) {
-            boolean rightCalled = getReferences(left).contains(right);
-            boolean leftCalled = getReferences(right).contains(left);
+            boolean rightCalled = doGetReferencedPatternsTransitively(left).contains(right);
+            boolean leftCalled = doGetReferencedPatternsTransitively(right).contains(left);
             
             if (leftCalled && !rightCalled) {
                 return -1;
@@ -294,10 +278,30 @@ public final class CorePatternLanguageHelper {
         } else {
             referencedPatterns = new HashSet<>();
         }
-        calculateReferencedPatternsTransitive(pattern, referencedPatterns);
+        referencedPatterns.addAll(doGetReferencedPatternsTransitively(pattern));
         return referencedPatterns;
     }
 
+    private static OnChangeEvictingCache cache = new OnChangeEvictingCache();
+    
+    private static Set<Pattern> doGetReferencedPatternsTransitively(final Pattern pattern) {
+        if (pattern.eResource() == null) {
+            Set<Pattern> patterns = new HashSet<>();
+            calculateReferencedPatternsTransitive(pattern, patterns);
+            return patterns;
+        } else {
+            return cache.get(pattern, pattern.eResource(), new Provider<Set<Pattern>>() {
+
+                @Override
+                public Set<Pattern> get() {
+                    Set<Pattern> patterns = new HashSet<>();
+                    calculateReferencedPatternsTransitive(pattern, patterns);
+                    return patterns;
+                }
+            });
+        }
+    }
+    
     private static void calculateReferencedPatternsTransitive(Pattern pattern, Set<Pattern> addedPatterns) {
         Set<Pattern> candidates = getReferencedPatterns(pattern);
         candidates.removeAll(addedPatterns);
