@@ -16,6 +16,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 
 /**
@@ -324,4 +325,15 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
 	 * @since 1.4
 	 */
 	public abstract ViatraQueryEngineOptions getEngineOptions();
+	
+	/**
+	 * Return the underlying result provider for the given matcher.
+	 * 
+	 * @param matcher
+	 * @return
+	 * @beta This method may change in future versions
+	 * @since 1.4
+	 * @noreference This method is considered internal API
+	 */
+	public abstract IQueryResultProvider getResultProviderOfMatcher(ViatraQueryMatcher<? extends IPatternMatch> matcher);
 }

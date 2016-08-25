@@ -166,7 +166,11 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     		QueryEvaluationHint optionalEvaluationHints) 
     	throws ViatraQueryException 
     {
-        Matcher matcher = querySpecification.instantiate();
+        Matcher matcher = getExistingMatcher(querySpecification, optionalEvaluationHints);
+        if (matcher != null){
+            return matcher;
+        }
+        matcher = querySpecification.instantiate();
         if (matcher == null){
             // Backward compatibility, generated code before 1.4 does not provide method to create uninitialized matchers
             // In this case, we lose hint information.
@@ -479,11 +483,19 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     {
         Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
         
-        return getResultProviderInternal(query, hint);
+        return getResultProviderInternal(query, getQueryEvaluationHint(query, hint));
     }
 
+    /**
+     * This method returns the result provider exactly as described by the passed hint. 
+     * Query and hint cannot be null!
+     * Use {@link #getQueryEvaluationHint(IQuerySpecification, QueryEvaluationHint)} before passing a hint to this method
+     * to make sure engine and query specific hints are correctly applied.
+     */
     private IQueryResultProvider getResultProviderInternal(IQuerySpecification<?> query, QueryEvaluationHint hint) throws ViatraQueryException, QueryProcessingException{
-        final IQueryBackend backend = getQueryBackend(query.getInternalQueryRepresentation());
+        Preconditions.checkArgument(query != null, "Query cannot be null!");
+        Preconditions.checkArgument(hint != null, "Hint cannot be null!");
+        final IQueryBackend backend = getQueryBackend(hint.getQueryBackendFactory());
         return backend.getResultProvider(query.getInternalQueryRepresentation(), hint);
     }
 	
@@ -544,8 +556,12 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
 	    return getEngineDefaultHint().overrideBy(query.getEvaluationHints());
 	}
 	
+	private QueryEvaluationHint getQueryEvaluationHint(IQuerySpecification<?> querySpecification, QueryEvaluationHint optionalOverrideHints) {
+	    return getQueryEvaluationHint(querySpecification.getInternalQueryRepresentation()).overrideBy(optionalOverrideHints);
+	}
+	
 	private IMatcherCapability getRequestedCapability(IQuerySpecification<?> querySpecification, QueryEvaluationHint optionalOverrideHints){
-	    return getQueryEvaluationHint(querySpecification.getInternalQueryRepresentation()).overrideBy(optionalOverrideHints).calculateRequiredCapability(querySpecification.getInternalQueryRepresentation());
+	    return getQueryEvaluationHint(querySpecification, optionalOverrideHints).calculateRequiredCapability(querySpecification.getInternalQueryRepresentation());
 	}
 	
 	@Override
@@ -570,18 +586,19 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
                     PQueries.queryNameFunction());
             Preconditions.checkState(erroneousPatterns.isEmpty(), "Erroneous query(s) found: %s", Joiner.on(", ")
                     .join(erroneousPatterns));
-            
-    		// TODO maybe do some smarter preparation per backend?
+
+            // TODO maybe do some smarter preparation per backend?
             try {
-    			engineContext.getBaseIndex().coalesceTraversals(new Callable<Void>() {
-    				@Override
-    				public Void call() throws Exception {
-    					for (IQuerySpecification<?> query : specifications) {
-    						getResultProviderInternal(query, optionalEvaluationHints);
-    					}
-    					return null;
-    				}
-    			});
+                engineContext.getBaseIndex().coalesceTraversals(new Callable<Void>() {
+                    @Override
+                    public Void call() throws Exception {
+                        for (IQuerySpecification<?> query : specifications) {
+                            QueryEvaluationHint queryEvaluationHint = getQueryEvaluationHint(query, optionalEvaluationHints);
+                            getResultProviderInternal(query, queryEvaluationHint);
+                        }
+                        return null;
+                    }
+                });
             } catch (InvocationTargetException ex) {
                 final Throwable cause = ex.getCause();
                 if (cause instanceof QueryProcessingException)
@@ -608,6 +625,11 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
         return engineOptions;
     }
 	
+    @Override
+    public IQueryResultProvider getResultProviderOfMatcher(ViatraQueryMatcher<? extends IPatternMatch> matcher) {
+        return ((QueryResultWrapper)matcher).backend;
+    }
+    
     // /**
     // * EXPERIMENTAL: Creates a VIATRA Query Engine that executes post-commit, or retrieves an already existing one.
     // * @param emfRoot the EMF root where this engine should operate
