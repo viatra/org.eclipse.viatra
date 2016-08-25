@@ -15,10 +15,9 @@ import java.util.List;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.Breakpoint;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.internal.EMFPatternLanguageActivator;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
+import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IMatchUpdateListener;
@@ -133,11 +132,7 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
             List<Pattern> patterns = results.getPatterns();
             List<IQuerySpecification<?>> specList = Lists.newArrayList();
             for (Pattern pattern : patterns) {
-                boolean isPrivate = false;
-                EList<Modifiers> modifiers = pattern.getModifiers();
-                for (Modifiers modifier : modifiers) {
-                    isPrivate = modifier.isPrivate();
-                }
+                boolean isPrivate = CorePatternLanguageHelper.isPrivate(pattern);
                 try {
                     IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> spec = builder.getOrCreateSpecification(pattern);
                     if(!isPrivate){

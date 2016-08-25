@@ -43,7 +43,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
@@ -282,14 +281,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     @Check
     public void checkPrivatePatternCall(PatternCall call) {
         final Pattern calledPattern = call.getPatternRef();
-        if (calledPattern != null) {
-            if (Iterables.any(calledPattern.getModifiers(), new Predicate<Modifiers>() {
-
-                @Override
-                public boolean apply(Modifiers input) {
-                    return input.isPrivate();
-                }
-            }) && calledPattern.eResource() != call.eResource()) {
+        if (calledPattern != null && calledPattern.getModifiers() != null) {
+            if (CorePatternLanguageHelper.isPrivate(calledPattern) && calledPattern.eResource() != call.eResource()){
                 error(String.format("The pattern %s is not visible.", getFormattedPattern(calledPattern)),
                         PatternLanguagePackage.Literals.PATTERN_CALL__PATTERN_REF, IssueCodes.PRIVATE_PATTERN_CALLED);
             }

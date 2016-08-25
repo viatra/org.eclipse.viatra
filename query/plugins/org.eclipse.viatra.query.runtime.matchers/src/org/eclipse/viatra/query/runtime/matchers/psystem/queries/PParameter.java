@@ -15,36 +15,67 @@ import java.util.Objects;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 /**
- * A descriptor for declared PQuery parameters. A parameter has a name and a declared type
+ * A descriptor for declared PQuery parameters. A parameter has a name, a declared type and a direction constraint
  *
  * @author Zoltan Ujhelyi
  *
  */
 public class PParameter {
 
-    private String name;
-    private String typeName;
-    private IInputKey declaredUnaryType;
+    private final String name;
+    private final String typeName;
+    private final IInputKey declaredUnaryType;
+    private final PParameterDirection direction;
 
     public PParameter(String name) {
-        this(name, null);
+        this(name, (String)null);
+    }
+    
+    /**
+     * @since 1.4
+     */
+    public PParameter(String name, PParameterDirection direction) {
+        this(name, null, direction);
     }
 
     public PParameter(String name, String typeName) {
-        this(name, typeName, null);
+        this(name, typeName, (IInputKey)null);
+    }
+    
+    /**
+     * @since 1.4
+     */
+    public PParameter(String name, String typeName, PParameterDirection direction) {
+        this(name, typeName, null, direction);
     }
 
-    public PParameter(String name, String typeName, IInputKey declaredUnaryType) {
+    public PParameter(String name, String typeName, IInputKey declaredUnaryType){
+        this(name, typeName, declaredUnaryType, PParameterDirection.INOUT);
+    }
+    
+    /**
+     * @since 1.4
+     */
+    public PParameter(String name, String typeName, IInputKey declaredUnaryType, PParameterDirection direction) {
         super();
         this.name = name;
         this.typeName = typeName;
 		this.declaredUnaryType = declaredUnaryType;
+		this.direction = direction;
 		
 		if (declaredUnaryType != null && declaredUnaryType.getArity()!=1) {
 			throw new IllegalArgumentException("PParameter declared type must be unary instead of " + declaredUnaryType.getPrettyPrintableName());
 		}
     }
 
+    /**
+     * @return the direction
+     * @since 1.4
+     */
+    public PParameterDirection getDirection() {
+        return direction;
+    }
+    
     /**
      * @return the name of the parameter
      */
@@ -73,7 +104,8 @@ public class PParameter {
 	    if (obj instanceof PParameter) {
 	        return Objects.equals(name, ((PParameter) obj).name)
 	            && Objects.equals(typeName, ((PParameter) obj).typeName)
-	            && Objects.equals(declaredUnaryType, ((PParameter) obj).declaredUnaryType);
+	            && Objects.equals(declaredUnaryType, ((PParameter) obj).declaredUnaryType)
+	            && Objects.equals(direction, ((PParameter) obj).direction);
 	    }
 	    return false;
 	}

@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Parameter;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
@@ -28,6 +29,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.BasePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
@@ -118,6 +120,21 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
                     if (var == null) {
                         return new PParameter("", "");
                     } else {
+                        PParameterDirection direction = PParameterDirection.INOUT;
+                        if (var instanceof Parameter){
+                            switch(((Parameter) var).getDirection()){
+                            case IN:
+                                direction = PParameterDirection.IN;
+                                break;
+                            case OUT:
+                                direction = PParameterDirection.OUT;
+                                break;
+                            case INOUT:
+                            default:
+                                break;
+                            
+                            }
+                        }
                         ITypeInferrer typeProvider = XtextInjectorProvider.INSTANCE.getInjector().getInstance(ITypeInferrer.class);
                         JvmTypeReference ref = typeProvider.getJvmType(var, var);
                         // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
@@ -129,7 +146,7 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
     					if (type instanceof ClassType) 
                         	unaryDeclaredType = PatternBodyTransformer.classifierToInputKey(((ClassType) type).getClassname());
                         
-    					return new PParameter(var.getName(), clazz, unaryDeclaredType);
+    					return new PParameter(var.getName(), clazz, unaryDeclaredType, direction);
                     }
                 }
     

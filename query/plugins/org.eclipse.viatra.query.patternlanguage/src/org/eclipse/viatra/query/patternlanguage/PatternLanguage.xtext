@@ -21,7 +21,7 @@ PatternModel:
 
 Pattern:
 	annotations+=Annotation*
-	modifiers+=Modifiers*
+	modifiers=Modifiers
 	'pattern'
 	name=ID
 	'('
@@ -39,8 +39,18 @@ AnnotationParameter:
 	name=ID '=' value=AnnotationValueReference;
 
 Modifiers:
+    {Modifiers}(
 //injective?='injective' &
-	private?='private';
+	private?='private'? &
+	execution=ExecutionTypeModifier?
+	);
+
+enum ExecutionType:
+    unspecifified | search | incremental ;
+
+enum ExecutionTypeModifier returns ExecutionType:
+    search | incremental
+;
 
 Variable returns Expression:
 	{Variable}
@@ -54,10 +64,21 @@ ParameterRef returns Variable:
 	(':' type=Type)?
 ;
 
+enum ParameterDirection:
+    inout | in | out
+;
+
+enum ParameterDirectionModifier returns ParameterDirection:
+    in | out
+;
+
 Parameter returns Variable:
+    {Parameter}
+    direction=ParameterDirectionModifier?
 	name=ID
 	(':' type=Type)?
 ;
+
 LocalVariable returns Variable:
 	{LocalVariable}
 	name=ID

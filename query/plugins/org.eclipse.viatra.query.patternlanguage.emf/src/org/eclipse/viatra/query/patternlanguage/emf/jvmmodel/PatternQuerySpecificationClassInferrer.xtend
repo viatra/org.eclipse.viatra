@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel
 import com.google.common.collect.Sets
 import com.google.inject.Inject
 import java.util.Arrays
+import java.util.Collections
 import java.util.List
 import java.util.Set
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
@@ -22,6 +23,9 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmMo
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.ExecutionType
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Parameter
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterDirection
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
@@ -32,12 +36,16 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException
+import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
 import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmType
@@ -181,6 +189,17 @@ class PatternQuerySpecificationClassInferrer {
 		]
   	}
 
+    def direction(Variable variable){
+        if(variable instanceof Parameter){
+            variable.direction
+        }
+        ParameterDirection.INOUT;
+    }
+    
+    def StringConcatenationClient directionLiteral(Variable variable){
+        '''«PParameterDirection».«variable.direction.name()»'''
+    }
+
 	def inferPQueryMembers(JvmDeclaredType pQueryClass, Pattern pattern, SpecificationBuilder specBuilder) {
 		pQueryClass.members += pattern.toField("INSTANCE", typeRef(pQueryClass)/*pattern.newTypeRef("volatile " + querySpecificationClass.simpleName)*/) [
 			final = true
@@ -226,6 +245,7 @@ class PatternQuerySpecificationClassInferrer {
 			exceptions += typeRef(typeof(QueryInitializationException))
 			try {
 				body = '''
+					setEvaluationHints(«inferQueryEvaluationHints(pattern)»);
 					«Set»<«PBody»> bodies = «Sets».newLinkedHashSet();
 					try {
 						«inferBodies(pattern)»
@@ -250,6 +270,40 @@ class PatternQuerySpecificationClassInferrer {
 		]
 		
 	}
+    
+    def ExecutionType getRequestedExecutionType(Pattern pattern){
+        val modifier = pattern.modifiers
+        if(modifier != null){
+            modifier.execution
+        } else{
+            ExecutionType::UNSPECIFIFIED
+        }
+    }
+    
+    def StringConcatenationClient incrementalBackendFactory(){
+        '''new «ReteBackendFactory»()'''
+    }
+    
+    def StringConcatenationClient searchBackendFactory(){
+        '''«LocalSearchBackendFactory».INSTANCE'''
+    }
+    
+    def StringConcatenationClient inferQueryEvaluationHints(Pattern pattern) {
+        '''new «QueryEvaluationHint»(«
+        switch(getRequestedExecutionType(pattern)){
+            case INCREMENTAL: {
+                incrementalBackendFactory
+            }
+            case SEARCH: {
+                searchBackendFactory
+            }
+            case UNSPECIFIFIED: {
+               '''null''' 
+            }
+            
+         }
+            », «Collections».<«String»,«Object»>emptyMap())'''
+    }
 
 	def StringConcatenationClient inferBodies(Pattern pattern) throws IllegalStateException {
 		'''«FOR body : pattern.bodies »
@@ -335,10 +389,10 @@ class PatternQuerySpecificationClassInferrer {
 		}
 		val type = variable.type
         if (type == null || type.eIsProxy) {
-    		'''new PParameter("«variable.name»", "«clazz»")'''
+    		'''new PParameter("«variable.name»", "«clazz»", «variable.directionLiteral»)'''
         } else {
             val declaredInputKey = typeSystem.extractTypeDescriptor(type)
-            '''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)»)'''
+            '''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)», «variable.directionLiteral»)'''
         }
     }
 
