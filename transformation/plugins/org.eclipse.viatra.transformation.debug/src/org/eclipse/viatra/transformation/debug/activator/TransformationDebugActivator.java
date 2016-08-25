@@ -13,6 +13,11 @@ package org.eclipse.viatra.transformation.debug.activator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+/**
+ * Activator class for the VIATRA transformation debugger plug-in.
+ * 
+ * @author Peter Lunk
+ */
 public class TransformationDebugActivator extends AbstractUIPlugin {
     public static final String PLUGIN_ID = "org.eclipse.viatra.transformation.debug"; //$NON-NLS-1$
 
@@ -28,11 +33,6 @@ public class TransformationDebugActivator extends AbstractUIPlugin {
         super.stop(context);
     }
 
-    /**
-     * Returns the shared instance
-     *
-     * @return the shared instance
-     */
     public static TransformationDebugActivator getDefault() {
         return plugin;
     }

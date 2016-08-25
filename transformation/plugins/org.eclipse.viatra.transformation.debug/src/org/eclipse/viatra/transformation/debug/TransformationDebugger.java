@@ -18,11 +18,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.debug.activationcoder.DefaultActivationCoder;
+import org.eclipse.viatra.transformation.debug.communication.DebuggerTargetEndpoint;
 import org.eclipse.viatra.transformation.debug.communication.IDebuggerTargetAgent;
-import org.eclipse.viatra.transformation.debug.communication.impl.DebuggerTargetEndpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ConditionalTransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.ActivationTrace;
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace;
 import org.eclipse.viatra.transformation.debug.transformationtrace.util.ActivationTraceUtil;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
@@ -298,29 +298,37 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     }
 
     public void disableBreakpoint(ITransformationBreakpoint breakpoint) {
-        if (breakpoints.contains(breakpoint)) {
-            try {
-                breakpoint.setEnabled(false);
-            } catch (CoreException e) {
-                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+        for (ITransformationBreakpoint brkp : breakpoints) {
+            if(brkp.equals(breakpoint)){
+                try {
+                    breakpoint.setEnabled(false);
+                } catch (CoreException e) {
+                    ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+                }
+            
             }
-        }
+        } 
     }
 
     public void enableBreakpoint(ITransformationBreakpoint breakpoint) {
-        if (breakpoints.contains(breakpoint)) {
-            try {
-                breakpoint.setEnabled(true);
-            } catch (CoreException e) {
-                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+        for (ITransformationBreakpoint brkp : breakpoints) {
+            if(brkp.equals(breakpoint)){
+                try {
+                    breakpoint.setEnabled(true);
+                } catch (CoreException e) {
+                    ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+                }
+            
             }
-        }
+        } 
     }
 
     public void removeBreakpoint(ITransformationBreakpoint breakpoint) {
-        if (breakpoints.contains(breakpoint)) {
-            breakpoints.remove(breakpoint);
-        }
+        for (ITransformationBreakpoint brkp : breakpoints) {
+            if(brkp.equals(breakpoint)){
+                breakpoints.remove(brkp);
+            }
+        }   
     }
 
     public void setDebuggerAction(DebuggerActions action) {

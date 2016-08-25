@@ -17,8 +17,10 @@ import org.eclipse.viatra.transformation.debug.model.TransformationDebugElement;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
 public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpoint {
+    private static final long serialVersionUID = -7229317025288796666L;
     private String ruleId;
-
+    private boolean enabled = true;
+    
     public RuleBreakpoint() {
     }
 
@@ -58,6 +60,7 @@ public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpo
     @Override
     public void setMarker(IMarker marker) throws CoreException {
         super.setMarker(marker);
+        this.enabled = super.isEnabled();
         if (ruleId != null) {
             marker.setAttribute("content", ruleId);
         } else {
@@ -73,5 +76,21 @@ public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpo
     @Override
     public int hashCode() {
         return getRuleId().hashCode();
+    }
+    
+    @Override
+    public void setEnabled(boolean enabled) throws CoreException {
+        try{
+            super.setEnabled(enabled);
+        }catch(CoreException e){
+            throw e;
+        }finally {
+            this.enabled = enabled;
+        }
+    }
+
+    @Override
+    public boolean isEnabled() throws CoreException {
+        return enabled;
     }
 }

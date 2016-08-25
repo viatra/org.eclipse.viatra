@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.ActivationParameter;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelProvider;
 
 import com.google.common.collect.Lists;
 
@@ -27,12 +28,14 @@ public class TransformationStackFrame extends TransformationDebugElement impleme
     private TransformationThread thread;
     private String name;
     private IVariable[] variables;
+    private final TransformationModelProvider modelProvider;
     
     
-    public TransformationStackFrame(TransformationThread thread, RuleActivation activation) throws DebugException {
+    public TransformationStackFrame(TransformationThread thread, RuleActivation activation, TransformationModelProvider modelProvider) throws DebugException {
         super((TransformationDebugTarget) thread.getDebugTarget());
         this.thread = thread;
         this.name = activation.getRuleName()+" : "+activation.getState();
+        this.modelProvider = modelProvider;
                 
         List<TransformationVariable> transformationVariables = Lists.newArrayList();
         transformationVariables.addAll(createVariables(activation));
@@ -44,7 +47,7 @@ public class TransformationStackFrame extends TransformationDebugElement impleme
         List<TransformationVariable> createdVariables = Lists.newArrayList();
 
         for (ActivationParameter parameter : activation.getParameters()) {
-            TransformationValue value = new TransformationValue((TransformationDebugTarget) getDebugTarget(), parameter.getValue());
+            TransformationValue value = new TransformationValue((TransformationDebugTarget) getDebugTarget(), parameter.getValue(), modelProvider);
             TransformationVariable variable = new TransformationVariable((TransformationDebugTarget) getDebugTarget(), parameter.getName(), value);
             createdVariables.add(variable);
         }

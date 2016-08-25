@@ -10,10 +10,12 @@
  */
 package org.eclipse.viatra.transformation.debug.model.breakpoint;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.viatra.transformation.debug.activationcoder.DefaultActivationCoder;
 import org.eclipse.viatra.transformation.debug.model.TransformationDebugElement;
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.ActivationTrace;
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace;
 import org.eclipse.viatra.transformation.debug.transformationtrace.util.ActivationTraceUtil;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
@@ -25,8 +27,10 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
  *
  */
 public class TransformationBreakpoint extends Breakpoint implements ITransformationBreakpoint{
+    private static final long serialVersionUID = -2412809220911146065L;
     private DefaultActivationCoder activationCoder = new DefaultActivationCoder();
     private ActivationTrace trace;
+    private boolean enabled = true;
     //private Activation<?> activation;
 
     public ActivationTrace getTrace() {
@@ -60,6 +64,12 @@ public class TransformationBreakpoint extends Breakpoint implements ITransformat
     }
     
     @Override
+    public void setMarker(IMarker marker) throws CoreException {
+        super.setMarker(marker);
+        this.enabled = super.isEnabled();
+    }
+    
+    @Override
     public boolean equals(Object item) {
         if(item instanceof TransformationBreakpoint){
             return ((TransformationBreakpoint) item).getTrace().equals(trace);
@@ -71,5 +81,21 @@ public class TransformationBreakpoint extends Breakpoint implements ITransformat
     @Override
     public int hashCode() {
         return trace.hashCode();
+    }
+    
+    @Override
+    public void setEnabled(boolean enabled) throws CoreException {
+        try{
+            super.setEnabled(enabled);
+        }catch(CoreException e){
+            throw e;
+        }finally {
+            this.enabled = enabled;
+        }
+    }
+
+    @Override
+    public boolean isEnabled() throws CoreException {
+        return enabled;
     }
 }

@@ -11,14 +11,13 @@
 package org.eclipse.viatra.transformation.tracer
 
 import org.eclipse.emf.common.util.URI
+import org.eclipse.viatra.transformation.debug.activationcoder.DefaultActivationCoder
 import org.eclipse.viatra.transformation.debug.activationcoder.IActivationCoder
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.TransformationTrace
 import org.eclipse.viatra.transformation.debug.transformationtrace.serializer.DefaultTraceModelSerializer
 import org.eclipse.viatra.transformation.debug.transformationtrace.serializer.ITraceModelSerializer
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.TransformationTrace
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.TransformationtraceFactory
 import org.eclipse.viatra.transformation.evm.api.Activation
 import org.eclipse.viatra.transformation.evm.api.adapter.AbstractEVMListener
-import org.eclipse.viatra.transformation.debug.activationcoder.DefaultActivationCoder
 
 /**
  * Adapter implementation that creates transformation traces based on the ongoing transformation.
@@ -27,7 +26,6 @@ import org.eclipse.viatra.transformation.debug.activationcoder.DefaultActivation
  * 
  */
 class TraceCoder extends AbstractEVMListener {
-    extension TransformationtraceFactory factory = TransformationtraceFactory.eINSTANCE
     extension IActivationCoder activationCoder
     
     TransformationTrace trace
@@ -36,19 +34,19 @@ class TraceCoder extends AbstractEVMListener {
     new(IActivationCoder activationCoder, ITraceModelSerializer serializer) {
         this.activationCoder = activationCoder
         this.serializer = serializer
-        trace = factory.createTransformationTrace
+        trace = new TransformationTrace
     }
 
     new(IActivationCoder activationCoder, URI location) {
         this.activationCoder = activationCoder
         this.serializer = new DefaultTraceModelSerializer(location)
-        trace = factory.createTransformationTrace
+        trace = new TransformationTrace
     }
 
     new(URI location) {
         this.activationCoder = new DefaultActivationCoder
         this.serializer = new DefaultTraceModelSerializer(location)
-        trace = factory.createTransformationTrace
+        trace = new TransformationTrace
     }
 
     override beforeFiring(Activation<?> activation) {

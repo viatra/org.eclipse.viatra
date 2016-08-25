@@ -1,12 +1,24 @@
+/**
+ * Copyright (c) 2010-2016, Peter Lunk, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Peter Lunk - initial API and implementation
+ */
 package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 
 import com.google.common.collect.Lists;
 
-public class TransformationState {
+public class TransformationState implements Serializable{
+    private static final long serialVersionUID = 6702356275765247363L;
     private final String ID;
     private List<TransformationRule> rules;
     private List<RuleActivation> activationStack;

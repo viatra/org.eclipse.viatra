@@ -10,7 +10,7 @@
  */
 package org.eclipse.viatra.transformation.debug.activationcoder;
 
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.ActivationTrace;
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 
 /**

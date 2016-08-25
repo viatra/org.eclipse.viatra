@@ -23,7 +23,4 @@ public class TransformationDebugElement extends DebugElement{
     public String getModelIdentifier() {
         return MODEL_ID;
     }
-
-
-
 }

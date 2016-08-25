@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.viatra.transformation.debug.feature"
-      label="VIATRA Transformation Debugger"
+      label="VIATRA Transformation Debugger (Incubation)"
       version="0.15.0.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"

@@ -8,38 +8,28 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  */
-package org.eclipse.viatra.transformation.debug.model.transformationstate;
+package org.eclipse.viatra.transformation.debug.transformationtrace.model;
 
 import java.io.Serializable;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
-public class TransformationRule implements Serializable{
-    private static final long serialVersionUID = -8125023765801802667L;
+public class ActivationTrace implements Serializable{
+    private static final long serialVersionUID = 4482651679137706911L;
     private final String ruleName;
-    private final boolean filtered;
-    private final List<RuleActivation> activations;
+    private List<RuleParameterTrace> ruleParameterTraces = Lists.newArrayList();
     
-    public TransformationRule(String ruleName, boolean filtered, List<RuleActivation> activations) {
+    public ActivationTrace(String ruleName) {
         super();
         this.ruleName = ruleName;
-        this.filtered = filtered;
-        this.activations = activations;
     }
-
 
     public String getRuleName() {
         return ruleName;
     }
 
-    public boolean isFiltered() {
-        return filtered;
+    public List<RuleParameterTrace> getRuleParameterTraces() {
+        return ruleParameterTraces;
     }
-
-    public List<RuleActivation> getActivations() {
-        return Lists.newArrayList(activations);
-    }
-    
-    
 }

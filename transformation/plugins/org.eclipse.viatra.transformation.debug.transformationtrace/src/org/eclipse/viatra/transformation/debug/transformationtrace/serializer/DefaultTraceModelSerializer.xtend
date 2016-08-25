@@ -10,14 +10,8 @@
  */
 package org.eclipse.viatra.transformation.debug.transformationtrace.serializer
 
-import java.io.IOException
-import java.util.Collections
 import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.TransformationTrace
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.TransformationtracePackage
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.TransformationTrace
 
 /**
  * Default trace model serializer implementation.
@@ -32,29 +26,11 @@ class DefaultTraceModelSerializer implements ITraceModelSerializer {
     }
 
     override loadTraceModel() {
-        TransformationtracePackage.eINSTANCE.eClass();
-        val reg = Resource.Factory.Registry.INSTANCE;
-        val m = reg.getExtensionToFactoryMap();
-        m.put("transformationtrace", new XMIResourceFactoryImpl());
-        val resSet = new ResourceSetImpl();
-        val resource = resSet.getResource(URI.createURI("transformationtrace/trace.transformationtrace"), true);
-        val trace = resource.getContents().get(0) as TransformationTrace
-        return trace;
+        throw new UnsupportedOperationException("Serialization is not implemented yet") 
     }
 
     override serializeTraceModel(TransformationTrace trace) {
-        val reg = Resource.Factory.Registry.INSTANCE;
-        val m = reg.getExtensionToFactoryMap();
-        m.put("transformationtrace", new XMIResourceFactoryImpl());
-        val resSet = new ResourceSetImpl();
-        val resource = resSet.createResource(location);
-        resource.getContents().add(trace);
-
-        try {
-            resource.save(Collections.EMPTY_MAP);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        throw new UnsupportedOperationException("Serialization is not implemented yet") 
     }
 
 }

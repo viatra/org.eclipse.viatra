@@ -20,7 +20,7 @@ import org.eclipse.viatra.transformation.debug.model.TransformationDebugTarget;
 import org.eclipse.viatra.transformation.debug.model.TransformationStackFrame;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.TransformationBreakpoint;
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.RuleParameterTrace;
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.RuleParameterTrace;
 import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 
 public class DebugModelPresentation extends LabelProvider implements IDebugModelPresentation {

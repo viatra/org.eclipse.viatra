@@ -10,7 +10,14 @@
  */
 package org.eclipse.viatra.transformation.debug.ui.launch;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -41,8 +48,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.viatra.transformation.debug.communication.DebuggerEndpointService;
-import org.eclipse.viatra.transformation.debug.communication.IDebuggerTargetEndpoint;
+import org.eclipse.viatra.transformation.debug.communication.DebuggerTargetEndpoint;
 import org.eclipse.viatra.transformation.debug.launch.TransformationLaunchConfigurationDelegate;
 import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 
@@ -135,28 +141,48 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
         comboViewer.setLabelProvider(new LabelProvider() {
             @Override
             public String getText(Object element) {
-                if (element instanceof IDebuggerTargetEndpoint) {
-                    return ((IDebuggerTargetEndpoint) element).getID();
+                return element.toString();
+            }
+        });
+
+        
+        
+        JMXServiceURL url;
+        try {
+            url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi");
+            JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
+            MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
+            List<ObjectName> queryNames = Lists.newArrayList(mbsc.queryNames(null, null));
+            List<ObjectName> filteredNames = Lists.newArrayList();
+            for (ObjectName objectName : queryNames) {
+                if(objectName.toString().contains(DebuggerTargetEndpoint.MBEANNAME)){
+                    filteredNames.add(objectName);
                 }
-                return "";
             }
-        });
-
-        List<IDebuggerTargetEndpoint> targetEndpoints = Lists.newArrayList(DebuggerEndpointService.getInstance().getTargetEndpoints());
-
-        comboViewer.setInput(targetEndpoints);
-
-        comboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-            @Override
-            public void selectionChanged(SelectionChangedEvent event) {
-                selectedID = ((IDebuggerTargetEndpoint) ((StructuredSelection) comboViewer.getSelection()).getFirstElement()).getID();
-                getLaunchConfigurationDialog().updateButtons();
+            
+            comboViewer.setInput(filteredNames);
+            
+            if (!queryNames.isEmpty()) {
+                comboViewer.setSelection(new StructuredSelection(queryNames.get(0)));
+                selectedID = queryNames.get(0).toString();
             }
-        });
+            
+            comboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+                @Override
+                public void selectionChanged(SelectionChangedEvent event) {
+                    selectedID = ((ObjectName) ((StructuredSelection) comboViewer.getSelection()).getFirstElement()).toString();
+                    getLaunchConfigurationDialog().updateButtons();
+                }
+            });
 
-        if (!targetEndpoints.isEmpty()) {
-            comboViewer.setSelection(new StructuredSelection(targetEndpoints.get(0)));
+            
+            jmxc.close();
+            
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        
 
     }
 

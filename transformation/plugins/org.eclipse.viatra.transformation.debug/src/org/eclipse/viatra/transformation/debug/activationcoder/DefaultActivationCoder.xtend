@@ -13,9 +13,9 @@ package org.eclipse.viatra.transformation.debug.activationcoder
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.ActivationTrace
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.TransformationtraceFactory
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace
 import org.eclipse.viatra.transformation.evm.api.Activation
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.RuleParameterTrace
 
 /**
  * Default activation coder implementation that creates transformation trace objects based on the rule 
@@ -24,18 +24,13 @@ import org.eclipse.viatra.transformation.evm.api.Activation
  * @author Peter Lunk
  */
 class DefaultActivationCoder implements IActivationCoder {
-    extension TransformationtraceFactory factory = TransformationtraceFactory.eINSTANCE
-
     override createActivationCode(Activation<?> activation) {
         val specification = activation.instance.specification
-        val ActivationTrace trace = factory.createActivationTrace
-
+        
         if (specification.name == "") {
             throw new IllegalStateException("Rule specification has no defined name:" + specification.toString());
         }
-
-        trace.ruleName = specification.name
-
+        val ActivationTrace trace = new ActivationTrace(specification.name)
         try {
             val match = activation.atom as IPatternMatch
 
@@ -46,10 +41,7 @@ class DefaultActivationCoder implements IActivationCoder {
 
                 if (param instanceof EObject) {
                     val paramName = match.parameterNames.get(i)
-                    trace.ruleParameterTraces.add(factory.createRuleParameterTrace => [
-                        parameterName = paramName
-                        objectId = EcoreUtil.getURI(param).toString
-                    ])
+                    trace.ruleParameterTraces.add(new RuleParameterTrace(paramName, EcoreUtil.getURI(param).toString))
                     i++
                 } else {
                     running = false

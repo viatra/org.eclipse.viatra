@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: VIATRA Model Transformation Debugger
+Bundle-Name: VIATRA Model Transformation Debugger (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.transformation.debug;singleton:=true
 Bundle-Version: 0.15.0.qualifier
 Bundle-ClassPath: .
@@ -22,7 +22,6 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.viatra.transformation.debug,
  org.eclipse.viatra.transformation.debug.activationcoder,
  org.eclipse.viatra.transformation.debug.communication,
- org.eclipse.viatra.transformation.debug.communication.impl,
  org.eclipse.viatra.transformation.debug.configuration,
  org.eclipse.viatra.transformation.debug.launch,
  org.eclipse.viatra.transformation.debug.model,

@@ -34,6 +34,7 @@ import org.eclipse.viatra.transformation.debug.communication.IDebuggerHostAgent;
 import org.eclipse.viatra.transformation.debug.communication.IDebuggerHostAgentListener;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelProvider;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
 import org.eclipse.viatra.transformation.debug.util.BreakpointCacheUtil;
 
@@ -46,6 +47,8 @@ public class TransformationThread extends TransformationDebugElement implements 
     private boolean terminated = false;
     
     private List<ITransformationBreakpoint> breakpoints;
+    private final TransformationModelProvider modelProvider;
+    
     
     private String name;
 
@@ -57,6 +60,7 @@ public class TransformationThread extends TransformationDebugElement implements 
         super(target);
         Preconditions.checkNotNull(transformationClass, "Transformation Class must not be null.");
         breakpoints = Lists.newArrayList();
+        modelProvider = new TransformationModelProvider(agent);
         this.transformationClass = transformationClass;
         this.name = name;
         this.agent = agent;
@@ -165,7 +169,7 @@ public class TransformationThread extends TransformationDebugElement implements 
                 activationStack.addAll(state.getActivationStack());
                 while(!activationStack.isEmpty()){
                     try {
-                        frames.add(new TransformationStackFrame(this, activationStack.pop()));
+                        frames.add(new TransformationStackFrame(this, activationStack.pop(), modelProvider));
                     } catch (Exception e) {
                         throw new DebugException(new Status(IStatus.ERROR, TransformationDebugActivator.PLUGIN_ID,
                                 "No transformation rules detected"));

@@ -17,9 +17,6 @@
                 <directory>src</directory>
             </resource>
             <resource>
-                <directory>src-gen</directory>
-            </resource>
-            <resource>
                 <directory>xtend-gen</directory>
             </resource>
         </resources>
@@ -30,12 +27,6 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>src-gen</directory>
-                            <excludes>
-                                <exclude>.gitignore</exclude>
-                            </excludes>
-                        </fileset>
-                        <fileset>
                             <directory>xtend-gen</directory>
                             <excludes>
                                 <exclude>.gitignore</exclude>
@@ -43,63 +34,6 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>
-            <!-- from https://gist.github.com/hwellmann/6044835 -->
-            <plugin>
-                <groupId>org.eclipse.tycho.extras</groupId>
-                <artifactId>tycho-eclipserun-plugin</artifactId>
-                <version>${tycho.version}</version>
-                <configuration>
-                    <!-- linebreaks not permitted in this arg line -->
-                    <appArgLine>-data target/workspace -application org.eclipse.emf.codegen.ecore.Generator -projects ${project.basedir} -model ${project.basedir}/model/transformationtrace.genmodel target/generated/emf</appArgLine>
-                    <dependencies>
-                        <dependency>
-                            <artifactId>org.eclipse.emf.codegen.ecore</artifactId>
-                            <type>eclipse-plugin</type>
-                            <version>2.11.0</version>
-                        </dependency>
-                    </dependencies>
-                    <repositories>
-                        <repository>
-                            <id>indigo</id>
-                            <url>http://download.eclipse.org/releases/indigo</url>
-                            <layout>p2</layout>
-                        </repository>
-                        <repository>
-                              <id>emf</id>
-                              <layout>p2</layout>
-                              <url>http://download.eclipse.org/modeling/emf/emf/updates/2.11/</url>
-                        </repository>
-                    </repositories>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>eclipse-run</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.basedir}/src-gen</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>target/generated/emf/src-gen</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.eclipse.xtend</groupId>

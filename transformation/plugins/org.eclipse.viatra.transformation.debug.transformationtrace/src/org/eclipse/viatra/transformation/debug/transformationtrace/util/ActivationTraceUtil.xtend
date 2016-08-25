@@ -10,15 +10,15 @@
  */
 package org.eclipse.viatra.transformation.debug.transformationtrace.util
 
-import org.eclipse.emf.common.util.EList
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.ActivationTrace
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.RuleParameterTrace
+import java.util.List
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.RuleParameterTrace
 
 class ActivationTraceUtil {
     def static boolean compareActivationCodes(ActivationTrace a1, ActivationTrace a2) {
         var boolean retVal = false
-        var EList<RuleParameterTrace> a1RuleParameterTraces = a1.getRuleParameterTraces()
-        var EList<RuleParameterTrace> a2ruleParameterTraces = a2.getRuleParameterTraces()
+        var List<RuleParameterTrace> a1RuleParameterTraces = a1.getRuleParameterTraces()
+        var List<RuleParameterTrace> a2ruleParameterTraces = a2.getRuleParameterTraces()
 
         if (a1RuleParameterTraces.size == a2ruleParameterTraces.size) {
             var boolean temp = true

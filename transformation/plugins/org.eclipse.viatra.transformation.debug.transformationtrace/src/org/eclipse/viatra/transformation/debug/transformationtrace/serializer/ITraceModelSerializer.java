@@ -10,7 +10,7 @@
  */
 package org.eclipse.viatra.transformation.debug.transformationtrace.serializer;
 
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.TransformationTrace;
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.TransformationTrace;
 
 /**
  * Interface that defines methods for loading and saving transformation trace models.

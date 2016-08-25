@@ -17,26 +17,24 @@ import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationB
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelElement;
 import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace;
 
-public interface IDebuggerHostAgent {
-    //Send messages
-    public void sendStepMessage();
-    public void sendContinueMessage();
+public interface DebuggerTargetEndpointMBean {
+    public void stepForward();
+    public void continueExecution();
     
-    public void sendNextActivationMessage(ActivationTrace activation);
+    public void setNextActivation(ActivationTrace activation);
 
-    public void sendAddBreakpointMessage(ITransformationBreakpoint breakpoint);
-    public void sendRemoveBreakpointMessage(ITransformationBreakpoint breakpoint);
-    public void sendDisableBreakpointMessage(ITransformationBreakpoint breakpoint);
-    public void sendEnableBreakpointMessage(ITransformationBreakpoint breakpoint);
+    public void addBreakpoint(ITransformationBreakpoint breakpoint);
+    public void removeBreakpoint(ITransformationBreakpoint breakpoint);
+    public void disableBreakpoint(ITransformationBreakpoint breakpoint);
+    public void enableBreakpoint(ITransformationBreakpoint breakpoint);
     
-    public void sendDisconnectMessage();
+    public void disconnect();
     
-    //Listen to changes
-    public void registerDebuggerHostAgentListener(IDebuggerHostAgentListener listener);
-    public void unRegisterDebuggerHostAgentListener(IDebuggerHostAgentListener listener);
+    public String getID();
     
     public List<TransformationModelElement> getRootElements();
     public Map<String, List<TransformationModelElement>> getChildren(TransformationModelElement parent);
     public Map<String, List<TransformationModelElement>> getCrossReferences(TransformationModelElement parent);
+    
     
 }

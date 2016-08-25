@@ -10,6 +10,8 @@
  */
 package org.eclipse.viatra.transformation.debug.model.breakpoint;
 
+import java.io.Serializable;
+
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.TransformationDebugElement;
 import org.eclipse.viatra.transformation.evm.api.Activation;
@@ -19,7 +21,7 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
  * @author Peter Lunk
  *
  */
-public interface ITransformationBreakpoint extends IBreakpoint{
+public interface ITransformationBreakpoint extends IBreakpoint, Serializable{
     public static final String NON_PERSISTENT = TransformationDebugElement.MODEL_ID;
     public static final String RULE = "org.eclipse.viatra.transformation.debug.model.rule";
     public static final String CONDITIONAL = "org.eclipse.viatra.transformation.debug.model.conditional";

@@ -21,8 +21,7 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.viatra.transformation.debug.communication.DebuggerEndpointService;
-import org.eclipse.viatra.transformation.debug.communication.impl.DebuggerHostEndpoint;
+import org.eclipse.viatra.transformation.debug.communication.DebuggerHostEndpoint;
 import org.eclipse.viatra.transformation.debug.model.TransformationDebugTarget;
 
 public class TransformationLaunchConfigurationDelegate implements ILaunchConfigurationDelegate {
@@ -45,7 +44,6 @@ public class TransformationLaunchConfigurationDelegate implements ILaunchConfigu
             //Create new debugger host AGENT
             //connect to the target agent via using the specified parameter
             DebuggerHostEndpoint agent = new DebuggerHostEndpoint(endpointID);
-            DebuggerEndpointService.getInstance().registerHostEndpoint(endpointID, agent);
             if (mode.equals(ILaunchManager.DEBUG_MODE)) {
                 
                 TransformationDebugTarget target = new TransformationDebugTarget(launch, agent, transformationType, endpointID);

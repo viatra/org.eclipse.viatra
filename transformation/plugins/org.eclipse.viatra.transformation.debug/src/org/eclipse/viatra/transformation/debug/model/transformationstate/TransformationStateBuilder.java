@@ -1,13 +1,24 @@
+/**
+ * Copyright (c) 2010-2016, Peter Lunk, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Peter Lunk - initial API and implementation
+ */
 package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.transformation.debug.activationcoder.DefaultActivationCoder;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
-import org.eclipse.viatra.transformation.debug.transformationtrace.transformationtrace.ActivationTrace;
+import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
@@ -27,15 +38,18 @@ public class TransformationStateBuilder {
     
     private ITransformationBreakpoint breakpointHit;
     
-    private List<ITransformationBreakpoint> breakpoints = Lists.newArrayList();
-
+    private TransformationModelBuilder builder;
+    
     private DefaultActivationCoder coder = new DefaultActivationCoder();
+    
+    public TransformationStateBuilder(TransformationModelBuilder builder){
+        this.builder = builder;
+    }
     
     public TransformationStateBuilder setID(String iD) {
         ID = iD;
         return this;
     }
-    
     
     public void activationFiring(Activation<?> act){
         startedActivations.push(act);
@@ -69,11 +83,6 @@ public class TransformationStateBuilder {
     public TransformationStateBuilder setActivations(Set<Activation<?>> conflictingActivations, Set<Activation<?>> nextActivations) {       
         this.conflictingActivations = Sets.difference(conflictingActivations, nextActivations);
         this.nextActivations = nextActivations;
-        return this;
-    }
-
-    public TransformationStateBuilder setBreakpoints(List<ITransformationBreakpoint> breakpoints) {
-        this.breakpoints = breakpoints;
         return this;
     }
     
@@ -120,13 +129,11 @@ public class TransformationStateBuilder {
         
         state.setActivationStack(activationStack);
         state.setBreakpointHit(breakpointHit);
-        state.setBreakpoints(breakpoints);
         state.setConflictingActivations(conflictingActivations);
         state.setNextActivations(nextActivations);
         state.setRules(stateRules);
         
         return state;
-    
     }
     
     private RuleActivation createActivation(TransformationState state, Activation<?> original){
@@ -148,13 +155,12 @@ public class TransformationStateBuilder {
 
             for (String parameterName : parameterNames) {
                 Object parameter = match.get(parameterName);
-                parameters.add(new ActivationParameter(parameter, parameterName));
+                if(parameter instanceof EObject){
+                    parameters.add(new ActivationParameter(builder.getTransformationElement((EObject) parameter), parameterName));
+                }
+                
             }
         }
-        
         return parameters;
     }
-    
-    
-    
 }

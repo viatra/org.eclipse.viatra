@@ -13,6 +13,8 @@ package org.eclipse.viatra.transformation.debug.model.breakpoint;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.Breakpoint;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.transformation.debug.model.TransformationDebugElement;
@@ -21,7 +23,9 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
 import com.google.common.collect.Sets;
 
 public class PreconditionMatchBreakpoint extends Breakpoint implements ITransformationBreakpoint{
+    private static final long serialVersionUID = 7556461012672298225L;
     private Set<Object> breakpointObjects = Sets.newHashSet();
+    private boolean enabled = true;
     
     public PreconditionMatchBreakpoint(Set<Object> breakpointObjects) {
         super();
@@ -68,6 +72,28 @@ public class PreconditionMatchBreakpoint extends Breakpoint implements ITransfor
     @Override
     public int hashCode() {
         return breakpointObjects.hashCode();
+    }
+    
+    @Override
+    public void setEnabled(boolean enabled) throws CoreException {
+        try{
+            super.setEnabled(enabled);
+        }catch(CoreException e){
+            throw e;
+        }finally {
+            this.enabled = enabled;
+        }
+    }
+
+    @Override
+    public boolean isEnabled() throws CoreException {
+        return enabled;
+    }
+    
+    @Override
+    public void setMarker(IMarker marker) throws CoreException {
+        super.setMarker(marker);
+        this.enabled = super.isEnabled();
     }
     
 }

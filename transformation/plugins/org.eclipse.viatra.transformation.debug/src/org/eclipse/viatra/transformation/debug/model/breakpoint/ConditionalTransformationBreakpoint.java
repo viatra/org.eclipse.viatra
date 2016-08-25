@@ -44,10 +44,11 @@ import com.google.inject.Injector;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ConditionalTransformationBreakpoint extends Breakpoint implements ITransformationBreakpoint, IMatchUpdateListener {
+    private static final long serialVersionUID = 8541374098762126605L;
     private String patternString;
     private String stringRep;
     private boolean matcherChanged = false;
-    
+    private boolean enabled = true;
     
     
     public ConditionalTransformationBreakpoint() {
@@ -100,11 +101,12 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
     @Override
     public void setMarker(IMarker marker) throws CoreException {
         super.setMarker(marker);
-            if(patternString != null){
-                marker.setAttribute("pattern", patternString);
-            }else{
-                patternString = marker.getAttribute("pattern", "");
-            }
+        this.enabled = super.isEnabled();
+        if(patternString != null){
+            marker.setAttribute("pattern", patternString);
+        }else{
+            patternString = marker.getAttribute("pattern", "");
+        }
     }
     
     public void setEngine(ViatraQueryEngine engine) {
@@ -156,5 +158,20 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
     public int hashCode() {
         return patternString.hashCode();
     }
+    
+    @Override
+    public void setEnabled(boolean enabled) throws CoreException {
+        try{
+            super.setEnabled(enabled);
+        }catch(CoreException e){
+            throw e;
+        }finally {
+            this.enabled = enabled;
+        }
+    }
 
+    @Override
+    public boolean isEnabled() throws CoreException {
+        return enabled;
+    }
 }
