@@ -55,6 +55,7 @@ import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -389,7 +390,7 @@ class PatternQuerySpecificationClassInferrer {
 		}
 		val type = variable.type
         if (type == null || type.eIsProxy) {
-    		'''new PParameter("«variable.name»", "«clazz»", «variable.directionLiteral»)'''
+    		'''new PParameter("«variable.name»", "«clazz»", («IInputKey»)null, «variable.directionLiteral»)'''
         } else {
             val declaredInputKey = typeSystem.extractTypeDescriptor(type)
             '''new PParameter("«variable.name»", "«clazz»", «serializeInputKey(declaredInputKey, true)», «variable.directionLiteral»)'''

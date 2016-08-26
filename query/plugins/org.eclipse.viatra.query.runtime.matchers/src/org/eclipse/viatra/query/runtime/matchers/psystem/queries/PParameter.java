@@ -30,25 +30,11 @@ public class PParameter {
     public PParameter(String name) {
         this(name, (String)null);
     }
-    
-    /**
-     * @since 1.4
-     */
-    public PParameter(String name, PParameterDirection direction) {
-        this(name, null, direction);
-    }
 
     public PParameter(String name, String typeName) {
         this(name, typeName, (IInputKey)null);
     }
     
-    /**
-     * @since 1.4
-     */
-    public PParameter(String name, String typeName, PParameterDirection direction) {
-        this(name, typeName, null, direction);
-    }
-
     public PParameter(String name, String typeName, IInputKey declaredUnaryType){
         this(name, typeName, declaredUnaryType, PParameterDirection.INOUT);
     }
