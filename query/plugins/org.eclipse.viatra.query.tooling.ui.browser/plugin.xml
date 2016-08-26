@@ -6,14 +6,14 @@
       <view
             category="org.eclipse.viatra.query.tooling.ui"
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
-            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
+            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
             id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
             name="Query Registry">
       </view>
       <view
             category="org.eclipse.viatra.query.tooling.ui"
             class="org.eclipse.viatra.query.tooling.ui.browser.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
-            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
+            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
             id="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
             name="Query Results">
       </view>
@@ -196,7 +196,7 @@
             locationURI="menu:org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.registry.reset"
-               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/reset.gif"
+               icon="platform:/plugin/org.eclipse.jdt.ui/icons/full/elcl16/refresh.png"
                label="Reset view"
                style="push">
          </command>
@@ -206,7 +206,7 @@
             locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.showlocation"
-               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/forward_nav.gif"
+               icon="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/gotoobj_tsk.png"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -258,19 +258,19 @@
             locationURI="menu:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.unloadmodel"
-               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/unload.gif"
+               icon="platform:/plugin/org.eclipse.ui/icons/full/elcl16/stop.png"
                label="Unload model"
                style="push">
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.wipeengine"
-               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/reset.gif"
+               icon="platform:/plugin/org.eclipse.ui/icons/full/etool16/delete_edit.png"
                label="Remove loaded queries"
                style="push">
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.openmanaged"
-               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/rsz_viatra_logo.png"
+               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
                label="Open managed engine"
                style="push">
          </command>
@@ -288,7 +288,7 @@
             locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.showlocation"
-               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/forward_nav.gif"
+               icon="platform:/plugin/org.eclipse.ui.ide/icons/full/elcl16/gotoobj_tsk.png"
                style="push">
             <visibleWhen
                   checkEnabled="false">
@@ -299,7 +299,7 @@
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.result.removequery"
-               icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/unload.gif"
+               icon="platform:/plugin/org.eclipse.ui/icons/full/etool16/delete_edit.png"
                label="Remove query"
                style="push">
             <visibleWhen

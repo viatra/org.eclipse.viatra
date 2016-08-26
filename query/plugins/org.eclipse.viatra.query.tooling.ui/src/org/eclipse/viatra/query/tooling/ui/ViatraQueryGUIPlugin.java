@@ -15,7 +15,9 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -41,11 +43,14 @@ public class ViatraQueryGUIPlugin extends AbstractUIPlugin {
     public static final String ICON_ARROW_BOTTOM = "arrow_bottom";
     public static final String ICON_EPACKAGE = "epackage";
     public static final String ICON_VQL = "vql";
-    public static final String ICON_VIATRA = "viatra";
     /**
      * @since 1.3
      */
     public static final String ICON_PROJECT = "project";
+    /**
+     * @since 1.4
+     */
+    public static final String ICON_VIATRA = "viatra";
 
     // The shared instance
     private static ViatraQueryGUIPlugin plugin;
@@ -76,10 +81,10 @@ public class ViatraQueryGUIPlugin extends AbstractUIPlugin {
         super.initializeImageRegistry(reg);
         @SuppressWarnings("unused")
         Bundle bundle = Platform.getBundle(PLUGIN_ID);
-        reg.put(ICON_ROOT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/root.gif"));
-        reg.put(ICON_MATCHER, imageDescriptorFromPlugin(PLUGIN_ID, "icons/matcher.gif"));
-        reg.put(ICON_MATCH, imageDescriptorFromPlugin(PLUGIN_ID, "icons/match.gif"));
-        reg.put(ICON_ERROR, imageDescriptorFromPlugin(PLUGIN_ID, "icons/error.gif"));
+        reg.put(ICON_ROOT, imageDescriptorFromPlugin(JavaUI.ID_PLUGIN, "icons/full/eview16/types.png"));
+        reg.put(ICON_MATCHER, imageDescriptorFromPlugin("org.eclipse.debug.ui", "icons/full/eview16/breakpoint_view.png"));
+        reg.put(ICON_MATCH, imageDescriptorFromPlugin(JavaUI.ID_PLUGIN, "icons/full/obj16/methpub_obj.png"));
+        reg.put(ICON_ERROR, imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID, "icons/full/progress/errorstate.png"));
         reg.put(ICON_PIN, imageDescriptorFromPlugin(PLUGIN_ID, "icons/pin.gif"));
         reg.put(ICON_ARROW_RIGHT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_right.gif"));
         reg.put(ICON_ARROW_LEFT, imageDescriptorFromPlugin(PLUGIN_ID, "icons/arrow_left.gif"));

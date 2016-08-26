@@ -423,7 +423,7 @@
             locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.treeViewerMenu">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.showlocation"
-               icon="icons/forward_nav.gif"
+               icon="platform:/plugin/org.eclipse.ui/icons/full/elcl16/step_current.png"
                label="Show location"
                style="push">
             <visibleWhen
@@ -440,7 +440,7 @@
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.unloadmodel"
-               icon="icons/unload.gif"
+               icon="platform:/plugin/org.eclipse.ui/icons/full/etool16/delete_edit.png"
                label="Unload model"
                style="push">
             <visibleWhen
@@ -477,13 +477,13 @@
             locationURI="popup:org.eclipse.viatra.query.tooling.ui.queryexplorer.QueryExplorer.patternsViewerMenu">
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.unregisterpattern"
-               icon="icons/unload.gif"
+               icon="platform:/plugin/org.eclipse.ui/icons/full/etool16/delete_edit.png"
                label="Unregister pattern"
                style="push">
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.ui.showlocation_patternreg"
-               icon="icons/forward_nav.gif"
+               icon="platform:/plugin/org.eclipse.ui/icons/full/elcl16/step_current.png"
                label="Show location"
                style="push">
          </command>

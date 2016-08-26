@@ -148,7 +148,9 @@ public class QueryExplorer extends ViewPart {
         listener = new IModelConnectorListener() {
             @Override
             public void modelUnloaded(IModelConnector modelConnector) {
-                unload(modelConnector);
+                if(!getSite().getShell().isDisposed()){
+                    unload(modelConnector);
+                }
             }
         };
     }

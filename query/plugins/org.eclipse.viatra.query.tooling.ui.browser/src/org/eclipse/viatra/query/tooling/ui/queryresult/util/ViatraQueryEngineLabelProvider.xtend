@@ -20,6 +20,7 @@ import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
+import org.eclipse.viatra.query.tooling.ui.browser.ViatraQueryToolingBrowserPlugin
 
 /**
  * @author Abel Hegedus
@@ -28,6 +29,7 @@ import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin
 class ViatraQueryEngineLabelProvider extends LabelProvider {
 
     val imageRegistry = ViatraQueryGUIPlugin.getDefault().getImageRegistry()
+    val browserImageRegistry = ViatraQueryToolingBrowserPlugin.getDefault().getImageRegistry()
     AdapterFactoryLabelProvider adapterFactoryLabelProvider
     
     new() {
@@ -44,11 +46,11 @@ class ViatraQueryEngineLabelProvider extends LabelProvider {
     }
     
     dispatch def getImageInternal(BaseIndexOptions element) {
-        imageRegistry.get(ViatraQueryGUIPlugin.ICON_MATCHER)
+        browserImageRegistry.get(ViatraQueryToolingBrowserPlugin.ICON_BASE_OPTIONS)
     }
     
     dispatch def getImageInternal(ViatraQueryEngineOptions element) {
-        imageRegistry.get(ViatraQueryGUIPlugin.ICON_MATCHER)
+        browserImageRegistry.get(ViatraQueryToolingBrowserPlugin.ICON_ENGINE_OPTIONS)
     }
     
     dispatch def getImageInternal(IQueryBackendFactory element) {
@@ -60,11 +62,11 @@ class ViatraQueryEngineLabelProvider extends LabelProvider {
     }
     
     dispatch def getImageInternal(Entry<String,Object> element) {
-        imageRegistry.get(ViatraQueryGUIPlugin.ICON_MATCH)
+        adapterFactoryLabelProvider.getImage(element.value)
     }
     
     dispatch def getImageInternal(Pair<String,Object> element) {
-        imageRegistry.get(ViatraQueryGUIPlugin.ICON_MATCH)
+        adapterFactoryLabelProvider.getImage(element.value)
     }
     
     dispatch def getImageInternal(Object element) {
