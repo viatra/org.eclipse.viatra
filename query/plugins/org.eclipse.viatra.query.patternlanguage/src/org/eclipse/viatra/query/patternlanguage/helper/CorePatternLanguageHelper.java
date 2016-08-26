@@ -112,10 +112,9 @@ public final class CorePatternLanguageHelper {
      * @return true if the pattern has a private modifier, false otherwise.
      */
     public static boolean isPrivate(Pattern pattern) {
-        for (Modifiers mod : pattern.getModifiers()) {
-            if (mod.isPrivate()) {
-                return true;
-            }
+        Modifiers mod = pattern.getModifiers();
+        if (mod != null){
+            return mod.isPrivate();
         }
         return false;
     }
