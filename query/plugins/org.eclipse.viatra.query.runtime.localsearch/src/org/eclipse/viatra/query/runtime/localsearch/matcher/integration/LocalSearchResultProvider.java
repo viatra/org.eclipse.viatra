@@ -70,9 +70,8 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     private Collection<SearchPlanForBody> createPlan(MatcherReference key, IPlanProvider planProvider,
             final ISearchContext searchContext) throws QueryProcessingException {
 
-        LocalSearchHints configuration = LocalSearchHints
-                .parse(hintProvider.getQueryEvaluationHint(key.getQuery()).overrideBy(userHints));
-
+        LocalSearchHints configuration = overrideDefaultHints(key.getQuery());
+        
         Collection<SearchPlanForBody> compiledPlans = Lists
                 .newArrayList(planProvider.getPlan((LocalSearchBackend) backend, configuration, key).getPlan());
 
@@ -103,6 +102,12 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
                 Collections.max(parameterSizes));
         searchContext.loadMatcher(key, matcher);
         return compiledPlans;
+    }
+
+
+    private LocalSearchHints overrideDefaultHints(PQuery pQuery) {
+        return LocalSearchHints
+           .parse(LocalSearchHints.getDefault().build().overrideBy(hintProvider.getQueryEvaluationHint(pQuery).overrideBy(userHints)));
     }
 
     private void collectElementsToIndex(Collection<SearchPlanForBody> compiledPlans, Set<EClass> classesToIndex,
@@ -258,7 +263,8 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
      * @since 1.4
      */
     public IMatcherCapability getCapabilites() {
-        return hintProvider.getQueryEvaluationHint(query).overrideBy(userHints).calculateRequiredCapability(query);
+        LocalSearchHints configuration = overrideDefaultHints(query);
+        return configuration;
     }
     
 }
