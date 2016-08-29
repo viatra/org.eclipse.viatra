@@ -6,7 +6,7 @@
       <view
             category="org.eclipse.viatra.query.tooling.ui"
             class="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.views.LocalSearchDebugView"
-            icon="icons/logo2.png"
+            icon="platform:/plugin/org.eclipse.viatra.query.tooling.ui/icons/logo2.png"
             id="org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView"
             name="Local Search Debugger"
             restorable="true">
@@ -97,25 +97,25 @@
             locationURI="toolbar:org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView">
          <command
                commandId="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.start"
-               icon="icons/lrun_obj.gif"
+               icon="platform:/plugin/org.eclipse.debug.ui/icons/full/obj16/lrun_obj.png"
                label="Start local search"
                style="push">
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.run"
-               icon="icons/resume_co.gif"
+               icon="platform:/plugin/org.eclipse.debug.ui/icons/full/elcl16/resume_co.png"
                label="Run local search"
                style="push">
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.step"
-               icon="icons/stepinto_co.gif"
+               icon="platform:/plugin/org.eclipse.debug.ui/icons/full/elcl16/stepinto_co.png"
                label="Step local search"
                style="push">
          </command>
          <command
                commandId="org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.placebreakpoint"
-               icon="icons/debug_exc.gif"
+               icon="platform:/plugin/org.eclipse.debug.ui/icons/full/etool16/debug_exc.png"
                label="Place/remove breakpoint"
                style="push">
          </command>

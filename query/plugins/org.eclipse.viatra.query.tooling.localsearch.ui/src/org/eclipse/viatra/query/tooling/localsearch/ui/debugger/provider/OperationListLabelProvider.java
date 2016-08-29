@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
@@ -46,12 +47,7 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
     // TODO proper resource management
     private LocalResourceManager localResourceManager;
     
-    private static Image notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-            LocalSearchToolingActivator.PLUGIN_ID, "/icons/help_contents.gif").createImage();
-    private static Image appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-            LocalSearchToolingActivator.PLUGIN_ID, "/icons/complete_status.gif").createImage();
-    private static Image currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-            LocalSearchToolingActivator.PLUGIN_ID, "icons/nav_go.gif").createImage();
+    private ImageRegistry imageRegistry = LocalSearchToolingActivator.getDefault().getImageRegistry();
 
 	private Map<Object, SearchPlanExecutor> dummyMatchOperationMappings = Maps.newHashMap();
 
@@ -68,11 +64,7 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 
 		switch (node.getOperationStatus()) {
 		case EXECUTED:
-		    if(appliedOperationImage.isDisposed()){
-		        appliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-		                LocalSearchToolingActivator.PLUGIN_ID, "/icons/complete_status.gif").createImage();
-            }
-			cell.setImage(appliedOperationImage);
+			cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_APPLIED_OPERATION));
 			text.setStyle(0, text.length(), new Styler() {
 				public void applyStyles(TextStyle textStyle) {
 					textStyle.font = localResourceManager.createFont(FontDescriptor.createFrom("Arial", 10, SWT.BOLD));
@@ -81,11 +73,7 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 			});
 			break;
 		case CURRENT:
-		    if(currentOperationImage.isDisposed()){
-		        currentOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-		                LocalSearchToolingActivator.PLUGIN_ID, "icons/nav_go.gif").createImage();
-            }
-			cell.setImage(currentOperationImage);
+			cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_CURRENT_OPERATION));
 			text.setStyle(0, text.length(), new Styler() {
 				public void applyStyles(TextStyle textStyle) {
 					LocalResourceManager localResMan = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
@@ -96,11 +84,7 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 			});
 			break;
 		case QUEUED:
-		    if(notAppliedOperationImage.isDisposed()){
-		        notAppliedOperationImage = AbstractUIPlugin.imageDescriptorFromPlugin(
-		                LocalSearchToolingActivator.PLUGIN_ID, "/icons/help_contents.gif").createImage();
-		    }
-			cell.setImage(notAppliedOperationImage);
+			cell.setImage(imageRegistry.get(LocalSearchToolingActivator.ICON_NOT_APPLIED_OPERATION));
 			text.setStyle(0, text.length(), new Styler() {
 				public void applyStyles(TextStyle textStyle) {
 					LocalResourceManager localResMan = new LocalResourceManager(JFaceResources.getResources(Display.getCurrent()));
@@ -155,10 +139,6 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
         if(localResourceManager != null){
             localResourceManager.dispose();
         }
-        
-        appliedOperationImage.dispose();
-        currentOperationImage.dispose();
-        notAppliedOperationImage.dispose();
         
         super.dispose();
     }
