@@ -18,6 +18,7 @@ import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistryEntr
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeEntry
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreePackage
 import org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryTreeSource
+import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory
 
 /**
  * @author Abel Hegedus
@@ -52,6 +53,7 @@ class QueryResultViewUtil {
      */
     static def AdapterFactory getGenericAdapterFactory() {
         val adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE)
+        adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory)
         return adapterFactory
     }
 }
