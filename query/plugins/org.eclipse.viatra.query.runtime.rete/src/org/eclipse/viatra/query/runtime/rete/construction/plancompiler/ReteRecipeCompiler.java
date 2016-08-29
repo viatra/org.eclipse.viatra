@@ -87,6 +87,7 @@ import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan;
 import org.eclipse.viatra.query.runtime.rete.traceability.ParameterProjectionTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
+import org.omg.CORBA.CharSeqHelper;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -506,12 +507,15 @@ public class ReteRecipeCompiler {
 		
 		IndexerRecipe aggregatorIndexerRecipe = FACTORY.createAggregatorIndexerRecipe();
 		aggregatorIndexerRecipe.setParent(aggregatorRecipe);
-		aggregatorIndexerRecipe.setMask(RecipesHelper.mask(
-				sideVariablesTuple.size(), 
-				//use same indices as in the projection indexer 
-				// EVEN if result variable already visible in left parent
-				callGroupMask.indices 
-		));
+		
+		int aggregatorWidth = sideVariablesTuple.size();
+        int aggregateResultIndex = aggregatorWidth-1;
+        
+        aggregatorIndexerRecipe.setMask(CompilerHelper.toRecipeMask(TupleMask.omit(
+                // aggregate according all but the last index
+		        aggregateResultIndex, 
+		        aggregatorWidth
+		)));
 		PlanningTrace aggregatorIndexerTrace = 
 				new PlanningTrace(plan, sideVariablesTuple, aggregatorIndexerRecipe, aggregatorTrace);
 		
@@ -519,18 +523,20 @@ public class ReteRecipeCompiler {
     	naturalJoinRecipe.setLeftParent((ProjectionIndexerRecipe) primaryIndexer.getRecipe());
     	naturalJoinRecipe.setRightParent(aggregatorIndexerRecipe);
 		naturalJoinRecipe.setRightParentComplementaryMask(RecipesHelper.mask(
-				sideVariablesTuple.size(), 
+				aggregatorWidth, 
 				// extend with last element only - the computation value
-				sideVariablesTuple.size() - 1
+				aggregateResultIndex
 		));
 		
         // what if the new variable already has a value?
-		boolean alreadyKnown = parentPlan.getVisibleVariables().contains(constraint.getResultVariable());
-		final List<PVariable> aggregatedVariablesTuple = new ArrayList<PVariable>(parentCompiled.getVariablesTuple());		
-		if (!alreadyKnown) aggregatedVariablesTuple.add(constraint.getResultVariable());
+		// even if already known, we add the new result variable, so that it can be filtered at the end
+		// boolean alreadyKnown = parentPlan.getVisibleVariables().contains(constraint.getResultVariable());
+		
+		final List<PVariable> finalVariablesTuple = new ArrayList<PVariable>(parentCompiled.getVariablesTuple());	
+		finalVariablesTuple.add(constraint.getResultVariable());
 
 		PlanningTrace joinTrace = new PlanningTrace(plan,
-			aggregatedVariablesTuple, 
+			finalVariablesTuple, 
 			naturalJoinRecipe, 
 			primaryIndexer, aggregatorIndexerTrace);
 
