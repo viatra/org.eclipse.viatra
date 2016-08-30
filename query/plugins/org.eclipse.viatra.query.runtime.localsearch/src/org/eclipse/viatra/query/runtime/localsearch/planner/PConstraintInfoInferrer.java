@@ -28,6 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 
@@ -85,6 +86,8 @@ class PConstraintInfoInferrer {
             createConstraintInfoExportedParameter(resultList, runtimeContext, (ExportedParameter) pConstraint);
         } else if(pConstraint instanceof TypeConstraint){
             createConstraintInfoTypeConstraint(resultList, runtimeContext, (TypeConstraint)pConstraint);
+        } else if(pConstraint instanceof ConstantValue){
+            createConstraintInfoConstantValue(resultList, runtimeContext, (ConstantValue)pConstraint);
         } else if (pConstraint instanceof Inequality){
             createConstraintInfoInequality(resultList, runtimeContext, (Inequality) pConstraint);
         } else if (pConstraint instanceof ExpressionEvaluation){
@@ -100,11 +103,16 @@ class PConstraintInfoInferrer {
         }
     }
     
-    /**
-     * @param resultList
-     * @param runtimeContext
-     * @param pConstraint
-     */
+    private void createConstraintInfoConstantValue(List<PConstraintInfo> resultList,
+            IQueryRuntimeContext runtimeContext, ConstantValue pConstraint) {
+        // A ConstantValue constraint has a single variable, which is allowed to be unbound 
+        // (extending through ConstantValue is considered a cheap operation)
+        Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
+        Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
+        doCreateConstraintInfos(runtimeContext, resultList, pConstraint, affectedVariables, bindings);
+    }
+
+
     private void createConstraintInfoPositivePatternCall(List<PConstraintInfo> resultList,
             IQueryRuntimeContext runtimeContext, PositivePatternCall pCall) {
         // A pattern call can have any of its variables unbound

@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.runtime.localsearch.planner;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +35,6 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -99,11 +97,6 @@ public class LocalSearchRuntimeBasedStrategy {
         SubPlanFactory subPlanFactory = new SubPlanFactory(pBody);
 
         // We assume that the adornment (now the bound variables) is previously set
-        Set<PVariable> constantVariables = new HashSet<>();
-        for(ConstantValue constantValue : pBody.getConstraintsOfType(ConstantValue.class)){
-            constantVariables.addAll(constantValue.getAffectedVariables());
-        }
-        initialBoundVariables = Sets.union(initialBoundVariables, constantVariables);
         SubPlan plan = subPlanFactory.createSubPlan(new PStart(initialBoundVariables));
         // Create mask infos
         Set<PConstraint> constraintSet = pBody.getConstraints();

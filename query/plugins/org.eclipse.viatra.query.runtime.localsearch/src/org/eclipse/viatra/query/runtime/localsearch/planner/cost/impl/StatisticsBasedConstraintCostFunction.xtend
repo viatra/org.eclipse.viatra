@@ -40,7 +40,7 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
     }
     
     protected def dispatch float calculateCost(ConstantValue constant, IConstraintEvaluationContext input) {
-        return 1.0f;
+        return 0.0f;
     }
 
     protected def dispatch float calculateCost(TypeConstraint constraint, IConstraintEvaluationContext input) {
