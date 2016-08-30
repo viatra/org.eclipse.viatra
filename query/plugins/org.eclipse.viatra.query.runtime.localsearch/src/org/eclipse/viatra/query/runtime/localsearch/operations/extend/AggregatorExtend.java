@@ -89,7 +89,8 @@ public class AggregatorExtend extends ExtendOperation<Object> implements IMatche
             parameterValues[entry.getValue()] = frame.getValue(entry.getKey());
         }
         mappedFrame.setParameterValues(parameterValues);
-        it = Iterators.<Object>singletonIterator(doAggregate(aggregator.getAggregator().getOperator(), mappedFrame));
+        Object aggregate = doAggregate(aggregator.getAggregator().getOperator(), mappedFrame);
+        it = aggregate == null ? Iterators.emptyIterator() : Iterators.<Object>singletonIterator(aggregate);
         
     }
     
