@@ -277,7 +277,7 @@ class PatternQuerySpecificationClassInferrer {
         if(modifier != null){
             modifier.execution
         } else{
-            ExecutionType::UNSPECIFIFIED
+            ExecutionType::UNSPECIFIED
         }
     }
     
@@ -298,7 +298,7 @@ class PatternQuerySpecificationClassInferrer {
             case SEARCH: {
                 searchBackendFactory
             }
-            case UNSPECIFIFIED: {
+            case UNSPECIFIED: {
                '''null''' 
             }
             

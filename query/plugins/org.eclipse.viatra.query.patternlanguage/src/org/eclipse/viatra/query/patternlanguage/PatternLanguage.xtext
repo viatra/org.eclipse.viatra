@@ -46,7 +46,7 @@ Modifiers:
 	);
 
 enum ExecutionType:
-    unspecifified | search | incremental ;
+    unspecified | search | incremental ;
 
 enum ExecutionTypeModifier returns ExecutionType:
     search | incremental
