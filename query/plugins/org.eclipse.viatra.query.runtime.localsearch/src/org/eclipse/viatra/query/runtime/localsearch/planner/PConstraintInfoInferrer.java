@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Aggregato
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 
@@ -89,7 +90,9 @@ class PConstraintInfoInferrer {
         } else if (pConstraint instanceof ExpressionEvaluation){
             createConstraintInfoExpressionEvaluation(resultList, runtimeContext, (ExpressionEvaluation)pConstraint);
         } else if (pConstraint instanceof AggregatorConstraint){
-            createConstraintInfoAggregatorConstraint(resultList, runtimeContext, (AggregatorConstraint) pConstraint);
+            createConstraintInfoAggregatorConstraint(resultList, runtimeContext, pConstraint, ((AggregatorConstraint) pConstraint).getResultVariable());
+        } else if (pConstraint instanceof PatternMatchCounter){
+            createConstraintInfoAggregatorConstraint(resultList, runtimeContext, pConstraint, ((PatternMatchCounter) pConstraint).getResultVariable());   
         } else if (pConstraint instanceof PositivePatternCall){
             createConstraintInfoPositivePatternCall(resultList, runtimeContext, (PositivePatternCall) pConstraint);
         } else{
@@ -137,9 +140,7 @@ class PConstraintInfoInferrer {
         doCreateConstraintInfos(runtimeContext, resultList, inequality, affectedVariables, Collections.singleton(affectedVariables));
     }
     
-    private void createConstraintInfoAggregatorConstraint(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, AggregatorConstraint pConstraint){
-        PVariable resultVariable = pConstraint.getResultVariable();
-       
+    private void createConstraintInfoAggregatorConstraint(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, PConstraint pConstraint, PVariable resultVariable){
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
         
         // The only variables which can be unbound are the ones which cannot be deduced by any constraint and the result variable
