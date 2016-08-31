@@ -87,4 +87,17 @@ public final class PQueries {
             }
         };
     }
+    
+    /**
+     * @since 1.4
+     */
+    public static Predicate<PParameter> parameterDirectionPredicate(final PParameterDirection direction){
+        return new Predicate<PParameter>() {
+
+            @Override
+            public boolean apply(PParameter input) {
+                return input.getDirection() == direction;
+            }
+        };
+    }
 }

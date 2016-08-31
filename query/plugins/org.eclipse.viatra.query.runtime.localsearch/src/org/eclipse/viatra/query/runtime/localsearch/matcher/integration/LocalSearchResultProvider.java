@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -45,11 +46,14 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -139,20 +143,36 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     }
 
     /**
+     * @throws QueryProcessingException 
      * @since 1.4
      */
     public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
             IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query,
-            IPlanProvider planProvider) {
+            IPlanProvider planProvider) throws QueryProcessingException {
         this(backend, logger, runtimeContext, cacheContext, hintProvider, query, planProvider, null);
     }
 
+    private Iterator<MatcherReference> computeAllPossibleAdornments(final PQuery query, final QueryEvaluationHint hints){
+        final Set<PParameter> ins = Sets.filter(Sets.newHashSet(query.getParameters()), PQueries.parameterDirectionPredicate(PParameterDirection.IN));
+        Set<PParameter> inouts = Sets.filter(Sets.newHashSet(query.getParameters()), PQueries.parameterDirectionPredicate(PParameterDirection.IN));
+        Set<Set<PParameter>> possibleInouts = Sets.powerSet(inouts);
+        return Iterators.transform(possibleInouts.iterator(), new Function<Set<PParameter>, MatcherReference>() {
+
+            @Override
+            public MatcherReference apply(Set<PParameter> input) {
+                Set<PParameter> adornment = Sets.union(ins, input);
+                return new MatcherReference(query, adornment, hints);
+            }
+        });
+    }
+    
     /**
+     * @throws QueryProcessingException 
      * @since 1.4
      */
     public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
-            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query,
-            IPlanProvider planProvider, QueryEvaluationHint userHints) {
+            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider,  PQuery query,
+            IPlanProvider planProvider, QueryEvaluationHint userHints) throws QueryProcessingException {
         this.backend = backend;
         this.cacheContext = cacheContext;
         this.hintProvider = hintProvider;
@@ -160,6 +180,12 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
         this.planProvider = planProvider;
         this.userHints = userHints;
+        
+        // Plan for possible adornments
+        Iterator<MatcherReference> iterator = computeAllPossibleAdornments(query, userHints);
+        while(iterator.hasNext()){
+            planProvider.getPlan((LocalSearchBackend) backend, overrideDefaultHints(query), iterator.next());
+        }
     }
 
     private LocalSearchMatcher initializeMatcher(Object[] parameters) {
