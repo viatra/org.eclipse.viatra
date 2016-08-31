@@ -96,7 +96,7 @@ public class AggregatorCheck extends CheckOperation implements IMatcherBasedOper
         }
         mappedFrame.setParameterValues(parameterValues);
         Object result = doAggregate(aggregator.getAggregator().getOperator(), mappedFrame);
-        return Objects.equals(frame.getValue(position), result);
+        return result == null ? false : Objects.equals(frame.getValue(position), result);
     }
     
     private <Domain, Accumulator, AggregateResult> AggregateResult doAggregate(IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, MatchingFrame initialFrame) throws LocalSearchException{
