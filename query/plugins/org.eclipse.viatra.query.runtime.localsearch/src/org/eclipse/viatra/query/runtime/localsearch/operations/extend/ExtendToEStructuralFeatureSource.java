@@ -17,8 +17,11 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
+import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.common.collect.Lists;
 
@@ -27,7 +30,7 @@ import com.google.common.collect.Lists;
  * It is assumed that the indexer is initialized for the selected {@link EStructuralFeature}.
  * 
  */
-public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> {
+public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> implements IIteratingSearchOperation{
 
     private int targetPosition;
     private EStructuralFeature feature;
@@ -65,5 +68,13 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<EObject> {
 	public List<Integer> getVariablePositions() {
 		return Lists.asList(position, targetPosition, new Integer[0]);
 	}
+    
+    /**
+     * @since 1.4
+     */
+    @Override
+    public IInputKey getIteratedInputKey() {
+        return new EStructuralFeatureInstancesKey(feature);
+    }
     
 }

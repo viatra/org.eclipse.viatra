@@ -15,11 +15,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * @author Grill Balázs
@@ -31,6 +35,7 @@ public class PlanDescriptor implements IPlanDescriptor {
     private final PQuery pquery;
     private final List<SearchPlanForBody> plan;
     private final Set<PParameter> adornment;
+    private Set<IInputKey> iteratedKeys = null;
     
     public PlanDescriptor(PQuery pquery, Collection<SearchPlanForBody> plan, Set<PParameter> adornment) {
         this.pquery = pquery;
@@ -51,6 +56,22 @@ public class PlanDescriptor implements IPlanDescriptor {
     @Override
     public Set<PParameter> getAdornment() {
         return adornment;
+    }
+
+    @Override
+    public Set<IInputKey> getIteratedKeys() {
+        if (iteratedKeys == null){
+            Set<IInputKey> keys = Sets.newHashSet();
+            for(SearchPlanForBody bodyPlan : plan){
+                for(ISearchOperation operation : bodyPlan.getCompiledOperations()){
+                    if (operation instanceof IIteratingSearchOperation){
+                        keys.add(((IIteratingSearchOperation) operation).getIteratedInputKey());
+                    }
+                }
+            }
+            iteratedKeys = Collections.unmodifiableSet(keys);
+        }
+        return iteratedKeys;
     }
 
 }

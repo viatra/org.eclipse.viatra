@@ -14,8 +14,11 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
+import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.common.collect.Lists;
 
@@ -24,7 +27,7 @@ import com.google.common.collect.Lists;
  * assumed that the indexer is initialized for the selected {@link EDataType}.
  * 
  */
-public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
+public class IterateOverEDatatypeInstances extends ExtendOperation<Object> implements IIteratingSearchOperation{
 
     private EDataType dataType;
 
@@ -62,6 +65,14 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> {
 	public List<Integer> getVariablePositions() {
 		return Lists.asList(position, new Integer[0]);
 	}
+
+    /**
+     * @since 1.4
+     */
+    @Override
+    public IInputKey getIteratedInputKey() {
+        return new EDataTypeInSlotsKey(dataType);
+    }
     
 
 }

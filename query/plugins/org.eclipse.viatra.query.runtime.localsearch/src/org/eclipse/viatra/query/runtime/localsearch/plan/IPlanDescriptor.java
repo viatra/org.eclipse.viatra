@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.localsearch.plan;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -42,5 +43,12 @@ public interface IPlanDescriptor {
      * @return
      */
     public Set<PParameter> getAdornment();
+    
+    /**
+     * The collection of {@link IInputKey}s which needs to be iterated during the execution of this plan. For optimal
+     * performance, instances of these keys might be indexed.
+     * @return
+     */
+    public Set<IInputKey> getIteratedKeys();
     
 }
