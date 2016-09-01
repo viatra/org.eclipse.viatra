@@ -42,6 +42,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
@@ -151,8 +152,8 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
      * @throws QueryProcessingException 
      * @since 1.4
      */
-    public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
-            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider,  PQuery query,
+    public LocalSearchResultProvider(IQueryBackend backend, Logger logger, final IQueryRuntimeContext runtimeContext,
+            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, final PQuery query,
             IPlanProvider planProvider, QueryEvaluationHint userHints) throws QueryProcessingException {
         this.backend = backend;
         this.cacheContext = cacheContext;
@@ -162,7 +163,34 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         this.planProvider = planProvider;
         this.userHints = userHints;
         
-        // Plan for possible adornments
+        // Request statistic indexing
+        try {
+            runtimeContext.coalesceTraversals(new Callable<Void>() {
+
+                @Override
+                public Void call() throws Exception {
+                    runtimeContext.ensureWildcardIndexing(IndexingService.STATISTICS);
+                    runtimeContext.executeAfterTraversal(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            try {
+                                preparePlansForPossibleAdornments();
+                            } catch (QueryProcessingException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
+                    return null;
+                }
+            });
+        } catch (InvocationTargetException e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+    
+    private void preparePlansForPossibleAdornments() throws QueryProcessingException{
+     // Plan for possible adornments
         Iterator<MatcherReference> iterator = computeAllPossibleAdornments(query, userHints);
         while(iterator.hasNext()){
             planProvider.getPlan((LocalSearchBackend) backend, overrideDefaultHints(query), iterator.next());
