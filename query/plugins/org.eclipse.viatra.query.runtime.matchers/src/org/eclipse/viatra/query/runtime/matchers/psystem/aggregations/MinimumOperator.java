@@ -65,12 +65,4 @@ public class MinimumOperator<T extends Comparable<T>>
     public T getAggregate(SortedMultiset<T> result) {
         return result.isEmpty() ? null : result.firstEntry().getElement();
     }
-
-    @Override
-    public T aggregateStatelessly(Collection<T> aggregableValues) {
-        if (aggregableValues.isEmpty())
-            return null;
-        else
-            return Collections.<T> min(aggregableValues);
-    }
 }

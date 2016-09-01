@@ -47,12 +47,6 @@ public interface IMultisetAggregationOperator<Domain, Accumulator, AggregateResu
     String getName();
     
     /**
-     * @return the aggregate result obtained statelessly from the given multiset of aggregable values. 
-     * May be null to indicate that the multiset cannot be aggregated (e.g. 0 elements have no minimum).
-     */
-    AggregateResult aggregateStatelessly(Collection<Domain> aggregableValues);
-   
-    /**
      * @return the neutral element, i.e. the interim result of aggregating an empty multiset.
      */
     Accumulator createNeutral();

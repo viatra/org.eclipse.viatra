@@ -20,13 +20,4 @@ import java.util.Collection;
 public abstract class AbstractMultisetAggregationOperator<Domain, Accumulator, AggregateResult>
         implements IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> {
 
-    // Default implementation based on incremental methods.
-    @Override
-    public AggregateResult aggregateStatelessly(Collection<Domain> aggregableValues) {
-        Accumulator accumulator = createNeutral();
-        for (Domain value : aggregableValues) {
-            update(accumulator, value, true);
-        }
-        return getAggregate(accumulator);
-    }
 }
