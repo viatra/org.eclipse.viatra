@@ -110,7 +110,7 @@ class IQGenerator {
 						try {
 							transformation = EventDrivenTransformation.forScope(new ''')
 					append('''«referClass(it, typeRefBuilder, model, EMFScope)»''')
-					append('''(resourceSet)).addRules(getRules()).create();''')
+					append('''(resourceSet)).addRules(getRules()).build();''')
 					newLine
 					append('''
 						} catch (ViatraQueryException e) {
