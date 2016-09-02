@@ -33,6 +33,7 @@ import java.util.Collection;
  * @param <AggregateResult> the type of the final result of the aggregation to be output.
  * 
  * @since 1.4
+ * @noimplement This interface is not intended to be implemented by clients. Extend {@link AbstractMultisetAggregationOperator} instead.
  */
 public interface IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> {
     

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.aggregations;
 
-import java.util.Collection;
-
 /**
  * Base class for aggregation operators.
  * @author Gabor Bergmann

@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.psystem.aggregations;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
