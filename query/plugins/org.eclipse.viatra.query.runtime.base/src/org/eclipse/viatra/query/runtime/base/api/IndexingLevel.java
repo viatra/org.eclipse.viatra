@@ -101,4 +101,11 @@ public enum IndexingLevel {
         return this == IndexingLevel.BOTH || this == IndexingLevel.STATISTICS || this == IndexingLevel.FULL;
     }
     
+    /**
+     * Tells whether the indexer shall perform instance indexing
+     */
+    public boolean hasInstances(){
+        return this == IndexingLevel.FULL;
+    }
+    
 }

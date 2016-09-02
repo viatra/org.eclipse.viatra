@@ -43,7 +43,7 @@ public class BaseIndexOptions {
      * 
      * By default, base indices will be constructed with wildcard mode set as false.
      */
-    protected static final boolean WILDCARD_MODE_DEFAULT = false;
+    protected static final IndexingLevel WILDCARD_MODE_DEFAULT = IndexingLevel.NONE;
     /**
      * 
      * By default, base indices will be constructed with only well-behaving features traversed.
@@ -57,7 +57,7 @@ public class BaseIndexOptions {
 
     protected boolean dynamicEMFMode = DYNAMIC_EMF_MODE_DEFAULT;
     protected boolean traverseOnlyWellBehavingDerivedFeatures = TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT;
-    protected boolean wildcardMode = WILDCARD_MODE_DEFAULT;
+    protected IndexingLevel wildcardMode = WILDCARD_MODE_DEFAULT;
     protected IBaseIndexObjectFilter notifierFilterConfiguration;
     protected IBaseIndexResourceFilter resourceFilterConfiguration;
 
@@ -69,8 +69,19 @@ public class BaseIndexOptions {
 
     /**
      * Creates a base index options using the provided values for dynamic EMF mode and wildcard mode.
+     * @deprecated use {@link #BaseIndexOptions(boolean, IndexingLevel)} instead. Use {@link IndexLevel.FULL} for wildcardMode equivalent to true. 
      */
+    @Deprecated
     public BaseIndexOptions(boolean dynamicEMFMode, boolean wildcardMode) {
+        this.dynamicEMFMode = dynamicEMFMode;
+        this.wildcardMode = wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE;
+    }
+    
+    /**
+     * Creates a base index options using the provided values for dynamic EMF mode and wildcard mode.
+     * @since 1.4
+     */
+    public BaseIndexOptions(boolean dynamicEMFMode, IndexingLevel wildcardMode) {
         this.dynamicEMFMode = dynamicEMFMode;
         this.wildcardMode = wildcardMode;
     }
@@ -143,10 +154,22 @@ public class BaseIndexOptions {
      * 
      * @param wildcardMode
      * @since 0.9
+     * @deprecated use {@link #withWildcardLevel(IndexingLevel)} instead.
      */
     public BaseIndexOptions withWildcardMode(boolean wildcardMode) {
     	BaseIndexOptions result = copy();
-        result.wildcardMode = wildcardMode;
+        result.wildcardMode = wildcardMode ? IndexingLevel.FULL : IndexingLevel.NONE;
+        return result;
+   }
+    
+    /**
+     * 
+     * @param wildcardMode
+     * @since 1.4
+     */
+    public BaseIndexOptions withWildcardLevel(IndexingLevel wildcardLevel) {
+        BaseIndexOptions result = copy();
+        result.wildcardMode = wildcardLevel;
         return result;
    }
 
@@ -154,6 +177,14 @@ public class BaseIndexOptions {
      * @return whether the base index option has wildcard mode set
      */
     public boolean isWildcardMode() {
+        return wildcardMode == IndexingLevel.FULL;
+    }
+    
+    /**
+     * @return the wildcardMode level
+     * @since 1.4
+     */
+    public IndexingLevel getWildcardLevel() {
         return wildcardMode;
     }
 
@@ -186,7 +217,7 @@ public class BaseIndexOptions {
 						: resourceFilterConfiguration.hashCode());
 		result = prime * result
 				+ (traverseOnlyWellBehavingDerivedFeatures ? 1231 : 1237);
-		result = prime * result + (wildcardMode ? 1231 : 1237);
+		result = prime * result + (1231 + wildcardMode.ordinal() * 6);
 		return result;
 	}
 

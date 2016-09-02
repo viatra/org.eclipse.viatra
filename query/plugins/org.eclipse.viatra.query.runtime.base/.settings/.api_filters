@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.runtime.base" version="2">
+    <resource path="src/org/eclipse/viatra/query/runtime/base/api/BaseIndexOptions.java" type="org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions">
+        <filter comment="Support for index levels in wildcard mode" id="388161617">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions"/>
+                <message_argument value="WILDCARD_MODE_DEFAULT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="BaseIndex wildCard functionality extended to all IndexedLevels" id="388161617">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions"/>
+                <message_argument value="wildcardMode"/>
+            </message_arguments>
+        </filter>
+        <filter comment="BaseIndex wildCard functionality extended to all IndexedLevels" id="389242988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions"/>
+                <message_argument value="WILDCARD_MODE_DEFAULT"/>
+                <message_argument value="0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

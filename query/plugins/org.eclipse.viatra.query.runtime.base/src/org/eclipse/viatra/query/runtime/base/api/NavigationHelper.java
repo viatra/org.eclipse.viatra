@@ -95,6 +95,21 @@ public interface NavigationHelper {
     public boolean isInWildcardMode();
     
     /**
+     * Returns the current {@link IndexingLevel} applied to all model elements. For specific types it is possible to request a higher indexing levels, but cannot be lowered.
+     * @return the current level of index specified
+     * @since 1.4
+     */
+    public IndexingLevel getWildcardLevel();
+    
+    /**
+     * Starts wildcard indexing at the given level. After this call, no registration is required for this {@link IndexingLevel}.
+     * a previously set wildcard level cannot be lowered, only extended.
+     * 
+     * @since 1.4
+     */
+    public void setWildcardLevel(IndexingLevel level);
+    
+    /**
      * Indicates whether indexing is performed in <em>dynamic EMF mode</em>, i.e. EPackage nsURI collisions are 
      *   tolerated and EPackages with the same URI are automatically considered as equal.
      * 

@@ -73,7 +73,7 @@ import com.google.common.collect.Table;
 
 public class NavigationHelperImpl implements NavigationHelper {
 
-    protected boolean inWildcardMode;
+    protected IndexingLevel wildcardMode;
 
     protected Notifier notifier;
     protected Set<Notifier> modelRoots;
@@ -189,7 +189,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public boolean isInWildcardMode() {
-        return baseIndexOptions.isWildcardMode();
+        return wildcardMode == IndexingLevel.FULL;
     }
 
     @Override
@@ -217,6 +217,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         assert (logger != null);
 
         this.comprehension = new EMFModelComprehension(baseIndexOptions);
+        this.wildcardMode = baseIndexOptions.getWildcardLevel();
         this.subscribedInstanceListeners = new HashMap<InstanceListener, Set<EClass>>();
         this.subscribedFeatureListeners = new HashMap<FeatureListener, Set<EStructuralFeature>>();
         this.subscribedDataTypeListeners = new HashMap<DataTypeListener, Set<EDataType>>();
@@ -239,6 +240,39 @@ public class NavigationHelperImpl implements NavigationHelper {
 
         if (emfRoot != null) {
             addRootInternal(emfRoot);
+        }
+              
+    }
+    
+    @Override
+    public IndexingLevel getWildcardLevel() {
+        return wildcardMode;
+    }
+    
+    @Override
+    public void setWildcardLevel(final IndexingLevel level) {
+        try{
+            IndexingLevel mergedLevel = NavigationHelperImpl.this.wildcardMode.merge(level);
+            if (mergedLevel != NavigationHelperImpl.this.wildcardMode){
+                NavigationHelperImpl.this.wildcardMode = mergedLevel;
+
+                // force traversal upon change of wildcard level
+                final NavigationHelperVisitor visitor = new NavigationHelperVisitor.TraversingVisitor(this,
+                        Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap(), Collections.<Object, IndexingLevel>emptyMap());
+                coalesceTraversals(new Callable<Void>() {
+
+                    @Override
+                    public Void call() throws Exception {
+                        traverse(visitor);
+                        return null;
+                    }
+
+                }); 
+            }
+        } catch (InvocationTargetException ex) {
+            processingFatal(ex.getCause(), "Setting wildcard level: " + level);
+        } catch (Exception ex) {
+            processingFatal(ex, "Setting wildcard level: " + level);
         }
     }
 
@@ -826,7 +860,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     boolean isObservedInternal(Object clazzKey) {
-        return inWildcardMode || getAllObservedClassesInternal().containsKey(clazzKey);
+        return isInWildcardMode() || getAllObservedClassesInternal().containsKey(clazzKey);
     }
 
     /**
@@ -1367,7 +1401,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
 
     private void ensureNotInWildcardMode() {
-        if (inWildcardMode) {
+        if (isInWildcardMode()) {
             throw new IllegalStateException("Cannot register/unregister observed classes in wildcard mode");
         }
     }

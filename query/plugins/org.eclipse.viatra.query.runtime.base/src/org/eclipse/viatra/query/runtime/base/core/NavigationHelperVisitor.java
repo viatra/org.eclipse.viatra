@@ -35,7 +35,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
      */
     public static class ChangeVisitor extends NavigationHelperVisitor {
         // local copies to save actual state, in case visitor has to be saved for later due unresolvable proxies
-        private final boolean wildcardMode;
+        private final IndexingLevel wildcardMode;
         private final Map<Object, IndexingLevel> allObservedClasses;
         private final Map<Object, IndexingLevel> observedDataTypes;
         private final Map<Object, IndexingLevel> observedFeatures;
@@ -43,7 +43,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
         public ChangeVisitor(NavigationHelperImpl navigationHelper, boolean isInsertion) {
             super(navigationHelper, isInsertion, false);
-            wildcardMode = navigationHelper.isInWildcardMode();
+            wildcardMode = navigationHelper.getWildcardLevel();
             allObservedClasses = navigationHelper.getAllObservedClassesInternal(); // new HashSet<EClass>();
             observedDataTypes = navigationHelper.getObservedDataTypesInternal(); // new HashSet<EDataType>();
             observedFeatures = navigationHelper.getObservedFeaturesInternal(); // new HashSet<EStructuralFeature>();
@@ -52,7 +52,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
         @Override
         protected boolean observesClass(Object eClass) {
-            return wildcardMode || (IndexingLevel.FULL == allObservedClasses.get(eClass)) || registerSampledClass(eClass);
+            return wildcardMode.hasInstances() || (IndexingLevel.FULL == allObservedClasses.get(eClass)) || registerSampledClass(eClass);
         }
 
         private boolean registerSampledClass(Object eClass) {
@@ -68,27 +68,27 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
 
         @Override
         protected boolean observesDataType(Object type) {
-            return wildcardMode || (IndexingLevel.FULL == observedDataTypes.get(type));
+            return wildcardMode.hasInstances() || (IndexingLevel.FULL == observedDataTypes.get(type));
         }
 
         @Override
         protected boolean observesFeature(Object feature) {
-            return wildcardMode || (IndexingLevel.FULL == observedFeatures.get(feature));
+            return wildcardMode.hasInstances() || (IndexingLevel.FULL == observedFeatures.get(feature));
         }
 
         @Override
         protected boolean countsFeature(Object feature) {
-            return observedFeatures.containsKey(feature) && observedFeatures.get(feature).hasStatistics();
+            return wildcardMode.hasStatistics() || observedFeatures.containsKey(feature) && observedFeatures.get(feature).hasStatistics();
         }
 
         @Override
         protected boolean countsDataType(Object type) {
-            return observedDataTypes.containsKey(type) && observedDataTypes.get(type).hasStatistics();
+            return wildcardMode.hasStatistics() || observedDataTypes.containsKey(type) && observedDataTypes.get(type).hasStatistics();
         }
 
         @Override
         protected boolean countsClass(Object eClass) {
-            return allObservedClasses.containsKey(eClass) && allObservedClasses.get(eClass).hasStatistics();
+            return wildcardMode.hasStatistics() || allObservedClasses.containsKey(eClass) && allObservedClasses.get(eClass).hasStatistics();
         }
     }
 
@@ -96,7 +96,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
      * A visitor for a single-pass traversal of the whole model, processing only the given types and inserting them.
      */
     public static class TraversingVisitor extends NavigationHelperVisitor {
-        private final boolean wildcardMode;
+        private final IndexingLevel wildcardMode;
         Map<Object, IndexingLevel> features;
         Map<Object, IndexingLevel> newClasses;
         Map<Object, IndexingLevel> oldClasses; // if decends from an old class, no need to add!
@@ -106,7 +106,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         public TraversingVisitor(NavigationHelperImpl navigationHelper, Map<Object, IndexingLevel> features, Map<Object, IndexingLevel> newClasses,
                 Map<Object, IndexingLevel> oldClasses, Map<Object, IndexingLevel> dataTypes) {
             super(navigationHelper, true, true);
-            wildcardMode = navigationHelper.isInWildcardMode();
+            wildcardMode = navigationHelper.getWildcardLevel();
             this.features = features;
             this.newClasses = newClasses;
             this.oldClasses = oldClasses;
@@ -163,7 +163,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         
         @Override
         protected boolean observesClass(Object eClass) {
-            if (wildcardMode) {
+            if (wildcardMode.hasInstances()) {
                 return true;
             }
             return IndexingLevel.FULL == getTraversalIndexing(eClass);
@@ -171,27 +171,27 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         
         @Override
         protected boolean countsClass(Object eClass) {
-            return getTraversalIndexing(eClass).hasStatistics();
+            return wildcardMode.hasStatistics() || getTraversalIndexing(eClass).hasStatistics();
         }
 
         @Override
         protected boolean observesDataType(Object type) {
-            return wildcardMode || (IndexingLevel.FULL == dataTypes.get(type));
+            return wildcardMode.hasInstances() || (IndexingLevel.FULL == dataTypes.get(type));
         }
 
         @Override
         protected boolean observesFeature(Object feature) {
-            return wildcardMode || (IndexingLevel.FULL == features.get(feature));
+            return wildcardMode.hasInstances() || (IndexingLevel.FULL == features.get(feature));
         }
         
         @Override
         protected boolean countsDataType(Object type) {
-            return dataTypes.containsKey(type) && dataTypes.get(type).hasStatistics();
+            return wildcardMode.hasStatistics() || dataTypes.containsKey(type) && dataTypes.get(type).hasStatistics();
         }
         
         @Override
         protected boolean countsFeature(Object feature) {
-            return features.containsKey(feature) && features.get(feature).hasStatistics();
+            return wildcardMode.hasStatistics() || features.containsKey(feature) && features.get(feature).hasStatistics();
         }
 
         @Override
