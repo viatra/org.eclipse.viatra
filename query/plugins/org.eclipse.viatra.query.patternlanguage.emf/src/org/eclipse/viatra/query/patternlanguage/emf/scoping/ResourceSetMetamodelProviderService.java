@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.scoping;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
@@ -100,7 +101,7 @@ public class ResourceSetMetamodelProviderService extends BaseMetamodelProviderSe
         while (it.hasNext()) {
             EObject obj = it.next();
             if (obj instanceof EPackage) {
-                if (((EPackage) obj).getNsURI().equals(packageUri)) {
+                if (Objects.equals(((EPackage) obj).getNsURI(), packageUri)) {
                     return (EPackage) obj;
                 }
             } else {
