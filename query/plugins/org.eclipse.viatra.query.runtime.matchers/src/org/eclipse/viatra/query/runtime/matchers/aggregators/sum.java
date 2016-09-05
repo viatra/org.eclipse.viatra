@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.matchers.aggregators;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AggregatorType;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.BoundAggregator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
-import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IntegerSumOperator;
 
 /**
  * This aggregator calculates the sum of the values of a selected aggregate parameter of a called pattern. The aggregate
@@ -25,15 +24,18 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IntegerSum
  *
  */
 @AggregatorType(
-        parameterTypes = {Integer.class, Double.class},
-        returnTypes = {Integer.class, Double.class})
+        parameterTypes = {Integer.class, Double.class, Long.class},
+        returnTypes = {Integer.class, Double.class, Long.class})
 public final class sum implements IAggregatorFactory {
 
     @Override
     public BoundAggregator getAggregatorLogic(Class<?> domainClass) {
         if (Integer.class.equals(domainClass))
             return new BoundAggregator(IntegerSumOperator.INSTANCE, Integer.class, Integer.class);
-        // TODO Double
+        if (Double.class.equals(domainClass))
+            return new BoundAggregator(DoubleSumOperator.INSTANCE, Double.class, Double.class);
+        if (Long.class.equals(domainClass))
+            return new BoundAggregator(LongSumOperator.INSTANCE, Long.class, Long.class);
         else throw new IllegalArgumentException();
     }
 }

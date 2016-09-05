@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2010-2016, Zoltan Ujhelyi, IncQuery Labs Ltd.
+ * Copyright (c) 2010-2016, Gabor Bergmann, IncQueryLabs Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *   Zoltan Ujhelyi - initial API and implementation
+ *   Gabor Bergmann - initial API and implementation
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.aggregators;
 
@@ -26,7 +26,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregato
  * minimum calculation.
  * 
  * @since 1.4
- *
+ * @author Gabor Bergmann
  */
 @AggregatorType(
         // TODO T extends Comparable?
@@ -34,12 +34,12 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregato
                 Date.class, Double.class, Enum.class, Float.class, Integer.class, Long.class, Short.class, String.class},
         returnTypes = {BigDecimal.class, BigInteger.class, Boolean.class, Byte.class, Calendar.class, Character.class, 
                 Date.class, Double.class, Enum.class, Float.class, Integer.class, Long.class, Short.class, String.class})
-public final class min implements IAggregatorFactory {
-    
+public class max implements IAggregatorFactory {
+
     @Override
     public BoundAggregator getAggregatorLogic(Class<?> domainClass) {
         if (Comparable.class.isAssignableFrom(domainClass))
-            return new BoundAggregator(ExtremumOperator.getMin(), domainClass, domainClass);
+            return new BoundAggregator(ExtremumOperator.getMax(), domainClass, domainClass);
         else throw new IllegalArgumentException();
     }
 

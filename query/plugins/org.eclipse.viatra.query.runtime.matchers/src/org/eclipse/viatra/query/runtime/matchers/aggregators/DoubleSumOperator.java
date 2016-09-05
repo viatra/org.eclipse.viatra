@@ -8,44 +8,45 @@
  * Contributors:
  *   Gabor Bergmann - initial API and implementation
  *******************************************************************************/
-package org.eclipse.viatra.query.runtime.matchers.psystem.aggregations;
+package org.eclipse.viatra.query.runtime.matchers.aggregators;
+
+import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AbstractMemorylessAggregationOperator;
 
 /**
- * Incrementally computes the sum of java.lang.Integer values
+ * Incrementally computes the sum of java.lang.Double values
  * @author Gabor Bergmann
  * @since 1.4
  */
-public class IntegerSumOperator extends AbstractMemorylessAggregationOperator<Integer, Integer> {
-    public static IntegerSumOperator INSTANCE = new IntegerSumOperator();
+public class DoubleSumOperator extends AbstractMemorylessAggregationOperator<Double, Double> {
+    public static DoubleSumOperator INSTANCE = new DoubleSumOperator();
     
-    private IntegerSumOperator() {
+    private DoubleSumOperator() {
         // Singleton, do not call.
     }
 
     @Override
     public String getShortDescription() {
-        return "sum<Integer> incrementally computes the sum of java.lang.Integer values";
+        return "sum<Double> incrementally computes the sum of java.lang.Double values";
     }
     @Override
     public String getName() {
-        return "sum<Integer>";
+        return "sum<Double>";
     }
     
     @Override
-    public Integer createNeutral() {
-        return 0;
+    public Double createNeutral() {
+        return 0d;
     }
 
     @Override
-    public boolean isNeutral(Integer result) {
-        return result == 0;
+    public boolean isNeutral(Double result) {
+        return createNeutral().equals(result);
     }
 
     @Override
-    public Integer update(Integer oldResult, Integer updateValue, boolean isInsertion) {
+    public Double update(Double oldResult, Double updateValue, boolean isInsertion) {
         return isInsertion ? 
                 oldResult + updateValue : 
                 oldResult - updateValue;
     }
-
 }

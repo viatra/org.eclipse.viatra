@@ -12,6 +12,8 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.aggregations;
 
 import java.util.Collection;
 
+import org.eclipse.viatra.query.runtime.matchers.aggregators.ExtremumOperator;
+
 /**
  * A single column aggregator is used to incrementally compute the aggregate of a multiset of values according to an aggregator operator.
  * 
@@ -23,7 +25,7 @@ import java.util.Collection;
  * <p> In case of incremental computation, the aggregable multiset is conceptual; it is not represented by an explicit Collection<Domain> object, but its update operations are tracked.  
  * 
  * <p> In case of incremental computation, internal results, potentially distinct from the final aggregate result, may be stored in a helper data structure called <b>accumulator</b>.
- * The goal of this distinction is that the final result may not be sufficient for incremental updates (see e.g. {@link MinimumOperator}).
+ * The goal of this distinction is that the final result may not be sufficient for incremental updates (see e.g. {@link ExtremumOperator}).
  * 
  * @author Gabor Bergmann
  *
