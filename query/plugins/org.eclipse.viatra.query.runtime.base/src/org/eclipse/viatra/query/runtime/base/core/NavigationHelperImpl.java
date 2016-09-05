@@ -21,8 +21,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -1560,7 +1560,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public int countFeatureTargets(EObject seedSource, EStructuralFeature feature) {
-        return statsStore.countFeatures(seedSource, toKey(feature));
+        return instanceStore.getHolderToFeatureToValueMap().get(seedSource, toKey(feature)).size();
     }
 
     @Override

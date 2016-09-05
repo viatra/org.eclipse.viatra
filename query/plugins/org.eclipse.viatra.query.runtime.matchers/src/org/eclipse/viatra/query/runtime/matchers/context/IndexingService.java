@@ -20,7 +20,8 @@ package org.eclipse.viatra.query.runtime.matchers.context;
 public enum IndexingService {
 
     /**
-     * Cardinality information is available. e.g. Number of instances of a class or the number of values in a feature.
+     * Cardinality information is available. Makes possible to calculate 
+     * unseeded calls of {@link IQueryRuntimeContext#countTuples(IInputKey, org.eclipse.viatra.query.runtime.matchers.tuple.Tuple)}
      */
     STATISTICS,
     

@@ -29,7 +29,9 @@ public enum IndexingLevel {
     NONE,
     
     /**
-     * Only cardinality information is stored
+     * Only cardinality information is stored. This indexing level makes possible to calculate
+     * results of {@link NavigationHelper#countAllInstances(org.eclipse.emf.ecore.EClass)}, {@link NavigationHelper#countFeatures(org.eclipse.emf.ecore.EStructuralFeature)}
+     * and {@link NavigationHelper#countDataTypeInstances(org.eclipse.emf.ecore.EDataType)} with minimal memory footprint.
      */
     STATISTICS,
     

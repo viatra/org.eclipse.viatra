@@ -17,8 +17,6 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 
 /**
  * @author Grill Balázs
@@ -32,31 +30,12 @@ public class EMFBaseIndexStatisticsStore {
      */
     private final Map<Object, Integer> stats = new HashMap<Object, Integer>();
     
-    /**
-     * Table feature, element -> count
-     */
-    private final Table<Object, Object, Integer> featureStats = HashBasedTable.create();
-    
     public void addFeature(Object element, Object feature){
         addInstance(feature);
-        Integer v = featureStats.get(feature, element);
-        featureStats.put(feature, element, v == null ? 1 : v+1);
     }
     
     public void removeFeature(Object element, Object feature){
         removeInstance(feature);
-        Integer v = featureStats.get(feature, element);
-        Preconditions.checkArgument(v != null && v > 0, "No instances of %s -> %s is registered before calling removeFeature method.", element, feature);
-        if (v.intValue() == 1){
-            featureStats.remove(feature, element);
-        }else{
-            featureStats.put(feature, element, v-1);
-        }
-    }
-    
-    public int countFeatures(Object element, Object feature){
-        Integer v = featureStats.get(feature, element);
-        return v == null ? 0 : v.intValue();
     }
     
     public void addInstance(Object key){
@@ -80,7 +59,6 @@ public class EMFBaseIndexStatisticsStore {
     }
     
     public void removeType(Object key){
-        featureStats.row(key).clear();
         stats.remove(key);
     }
 
