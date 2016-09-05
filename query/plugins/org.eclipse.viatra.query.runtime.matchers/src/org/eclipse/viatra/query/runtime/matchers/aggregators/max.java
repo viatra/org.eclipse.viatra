@@ -34,7 +34,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregato
                 Date.class, Double.class, Enum.class, Float.class, Integer.class, Long.class, Short.class, String.class},
         returnTypes = {BigDecimal.class, BigInteger.class, Boolean.class, Byte.class, Calendar.class, Character.class, 
                 Date.class, Double.class, Enum.class, Float.class, Integer.class, Long.class, Short.class, String.class})
-public class max implements IAggregatorFactory {
+public final class max implements IAggregatorFactory {
 
     @Override
     public BoundAggregator getAggregatorLogic(Class<?> domainClass) {
