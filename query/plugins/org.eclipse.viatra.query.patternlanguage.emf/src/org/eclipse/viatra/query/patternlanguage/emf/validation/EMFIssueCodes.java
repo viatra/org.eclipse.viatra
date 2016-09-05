@@ -61,4 +61,9 @@ public final class EMFIssueCodes {
     
     public static final String OTHER_ISSUE = ISSUE_CODE_PREFIX + "other_issue";
 
+    /**
+     * This prefix is used to distinguish between Java and EMF parameter type proposals
+     * @since 1.4
+     */
+    public static final String JAVA_TYPE_PREFIX = "java:";
 }

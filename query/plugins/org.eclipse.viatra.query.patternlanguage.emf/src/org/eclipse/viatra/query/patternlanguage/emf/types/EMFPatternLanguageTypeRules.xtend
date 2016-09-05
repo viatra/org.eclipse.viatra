@@ -26,9 +26,11 @@ class EMFPatternLanguageTypeRules extends PatternLanguageTypeRules {
    @Inject EMFTypeSystem typeSystem
    
    def dispatch void inferTypes(EClassifierConstraint constraint, TypeInformation information) {
-       val type = typeSystem.extractTypeDescriptor(constraint.type)
-       information.provideType(new TypeJudgement(constraint.^var, type))
-   }
+        if (typeSystem.isValidType(constraint.type)) {
+            val type = typeSystem.extractTypeDescriptor(constraint.type)
+            information.provideType(new TypeJudgement(constraint.^var, type))
+        }
+    }
    
    def dispatch void inferTypes(EnumValue reference, TypeInformation information) {
        if (reference.enumeration == null) {

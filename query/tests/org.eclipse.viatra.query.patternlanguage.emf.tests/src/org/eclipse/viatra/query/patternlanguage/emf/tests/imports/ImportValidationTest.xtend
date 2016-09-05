@@ -61,7 +61,11 @@ class ImportValidationTest extends AbstractValidatorTest {
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertAll(getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT), getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE));
+		tester.validate(model).assertAll(
+		    getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT),
+		    getWarningCode(EMFIssueCodes::DUPLICATE_IMPORT),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		);
 	}
 
 	@Test
@@ -77,7 +81,9 @@ class ImportValidationTest extends AbstractValidatorTest {
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 
 	@Test
@@ -94,7 +100,10 @@ class ImportValidationTest extends AbstractValidatorTest {
 		')
 //		model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
 		model.assertNoErrors
-		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+		tester.validate(model).assertAll(
+		    getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 
 	@Test
@@ -111,7 +120,8 @@ class ImportValidationTest extends AbstractValidatorTest {
 		')
 		tester.validate(model).assertAll(
 			getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
-			getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED)
+			getWarningCode(org.eclipse.xtext.xbase.validation.IssueCodes::IMPORT_WILDCARD_DEPRECATED),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 }

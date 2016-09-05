@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.patternlanguage.typing
 
 import com.google.inject.Inject
 import java.util.List
+import java.util.logging.Logger
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue
@@ -25,9 +26,12 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCall
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCompositionConstraint
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.TypeCheckConstraint
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue
+import org.eclipse.viatra.query.patternlanguage.typing.judgements.ConditionalJudgement
 import org.eclipse.viatra.query.patternlanguage.typing.judgements.ParameterTypeJudgement
 import org.eclipse.viatra.query.patternlanguage.typing.judgements.TypeConformJudgement
 import org.eclipse.viatra.query.patternlanguage.typing.judgements.TypeJudgement
@@ -35,9 +39,7 @@ import org.eclipse.viatra.query.patternlanguage.typing.judgements.XbaseExpressio
 import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver
-import org.eclipse.viatra.query.patternlanguage.typing.judgements.ConditionalJudgement
-import java.util.logging.Logger
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCall
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType
 
 /**
  * @author Zoltan Ujhelyi
@@ -51,7 +53,7 @@ class PatternLanguageTypeRules {
    
    def dispatch void inferTypes(Pattern pattern, TypeInformation information) {
        pattern.parameters.forEach[parameter|
-            if (parameter.type != null) {
+            if (typeSystem.isValidType(parameter.type)) {
                 val typeKey = typeSystem.extractTypeDescriptor(parameter.type)
                 information.declareType(parameter, typeKey)
            }
@@ -91,12 +93,30 @@ class PatternLanguageTypeRules {
        }
    }
    
+   def dispatch void inferTypes(TypeCheckConstraint constraint, TypeInformation information) {
+        val constraintType = constraint.type
+        if (constraintType instanceof JavaType && typeSystem.isValidType(constraintType)) {
+            val sourceType = typeSystem.extractTypeDescriptor(constraintType)
+            if (sourceType != null) {
+                information.provideType(new TypeJudgement(constraint.^var, sourceType))
+            }
+        }
+    }
+   
    def dispatch void inferTypes(PathExpressionConstraint constraint, TypeInformation information) {
+       if (!typeSystem.isValidType(constraint.head.type)) {
+           return
+       }
        val sourceType = typeSystem.extractTypeDescriptor(constraint.head.type)
        var tail = constraint.head.tail
        while (tail.tail != null) {
            tail = tail.tail
        }
+       
+       if (!typeSystem.isValidType(tail.type)) {
+           return
+       }
+        
        val targetType = typeSystem.extractTypeDescriptor(tail.type)
        if (sourceType != null && targetType != null) {
            information.provideType(new TypeJudgement(constraint.head.src, sourceType))

@@ -489,7 +489,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
                 val clazz = key.prettyPrintableName
                 target.append('''new ''')
                 target.append(JavaTransitiveInstancesKey)
-                target.append('''(«clazz»)''')
+                target.append('''(«clazz».class)''')
             }
             case null : {
                 target.append('''null''')

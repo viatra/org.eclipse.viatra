@@ -76,7 +76,7 @@ Parameter returns Variable:
     {Parameter}
     direction=ParameterDirectionModifier?
 	name=ID
-	(':' type=Type)?
+	(':' type=Type | ':' type=JavaType)?
 ;
 
 LocalVariable returns Variable:
@@ -93,12 +93,18 @@ VariableReference returns VariableReference:
 	aggregator?='#'? var = ID |
 	aggregator?='#';
 
-	//These types are not meant to be written directly, just in the desc languages
+
+//These types are not meant to be written directly, just in the desc languages	
 Type returns Type:
 	{EntityType}
 	typename=ID;
 
-	//These types are not meant to be written directly, just in the desc languages
+JavaType returns Type:
+    {JavaType}
+    typename='java' classRef=[types::JvmDeclaredType|QualifiedName]
+;
+
+//These types are not meant to be written directly, just in the desc languages
 RefType returns Type:
 	{RelationType}
 	typename=ID;
@@ -111,8 +117,12 @@ PatternBody returns PatternBody:
 	'}';
 
 Constraint returns Constraint:
-CheckConstraint |
+    CheckConstraint | TypeCheckConstraint |
 	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint;
+
+TypeCheckConstraint returns Constraint:
+    {TypeCheckConstraint} type = JavaType  '(' var = VariableReference ')'
+;
 
 PatternCompositionConstraint returns Constraint:
 	{PatternCompositionConstraint} negative?='neg'? call=PatternCall;

@@ -28,10 +28,11 @@ import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.validation.AssertableDiagnostics
 import org.junit.Assert
 import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class CartesianProductTest {
+class CartesianProductTest extends AbstractValidatorTest{
 
 	@Inject
 	ParseHelper<PatternModel> parseHelper
@@ -144,7 +145,9 @@ class CartesianProductTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOk
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 
 	@Test
@@ -225,7 +228,9 @@ class CartesianProductTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOk
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 
 	@Test
@@ -263,7 +268,9 @@ class CartesianProductTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOk
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 
 	@Test
@@ -279,7 +286,11 @@ class CartesianProductTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertWarning(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
+		tester.validate(model).assertAll(
+		    getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 
 	@Test

@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
@@ -75,6 +76,12 @@ public interface PatternModelAcceptor<Result> {
      * Accepts a {@link TypeConstraint}.
      */
     void acceptTypeConstraint(List<String> variableNames, IInputKey inputKey);
+    
+    /**
+     * Accepts a {@link TypeFilterConstraint}.
+     * @since 1.4
+     */
+    void acceptTypeCheckConstraint(List<String> variableNames, IInputKey inputKey);
 
     /**
      * Accepts a {@link PositivePatternCall}.

@@ -24,10 +24,12 @@ import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class CheckConstraintTest {
+class CheckConstraintTest extends AbstractValidatorTest {
 
 	@Inject
 	ParseHelper<PatternModel> parseHelper
@@ -59,7 +61,9 @@ class CheckConstraintTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	
 	@Test
@@ -74,7 +78,9 @@ class CheckConstraintTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	@Test
 	def whitelistedMethodCheck3() {
@@ -88,7 +94,9 @@ class CheckConstraintTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	@Test
 	def whitelistedMethodCheck4() {
@@ -102,7 +110,9 @@ class CheckConstraintTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	@Test
 	def whitelistedMethodCheck5() {
@@ -116,7 +126,9 @@ class CheckConstraintTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	@Test
 	def whitelistedClassCheck() {
@@ -130,7 +142,9 @@ class CheckConstraintTest {
 			}
 		''')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	@Test
 	def whitelistedImportedClassCheck() {
@@ -145,7 +159,9 @@ class CheckConstraintTest {
 			}
 		''')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	@Test
 	def nonwhitelistedImportedToplevelCheck() {
@@ -160,7 +176,10 @@ class CheckConstraintTest {
 			}
 		''')
 		model.assertNoErrors
-		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+		tester.validate(model).assertAll(
+		    getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 
 	@Test
@@ -175,7 +194,10 @@ class CheckConstraintTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertWarning(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS)
+		tester.validate(model).assertAll(
+		    getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 
 }

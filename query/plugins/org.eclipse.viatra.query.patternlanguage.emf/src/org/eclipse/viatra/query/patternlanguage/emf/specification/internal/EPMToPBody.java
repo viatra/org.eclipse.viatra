@@ -33,6 +33,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Expressio
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
@@ -119,6 +120,11 @@ public class EPMToPBody implements PatternModelAcceptor<PBody> {
     @Override
     public void acceptTypeConstraint(List<String> variableNames, IInputKey inputKey) {
         new TypeConstraint(pBody, getPVariableTuple(variableNames), inputKey);
+    }
+    
+    @Override
+    public void acceptTypeCheckConstraint(List<String> variableNames, IInputKey inputKey) {
+        new TypeFilterConstraint(pBody, getPVariableTuple(variableNames), inputKey);
     }
 
     private FlatTuple getPVariableTuple(List<String> variableNames) {

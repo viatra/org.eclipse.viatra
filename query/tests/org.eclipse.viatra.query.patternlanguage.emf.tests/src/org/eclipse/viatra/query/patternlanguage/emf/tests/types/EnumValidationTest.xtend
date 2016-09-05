@@ -120,7 +120,9 @@ class EnumValidationTest extends AbstractValidatorTest {
 				find runtimeVersion(GenRuntimeVersion::EMF24);
 			}
 		') as PatternModel
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	
 }

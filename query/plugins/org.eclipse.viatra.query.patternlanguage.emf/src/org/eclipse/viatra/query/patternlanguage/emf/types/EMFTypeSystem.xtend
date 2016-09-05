@@ -49,6 +49,7 @@ import org.eclipse.xtext.diagnostics.Severity
 
 import static com.google.common.base.Preconditions.checkArgument
 import org.eclipse.emf.ecore.EcorePackage
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType
 
 /** 
  * @author Zoltan Ujhelyi
@@ -83,13 +84,15 @@ public class EMFTypeSystem extends AbstractTypeSystem {
     }
 
     override IInputKey extractTypeDescriptor(Type type) {
-        checkArgument(type instanceof ClassType || type instanceof ReferenceType, NON_EMF_TYPE_ENCOUNTERED,
-            type.getClass())
+        checkArgument(type instanceof ClassType || type instanceof ReferenceType || type instanceof JavaType,
+             NON_EMF_TYPE_ENCOUNTERED, type.getClass())
         if (type instanceof ClassType) {
             val EClassifier classifier = (type as ClassType).getClassname()
             return classifierToInputKey(classifier)
         } else if (type instanceof ReferenceType) {
             return type.refname?.EType.classifierToInputKey
+        } else if (type instanceof JavaType) {
+            return new JavaTransitiveInstancesKey(type.classRef.identifier)
         }
         // Never executed
         throw new UnsupportedOperationException()
@@ -392,5 +395,17 @@ public class EMFTypeSystem extends AbstractTypeSystem {
             }
             return #{}
         }
+        
+        override isValidType(Type type) {
+            if (type instanceof ClassType) {
+                val classifier = type.classname
+                return classifier != null && !classifier.eIsProxy
+            } else if (type instanceof ReferenceType) {
+                val feature = type.refname
+                return feature != null && !feature.eIsProxy
+            }
+            super.isValidType(type)
+        }
+        
     }
     

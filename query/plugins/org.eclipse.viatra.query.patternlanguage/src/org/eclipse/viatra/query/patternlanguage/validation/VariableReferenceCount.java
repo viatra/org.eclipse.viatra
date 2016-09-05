@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 
@@ -44,7 +45,9 @@ class VariableReferenceCount {
         }
         
         for (Variable variable : variables) {
-        	if (variable instanceof ParameterRef && ((ParameterRef) variable).getReferredParam().getType() != null) {
+        	if (variable instanceof ParameterRef 
+        	        && ((ParameterRef) variable).getReferredParam().getType() != null
+        	        && !(((ParameterRef) variable).getReferredParam().getType() instanceof JavaType)) {
         		counters.put(ReferenceType.POSITIVE, 1);
         	}
         }

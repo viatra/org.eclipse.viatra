@@ -48,6 +48,7 @@ import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -145,6 +146,17 @@ class BodyCodeGenerator extends StringConcatenationClient {
             override acceptTypeConstraint(List<String> variableNames, IInputKey key) {
                 target.append('''new ''')
                 target.append(TypeConstraint)
+                target.append('''(body, new ''')
+                target.append(FlatTuple)
+                target.append('''(«variableNames.output»), ''')
+                target.appendInputKey(key, false)
+                target.append(''');
+                ''')
+            }
+            
+            override acceptTypeCheckConstraint(List<String> variableNames, IInputKey key) {
+                target.append('''new ''')
+                target.append(TypeFilterConstraint)
                 target.append('''(body, new ''')
                 target.append(FlatTuple)
                 target.append('''(«variableNames.output»), ''')

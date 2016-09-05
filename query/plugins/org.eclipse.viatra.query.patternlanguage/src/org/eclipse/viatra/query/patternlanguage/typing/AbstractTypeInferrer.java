@@ -56,12 +56,12 @@ public abstract class AbstractTypeInferrer implements ITypeInferrer {
     public IInputKey getDeclaredType(Expression ex) {
         if (ex instanceof ParameterRef) {
             Type type = ((ParameterRef) ex).getReferredParam().getType();
-            if (type != null) {
+            if (typeSystem.isValidType(type)) {
                 return typeSystem.extractTypeDescriptor(type);
             } 
         } else if (ex instanceof Variable) {
             final Type type = ((Variable)ex).getType();
-            if (type != null) {
+            if (typeSystem.isValidType(type)) {
                 return typeSystem.extractTypeDescriptor(type);
             } 
         } else if (ex instanceof AggregatedValue) {

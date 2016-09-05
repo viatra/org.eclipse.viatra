@@ -63,7 +63,9 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
         ''')
 //      model.assertError(PatternLanguagePackage::Literals.PATTERN_MODEL, IssueCodes::PACKAGE_NAME_MISMATCH)
         model.assertNoErrors
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
 
     @Test
@@ -135,7 +137,10 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 check(S.length);
             }
         ''')
-        tester.validate(model).assertError(IssueCodes::CHECK_MUST_BE_BOOLEAN)
+        tester.validate(model).assertAll(
+            getErrorCode(IssueCodes::CHECK_MUST_BE_BOOLEAN),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
 
     @Test
@@ -158,7 +163,10 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 check(c2 >= 2);
             }
         ''')
-        tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -171,7 +179,9 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 n == eval(2);
             }
         ''')
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -185,7 +195,9 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 n == eval(s.length);
             }
         ''')
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -199,7 +211,9 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 4 == eval(s.length);
             }
         ''')
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -214,7 +228,9 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 EStructuralFeature.upperBound(o, n);
             }
         ''')
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -230,7 +246,9 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 check(s.length > 5);
             }
         ''')
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -246,7 +264,9 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 EString(s);
             }
         ''')
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -261,7 +281,10 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 EStructuralFeature.transient(o, n);
             }
         ''')
-        tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+        tester.validate(model).assertAll(
+            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -278,7 +301,10 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 n == eval(Integer.parseInt("2"));
             }
         ''')
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -296,6 +322,9 @@ class CheckConstraintTypesTest extends AbstractValidatorTest{
                 check(n > 2);
             }
         ''')
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
 }

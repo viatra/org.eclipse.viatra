@@ -389,7 +389,7 @@ class PatternQuerySpecificationClassInferrer {
 			ref.getType().getQualifiedName()
 		}
 		val type = variable.type
-        if (type == null || type.eIsProxy) {
+        if (type == null || !typeSystem.isValidType(type)) {
     		'''new PParameter("«variable.name»", "«clazz»", («IInputKey»)null, «variable.directionLiteral»)'''
         } else {
             val declaredInputKey = typeSystem.extractTypeDescriptor(type)

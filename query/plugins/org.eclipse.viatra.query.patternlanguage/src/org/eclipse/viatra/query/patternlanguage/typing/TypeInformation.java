@@ -226,7 +226,7 @@ public class TypeInformation {
     
     public IInputKey getType(Expression expression) {
         if (CorePatternLanguageHelper.isParameter(expression)) {
-            if (((Variable)expression).getType() != null) {
+            if (typeSystem.isValidType(((Variable)expression).getType())) {
                 return typeSystem.extractTypeDescriptor(((Variable)expression).getType());
             }
         }
