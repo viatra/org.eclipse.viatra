@@ -650,6 +650,15 @@ public interface NavigationHelper {
     public <V> V coalesceTraversals(Callable<V> callable) throws InvocationTargetException;
 
     /**
+     * Execute the given runnable after traversal. It is guaranteed that the runnable is executed as soon as
+     * the indexing is finished. The callback is executed only once, then is removed from the callback queue.
+     * @param traversalCallback
+     * @throws InvocationTargetException 
+     * @since 1.4
+     */
+    public void executeAfterTraversal(Runnable traversalCallback) throws InvocationTargetException;
+    
+    /**
      * Examines whether execution is currently in the callable 
      * 	block of an invocation of {#link {@link #coalesceTraversals(Callable)}}. 
      */

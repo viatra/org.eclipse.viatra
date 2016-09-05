@@ -19,7 +19,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -117,6 +119,8 @@ public class NavigationHelperImpl implements NavigationHelper {
      * Reasources that are currently loading, implying the proxy resolution attempts should be delayed
      */
     protected Set<Resource> resolutionDelayingResources = new HashSet<Resource>();
+    
+    protected Queue<Runnable> traversalCallbacks = new LinkedList<Runnable>();
 
     /**
      * These global listeners will be called after updates.
@@ -1330,7 +1334,26 @@ public class NavigationHelperImpl implements NavigationHelper {
                 throw new InvocationTargetException(e);
             }
         }
+        executeTraversalCallbacks();
         return finalResult;
+    }
+    
+    private void executeTraversalCallbacks() throws InvocationTargetException{
+        final Runnable[] callbacks = traversalCallbacks.toArray(new Runnable[traversalCallbacks.size()]);
+        traversalCallbacks.clear();
+        if (callbacks.length > 0){
+            coalesceTraversals(new Callable<Void>() {
+
+                @Override
+                public Void call() throws Exception {
+
+                    for(Runnable callback : callbacks){
+                        callback.run();
+                    }
+                    return null;
+                }
+            });
+        }
     }
 
     private void traverse(final NavigationHelperVisitor visitor) {
@@ -1573,6 +1596,18 @@ public class NavigationHelperImpl implements NavigationHelper {
             level = delayedFeatures.get(key);
         }
         return level == null ? IndexingLevel.NONE : level;
+    }
+    
+    @Override
+    public void executeAfterTraversal(final Runnable traversalCallback) throws InvocationTargetException {
+        coalesceTraversals(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                traversalCallbacks.add(traversalCallback);
+                return null;
+            }
+        });
     }
 
 }
