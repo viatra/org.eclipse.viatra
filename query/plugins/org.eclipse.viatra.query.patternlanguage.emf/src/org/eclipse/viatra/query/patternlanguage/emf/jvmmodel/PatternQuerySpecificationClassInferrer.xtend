@@ -310,7 +310,7 @@ class PatternQuerySpecificationClassInferrer {
 		'''«FOR body : pattern.bodies »
 			{
 				PBody body = new PBody(this);
-				«new BodyCodeGenerator(pattern, body, util, feedback, serializer)»
+				«new BodyCodeGenerator(pattern, body, util, feedback, serializer, builder)»
 				bodies.add(body);
 			}
 		«ENDFOR»'''
