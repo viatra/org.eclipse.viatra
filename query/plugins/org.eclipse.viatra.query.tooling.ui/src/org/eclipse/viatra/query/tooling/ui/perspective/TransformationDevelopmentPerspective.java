@@ -42,12 +42,15 @@ public class TransformationDevelopmentPerspective implements IPerspectiveFactory
                 IPageLayout.LEFT, 0.25f, factory.getEditorArea());
         left.addView(IPageLayout.ID_PROJECT_EXPLORER);
 
+        factory.createFolder("right", // NON-NLS-1
+                IPageLayout.RIGHT, 0.75f, factory.getEditorArea());
+        
         IFolderLayout bottom = factory.createFolder("bottomRight", // NON-NLS-1
                 IPageLayout.BOTTOM, 0.75f, factory.getEditorArea());
         bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 
-        IFolderLayout right = factory.createFolder("right", IPageLayout.RIGHT, 0.75f, factory.getEditorArea()); //$NON-NLS-1$
-        right.addView(IPageLayout.ID_OUTLINE);
+        IFolderLayout bottomLeft = factory.createFolder("bottomLeft", IPageLayout.BOTTOM, 0.75f, IPageLayout.ID_PROJECT_EXPLORER); //$NON-NLS-1$
+        bottomLeft.addView(IPageLayout.ID_OUTLINE);
 
     }
 
