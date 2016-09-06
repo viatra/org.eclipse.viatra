@@ -98,7 +98,10 @@ class TypeInferenceTest extends AbstractValidatorTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertAll(getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 		
 		val param1 = model.patterns.get(0).parameters.get(0)
 		val param2 = model.patterns.get(1).parameters.get(0)
@@ -389,7 +392,9 @@ class TypeInferenceTest extends AbstractValidatorTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeInferrer.getType(param)
@@ -405,7 +410,9 @@ class TypeInferenceTest extends AbstractValidatorTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeInferrer.getType(param)
@@ -421,7 +428,9 @@ class TypeInferenceTest extends AbstractValidatorTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeInferrer.getType(param)
@@ -437,7 +446,9 @@ class TypeInferenceTest extends AbstractValidatorTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeInferrer.getType(param)
@@ -459,7 +470,10 @@ class TypeInferenceTest extends AbstractValidatorTest {
 			}
 		')
 		model.assertNoErrors
-		tester.validate(model).assertOK
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 		
 		val param = model.patterns.get(0).parameters.get(0)
 		val type = typeInferrer.getType(param)
@@ -519,7 +533,10 @@ class TypeInferenceTest extends AbstractValidatorTest {
                 find feature(attribute);
             }
 		''')
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(
+		    getErrorCode(EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	
 	@Test
@@ -589,7 +606,10 @@ class TypeInferenceTest extends AbstractValidatorTest {
                 Child2(parameter);
             }
         ''')
-        tester.validate(model).assertError(EMFIssueCodes::PARAMETER_TYPE_AMBIGUOUS)
+        tester.validate(model).assertAll(
+            getErrorCode(EMFIssueCodes::PARAMETER_TYPE_AMBIGUOUS),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
         
         val param = model.patterns.get(0).parameters.get(0)
         val type = typeInferrer.getType(param)
@@ -654,6 +674,7 @@ class TypeInferenceTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertAll(
             getWarningCode(IssueCodes::RECURSIVE_PATTERN_CALL),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
         
@@ -694,7 +715,10 @@ class TypeInferenceTest extends AbstractValidatorTest {
 				EDataType(parameter);
 			} 
 		')
-		tester.validate(model).assertAll(getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR), getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE))
+		tester.validate(model).assertAll(
+		    getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	
 	@Test

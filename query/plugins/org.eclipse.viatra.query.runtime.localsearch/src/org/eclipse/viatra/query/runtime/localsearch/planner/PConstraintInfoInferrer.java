@@ -28,6 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
@@ -86,6 +87,8 @@ class PConstraintInfoInferrer {
             createConstraintInfoExportedParameter(resultList, runtimeContext, (ExportedParameter) pConstraint);
         } else if(pConstraint instanceof TypeConstraint){
             createConstraintInfoTypeConstraint(resultList, runtimeContext, (TypeConstraint)pConstraint);
+        } else if(pConstraint instanceof TypeFilterConstraint){
+            createConstraintInfoTypeFilterConstraint(resultList, runtimeContext, (TypeFilterConstraint)pConstraint);
         } else if(pConstraint instanceof ConstantValue){
             createConstraintInfoConstantValue(resultList, runtimeContext, (ConstantValue)pConstraint);
         } else if (pConstraint instanceof Inequality){
@@ -142,6 +145,12 @@ class PConstraintInfoInferrer {
         doCreateConstraintInfos(runtimeContext, resultList, expressionEvaluation, affectedVariables, bindings);
     }
 
+    private void createConstraintInfoTypeFilterConstraint(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, TypeFilterConstraint filter){
+        // In case of type filter, all affected variables must be bound in order to execute
+        Set<PVariable> affectedVariables = filter.getAffectedVariables();
+        doCreateConstraintInfos(runtimeContext, resultList, filter, affectedVariables, Collections.singleton(affectedVariables));
+    }
+    
     private void createConstraintInfoInequality(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, Inequality inequality){
         // In case of inequality, all affected variables must be bound in order to execute
         Set<PVariable> affectedVariables = inequality.getAffectedVariables();

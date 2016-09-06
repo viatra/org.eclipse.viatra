@@ -51,6 +51,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCompositi
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.TypeCheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
@@ -941,6 +942,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             return ReferenceType.NEGATIVE;
         } else if (parent instanceof AggregatedValue) {
             return ReferenceType.NEGATIVE;
+        } else if (parent instanceof TypeCheckConstraint) {
+            return ReferenceType.READ_ONLY;
         }
         // Other constraints use positive references
         return ReferenceType.POSITIVE;

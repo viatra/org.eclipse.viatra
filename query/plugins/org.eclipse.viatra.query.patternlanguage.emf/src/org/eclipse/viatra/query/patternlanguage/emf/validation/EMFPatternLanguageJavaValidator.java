@@ -13,8 +13,8 @@ package org.eclipse.viatra.query.patternlanguage.emf.validation;
 
 import static org.eclipse.xtext.xbase.validation.IssueCodes.IMPORT_UNUSED;
 
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -91,6 +91,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -115,6 +116,24 @@ import com.google.inject.Inject;
  */
 public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
 
+    /**
+     * @author stampie
+     *
+     */
+    private final class InputKeyToData implements Function<IInputKey, String> {
+        @Override
+        public String apply(IInputKey input) {
+            if (input instanceof EClassTransitiveInstancesKey) {
+                return ((EClassTransitiveInstancesKey) input).getEmfKey().getName();
+            } else if (input instanceof EDataTypeInSlotsKey) {
+                    return ((EDataTypeInSlotsKey) input).getEmfKey().getName();
+            } else if (input instanceof JavaTransitiveInstancesKey) {
+                return EMFIssueCodes.JAVA_TYPE_PREFIX + ((JavaTransitiveInstancesKey) input).getWrappedKey();
+            }
+            return null;
+        }
+    }
+
     private final static class SamePackageUri implements Predicate<PackageImport> {
         private final String nsUri;
 
@@ -126,6 +145,15 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         public boolean apply(PackageImport importDecl) {
             return importDecl != null && nsUri.equals(importDecl.getEPackage().getNsURI());
         }
+    }
+    
+    private final static class EClassType implements Predicate<IInputKey> {
+
+        @Override
+        public boolean apply(IInputKey input) {
+            return input instanceof EClassTransitiveInstancesKey;
+        }
+        
     }
 
     private static Type getTypeFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
@@ -369,18 +397,11 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             for (Variable bodyVar : parameterReferences) {
                 possibleTypes.addAll(typeInferrer.getAllPossibleTypes(bodyVar));
             }
+            reportMissingParameterTypeDeclaration(variable, possibleTypes, typeInferrer.getInferredType(variable));
+            
             if (possibleTypes.size() == 0) {
                 return;
-            } else if (possibleTypes.size() == 1) {
-                    IInputKey type = possibleTypes.iterator().next();
-                    if (type instanceof EClassTransitiveInstancesKey) {
-                    EClass eClass = ((EClassTransitiveInstancesKey)type).getEmfKey();
-                    String[] issueData = (eClass.getName() == null) ? null : new String[]{eClass.getName()};
-                    info("Type not defined for variable " + variable.getName() + ", inferred type " + typeSystem.typeString(type) + " is used instead.",
-                            PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
-                            issueData);
-                    }
-            } else if (Iterables.all(possibleTypes, Predicates.instanceOf(EClassTransitiveInstancesKey.class))) {
+            } else if (possibleTypes.size() > 1 && Iterables.all(possibleTypes, Predicates.instanceOf(EClassTransitiveInstancesKey.class))) {
                 Set<IInputKey> types = typeSystem.getCompatibleSupertypes(possibleTypes);
                 Iterable<EClass> eClasses = Iterables.filter(Iterables.transform(
                         Iterables.filter(types, EClassTransitiveInstancesKey.class),
@@ -422,10 +443,6 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                             + Joiner.on(", ").join(typeNames)
                             + "], specify one as the intended supertype.", variable, null,
                             EMFIssueCodes.PARAMETER_TYPE_AMBIGUOUS, issueData);
-                } else if (issueData.length > 0) {
-                    info("Type not defined for variable " + variable.getName() + ", inferred type " + reduced.getName() + " is used instead.",
-                            PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
-                            issueData);
                 }
             }
         } else {
@@ -448,6 +465,47 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         }
     }
 
+    private void reportMissingParameterTypeDeclaration(Variable parameter, Set<IInputKey> possibleTypes, IInputKey inferredType) {
+        if (possibleTypes.size() == 0) {
+            return;
+        } else if (possibleTypes.size() == 1) {
+            String[] issueData = new String[]{new InputKeyToData().apply(inferredType)};
+            info("Type not defined for variable " + parameter.getName() + ", inferred type " + typeSystem.typeString(inferredType) + " is used instead.",
+                    PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
+                    issueData);
+        } else {
+            Set<IInputKey> orderedTypes = ImmutableSortedSet.orderedBy(new Comparator<IInputKey>() {
+    
+                @Override
+                public int compare(IInputKey o1, IInputKey o2) {
+                    if (o1 instanceof EClassTransitiveInstancesKey && !(o2 instanceof EClassTransitiveInstancesKey)) {
+                        return +1;
+                    } else if (o2 instanceof EClassTransitiveInstancesKey && !(o1 instanceof EClassTransitiveInstancesKey)) {
+                        return -1;
+                    } else if (o1 instanceof EDataTypeInSlotsKey && !(o2 instanceof EDataTypeInSlotsKey)) {
+                        return +1;
+                    } else if (o2 instanceof EDataTypeInSlotsKey && !(o1 instanceof EDataTypeInSlotsKey)) {
+                        return +1;
+                    } else if (typeSystem.isConformant(o1, o2)){ //Common type group
+                        return +1;
+                    } else if (typeSystem.isConformant(o2, o1)) {
+                        return -1;
+                    }
+                    return 0;
+                }}).addAll(possibleTypes).build();
+            Set<String> superClasses = (Iterables.any(possibleTypes, new EClassType())) 
+                    ? ImmutableSet.of("EObject")
+                    : ImmutableSet.of(EMFIssueCodes.JAVA_TYPE_PREFIX + "java.lang.Object");
+            Iterable<String> typeNames = Iterables.concat(Iterables.filter(Iterables.transform(orderedTypes, new InputKeyToData()), Predicates.notNull()), superClasses);
+            String[] issueData = Iterables.toArray(typeNames, String.class);
+            if (issueData.length > 0) {
+                info("Type not defined for variable " + parameter.getName() + ", inferred type " + typeSystem.typeString(inferredType) + " is used instead.",
+                        PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
+                        issueData);
+            }
+        }
+    }
+    
     /**
      * A validator for cartesian products (isolated constraints) in pattern bodies. There are two types of warnings:
      * strict and soft. Strict warning means that there are constraints in the body which has no connection at all, in

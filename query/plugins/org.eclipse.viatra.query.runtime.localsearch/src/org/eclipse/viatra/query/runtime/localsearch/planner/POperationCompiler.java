@@ -32,6 +32,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.check.ExpressionE
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.InequalityCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.InstanceOfClassCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.InstanceOfDataTypeCheck;
+import org.eclipse.viatra.query.runtime.localsearch.operations.check.InstanceOfJavaClassCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.NACOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.StructuralFeatureCheck;
 import org.eclipse.viatra.query.runtime.localsearch.operations.check.nobase.ScopeCheck;
@@ -48,6 +49,7 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.util.CompilerHelper;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PApply;
@@ -62,6 +64,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Expressio
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
@@ -199,6 +202,8 @@ public class POperationCompiler {
             createCheck((PatternMatchCounter) pConstraint, variableMapping);
         } else if (pConstraint instanceof ExpressionEvaluation) {
             createCheck((ExpressionEvaluation) pConstraint, variableMapping);
+        } else if (pConstraint instanceof TypeFilterConstraint) {
+            createCheck((TypeFilterConstraint) pConstraint,variableMapping);
         } else if (pConstraint instanceof ExportedParameter) {
             // Nothing to do here
         } else
@@ -266,6 +271,19 @@ public class POperationCompiler {
         operations.add(new CheckConstant(position, constant.getSupplierKey()));
     }
 
+    private void createCheck(TypeFilterConstraint typeConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
+        final IInputKey inputKey = typeConstraint.getInputKey();
+        if (inputKey instanceof JavaTransitiveInstancesKey) {
+            operations.add(new InstanceOfJavaClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((JavaTransitiveInstancesKey) inputKey).getInstanceClass()));
+        } else if (inputKey instanceof EDataTypeInSlotsKey) {
+            operations.add(new InstanceOfDataTypeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)),
+                    ((EDataTypeInSlotsKey) inputKey).getEmfKey()));
+        } else {
+            String msg = "Unsupported type: " + inputKey;
+            throw new QueryProcessingException(msg, null, msg, null);
+        }
+    }
+    
     private void createCheck(TypeConstraint typeConstraint, Map<PVariable, Integer> variableMapping) throws QueryProcessingException {
     	final IInputKey inputKey = typeConstraint.getSupplierKey();
 		if (inputKey instanceof EClassTransitiveInstancesKey) {

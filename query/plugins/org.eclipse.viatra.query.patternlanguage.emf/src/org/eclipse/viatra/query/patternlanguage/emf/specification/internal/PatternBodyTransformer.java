@@ -32,6 +32,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
@@ -42,6 +43,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCall;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCompositionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.TypeCheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
@@ -52,7 +54,10 @@ import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.aggregators.count;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.xbase.XExpression;
 
 import com.google.common.base.Function;
@@ -102,10 +107,14 @@ public class PatternBodyTransformer {
     private void preprocessParameters(final PatternBody body, PatternModelAcceptor<?> acceptor) {
         EList<Variable> parameters = pattern.getParameters();
         for (Variable variable : parameters) {
-            if (variable.getType() != null && variable.getType() instanceof ClassType) {
+            if (variable.getType() instanceof ClassType) {
                 EClassifier classifier = ((ClassType) variable.getType()).getClassname();
                 IInputKey inputKey = classifierToInputKey(classifier);
                 acceptor.acceptTypeConstraint(ImmutableList.of(variable.getName()), inputKey);
+            } else if (variable.getType() instanceof JavaType) {
+                JvmDeclaredType classRef = ((JavaType) variable.getType()).getClassRef();
+                IInputKey inputKey = new JavaTransitiveInstancesKey(classRef.getIdentifier());
+                acceptor.acceptTypeCheckConstraint(ImmutableList.of(variable.getName()), inputKey);
             }
         }
         acceptor.acceptExportedParameters(parameters);
@@ -132,6 +141,9 @@ public class PatternBodyTransformer {
         if (constraint instanceof EClassifierConstraint) { // EMF-specific
             EClassifierConstraint classifierConstraint = (EClassifierConstraint) constraint;
             gatherClassifierConstraint(classifierConstraint, acceptor);
+        } else if (constraint instanceof TypeCheckConstraint) {
+                TypeCheckConstraint typeConstraint = (TypeCheckConstraint) constraint;
+                gatherTypeConstraint(typeConstraint, acceptor);
         } else if (constraint instanceof PatternCompositionConstraint) {
             PatternCompositionConstraint compositionConstraint = (PatternCompositionConstraint) constraint;
             gatherCompositionConstraint(compositionConstraint, acceptor);
@@ -204,7 +216,8 @@ public class PatternBodyTransformer {
      * @return the string describing a metamodel type, for debug / exception purposes
      */
     private String typeStr(Type type) {
-        return type.getTypename() == null ? "(null)" : type.getTypename();
+        return NodeModelUtils.getNode(type).getText();
+        //return type.getTypename() == null ? "(null)" : type.getTypename();
     }
 
     private void gatherCompareConstraint(CompareConstraint compare, PatternModelAcceptor<?> acceptor)
@@ -251,6 +264,13 @@ public class PatternBodyTransformer {
         EClassifier classname = ((ClassType) constraint.getType()).getClassname();
         IInputKey inputKey = classifierToInputKey(classname);
         acceptor.acceptTypeConstraint(ImmutableList.of(variableName), inputKey);
+    }
+    
+    private void gatherTypeConstraint(TypeCheckConstraint constraint, PatternModelAcceptor<?> acceptor) {
+        String variableName = getVariableName(constraint.getVar(), acceptor);
+        String className = ((JavaType)constraint.getType()).getClassRef().getIdentifier();
+        IInputKey inputKey = new JavaTransitiveInstancesKey(className);
+        acceptor.acceptTypeCheckConstraint(ImmutableList.of(variableName), inputKey);
     }
 
     private void gatherCheckConstraint(final CheckConstraint check, PatternModelAcceptor<?> acceptor)

@@ -46,8 +46,11 @@ import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.compiler.output.ImportingStringConcatenation
-import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
+import org.eclipse.xtext.common.types.JvmTypeReference
+import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
+import org.eclipse.xtext.common.types.JvmParameterizedTypeReference
 
 /** 
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
@@ -61,13 +64,16 @@ class BodyCodeGenerator extends StringConcatenationClient {
     extension val EMFPatternLanguageJvmModelInferrerUtil util
     val IErrorFeedback feedback
     val Serializer serializer
+    val JvmTypeReferenceBuilder typeReferences
+    static val INDENTATION = '''    '''
 
-    new(Pattern pattern, PatternBody body, EMFPatternLanguageJvmModelInferrerUtil util, IErrorFeedback feedback, Serializer serializer) {
+    new(Pattern pattern, PatternBody body, EMFPatternLanguageJvmModelInferrerUtil util, IErrorFeedback feedback, Serializer serializer, JvmTypeReferenceBuilder typeReferences) {
         this.pattern = pattern
         this.body = body
         this.util = util
         this.feedback = feedback
         this.serializer = serializer
+        this.typeReferences = typeReferences
     }
 
     override protected appendTo(TargetStringConcatenation target) {
@@ -152,6 +158,17 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append(''');
                 ''')
             }
+            
+            override acceptTypeCheckConstraint(List<String> variableNames, IInputKey key) {
+                target.append('''new ''')
+                target.append(TypeFilterConstraint)
+                target.append('''(body, new ''')
+                target.append(FlatTuple)
+                target.append('''(«variableNames.output»), ''')
+                target.appendInputKey(key, false)
+                target.append(''');
+                ''')
+            }
         
             private def output(List<String> variableNames) {
                 Joiner.on(", ").join(variableNames.map[escape])
@@ -224,33 +241,65 @@ class BodyCodeGenerator extends StringConcatenationClient {
                 target.append(ExpressionEvaluation)
                 target.append('''(body, new ''')
                 target.append(IExpressionEvaluator)
-                target.append('''() {
+                target.append('''() {''')
+
+                target.newLine
+                target.newLine
                             
-                            @Override
-                            public String getShortDescription() {
-                                return "Expression evaluation from pattern «pattern.name»";
-                            }
+                target.append('''
+                        «INDENTATION»@Override
+                        public String getShortDescription() {
+                            return "Expression evaluation from pattern «pattern.name»";
+                        }
 
-                            @Override
-                            public Iterable<String> getInputParameterNames() {
-                                return ''')
+                        @Override
+                        public Iterable<String> getInputParameterNames() {
+                            return ''', INDENTATION)
                 target.append(Arrays)
-                target.append('''.asList(«FOR name : xBaseEvaluator.inputParameterNames SEPARATOR ", "»"«name»"«ENDFOR»);
-                            }
+                target.append('''.asList(«FOR name : xBaseEvaluator.inputParameterNames SEPARATOR ", "»"«name»"«ENDFOR»);''')
+                target.append('''}''', INDENTATION)
 
-                            @Override
-                            public Object evaluateExpression(''')
+                target.newLine
+                target.newLine
+
+                target.append('''
+                        «INDENTATION»@Override
+                        public Object evaluateExpression(''', INDENTATION)
                 target.append(IValueProvider)
-                target.append(''' provider) throws Exception {
-                                    «val variables = variables(xBaseEvaluator.expression)»
-                                    «FOR variable : variables»
-                                        «variable.calculateType.qualifiedName» «variable.name» = («variable.calculateType.qualifiedName») provider.getValue("«variable.name»");
-                                    «ENDFOR»
-                                    return «expressionMethodName(xBaseEvaluator.expression)»(«FOR variable : variables SEPARATOR ', '»«variable.name»«ENDFOR»);
-                                }
+                target.append(''' provider) throws Exception {''')
+                target.newLine
+                val variables = variables(xBaseEvaluator.expression)
+                for (variable : variables) {
+                    val type = variable.calculateType.eraseGenerics
+                    target.append(INDENTATION)
+                    target.append(INDENTATION)
+                    target.append(type)
+                    target.append(''' «variable.name» = (''')
+                    target.append(type)
+                    target.append(''') provider.getValue("«variable.name»");''')
+                    target.newLine
+                }
+                target.append(INDENTATION)
+                target.append(INDENTATION)
+                target.append('''return «expressionMethodName(xBaseEvaluator.expression)»(«FOR variable : variables SEPARATOR ', '»«variable.name»«ENDFOR»);''')
+                target.newLine
+                
+                target.append(INDENTATION)
+                target.append("}")
+                target.newLine
 
-                        }, «IF outputVariableName != null » «outputVariableName.escape» «ELSE» null«ENDIF»); '''
-                )
+
+                target.append('''}, «IF outputVariableName != null » «outputVariableName.escape» «ELSE» null«ENDIF»); ''')
+                target.newLine
+            }
+            
+            private def eraseGenerics(JvmTypeReference reference) {
+                if (reference instanceof JvmParameterizedTypeReference) {
+                    typeReferences.typeRef(reference.type, reference.arguments.map[typeReferences.wildcard])    
+                } else {
+                    reference
+                }
+                
             }
             
             override acceptPatternMatchCounter(List<String> argumentVariableNames, Pattern calledPattern, String resultVariableName) {

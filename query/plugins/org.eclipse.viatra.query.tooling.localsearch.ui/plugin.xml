@@ -160,7 +160,7 @@
                id="org.eclipse.viatra.query.tooling.localsearch.ui.LocalSearchDebugView"
                minimized="false"
                relationship="stack"
-               relative="org.eclipse.ui.views.ProblemView"
+               relative="bottomLeft"
                visible="false">
          </view>
       </perspectiveExtension>

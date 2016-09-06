@@ -310,7 +310,7 @@ class PatternQuerySpecificationClassInferrer {
 		'''«FOR body : pattern.bodies »
 			{
 				PBody body = new PBody(this);
-				«new BodyCodeGenerator(pattern, body, util, feedback, serializer)»
+				«new BodyCodeGenerator(pattern, body, util, feedback, serializer, builder)»
 				bodies.add(body);
 			}
 		«ENDFOR»'''
@@ -389,7 +389,7 @@ class PatternQuerySpecificationClassInferrer {
 			ref.getType().getQualifiedName()
 		}
 		val type = variable.type
-        if (type == null || type.eIsProxy) {
+        if (type == null || !typeSystem.isValidType(type)) {
     		'''new PParameter("«variable.name»", "«clazz»", («IInputKey»)null, «variable.directionLiteral»)'''
         } else {
             val declaredInputKey = typeSystem.extractTypeDescriptor(type)

@@ -117,10 +117,13 @@ pattern trimmerRecipe(recipe : TrimmerRecipe, mask : Mask) {
 	TrimmerRecipe.mask(recipe, mask);
 }
 
-@Item(item = recipe)
+@Item(item = recipe, label = "$opName$($aggregableIndex$) by group $mask.sourceIndices$/$mask.sourceArity$")
 @QueryExplorer(checked = false)
-pattern aggregatorRecipe(recipe : SingleColumnAggregatorRecipe) {
-	SingleColumnAggregatorRecipe(recipe);
+pattern aggregatorRecipe(recipe : SingleColumnAggregatorRecipe, aggregableIndex, mask : Mask, opName) {
+	SingleColumnAggregatorRecipe.aggregableIndex(recipe, aggregableIndex);
+	SingleColumnAggregatorRecipe.groupByMask(recipe, mask);
+	SingleColumnAggregatorRecipe.multisetAggregationOperator(recipe, operator);
+	opName == eval(operator.name);
 }
 
 @Item(item = recipe, label = "Aggregator Indexer: $mask.sourceIndices$/$mask.sourceArity$")

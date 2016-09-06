@@ -49,14 +49,14 @@ XImportDeclaration returns xtype::XImportDeclaration:
 ;
 	
 Constraint returns core::Constraint:
-	CheckConstraint	| 
+	CheckConstraint	| TypeCheckConstraint |
 	CompareConstraint | PatternCompositionConstraint | PathExpressionConstraint // Copied from PatternLanguage
 	| EClassifierConstraint                                 // Additions
 ;
 
 EClassifierConstraint:
 	type = Type  '(' var = VariableReference ')'
-; 
+;
 
 Type returns core::EntityType:
 	{ClassType}

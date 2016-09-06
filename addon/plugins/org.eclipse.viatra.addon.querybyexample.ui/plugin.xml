@@ -203,7 +203,7 @@
              id="org.eclipse.viatra.addon.querybyexample.ui.qbeview"
              minimized="false"
              relationship="stack"
-             relative="org.eclipse.ui.views.ContentOutline"
+             relative="right"
              visible="false">
        </view>
        <viewShortcut

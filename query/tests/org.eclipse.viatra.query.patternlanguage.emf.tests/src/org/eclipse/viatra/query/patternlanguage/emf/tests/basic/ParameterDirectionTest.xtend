@@ -13,10 +13,12 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
-class ParameterDirectionTest {
+class ParameterDirectionTest extends AbstractValidatorTest {
     
     @Inject
     ParseHelper<PatternModel> parseHelper
@@ -47,7 +49,9 @@ class ParameterDirectionTest {
             }
         ')
         model.assertNoErrors
-        tester.validate(model).assertOK
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
     }
     
     @Test
@@ -61,7 +65,10 @@ class ParameterDirectionTest {
             }
         ')
         model.assertNoErrors
-        tester.validate(model).assertDiagnosticsCount(1)
+        tester.validate(model).assertAll(
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+            getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+        )
         // There should be one diagnostic about missing type
     }
     

@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
 
 /**
  * Cost function which calculates cost based on the cardinality of items in the runtime model
@@ -141,7 +142,11 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
     }
 
     def dispatch float calculateCost(ExportedParameter exportedParam, IConstraintEvaluationContext input) {
-        return 1.0f;
+        return 0.0f;
+    }
+    
+    def dispatch float calculateCost(TypeFilterConstraint exportedParam, IConstraintEvaluationContext input) {
+        return 0.0f;
     }
 
     /**

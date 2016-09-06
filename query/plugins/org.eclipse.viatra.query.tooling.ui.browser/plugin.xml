@@ -26,13 +26,13 @@
                id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView"
                minimized="false"
                relationship="stack"
-               relative="org.eclipse.ui.navigator.ProjectExplorer">
+               relative="left">
          </view>
          <view
                id="org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView"
                minimized="false"
-               relationship="bottom"
-               relative="org.eclipse.ui.navigator.ProjectExplorer">
+               relationship="stack"
+               relative="right">
          </view>
          <viewShortcut
                id="org.eclipse.viatra.query.tooling.ui.queryregistry.QueryRegistryView">

@@ -60,13 +60,6 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider implements
                 } else if (node instanceof IterableIndexer) {
                     IterableIndexer iterableIndexer = (IterableIndexer) node;
                     text.append(formatSize(iterableIndexer.getSignatures().size()));
-                } else if (paramObject instanceof SingleColumnAggregatorRecipe) {
-                	IMultisetAggregationOperator<?, ?, ?> operator = ((SingleColumnAggregatorRecipe) paramObject).getMultisetAggregationOperator();
-					if (operator == null) {
-						text.append("Undefined operator");
-					} else {
-						text.append(operator.getName());
-					}
                 }
             }
         }

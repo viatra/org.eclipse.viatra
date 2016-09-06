@@ -54,20 +54,35 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     @Fix(EMFIssueCodes.MISSING_PARAMETER_TYPE)
     public void inferMissingParameterType(final Issue issue, IssueResolutionAcceptor acceptor) {
         for (final String data : issue.getData()) {
-            acceptor.accept(issue, "Insert type '" + data + "'", 
-                    "Declares the inferred type " + data + " for the variable. \n\n" +
-                    "Warning! When not matching the entire ResourceSet, \n" + 
-                    "this might slightly change the results of the pattern; \n" + 
-                    "look at the documentation of Query Scopes for details.", 
-                    null, new IModification() {
+            if (data.startsWith(EMFIssueCodes.JAVA_TYPE_PREFIX)) {
+                final String typeName = data.substring(EMFIssueCodes.JAVA_TYPE_PREFIX.length());
+                acceptor.accept(issue, "Insert Java type '" + typeName + "'",
+                        "Declares the inferred type " + typeName + " for the variable.",
+                        null, new IModification() {
 
-                @Override
-                public void apply(IModificationContext context) throws Exception {
-                    IXtextDocument document = context.getXtextDocument();
-                    document.replace(issue.getOffset() + issue.getLength(), 0, " : " + data);
-                }
-                
-            });
+                            @Override
+                            public void apply(IModificationContext context) throws Exception {
+                                IXtextDocument document = context.getXtextDocument();
+                                document.replace(issue.getOffset() + issue.getLength(), 0, " : java " + typeName);
+                            }
+
+                        });
+            } else {
+                acceptor.accept(issue, "Insert EMF type '" + data + "'",
+                        "Declares the inferred type " + data + " for the variable. \n\n"
+                                + "Warning! When not matching the entire ResourceSet, \n"
+                                + "this might slightly change the results of the pattern; \n"
+                                + "look at the documentation of Query Scopes for details.",
+                        null, new IModification() {
+
+                            @Override
+                            public void apply(IModificationContext context) throws Exception {
+                                IXtextDocument document = context.getXtextDocument();
+                                document.replace(issue.getOffset() + issue.getLength(), 0, " : " + data);
+                            }
+
+                        });
+            }
         }
     }
     

@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.typing;
 
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Type;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
+import org.eclipse.xtext.common.types.JvmDeclaredType;
+import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
 
 /**
  * @author Zoltan Ujhelyi
@@ -57,5 +61,24 @@ public abstract class AbstractTypeSystem implements ITypeSystem {
         }
         return typeClass;
     }
+
+    /**
+     * @since 1.4
+     */
+    @Override
+    public boolean isValidType(Type type) {
+        if (type instanceof JavaType) {
+            return isValidType((JavaType)type);
+        }
+        return false;
+    }
     
+    /**
+     * @since 1.4
+     */
+    protected boolean isValidType(JavaType type) {
+        JvmDeclaredType classRef = type.getClassRef();
+        return classRef != null && !classRef.eIsProxy() &&
+                !(classRef instanceof JvmUnknownTypeReference);
+    }
 }

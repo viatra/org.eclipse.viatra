@@ -22,7 +22,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  * A type system represents the types (classes, or references) provided by a modeling backend.
  * 
  * @author Zoltan Ujhelyi
- * @noimplement
+ * @noimplement Do not implement directly, rely on {@link AbstractTypeSystem} instead.
  */
 public interface ITypeSystem {
 
@@ -111,6 +111,14 @@ public interface ITypeSystem {
     Set<IInputKey> getCompatibleSupertypes(Set<IInputKey> types);
 
     /**
+     * Returns whether the type declaration represents a valid, resolvable type for the selected type system. A null type is invalid.
+     * @param type
+     * @return
+     * @since 1.4
+     */
+    boolean isValidType(Type type);
+    
+    /**
      * An empty implementation of {@link ITypeSystem} that can be used by the abstract pattern language module.
      * @since 1.3
      */
@@ -179,6 +187,14 @@ public interface ITypeSystem {
         @Override
         public Set<IInputKey> getCompatibleSupertypes(Set<IInputKey> types) {
             throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @since 1.4
+         */
+        @Override
+        public boolean isValidType(Type type) {
+            return false;
         }
 
 

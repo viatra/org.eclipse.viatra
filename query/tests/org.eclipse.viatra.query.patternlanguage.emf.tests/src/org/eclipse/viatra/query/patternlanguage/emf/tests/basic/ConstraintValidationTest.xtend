@@ -96,7 +96,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 				IntValue(Name2);				// Then this line can be deleted.
 			}
 		') as PatternModel
-		assertOK(tester.validate(model))
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	@Test
 	def rightNewVariableCompareValidation() {
@@ -123,7 +125,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 				StringValue(Name2);				// Then this line can be deleted.
 			}
 		') as PatternModel
-		assertOK(tester.validate(model))
+		tester.validate(model).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 	}
 	@Test
 	def leftNewVariableCompareValidation() {
@@ -161,9 +165,9 @@ class ConstraintValidationTest extends AbstractValidatorTest {
 			}
 		') as PatternModel
 		tester.validate(model).assertAll(
+			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE),
 			getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT),
-			getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT),
-			getErrorCode(IssueCodes::SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE)
+			getWarningCode(IssueCodes::SELF_COMPARE_CONSTRAINT)
 		)
 	}
 	@Test

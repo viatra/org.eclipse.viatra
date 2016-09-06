@@ -110,7 +110,7 @@
                id="org.eclipse.viatra.addon.viewers.tooling.ui.sandbox"
                minimized="false"
                relationship="stack"
-               relative="org.eclipse.ui.views.ContentOutline"
+               relative="right"
                visible="false">
          </view>
          <viewShortcut

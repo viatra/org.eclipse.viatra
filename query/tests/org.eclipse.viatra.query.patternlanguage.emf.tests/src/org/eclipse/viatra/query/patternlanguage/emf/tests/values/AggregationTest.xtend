@@ -308,7 +308,10 @@ class AggregationTest extends AbstractValidatorTest {
 			     number == eval(name.length);
 			}
 			''')
-		tester.validate(parsed).assertOK
+		tester.validate(parsed).assertAll(
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 		val parameter_c = parsed.patterns.get(0).parameters.get(0)
 		val inferredType = typeInferrer.getType(parameter_c)
 		Assert.assertEquals("Parameter c is expected to have a type of Integers", Integer, (inferredType as JavaTransitiveInstancesKey).instanceClass)
@@ -331,7 +334,11 @@ class AggregationTest extends AbstractValidatorTest {
 			     EInt(number);
 			}
 			''')
-		tester.validate(parsed).assertWarning(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
+		tester.validate(parsed).assertAll(
+		    getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 		val parameter_c = parsed.patterns.get(0).parameters.get(0)
 		val inferredType = typeInferrer.getType(parameter_c)
 		Assert.assertEquals("Parameter c is expected to have a type of Integers", Integer, (inferredType as JavaTransitiveInstancesKey).instanceClass)
@@ -354,7 +361,11 @@ class AggregationTest extends AbstractValidatorTest {
 			     number == eval(name.length.doubleValue);
 			}
 			''')
-		tester.validate(parsed).assertAll(getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS))
+		tester.validate(parsed).assertAll(
+		    getWarningCode(IssueCodes::CHECK_WITH_IMPURE_JAVA_CALLS),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+		)
 		val parameter_c = parsed.patterns.get(0).parameters.get(0)
 		val inferredType = typeInferrer.getType(parameter_c)
 		Assert.assertEquals("Parameter c is expected to have a type of Doubles", Double, (inferredType as JavaTransitiveInstancesKey).instanceClass)
@@ -378,7 +389,9 @@ class AggregationTest extends AbstractValidatorTest {
 			}
 			''')
 		tester.validate(parsed).assertAll(
-		    getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING)
+		    getWarningCode(EMFIssueCodes::CARTESIAN_STRICT_WARNING),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 		val parameter_c = parsed.patterns.get(0).parameters.get(0)
 		val inferredType = typeInferrer.getType(parameter_c)
@@ -458,7 +471,8 @@ class AggregationTest extends AbstractValidatorTest {
 			'''
 		)
 	    tester.validate(parsed).assertAll(
-			getErrorCode(IssueCodes.DUBIUS_VARIABLE_NAME)
+			getErrorCode(IssueCodes.DUBIUS_VARIABLE_NAME),
+			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
 	
