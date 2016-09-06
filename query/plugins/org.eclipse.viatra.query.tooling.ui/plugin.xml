@@ -10,21 +10,21 @@
       <wizard
             category="org.eclipse.viatra.query.tooling.ui.category"
             class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.wizards.NewProjectWizard"
-            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            finalPerspective="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective"
             icon="icons/logo2.png"
             id="org.eclipse.viatra.query.tooling.ui.newproject"
             name="Query Project"
-            preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
+            preferredPerspectives="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective"
             project="true">
       </wizard>
       <wizard
             category="org.eclipse.viatra.query.tooling.ui.category"
             class="org.eclipse.viatra.query.tooling.ui.QueryLanguageExecutableExtensionFactory:org.eclipse.viatra.query.tooling.ui.wizards.NewVqlFileWizard"
-            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            finalPerspective="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective"
             icon="icons/logo2.png"
             id="org.eclipse.viatra.query.tooling.ui.newvqlfile"
             name="Query Definition "
-            preferredPerspectives="org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
+            preferredPerspectives="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective,org.eclipse.pde.ui.PDEPerspective,org.eclipse.jdt.ui.JavaPerspective">
       </wizard>
       <wizard
             category="org.eclipse.viatra.query.tooling.ui.category"

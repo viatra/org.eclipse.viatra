@@ -5,6 +5,7 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             category="org.eclipse.viatra.query.tooling.ui.category"
+            finalPerspective="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective"
             icon="icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.transformation.ui.wizards.transformation"
             name="Model Transformation">
