@@ -42,6 +42,10 @@ public class StructuralFeatureCheck extends CheckOperation {
         Preconditions.checkNotNull(frame.getValue(targetPosition), "Invalid plan, variable %s unbound", targetPosition);
         try {
             EObject source = (EObject) frame.getValue(sourcePosition);
+            if(! feature.getEContainingClass().isSuperTypeOf(source.eClass()) ){
+                // TODO planner should ensure the proper supertype relation, see bug 500968
+                return false;
+            }
             Object target = frame.getValue(targetPosition);
             if (feature.isMany()) {
                 return ((Collection<?>) source.eGet(feature)).contains(target);
