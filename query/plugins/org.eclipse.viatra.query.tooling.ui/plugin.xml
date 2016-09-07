@@ -733,4 +733,31 @@
             name="Transformation Development">
       </perspective>
    </extension>
+   <extension
+         point="org.eclipse.ui.navigator.navigatorContent">
+      <commonWizard
+            menuGroupId="org.eclipse.viatra"
+            type="new"
+            wizardId="org.eclipse.viatra.query.tooling.ui.newproject">
+         <enablement>
+            <with
+                  variable="activeWorkbenchWindow.activePerspective">
+               <equals
+                     value="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
+               </equals>
+            </with></enablement>
+      </commonWizard>
+      <commonWizard
+            menuGroupId="org.eclipse.viatra"
+            type="new"
+            wizardId="org.eclipse.viatra.query.tooling.ui.newvqlfile">
+         <enablement>
+            <with
+                  variable="activeWorkbenchWindow.activePerspective">
+               <equals
+                     value="org.eclipse.viatra.query.tooling.ui.TransformationDevPerspective">
+               </equals>
+            </with></enablement>
+      </commonWizard>
+   </extension>
 </plugin>
