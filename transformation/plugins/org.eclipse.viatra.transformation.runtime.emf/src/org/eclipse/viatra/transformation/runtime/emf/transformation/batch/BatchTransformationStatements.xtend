@@ -71,7 +71,7 @@ class BatchTransformationStatements {
     def <Match extends IPatternMatch> fireUntil(
         BatchTransformationRule<Match, ?> rule,
         Predicate<Match> breakCondition,
-        Pair<String, Object>... filterParameters
+        Pair<String, ? extends Object>... filterParameters
     ) {
         executor.startExecution("Fire_until_transaction_filter_condition_ruleName: " + rule.name)
         rule.ruleSpecification.fireUntil(breakCondition, new MatchParameterFilter(filterParameters))
@@ -162,7 +162,7 @@ class BatchTransformationStatements {
      * Executes the selected rule with the selected filter on its current match set of the precondition.
      */
     def <Match extends IPatternMatch> fireAllCurrent(BatchTransformationRule<Match, ?> rule,
-        Pair<String, Object>... parameterFilter) {
+        Pair<String, ? extends Object>... parameterFilter) {
         executor.startExecution("Fire_all_current_transaction_filter_ruleName: " + rule.name)
         rule.ruleSpecification.fireAllCurrent(new MatchParameterFilter(parameterFilter))
         executor.endExecution("Fire_all_current_transaction_filter_ruleName: " + rule.name)
@@ -228,7 +228,7 @@ class BatchTransformationStatements {
      * <p><strong>Warning</strong>: the selection criteria is not specified - it is neither random nor controllable
      */
     def <Match extends IPatternMatch> fireOne(BatchTransformationRule<Match, ?> rule,
-        Pair<String, Object>... parameterFilter) {
+        Pair<String, ? extends Object>... parameterFilter) {
         executor.startExecution("Fire_one_transaction_filter_ruleName: " + rule.name)
         rule.ruleSpecification.fireOne(new MatchParameterFilter(parameterFilter))
         executor.endExecution("Fire_one_transaction_filter_ruleName: " + rule.name)
