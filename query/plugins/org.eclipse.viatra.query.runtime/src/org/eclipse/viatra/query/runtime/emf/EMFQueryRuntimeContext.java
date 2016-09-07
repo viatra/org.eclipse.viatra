@@ -659,5 +659,15 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     public Tuple wrapTuple(Tuple externalElements) {
     	return externalElements;
     }
+    
+    @Override
+    public void ensureWildcardIndexing(IndexingService service) {
+        baseIndex.setWildcardLevel(IndexingLevel.toLevel(service));
+    }
+    
+    @Override
+    public void executeAfterTraversal(Runnable runnable) throws InvocationTargetException {
+        baseIndex.executeAfterTraversal(runnable);
+    }
 }
 

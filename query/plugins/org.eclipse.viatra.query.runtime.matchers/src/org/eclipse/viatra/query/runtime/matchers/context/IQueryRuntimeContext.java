@@ -216,5 +216,19 @@ public interface IQueryRuntimeContext {
     */
     public Tuple unwrapTuple(Tuple internalElements);
 
+    /**
+     * Starts wildcard indexing for the given service. After this call, no registration is required for this {@link IndexingService}.
+     * a previously set wildcard level cannot be lowered, only extended.
+     * @since 1.4
+     */
+	public void ensureWildcardIndexing(IndexingService service);
 	
+	/**
+     * Execute the given runnable after traversal. It is guaranteed that the runnable is executed as soon as
+     * the indexing is finished. The callback is executed only once, then is removed from the callback queue.
+     * @param traversalCallback
+     * @throws InvocationTargetException 
+     * @since 1.4
+     */
+	public void executeAfterTraversal(Runnable runnable) throws InvocationTargetException;
 }
