@@ -84,10 +84,10 @@ public class LocalSearchRuntimeBasedStrategy {
 
         final ICostFunction costFunction = configuration.getCostFunction();
         PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(configuration.isAllowInverse(), configuration.isUseBase(), 
-                new Function<IConstraintEvaluationContext, Float>() {
+                new Function<IConstraintEvaluationContext, Double>() {
 
                     @Override
-                    public Float apply(IConstraintEvaluationContext input) {
+                    public Double apply(IConstraintEvaluationContext input) {
                         return costFunction.apply(input);
                     }
                 });

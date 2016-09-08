@@ -35,7 +35,7 @@ public class PlanState {
     private PBody pBody;
     private List<PConstraintInfo> operationsList;
     private Set<PVariable> boundVariables;
-    private float cost;
+    private double cost;
     /*
      * For a short explanation of past, present and future operations,
      * see class 
@@ -52,7 +52,7 @@ public class PlanState {
 
         // Calculate and store cost for the associated search plan
         cost = 0;
-        float cummulativeProduct = 1;
+        double cummulativeProduct = 1;
         for (PConstraintInfo constraintInfo : operationsList) {
             cummulativeProduct *= constraintInfo.getCost();
             cost += cummulativeProduct;
@@ -172,7 +172,7 @@ public class PlanState {
     /**
      * @return the derived cost of the plan contained in the state
      */
-    public float getCost() {
+    public double getCost() {
         return cost;
     }
 

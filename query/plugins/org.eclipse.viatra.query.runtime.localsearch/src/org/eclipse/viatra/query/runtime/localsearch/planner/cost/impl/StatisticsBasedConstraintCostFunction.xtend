@@ -31,8 +31,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilte
  * @since 1.4
  */
 abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
-    static float MAX_COST = 250.0f
-    static float DEFAULT_COST = MAX_COST - 100.0f
+    static double MAX_COST = 250.0
+    static double DEFAULT_COST = MAX_COST - 100.0
 
     def abstract long countTuples(IConstraintEvaluationContext input, IInputKey supplierKey);
 
@@ -40,11 +40,11 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
         calculateCost(input.constraint, input)
     }
     
-    protected def dispatch float calculateCost(ConstantValue constant, IConstraintEvaluationContext input) {
+    protected def dispatch double calculateCost(ConstantValue constant, IConstraintEvaluationContext input) {
         return 0.0f;
     }
 
-    protected def dispatch float calculateCost(TypeConstraint constraint, IConstraintEvaluationContext input) {
+    protected def dispatch double calculateCost(TypeConstraint constraint, IConstraintEvaluationContext input) {
         val freeMaskVariables = input.freeVariables
         val boundMaskVariables = input.boundVariables
         var IInputKey supplierKey = (constraint as TypeConstraint).getSupplierKey()
@@ -69,15 +69,15 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
         }
     }
     
-    protected def float calculateBinaryExtendCost(IInputKey supplierKey, PVariable srcVariable, PVariable dstVariable, boolean isInverse, long edgeCount, IConstraintEvaluationContext input) {
+    protected def double calculateBinaryExtendCost(IInputKey supplierKey, PVariable srcVariable, PVariable dstVariable, boolean isInverse, long edgeCount, IConstraintEvaluationContext input) {
         val freeMaskVariables = input.freeVariables
         val boundMaskVariables = input.boundVariables
         val constraint = input.constraint
         var metaContext = input.runtimeContext.getMetaContext()
         var Collection<InputKeyImplication> implications = metaContext.getImplications(supplierKey)
         // TODO prepare for cases when this info is not available - use only metamodel related cost calculation (see TODO at the beginning of the function)
-        var long srcCount = -1
-        var long dstCount = -1
+        var double srcCount = -1
+        var double dstCount = -1
         // Obtain runtime information
         for (InputKeyImplication implication : implications) {
             var List<Integer> impliedIndices = implication.getImpliedIndices()
@@ -93,8 +93,8 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
         if (freeMaskVariables.contains(srcVariable) && freeMaskVariables.contains(dstVariable)) {
             return dstCount * srcCount
         } else {
-            var long srcNodeCount = -1
-            var long dstNodeCount = -1
+            var double srcNodeCount = -1
+            var double dstNodeCount = -1
             if (isInverse) {
                 srcNodeCount = dstCount
                 dstNodeCount = srcCount
@@ -108,7 +108,7 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
                 if (srcNodeCount == 0) {
                     return 0
                 } else {
-                    return ((edgeCount) as float) / srcNodeCount
+                    return ((edgeCount) as double) / srcNodeCount
                 }
             } else if (srcCount > -1 && dstCount > -1) {
                 // Both of the end nodes had implied (type) constraint
@@ -124,7 +124,7 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
                 var Map<Set<PVariable>, Set<PVariable>> functionalDependencies = constraint.getFunctionalDependencies(metaContext);
                 var impliedVariables = functionalDependencies.get(boundMaskVariables)
                 if(impliedVariables != null && impliedVariables.containsAll(freeMaskVariables)){
-                    return 1.0f;
+                    return 1.0;
                 } else {
                     return DEFAULT_COST
                 }
@@ -132,29 +132,29 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
         }
     }
     
-    protected def float calculateUnaryConstraintCost(TypeConstraint constraint, IConstraintEvaluationContext input) {
+    protected def double calculateUnaryConstraintCost(TypeConstraint constraint, IConstraintEvaluationContext input) {
         var variable = constraint.getVariablesTuple().get(0) as PVariable
         if (input.boundVariables.contains(variable)) {
-            return 0.9f
+            return 0.9
         } else {
             return countTuples(input, constraint.supplierKey)+DEFAULT_COST
         }
     }
 
-    def dispatch float calculateCost(ExportedParameter exportedParam, IConstraintEvaluationContext input) {
-        return 0.0f;
+    def dispatch double calculateCost(ExportedParameter exportedParam, IConstraintEvaluationContext input) {
+        return 0.0;
     }
     
-    def dispatch float calculateCost(TypeFilterConstraint exportedParam, IConstraintEvaluationContext input) {
-        return 0.0f;
+    def dispatch double calculateCost(TypeFilterConstraint exportedParam, IConstraintEvaluationContext input) {
+        return 0.0;
     }
 
     /**
      * Default cost calculation strategy
      */
-    protected def dispatch float calculateCost(PConstraint constraint, IConstraintEvaluationContext input) {
+    protected def dispatch double calculateCost(PConstraint constraint, IConstraintEvaluationContext input) {
         if (input.freeVariables.isEmpty) {
-            return 1.0f;
+            return 1.0;
         } else {
             return DEFAULT_COST
         }

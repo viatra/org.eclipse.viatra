@@ -17,10 +17,13 @@ import java.util.Map.Entry;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
+import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.common.collect.Lists;
 
@@ -29,7 +32,7 @@ import com.google.common.collect.Lists;
  * indexer}.
  * 
  */
-public class IterateOverEStructuralFeatureInstances implements ISearchOperation {
+public class IterateOverEStructuralFeatureInstances implements ISearchOperation, IIteratingSearchOperation{
 
     private EStructuralFeature feature;
     private int sourcePosition, targetPosition;
@@ -76,5 +79,13 @@ public class IterateOverEStructuralFeatureInstances implements ISearchOperation 
 	public List<Integer> getVariablePositions() {
 		return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
 	}
+    
+    /**
+     * @since 1.4
+     */
+    @Override
+    public IInputKey getIteratedInputKey() {
+        return new EStructuralFeatureInstancesKey(feature);
+    }
     
 }

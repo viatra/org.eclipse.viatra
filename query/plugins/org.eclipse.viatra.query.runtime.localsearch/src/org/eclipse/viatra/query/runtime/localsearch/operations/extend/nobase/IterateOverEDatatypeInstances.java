@@ -21,9 +21,12 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
+import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
+import org.eclipse.viatra.query.runtime.localsearch.operations.IIteratingSearchOperation;
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -36,7 +39,7 @@ import com.google.common.collect.Table;
  * Iterates over all {@link EDataType} instances without using an {@link NavigationHelper VIATRA Base indexer}.
  * 
  */
-public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperation<Object> {
+public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperation<Object> implements IIteratingSearchOperation {
 
     private EDataType dataType;
     private final LocalSearchBackend backend;
@@ -108,5 +111,12 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
 		return Lists.asList(position, new Integer[0]);
 	}
     
+    /**
+     * @since 1.4
+     */
+    @Override
+    public IInputKey getIteratedInputKey() {
+        return new EDataTypeInSlotsKey(dataType);
+    }
 
 }

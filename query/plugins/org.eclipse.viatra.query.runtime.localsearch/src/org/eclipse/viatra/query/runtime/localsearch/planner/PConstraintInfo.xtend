@@ -33,7 +33,7 @@ class PConstraintInfo implements IConstraintEvaluationContext {
 	private Set<PConstraintInfo> sameWithDifferentBindings
 	private IQueryRuntimeContext runtimeContext
 
-	private float cost
+	private double cost
 
 	/** 
 	 * Instantiates the wrapper
@@ -46,7 +46,7 @@ class PConstraintInfo implements IConstraintEvaluationContext {
 	 * @param runtimeContextthe runtime query context
 	 */
 	new(PConstraint constraint, Set<PVariable> boundMaskVariables, Set<PVariable> freeMaskVariables,
-		Set<PConstraintInfo> sameWithDifferentBindings, IQueryRuntimeContext runtimeContext, Function<IConstraintEvaluationContext, Float> costFunction) {
+		Set<PConstraintInfo> sameWithDifferentBindings, IQueryRuntimeContext runtimeContext, Function<IConstraintEvaluationContext, Double> costFunction) {
 		this.constraint = constraint
 		this.boundMaskVariables = boundMaskVariables
 		this.freeMaskVariables = freeMaskVariables
@@ -77,7 +77,7 @@ class PConstraintInfo implements IConstraintEvaluationContext {
 		return sameWithDifferentBindings
 	}
 
-	def float getCost() {
+	def double getCost() {
 		return cost
 	}
 

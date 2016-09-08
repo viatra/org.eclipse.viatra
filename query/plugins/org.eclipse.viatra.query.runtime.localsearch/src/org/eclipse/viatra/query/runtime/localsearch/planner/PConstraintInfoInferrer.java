@@ -54,12 +54,12 @@ class PConstraintInfoInferrer {
 
     private final boolean allowInverseNavigation;
     private final boolean useIndex;
-    private final Function<IConstraintEvaluationContext, Float> costFunction;
+    private final Function<IConstraintEvaluationContext, Double> costFunction;
     
     /**
      * 
      */
-    public PConstraintInfoInferrer(boolean allowInverseNavigation, boolean useIndex, Function<IConstraintEvaluationContext, Float> costFunction) {
+    public PConstraintInfoInferrer(boolean allowInverseNavigation, boolean useIndex, Function<IConstraintEvaluationContext, Double> costFunction) {
         this.allowInverseNavigation = allowInverseNavigation;
         this.useIndex = useIndex;
         this.costFunction = costFunction;

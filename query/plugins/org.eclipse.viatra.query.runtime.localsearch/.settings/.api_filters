@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.localsearch" version="2">
-	<resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/integration/LocalSearchResultProvider.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider">
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/integration/LocalSearchResultProvider.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider">
         <filter id="338722907">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider"/>
@@ -13,6 +13,14 @@
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy"/>
                 <message_argument value="LocalSearchRuntimeBasedStrategy(boolean, boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/PlanState.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState">
+        <filter comment="plan cost is now double" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
+                <message_argument value="getCost()"/>
             </message_arguments>
         </filter>
     </resource>

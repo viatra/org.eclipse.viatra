@@ -19,6 +19,6 @@ package org.eclipse.viatra.query.runtime.localsearch.planner.cost;
  */
 public interface ICostFunction{
 
-    public Float apply(IConstraintEvaluationContext input);
+    public double apply(IConstraintEvaluationContext input);
     
 }
