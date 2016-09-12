@@ -54,8 +54,11 @@ public class PlanState {
         cost = 0;
         double cummulativeProduct = 1;
         for (PConstraintInfo constraintInfo : operationsList) {
-            cummulativeProduct *= constraintInfo.getCost();
-            cost += cummulativeProduct;
+            double constraintCost = constraintInfo.getCost();
+            if (constraintCost > 0){
+                cummulativeProduct *= constraintCost;
+                cost += cummulativeProduct;
+            }
         }
 
     }
