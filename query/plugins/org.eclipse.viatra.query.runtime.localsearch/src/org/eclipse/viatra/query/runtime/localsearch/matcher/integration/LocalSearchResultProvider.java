@@ -42,7 +42,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
@@ -193,7 +192,12 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
      // Plan for possible adornments
         Iterator<MatcherReference> iterator = computeAllPossibleAdornments(query, userHints);
         while(iterator.hasNext()){
-            planProvider.getPlan((LocalSearchBackend) backend, overrideDefaultHints(query), iterator.next());
+            IPlanDescriptor plan = planProvider.getPlan((LocalSearchBackend) backend, overrideDefaultHints(query), iterator.next());
+            try {
+                indexKeys(plan.getIteratedKeys());
+            } catch (InvocationTargetException e) {
+                throw new QueryProcessingException(e.getMessage(), null, e.getMessage(), query, e);
+            }
         }
     }
 
