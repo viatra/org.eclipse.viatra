@@ -135,7 +135,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     private Iterator<MatcherReference> computeAllPossibleAdornments(final PQuery query, final QueryEvaluationHint hints){
         final Set<PParameter> ins = Sets.filter(Sets.newHashSet(query.getParameters()), PQueries.parameterDirectionPredicate(PParameterDirection.IN));
-        Set<PParameter> inouts = Sets.filter(Sets.newHashSet(query.getParameters()), PQueries.parameterDirectionPredicate(PParameterDirection.IN));
+        Set<PParameter> inouts = Sets.filter(Sets.newHashSet(query.getParameters()), PQueries.parameterDirectionPredicate(PParameterDirection.INOUT));
         Set<Set<PParameter>> possibleInouts = Sets.powerSet(inouts);
         return Iterators.transform(possibleInouts.iterator(), new Function<Set<PParameter>, MatcherReference>() {
 
