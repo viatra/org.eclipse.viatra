@@ -17,6 +17,8 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -52,17 +54,14 @@ class PConstraintInfoInferrer {
         }
     }
 
-    private final boolean allowInverseNavigation;
     private final boolean useIndex;
     private final Function<IConstraintEvaluationContext, Double> costFunction;
+    private final EMFModelComprehension modelComprehension;
     
-    /**
-     * 
-     */
-    public PConstraintInfoInferrer(boolean allowInverseNavigation, boolean useIndex, Function<IConstraintEvaluationContext, Double> costFunction) {
-        this.allowInverseNavigation = allowInverseNavigation;
+    public PConstraintInfoInferrer(boolean useIndex, Function<IConstraintEvaluationContext, Double> costFunction) {
         this.useIndex = useIndex;
         this.costFunction = costFunction;
+        this.modelComprehension = new EMFModelComprehension(new BaseIndexOptions());
     }
     
     
@@ -197,26 +196,26 @@ class PConstraintInfoInferrer {
         doCreateConstraintInfos(runtimeContext, resultList, pConstraint, affectedVariables, bindings);
     }
     
+    private boolean canPerformInverseNavigation(EStructuralFeature feature){
+        return ( // Feature has opposite (this only possible for references)
+                 hasEOpposite(feature)  
+                 || (   // Or indexing is enabled, and the feature can be indexed (it's not a non-well-behaving 
+                        // derived feature) and it's a reference TODO this constraint might not be needed. It shall be possible to find elements by an attribute value using the base indexer
+                        useIndex && modelComprehension.representable(feature) && (feature instanceof EReference)
+                 ));
+    }
+    
     private void createConstraintInfoTypeConstraint(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, TypeConstraint typeConstraint) {
         Set<PVariable> affectedVariables = typeConstraint.getAffectedVariables();
         Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
         
-        if(!allowInverseNavigation){
-            // When inverse navigation is not allowed, filter out operation masks, where
-            // the first variable would be free AND the feature is an EReference and has no EOpposite
-            bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
-        } else {
-            // Also do the above case, if it is an EReference with no EOpposite, or is an EAttribute
-            IInputKey inputKey = typeConstraint.getSupplierKey();
-            if(inputKey instanceof EStructuralFeatureInstancesKey){
-                final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
-                if(feature instanceof EReference){
-                    if(!useIndex){                        
-                        bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
-                    }
-                } else {
-                    bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
-                }
+        IInputKey inputKey = typeConstraint.getSupplierKey();
+        if(inputKey instanceof EStructuralFeatureInstancesKey){
+            final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
+            if(!canPerformInverseNavigation(feature)){
+                // When inverse navigation is not allowed or not possible, filter out operation masks, where
+                // the first variable would be free AND the feature is an EReference and has no EOpposite
+                bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
             }
         }
         doCreateConstraintInfos(runtimeContext, resultList, typeConstraint, affectedVariables, bindings);
@@ -239,7 +238,7 @@ class PConstraintInfoInferrer {
         Set<Set<PVariable>>elementsToRemove = Sets.newHashSet();
         while (iterator.hasNext()) {
             Set<PVariable> boundVariablesSet = iterator.next();
-            if(!boundVariablesSet.isEmpty() && !boundVariablesSet.contains(firstVariable) && !hasEOpposite(typeConstraint)){
+            if(!boundVariablesSet.isEmpty() && !boundVariablesSet.contains(firstVariable)){
                 elementsToRemove.add(boundVariablesSet);
             }
         }
@@ -247,15 +246,11 @@ class PConstraintInfoInferrer {
         return bindings;
     }
     
-    private boolean hasEOpposite(TypeConstraint typeConstraint) {
-        IInputKey supplierKey = typeConstraint.getSupplierKey();
-        if(supplierKey instanceof EStructuralFeatureInstancesKey){
-            EStructuralFeature wrappedKey = ((EStructuralFeatureInstancesKey) supplierKey).getWrappedKey();
-            if(wrappedKey instanceof EReference){
-                EReference eOpposite = ((EReference) wrappedKey).getEOpposite();
-                if(eOpposite != null){
-                    return true;
-                }
+    private boolean hasEOpposite(EStructuralFeature feature) {
+        if(feature instanceof EReference){
+            EReference eOpposite = ((EReference) feature).getEOpposite();
+            if(eOpposite != null){
+                return true;
             }
         }
         return false;

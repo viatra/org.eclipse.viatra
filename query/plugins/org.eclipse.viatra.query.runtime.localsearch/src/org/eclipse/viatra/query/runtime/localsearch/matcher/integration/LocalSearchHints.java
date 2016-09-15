@@ -36,8 +36,6 @@ public final class LocalSearchHints implements IMatcherCapability{
 
     private Boolean useBase = null;
     
-    private Boolean allowInverse = null;
-    
     private Integer rowCount = null;
     
     private ICostFunction costFunction = null;
@@ -59,7 +57,6 @@ public final class LocalSearchHints implements IMatcherCapability{
     public static LocalSearchHints getDefault(){
         LocalSearchHints result = new LocalSearchHints();
         result.useBase = true;
-        result.allowInverse = true;
         result.rowCount = 4;
         result.costFunction = new IndexerBasedConstraintCostFunction();
         result.flattenCallPredicate = new NeverFlattenCallPredicate();
@@ -73,7 +70,6 @@ public final class LocalSearchHints implements IMatcherCapability{
     public static LocalSearchHints getDefaultFlatten(){
         LocalSearchHints result = new LocalSearchHints();
         result.useBase = true;
-        result.allowInverse = true;
         result.rowCount = 4;
         result.costFunction = new IndexerBasedConstraintCostFunction();
         result.flattenCallPredicate = new DefaultFlattenCallPredicate();
@@ -86,7 +82,6 @@ public final class LocalSearchHints implements IMatcherCapability{
     public static LocalSearchHints getDefaultNoBase(){
         LocalSearchHints result = new LocalSearchHints();
         result.useBase = false;
-        result.allowInverse = false;
         result.rowCount = 4;
         result.costFunction = new VariableBindingBasedCostFunction();
         result.flattenCallPredicate = new NeverFlattenCallPredicate();
@@ -98,7 +93,6 @@ public final class LocalSearchHints implements IMatcherCapability{
         Map<String, Object> hints = hint.getBackendHints();
         
         result.useBase = (Boolean) hints.get(LocalSearchHintKeys.USE_BASE_INDEX);
-        result.allowInverse = (Boolean) hints.get(LocalSearchHintKeys.ALLOW_INVERSE_NAVIGATION);
         result.rowCount = (Integer) hints.get(LocalSearchHintKeys.PLANNER_TABLE_ROW_COUNT);
         Object object = hints.get(LocalSearchHintKeys.FLATTEN_CALL_PREDICATE);
         if (object != null){
@@ -120,9 +114,6 @@ public final class LocalSearchHints implements IMatcherCapability{
         if (useBase != null){
             map.put(LocalSearchHintKeys.USE_BASE_INDEX, useBase);
         }
-        if (allowInverse != null){
-            map.put(LocalSearchHintKeys.ALLOW_INVERSE_NAVIGATION, allowInverse);
-        }
         if (rowCount != null){
             map.put(LocalSearchHintKeys.PLANNER_TABLE_ROW_COUNT, rowCount);
         }
@@ -139,8 +130,12 @@ public final class LocalSearchHints implements IMatcherCapability{
         return useBase;
     }
     
+    /**
+     * @deprecated allow inverse was deprecated in 1.4; its uses are ignored 
+     */
+    @Deprecated
     public Boolean isAllowInverse() {
-        return allowInverse;
+        return true;
     }
     
     public ICostFunction getCostFunction() {
@@ -154,9 +149,12 @@ public final class LocalSearchHints implements IMatcherCapability{
     public Integer getRowCount() {
         return rowCount;
     }
-    
+
+    /**
+     * @deprecated allow inverse was deprecated in 1.4; its uses are ignored 
+     */
+    @Deprecated
     public LocalSearchHints setAllowInverse(boolean allowInverse) {
-        this.allowInverse = allowInverse;
         return this;
     }
     
@@ -208,7 +206,6 @@ public final class LocalSearchHints implements IMatcherCapability{
              * We allow substitution of matchers if their settings are equal.
              */
             return Objects.equal(other.useBase, useBase) && 
-                    Objects.equal(other.allowInverse, allowInverse) &&
                     Objects.equal(other.costFunction, costFunction) &&
                     Objects.equal(other.flattenCallPredicate, flattenCallPredicate) &&
                     Objects.equal(other.rowCount, rowCount);

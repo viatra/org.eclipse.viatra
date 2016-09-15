@@ -83,7 +83,7 @@ public class LocalSearchRuntimeBasedStrategy {
             IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, LocalSearchHints configuration) {
 
         final ICostFunction costFunction = configuration.getCostFunction();
-        PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(configuration.isAllowInverse(), configuration.isUseBase(), 
+        PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(configuration.isUseBase(), 
                 new Function<IConstraintEvaluationContext, Double>() {
 
                     @Override

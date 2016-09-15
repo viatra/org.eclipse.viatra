@@ -18,6 +18,10 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallP
  *
  */
 public class LocalSearchHintKeys {
+    /**
+     * @deprecated removed support in 1.4; its uses will be ignored 
+     */
+    @Deprecated
     public static final String ALLOW_INVERSE_NAVIGATION = "org.eclipse.viatra.query.runtime.localsearch - allow inverse navigation";
     public static final String USE_BASE_INDEX = "org.eclipse.viatra.query.runtime.localsearch - use base index";
 
