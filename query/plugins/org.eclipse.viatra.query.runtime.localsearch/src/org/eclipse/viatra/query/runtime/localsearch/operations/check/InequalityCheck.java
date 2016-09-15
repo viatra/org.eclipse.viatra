@@ -46,7 +46,7 @@ public class InequalityCheck extends CheckOperation {
     
     @Override
     public String toString() {
-        return "InequalityCheck";
+        return String.format("Inequality check between positions %d and %d", sourceLocation, targetLocation);
     }
 
     @Override

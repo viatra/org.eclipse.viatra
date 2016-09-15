@@ -84,10 +84,11 @@ public class CountOperation extends ExtendOperation<Integer> implements IMatcher
 
     @Override
     public String toString() {
-    	StringBuilder builder = new StringBuilder();
-		builder.append("CountOperation, pattern: ")
-			.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
-		return builder.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("Extend count for pattern ")
+            .append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1))
+            .append("for position ").append(position);
+        return builder.toString();
     }
     
     @Override

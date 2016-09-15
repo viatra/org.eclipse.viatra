@@ -106,8 +106,9 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IMat
     @Override
     public String toString() {
     	StringBuilder builder = new StringBuilder();
-    	builder.append("Binary transitive colsure, pattern: ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
+    	builder.append("Check binary transitive closure of ")
+    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1))
+    		.append(" from ").append(sourcePosition).append(" to ").append(targetPosition);
     	return builder.toString();
     }
 

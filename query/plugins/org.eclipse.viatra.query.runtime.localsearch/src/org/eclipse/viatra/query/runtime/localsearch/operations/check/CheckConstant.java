@@ -44,4 +44,9 @@ public class CheckConstant extends CheckOperation {
 		return Lists.asList(position, new Integer[0]);
 	}
     
+    @Override
+    public String toString() {
+        return "Check constant '"+value+"' for position "+position;
+    }
+    
 }

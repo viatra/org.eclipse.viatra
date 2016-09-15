@@ -55,7 +55,7 @@ public class ExpressionEval extends ExtendOperation<Object> {
     
     @Override
     public String toString() {
-    	return "ExpressionEval";
+        return String.format("Expression evaluation %s for position %d", evaluator.getShortDescription(), position);
     }
     
     

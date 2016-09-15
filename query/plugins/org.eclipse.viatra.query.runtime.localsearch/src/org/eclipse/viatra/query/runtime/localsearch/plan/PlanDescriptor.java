@@ -20,8 +20,12 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -72,6 +76,18 @@ public class PlanDescriptor implements IPlanDescriptor {
             iteratedKeys = Collections.unmodifiableSet(keys);
         }
         return iteratedKeys;
+    }
+    
+    @Override
+    public String toString() {
+        return new StringBuilder().append("Plan for ").append(pquery.getFullyQualifiedName()).append("(")
+        .append(Joiner.on(',').join(Iterables.transform(adornment, PQueries.parameterNameFunction())))
+        .append("{").append(Joiner.on("}\n{").join(Iterables.transform(plan, new Function<SearchPlanForBody, String>() {
+            @Override
+            public String apply(SearchPlanForBody input) {
+                return input.toString();
+            }
+        }))).toString();
     }
 
 }

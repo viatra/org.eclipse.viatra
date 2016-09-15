@@ -29,6 +29,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOper
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -205,6 +206,15 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     @Override
     public void removeAdapter(ILocalSearchAdapter adapter) {
         removeAdapters(Lists.newArrayList(adapter));
+    }
+
+    @Override
+    public String toString() {
+        if (operations == null) {
+            return "Unspecified plan";
+        } else {
+            return Joiner.on("\n").join(operations);
+        }
     }
 
 }

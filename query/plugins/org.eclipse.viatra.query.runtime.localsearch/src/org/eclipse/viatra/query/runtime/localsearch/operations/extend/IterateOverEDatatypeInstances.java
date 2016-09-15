@@ -56,7 +56,9 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> imple
         String name = dataType.getName();
 
         builder.append("extend ")
-            .append(name);
+        .append(name)
+        .append(" over position ")
+        .append(position);
 
         return builder.toString();
     }

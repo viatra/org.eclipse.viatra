@@ -111,11 +111,8 @@ public class AggregatorExtend extends ExtendOperation<Object> implements IMatche
     
     @Override
     public String toString() {
-    	StringBuilder builder = new StringBuilder();
-    	builder.append("Count check for pattern ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
-    	return super.toString();
+        String patternName = calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1);
+        return String.format("Extend aggregation of %s %s to position %d", aggregator.getAggregator().getOperator().getName(), patternName, position);
     }
-
     
 }

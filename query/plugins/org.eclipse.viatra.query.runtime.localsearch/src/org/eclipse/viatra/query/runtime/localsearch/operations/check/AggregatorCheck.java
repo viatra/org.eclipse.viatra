@@ -116,10 +116,8 @@ public class AggregatorCheck extends CheckOperation implements IMatcherBasedOper
     
     @Override
     public String toString() {
-    	StringBuilder builder = new StringBuilder();
-    	builder.append("Count check for pattern ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
-    	return super.toString();
+        String patternName = calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1);
+        return String.format("Check aggregation of %s %s for position %d", aggregator.getAggregator().getOperator().getName(), patternName, position);
     }
 
     

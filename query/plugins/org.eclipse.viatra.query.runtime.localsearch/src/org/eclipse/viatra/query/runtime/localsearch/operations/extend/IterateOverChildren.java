@@ -58,7 +58,9 @@ public class IterateOverChildren extends ExtendOperation<EObject> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("extend ")
-        	.append("IterateOverChildren");
+            .append(transitive ? "transitive" : "direct")
+            .append(" children of position ").append(sourcePosition).append(" to ")
+        	.append(position);
         return builder.toString();
     }
     

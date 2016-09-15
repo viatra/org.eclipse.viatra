@@ -46,4 +46,9 @@ public class FrameInitializationCheck extends CheckOperation {
         return frame.setKeys(this.parameterKeys);
     }
 
+    @Override
+    public String toString() {
+        return String.format("Parameter positions %s", Arrays.toString(parameterKeys));
+    }
+
 }

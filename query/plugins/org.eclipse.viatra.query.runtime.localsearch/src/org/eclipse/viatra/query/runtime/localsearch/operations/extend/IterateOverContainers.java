@@ -92,7 +92,9 @@ public class IterateOverContainers extends ExtendOperation<EObject> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("extend ")
-        	.append("IterateOverContainers");
+            .append(transitive ? "transitive" : "direct")
+            .append(" containers of position ").append(sourcePosition).append(" to ")
+            .append(position);
         return builder.toString();
     }
 

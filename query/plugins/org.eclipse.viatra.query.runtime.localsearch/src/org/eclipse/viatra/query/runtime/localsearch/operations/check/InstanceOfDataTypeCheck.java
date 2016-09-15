@@ -41,7 +41,7 @@ public class InstanceOfDataTypeCheck extends CheckOperation {
 
     @Override
     public String toString() {
-        return "InstanceOfCheck";
+        return String.format("check position %d for EDataType %s", position, dataType.getName());
     }
     @Override
 	public List<Integer> getVariablePositions() {

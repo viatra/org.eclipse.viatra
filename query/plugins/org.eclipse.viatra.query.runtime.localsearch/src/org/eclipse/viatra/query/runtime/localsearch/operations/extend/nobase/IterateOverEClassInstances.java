@@ -57,7 +57,9 @@ public class IterateOverEClassInstances extends AbstractIteratingExtendOperation
         String name = clazz.getName();
 
         builder.append("extend ")
-        .append(name);
+        .append(name)
+        .append(" over position ")
+        .append(position);
 
         return builder.toString();
     }

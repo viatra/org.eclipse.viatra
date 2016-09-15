@@ -54,7 +54,9 @@ public class IterateOverEClassInstances extends ExtendOperation<EObject> impleme
         String name = clazz.getName();
 
         builder.append("extend ")
-        .append(name);
+        .append(name)
+        .append(" over position ")
+        .append(position);
 
         return builder.toString();
     }

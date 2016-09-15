@@ -59,12 +59,8 @@ public class StructuralFeatureCheck extends CheckOperation {
     
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("check ")
-        	.append(feature.getContainerClass().getSimpleName())
-        	.append('.')
-        	.append(feature.getName());
-        return builder.toString();
+        return String.format("check feature %s.%s from position %d to position %d",
+                feature.getContainerClass().getSimpleName(), feature.getName(), sourcePosition, targetPosition);
     }
     
     @Override

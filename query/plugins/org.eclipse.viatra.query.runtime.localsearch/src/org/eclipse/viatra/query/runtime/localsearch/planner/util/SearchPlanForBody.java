@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /**
@@ -76,6 +77,11 @@ public class SearchPlanForBody {
     
     public Collection<MatcherReference> getDependencies() {
         return dependencies;
+    }
+    
+    @Override
+    public String toString() {
+        return Joiner.on("\n").join(compiledOperations);
     }
     
 }

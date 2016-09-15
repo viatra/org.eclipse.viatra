@@ -101,7 +101,9 @@ public class IterateOverEDatatypeInstances extends AbstractIteratingExtendOperat
         String name = dataType.getName();
 
         builder.append("extend ")
-            .append(name);
+        .append(name)
+        .append(" over position ")
+        .append(position);
 
         return builder.toString();
     }

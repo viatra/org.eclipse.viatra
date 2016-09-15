@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOper
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -92,10 +93,9 @@ public class NACOperation extends CheckOperation implements IMatcherBasedOperati
     
     @Override
     public String toString() {
-    	StringBuilder builder = new StringBuilder();
-    	builder.append("NACOperation, pattern: ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
-    	return builder.toString();
+        return String.format("NAC check %s (%s)", 
+                calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1), 
+                Joiner.on(", ").join(getVariablePositions()));
     }
     
     @Override

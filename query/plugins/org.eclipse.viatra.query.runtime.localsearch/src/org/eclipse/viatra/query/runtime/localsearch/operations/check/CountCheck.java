@@ -100,9 +100,10 @@ public class CountCheck extends CheckOperation implements IMatcherBasedOperation
     @Override
     public String toString() {
     	StringBuilder builder = new StringBuilder();
-    	builder.append("Count check for pattern ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1));
-    	return super.toString();
+    	builder.append("Check count for pattern ")
+    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1))
+    		.append("for position ").append(position);
+    	return builder.toString();
     }
 
     

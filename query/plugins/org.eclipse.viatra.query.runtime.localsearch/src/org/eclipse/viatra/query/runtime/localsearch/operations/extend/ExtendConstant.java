@@ -45,6 +45,9 @@ public class ExtendConstant extends ExtendOperation<Object> {
 		return Lists.asList(position, new Integer[0]);
 	}
     
-
+    @Override
+    public String toString() {
+        return "Extend constant '"+value+"' to position "+position;
+    }
     
 }
