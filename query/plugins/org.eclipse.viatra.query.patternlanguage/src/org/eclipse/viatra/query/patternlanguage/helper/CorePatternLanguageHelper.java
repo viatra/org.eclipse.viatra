@@ -261,7 +261,7 @@ public final class CorePatternLanguageHelper {
             }
             
           }
-    };
+    }
     
     public static Set<Pattern> getReferencedPatternsTransitive(Pattern pattern) {
         return getReferencedPatternsTransitive(pattern, false);

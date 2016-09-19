@@ -116,11 +116,7 @@ import com.google.inject.Inject;
  */
 public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
 
-    /**
-     * @author stampie
-     *
-     */
-    private final class InputKeyToData implements Function<IInputKey, String> {
+    private final static class InputKeyToData implements Function<IInputKey, String> {
         @Override
         public String apply(IInputKey input) {
             if (input instanceof EClassTransitiveInstancesKey) {

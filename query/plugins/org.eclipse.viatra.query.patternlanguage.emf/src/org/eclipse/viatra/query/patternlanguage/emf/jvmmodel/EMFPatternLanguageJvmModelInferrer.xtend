@@ -34,6 +34,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
  *
  * <p>The JVM model should contain all elements that would appear in the Java code
  * which is generated from the source model. Other models link against the JVM model rather than the source model.</p>
+ * @noreference
  */
 class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 

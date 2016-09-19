@@ -21,8 +21,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.VariableDeferredPConstr
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
-import com.google.common.base.Preconditions;
-
 /**
  * @author Gabor Bergmann
  *

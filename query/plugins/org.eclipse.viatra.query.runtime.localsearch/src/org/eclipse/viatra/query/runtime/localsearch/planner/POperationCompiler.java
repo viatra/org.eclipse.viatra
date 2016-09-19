@@ -86,6 +86,10 @@ import com.google.common.collect.Sets;
  */
 public class POperationCompiler {
 
+    /**
+     * 
+     */
+    private static final String UNSUPPORTED_TYPE_MESSAGE = "Unsupported type: ";
     private List<ISearchOperation> operations;
     private Set<MatcherReference> dependencies = Sets.newHashSet();
     private Map<PConstraint, Set<Integer>> variableBindings;
@@ -279,7 +283,7 @@ public class POperationCompiler {
             operations.add(new InstanceOfDataTypeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)),
                     ((EDataTypeInSlotsKey) inputKey).getEmfKey()));
         } else {
-            String msg = "Unsupported type: " + inputKey;
+            String msg = UNSUPPORTED_TYPE_MESSAGE + inputKey;
             throw new QueryProcessingException(msg, null, msg, null);
         }
     }
@@ -297,7 +301,7 @@ public class POperationCompiler {
             operations.add(new InstanceOfDataTypeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)),
                     ((EDataTypeInSlotsKey) inputKey).getEmfKey()));
         } else {
-            String msg = "Unsupported type: " + inputKey;
+            String msg = UNSUPPORTED_TYPE_MESSAGE + inputKey;
             throw new QueryProcessingException(msg, null, msg, null);
 	    }
     }
@@ -503,7 +507,7 @@ public class POperationCompiler {
             }
 
 	    } else {
-	    	throw new IllegalArgumentException("Unsupported type: " + inputKey);
+	    	throw new IllegalArgumentException(UNSUPPORTED_TYPE_MESSAGE + inputKey);
 	    }        
     }
 

@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AbstractMe
  * @since 1.4
  */
 public class LongSumOperator extends AbstractMemorylessAggregationOperator<Long, Long> {
-    public static LongSumOperator INSTANCE = new LongSumOperator();
+    public static final LongSumOperator INSTANCE = new LongSumOperator();
     
     private LongSumOperator() {
         // Singleton, do not call.

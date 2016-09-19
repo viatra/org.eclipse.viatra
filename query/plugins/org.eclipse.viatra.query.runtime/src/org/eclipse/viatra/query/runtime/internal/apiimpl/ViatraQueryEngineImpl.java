@@ -77,6 +77,10 @@ import com.google.common.collect.Multimap;
 public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements IQueryBackendHintProvider, IQueryCacheContext {
     
     /**
+     * 
+     */
+    private static final String QUERY_ON_DISPOSED_ENGINE_MESSAGE = "Cannot evaluate query on disposed engine!";
+    /**
      * The engine manager responsible for this engine. Null if this engine is unmanaged.
      */
     private final ViatraQueryEngineManager manager;
@@ -465,7 +469,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
 	public IQueryResultProvider getResultProvider(IQuerySpecification<?> query) 
 		throws QueryProcessingException, ViatraQueryException 
 	{
-		Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
+		Preconditions.checkState(!disposed, QUERY_ON_DISPOSED_ENGINE_MESSAGE);
         
 		return getResultProviderInternal(query, getQueryEvaluationHint(query.getInternalQueryRepresentation()));
 	}
@@ -481,7 +485,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     public IQueryResultProvider getResultProvider(IQuerySpecification<?> query, QueryEvaluationHint hint) 
         throws QueryProcessingException, ViatraQueryException 
     {
-        Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
+        Preconditions.checkState(!disposed, QUERY_ON_DISPOSED_ENGINE_MESSAGE);
         
         return getResultProviderInternal(query, getQueryEvaluationHint(query, hint));
     }
@@ -569,7 +573,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
 			final QueryEvaluationHint optionalEvaluationHints) throws ViatraQueryException 
 	{
         try {
-    		Preconditions.checkState(!disposed, "Cannot evaluate query on disposed engine!");
+    		Preconditions.checkState(!disposed, QUERY_ON_DISPOSED_ENGINE_MESSAGE);
     		
     		final Set<IQuerySpecification<?>> specifications = new HashSet<IQuerySpecification<?>>(queryGroup.getSpecifications());
             final Collection<PQuery> patterns = Collections2.transform(specifications, new Function<IQuerySpecification<?>, PQuery>() {

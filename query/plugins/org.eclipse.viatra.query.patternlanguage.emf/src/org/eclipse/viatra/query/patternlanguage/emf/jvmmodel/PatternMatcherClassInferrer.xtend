@@ -42,6 +42,7 @@ import org.eclipse.xtext.diagnostics.Severity
  * {@link ViatraQueryMatcher} implementation inferrer.
  *
  * @author Mark Czotter
+ * @noreference
  */
 class PatternMatcherClassInferrer {
 

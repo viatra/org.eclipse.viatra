@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AbstractMe
  * @since 1.4
  */
 public class DoubleSumOperator extends AbstractMemorylessAggregationOperator<Double, Double> {
-    public static DoubleSumOperator INSTANCE = new DoubleSumOperator();
+    public static final DoubleSumOperator INSTANCE = new DoubleSumOperator();
     
     private DoubleSumOperator() {
         // Singleton, do not call.

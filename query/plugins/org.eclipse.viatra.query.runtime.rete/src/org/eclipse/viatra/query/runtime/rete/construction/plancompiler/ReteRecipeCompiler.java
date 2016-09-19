@@ -87,7 +87,6 @@ import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan;
 import org.eclipse.viatra.query.runtime.rete.traceability.ParameterProjectionTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
-import org.omg.CORBA.CharSeqHelper;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;

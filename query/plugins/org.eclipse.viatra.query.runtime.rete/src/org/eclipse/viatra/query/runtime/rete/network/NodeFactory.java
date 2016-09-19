@@ -23,7 +23,6 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.aggregation.ColumnAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.CountNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
-import org.eclipse.viatra.query.runtime.rete.aggregation.IndexerBasedAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputStatelessFilterNode;
 import org.eclipse.viatra.query.runtime.rete.eval.CachedFunctionEvaluatorNode;

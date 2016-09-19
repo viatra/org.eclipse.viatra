@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.matchers" version="2">
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/DoubleSumOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.DoubleSumOperator">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="AbstractMemorylessAggregationOperator&lt;Domain, AggregateResult&gt;"/>
+                <message_argument value="DoubleSumOperator"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/IntegerSumOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.IntegerSumOperator">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="AbstractMemorylessAggregationOperator&lt;Domain, AggregateResult&gt;"/>
+                <message_argument value="IntegerSumOperator"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/aggregators/LongSumOperator.java" type="org.eclipse.viatra.query.runtime.matchers.aggregators.LongSumOperator">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="AbstractMemorylessAggregationOperator&lt;Domain, AggregateResult&gt;"/>
+                <message_argument value="LongSumOperator"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/backend/IQueryBackend.java" type="org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend">
         <filter comment="New method allows to inject hints to called pattern" id="403804204">
             <message_arguments>

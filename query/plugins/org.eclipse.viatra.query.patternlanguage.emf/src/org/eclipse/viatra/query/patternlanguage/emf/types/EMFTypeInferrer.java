@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.types;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;

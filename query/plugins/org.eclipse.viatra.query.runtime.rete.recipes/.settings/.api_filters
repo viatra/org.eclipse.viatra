@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.runtime.rete.recipes" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.recipes.AggregatorRecipe">
+        <filter comment="Generated code updates" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.AggregatorRecipe"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes_1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.recipes.impl.AggregatorRecipeImpl">
+        <filter comment="Generated code updates" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.impl.AggregatorRecipeImpl"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes_1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/IndexerBasedAggregatorRecipe.java" type="org.eclipse.viatra.query.runtime.rete.recipes.IndexerBasedAggregatorRecipe">
+        <filter comment="Generated code updates" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.IndexerBasedAggregatorRecipe"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/RecipesFactory.java" type="org.eclipse.viatra.query.runtime.rete.recipes.RecipesFactory">
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesFactory"/>
+                <message_argument value="createSingleColumnAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="createSingleColumnAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/RecipesPackage.java" type="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage">
+        <filter comment="Generated code updates" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="INDEX"/>
+                <message_argument value="32"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="AGGREGATION_OPERATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE_OPERATION_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE__EQUIVALENCE_CLASS_IDS"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE__PARENT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE__TRACE_INFO"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE_OPERATION_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__AGGREGABLE_INDEX"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__EQUIVALENCE_CLASS_IDS"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__GROUP_BY_MASK"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__MULTISET_AGGREGATION_OPERATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__PARENT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__TRACE_INFO"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getAggregationOperator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getIndexerBasedAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getIndexerBasedAggregatorRecipe_Parent()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getIndexerBasedAggregatorRecipe__GetArity()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getSingleColumnAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getSingleColumnAggregatorRecipe_AggregableIndex()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getSingleColumnAggregatorRecipe_GroupByMask()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getSingleColumnAggregatorRecipe_MultisetAggregationOperator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getSingleColumnAggregatorRecipe__GetArity()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="AGGREGATOR_RECIPE_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="AGGREGATOR_RECIPE_OPERATION_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="AGGREGATOR_RECIPE__EQUIVALENCE_CLASS_IDS"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="AGGREGATOR_RECIPE__PARENT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="AGGREGATOR_RECIPE__TRACE_INFO"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getAggregatorRecipe_Parent()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getAggregatorRecipe__GetArity()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="AGGREGATION_OPERATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE_OPERATION_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE__EQUIVALENCE_CLASS_IDS"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE__PARENT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE__TRACE_INFO"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE_FEATURE_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE_OPERATION_COUNT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__AGGREGABLE_INDEX"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__EQUIVALENCE_CLASS_IDS"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__GROUP_BY_MASK"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__MULTISET_AGGREGATION_OPERATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__PARENT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__TRACE_INFO"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="getAggregationOperator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="getIndexerBasedAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="getIndexerBasedAggregatorRecipe_Parent()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="getIndexerBasedAggregatorRecipe__GetArity()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe_AggregableIndex()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe_GroupByMask()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe_MultisetAggregationOperator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe__GetArity()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/RecipesPackage.java" type="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage$Literals">
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="AGGREGATION_OPERATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE__PARENT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__AGGREGABLE_INDEX"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__GROUP_BY_MASK"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__MULTISET_AGGREGATION_OPERATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="AGGREGATOR_RECIPE__PARENT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="405864542">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="AGGREGATION_OPERATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE__PARENT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="INDEXER_BASED_AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__AGGREGABLE_INDEX"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__GROUP_BY_MASK"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE__MULTISET_AGGREGATION_OPERATOR"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1211105284">
+            <message_arguments>
+                <message_argument value="SINGLE_COLUMN_AGGREGATOR_RECIPE___GET_ARITY"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/SingleColumnAggregatorRecipe.java" type="org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe">
+        <filter comment="Generated code updates" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/impl/IndexerBasedAggregatorRecipeImpl.java" type="org.eclipse.viatra.query.runtime.rete.recipes.impl.IndexerBasedAggregatorRecipeImpl">
+        <filter comment="Generated code updates" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.impl.IndexerBasedAggregatorRecipeImpl"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/impl/RecipesFactoryImpl.java" type="org.eclipse.viatra.query.runtime.rete.recipes.impl.RecipesFactoryImpl">
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="convertAggregationOperatorToString(EDataType, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="createAggregationOperatorFromString(EDataType, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="createSingleColumnAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/impl/RecipesPackageImpl.java" type="org.eclipse.viatra.query.runtime.rete.recipes.impl.RecipesPackageImpl">
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.impl.RecipesPackageImpl"/>
+                <message_argument value="getAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.impl.RecipesPackageImpl"/>
+                <message_argument value="getAggregatorRecipe_Parent()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.impl.RecipesPackageImpl"/>
+                <message_argument value="getAggregatorRecipe__GetArity()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getAggregationOperator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getIndexerBasedAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getIndexerBasedAggregatorRecipe_Parent()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getIndexerBasedAggregatorRecipe__GetArity()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe_AggregableIndex()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe_GroupByMask()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe_MultisetAggregationOperator()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getSingleColumnAggregatorRecipe__GetArity()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/impl/SingleColumnAggregatorRecipeImpl.java" type="org.eclipse.viatra.query.runtime.rete.recipes.impl.SingleColumnAggregatorRecipeImpl">
+        <filter comment="Generated code updates" id="1110441988">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.impl.SingleColumnAggregatorRecipeImpl"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/util/RecipesAdapterFactory.java" type="org.eclipse.viatra.query.runtime.rete.recipes.util.RecipesAdapterFactory">
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.util.RecipesAdapterFactory"/>
+                <message_argument value="createAggregatorRecipeAdapter()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="createIndexerBasedAggregatorRecipeAdapter()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="createSingleColumnAggregatorRecipeAdapter()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/util/RecipesSwitch.java" type="org.eclipse.viatra.query.runtime.rete.recipes.util.RecipesSwitch">
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.util.RecipesSwitch"/>
+                <message_argument value="caseAggregatorRecipe(AggregatorRecipe)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="caseIndexerBasedAggregatorRecipe(IndexerBasedAggregatorRecipe)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="caseSingleColumnAggregatorRecipe(SingleColumnAggregatorRecipe)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

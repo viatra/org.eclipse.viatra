@@ -19,7 +19,6 @@ import org.eclipse.xtext.common.types.JvmUnknownTypeReference;
 
 /**
  * @author Zoltan Ujhelyi
- * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class AbstractTypeSystem implements ITypeSystem {
 

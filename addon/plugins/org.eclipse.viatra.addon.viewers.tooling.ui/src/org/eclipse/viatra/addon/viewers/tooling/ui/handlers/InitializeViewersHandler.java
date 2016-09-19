@@ -27,11 +27,8 @@ import com.google.common.collect.Sets;
 
 public abstract class InitializeViewersHandler extends AbstractHandler {
 
-    IModelConnectorTypeEnum type;
-
     public InitializeViewersHandler(IModelConnectorTypeEnum modelconnectortype) {
         super();
-        type = modelconnectortype;
     }
 
     @Override

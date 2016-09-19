@@ -343,7 +343,7 @@ public interface NavigationHelper {
      * 
      * @param clazz
      * @return
-     * @since 1.3
+     * @since 1.4
      */
     public int countAllInstances(EClass clazz);
     

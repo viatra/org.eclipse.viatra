@@ -37,6 +37,7 @@ import org.eclipse.xtext.diagnostics.Severity
  * {@link IPatternMatch} implementation inferer.
  *
  * @author Mark Czotter
+ * @noreference
  */
 class PatternMatchClassInferrer {
 

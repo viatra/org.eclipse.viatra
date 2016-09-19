@@ -61,6 +61,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
  * {@link IQuerySpecification} implementation inferrer.
  *
  * @author Mark Czotter
+ * @noreference
  */
 class PatternQuerySpecificationClassInferrer {
 

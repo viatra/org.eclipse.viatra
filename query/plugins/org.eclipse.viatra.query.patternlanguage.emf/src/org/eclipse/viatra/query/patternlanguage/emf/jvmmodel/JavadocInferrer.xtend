@@ -18,6 +18,9 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
 import org.eclipse.xtext.naming.IQualifiedNameProvider
 
+/**
+ * @noreference
+ */
 class JavadocInferrer {
 
 	@Inject extension EMFPatternLanguageJvmModelInferrerUtil

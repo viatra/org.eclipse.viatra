@@ -32,17 +32,42 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/parser/antlr/internal/InternalEMFPatternLanguageLexer.java" type="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageLexer">
-        <filter comment="Xtext generated code" id="338755678">
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/AbstractEMFPatternLanguageRuntimeModule.java" type="org.eclipse.viatra.query.patternlanguage.emf.AbstractEMFPatternLanguageRuntimeModule">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageLexer"/>
-                <message_argument value="T__100"/>
+                <message_argument value="bindIUnorderedGroupHelper()"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="338792546">
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/parser/antlr/internal/InternalEMFPatternLanguageLexer.java" type="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageLexer">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageLexer"/>
-                <message_argument value="mT__100()"/>
+                <message_argument value="T__101"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="T__102"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="T__103"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="mT__101()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="mT__102()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="mT__103()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -50,13 +75,19 @@
         <filter comment="Xtext generated code" id="338755678">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
-                <message_argument value="T__100"/>
+                <message_argument value="dfa109"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="338755678">
+        <filter comment="Generated code updates" id="338755678">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
-                <message_argument value="dfa109"/>
+                <message_argument value="dfa110"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
+                <message_argument value="dfa111"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="338755678">
@@ -71,10 +102,10 @@
                 <message_argument value="dfa117"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="338755678">
+        <filter comment="Generated code updates" id="338755678">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
-                <message_argument value="dfa122"/>
+                <message_argument value="dfa119"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="338755678">
@@ -104,19 +135,19 @@
         <filter comment="Xtext generated code" id="338755678">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
-                <message_argument value="dfa53"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Xtext generated code" id="338755678">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
                 <message_argument value="dfa68"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="338755678">
+        <filter comment="Generated code updates" id="338755678">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
-                <message_argument value="dfa72"/>
+                <message_argument value="dfa69"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
+                <message_argument value="dfa70"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="338755678">
@@ -131,6 +162,12 @@
                 <message_argument value="dfa87"/>
             </message_arguments>
         </filter>
+        <filter comment="Generated code updates" id="338755678">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
+                <message_argument value="dfa88"/>
+            </message_arguments>
+        </filter>
         <filter comment="Xtext generated code" id="338792546">
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.parser.antlr.internal.InternalEMFPatternLanguageParser"/>
@@ -143,14 +180,49 @@
                 <message_argument value="ruleAggregatorExpression()"/>
             </message_arguments>
         </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="FOLLOW_109"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="FOLLOW_110"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="FOLLOW_111"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="T__101"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="T__102"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="T__103"/>
+            </message_arguments>
+        </filter>
         <filter comment="Xtext generated code" id="1143996420">
             <message_arguments>
                 <message_argument value="dfa112"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="dfa116"/>
+                <message_argument value="dfa113"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa114"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
@@ -158,14 +230,19 @@
                 <message_argument value="dfa120"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="dfa123"/>
+                <message_argument value="dfa121"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="dfa139"/>
+                <message_argument value="dfa125"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa13"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
@@ -173,19 +250,19 @@
                 <message_argument value="dfa141"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="dfa41"/>
+                <message_argument value="dfa143"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="dfa51"/>
+                <message_argument value="dfa43"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="dfa54"/>
+                <message_argument value="dfa56"/>
             </message_arguments>
         </filter>
         <filter comment="Xtext generated code" id="1143996420">
@@ -198,14 +275,54 @@
                 <message_argument value="dfa73"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="dfa82"/>
+                <message_argument value="dfa75"/>
             </message_arguments>
         </filter>
-        <filter comment="Xtext generated code" id="1143996420">
+        <filter comment="Generated code updates" id="1143996420">
             <message_arguments>
-                <message_argument value="dfa89"/>
+                <message_argument value="dfa84"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa90"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="dfa91"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="entryRuleJavaType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="entryRuleTypeCheckConstraint()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="ruleExecutionTypeModifier()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="ruleJavaType()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="ruleParameterDirectionModifier()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="ruleTypeCheckConstraint()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -220,6 +337,125 @@
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess"/>
                 <message_argument value="getAggregatorExpressionRule()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getExecutionTypeAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getExecutionTypeModifierAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getExecutionTypeModifierRule()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getExecutionTypeRule()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getJavaTypeAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getJavaTypeRule()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getParameterDirectionAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getParameterDirectionModifierAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getParameterDirectionModifierRule()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getParameterDirectionRule()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getTypeCheckConstraintAccess()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getTypeCheckConstraintRule()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/emf/services/EMFPatternLanguageGrammarAccess.java" type="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess$ConstraintElements">
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.ConstraintElements"/>
+                <message_argument value="getCompareConstraintParserRuleCall_1()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.ConstraintElements"/>
+                <message_argument value="getEClassifierConstraintParserRuleCall_4()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.ConstraintElements"/>
+                <message_argument value="getPathExpressionConstraintParserRuleCall_3()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess.ConstraintElements"/>
+                <message_argument value="getPatternCompositionConstraintParserRuleCall_2()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getCompareConstraintParserRuleCall_2()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getEClassifierConstraintParserRuleCall_5()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getPathExpressionConstraintParserRuleCall_4()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getPatternCompositionConstraintParserRuleCall_3()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="getTypeCheckConstraintParserRuleCall_1()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="xtend-gen/org/eclipse/viatra/query/patternlanguage/emf/jvmmodel/BodyCodeGenerator.java" type="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.BodyCodeGenerator">
+        <filter id="338722907">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.BodyCodeGenerator"/>
+                <message_argument value="BodyCodeGenerator(Pattern, PatternBody, EMFPatternLanguageJvmModelInferrerUtil, IErrorFeedback, Serializer)"/>
             </message_arguments>
         </filter>
     </resource>

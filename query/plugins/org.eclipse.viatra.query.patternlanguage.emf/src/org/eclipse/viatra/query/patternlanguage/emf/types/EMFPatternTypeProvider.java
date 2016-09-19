@@ -80,9 +80,9 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 /**
- * A type provider for inferring the correct types for the pattern variables. It handles
- * all constraints in the model which can modify the outcome of the type, but it has some practical limitations, as the
- * calculation of the proper type can be time consuming in some cases.
+ * A type provider for inferring the correct types for the pattern variables. It handles all constraints in the model
+ * which can modify the outcome of the type, but it has some practical limitations, as the calculation of the proper
+ * type can be time consuming in some cases.
  */
 @Singleton
 @SuppressWarnings("restriction")
@@ -94,18 +94,18 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
 
     @Inject
     private Primitives primitives;
-    
+
     @Inject
     private CompilerPhases compilerPhases;
     @Inject
     private IResourceScopeCache cache;
-    
+
     @Inject
     private IErrorFeedback errorFeedback;
-    
+
     @Inject
     private IBatchTypeResolver typeResolver;
-    
+
     @Inject
     private IMetamodelProvider metamodelProvider;
 
@@ -113,13 +113,13 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
 
     @Override
     public JvmTypeReference getVariableType(final Variable variable) {
-        return cache.get(variable, variable.eResource(), new Provider<JvmTypeReference>(){
-            
+        return cache.get(variable, variable.eResource(), new Provider<JvmTypeReference>() {
+
             @Override
             public JvmTypeReference get() {
                 return doGetVariableType(variable);
             }
-            
+
         });
     }
 
@@ -131,12 +131,12 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
     @Override
     public JvmTypeReference getJvmType(EClassifier classifier, EObject context) {
         if (classifier != null) {
-            String className = metamodelProvider.getQualifiedClassName(classifier, context); 
+            String className = metamodelProvider.getQualifiedClassName(classifier, context);
             if (!Strings.isNullOrEmpty(className)) {
                 return getTypeReferenceForTypeName(className, context);
             }
         }
-        //Return Object or EObject if no classifier can be found 
+        // Return Object or EObject if no classifier can be found
         final Class<?> clazz = (classifier instanceof EClass) ? EObject.class : Object.class;
         return typeReferences.getTypeForName(clazz, context);
     }
@@ -158,8 +158,8 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
         final Set<EClassifier> resultList = new HashSet<EClassifier>(classifierList);
         if (resultList.size() > 1) {
             for (EClassifier classifier : classifierList) {
-                if ("EObject".equals(classifier.getName()) && 
-                        EcorePackage.eNS_URI.equals(classifier.getEPackage().getNsURI())) {
+                if ("EObject".equals(classifier.getName())
+                        && EcorePackage.eNS_URI.equals(classifier.getEPackage().getNsURI())) {
                     resultList.remove(classifier);
                 } else if (classifier instanceof EClass) {
                     for (EClass eClass : ((EClass) classifier).getEAllSuperTypes()) {
@@ -173,17 +173,19 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
 
                         @Override
                         public boolean apply(EDataType dataType) {
-                        	if (dataType == null) {
-                        		return false;
-                        	} else if (dataType.equals(eDataType)){
-                        		return false;
-                        	} else if (dataType.getInstanceClassName() != null && eDataType.getInstanceClassName() != null) {
-                        		return dataType.getInstanceClassName().equals(eDataType.getInstanceClassName()) && resultList.contains(eDataType);                        		
-                        	}
-                        	return false;
+                            if (dataType == null) {
+                                return false;
+                            } else if (dataType.equals(eDataType)) {
+                                return false;
+                            } else if (dataType.getInstanceClassName() != null
+                                    && eDataType.getInstanceClassName() != null) {
+                                return dataType.getInstanceClassName().equals(eDataType.getInstanceClassName())
+                                        && resultList.contains(eDataType);
+                            }
+                            return false;
                         }
                     })) {
-                       resultList.remove(eDataType); 
+                        resultList.remove(eDataType);
                     }
                 }
             }
@@ -192,16 +194,16 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
         return resultList;
     }
 
-    
-    private EClassifier getClassifierForParameterVariable(Pattern pattern, Variable parameterVariable, int recursionCallingLevel) {
-    	EClassifier explicitType = getExplicitClassifierForPatternParameterVariable(parameterVariable);
-		if (explicitType != null) { // there is an explicit type, it overrides inference
-    		return explicitType;
-    	} else { // no explicit type, try to infer something from bodies  		
-    		return getClassifierForVariableWithPattern(pattern, parameterVariable, recursionCallingLevel);
-    	}
+    private EClassifier getClassifierForParameterVariable(Pattern pattern, Variable parameterVariable,
+            int recursionCallingLevel) {
+        EClassifier explicitType = getExplicitClassifierForPatternParameterVariable(parameterVariable);
+        if (explicitType != null) { // there is an explicit type, it overrides inference
+            return explicitType;
+        } else { // no explicit type, try to infer something from bodies
+            return getClassifierForVariableWithPattern(pattern, parameterVariable, recursionCallingLevel);
+        }
     }
-    
+
     private EClassifier getClassifierForVariableWithPattern(Pattern pattern, Variable variable,
             int recursionCallingLevel) {
         Set<EClassifier> intermediateResultList = new HashSet<EClassifier>();
@@ -245,8 +247,8 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
 
     @Override
     public Set<EClassifier> getIrreducibleClassifiersForVariableInBody(PatternBody patternBody, Variable variable) {
-        Set<EClassifier> possibleClassifiersList = getPotentialClassifiersForVariableWithPatternBody(patternBody, variable, 0,
-                null);
+        Set<EClassifier> possibleClassifiersList = getPotentialClassifiersForVariableWithPatternBody(patternBody,
+                variable, 0, null);
         if (possibleClassifiersList.size() <= 1) {
             return possibleClassifiersList;
         } else {
@@ -283,8 +285,8 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
         }
     }
 
-    private Set<EClassifier> getPotentialClassifiersForVariableWithPatternBody(PatternBody patternBody, Variable variable,
-            int recursionCallingLevel, Variable injectiveVariablePair) {
+    private Set<EClassifier> getPotentialClassifiersForVariableWithPatternBody(PatternBody patternBody,
+            Variable variable, int recursionCallingLevel, Variable injectiveVariablePair) {
         Set<EClassifier> possibleClassifiersList = new HashSet<EClassifier>();
         EClassifier classifier = null;
 
@@ -433,7 +435,7 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
         }
         return false;
     }
-    
+
     @Override
     public EClassifier getClassifierForLiteralComputationEnumValueReference(ValueReference valueReference) {
         if (valueReference instanceof LiteralValueReference) {
@@ -449,24 +451,20 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
                 return null;
             }
         } else if (valueReference instanceof AggregatedValue) {
-            AggregatedValue aggregatedValue = (AggregatedValue) valueReference;
-//            if (aggregatedValue.getAggregator() instanceof CountAggregator) {
-//                return EcorePackage.Literals.EINT;
-//            }
             return EcorePackage.Literals.EINT;
         } else if (valueReference instanceof FunctionEvaluationValue) {
             FunctionEvaluationValue eval = (FunctionEvaluationValue) valueReference;
             final XExpression xExpression = eval.getExpression();
-            //XXX If type cannot be calculated, use Java Object
+            // XXX If type cannot be calculated, use Java Object
             EDataType dataType = EcorePackage.Literals.EJAVA_OBJECT;
-            if (!compilerPhases.isIndexing(xExpression)){
+            if (!compilerPhases.isIndexing(xExpression)) {
                 final IResolvedTypes resolvedTypes = typeResolver.resolveTypes(xExpression);
                 final LightweightTypeReference type = resolvedTypes.getReturnType(xExpression);
-            	if (type != null) {
-            	    dataType = EcoreFactory.eINSTANCE.createEDataType();
-            	    dataType.setName(type.getSimpleName());
-            	    dataType.setInstanceClassName(type.getJavaIdentifier());
-            	}
+                if (type != null) {
+                    dataType = EcoreFactory.eINSTANCE.createEDataType();
+                    dataType.setName(type.getSimpleName());
+                    dataType.setInstanceClassName(type.getJavaIdentifier());
+                }
             }
             return dataType;
         } else if (valueReference instanceof EnumValue) {
@@ -486,22 +484,24 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
         }
         return pathExpressionTail.getType();
     }
-    
+
     @Override
-    public Map<PathExpressionTail,EStructuralFeature> getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail) {
-        Map<PathExpressionTail,EStructuralFeature> types = Maps.newHashMap();
+    public Map<PathExpressionTail, EStructuralFeature> getAllFeaturesFromPathExpressionTail(
+            PathExpressionTail pathExpressionTail) {
+        Map<PathExpressionTail, EStructuralFeature> types = Maps.newHashMap();
         getAllFeaturesFromPathExpressionTail(pathExpressionTail, types);
         return types;
     }
-    
-    private void getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail, Map<PathExpressionTail,EStructuralFeature> types) {
+
+    private void getAllFeaturesFromPathExpressionTail(PathExpressionTail pathExpressionTail,
+            Map<PathExpressionTail, EStructuralFeature> types) {
         if (pathExpressionTail != null) {
             Type type = pathExpressionTail.getType();
-            if(type instanceof ReferenceType) {
+            if (type instanceof ReferenceType) {
                 ReferenceType referenceType = (ReferenceType) type;
                 EStructuralFeature refname = referenceType.getRefname();
-                if(refname != null) {
-                    types.put(pathExpressionTail,refname);
+                if (refname != null) {
+                    types.put(pathExpressionTail, refname);
                 }
             }
             getAllFeaturesFromPathExpressionTail(pathExpressionTail.getTail(), types);
@@ -511,20 +511,21 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
     private JvmTypeReference getTypeReferenceForTypeName(String typeName, EObject context) {
         JvmTypeReference typeRef = typeReferences.getTypeForName(typeName, context);
         JvmTypeReference typeReference = primitives.asWrapperTypeIfPrimitive(typeRef);
-        
+
         if (typeReference == null) {
             EObject errorContext = context;
             String contextName = context.toString();
-            if (context instanceof Variable && ((Variable)context).eContainer() instanceof PatternBody && ((Variable)context).getReferences().size() > 0) {
-                contextName = ((Variable)context).getName();
-                errorContext = ((Variable)context).getReferences().get(0);
+            if (context instanceof Variable && ((Variable) context).eContainer() instanceof PatternBody
+                    && ((Variable) context).getReferences().size() > 0) {
+                contextName = ((Variable) context).getName();
+                errorContext = ((Variable) context).getReferences().get(0);
             }
-            errorFeedback.reportError(
-                    errorContext,
+            errorFeedback.reportError(errorContext,
                     String.format(
                             "Cannot resolve corresponding Java type for variable %s. Are the required bundle dependencies set?",
-                            contextName), EMFPatternLanguageJvmModelInferrer.INVALID_TYPEREF_CODE,
-                            Severity.WARNING, IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
+                            contextName),
+                    EMFPatternLanguageJvmModelInferrer.INVALID_TYPEREF_CODE, Severity.WARNING,
+                    IErrorFeedback.JVMINFERENCE_ERROR_TYPE);
         }
         return typeReference;
     }

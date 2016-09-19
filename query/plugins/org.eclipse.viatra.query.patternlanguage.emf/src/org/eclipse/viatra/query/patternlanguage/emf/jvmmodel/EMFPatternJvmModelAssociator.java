@@ -21,6 +21,7 @@ import com.google.inject.Inject;
  * This subClass is needed for local variable scoping. PatternBody not associated with any Inferred classes.
  *
  * @author Mark Czotter
+ * @noreference This class is not intended to be referenced by clients.
  *
  */
 public class EMFPatternJvmModelAssociator extends PatternLanguageJvmModelAssociator {

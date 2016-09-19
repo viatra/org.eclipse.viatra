@@ -18,7 +18,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AbstractMe
  * @since 1.4
  */
 public class IntegerSumOperator extends AbstractMemorylessAggregationOperator<Integer, Integer> {
-    public static IntegerSumOperator INSTANCE = new IntegerSumOperator();
+    public static final IntegerSumOperator INSTANCE = new IntegerSumOperator();
     
     private IntegerSumOperator() {
         // Singleton, do not call.

@@ -22,7 +22,7 @@ import org.eclipse.viatra.query.tooling.ui.queryresult.QueryResultView;
  */
 public class ActiveEnginePropertyTester extends PropertyTester {
 
-    private final String ACTIVE_ENGINE = "activeengine";
+    private static final String ACTIVE_ENGINE = "activeengine";
     public static final String ACTIVE_ENGINE_ID = "org.eclipse.viatra.query.tooling.ui.browser.result.activeengine";
 
     @Override

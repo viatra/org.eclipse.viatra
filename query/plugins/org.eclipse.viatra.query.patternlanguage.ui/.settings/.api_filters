@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.patternlanguage.ui" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatorExpression">
+        <filter comment="Generated code updates" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatorExpression"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.ui_1.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.CountAggregator">
+        <filter comment="Generated code updates" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.CountAggregator"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.ui_1.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AggregatorExpressionImpl">
+        <filter comment="Generated code updates" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.AggregatorExpressionImpl"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.ui_1.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.CountAggregatorImpl">
+        <filter comment="Generated code updates" id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.patternLanguage.impl.CountAggregatorImpl"/>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.ui_1.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/patternlanguage/ui/contentassist/AbstractPatternLanguageProposalProvider.java" type="org.eclipse.viatra.query.patternlanguage.ui.contentassist.AbstractPatternLanguageProposalProvider">
+        <filter comment="Generated code updates" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.patternlanguage.ui.contentassist.AbstractPatternLanguageProposalProvider"/>
+                <message_argument value="complete_AggregatorExpression(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeJavaType_ClassRef(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeJavaType_Typename(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeModifiers_Execution(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeParameter_Direction(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeTypeCheckConstraint_Type(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeTypeCheckConstraint_Var(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="completeVariableReference_Aggregator(EObject, Assignment, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="complete_ExecutionType(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="complete_ExecutionTypeModifier(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="complete_JavaType(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="complete_ParameterDirection(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="complete_ParameterDirectionModifier(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Generated code updates" id="1143996420">
+            <message_arguments>
+                <message_argument value="complete_TypeCheckConstraint(EObject, RuleCall, ContentAssistContext, ICompletionProposalAcceptor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

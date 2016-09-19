@@ -28,6 +28,7 @@ import org.eclipse.xtext.diagnostics.Severity
  * {@link IMatchProcessor} implementation inferrer.
  *
  * @author Mark Czotter
+ * @noreference
  */
 class PatternMatchProcessorClassInferrer {
 

@@ -56,6 +56,7 @@ import org.eclipse.xtext.common.types.JvmParameterizedTypeReference
  * {@link PatternModelAcceptor} implementation that generates body code for {@link IQuerySpecification} classes.
  * Implementation note: it extends {@link StringConcatenationClient} so that it can be used with {@link ImportingStringConcatenation}.
  * @since 1.1
+ * @noreference
  */
 class BodyCodeGenerator extends StringConcatenationClient {
 

@@ -52,6 +52,7 @@ import com.google.common.collect.Maps;
  * @author Bergmann Gabor
  *
  * <p> TODO: {@link #ensureIndexed(EClass)} may be inefficient if supertype already cached.
+ * @since 1.4
  */
 public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 	protected final NavigationHelper baseIndex;
@@ -660,11 +661,17 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     	return externalElements;
     }
     
+    /**
+     * @since 1.4
+     */
     @Override
     public void ensureWildcardIndexing(IndexingService service) {
         baseIndex.setWildcardLevel(IndexingLevel.toLevel(service));
     }
     
+    /**
+     * @since 1.4
+     */
     @Override
     public void executeAfterTraversal(Runnable runnable) throws InvocationTargetException {
         baseIndex.executeAfterTraversal(runnable);

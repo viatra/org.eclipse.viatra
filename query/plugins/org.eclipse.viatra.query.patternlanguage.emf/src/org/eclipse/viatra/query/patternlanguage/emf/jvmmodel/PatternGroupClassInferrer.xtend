@@ -31,6 +31,7 @@ import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 
 /**
  * Model Inferrer for Pattern grouping. Infers a Group class for every PatternModel.
+ * @noreference
  */
 class PatternGroupClassInferrer {
 

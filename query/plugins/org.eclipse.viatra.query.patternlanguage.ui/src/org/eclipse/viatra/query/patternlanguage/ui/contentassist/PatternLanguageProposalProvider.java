@@ -61,7 +61,7 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
     @Inject
     private ITypesProposalProvider typeProposalProvider;
 
-    private class ReferenceableVariable implements Predicate<Variable> {
+    private static class ReferenceableVariable implements Predicate<Variable> {
 
         @Override
         public boolean apply(Variable v) {
@@ -71,7 +71,7 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
         
     }
     
-    private class ReferenceableVariableDescription implements Predicate<IEObjectDescription> {
+    private static class ReferenceableVariableDescription implements Predicate<IEObjectDescription> {
         
         @Override
         public boolean apply(IEObjectDescription desc) {

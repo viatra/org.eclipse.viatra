@@ -10,13 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.aggregators;
 
-import java.util.EnumMap;
-
-import javax.print.attribute.standard.RequestingUserName;
-
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.AbstractMultisetAggregationOperator;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 

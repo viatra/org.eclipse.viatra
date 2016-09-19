@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.index.AggregatorNode">
+        <filter id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.AggregatorNode"/>
+                <message_argument value="org.eclipse.viatra.query.runtime_1.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.viatra.query.runtime.rete.index.CountNode">
+        <filter id="305422471">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.index.CountNode"/>
+                <message_argument value="org.eclipse.viatra.query.runtime_1.3.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/api/impl/BaseMatcher.java" type="org.eclipse.viatra.query.runtime.api.impl.BaseMatcher">
+        <filter comment="QueryResultWrapper has no API methods" id="576720909">
+            <message_arguments>
+                <message_argument value="QueryResultWrapper"/>
+                <message_argument value="BaseMatcher&lt;Match&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/api/scope/QueryScope.java" type="org.eclipse.viatra.query.runtime.api.scope.QueryScope">
+        <filter comment="No public method on base class" id="576720909">
+            <message_arguments>
+                <message_argument value="EngineContextFactory"/>
+                <message_argument value="QueryScope"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/emf/EMFQueryRuntimeContext.java" type="org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext">
         <filter comment="Replaced internal set with map" id="388161617">
             <message_arguments>
