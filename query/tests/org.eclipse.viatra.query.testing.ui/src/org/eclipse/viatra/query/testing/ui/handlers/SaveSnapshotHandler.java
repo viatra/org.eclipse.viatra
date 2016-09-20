@@ -99,9 +99,8 @@ public class SaveSnapshotHandler extends AbstractHandler {
                     engine = matcher.getEngine();
                 }
 			}
-		} else if(selection instanceof IStructuredSelection){
-            IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-		    Iterator<IFilteredMatcherContent> filteredMatchers = Iterators.filter(structuredSelection.iterator(), IFilteredMatcherContent.class);
+		} else {
+		    Iterator<IFilteredMatcherContent> filteredMatchers = Iterators.filter(selection.iterator(), IFilteredMatcherContent.class);
 		    while (filteredMatchers.hasNext()) {
                 IFilteredMatcherContent selectedElement = filteredMatchers.next();
                 matchers.add(selectedElement);
@@ -169,10 +168,6 @@ public class SaveSnapshotHandler extends AbstractHandler {
 	}
 
 
-	/**
-	 * @param engine
-	 * @param snapshot
-	 */
 	private boolean validateInputSpecification(ViatraQueryEngine engine, QuerySnapshot snapshot) {
 		if(snapshot.getInputSpecification() != null) {
 			Notifier root = helper.getEMFRootForSnapshot(snapshot);
@@ -182,42 +177,6 @@ public class SaveSnapshotHandler extends AbstractHandler {
 				return false;
 			}
 			return true;
-			/*switch(snapshot.getInputSpecification()) {
-				case EOBJECT:
-					if(matcherRoot instanceof EObject && root instanceof EObject) {
-						if(matcherRoot != root) {
-							engine.getLogger().logError("Existing snapshot model root (" + root + ") not equal to selected input (" + matcherRoot + ")!");
-						}
-					}
-					break;
-				case RESOURCE:
-					if(matcherRoot instanceof Resource && root instanceof Resource) {
-						Resource res = (Resource) matcherRoot;
-						for (EObject eobj : res.getContents()) {
-							if(!snapshot.getModelRoots().contains(eobj)) {
-								engine.getLogger().logError("Existing snapshot model root not equal to selected input! Missing model root: " + eobj);
-							}
-						}
-						for(EObject eobj : snapshot.getModelRoots()) {
-							if(!res.getContents().contains(eobj)) {
-								engine.getLogger().logError("Existing snapshot model root not equal to selected input! Missing snapshot root: " + eobj);
-							}
-						}
-					}
-					break;
-				case RESOURCE_SET:
-					if(matcherRoot instanceof ResourceSet && root instanceof ResourceSet) {
-						ResourceSet set = (ResourceSet) matcherRoot;
-						for (Resource res : set.getResources()) {
-							for (EObject eobj : res.getContents()) {
-								if(!snapshot.getModelRoots().contains(eobj)) {
-									engine.getLogger().logError("Existing snapshot model root not equal to selected input!");
-								}
-							}
-						}
-					}
-					break;
-			}*/
 		}
 		return true;
 	}

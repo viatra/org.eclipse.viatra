@@ -14,7 +14,6 @@ package org.eclipse.viatra.query.tooling.ui.queryexplorer.content.matcher;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -47,7 +46,6 @@ import org.eclipse.viatra.transformation.evm.specific.Schedulers;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * A top level element in the {@link QueryExplorer}'s tree viewer, which is actually displayed. Instances of this class

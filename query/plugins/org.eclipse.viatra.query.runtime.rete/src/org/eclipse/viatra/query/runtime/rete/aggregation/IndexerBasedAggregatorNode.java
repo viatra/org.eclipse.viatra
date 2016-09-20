@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.runtime.rete.aggregation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.LeftInheritanceTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -117,8 +118,8 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
 
     @Override
     public void pullInto(Collection<Tuple> collector) {
-        for (Tuple signature : mainAggregates.keySet()) {
-            collector.add(packResult(signature, mainAggregates.get(signature)));
+        for (Entry<Tuple, Object> aggregateEntry : mainAggregates.entrySet()) {
+            collector.add(packResult(aggregateEntry.getKey(), aggregateEntry.getValue()));
         }
     }
 

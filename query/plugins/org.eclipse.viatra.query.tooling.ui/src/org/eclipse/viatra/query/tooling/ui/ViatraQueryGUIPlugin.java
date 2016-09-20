@@ -13,13 +13,11 @@ package org.eclipse.viatra.query.tooling.ui;
 
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -79,8 +77,6 @@ public class ViatraQueryGUIPlugin extends AbstractUIPlugin {
     @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
-        @SuppressWarnings("unused")
-        Bundle bundle = Platform.getBundle(PLUGIN_ID);
         reg.put(ICON_ROOT, imageDescriptorFromPlugin(JavaUI.ID_PLUGIN, "icons/full/eview16/types.png"));
         reg.put(ICON_MATCHER, imageDescriptorFromPlugin("org.eclipse.debug.ui", "icons/full/eview16/breakpoint_view.png"));
         reg.put(ICON_MATCH, imageDescriptorFromPlugin(JavaUI.ID_PLUGIN, "icons/full/obj16/methpub_obj.png"));

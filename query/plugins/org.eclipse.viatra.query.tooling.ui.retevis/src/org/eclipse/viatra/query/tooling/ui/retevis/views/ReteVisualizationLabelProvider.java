@@ -19,12 +19,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerState;
 import org.eclipse.viatra.addon.viewers.runtime.notation.Item;
 import org.eclipse.viatra.addon.viewers.runtime.zest.sources.ZestLabelProvider;
-import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.rete.index.IndexerWithMemory;
 import org.eclipse.viatra.query.runtime.rete.index.IterableIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
-import org.eclipse.viatra.query.runtime.rete.recipes.SingleColumnAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
 
 public class ReteVisualizationLabelProvider extends ZestLabelProvider implements IEntityStyleProvider, IConnectionStyleProvider {
@@ -43,6 +41,7 @@ public class ReteVisualizationLabelProvider extends ZestLabelProvider implements
 
     @Override
     public String getText(Object element) {
+        @SuppressWarnings("restriction")
         String inherited = super.getText(element);
 		StringBuffer text = new StringBuffer(inherited == null? "" : inherited);
         if (element instanceof Item) {

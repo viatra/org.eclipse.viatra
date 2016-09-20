@@ -46,7 +46,7 @@ public class AggregatorConstraint extends PatternCallBasedDeferred implements IT
 
     public int getAggregatedColumn() {
         return this.aggregatedColumn;
-    };
+    }
 
     public BoundAggregator getAggregator() {
         return this.aggregator;

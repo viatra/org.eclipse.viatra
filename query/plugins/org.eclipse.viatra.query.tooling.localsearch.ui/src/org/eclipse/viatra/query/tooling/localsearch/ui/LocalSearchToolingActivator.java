@@ -9,11 +9,9 @@
  *   Marton Bur, Zoltan Ujhelyi - initial API and implementation
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.localsearch.ui;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -56,8 +54,6 @@ public class LocalSearchToolingActivator extends AbstractUIPlugin {
     @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
-        @SuppressWarnings("unused")
-        Bundle bundle = Platform.getBundle(PLUGIN_ID);
         reg.put(ICON_NOT_APPLIED_OPERATION, imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID, "icons/full/etool16/help_contents.png"));
         reg.put(ICON_APPLIED_OPERATION, imageDescriptorFromPlugin(PLUGIN_ID, "icons/complete_status.gif"));
         reg.put(ICON_CURRENT_OPERATION, imageDescriptorFromPlugin(PLUGIN_ID, "icons/nav_go.png"));

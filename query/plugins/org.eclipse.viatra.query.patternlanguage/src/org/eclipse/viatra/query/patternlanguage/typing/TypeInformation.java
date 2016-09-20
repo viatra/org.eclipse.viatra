@@ -225,10 +225,8 @@ public class TypeInformation {
     }
     
     public IInputKey getType(Expression expression) {
-        if (CorePatternLanguageHelper.isParameter(expression)) {
-            if (typeSystem.isValidType(((Variable)expression).getType())) {
-                return typeSystem.extractTypeDescriptor(((Variable)expression).getType());
-            }
+        if (CorePatternLanguageHelper.isParameter(expression) && typeSystem.isValidType(((Variable)expression).getType())) {
+            return typeSystem.extractTypeDescriptor(((Variable)expression).getType());
         }
         final Set<IInputKey> allTypes = getMinimizedTypes(expression);
         if (allTypes.size() >= 1) {

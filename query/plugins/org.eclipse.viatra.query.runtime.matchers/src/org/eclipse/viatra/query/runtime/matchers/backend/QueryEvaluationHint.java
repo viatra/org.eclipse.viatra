@@ -72,17 +72,15 @@ public class QueryEvaluationHint {
 	    if (overridingHint == null)
             return this;
         
-        IQueryBackendFactory queryBackendFactory = 
-                this.getQueryBackendFactory();
+        IQueryBackendFactory factory = this.getQueryBackendFactory();
         if (overridingHint.getQueryBackendFactory() != null)
-            queryBackendFactory = overridingHint.getQueryBackendFactory();
+            factory = overridingHint.getQueryBackendFactory();
         
-        Map<String, Object> backendHints = 
-                new HashMap<String, Object>(this.getBackendHints());
+        Map<String, Object> hints = new HashMap<>(this.getBackendHints());
         if (overridingHint.getBackendHints() != null)
-            backendHints.putAll(overridingHint.getBackendHints());
+            hints.putAll(overridingHint.getBackendHints());
         
-        return new QueryEvaluationHint(queryBackendFactory, backendHints);
+        return new QueryEvaluationHint(factory, hints);
 	}
 	
 	/**

@@ -59,7 +59,7 @@ public enum XtextIndexBasedRegistryUpdaterFactory {
         Preconditions.checkArgument(updater != null, "Updater cannot be null!");
         IQuerySpecificationRegistry registry = updater.getConnectedRegistry();
         if(updater.equals(updaters.get(registry))){
-            updaters.remove(updater);
+            updaters.remove(registry);
             updater.disconnectIndexFromRegistry();
         }
         
