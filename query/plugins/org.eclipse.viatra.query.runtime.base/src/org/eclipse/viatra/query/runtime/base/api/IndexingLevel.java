@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.api;
 
-import java.util.EnumSet;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 
@@ -74,7 +74,7 @@ public enum IndexingLevel {
         }
     }
     
-    public static IndexingLevel toLevel(EnumSet<IndexingService> services){
+    public static IndexingLevel toLevel(Set<IndexingService> services){
         IndexingLevel result = NONE;
         for(IndexingService service : services){
             result = result.merge(toLevel(service));

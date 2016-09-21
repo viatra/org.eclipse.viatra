@@ -172,10 +172,8 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
     @Override
     public void assignTraceInfo(TraceInfo traceInfo) {
     	super.assignTraceInfo(traceInfo);
-    	if (traceInfo.propagateToIndexerParent()) {
-    		if (projection != null)
-    			projection.acceptPropagatedTraceInfo(traceInfo);
-    	}
+    	if (traceInfo.propagateToIndexerParent() && projection != null)
+            projection.acceptPropagatedTraceInfo(traceInfo);
     }
 
     /**
@@ -247,7 +245,7 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
         // private Map<Tuple,Tuple> localAggregates;
         int resultPositionInSignature;
         TupleMask pruneResult;
-        TupleMask reorder;
+        TupleMask reorderMask;
 
         public AggregatorOuterIdentityIndexer(int resultPositionInSignature) {
             super(me.reteContainer, TupleMask.displace(sourceWidth, resultPositionInSignature, sourceWidth + 1));
@@ -256,9 +254,9 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
             this.resultPositionInSignature = resultPositionInSignature;
             this.pruneResult = TupleMask.omit(resultPositionInSignature, sourceWidth + 1);
             if (resultPositionInSignature == sourceWidth)
-                this.reorder = null;
+                this.reorderMask = null;
             else
-                this.reorder = mask;
+                this.reorderMask = mask;
         }
 
         @Override
@@ -289,10 +287,10 @@ public abstract class IndexerBasedAggregatorNode extends StandardNode implements
 
         private Tuple reorder(Tuple signatureWithResult) {
             Tuple transformed;
-            if (reorder == null)
+            if (reorderMask == null)
                 transformed = signatureWithResult;
             else
-                transformed = reorder.transform(signatureWithResult);
+                transformed = reorderMask.transform(signatureWithResult);
             return transformed;
         }
 

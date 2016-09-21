@@ -184,7 +184,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
                 }
             });
         } catch (InvocationTargetException e) {
-            logger.error(e.getMessage(), e);
+            throw new QueryProcessingException("Error while building required indexes: %s", new String[]{e.getMessage()}, "Error while building required indexes.", query, e);
         }
     }
     

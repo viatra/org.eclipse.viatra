@@ -225,7 +225,7 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
     class AggregatorOuterIdentityIndexer extends StandardIndexer /* implements Receiver */ {
         int resultPositionInSignature;
         TupleMask pruneResult;
-        TupleMask reorder;
+        TupleMask reorderMask;
 
         public AggregatorOuterIdentityIndexer(int resultPositionInSignature) {
             super(ColumnAggregatorNode.this.reteContainer,
@@ -234,16 +234,16 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
             this.resultPositionInSignature = resultPositionInSignature;
             this.pruneResult = TupleMask.omit(resultPositionInSignature, sourceWidth + 1);
             if (resultPositionInSignature == sourceWidth)
-                this.reorder = null;
+                this.reorderMask = null;
             else
-                this.reorder = mask;
+                this.reorderMask = mask;
         }
 
         @Override
         public Collection<Tuple> get(Tuple signatureWithResult) {
             Tuple prunedSignature = pruneResult.transform(signatureWithResult);
             AggregateResult result = getAggregateResult(prunedSignature);
-            if (result != null && signatureWithResult.get(resultPositionInSignature).equals(result))
+            if (result != null && Objects.equals(signatureWithResult.get(resultPositionInSignature), result))
                 return Collections.singleton(signatureWithResult);
             else
                 return null;
@@ -258,10 +258,10 @@ public class ColumnAggregatorNode<Domain, Accumulator, AggregateResult> extends 
 
         private Tuple reorder(Tuple signatureWithResult) {
             Tuple transformed;
-            if (reorder == null)
+            if (reorderMask == null)
                 transformed = signatureWithResult;
             else
-                transformed = reorder.transform(signatureWithResult);
+                transformed = reorderMask.transform(signatureWithResult);
             return transformed;
         }
 

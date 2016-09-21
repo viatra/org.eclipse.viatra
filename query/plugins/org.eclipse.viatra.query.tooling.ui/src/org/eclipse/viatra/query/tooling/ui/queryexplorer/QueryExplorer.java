@@ -312,9 +312,9 @@ public class QueryExplorer extends ViewPart {
         IObservableValue selection = ViewersObservables.observeSingleSelection(matcherTreeViewer);
         selection.addValueChangeListener(new RootContentSelectionChangeListener());
 
-        DoubleClickListener listener = new DoubleClickListener();
-        injector.injectMembers(listener);
-        matcherTreeViewer.addDoubleClickListener(listener);
+        DoubleClickListener doubleClickListener = new DoubleClickListener();
+        injector.injectMembers(doubleClickListener);
+        matcherTreeViewer.addDoubleClickListener(doubleClickListener);
 
         // patternsViewer configuration
         patternsTreeViewer = new CheckboxTreeViewer(patternsViewerFlyout.getFlyoutParent(), SWT.CHECK | SWT.BORDER
