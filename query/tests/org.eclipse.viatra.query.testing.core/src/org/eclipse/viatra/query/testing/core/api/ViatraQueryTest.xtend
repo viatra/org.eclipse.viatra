@@ -193,12 +193,19 @@ class ViatraQueryTest {
     }
 
 	/**
-	 * Execute all queries and check that the result sets are equal
+	 * Execute all queries and check that the result sets are equal and no error log message was thrown
 	 */
 	def assertEquals() {
+		this.assertEquals(Level::INFO)
+	}
+	/**
+	 * Execute all queries and check that the result sets are equal with a selected log level treshold
+	 */
+	def assertEquals(Level treshold) {
 		patterns.forEach [
 			testCase.assertMatchSetsEqual(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
 		]
+		testCase.assertLogSeverityThreshold(treshold)
 	}
 	
 	/**

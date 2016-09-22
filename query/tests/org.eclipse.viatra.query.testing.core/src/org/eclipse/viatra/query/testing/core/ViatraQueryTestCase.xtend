@@ -11,7 +11,6 @@ package org.eclipse.viatra.query.testing.core
 
 import java.util.LinkedList
 import java.util.List
-import junit.framework.AssertionFailedError
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.ResourceSet
@@ -26,9 +25,6 @@ import org.junit.Assume
 import org.apache.log4j.Level
 import org.junit.Assert
 import org.junit.ComparisonFailure
-import java.util.Collections
-import com.google.common.collect.Collections2
-import com.google.common.collect.Iterables
 import com.google.common.base.Joiner
 
 /** 
