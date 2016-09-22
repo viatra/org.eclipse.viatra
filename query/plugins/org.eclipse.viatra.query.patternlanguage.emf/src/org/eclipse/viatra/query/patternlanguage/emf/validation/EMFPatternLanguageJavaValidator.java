@@ -48,8 +48,10 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstrain
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareFeature;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ComputationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.ExecutionType;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.LiteralValueReference;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
@@ -70,13 +72,16 @@ import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.context.surrogate.SurrogateQueryRegistry;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.common.types.JvmEnumerationType;
 import org.eclipse.xtext.common.types.JvmGenericType;
+import org.eclipse.xtext.common.types.JvmType;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.validation.Check;
@@ -964,7 +969,19 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         } else if (typeReferences.findDeclaredType(ViatraQueryEngine.class, modelFile) == null) {
             error("Couldn't find the mandatory library 'org.eclipse.viatra.query.runtime' on the project's classpath.",
                     modelFile, PatternLanguagePackage.Literals.PATTERN_MODEL__PACKAGE_NAME,
-                    EMFIssueCodes.IQR_NOT_ON_CLASSPATH);
+                    EMFIssueCodes.IQR_NOT_ON_CLASSPATH, "org.eclipse.viatra.query.runtime");
+        }
+    }
+    
+    @Check
+    public void checkClassPath(Modifiers modifier) {
+        if (modifier.getExecution() == ExecutionType.SEARCH) {
+            final JvmEnumerationType lsBackendType = (JvmEnumerationType) typeReferences.findDeclaredType(LocalSearchBackendFactory.class, modifier);
+            if (lsBackendType == null || lsBackendType.eIsProxy()) {
+                error("Couldn't find the mandatory library 'org.eclipse.viatra.query.runtime.localsearch' on the project's classpath.",
+                        modifier, PatternLanguagePackage.Literals.MODIFIERS__EXECUTION,
+                        EMFIssueCodes.IQR_NOT_ON_CLASSPATH, "org.eclipse.viatra.query.runtime.localsearch");
+            }
         }
     }
 }

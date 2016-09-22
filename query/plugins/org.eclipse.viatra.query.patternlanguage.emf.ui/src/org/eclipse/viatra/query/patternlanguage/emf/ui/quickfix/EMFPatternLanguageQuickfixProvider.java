@@ -39,6 +39,31 @@ import com.google.common.collect.Iterators;
 
 public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     
+    private final class AddDependency implements IModification {
+
+        private final Issue issue;
+
+        private AddDependency(Issue issue) {
+            this.issue = issue;
+        }
+
+        @Override
+        public void apply(IModificationContext context) throws CoreException, BadLocationException {
+            URI uriToProblem = issue.getUriToProblem();
+            if (uriToProblem.isPlatform()) {
+                IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                IFile file = root.getFile(new Path(uriToProblem.toPlatformString(true)));
+                if (file.exists() && !file.isReadOnly())
+                    ProjectGenerationHelper.ensureBundleDependencies(file.getProject(),
+                            Arrays.asList(issue.getData()));
+                // The following change changes the document thus
+                // triggers its parsing
+                IXtextDocument document = context.getXtextDocument();
+                document.replace(issue.getOffset(), 1, document.get(issue.getOffset(), 1));
+            }
+        }
+    }
+
     @Fix(EMFIssueCodes.IDENTIFIER_AS_KEYWORD)
     public void escapeKeywordAsIdentifier(final Issue issue, IssueResolutionAcceptor acceptor) {
         acceptor.accept(issue, "Prefix Identifier", "Adds a ^ prefix to the identifier", null, new IModification() {
@@ -140,23 +165,17 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     @Fix(EMFIssueCodes.IMPORT_DEPENDENCY_MISSING)
     public void addDependency(final Issue issue, IssueResolutionAcceptor acceptor) {
         acceptor.accept(issue, "Add dependency", "Add the required bundle to the manifest.mf file.", null,
-                new IModification() {
-
-                    @Override
-                    public void apply(IModificationContext context) throws CoreException, BadLocationException {
-                        URI uriToProblem = issue.getUriToProblem();
-                        if (uriToProblem.isPlatform()) {
-                            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-                            IFile file = root.getFile(new Path(uriToProblem.toPlatformString(true)));
-                            if (file.exists() && !file.isReadOnly())
-                                ProjectGenerationHelper.ensureBundleDependencies(file.getProject(),
-                                        Arrays.asList(issue.getData()));
-                            // The following change changes the document thus
-                            // triggers its parsing
-                            IXtextDocument document = context.getXtextDocument();
-                            document.replace(issue.getOffset(), 1, document.get(issue.getOffset(), 1));
-                        }
-                    }
-                });
+                new AddDependency(issue));
+    }
+    
+    @Fix(EMFIssueCodes.IQR_NOT_ON_CLASSPATH)
+    public void addLibrary(final Issue issue, IssueResolutionAcceptor acceptor) {
+        if (issue.getData().length > 1) {
+            return;
+        }
+        acceptor.accept(issue, "Add dependency", 
+                String.format("Add the required bundle '%s' to the manifest.mf file.", issue.getData()[0]), 
+                null,
+                new AddDependency(issue));
     }
 }
