@@ -20,16 +20,12 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguag
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
-import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem
-import org.eclipse.viatra.query.patternlanguage.emf.tests.pltest.PltestPackage
 
 @RunWith(typeof(XtextRunner))
 @InjectWith(typeof(EMFPatternLanguageInjectorProvider))
@@ -82,6 +78,21 @@ class JavaTypesTest extends AbstractValidatorTest {
         ''')
         tester.validate(model).assertOK
     }
+    
+	@Test
+    def definedParameterIncorrectDataType() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern just1295(x : EInt) = {
+                x == eval(1337l);
+            }
+        ''')
+        tester.validate(model).assertAll(
+            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+        )
+    }
 	@Test
     def definedParameterJavaType() {
         val model = parseHelper.parse('''
@@ -93,6 +104,21 @@ class JavaTypesTest extends AbstractValidatorTest {
             }
         ''')
         tester.validate(model).assertOK
+    }
+    
+	@Test
+    def definedParameterInconsistentJavaType() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+
+            pattern just1295(x : java Integer) = {
+            x == eval(1337l-42);
+            }
+        ''')
+        tester.validate(model).assertAll(
+            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+        )
     }
 	@Test
     def undefinedParameterDataType() {
@@ -110,17 +136,18 @@ class JavaTypesTest extends AbstractValidatorTest {
         )
     }
 	@Test
-    def undefinedParameterJavaType() {
+    def undefinedParameterInconsistentJavaType() {
         val model = parseHelper.parse('''
             package org.eclipse.viatra.query.patternlanguage.emf.tests
             import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
 
             pattern just1295(x) = {
                 java Integer(x);
-                x == eval(1337-42);
+                x == eval(1337l-42);
             }
         ''')
         tester.validate(model).assertAll(
+            getErrorCode(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR),
             getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
         )
     }

@@ -353,7 +353,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                 if (variable instanceof ParameterRef) {
                     error("Ambiguous variable type definitions: " + typeNameSet
                             + ", type cannot be selected. Please specify the one to be used as the parameter type"
-                            + " by adding it to the parameter definition.", variable.getReferences().get(0), null,
+                            + " by adding it to the parameter definition.", ((ParameterRef) variable).getReferredParam(), null,
                             EMFIssueCodes.VARIABLE_TYPE_INVALID_ERROR);
                 } else {
                     error("Inconsistent variable type definitions: " + typeNameSet + ", type cannot be selected.",
