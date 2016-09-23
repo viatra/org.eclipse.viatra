@@ -64,6 +64,7 @@ public class TimedScheduler extends Scheduler {
     @Override
     public void dispose() {
         interrupted = true;
+        super.dispose();
     }
     
     /**

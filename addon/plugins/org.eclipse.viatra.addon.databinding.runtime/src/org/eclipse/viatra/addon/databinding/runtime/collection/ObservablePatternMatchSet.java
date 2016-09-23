@@ -55,6 +55,7 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     private RuleSpecification<Match> specification;
     private EventFilter<Match> matchFilter;
     private RuleEngine ruleEngine;
+    private boolean privateRuleEngine;
 
     private ObservablePatternMatchCollection<Match> internalCollection;
   
@@ -91,11 +92,13 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
                 @Override
                 public void initialize(ViatraQueryEngine engine) {
                     ruleEngine = ObservableCollectionHelper.prepareRuleEngine(engine, specification, matchFilter);
+                    privateRuleEngine = true;
                 }
 
                 @Override
                 public void initialize(RuleEngine engine) {
                     ruleEngine = engine;
+                    privateRuleEngine = false;
                     ruleEngine.addRule(specification, matchFilter);
                     ObservableCollectionHelper.fireActivations(engine, specification, matchFilter);
                 }
@@ -123,6 +126,9 @@ public class ObservablePatternMatchSet<Match extends IPatternMatch> extends Abst
     @Override
     public synchronized void dispose() {
         ruleEngine.removeRule(specification,matchFilter);
+        if(privateRuleEngine && ruleEngine.getRuleSpecificationMultimap().isEmpty()) {
+            ruleEngine.dispose();
+        }
         clear();
         super.dispose();
     }

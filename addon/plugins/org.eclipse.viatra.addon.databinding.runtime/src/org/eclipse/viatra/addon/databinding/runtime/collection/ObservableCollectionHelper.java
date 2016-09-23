@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.viatra.addon.databinding.runtime.collection;
 
+import java.lang.ref.WeakReference;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
@@ -43,10 +46,21 @@ import com.google.common.collect.ImmutableSet;
  */
 public final class ObservableCollectionHelper {
 
+    private static ObservableCollectionHelper instance = new ObservableCollectionHelper();
+    private Map<ViatraQueryEngine, WeakReference<RuleEngine>> queryToRuleEngineMap; 
+    
+    /**
+     * @return the singleton instance
+     */
+    private static ObservableCollectionHelper getInstance() {
+        return instance;
+    }
+    
     /**
      * Constructor hidden for utility class
      */
     private ObservableCollectionHelper() {
+       queryToRuleEngineMap = new WeakHashMap<ViatraQueryEngine, WeakReference<RuleEngine>>();
     }
 
     /**
@@ -111,10 +125,28 @@ public final class ObservableCollectionHelper {
     }
 
     protected static <Match extends IPatternMatch> RuleEngine prepareRuleEngine(ViatraQueryEngine engine, RuleSpecification<Match> specification, EventFilter<Match> filter) {
-        RuleEngine ruleEngine = ExecutionSchemas.createViatraQueryExecutionSchema(engine,
-                Schedulers.getQueryEngineSchedulerFactory(engine));
+        RuleEngine ruleEngine = getRuleEngine(engine);
 		ruleEngine.addRule(specification, filter);
         fireActivations(ruleEngine, specification, filter);
+        return ruleEngine;
+    }
+
+    /**
+     * Reuse rule engine if it was already created for this query engine to handle observable collections.
+     * 
+     */
+    private static RuleEngine getRuleEngine(ViatraQueryEngine engine) {
+        Map<ViatraQueryEngine, WeakReference<RuleEngine>> ruleEngineMap = getInstance().getQueryToRuleEngineMap();
+        if(ruleEngineMap.containsKey(engine)){
+            WeakReference<RuleEngine> ruleEngineRef = ruleEngineMap.get(engine);
+            RuleEngine ruleEngine = ruleEngineRef.get();
+            if(ruleEngine != null){
+                return ruleEngine;
+            }
+        }
+        RuleEngine ruleEngine = ExecutionSchemas.createViatraQueryExecutionSchema(engine,
+                Schedulers.getQueryEngineSchedulerFactory(engine));
+        ruleEngineMap.put(engine, new WeakReference<RuleEngine>(ruleEngine));
         return ruleEngine;
     }
     
@@ -131,6 +163,13 @@ public final class ObservableCollectionHelper {
     	for (Activation<Match> activation : activations) {
     		activation.fire(context);
     	}
+    }
+
+    /**
+     * @return the queryToRuleEngineMap
+     */
+    private Map<ViatraQueryEngine, WeakReference<RuleEngine>> getQueryToRuleEngineMap() {
+        return queryToRuleEngineMap;
     }
     
 }
