@@ -39,7 +39,7 @@ import com.google.common.collect.Iterators;
 
 public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
     
-    private final class AddDependency implements IModification {
+    private static final class AddDependency implements IModification {
 
         private final Issue issue;
 
