@@ -14,9 +14,11 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.impl.BaseQueryGroup;
 import org.eclipse.viatra.query.runtime.matchers.util.IProvider;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -51,7 +53,7 @@ public class LazyLoadingQueryGroup extends BaseQueryGroup {
     @Override
     public Set<IQuerySpecification<?>> getSpecifications() {
         if (specifications == null) {
-            specifications = Sets.newHashSet(Iterables.transform(providers,
+            specifications = Sets.newHashSet(Iterables.filter(Iterables.transform(providers,
                     new Function<IProvider<IQuerySpecification<?>>, IQuerySpecification<?>>() {
 
                         @Override
@@ -59,9 +61,16 @@ public class LazyLoadingQueryGroup extends BaseQueryGroup {
                             if (input == null) {
                                 return null;
                             }
-                            return input.get();
+                            try {
+                                return input.get();
+                            } catch (Exception e) {
+                                // TODO maybe store in issue list and provide better error reporting in general
+                                String errorMessage = "Exception occurred while accessing query specification from provider: " + e.getMessage();
+                                ViatraQueryLoggingUtil.getLogger(getClass()).error(errorMessage);
+                                return null;
+                            }
                         }
-                    }));
+                    }),Predicates.notNull()));
         }
         return specifications;
     }

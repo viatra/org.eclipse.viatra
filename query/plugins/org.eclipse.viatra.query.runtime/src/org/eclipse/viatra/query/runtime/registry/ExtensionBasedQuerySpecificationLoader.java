@@ -207,7 +207,7 @@ public class ExtensionBasedQuerySpecificationLoader {
                 }
                 return queryGroup;
             } catch (CoreException e) {
-                throw new IllegalArgumentException("Error initializing query group", e);
+                throw new IllegalStateException(e.getMessage(), e);
             }
         }
         
