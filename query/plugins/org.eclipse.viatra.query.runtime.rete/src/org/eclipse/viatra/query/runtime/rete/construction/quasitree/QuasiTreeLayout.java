@@ -32,9 +32,13 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
+
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 
 /**
  * Layout ideas: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=398763
@@ -60,6 +64,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
         Set<DeferredPConstraint> deferredConstraints = null;
         Set<EnumerablePConstraint> enumerableConstraints = null;
+        Set<ConstantValue> constantConstraints = null;
         Set<SubPlan> forefront = new LinkedHashSet<SubPlan>();
 		Logger logger;
 
@@ -83,6 +88,8 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                 // PROCESS CONSTRAINTS
                 deferredConstraints = pSystem.getConstraintsOfType(DeferredPConstraint.class);
                 enumerableConstraints = pSystem.getConstraintsOfType(EnumerablePConstraint.class);
+                constantConstraints = pSystem.getConstraintsOfType(ConstantValue.class);
+                
                 for (EnumerablePConstraint enumerable : enumerableConstraints) {
                     SubPlan plan = planFactory.createSubPlan(new PEnumerate(enumerable));
                     admitSubPlan(plan);
@@ -131,8 +138,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                 for (SubPlan a : forefront) {
                     if (aIndex++ >= bIndex)
                         break;
-                    final SubPlan joinedPlan = planFactory.createSubPlan(new PJoin(), a, b);
-                    candidates.add(new JoinCandidate(joinedPlan, context));
+                    candidates.add(new JoinCandidate(a, b, context));
                 }
                 bIndex++;
             }
@@ -140,6 +146,16 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         }
 
         private void admitSubPlan(SubPlan plan) throws QueryProcessingException {
+            // are there any unapplied constant filters that we can apply here?
+            if (Options.prioritizeConstantFiltering) {
+                SetView<ConstantValue> unappliedConstants = 
+                        Sets.difference(constantConstraints, plan.getAllEnforcedConstraints());
+                for (ConstantValue constantConstraint : unappliedConstants) {
+                    if (plan.getVisibleVariables().containsAll(constantConstraint.getAffectedVariables())) {
+                        plan = planFactory.createSubPlan(new PApply(constantConstraint), plan);
+                    }                    
+                }
+            }
         	// are there any variables that will not be needed anymore and are worth trimming?
         	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
         	if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
@@ -164,7 +180,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                 throws QueryProcessingException {
             forefront.remove(selectedJoin.getPrimary());
             forefront.remove(selectedJoin.getSecondary());
-            admitSubPlan(selectedJoin.getJoinedPlan());
+            admitSubPlan(selectedJoin.getJoinedPlan(planFactory));
         }
 
     }

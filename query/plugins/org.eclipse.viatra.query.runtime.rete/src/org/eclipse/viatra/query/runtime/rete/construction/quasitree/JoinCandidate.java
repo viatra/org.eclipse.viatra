@@ -20,7 +20,9 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
+import org.eclipse.viatra.query.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDependencyHelper;
+import org.eclipse.viatra.query.runtime.matchers.planning.operations.PJoin;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
@@ -35,8 +37,6 @@ class JoinCandidate {
     SubPlan primary;
     SubPlan secondary;
     
-    SubPlan joinedPlan;
-
     Set<PVariable> varPrimary;
     Set<PVariable> varSecondary;
     Set<PVariable> varCommon;
@@ -45,12 +45,11 @@ class JoinCandidate {
     List<PConstraint> consSecondary;
     
 
-    JoinCandidate(SubPlan joinedPlan, IQueryMetaContext context) {
+    JoinCandidate(SubPlan primary, SubPlan secondary, IQueryMetaContext context) {
         super();
-        this.joinedPlan = joinedPlan;
 		this.context = context;
-        this.primary = joinedPlan.getParentPlans().get(0);
-        this.secondary = joinedPlan.getParentPlans().get(1);
+        this.primary = primary;
+        this.secondary = secondary;
 
         varPrimary = getPrimary().getVisibleVariables();
         varSecondary = getSecondary().getVisibleVariables();
@@ -79,8 +78,17 @@ class JoinCandidate {
         return secondary;
     }
 
-    public SubPlan getJoinedPlan() {
-		return joinedPlan;
+    public SubPlan getJoinedPlan(SubPlanFactory factory) {
+        // check special cases first
+        if (isTrivial())
+            return primary;
+        if (isSubsumption())
+            return 
+                (consPrimary.size() > consSecondary.size()) ? primary : secondary;
+                            
+        
+        // default case
+		return factory.createSubPlan(new PJoin(), primary, secondary);
 	}
 
     @Override
@@ -119,6 +127,10 @@ class JoinCandidate {
 
 	public boolean isTrivial() {
         return getPrimary().equals(getSecondary());
+    }
+	
+    public boolean isSubsumption() {
+        return consPrimary.containsAll(consSecondary) || consSecondary.containsAll(consPrimary);
     }
 
     public boolean isCheckOnly() {

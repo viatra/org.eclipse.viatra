@@ -28,6 +28,7 @@ public class JoinOrderingHeuristics implements Comparator<JoinCandidate> {
             @Override
             protected void doCompare() {
                 swallowBoolean(true && consider(preferTrue(a.isTrivial(), b.isTrivial()))
+                        && consider(preferTrue(a.isSubsumption(), b.isSubsumption()))
                         && consider(preferTrue(a.isCheckOnly(), b.isCheckOnly()))
                         && consider( 
                         		Options.functionalDependencyOption == Options.FunctionalDependencyOption.OFF ?

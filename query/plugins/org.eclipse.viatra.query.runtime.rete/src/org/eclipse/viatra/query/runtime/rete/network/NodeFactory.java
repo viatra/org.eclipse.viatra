@@ -36,6 +36,8 @@ import org.eclipse.viatra.query.runtime.rete.recipes.AntiJoinRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.CheckRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ConstantRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.CountAggregatorRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorBucketRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorDispatcherRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.EqualityFilterRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.EvalRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionDefinition;
@@ -55,6 +57,8 @@ import org.eclipse.viatra.query.runtime.rete.recipes.TransparentRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.TrimmerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.UniquenessEnforcerRecipe;
 import org.eclipse.viatra.query.runtime.rete.single.DefaultProductionNode;
+import org.eclipse.viatra.query.runtime.rete.single.DiscriminatorBucketNode;
+import org.eclipse.viatra.query.runtime.rete.single.DiscriminatorDispatcherNode;
 import org.eclipse.viatra.query.runtime.rete.single.EqualityFilterNode;
 import org.eclipse.viatra.query.runtime.rete.single.InequalityFilterNode;
 import org.eclipse.viatra.query.runtime.rete.single.TransitiveClosureNode;
@@ -150,6 +154,10 @@ class NodeFactory {
             return instantiateNode(reteContainer, (CountAggregatorRecipe)recipe);
         if (recipe instanceof SingleColumnAggregatorRecipe) 
             return instantiateNode(reteContainer, (SingleColumnAggregatorRecipe)recipe);
+        if (recipe instanceof DiscriminatorDispatcherRecipe) 
+            return instantiateNode(reteContainer, (DiscriminatorDispatcherRecipe)recipe);
+        if (recipe instanceof DiscriminatorBucketRecipe) 
+            return instantiateNode(reteContainer, (DiscriminatorBucketRecipe)recipe);
 		
 		// MultiParentNodeRecipe
 		if (recipe instanceof UniquenessEnforcerRecipe) 
@@ -165,14 +173,14 @@ class NodeFactory {
 		if (recipe instanceof AntiJoinRecipe) 
 			return instantiateNode(reteContainer, (AntiJoinRecipe)recipe);
 		
-		// ... TODO	
+		// ... else	
 		throw new IllegalArgumentException("Unsupported recipe type: " + recipe);
 	}
 
 
 	// INSTANTIATION for recipe types
 
-	private Supplier instantiateNode(ReteContainer reteContainer, InputRecipe recipe) {
+    private Supplier instantiateNode(ReteContainer reteContainer, InputRecipe recipe) {
 		return new ExternalInputEnumeratorNode(reteContainer);
 	}
 	private Supplier instantiateNode(ReteContainer reteContainer, InputFilterRecipe recipe) {
@@ -228,6 +236,14 @@ class NodeFactory {
 		final Object[] constantArray = constantValues.toArray(new Object[constantValues.size()]);
 		return new ConstantNode(reteContainer, new FlatTuple(constantArray));
 	}
+
+    private Supplier instantiateNode(ReteContainer reteContainer, DiscriminatorBucketRecipe recipe) {
+        return new DiscriminatorBucketNode(reteContainer, recipe.getBucketKey());
+    }
+
+    private Supplier instantiateNode(ReteContainer reteContainer, DiscriminatorDispatcherRecipe recipe) {
+        return new DiscriminatorDispatcherNode(reteContainer, recipe.getDiscriminationColumnIndex());
+    }
 
 	private Supplier instantiateNode(ReteContainer reteContainer, TrimmerRecipe recipe) {
 		return new TrimmerNode(reteContainer, toMask(recipe.getMask()));

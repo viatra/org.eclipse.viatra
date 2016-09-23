@@ -104,6 +104,21 @@ pattern transparentRecipe(recipe : TransparentRecipe) {
 	TransparentRecipe(recipe);
 }
 
+@Item(item = recipe, label = "Dispatch on $colIndex$")
+@QueryExplorer(checked = false)
+pattern discriminatorDispatcherRecipe(recipe : DiscriminatorDispatcherRecipe, colIndex) {
+	DiscriminatorDispatcherRecipe.discriminationColumnIndex(recipe, colIndex);
+}
+
+@Item(item = recipe, label = "Bucket: '$keyStr$'")
+@QueryExplorer(checked = false)
+pattern discriminatorBucketRecipe(recipe : DiscriminatorBucketRecipe, keyStr) {
+	DiscriminatorBucketRecipe.bucketKey(recipe, key);
+	keyStr == eval(key.toString);
+}
+
+
+
 @Item(item = recipe, label = "Transitive Closure")
 @QueryExplorer(checked = false)
 pattern transitiveClosureRecipe(recipe : TransitiveClosureRecipe) {

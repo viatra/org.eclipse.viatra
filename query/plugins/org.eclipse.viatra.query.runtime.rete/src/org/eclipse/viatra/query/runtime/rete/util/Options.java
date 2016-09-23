@@ -15,6 +15,11 @@ import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.viatra.query.runtime.rete.construction.basiclinear.BasicLinearLayout;
 import org.eclipse.viatra.query.runtime.rete.construction.quasitree.QuasiTreeLayout;
 
+/**
+ * Feature switches.
+ * @author Gabor Bergmann
+ *
+ */
 public class Options {
 
     public enum NodeSharingOption {
@@ -80,5 +85,12 @@ public class Options {
     public static PlanTrimOption planTrimOption = 
     		PlanTrimOption.OPPORTUNISTIC;
 
-
+    /**
+     * @since 1.5
+     */
+    public static boolean useDiscriminatorDispatchersForConstantFiltering = true;
+    /**
+     * @since 1.5
+     */
+    public static boolean prioritizeConstantFiltering = true;
 }

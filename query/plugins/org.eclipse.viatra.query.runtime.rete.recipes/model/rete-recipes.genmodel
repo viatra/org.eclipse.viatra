@@ -130,5 +130,13 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//SingleColumnAggregatorRecipe/multisetAggregationOperator"/>
       <genOperations ecoreOperation="recipes.ecore#//SingleColumnAggregatorRecipe/getArity"/>
     </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//DiscriminatorDispatcherRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//DiscriminatorDispatcherRecipe/discriminationColumnIndex"/>
+      <genOperations ecoreOperation="recipes.ecore#//DiscriminatorDispatcherRecipe/getArity"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//DiscriminatorBucketRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//DiscriminatorBucketRecipe/bucketKey"/>
+      <genOperations ecoreOperation="recipes.ecore#//DiscriminatorBucketRecipe/getArity"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

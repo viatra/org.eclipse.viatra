@@ -63,9 +63,13 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
+import org.eclipse.viatra.query.runtime.rete.misc.ConstantNode;
+import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.recipes.AntiJoinRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ConstantRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.CountAggregatorRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorBucketRecipe;
+import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorDispatcherRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.EqualityFilterRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
@@ -87,6 +91,7 @@ import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan;
 import org.eclipse.viatra.query.runtime.rete.traceability.ParameterProjectionTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
+import org.eclipse.viatra.query.runtime.rete.util.Options;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -288,7 +293,6 @@ public class ReteRecipeCompiler {
 			throw new IllegalArgumentException(
 					"Unsupported POperation in query plan: " + plan.toShortString());
 		}
-		// TODO dispatch
 	}
 
 
@@ -345,6 +349,38 @@ public class ReteRecipeCompiler {
             );
         }
     }
+
+    /**
+     * Precondition: constantTrace must map to a ConstantRecipe, and all of its variables must be contained in toFilterTrace.
+     */
+    private CompiledSubPlan compileConstantFiltering(SubPlan plan, PlanningTrace toFilterTrace, ConstantRecipe constantRecipe, List<PVariable> filteredVariables) {
+        PlanningTrace resultTrace = toFilterTrace;
+        
+        int constantVariablesSize = filteredVariables.size();
+        for (int i=0; i<constantVariablesSize; ++i) {
+            Object constantValue = constantRecipe.getConstantValues().get(i);
+            PVariable filteredVariable = filteredVariables.get(i);
+            int filteredColumn = resultTrace.getVariablesTuple().indexOf(filteredVariable);
+            
+            DiscriminatorDispatcherRecipe dispatcherRecipe = FACTORY.createDiscriminatorDispatcherRecipe();
+            dispatcherRecipe.setDiscriminationColumnIndex(filteredColumn);
+            dispatcherRecipe.setParent(resultTrace.getRecipe());
+            
+            PlanningTrace dispatcherTrace = 
+                    new PlanningTrace(plan, resultTrace.getVariablesTuple(), dispatcherRecipe, resultTrace);
+            
+            DiscriminatorBucketRecipe bucketRecipe = FACTORY.createDiscriminatorBucketRecipe();
+            bucketRecipe.setBucketKey(constantValue);
+            bucketRecipe.setParent(dispatcherRecipe);
+            
+            PlanningTrace bucketTrace = new PlanningTrace(plan, dispatcherTrace.getVariablesTuple(), bucketRecipe, dispatcherTrace);
+            
+            resultTrace = bucketTrace;            
+        }
+        
+        return resultTrace.cloneFor(plan);
+    }
+
     
     private CompiledSubPlan compileDeferred(ExportedParameter constraint, 
     		SubPlan plan, SubPlan parentPlan, CompiledSubPlan parentCompiled) {
@@ -587,7 +623,25 @@ public class ReteRecipeCompiler {
 
 	private CompiledSubPlan compileToNaturalJoin(SubPlan plan,
 			final PlanningTrace leftCompiled,
-			final PlanningTrace rightCompiled) {
+			final PlanningTrace rightCompiled) 
+	{
+	    // CHECK IF SPECIAL CASE
+	    
+	    // Is constant filtering applicable?
+	    if (Options.useDiscriminatorDispatchersForConstantFiltering) {
+	        if (leftCompiled.getRecipe() instanceof ConstantRecipe && 
+	                rightCompiled.getVariablesTuple().containsAll(leftCompiled.getVariablesTuple())) {
+	            return compileConstantFiltering(plan, rightCompiled, 
+	                    (ConstantRecipe) leftCompiled.getRecipe(), leftCompiled.getVariablesTuple());                 
+	        }
+            if (rightCompiled.getRecipe() instanceof ConstantRecipe && 
+                    leftCompiled.getVariablesTuple().containsAll(rightCompiled.getVariablesTuple())) {
+                return compileConstantFiltering(plan, leftCompiled, 
+                        (ConstantRecipe) rightCompiled.getRecipe(), rightCompiled.getVariablesTuple());                 
+            }
+	    }
+	    
+	    // ELSE: ACTUAL JOIN
 		JoinHelper joinHelper = new JoinHelper(plan, leftCompiled, rightCompiled);
         return new CompiledSubPlan(plan, 
         		joinHelper.getNaturalJoinVariablesTuple(), 
@@ -595,7 +649,8 @@ public class ReteRecipeCompiler {
         		joinHelper.getPrimaryIndexer(), joinHelper.getSecondaryIndexer());
 	}
 
-	private CompiledSubPlan doCompileProject(PProject operation, SubPlan plan) throws QueryProcessingException {
+
+    private CompiledSubPlan doCompileProject(PProject operation, SubPlan plan) throws QueryProcessingException {
 		final List<CompiledSubPlan> compiledParents = getCompiledFormOfParents(plan);
 		final CompiledSubPlan compiledParent = compiledParents.get(0);
 		
