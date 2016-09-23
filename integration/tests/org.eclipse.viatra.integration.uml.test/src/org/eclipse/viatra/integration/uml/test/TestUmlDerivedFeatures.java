@@ -59,11 +59,13 @@ public class TestUmlDerivedFeatures {
         Package pkg1 = FACTORY.createPackage();
         pkg1.setName("pkg1");
         Class clazz = FACTORY.createClass();
+        clazz.setName("cl");
         resource.getContents().add(pkg);
         pkg.getPackagedElements().add(pkg1);
         pkg.getPackagedElements().add(clazz);
         NamedElementQualifiedNameMatcher matcher = NamedElementQualifiedNameMatcher.on(getEngine(resource));
         pkg1.getPackagedElements().add(clazz);
+        assertEquals(ImmutableSet.of(clazz.getQualifiedName()), matcher.getAllValuesOfqualifiedName(clazz));
     }
 
 	@Test

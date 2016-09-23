@@ -199,7 +199,7 @@ public class SurrogateQueryTest {
                             incorrectValuesFound = true;
                             Object matchTarget = matcher.getAllValues(matcher.getParameterNames().get(1), match).iterator().next();
                             System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
-                            System.out.println("-> eGet: null" + target + "\n-> match: " + matchTarget);
+                            System.out.println("-> eGet: null\n-> match: " + matchTarget);
                         }
                         // assertTrue("Incorrect number of matches (should be 0): " + numberOfMatches, numberOfMatches == 0);
                     }
@@ -296,7 +296,7 @@ public class SurrogateQueryTest {
                         incorrectValuesFound = true;
                         Object matchTarget = matcher.getAllValues(matcher.getParameterNames().get(1), match).iterator().next();
                         System.out.println("Incorrect values for:\n  Query: " + querySpecificationFQN + "\n  Source: " + sourceEObject);
-                        System.out.println("-> eGet: null" + target + "\n-> match: " + matchTarget);
+                        System.out.println("-> eGet: null\n-> match: " + matchTarget);
                     }
                     // assertTrue("Incorrect number of matches (should be 0): " + numberOfMatches, numberOfMatches == 0);
                 }
