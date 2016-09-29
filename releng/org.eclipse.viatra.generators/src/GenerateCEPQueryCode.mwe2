@@ -1,0 +1,44 @@
+module org.eclipse.viatra.query.patternlanguage.emf.GenerateQueryCode
+
+import org.eclipse.emf.mwe.utils.*
+
+var projectName = "org.eclipse.viatra.cep.core"
+var escapedProjectName = "org\\.eclipse\\.viatra\\.cep\\.core"
+var projectPath = "cep/plugins"
+
+Workflow {
+ 
+    bean = StandaloneSetup {
+        scanClassPath = true
+        platformUri = ".."
+        registerGeneratedEPackage = "org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonPackage"
+        registerGeneratedEPackage = "org.eclipse.viatra.cep.core.metamodels.events.EventsPackage"
+    }
+ 
+    component = DirectoryCleaner {
+        directory = "../../${projectPath}/${projectName}/src-gen"
+    }
+
+    component = org.eclipse.xtext.mwe.Reader {
+        useJavaClassPath = true
+
+        // or define search scope explicitly
+        uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+            extension = "vql"
+            regularExpression = ".*${escapedProjectName}/.*vql"
+        }
+        register = org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup {}
+        loadResource = {
+            uri = ".*${escapedProjectName}/.*vql"
+            slot = "query"
+        }
+    }
+    
+    component = org.eclipse.xtext.generator.GeneratorComponent {
+        register = org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup {}
+        slot = 'query'
+        outlet = {
+            path = "../../${projectPath}/${projectName}/src-gen"
+        }
+    }
+}

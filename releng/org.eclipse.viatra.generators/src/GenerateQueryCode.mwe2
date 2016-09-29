@@ -1,0 +1,46 @@
+module org.eclipse.viatra.query.patternlanguage.emf.GenerateQueryCode
+
+import org.eclipse.emf.mwe.utils.*
+
+var projectName = "org.eclipse.viatra.query.tooling.ui.retevis"
+var escapedProjectName = "org\\.eclipse\\.viatra\\.query\\.tooling\\.ui\\.retevis"
+var projectPath = "query/plugins"
+
+Workflow {
+ 
+    bean = StandaloneSetup {
+        scanClassPath = true
+        platformUri = ".."
+        registerGeneratedEPackage = "org.eclipse.viatra.transformation.views.traceability.TraceabilityPackage"
+        registerGeneratedEPackage = "org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage"
+        registerGeneratedEPackage = "org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"
+        registerGeneratedEPackage = "org.eclipse.uml2.uml.UMLPackage"
+    }
+ 
+    component = DirectoryCleaner {
+        directory = "../../${projectPath}/${projectName}/src-gen"
+    }
+ 
+    component = org.eclipse.xtext.mwe.Reader {
+        useJavaClassPath = true
+
+        // or define search scope explicitly
+        uriFilter = org.eclipse.xtext.mwe.NameBasedFilter {
+            extension = "vql"
+            regularExpression = ".*${escapedProjectName}/.*vql"
+        }
+        register = org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup {}
+        loadResource = {
+            uri = ".*${escapedProjectName}/.*vql"
+            slot = "query"
+        }
+    }
+    
+    component = org.eclipse.xtext.generator.GeneratorComponent {
+        register = org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageStandaloneSetup {}
+        slot = 'query'
+        outlet = {
+            path = "../../${projectPath}/${projectName}/src-gen"
+        }
+    }
+}

@@ -456,7 +456,32 @@
       <description>The dynamic working sets for ${scope.project.label}</description>
     </setupTask>
     <stream
-        name="master"/>
+        name="master">
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          name="Generate query code">
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateRetevisQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateTransformationViewsQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateUMLIntegrationQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateViewersRuntimeQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+      </setupTask>
+    </stream>
     <stream
         name="1.2-maintenance"/>
     <stream
@@ -610,7 +635,22 @@
       <description>The dynamic working sets for ${scope.project.label}</description>
     </setupTask>
     <stream
-        name="master"/>
+        name="master">
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          name="Generate query code">
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateCEPCoreQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateCEPMetamodelQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+      </setupTask>
+    </stream>
     <stream
         name="1.2-maintenance"/>
     <stream

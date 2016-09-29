@@ -14,6 +14,10 @@ Require-Bundle: org.eclipse.emf.mwe2.launch,
  org.eclipse.viatra.addon.viewers.runtime;resolution:=optional,
  org.eclipse.viatra.transformation.views;resolution:=optional,
  org.eclipse.viatra.transformation.tracer;resolution:=optional,
+ org.eclipse.viatra.cep.core;resolution:=optional,
  org.eclipse.viatra.cep.core.metamodels;resolution:=optional,
- org.eclipse.viatra.query.patternlanguage.emf.tests;resolution:=optional
+ org.eclipse.viatra.query.patternlanguage.emf;resolution:=optional,
+ org.eclipse.viatra.query.patternlanguage.emf.tests;resolution:=optional,
+ org.eclipse.viatra.query.tooling.ui.retevis;resolution:=optional,
+ org.eclipse.viatra.integration.uml;resolution:=optional
 Import-Package: org.apache.log4j
