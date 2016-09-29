@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.eclipse.viatra</groupId>
 		<artifactId>org.eclipse.viatra.parent</artifactId>
-		<version>1.4.0-SNAPSHOT</version>
+		<version>1.5.0-SNAPSHOT</version>
 		<relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
 	</parent>
 	<properties>
