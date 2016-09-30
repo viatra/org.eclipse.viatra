@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Query-by-example support
 Bundle-SymbolicName: org.eclipse.viatra.addon.querybyexample
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.14.1.qualifier
 Export-Package: org.eclipse.viatra.addon.querybyexample.interfaces,
  org.eclipse.viatra.addon.querybyexample.interfaces.beans,
  org.eclipse.viatra.addon.querybyexample.services

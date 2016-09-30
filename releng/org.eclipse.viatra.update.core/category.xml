@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.viatra.query.runtime.feature.source_1.4.0.qualifier.jar" id="org.eclipse.viatra.query.runtime.feature.source" version="1.4.0.qualifier">
+   <feature url="features/org.eclipse.viatra.query.runtime.feature.source_1.4.1.qualifier.jar" id="org.eclipse.viatra.query.runtime.feature.source" version="1.4.1.qualifier">
       <category name="org.eclipse.viatra"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.query.language.feature.source_1.4.0.qualifier.jar" id="org.eclipse.viatra.query.language.feature.source" version="1.4.0.qualifier">
+   <feature url="features/org.eclipse.viatra.query.language.feature.source_1.4.1.qualifier.jar" id="org.eclipse.viatra.query.language.feature.source" version="1.4.1.qualifier">
       <category name="org.eclipse.viatra"/>
    </feature>
-   <feature url="features/org.eclipse.viatra.transformation.runtime.emf.feature.source_1.4.0.qualifier.jar" id="org.eclipse.viatra.transformation.runtime.emf.feature.source" version="1.4.0.qualifier">
+   <feature url="features/org.eclipse.viatra.transformation.runtime.emf.feature.source_1.4.1.qualifier.jar" id="org.eclipse.viatra.transformation.runtime.emf.feature.source" version="1.4.1.qualifier">
       <category name="org.eclipse.viatra"/>
    </feature>
    <category-def name="org.eclipse.viatra" label="VIATRA Core"/>
