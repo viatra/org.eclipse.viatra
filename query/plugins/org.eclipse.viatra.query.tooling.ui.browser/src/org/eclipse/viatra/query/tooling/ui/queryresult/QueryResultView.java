@@ -93,7 +93,7 @@ public class QueryResultView extends ViewPart {
                 return getSite().getId();
             }
         };
-        this.hint = new QueryEvaluationHint(new ReteBackendFactory(), new HashMap<String, Object>());
+        this.hint = new QueryEvaluationHint(null, new ReteBackendFactory());
         this.connectorListener = new IModelConnectorListener() {
             @Override
             public void modelUnloaded(IModelConnector modelConnector) {

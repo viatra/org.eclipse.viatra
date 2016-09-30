@@ -26,14 +26,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 public interface IQueryBackendHintProvider {
 	
 	/**
-	 * Suggests query evaluation hints regarding a query. 
-	 * @return non-null map of option keys and values
-	 * @deprecated use {@link #getQueryEvaluationHint(PQuery)} instead
-	 */
-    @Deprecated
-	Map<String, Object> getHints(PQuery query);
-
-	/**
 	 * Suggests query evaluation hints regarding a query. The returned hints reflects the default hints of the 
 	 * query engine merged with the hints provided by the pattern itself. These can be overridden via specific
 	 * advanced API of the engine.  
@@ -42,23 +34,4 @@ public interface IQueryBackendHintProvider {
      */
 	QueryEvaluationHint getQueryEvaluationHint(PQuery query);
 	
-	/**
-	 * A default implementation that just returns the hints embedded in the query, without overriding.
-	 * @deprecated Use a ViatraQueryEngine instead
-	 */
-	public static final IQueryBackendHintProvider DEFAULT = new IQueryBackendHintProvider() {
-		
-		@Override
-		public Map<String, Object> getHints(PQuery query) {
-			final QueryEvaluationHint embeddedHints = query.getEvaluationHints();
-			if (embeddedHints != null && embeddedHints.getBackendHints() != null)
-				return embeddedHints.getBackendHints();
-			else return Collections.emptyMap();
-		}
-
-        @Override
-        public QueryEvaluationHint getQueryEvaluationHint(PQuery query) {
-            throw new UnsupportedOperationException("Do not use this implementation.");
-        }
-	};
 }

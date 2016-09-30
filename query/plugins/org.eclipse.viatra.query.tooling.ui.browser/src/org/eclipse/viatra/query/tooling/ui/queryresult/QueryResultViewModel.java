@@ -44,7 +44,7 @@ public enum QueryResultViewModel {
     
     private QueryResultViewModel() {
         this.inputs = Sets.newHashSet();
-        this.defaultHint = new QueryEvaluationHint(new ReteBackendFactory(), Maps.<String,Object>newHashMap());
+        this.defaultHint = new QueryEvaluationHint(null, new ReteBackendFactory());
     }
     
     protected QueryResultTreeInput createInput(IModelConnector connector, IModelConnectorTypeEnum type) throws ViatraQueryException {

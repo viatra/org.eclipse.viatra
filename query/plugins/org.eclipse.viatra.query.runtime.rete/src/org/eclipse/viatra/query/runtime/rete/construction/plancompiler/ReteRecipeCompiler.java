@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
@@ -92,6 +93,7 @@ import org.eclipse.viatra.query.runtime.rete.traceability.ParameterProjectionTra
 import org.eclipse.viatra.query.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
+import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -628,7 +630,7 @@ public class ReteRecipeCompiler {
 	    // CHECK IF SPECIAL CASE
 	    
 	    // Is constant filtering applicable?
-	    if (Options.useDiscriminatorDispatchersForConstantFiltering) {
+	    if (ReteHintOptions.useDiscriminatorDispatchersForConstantFiltering.getValueOrDefault(getHints(plan))) {
 	        if (leftCompiled.getRecipe() instanceof ConstantRecipe && 
 	                rightCompiled.getVariablesTuple().containsAll(leftCompiled.getVariablesTuple())) {
 	            return compileConstantFiltering(plan, rightCompiled, 
@@ -785,5 +787,11 @@ public class ReteRecipeCompiler {
 	}
 
 	
-	
+    private QueryEvaluationHint getHints(SubPlan plan) {
+        return getHints(plan.getBody().getPattern());
+    }
+
+    private QueryEvaluationHint getHints(PQuery pattern) {
+        return hintProvider.getQueryEvaluationHint(pattern);
+    }
 }

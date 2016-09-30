@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -47,6 +48,14 @@ public class BasicLinearLayout implements IQueryPlannerStrategy {
 
 	//SubPlanProcessor planProcessor = new SubPlanProcessor();
 	
+    private IQueryBackendHintProvider hintProvider;
+    /**
+     * @param hintProvider
+     */
+    public BasicLinearLayout(IQueryBackendHintProvider hintProvider) {
+        this.hintProvider = hintProvider;
+    }
+
     @Override
     public SubPlan plan(final PBody pSystem, Logger logger, IQueryMetaContext context) throws QueryProcessingException {
     	SubPlanFactory planFactory = new SubPlanFactory(pSystem);

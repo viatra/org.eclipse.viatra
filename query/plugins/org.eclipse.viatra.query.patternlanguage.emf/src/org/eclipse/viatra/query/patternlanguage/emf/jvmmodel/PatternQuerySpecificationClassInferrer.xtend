@@ -56,6 +56,7 @@ import org.eclipse.xtext.serializer.impl.Serializer
 import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -289,9 +290,12 @@ class PatternQuerySpecificationClassInferrer {
     def StringConcatenationClient searchBackendFactory(){
         '''«LocalSearchBackendFactory».INSTANCE'''
     }
+    def StringConcatenationClient defaultBackendFactory(){
+        '''(«IQueryBackendFactory»)null''' 
+    }
     
     def StringConcatenationClient inferQueryEvaluationHints(Pattern pattern) {
-        '''new «QueryEvaluationHint»(«
+        '''new «QueryEvaluationHint»(null, «
         switch(getRequestedExecutionType(pattern)){
             case INCREMENTAL: {
                 incrementalBackendFactory
@@ -300,12 +304,13 @@ class PatternQuerySpecificationClassInferrer {
                 searchBackendFactory
             }
             case UNSPECIFIED: {
-               '''null''' 
+               defaultBackendFactory 
             }
             
          }
-            », «Collections».<«String»,«Object»>emptyMap())'''
+            »)'''
     }
+    
 
 	def StringConcatenationClient inferBodies(Pattern pattern) throws IllegalStateException {
 		'''«FOR body : pattern.bodies »

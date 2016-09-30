@@ -31,7 +31,7 @@ class HintsPropertySource implements IPropertySource {
     }
     
     override toString() {
-        if(hint.backendHints.empty){
+        if(hint.backendHintSettings.empty){
             return "No hints specified"
         }
         return ""
@@ -40,8 +40,8 @@ class HintsPropertySource implements IPropertySource {
     override IPropertyDescriptor[] getPropertyDescriptors() {
         val String category = "Hints"
         val List<IPropertyDescriptor> hints = Lists.newArrayList()
-        hint.backendHints.keySet.forEach[ key |
-            val PropertyDescriptor property = new PropertyDescriptor(key, key)
+        hint.backendHintSettings.keySet.forEach[ option |
+            val PropertyDescriptor property = new PropertyDescriptor(option, option.qualifiedName)
             property.setCategory(category)
             hints.add(property)
         ]
@@ -49,7 +49,7 @@ class HintsPropertySource implements IPropertySource {
     }
 
     override Object getPropertyValue(Object id) {
-        val hintValue = hint.backendHints.get(id)
+        val hintValue = hint.backendHintSettings.get(id)
         return hintValue
     }
 

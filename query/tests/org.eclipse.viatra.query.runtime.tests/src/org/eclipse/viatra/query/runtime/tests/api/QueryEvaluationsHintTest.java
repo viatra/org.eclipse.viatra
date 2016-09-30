@@ -78,7 +78,7 @@ public class QueryEvaluationsHintTest {
      */
     @Test
     public void testRete() throws Exception {
-        ViatraQueryMatcher<?> matcher = engine.getMatcher(specification, new QueryEvaluationHint(new ReteBackendFactory(), Collections.<String, Object>emptyMap()));
+        ViatraQueryMatcher<?> matcher = engine.getMatcher(specification, new QueryEvaluationHint(null, new ReteBackendFactory()));
         IQueryResultProvider resultProvider = engine.getResultProviderOfMatcher(matcher);
         Assert.assertTrue(resultProvider + "is not rete", resultProvider instanceof RetePatternMatcher);
     }
@@ -89,7 +89,7 @@ public class QueryEvaluationsHintTest {
     @Test
     public void testReteOverridesLS() throws Exception {
         // First, initialize a Rete matcher
-        engine.getMatcher(specification, new QueryEvaluationHint(new ReteBackendFactory(), Collections.<String, Object>emptyMap()));
+        engine.getMatcher(specification, new QueryEvaluationHint(null, new ReteBackendFactory()));
         // Then try to request a local search matcher
         ViatraQueryMatcher<?> matcher = engine.getMatcher(specification, LocalSearchHints.getDefault().build());
         IQueryResultProvider resultProvider = engine.getResultProviderOfMatcher(matcher);

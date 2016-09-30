@@ -28,6 +28,7 @@ import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.eclipse.xtend.lib.annotations.Data
 import org.junit.Test
+import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements of the base index and
@@ -85,8 +86,11 @@ abstract class QueryPerformanceTest {
      * This method shall return the query backend class that will be used for evaluation.
      * The backend must be already registered in the {@link QueryBackendRegistry}.
      * 
-     * Default implementation returns the registered default backend class.
+     * <p>Default implementation returns the registered default backend class.
+     * 
+     * @deprecated override {@link #getEngineOptions()} for more freedom in configuring the engine.
      */
+    @Deprecated
     def IQueryBackendFactory getQueryBackendFactory() {
         new ReteBackendFactory()
     }
@@ -97,12 +101,21 @@ abstract class QueryPerformanceTest {
         val preparedScope = scope
         logMemoryProperties("Scope prepared")
 
-        queryEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(preparedScope)
+        queryEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(preparedScope, getEngineOptions())
         queryGroup.prepare(queryEngine)
         logMemoryProperties("Base index created")
         queryEngine.wipe()
         logMemoryProperties("VIATRA Query engine wiped")
         info("Prepared query performance test")
+    }
+    
+    /**
+     * This method shall return the engine options that will be used for query evaluation.
+     * 
+     * Default implementation returns the default options plus whatever is selected by {@link #getQueryBackendFactory()}; override to deviate.
+     */
+    def ViatraQueryEngineOptions getEngineOptions() {
+        ViatraQueryEngineOptions.copyOptions(ViatraQueryEngineOptions.DEFAULT).withDefaultBackend(queryBackendFactory).build;
     }
 
     /**
@@ -147,7 +160,7 @@ abstract class QueryPerformanceTest {
         val specification = _specification as IQuerySpecification<? extends ViatraQueryMatcher>
         debug("Building Rete")
         val watch = Stopwatch.createStarted
-        val matcher = queryEngine.getMatcher(specification, new QueryEvaluationHint(queryBackendFactory, newHashMap))
+        val matcher = queryEngine.getMatcher(specification)
         watch.stop()
         val countMatches = matcher.countMatches
         val usedHeapAfter = logMemoryProperties("Matcher created")

@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 
+import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.FLATTEN_CALL_PREDICATE;
+import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.PLANNER_COST_FUNCTION;
+import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.PLANNER_TABLE_ROW_COUNT;
+import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.USE_BASE_INDEX;
+
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
@@ -17,12 +22,12 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBas
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.VariableBindingBasedCostFunction;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.DefaultFlattenCallPredicate;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.NeverFlattenCallPredicate;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 /**
@@ -32,8 +37,8 @@ import com.google.common.collect.Maps;
  * @since 1.4
  *
  */
-public final class LocalSearchHints implements IMatcherCapability{
-
+public final class LocalSearchHints implements IMatcherCapability {
+    
     private Boolean useBase = null;
     
     private Integer rowCount = null;
@@ -56,15 +61,15 @@ public final class LocalSearchHints implements IMatcherCapability{
      */
     public static LocalSearchHints getDefault(){
         LocalSearchHints result = new LocalSearchHints();
-        result.useBase = true;
-        result.rowCount = 4;
-        result.costFunction = new IndexerBasedConstraintCostFunction();
-        result.flattenCallPredicate = new NeverFlattenCallPredicate();
+        result.useBase = USE_BASE_INDEX.getDefaultValue();
+        result.rowCount = PLANNER_TABLE_ROW_COUNT.getDefaultValue();
+        result.costFunction = PLANNER_COST_FUNCTION.getDefaultValue();
+        result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getDefaultValue();
         return result;
     }
     
     /**
-     * With this setting, the patterns are flattened before planning. This may cause performance gain in most of the cases compared to the {@link #DEFAULT} settings,
+     * With this setting, the patterns are flattened before planning. This may cause performance gain in most of the cases compared to the {@link #getDefault()} settings,
      * However this should be used with care for patterns containing calls with several bodies.
      */
     public static LocalSearchHints getDefaultFlatten(){
@@ -90,40 +95,31 @@ public final class LocalSearchHints implements IMatcherCapability{
     
     public static LocalSearchHints parse(QueryEvaluationHint hint){
         LocalSearchHints result = new LocalSearchHints();
-        Map<String, Object> hints = hint.getBackendHints();
         
-        result.useBase = (Boolean) hints.get(LocalSearchHintKeys.USE_BASE_INDEX);
-        result.rowCount = (Integer) hints.get(LocalSearchHintKeys.PLANNER_TABLE_ROW_COUNT);
-        Object object = hints.get(LocalSearchHintKeys.FLATTEN_CALL_PREDICATE);
-        if (object != null){
-            Preconditions.checkArgument(object instanceof IFlattenCallPredicate);
-            result.flattenCallPredicate = (IFlattenCallPredicate)object;
-        }
-        
-        object = hints.get(LocalSearchHintKeys.PLANNER_COST_FUNCTION);
-        if (object != null){
-            Preconditions.checkArgument(object instanceof ICostFunction);
-            result.costFunction = (ICostFunction)object;
-        }
+        result.useBase = USE_BASE_INDEX.getValueOrNull(hint);
+        result.rowCount = PLANNER_TABLE_ROW_COUNT.getValueOrNull(hint);
+        result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getValueOrNull(hint);
+        result.costFunction = PLANNER_COST_FUNCTION.getValueOrNull(hint);
         
         return result;
     }
     
     public QueryEvaluationHint build(){
-        Map<String, Object> map = Maps.newHashMap();
+        @SuppressWarnings("rawtypes")
+        Map<QueryHintOption, Object> map = Maps.newHashMap();
         if (useBase != null){
-            map.put(LocalSearchHintKeys.USE_BASE_INDEX, useBase);
+            USE_BASE_INDEX.insertOverridingValue(map, useBase); 
         }
         if (rowCount != null){
-            map.put(LocalSearchHintKeys.PLANNER_TABLE_ROW_COUNT, rowCount);
+            PLANNER_TABLE_ROW_COUNT.insertOverridingValue(map, rowCount);
         }
         if (costFunction != null){
-            map.put(LocalSearchHintKeys.PLANNER_COST_FUNCTION, costFunction);
+            PLANNER_COST_FUNCTION.insertOverridingValue(map, costFunction);
         }
         if (flattenCallPredicate != null){
-            map.put(LocalSearchHintKeys.FLATTEN_CALL_PREDICATE, flattenCallPredicate);
+            FLATTEN_CALL_PREDICATE.insertOverridingValue(map, flattenCallPredicate);
         }
-        return new QueryEvaluationHint(LocalSearchBackendFactory.INSTANCE, map);
+        return new QueryEvaluationHint(map, LocalSearchBackendFactory.INSTANCE);
     }
     
     public boolean isUseBase() {

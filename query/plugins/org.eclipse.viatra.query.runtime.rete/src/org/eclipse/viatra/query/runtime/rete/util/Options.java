@@ -11,6 +11,8 @@
 
 package org.eclipse.viatra.query.runtime.rete.util;
 
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.viatra.query.runtime.rete.construction.basiclinear.BasicLinearLayout;
 import org.eclipse.viatra.query.runtime.rete.construction.quasitree.QuasiTreeLayout;
@@ -55,12 +57,12 @@ public class Options {
     public enum BuilderMethod {
         LEGACY, // ONLY with GTASM
         PSYSTEM_BASIC_LINEAR, PSYSTEM_QUASITREE;
-        public IQueryPlannerStrategy layoutStrategy() {
+        public IQueryPlannerStrategy layoutStrategy(IQueryBackendHintProvider hintProvider) {
             switch (this) {
             case PSYSTEM_BASIC_LINEAR:
-                return new BasicLinearLayout();
+                return new BasicLinearLayout(hintProvider);
             case PSYSTEM_QUASITREE:
-                return new QuasiTreeLayout();
+                return new QuasiTreeLayout(hintProvider);
             default:
             	throw new UnsupportedOperationException();
             }
@@ -85,12 +87,4 @@ public class Options {
     public static PlanTrimOption planTrimOption = 
     		PlanTrimOption.OPPORTUNISTIC;
 
-    /**
-     * @since 1.5
-     */
-    public static boolean useDiscriminatorDispatchersForConstantFiltering = true;
-    /**
-     * @since 1.5
-     */
-    public static boolean prioritizeConstantFiltering = true;
 }

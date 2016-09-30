@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -36,6 +38,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.Consta
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.construction.RetePatternBuildException;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
+import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
 
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
@@ -48,6 +51,15 @@ import com.google.common.collect.Sets.SetView;
  */
 public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
+    private IQueryBackendHintProvider hintProvider;
+
+    /**
+     * @param hintProvider
+     */
+    public QuasiTreeLayout(IQueryBackendHintProvider hintProvider) {
+        this.hintProvider = hintProvider;
+    }
+
     @Override
     public SubPlan plan(PBody pSystem, Logger logger, IQueryMetaContext context)
             throws QueryProcessingException {
@@ -58,6 +70,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         PBody pSystem;
         PQuery query;
         IQueryMetaContext context;
+        private QueryEvaluationHint hints;
         //IOperationCompiler compiler;
         //SubPlanProcessor planProcessor = new SubPlanProcessor();
         SubPlanFactory planFactory;
@@ -76,6 +89,8 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
             query = pSystem.getPattern();
             //this.compiler = compiler;
             //planProcessor.setCompiler(compiler);
+            
+            hints = hintProvider.getQueryEvaluationHint(query);
         }
 
         public SubPlan run() throws QueryProcessingException {
@@ -147,7 +162,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
         private void admitSubPlan(SubPlan plan) throws QueryProcessingException {
             // are there any unapplied constant filters that we can apply here?
-            if (Options.prioritizeConstantFiltering) {
+            if (ReteHintOptions.prioritizeConstantFiltering.getValueOrDefault(hints)) {
                 SetView<ConstantValue> unappliedConstants = 
                         Sets.difference(constantConstraints, plan.getAllEnforcedConstraints());
                 for (ConstantValue constantConstraint : unappliedConstants) {

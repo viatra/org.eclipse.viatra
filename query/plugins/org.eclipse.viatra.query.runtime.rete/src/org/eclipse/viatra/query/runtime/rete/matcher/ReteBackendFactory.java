@@ -38,7 +38,7 @@ public class ReteBackendFactory implements IQueryBackendFactory {
 	    engine = new ReteEngine(logger, runtimeContext, reteThreads);
 	    ReteRecipeCompiler compiler = 
 	    		new ReteRecipeCompiler(
-	    				Options.builderMethod.layoutStrategy(), 
+	    				Options.builderMethod.layoutStrategy(hintProvider), 
 	    				logger,
 	    				runtimeContext.getMetaContext(),
 	    				queryCacheContext,

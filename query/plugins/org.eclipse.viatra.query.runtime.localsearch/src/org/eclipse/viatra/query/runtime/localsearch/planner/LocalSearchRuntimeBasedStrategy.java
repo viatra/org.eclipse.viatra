@@ -56,17 +56,7 @@ import com.google.common.collect.Sets.SetView;
  * @noreference This class is not intended to be referenced by clients.
  */
 public class LocalSearchRuntimeBasedStrategy {
-	
-    /**
-     * 
-     * @deprecated use {@link #plan(PBody, Logger, Set, IQueryMetaContext, IQueryRuntimeContext, LocalSearchHints)} instead
-     */
-    @Deprecated
-    public SubPlan plan(PBody pBody, Logger logger, Set<PVariable> initialBoundVariables,
-            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, Map<String, Object> hints){
-        return plan(pBody, logger, initialBoundVariables, metaContext, runtimeContext, LocalSearchHints.getDefaultOverriddenBy(new QueryEvaluationHint(LocalSearchBackendFactory.INSTANCE, hints)));
-    }
-    
+	    
     /**
      * The implementation of a local search-based algorithm to create a search plan for a flattened (and normalized)
      * PBody

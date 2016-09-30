@@ -117,7 +117,7 @@ class ViatraQueryTest {
 	 * Add match result set with a query initialized using the given query backend
 	 */
 	def with(IQueryBackendFactory queryBackendFactory) {
-		val QueryEvaluationHint hint = new QueryEvaluationHint(queryBackendFactory, emptyMap);
+		val QueryEvaluationHint hint = new QueryEvaluationHint(null, queryBackendFactory);
 		with(hint)
 	}
 

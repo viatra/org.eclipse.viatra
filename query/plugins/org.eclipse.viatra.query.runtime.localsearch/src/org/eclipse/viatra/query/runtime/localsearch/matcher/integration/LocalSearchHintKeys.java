@@ -15,8 +15,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallP
 
 /**
  * @author Marton Bur
- *
+ * @deprecated removed support in version 1.5; use {@link LocalSearchHintOptions}
  */
+@Deprecated
 public class LocalSearchHintKeys {
     /**
      * @deprecated removed support in 1.4; its uses will be ignored 

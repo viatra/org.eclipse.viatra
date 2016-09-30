@@ -144,7 +144,7 @@ public class QueryExplorer extends ViewPart {
         flatLP = new PatternsViewerFlatLabelProvider(patternsViewerInput);
         hierarchicalCP = new PatternsViewerHierarchicalContentProvider();
         hierarchicalLP = new PatternsViewerHierarchicalLabelProvider(patternsViewerInput);
-        hints = new QueryEvaluationHint(QueryBackendRegistry.getInstance().getDefaultBackend(), new HashMap<String, Object>());
+        hints = new QueryEvaluationHint(null, QueryBackendRegistry.getInstance().getDefaultBackend());
         listener = new IModelConnectorListener() {
             @Override
             public void modelUnloaded(IModelConnector modelConnector) {

@@ -55,7 +55,7 @@ abstract class RelativeQueryPerformanceTest extends QueryPerformanceTest {
         {
             debug("Building Prerequisites")
             val watch = Stopwatch.createStarted
-            queryEngine.prepareGroup(prerequisites, new QueryEvaluationHint(queryBackendFactory, newHashMap))
+            queryEngine.prepareGroup(prerequisites, null)
             watch.stop()
             val usedHeapAfter = logMemoryProperties("Prerequisites built")
 

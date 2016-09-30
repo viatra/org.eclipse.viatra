@@ -100,8 +100,8 @@ class ViatraQueryEngineContentProvider implements ITreeContentProvider {
     
     dispatch def getChildrenInternal(QueryEvaluationHint parentElement) {
         val builder = ImmutableList.builder.add(parentElement.queryBackendFactory)
-        if(!parentElement.backendHints.empty){
-            builder.add(parentElement.backendHints.entrySet)
+        if(!parentElement.backendHintSettings.empty){
+            builder.add(parentElement.backendHintSettings.entrySet)
         } else {
             builder.add("No hints specified")
         }

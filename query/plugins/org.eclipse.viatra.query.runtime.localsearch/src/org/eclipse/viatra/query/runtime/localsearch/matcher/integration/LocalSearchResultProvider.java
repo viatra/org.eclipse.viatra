@@ -36,6 +36,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvid
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
@@ -111,8 +112,16 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
 
     private LocalSearchHints overrideDefaultHints(PQuery pQuery) {
-        return LocalSearchHints
-           .parse(LocalSearchHints.getDefault().build().overrideBy(hintProvider.getQueryEvaluationHint(pQuery).overrideBy(userHints)));
+        return LocalSearchHints.getDefaultOverriddenBy(
+                computeOverridingHints(pQuery));
+    }
+
+    /** 
+     * Combine with {@link QueryHintOption#getValueOrDefault(QueryEvaluationHint)} to access 
+     *  hint settings not covered by {@link LocalSearchHints} 
+     */
+    private QueryEvaluationHint computeOverridingHints(PQuery pQuery) {
+        return hintProvider.getQueryEvaluationHint(pQuery).overrideBy(userHints);
     }
 
     private void collectDependencies(Iterable<SearchPlanForBody> compiledPlans, Set<MatcherReference> dependencies) {

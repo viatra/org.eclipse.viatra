@@ -54,13 +54,13 @@ public abstract class AbstractBackendSelectionControl extends WorkbenchWindowCon
 
     /**
      * Applies the selected backend to the {@link QueryExplorer} instance by updating its {@link QueryEvaluationHint}
-     * object. The backend hints are preserved.
+     * object. The backend hint settings are preserved.
      * 
      * @param backend
      */
     private void applyBackendSelection(IQueryBackendFactory backend) {
         QueryEvaluationHint oldHint = getHints();
-        QueryEvaluationHint newHint = new QueryEvaluationHint(backend, oldHint.getBackendHints());
+        QueryEvaluationHint newHint = oldHint.overrideBy(new QueryEvaluationHint(null, backend));
         setHints(newHint);
     }
 

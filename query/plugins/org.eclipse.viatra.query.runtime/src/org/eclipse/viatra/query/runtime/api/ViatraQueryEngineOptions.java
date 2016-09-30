@@ -75,13 +75,12 @@ public final class ViatraQueryEngineOptions {
             IQueryBackendFactory defaultFactory = (defaultBackendFactory == null) ? new ReteBackendFactory()
                     : defaultBackendFactory;
             IQueryBackendFactory defaultCachingFactory = (defaultCachingBackendFactory == null)
-                    ? new ReteBackendFactory() // TODO this should be defaultFactory is it is caching
+                    ? new ReteBackendFactory() // TODO this should be defaultFactory if it is caching
                     : defaultBackendFactory;
 
             QueryEvaluationHint hint = (engineDefaultHints == null)
-                    ? (new QueryEvaluationHint(defaultFactory, Collections.<String, Object> emptyMap()))
-                    : engineDefaultHints;
-            hint = hint.overrideBy(new QueryEvaluationHint(defaultFactory, null));
+                    ? (new QueryEvaluationHint(null, defaultFactory))
+                    : engineDefaultHints.overrideBy(new QueryEvaluationHint(null, defaultFactory));
             return new ViatraQueryEngineOptions(hint, defaultCachingFactory);
         }
     }
@@ -106,8 +105,7 @@ public final class ViatraQueryEngineOptions {
     }
 
     private ViatraQueryEngineOptions(QueryEvaluationHint engineDefaultHints, IQueryBackendFactory defaultCachingBackendFactory) {
-        this.engineDefaultHints = new QueryEvaluationHint(engineDefaultHints.getQueryBackendFactory(),
-                engineDefaultHints.getBackendHints());
+        this.engineDefaultHints = engineDefaultHints;
         this.defaultCachingBackendFactory = defaultCachingBackendFactory;
     }
 
@@ -136,20 +134,10 @@ public final class ViatraQueryEngineOptions {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if(!Objects.equal(engineDefaultHints, DEFAULT.engineDefaultHints)) {
-            sb.append("backend: ").append(engineDefaultHints.getQueryBackendFactory().getBackendClass().getSimpleName());
-            Map<String, Object> backendHints = engineDefaultHints.getBackendHints();
-            sb.append("hints: ");
-            if(backendHints instanceof AbstractMap){
-                sb.append(backendHints.toString());
-            } else {
-                // we have to iterate on the contents
-                String joinedHintMap = Joiner.on(", ").withKeyValueSeparator("=").join(backendHints);
-                sb.append('{').append(joinedHintMap).append('}');
-            }
-        }
-        final String result = sb.toString();
-        return result.isEmpty() ? "defaults" : result;
+        // TODO defaultCachingBackendFactory is ignored
+        if(Objects.equal(engineDefaultHints, DEFAULT.engineDefaultHints)) 
+            return "defaults";
+        else
+            return engineDefaultHints.toString();
     }
 }
