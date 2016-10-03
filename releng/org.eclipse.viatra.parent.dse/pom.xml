@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>org.eclipse.viatra.parent.dse</artifactId>
+	<name>VIATRA Design Space Exploration</name>
+	<version>0.15.0-SNAPSHOT</version>
+	<url>http://eclipse.org/viatra</url>
+	<packaging>pom</packaging>
+	<modules>
+
+		<!-- DSE -->
+		<module>../../dse/plugins/org.eclipse.viatra.dse</module>
+		<module>../../dse/plugins/org.eclipse.viatra.dse.genetic</module>
+		<module>../../dse/features/org.eclipse.viatra.dse.feature</module>
+
+	</modules>
+	<parent>
+		<groupId>org.eclipse.viatra</groupId>
+		<artifactId>org.eclipse.viatra.parent.all</artifactId>
+		<version>1.5.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.viatra.parent.all/pom.xml</relativePath>
+	</parent>
+	<properties>
+		<viatra.incubation.version>0.15.0-SNAPSHOT</viatra.incubation.version>
+	</properties>
+	<build>
+	    <pluginManagement>
+            <plugins>
+               <plugin>
+                   <groupId>org.eclipse.tycho</groupId>
+                   <artifactId>tycho-versions-plugin</artifactId>
+                   <version>${tycho.version}</version>
+                   <configuration>
+                     <properties>viatra.incubation.version</properties>
+                   </configuration>
+               </plugin>
+            </plugins>
+        </pluginManagement>
+	</build>
+</project>
