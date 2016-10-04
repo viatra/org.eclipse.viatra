@@ -125,7 +125,7 @@ class PatternMatcherClassInferrer {
    		matcherClass.members += pattern.toMethod("create", typeRef(matcherClass)) [
             static = true
             visibility = JvmVisibility::PUBLIC
-            documentation = pattern.javadocMatcherStaticOnEngine.toString
+            documentation = pattern.javadocMatcherStaticCreate.toString
             exceptions += typeRef(typeof (ViatraQueryException))
             body = '''
                 return new «matcherClass.simpleName»();

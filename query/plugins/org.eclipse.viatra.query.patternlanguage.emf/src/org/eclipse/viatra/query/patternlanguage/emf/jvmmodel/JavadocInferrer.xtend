@@ -89,6 +89,12 @@ class JavadocInferrer {
 		@param engine the existing VIATRA Query engine in which this matcher will be created.
 		@throws ViatraQueryException if an error occurs during pattern matcher creation
 	'''
+	
+	def javadocMatcherStaticCreate(Pattern pattern) '''	
+		@throws ViatraQueryException if an error occurs during pattern matcher creation
+		@return an initialized matcher
+		@noreference This method is for internal matcher initialization by the framework, do not call it manually.
+	'''
 
 	def javadocGetAllMatchesMethod(Pattern pattern) '''
 		Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
