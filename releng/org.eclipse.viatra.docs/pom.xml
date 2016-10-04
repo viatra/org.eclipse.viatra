@@ -34,6 +34,17 @@
           http://docs.oracle.com/javase/7/docs/api/
          </additionalArgument>
          <additionalArgument>-public</additionalArgument>
+         <!-- API tools tags -->
+         <additionalArgument>-tag 'noimplement:a:No Implement:'</additionalArgument>
+         <additionalArgument>-tag 'noextend:a:No Extend:'</additionalArgument>
+         <additionalArgument>-tag 'noreference:a:No Reference:'</additionalArgument>
+         <additionalArgument>-tag 'noinstantiate:a:No Instantiate:'</additionalArgument>
+         <additionalArgument>-tag 'nooverride:a:No Override:'</additionalArgument>
+         <additionalArgument>-tag 'category:a:Category:'</additionalArgument>
+         <!-- EMF generated tags -->
+         <additionalArgument>-tag 'generated:a:Generated:'</additionalArgument>   
+         <additionalArgument>-tag 'ordered:a:Ordered:'</additionalArgument>   
+         <additionalArgument>-tag 'model:a:Model:'</additionalArgument>   
         </additionalArguments>
        </javadocOptions>
       </configuration>
