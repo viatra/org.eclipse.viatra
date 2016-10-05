@@ -19,10 +19,10 @@ import org.eclipse.viatra.transformation.debug.model.transformationstate.Transfo
 import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 
 public class RuleBrowserLabelProvider extends LabelProvider {
-    protected AdaptableTransformationBrowser view;
+    protected TransformationBrowserView view;
     protected ImageRegistry imageRegistry;
 
-    public RuleBrowserLabelProvider(AdaptableTransformationBrowser view) {
+    public RuleBrowserLabelProvider(TransformationBrowserView view) {
         this.view = view;
         this.imageRegistry = TransformationDebugUIActivator.getDefault().getImageRegistry();
     }

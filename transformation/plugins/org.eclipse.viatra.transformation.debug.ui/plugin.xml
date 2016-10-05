@@ -5,18 +5,18 @@
          point="org.eclipse.ui.views">
       <view
             category="org.eclipse.viatra.query.tooling.ui"
-            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser"
+            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.TransformationBrowserView"
             icon="icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser"
-            name="Adaptable Transformation Browser"
+            name="Transformation Browser"
             restorable="true">
       </view>
       <view
             category="org.eclipse.viatra.query.tooling.ui"
-            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.ModelInstanceViewer"
+            class="org.eclipse.viatra.transformation.debug.ui.util.DebugExecutableExtensionFactory:org.eclipse.viatra.transformation.debug.ui.views.modelinstancebrowser.ModelInstanceViewer"
             icon="icons/rsz_viatra_logo.png"
             id="org.eclipse.viatra.transformation.ui.debug.TransformationViewer"
-            name="Transformation Viewer"
+            name="Transformation Model Instance Viewer"
             restorable="true">
       </view>
    </extension>
@@ -56,7 +56,7 @@
             <with
                   variable="activePart">
                <instanceof
-                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.TransformationBrowserView">
                </instanceof>
                <test
                      property="org.eclipse.viatra.transformation.debug.ui.activation">
@@ -71,7 +71,7 @@
             <with
                   variable="activePart">
                <instanceof
-                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.TransformationBrowserView">
                </instanceof>
                <test
                      property="org.eclipse.viatra.transformation.debug.ui.activation">
@@ -86,7 +86,7 @@
             <with
                   variable="activePart">
                <instanceof
-                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.TransformationBrowserView">
                </instanceof>
                <test
                      property="org.eclipse.viatra.transformation.debug.ui.running">
@@ -101,7 +101,7 @@
             <with
                   variable="activePart">
                <instanceof
-                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+                     value="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.TransformationBrowserView">
                </instanceof>
                <test
                      property="org.eclipse.viatra.transformation.debug.ui.running">
@@ -186,7 +186,7 @@
                id="org.eclipse.viatra.transformation.debug.ui.debuggerPropertyTester"
                namespace="org.eclipse.viatra.transformation.debug.ui"
                properties="adaptableevm,activation,running"
-               type="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser">
+               type="org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.TransformationBrowserView">
          </propertyTester>
       </extension>
       <extension

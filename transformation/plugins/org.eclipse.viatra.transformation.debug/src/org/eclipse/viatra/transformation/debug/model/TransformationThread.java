@@ -49,7 +49,6 @@ public class TransformationThread extends TransformationDebugElement implements 
     private List<ITransformationBreakpoint> breakpoints;
     private final TransformationModelProvider modelProvider;
     
-    
     private String name;
 
     private IType transformationClass;
@@ -180,6 +179,10 @@ public class TransformationThread extends TransformationDebugElement implements 
         } else {
             return new IStackFrame[0];
         }
+    }
+    
+    public TransformationModelProvider getModelProvider() {
+        return modelProvider;
     }
 
     @Override

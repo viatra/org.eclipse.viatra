@@ -21,7 +21,6 @@ import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
 public class TransformationModelBuilder {
-    public static final String TYPE_ATTR = "EObjectType";
     private Map<TransformationModelElement, EObject> elementMap = Maps.newHashMap();
     
     public void reset(){
@@ -43,11 +42,11 @@ public class TransformationModelBuilder {
         TransformationModelElement element = new TransformationModelElement();
         for(EAttribute attribute : eobject.eClass().getEAllAttributes()){
             Object eGet = eobject.eGet(attribute);
-            if(eGet != null && !attribute.getName().equals(TYPE_ATTR)){
+            if(eGet != null && !attribute.getName().equals(TransformationModelElement.TYPE_ATTR)){
                 element.addAttribute(attribute.getName(), eobject.eGet(attribute).toString());
             }
         }
-        element.addAttribute(TYPE_ATTR, eobject.eClass().getName());
+        element.addAttribute(TransformationModelElement.TYPE_ATTR, eobject.eClass().getName());
         elementMap.put(element, eobject);
         return element;
     }
@@ -67,7 +66,7 @@ public class TransformationModelBuilder {
                 }
             }
         }
-        return element.getContainedElements();
+        return element.getContainments();
     }
     
     public Map<String, List<TransformationModelElement>> createCrossReferenceElements(TransformationModelElement element){

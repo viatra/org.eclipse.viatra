@@ -21,8 +21,10 @@ import com.google.common.collect.Maps;
 
 public class TransformationModelElement implements Serializable{
     private static final long serialVersionUID = -8165991633354685442L;
-
+    public static final String TYPE_ATTR = "EObjectType";
+    
     private UUID id = UUID.randomUUID(); 
+    private boolean loaded = false; 
     
     private Map<String, String> attributes = Maps.newHashMap();
     
@@ -32,6 +34,10 @@ public class TransformationModelElement implements Serializable{
     
     public UUID getId() {
         return id;
+    }
+    
+    public boolean isLoaded() {
+        return loaded;
     }
     
     public String getAttribute(String name) {
@@ -77,15 +83,38 @@ public class TransformationModelElement implements Serializable{
         }
     }
     
-    public Map<String, List<TransformationModelElement>> getContainedElements() {
+    public Map<String, List<TransformationModelElement>> getContainments() {
         return Maps.newHashMap((containedElements));
+    }
+    
+    public List<TransformationModelElement> getChildren() {
+        List<TransformationModelElement> list = Lists.newArrayList();
+        for(String label : containedElements.keySet()){
+            list.addAll(containedElements.get(label));
+        } 
+        return list;
     }
     
     public void setCrossReferences(Map<String, List<TransformationModelElement>> crossReferences) {
         this.crossReferences = crossReferences;
+        loaded = true;
     }
 
     public void setContainedElements(Map<String, List<TransformationModelElement>> containedElements) {
         this.containedElements = containedElements;
+        loaded = true;
+    }
+    
+    public String getNameAttribute(){
+        for (String attributeKey : attributes.keySet()) {
+            if(attributeKey.matches("(.*ID.*|.*identifier.*|.*name.*)")){
+                return attributes.get(attributeKey);
+            }
+        }
+        return "";
+    }
+    
+    public String getTypeAttribute(){
+        return getAttribute(TYPE_ATTR);
     }
 }

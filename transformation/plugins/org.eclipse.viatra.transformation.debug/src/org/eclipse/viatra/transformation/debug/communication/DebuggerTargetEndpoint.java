@@ -259,15 +259,20 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
    
     private ResourceSet[] getResources(ViatraQueryEngine engine) {
         List<ResourceSet> retVal = Lists.newArrayList();
-        QueryScope scope = engine.getScope();
-        if (scope instanceof EMFScope) {
-            for (Notifier notifier : ((EMFScope) scope).getScopeRoots()) {
-                if (notifier instanceof ResourceSet) {
-                    retVal.add((ResourceSet) notifier);
+        if(engine != null){
+            QueryScope scope = engine.getScope();
+            if (scope instanceof EMFScope) {
+                for (Notifier notifier : ((EMFScope) scope).getScopeRoots()) {
+                    if (notifier instanceof ResourceSet) {
+                        retVal.add((ResourceSet) notifier);
+                    }
                 }
             }
+            return retVal.toArray(new ResourceSet[retVal.size()]);
+        }else{
+            return new ResourceSet[0];
         }
-        return retVal.toArray(new ResourceSet[retVal.size()]);
+        
     }
     
     private List<EObject> getResourceElements(ResourceSet[] resourceSets) {

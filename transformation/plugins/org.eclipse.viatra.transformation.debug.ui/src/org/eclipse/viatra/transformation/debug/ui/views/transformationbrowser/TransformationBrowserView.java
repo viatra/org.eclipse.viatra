@@ -40,8 +40,10 @@ import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugU
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-public class AdaptableTransformationBrowser extends ViewPart
+public class TransformationBrowserView extends ViewPart
         implements IDebuggerHostAgentListener {
+    private static final String DEBUG_VIEW = "org.eclipse.debug.ui.DebugView";
+
     public static final String ID = "org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser";
     
     private TransformationThread currentThread;
@@ -83,7 +85,7 @@ public class AdaptableTransformationBrowser extends ViewPart
                                 treeViewer.setInput(currentThread);
                             }
                             treeViewer.setExpandedElements(expandedElements);
-                            currentThread.getHostAgent().registerDebuggerHostAgentListener(AdaptableTransformationBrowser.this);
+                            currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
                         } else if(firstElement instanceof TransformationStackFrame){
                             TransformationThread thread = (TransformationThread) ((TransformationStackFrame) firstElement).getThread();
                             currentThread =  thread;
@@ -92,7 +94,7 @@ public class AdaptableTransformationBrowser extends ViewPart
                                 treeViewer.setInput(currentThread);
                             }
                             treeViewer.setExpandedElements(expandedElements);
-                            currentThread.getHostAgent().registerDebuggerHostAgentListener(AdaptableTransformationBrowser.this);
+                            currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
                         }
                     } catch (Exception e) {
                         TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
@@ -104,7 +106,7 @@ public class AdaptableTransformationBrowser extends ViewPart
             }
         };
         
-        sService.addSelectionListener("org.eclipse.debug.ui.DebugView", listener);
+        sService.addSelectionListener(DEBUG_VIEW, listener);
         getSite().setSelectionProvider(treeViewer);
     }
 
@@ -130,9 +132,9 @@ public class AdaptableTransformationBrowser extends ViewPart
  
     private final class ConfigurationApplication implements Runnable {
         private final TransformationViewConfiguration config;
-        private final AdaptableTransformationBrowser view;
+        private final TransformationBrowserView view;
 
-        private ConfigurationApplication(TransformationViewConfiguration config, AdaptableTransformationBrowser view) {
+        private ConfigurationApplication(TransformationViewConfiguration config, TransformationBrowserView view) {
             this.config = config;
             this.view = view;
         }
