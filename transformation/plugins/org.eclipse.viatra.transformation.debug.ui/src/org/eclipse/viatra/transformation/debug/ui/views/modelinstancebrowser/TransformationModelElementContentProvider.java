@@ -19,6 +19,7 @@ import org.eclipse.viatra.transformation.debug.model.transformationstate.Transfo
 
 public class TransformationModelElementContentProvider implements ITreeContentProvider{
     private final TransformationModelProvider modelProvider;
+    private boolean disposed=false;
     
     public TransformationModelElementContentProvider(TransformationModelProvider modelProvider) {
         this.modelProvider = modelProvider;
@@ -39,12 +40,12 @@ public class TransformationModelElementContentProvider implements ITreeContentPr
     
     @Override
     public void dispose() {
-        
+        disposed = true;
     }
 
     @Override
     public Object[] getChildren(Object parentElement) {
-        if(parentElement instanceof TransformationModelElement){
+        if(!disposed && parentElement instanceof TransformationModelElement){
             modelProvider.loadElementContent((TransformationModelElement) parentElement);
             List<TransformationModelElement> children = ((TransformationModelElement)parentElement).getChildren();
             return children.toArray(new TransformationModelElement[children.size()]);
@@ -59,7 +60,7 @@ public class TransformationModelElementContentProvider implements ITreeContentPr
 
     @Override
     public boolean hasChildren(Object element) {
-        if(element instanceof TransformationModelElement){
+        if(!disposed && element instanceof TransformationModelElement){
             modelProvider.loadElementContent((TransformationModelElement) element);
             return !((TransformationModelElement) element).getChildren().isEmpty();
         }

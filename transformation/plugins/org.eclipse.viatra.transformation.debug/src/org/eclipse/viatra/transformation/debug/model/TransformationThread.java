@@ -145,7 +145,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public boolean canTerminate() {
-        return getDebugTarget().canTerminate();
+        return !terminated;
     }
 
     @Override
@@ -155,7 +155,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public void terminate() throws DebugException {
-
+        agent.sendDisconnectMessage();
     }
 
     @Override
@@ -219,14 +219,14 @@ public class TransformationThread extends TransformationDebugElement implements 
     @Override
     public void terminated(IDebuggerHostAgent agent) throws CoreException, DebugException {
         terminated = true;
+        stepping = false;
+        suspended = false;
+        
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
         TransformationThreadFactory.getInstance().deleteTransformationThread(this);
+        
+        ((TransformationDebugTarget)getDebugTarget()).requestTermination();
         fireTerminateEvent();
-        try {
-            ((TransformationDebugTarget) getDebugTarget()).requestTermination();
-        } catch (DebugException e) {
-            throw e;
-        }       
     }
 
 

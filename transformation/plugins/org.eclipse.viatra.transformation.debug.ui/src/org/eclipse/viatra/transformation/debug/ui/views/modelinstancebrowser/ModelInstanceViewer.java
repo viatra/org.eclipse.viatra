@@ -14,13 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -56,7 +54,8 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
 
     private TransformationThread currentThread;
     private Map<CTabItem, TreeViewer> tabMap = Maps.newHashMap();
-
+    private ITreeContentProvider contentProvider;
+    
     private TabbedSelectionProviderWrapper selectionProviderWrapper;
     
     
@@ -99,18 +98,33 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
                     try {
                         if (firstElement instanceof TransformationThread) {
                             currentThread = (TransformationThread) firstElement;
-                            maintainTabs();
-                            currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
+                            if(!currentThread.isTerminated()){
+                                maintainTabs();
+                                currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
+                            }else {
+                                currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(ModelInstanceViewer.this);
+                                for (CTabItem item : tabFolder.getItems()) {
+                                    item.getControl().dispose();
+                                    item.dispose();
+                                } 
+                            }
+                            
                         } else if(firstElement instanceof TransformationStackFrame){
                             TransformationThread thread = (TransformationThread) ((TransformationStackFrame) firstElement).getThread();
                             currentThread =  thread;
-                            maintainTabs();
-                            currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
+                            if(!currentThread.isTerminated()){
+                                maintainTabs();
+                                currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
+                            }else{
+                                currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(ModelInstanceViewer.this);
+                                for (CTabItem item : tabFolder.getItems()) {
+                                    item.getControl().dispose();
+                                    item.dispose();
+                                }
+                            }
                         }
                     } catch (Exception e) {
                         TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
-                        ErrorDialog.openError(composite.getShell(), "An error has occured", e.getMessage(),
-                                new Status(IStatus.ERROR, TransformationDebugUIActivator.PLUGIN_ID, e.getMessage()));
                     }
                     
                 }
@@ -142,7 +156,8 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
             ritem.setControl(treeViewer.getTree());
             tabMap.put(ritem, treeViewer);
 
-            treeViewer.setContentProvider(new TransformationModelElementContentProvider(currentThread.getModelProvider()));
+            contentProvider = new TransformationModelElementContentProvider(currentThread.getModelProvider()); 
+            treeViewer.setContentProvider(contentProvider);
             treeViewer.setLabelProvider(new TransformationModelElementLabelProvider());
 
             treeViewer.setInput(new TransformationModelElement[]{element});
@@ -178,6 +193,7 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
             tabFolder.getDisplay().syncExec(new Runnable() {
                 @Override
                 public void run() {
+                    contentProvider.dispose();
                     currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(ModelInstanceViewer.this);
                     for (CTabItem item : tabFolder.getItems()) {
                         item.getControl().dispose();

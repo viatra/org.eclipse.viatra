@@ -23,8 +23,7 @@ public class TransformationModelElementLabelProvider extends LabelProvider {
         if (element instanceof TransformationModelElement) {
             String nameAttribute = ((TransformationModelElement) element).getNameAttribute();
             return ((TransformationModelElement) element).getTypeAttribute()
-                    + ((nameAttribute == "") ? " " : (" \"" + nameAttribute + "\" ")) + "ID="
-                    + ((TransformationModelElement) element).getId();
+                    + ((nameAttribute == "") ? " " : (" \"" + nameAttribute + "\" "));
         } else if (element instanceof CompositeItem) {
             return ((CompositeItem) element).getName();
         } else {

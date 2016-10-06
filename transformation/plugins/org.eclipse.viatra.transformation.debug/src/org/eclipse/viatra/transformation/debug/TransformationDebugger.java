@@ -262,14 +262,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     }
 
     public void disconnect() {
-        for (IDebuggerTargetAgent listener : agents) {
-            try {
-                listener.terminated();
-                unRegisterTransformationDebugListener(listener);
-            } catch (CoreException e) {
-                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
-            }
-        }
+        disposeListener();
         breakpoints.clear();
         setDebuggerAction(DebuggerActions.Continue);
     }

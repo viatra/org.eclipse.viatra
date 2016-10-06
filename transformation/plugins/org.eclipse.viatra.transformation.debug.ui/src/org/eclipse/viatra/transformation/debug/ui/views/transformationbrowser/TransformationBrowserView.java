@@ -83,18 +83,24 @@ public class TransformationBrowserView extends ViewPart
                             Object[] expandedElements = treeViewer.getExpandedElements();
                             if(!currentThread.isTerminated()){
                                 treeViewer.setInput(currentThread);
+                                treeViewer.setExpandedElements(expandedElements);
+                                currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
+                            }else{
+                                treeViewer.setInput(new Object[0]);
+                                currentThread = null;
                             }
-                            treeViewer.setExpandedElements(expandedElements);
-                            currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
                         } else if(firstElement instanceof TransformationStackFrame){
                             TransformationThread thread = (TransformationThread) ((TransformationStackFrame) firstElement).getThread();
                             currentThread =  thread;
                             Object[] expandedElements = treeViewer.getExpandedElements();
                             if(!currentThread.isTerminated()){
                                 treeViewer.setInput(currentThread);
+                                treeViewer.setExpandedElements(expandedElements);
+                                currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
+                            }else{
+                                treeViewer.setInput(new Object[0]);
+                                currentThread = null;
                             }
-                            treeViewer.setExpandedElements(expandedElements);
-                            currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
                         }
                     } catch (Exception e) {
                         TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
@@ -202,7 +208,9 @@ public class TransformationBrowserView extends ViewPart
                 @Override
                 public void run() {
                     treeViewer.setInput(new Object[0]);
+                    currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(TransformationBrowserView.this);
                     currentThread = null;
+                    
                 }
             });
         }

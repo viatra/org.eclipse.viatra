@@ -62,6 +62,11 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     }
 
     @Override
+    public IDebugTarget getDebugTarget() {
+        return this;
+    }
+    
+    @Override
     public IThread[] getThreads() throws DebugException {
         return threads.toArray(new IThread[0]);
     }
@@ -84,7 +89,7 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     //ITerminate
     @Override
     public boolean canTerminate() {
-        return false;
+        return !terminated;
     }
 
     @Override
@@ -94,7 +99,9 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     
     @Override
     public void terminate() throws DebugException {
-         
+        for (TransformationThread transformationThread : threads) {
+            transformationThread.terminate();
+        }
     }
     
     //ISuspendResume
@@ -171,23 +178,9 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     }
     
     protected void requestTermination() throws DebugException {
-        if(threadsTerminated()){
-            try {
-                launch.terminate();
-                terminated = true;
-                fireTerminateEvent();
-            } catch (DebugException e) {
-                throw e;
-            }
-        }
+        terminated = true;
+        fireTerminateEvent();
     }
     
-    protected boolean threadsTerminated(){
-        for (TransformationThread transformationThread : threads) {
-            if(!transformationThread.isTerminated()){
-                return false;
-            }
-        }
-        return true;
-    }
+
 }

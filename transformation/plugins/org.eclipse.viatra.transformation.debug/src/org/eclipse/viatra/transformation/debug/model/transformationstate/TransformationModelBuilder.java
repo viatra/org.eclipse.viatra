@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
@@ -57,12 +58,14 @@ public class TransformationModelBuilder {
             if(reference.isContainment()){
                 Object eGet = eobject.eGet(reference);
                 if(eGet instanceof List){
-                    List<EObject> referenceList = ((List<EObject>)eGet); 
+                    List<EObject> referenceList = Lists.newArrayList(((List<EObject>)eGet)); 
                     for(EObject object : referenceList){
                         element.addContainedElement(reference.getName(), getTransformationElement(object));
                     }
                 }else if (eGet instanceof EObject){
                     element.addContainedElement(reference.getName(), getTransformationElement((EObject) eGet));
+                } else {
+                    element.addEmptyContainment(reference.getName());
                 }
             }
         }
@@ -75,12 +78,14 @@ public class TransformationModelBuilder {
             if(!reference.isContainment()){
                 Object eGet = eobject.eGet(reference);
                 if(eGet instanceof List){
-                    List<EObject> referenceList = ((List<EObject>)eGet); 
+                    List<EObject> referenceList = Lists.newArrayList(((List<EObject>)eGet)); 
                     for(EObject object : referenceList){
                         element.addCrossReference(reference.getName(), getTransformationElement(object));
                     }
                 }else if (eGet instanceof EObject){
                     element.addCrossReference(reference.getName(), getTransformationElement((EObject) eGet));
+                }else {
+                    element.addEmptyCrossReference(reference.getName());
                 }
             }
         }

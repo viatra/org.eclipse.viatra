@@ -11,6 +11,7 @@
 package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,13 @@ public class TransformationModelElement implements Serializable{
         return crossReferences.get(name);
     }
     
+    public void addEmptyCrossReference(String name) {
+        List<TransformationModelElement> list = crossReferences.get(name);
+        if(list==null){
+            crossReferences.put(name, new ArrayList<TransformationModelElement>());
+        }
+    }
+    
     public void addCrossReference(String name, TransformationModelElement value) {
         List<TransformationModelElement> list = crossReferences.get(name);
         if(list==null){
@@ -72,6 +80,13 @@ public class TransformationModelElement implements Serializable{
     
     public Collection<TransformationModelElement> getContainedElement(String name) {
         return containedElements.get(name);
+    }
+    
+    public void addEmptyContainment(String name) {
+        List<TransformationModelElement> list = containedElements.get(name);
+        if(list==null){
+            containedElements.put(name, new ArrayList<TransformationModelElement>());
+        }
     }
     
     public void addContainedElement(String name, TransformationModelElement value) {
@@ -114,7 +129,7 @@ public class TransformationModelElement implements Serializable{
         return "";
     }
     
-    public String getTypeAttribute(){
+    public String getTypeAttribute(){   
         return getAttribute(TYPE_ATTR);
     }
 }
