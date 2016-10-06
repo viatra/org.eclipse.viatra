@@ -27,17 +27,42 @@
 		<viatra.incubation.version>0.15.0-SNAPSHOT</viatra.incubation.version>
 	</properties>
 	<build>
-	    <pluginManagement>
-            <plugins>
-               <plugin>
-                   <groupId>org.eclipse.tycho</groupId>
-                   <artifactId>tycho-versions-plugin</artifactId>
-                   <version>${tycho.version}</version>
-                   <configuration>
-                     <properties>viatra.incubation.version</properties>
-                   </configuration>
-               </plugin>
-            </plugins>
-        </pluginManagement>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-versions-plugin</artifactId>
+					<version>${tycho.version}</version>
+					<configuration>
+						<properties>viatra.incubation.version</properties>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>target-platform-configuration</artifactId>
+					<version>${tycho.version}</version>
+					<configuration>
+						<resolver>p2</resolver>
+						<target>
+							<artifact>
+								<groupId>org.eclipse.viatra</groupId>
+								<artifactId>org.eclipse.viatra.target.core</artifactId>
+								<version>${viatra.main.version}</version>
+							</artifact>
+							<dependency-resolution>
+								<extraRequirements>
+									<requirement>
+										<type>eclipse-plugin</type>
+										<id>com.google.inject.multibindings</id>
+										<versionRange>[3.0.0,4.0.0)</versionRange>
+									</requirement>
+								</extraRequirements>
+							</dependency-resolution>
+						</target>
+						<ignoreTychoRepositories>true</ignoreTychoRepositories>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>
