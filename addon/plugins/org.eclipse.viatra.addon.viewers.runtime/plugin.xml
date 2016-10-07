@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><?eclipse version="3.4"?><plugin>
-  <extension point="org.eclipse.emf.ecore.generated_package">
-    <!-- @generated notation -->
-    <package class="org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage" genModel="model/notation.genmodel" uri="http://www.eclipse.org/viatra/addon/viewers/notation/1.0"/>
-  </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated notation -->
+      <package
+            uri="http://www.eclipse.org/viatra/addon/viewers/notation/1.0"
+            class="org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage"
+            genModel="model/notation.genmodel"/>
+   </extension>
   <extension point="org.eclipse.viatra.query.patternlanguage.annotation">
     <annotation additionalValidator="org.eclipse.viatra.addon.viewers.runtime.validators.ItemValidator" description="An element to display in a JFace viewer" name="Item">
       <annotationparameter description="The pattern parameter the Item will represent in the viewer." mandatory="true" multiple="false" name="item" type="variablereference"/>
