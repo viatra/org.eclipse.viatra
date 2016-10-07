@@ -1,103 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.localsearch" version="2">
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/integration/LocalSearchResultProvider.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider">
-        <filter id="338722907">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="926941240">
             <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider"/>
-                <message_argument value="LocalSearchResultProvider(IQueryBackend, Logger, IQueryRuntimeContext, IQueryCacheContext, IQueryBackendHintProvider, PQuery)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/LocalSearchPlanner.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner">
-        <filter id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner"/>
-                <message_argument value="LocalSearchPlanner()"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchPlanner"/>
-                <message_argument value="initializePlanner(PQueryFlattener, Logger, IQueryMetaContext, IQueryRuntimeContext, PBodyNormalizer, LocalSearchRuntimeBasedStrategy, POperationCompiler, Map&lt;String,Object&gt;)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/LocalSearchRuntimeBasedStrategy.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy">
-        <filter comment="LocalSearchRuntimeBasedStrategy made stateless, all constructors has been removed" id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy"/>
-                <message_argument value="LocalSearchRuntimeBasedStrategy(boolean, boolean)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/PlanState.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState">
-        <filter comment="plan cost is now double" id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PlanState"/>
-                <message_argument value="getCost()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/planner/cost/impl/VariableBindingBasedCostEstimator.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.VariableBindingBasedCostEstimator">
-        <filter id="1110441988">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.VariableBindingBasedCostEstimator"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="xtend-gen/org/eclipse/viatra/query/runtime/localsearch/planner/PConstraintInfo.java" type="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo">
-        <filter id="338722907">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="PConstraintInfo(PConstraint, Set&lt;PVariable&gt;, Set&lt;PVariable&gt;, Set&lt;PConstraintInfo&gt;, IQueryRuntimeContext)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="_calculateCost(ConstantValue)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="_calculateCost(ExportedParameter)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="_calculateCost(PConstraint)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="_calculateCost(TypeConstraint)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="calculateBinaryExtendCost(IInputKey, PVariable, PVariable, boolean, long)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="calculateCost(PConstraint)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="calculateUnaryConstraintCost(IInputKey)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338792546">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.planner.PConstraintInfo"/>
-                <message_argument value="getCost()"/>
+                <message_argument value="1.5.0"/>
+                <message_argument value="1.4.0"/>
             </message_arguments>
         </filter>
     </resource>

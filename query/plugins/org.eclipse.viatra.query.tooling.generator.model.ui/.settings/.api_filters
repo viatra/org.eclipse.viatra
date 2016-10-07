@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.tooling.generator.model.ui" version="2">
+    <resource path="src-gen/org/eclipse/viatra/query/tooling/generator/model/ui/contentassist/antlr/PartialGeneratorModelContentAssistParser.java" type="org.eclipse.viatra.query.tooling.generator.model.ui.contentassist.antlr.PartialGeneratorModelContentAssistParser">
+        <filter comment="Xtext generated code" id="576725006">
+            <message_arguments>
+                <message_argument value="IPartialContentAssistParser"/>
+                <message_argument value="PartialGeneratorModelContentAssistParser"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.query.tooling.generator.model" version="2">
+    <resource path="src-gen/org/eclipse/viatra/query/tooling/generator/model/serializer/GeneratorModelSemanticSequencer.java" type="org.eclipse.viatra.query.tooling.generator.model.serializer.GeneratorModelSemanticSequencer">
+        <filter comment="Xtext generated code" id="576720909">
+            <message_arguments>
+                <message_argument value="AbstractDelegatingSemanticSequencer"/>
+                <message_argument value="GeneratorModelSemanticSequencer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/tooling/generator/model/serializer/GeneratorModelSyntacticSequencer.java" type="org.eclipse.viatra.query.tooling.generator.model.serializer.GeneratorModelSyntacticSequencer">
+        <filter comment="Xtext generated code" id="576720909">
+            <message_arguments>
+                <message_argument value="AbstractSyntacticSequencer"/>
+                <message_argument value="GeneratorModelSyntacticSequencer"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="643846161">
+            <message_arguments>
+                <message_argument value="ISynTransition"/>
+                <message_argument value="GeneratorModelSyntacticSequencer"/>
+                <message_argument value="emitUnassignedTokens(EObject, ISyntacticSequencerPDAProviderISynTransition, INode, INode)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/query/tooling/generator/model/scoping/GeneratorModelCrossRefSerializer.java" type="org.eclipse.viatra.query.tooling.generator.model.scoping.GeneratorModelCrossRefSerializer">
+        <filter comment="Xtext generated code" id="576720909">
+            <message_arguments>
+                <message_argument value="CrossReferenceSerializer"/>
+                <message_argument value="GeneratorModelCrossRefSerializer"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Xtext generated code" id="643846161">
+            <message_arguments>
+                <message_argument value="Acceptor"/>
+                <message_argument value="GeneratorModelCrossRefSerializer"/>
+                <message_argument value="serializeCrossRef(EObject, CrossReference, EObject, INode, ISerializationDiagnosticAcceptor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.viatra.transformation.runtime.emf" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="926941240">
+            <message_arguments>
+                <message_argument value="1.5.0"/>
+                <message_argument value="1.4.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/transformation/runtime/emf/transformation/batch/BatchTransformation.java" type="org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation$BatchTransformationBuilder">
+        <filter comment="Adapter support is experimental" id="643846161">
+            <message_arguments>
+                <message_argument value="IAdapterConfiguration"/>
+                <message_argument value="BatchTransformationBuilder"/>
+                <message_argument value="addAdapterConfiguration(IAdapterConfiguration)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adapter support is experimental" id="643846161">
+            <message_arguments>
+                <message_argument value="IEVMAdapter"/>
+                <message_argument value="BatchTransformationBuilder"/>
+                <message_argument value="addAdapter(IEVMAdapter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adapter support is experimental" id="643846161">
+            <message_arguments>
+                <message_argument value="IEVMListener"/>
+                <message_argument value="BatchTransformationBuilder"/>
+                <message_argument value="addListener(IEVMListener)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/viatra/transformation/runtime/emf/transformation/eventdriven/EventDrivenTransformation.java" type="org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.EventDrivenTransformation$EventDrivenTransformationBuilder">
+        <filter comment="Adapter support is experimental" id="643846161">
+            <message_arguments>
+                <message_argument value="IAdapterConfiguration"/>
+                <message_argument value="EventDrivenTransformationBuilder"/>
+                <message_argument value="addAdapterConfiguration(IAdapterConfiguration)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adapter support is experimental" id="643846161">
+            <message_arguments>
+                <message_argument value="IEVMAdapter"/>
+                <message_argument value="EventDrivenTransformationBuilder"/>
+                <message_argument value="addAdapter(IEVMAdapter)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Adapter support is experimental" id="643846161">
+            <message_arguments>
+                <message_argument value="IEVMListener"/>
+                <message_argument value="EventDrivenTransformationBuilder"/>
+                <message_argument value="addListener(IEVMListener)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
