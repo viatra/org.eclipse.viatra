@@ -24,6 +24,12 @@
     <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
   </setupTask>
   <setupTask
+      xsi:type="jdt:JRETask"
+      version="JavaSE-1.8"
+      location="${jre.location-1.8}">
+    <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
+  </setupTask>
+  <setupTask
       xsi:type="setup:EclipseIniTask"
       option="-Xmx"
       value="2048m"
@@ -132,11 +138,11 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      defaultValue="Mars"
+      defaultValue="Neon"
       storageURI="scope://Workspace"/>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
-      predecessor="//@setupTasks.11"
+      predecessor="//@setupTasks.12"
       successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
     <targlet
         name="${scope.project.label}"
@@ -269,7 +275,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -323,7 +329,7 @@
       <setupTask
           xsi:type="projects:ProjectsBuildTask"
           id="viatra.pregen"
-          predecessor="//@setupTasks.11 //@setupTasks.9"
+          predecessor="//@setupTasks.12 //@setupTasks.10"
           onlyNewProjects="true"/>
       <setupTask
           xsi:type="launching:LaunchTask"
@@ -500,7 +506,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}">
@@ -591,7 +597,7 @@
     <setupTask
         xsi:type="projects:ProjectsBuildTask"
         id="viatra.cep.premetamodelgen"
-        predecessor="//@setupTasks.9"
+        predecessor="//@setupTasks.10"
         onlyNewProjects="true"
         refresh="true">
       <description></description>
@@ -668,7 +674,7 @@
       label="Xcore Integration">
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4">
       <targlet
           name="${scope.project.label}"
@@ -926,7 +932,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
@@ -997,7 +1003,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
@@ -1068,7 +1074,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
@@ -1133,7 +1139,7 @@
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask"
-        predecessor="//@setupTasks.11"
+        predecessor="//@setupTasks.12"
         successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
         targetName="">
       <targlet
