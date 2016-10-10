@@ -37,6 +37,7 @@ import org.eclipse.viatra.transformation.debug.model.transformationstate.Transfo
 import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class DebuggerHostEndpoint implements IDebuggerHostAgent, IDebuggerHostEndpoint, NotificationListener {
     private String name;
@@ -45,6 +46,7 @@ public class DebuggerHostEndpoint implements IDebuggerHostAgent, IDebuggerHostEn
     private ObjectName mbeanName;
     private MBeanServerConnection mbsc;
     private JMXConnector jmxc;
+    private boolean isClosed = false;
     
     public DebuggerHostEndpoint(String ID){
         this.name = ID;
@@ -137,16 +139,17 @@ public class DebuggerHostEndpoint implements IDebuggerHostAgent, IDebuggerHostEn
 
     @Override
     public void terminated() throws CoreException {
-        for (IDebuggerHostAgentListener listener : listeners) {
-            listener.terminated(this);
-        }
-        listeners.clear();
         try {
+            isClosed = true;
             mbsc.removeNotificationListener(mbeanName, this, null, null);
             jmxc.close();
         } catch (InstanceNotFoundException | ListenerNotFoundException | IOException e) {
             ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
         }
+        for (IDebuggerHostAgentListener listener : listeners) {
+            listener.terminated(this);
+        }
+        listeners.clear();
     }
 
     
@@ -181,18 +184,25 @@ public class DebuggerHostEndpoint implements IDebuggerHostAgent, IDebuggerHostEn
 
     @Override
     public List<TransformationModelElement> getRootElements(){
-        return mbeanProxy.getRootElements();
-        
+        if(!isClosed){
+            return mbeanProxy.getRootElements();
+        }
+        return Lists.newArrayList();
     }
 
     @Override
     public Map<String, List<TransformationModelElement>> getChildren(TransformationModelElement parent){
-        return mbeanProxy.getChildren(parent);
+        if(!isClosed){
+            return mbeanProxy.getChildren(parent);
+        }
+        return Maps.newHashMap();
     }
-
     
     @Override
     public Map<String, List<TransformationModelElement>> getCrossReferences(TransformationModelElement parent) {
-        return mbeanProxy.getCrossReferences(parent);
+        if(!isClosed){
+            return mbeanProxy.getCrossReferences(parent);
+        }
+        return Maps.newHashMap();
     }
 }

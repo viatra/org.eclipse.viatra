@@ -40,8 +40,10 @@ import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugU
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-public class AdaptableTransformationBrowser extends ViewPart
+public class TransformationBrowserView extends ViewPart
         implements IDebuggerHostAgentListener {
+    private static final String DEBUG_VIEW = "org.eclipse.debug.ui.DebugView";
+
     public static final String ID = "org.eclipse.viatra.transformation.debug.ui.AdaptableTransformationBrowser";
     
     private TransformationThread currentThread;
@@ -81,18 +83,24 @@ public class AdaptableTransformationBrowser extends ViewPart
                             Object[] expandedElements = treeViewer.getExpandedElements();
                             if(!currentThread.isTerminated()){
                                 treeViewer.setInput(currentThread);
+                                treeViewer.setExpandedElements(expandedElements);
+                                currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
+                            }else{
+                                treeViewer.setInput(new Object[0]);
+                                currentThread = null;
                             }
-                            treeViewer.setExpandedElements(expandedElements);
-                            currentThread.getHostAgent().registerDebuggerHostAgentListener(AdaptableTransformationBrowser.this);
                         } else if(firstElement instanceof TransformationStackFrame){
                             TransformationThread thread = (TransformationThread) ((TransformationStackFrame) firstElement).getThread();
                             currentThread =  thread;
                             Object[] expandedElements = treeViewer.getExpandedElements();
                             if(!currentThread.isTerminated()){
                                 treeViewer.setInput(currentThread);
+                                treeViewer.setExpandedElements(expandedElements);
+                                currentThread.getHostAgent().registerDebuggerHostAgentListener(TransformationBrowserView.this);
+                            }else{
+                                treeViewer.setInput(new Object[0]);
+                                currentThread = null;
                             }
-                            treeViewer.setExpandedElements(expandedElements);
-                            currentThread.getHostAgent().registerDebuggerHostAgentListener(AdaptableTransformationBrowser.this);
                         }
                     } catch (Exception e) {
                         TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
@@ -104,7 +112,7 @@ public class AdaptableTransformationBrowser extends ViewPart
             }
         };
         
-        sService.addSelectionListener("org.eclipse.debug.ui.DebugView", listener);
+        sService.addSelectionListener(DEBUG_VIEW, listener);
         getSite().setSelectionProvider(treeViewer);
     }
 
@@ -130,9 +138,9 @@ public class AdaptableTransformationBrowser extends ViewPart
  
     private final class ConfigurationApplication implements Runnable {
         private final TransformationViewConfiguration config;
-        private final AdaptableTransformationBrowser view;
+        private final TransformationBrowserView view;
 
-        private ConfigurationApplication(TransformationViewConfiguration config, AdaptableTransformationBrowser view) {
+        private ConfigurationApplication(TransformationViewConfiguration config, TransformationBrowserView view) {
             this.config = config;
             this.view = view;
         }
@@ -200,7 +208,9 @@ public class AdaptableTransformationBrowser extends ViewPart
                 @Override
                 public void run() {
                     treeViewer.setInput(new Object[0]);
+                    currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(TransformationBrowserView.this);
                     currentThread = null;
+                    
                 }
             });
         }

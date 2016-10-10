@@ -87,6 +87,11 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     @Override
     public void initializeListener(ViatraQueryEngine engine) {
         this.engine = engine;
+        for (ITransformationBreakpoint breakpoint : breakpoints) {
+            if (breakpoint instanceof ConditionalTransformationBreakpoint && engine!=null) {
+                ((ConditionalTransformationBreakpoint) breakpoint).setEngine(engine);
+            }
+        }
     }
 
     @Override
@@ -130,8 +135,9 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         for (IDebuggerTargetAgent iDebuggerTargetAgent : listenersToRemove) {
             unRegisterTransformationDebugListener(iDebuggerTargetAgent);
         }
-        breakpoints.clear();
+        
         agents.clear();
+        breakpoints.clear();
     }
 
     @Override
@@ -262,14 +268,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     }
 
     public void disconnect() {
-        for (IDebuggerTargetAgent listener : agents) {
-            try {
-                listener.terminated();
-                unRegisterTransformationDebugListener(listener);
-            } catch (CoreException e) {
-                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
-            }
-        }
+        disposeListener();
         breakpoints.clear();
         setDebuggerAction(DebuggerActions.Continue);
     }
@@ -290,7 +289,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
 
     public void addBreakpoint(ITransformationBreakpoint breakpoint) {
         if (!breakpoints.contains(breakpoint)) {
-            if (breakpoint instanceof ConditionalTransformationBreakpoint) {
+            if (breakpoint instanceof ConditionalTransformationBreakpoint && engine!=null) {
                 ((ConditionalTransformationBreakpoint) breakpoint).setEngine(engine);
             }
             breakpoints.add(breakpoint);
@@ -301,7 +300,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         for (ITransformationBreakpoint brkp : breakpoints) {
             if(brkp.equals(breakpoint)){
                 try {
-                    breakpoint.setEnabled(false);
+                    brkp.setEnabled(false);
                 } catch (CoreException e) {
                     ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
                 }
@@ -314,7 +313,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
         for (ITransformationBreakpoint brkp : breakpoints) {
             if(brkp.equals(breakpoint)){
                 try {
-                    breakpoint.setEnabled(true);
+                    brkp.setEnabled(true);
                 } catch (CoreException e) {
                     ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
                 }
@@ -324,11 +323,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     }
 
     public void removeBreakpoint(ITransformationBreakpoint breakpoint) {
-        for (ITransformationBreakpoint brkp : breakpoints) {
-            if(brkp.equals(breakpoint)){
-                breakpoints.remove(brkp);
-            }
-        }   
+        breakpoints.remove(breakpoint);
     }
 
     public void setDebuggerAction(DebuggerActions action) {

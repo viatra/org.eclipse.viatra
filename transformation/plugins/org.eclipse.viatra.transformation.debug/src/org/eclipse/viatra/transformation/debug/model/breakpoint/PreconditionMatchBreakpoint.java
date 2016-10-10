@@ -76,17 +76,17 @@ public class PreconditionMatchBreakpoint extends Breakpoint implements ITransfor
     
     @Override
     public void setEnabled(boolean enabled) throws CoreException {
-        try{
-            super.setEnabled(enabled);
-        }catch(CoreException e){
-            throw e;
-        }finally {
-            this.enabled = enabled;
+        if(getMarker() != null){
+            super.setEnabled(enabled); 
         }
+        this.enabled = enabled;
     }
 
     @Override
     public boolean isEnabled() throws CoreException {
+        if(getMarker() != null){
+            return super.isEnabled(); 
+        }
         return enabled;
     }
     

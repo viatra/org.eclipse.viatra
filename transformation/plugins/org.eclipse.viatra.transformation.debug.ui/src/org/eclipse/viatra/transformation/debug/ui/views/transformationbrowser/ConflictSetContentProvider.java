@@ -23,9 +23,9 @@ public class ConflictSetContentProvider implements ITreeContentProvider {
     private static final String NEXT_NAME = "Conflicting Activations";
     private static final String CONFLICTING_NAME = "Executable Activations";
     
-    protected AdaptableTransformationBrowser view;
+    protected TransformationBrowserView view;
     
-    public ConflictSetContentProvider(AdaptableTransformationBrowser view){
+    public ConflictSetContentProvider(TransformationBrowserView view){
         this.view = view;
     }
     

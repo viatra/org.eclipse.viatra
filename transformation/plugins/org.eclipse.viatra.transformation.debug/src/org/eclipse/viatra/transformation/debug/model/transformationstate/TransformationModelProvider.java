@@ -25,12 +25,13 @@ public class TransformationModelProvider {
     
     
     public void loadElementContent(TransformationModelElement element){
-        Map<String, List<TransformationModelElement>> crossReferences = agent.getCrossReferences(element);
-        Map<String, List<TransformationModelElement>> children = agent.getChildren(element);
-        
-        
-        element.setCrossReferences(crossReferences);
-        element.setContainedElements(children);
+        if(!element.isLoaded()){
+            Map<String, List<TransformationModelElement>> crossReferences = agent.getCrossReferences(element);
+            Map<String, List<TransformationModelElement>> children = agent.getChildren(element);
+            
+            element.setCrossReferences(crossReferences);
+            element.setContainedElements(children);
+        }
     }
     
     public List<TransformationModelElement> getRootElements(){

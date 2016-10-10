@@ -18,6 +18,8 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 public class TransformationDebugProcess implements IProcess{
     private String label;
     private ILaunch launch;
+    private boolean terminated = false;
+    
     
     public TransformationDebugProcess(ILaunch launch, String label) {
         this.label = label;
@@ -26,16 +28,17 @@ public class TransformationDebugProcess implements IProcess{
     
     @Override
     public boolean canTerminate() {
-        return false;
+        return !terminated;
     }
 
     @Override
     public boolean isTerminated() {
-        return false;
+        return terminated;
     }
 
     @Override
     public void terminate() throws DebugException {
+        terminated = true;
     }
 
     @Override

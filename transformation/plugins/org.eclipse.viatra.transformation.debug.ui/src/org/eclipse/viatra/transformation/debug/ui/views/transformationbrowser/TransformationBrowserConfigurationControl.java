@@ -35,9 +35,9 @@ public class TransformationBrowserConfigurationControl extends WorkbenchWindowCo
         super(id);
     }
 
-    private AdaptableTransformationBrowser getAdaptableTransformationBrowser(){
+    private TransformationBrowserView getAdaptableTransformationBrowser(){
         try {
-            AdaptableTransformationBrowser view = (AdaptableTransformationBrowser) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(AdaptableTransformationBrowser.ID);
+            TransformationBrowserView view = (TransformationBrowserView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(TransformationBrowserView.ID);
             return view;
         } catch (PartInitException e) {
             TransformationDebugUIActivator.getDefault().logException(e.getMessage(), e);
@@ -46,7 +46,7 @@ public class TransformationBrowserConfigurationControl extends WorkbenchWindowCo
     }
     
     private void applyConfligurationSelection(TransformationViewConfiguration config){
-        AdaptableTransformationBrowser view = getAdaptableTransformationBrowser();
+        TransformationBrowserView view = getAdaptableTransformationBrowser();
         if(view != null){
             view.setViewConfiguration(config);
         }

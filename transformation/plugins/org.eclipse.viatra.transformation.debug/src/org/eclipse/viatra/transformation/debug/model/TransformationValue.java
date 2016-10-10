@@ -10,11 +10,11 @@
  */
 package org.eclipse.viatra.transformation.debug.model;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
-import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelBuilder;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelElement;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelProvider;
 
@@ -56,7 +55,7 @@ public class TransformationValue extends TransformationDebugElement implements I
     @Override
     public String getReferenceTypeName() throws DebugException {
         if(value instanceof TransformationModelElement){
-            return ((TransformationModelElement)value).getAttribute(TransformationModelBuilder.TYPE_ATTR);
+            return ((TransformationModelElement)value).getTypeAttribute();
         }else{
             return value.getClass().getSimpleName();
         }
@@ -70,8 +69,8 @@ public class TransformationValue extends TransformationDebugElement implements I
         if (value == null) {
             return "NULL";
         } else if (value instanceof TransformationModelElement){
-            String nameAttribute = getNameAttribute((TransformationModelElement) value);
-            return ((TransformationModelElement)value).getAttribute(TransformationModelBuilder.TYPE_ATTR)+((nameAttribute=="" )? " " : (" \""+nameAttribute+"\" "))+"ID="+((TransformationModelElement)value).getId();
+            String nameAttribute = ((TransformationModelElement) value).getNameAttribute();
+            return ((TransformationModelElement)value).getTypeAttribute()+((nameAttribute=="" )? " " : (" \""+nameAttribute+"\" "))+"ID="+((TransformationModelElement)value).getId();
         } else if (value instanceof List<?>){
             Type[] arguments = ((ParameterizedType) value.getClass().getGenericSuperclass()).getActualTypeArguments();
             return value.getClass().getSimpleName()+"<"+Joiner.on(",").join(arguments)+">";
@@ -79,15 +78,6 @@ public class TransformationValue extends TransformationDebugElement implements I
         return adapterFactoryLabelProvider.getText(value);
     }
     
-    private String getNameAttribute(TransformationModelElement value){
-        Map<String, String> attributes = value.getAttributes();
-        for (String attributeKey : attributes.keySet()) {
-            if(attributeKey.matches("(.*ID.*|.*identifier.*|.*name.*)")){
-                return attributes.get(attributeKey);
-            }
-        }
-        return "";
-    }
 
     @Override
     public boolean isAllocated() throws DebugException {
@@ -112,7 +102,7 @@ public class TransformationValue extends TransformationDebugElement implements I
                 //Attributes
                 Map<String, String> attributes = element.getAttributes();
                 for (String attrLabel : attributes.keySet()) {
-                    if(!attrLabel.equals(TransformationModelBuilder.TYPE_ATTR)){
+                    if(!attrLabel.equals(TransformationModelElement.TYPE_ATTR)){
                         transformationVariables.add(createTransformationVariable("\""+attributes.get(attrLabel)+"\"", attrLabel));
                     }
                 }
@@ -127,7 +117,7 @@ public class TransformationValue extends TransformationDebugElement implements I
                     }
                 }
                 //Children
-                Map<String, List<TransformationModelElement>> children = element.getContainedElements();
+                Map<String, List<TransformationModelElement>> children = element.getContainments();
                 for (String containmentLabel : children.keySet()) {
                     transformationVariables.add(createTransformationVariable(children.get(containmentLabel), containmentLabel));
                 }

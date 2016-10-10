@@ -20,9 +20,9 @@ import org.eclipse.viatra.transformation.debug.model.transformationstate.Transfo
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
 
 public class RuleBrowserContentProvider implements ITreeContentProvider {
-    protected AdaptableTransformationBrowser view;
+    protected TransformationBrowserView view;
     
-    public RuleBrowserContentProvider(AdaptableTransformationBrowser view){
+    public RuleBrowserContentProvider(TransformationBrowserView view){
         this.view = view;
     }
     

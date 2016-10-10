@@ -10,7 +10,6 @@
  */
 package org.eclipse.viatra.transformation.debug.model;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Stack;
 
@@ -25,8 +24,6 @@ import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
-import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
 import org.eclipse.viatra.transformation.debug.activator.TransformationDebugActivator;
@@ -36,7 +33,6 @@ import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationB
 import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelProvider;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
-import org.eclipse.viatra.transformation.debug.util.BreakpointCacheUtil;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -46,9 +42,7 @@ public class TransformationThread extends TransformationDebugElement implements 
     private boolean suspended = true;
     private boolean terminated = false;
     
-    private List<ITransformationBreakpoint> breakpoints;
     private final TransformationModelProvider modelProvider;
-    
     
     private String name;
 
@@ -59,24 +53,20 @@ public class TransformationThread extends TransformationDebugElement implements 
     protected TransformationThread(String name, IDebuggerHostAgent agent, TransformationDebugTarget target, IType transformationClass) {
         super(target);
         Preconditions.checkNotNull(transformationClass, "Transformation Class must not be null.");
-        breakpoints = Lists.newArrayList();
         modelProvider = new TransformationModelProvider(agent);
         this.transformationClass = transformationClass;
         this.name = name;
         this.agent = agent;
         //Register breakpoint listener
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);        
-        if(BreakpointCacheUtil.breakpointCacheExists()){
-            ImportBreakpointsOperation operation = new ImportBreakpointsOperation(
-                    BreakpointCacheUtil.getBreakpointCacheLocation().trim(), 
-                    false, 
-                    false);
-            try {
-                operation.run(null);
-            } catch (InvocationTargetException e) {
-                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
-            }
+        
+        //get initial breakpoints from the manager
+        IBreakpoint[] transfBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(MODEL_ID);
+        for (IBreakpoint iBreakpoint : transfBreakpoints) {
+            breakpointAdded(iBreakpoint);
         }
+        
+        
         //Register host agent listener
         agent.registerDebuggerHostAgentListener(this);
     }
@@ -146,7 +136,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public boolean canTerminate() {
-        return getDebugTarget().canTerminate();
+        return !terminated;
     }
 
     @Override
@@ -156,7 +146,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public void terminate() throws DebugException {
-
+        agent.sendDisconnectMessage();
     }
 
     @Override
@@ -180,6 +170,10 @@ public class TransformationThread extends TransformationDebugElement implements 
         } else {
             return new IStackFrame[0];
         }
+    }
+    
+    public TransformationModelProvider getModelProvider() {
+        return modelProvider;
     }
 
     @Override
@@ -208,7 +202,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public IBreakpoint[] getBreakpoints() {
-        return breakpoints.toArray(new IBreakpoint[breakpoints.size()]);
+        return DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(MODEL_ID);
     }
 
 
@@ -216,14 +210,14 @@ public class TransformationThread extends TransformationDebugElement implements 
     @Override
     public void terminated(IDebuggerHostAgent agent) throws CoreException, DebugException {
         terminated = true;
+        stepping = false;
+        suspended = false;
+        
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
         TransformationThreadFactory.getInstance().deleteTransformationThread(this);
+        
+        ((TransformationDebugTarget)getDebugTarget()).requestTermination();
         fireTerminateEvent();
-        try {
-            ((TransformationDebugTarget) getDebugTarget()).requestTermination();
-        } catch (DebugException e) {
-            throw e;
-        }       
     }
 
 
@@ -247,35 +241,14 @@ public class TransformationThread extends TransformationDebugElement implements 
     @Override
     public void breakpointAdded(IBreakpoint breakpoint) {
         if(breakpoint instanceof ITransformationBreakpoint){
-            breakpoints.add((ITransformationBreakpoint) breakpoint);
             agent.sendAddBreakpointMessage((ITransformationBreakpoint) breakpoint);           
-            ExportBreakpointsOperation operation = new ExportBreakpointsOperation(
-                    BreakpointCacheUtil.filterBreakpoints(getBreakpoints()),
-                    BreakpointCacheUtil.getBreakpointCacheLocation());
-            
-            try {
-                operation.run(null);
-            } catch (InvocationTargetException e) {
-                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
-            }
         }
     }
 
     @Override
     public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
         if(breakpoint instanceof ITransformationBreakpoint){
-            breakpoints.remove(breakpoint);
             agent.sendRemoveBreakpointMessage((ITransformationBreakpoint) breakpoint);
-            
-            ExportBreakpointsOperation operation = new ExportBreakpointsOperation(
-                    BreakpointCacheUtil.filterBreakpoints(getBreakpoints()),
-                    BreakpointCacheUtil.getBreakpointCacheLocation());
-            
-            try {
-                operation.run(null);
-            } catch (InvocationTargetException e) {
-                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
-            }
         }
     }
 
@@ -290,17 +263,6 @@ public class TransformationThread extends TransformationDebugElement implements 
                 }
             } catch (CoreException e1) {
                 ViatraQueryLoggingUtil.getDefaultLogger().error(e1.getMessage(), e1);
-            }
-            
-            
-            ExportBreakpointsOperation operation = new ExportBreakpointsOperation(
-                    BreakpointCacheUtil.filterBreakpoints(getBreakpoints()),
-                    BreakpointCacheUtil.getBreakpointCacheLocation());
-            
-            try {
-                operation.run(null);
-            } catch (InvocationTargetException e) {
-                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
             }
         }
     }

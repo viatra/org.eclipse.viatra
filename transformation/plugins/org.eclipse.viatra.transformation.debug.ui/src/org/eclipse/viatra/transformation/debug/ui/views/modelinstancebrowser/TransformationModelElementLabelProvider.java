@@ -8,28 +8,22 @@
  * Contributors:
  *   Peter Lunk - initial API and implementation
  */
-package org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser;
+package org.eclipse.viatra.transformation.debug.ui.views.modelinstancebrowser;
 
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
+import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelElement;
 import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
 import org.eclipse.viatra.transformation.debug.ui.views.model.CompositeItem;
 
-public class ConflictSetLabelProvider extends RuleBrowserLabelProvider {
-
-    public ConflictSetLabelProvider(TransformationBrowserView view) {
-        super(view);
-    }
+public class TransformationModelElementLabelProvider extends LabelProvider {
 
     @Override
     public String getText(Object element) {
-        if (element instanceof RuleActivation) {
-            RuleActivation activation = (RuleActivation) element;
-            // TransformationState state = view.getStateForActivation(activation);
-
-            return activation.getRuleName() + " Activation, State: " + activation.getState()
-                    + activation.getParameters();
-
+        if (element instanceof TransformationModelElement) {
+            String nameAttribute = ((TransformationModelElement) element).getNameAttribute();
+            return ((TransformationModelElement) element).getTypeAttribute()
+                    + ((nameAttribute == "") ? " " : (" \"" + nameAttribute + "\" "));
         } else if (element instanceof CompositeItem) {
             return ((CompositeItem) element).getName();
         } else {
@@ -39,9 +33,10 @@ public class ConflictSetLabelProvider extends RuleBrowserLabelProvider {
 
     @Override
     public Image getImage(Object element) {
-        if (element instanceof CompositeItem) {
-            return TransformationDebugUIActivator.getDefault().getImageRegistry().get(TransformationDebugUIActivator.ICON_VIATRA_ATOM);
-        }else {
+        if (element instanceof TransformationModelElement) {
+            return TransformationDebugUIActivator.getDefault().getImageRegistry()
+                    .get(TransformationDebugUIActivator.ICON_VIATRA_ATOM);
+        } else {
             return super.getImage(element);
         }
     }

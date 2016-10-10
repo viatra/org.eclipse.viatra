@@ -11,6 +11,7 @@
 package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,10 @@ import com.google.common.collect.Maps;
 
 public class TransformationModelElement implements Serializable{
     private static final long serialVersionUID = -8165991633354685442L;
-
+    public static final String TYPE_ATTR = "EObjectType";
+    
     private UUID id = UUID.randomUUID(); 
+    private boolean loaded = false; 
     
     private Map<String, String> attributes = Maps.newHashMap();
     
@@ -32,6 +35,10 @@ public class TransformationModelElement implements Serializable{
     
     public UUID getId() {
         return id;
+    }
+    
+    public boolean isLoaded() {
+        return loaded;
     }
     
     public String getAttribute(String name) {
@@ -51,6 +58,13 @@ public class TransformationModelElement implements Serializable{
         return crossReferences.get(name);
     }
     
+    public void addEmptyCrossReference(String name) {
+        List<TransformationModelElement> list = crossReferences.get(name);
+        if(list==null){
+            crossReferences.put(name, new ArrayList<TransformationModelElement>());
+        }
+    }
+    
     public void addCrossReference(String name, TransformationModelElement value) {
         List<TransformationModelElement> list = crossReferences.get(name);
         if(list==null){
@@ -68,6 +82,13 @@ public class TransformationModelElement implements Serializable{
         return containedElements.get(name);
     }
     
+    public void addEmptyContainment(String name) {
+        List<TransformationModelElement> list = containedElements.get(name);
+        if(list==null){
+            containedElements.put(name, new ArrayList<TransformationModelElement>());
+        }
+    }
+    
     public void addContainedElement(String name, TransformationModelElement value) {
         List<TransformationModelElement> list = containedElements.get(name);
         if(list==null){
@@ -77,15 +98,38 @@ public class TransformationModelElement implements Serializable{
         }
     }
     
-    public Map<String, List<TransformationModelElement>> getContainedElements() {
+    public Map<String, List<TransformationModelElement>> getContainments() {
         return Maps.newHashMap((containedElements));
+    }
+    
+    public List<TransformationModelElement> getChildren() {
+        List<TransformationModelElement> list = Lists.newArrayList();
+        for(String label : containedElements.keySet()){
+            list.addAll(containedElements.get(label));
+        } 
+        return list;
     }
     
     public void setCrossReferences(Map<String, List<TransformationModelElement>> crossReferences) {
         this.crossReferences = crossReferences;
+        loaded = true;
     }
 
     public void setContainedElements(Map<String, List<TransformationModelElement>> containedElements) {
         this.containedElements = containedElements;
+        loaded = true;
+    }
+    
+    public String getNameAttribute(){
+        for (String attributeKey : attributes.keySet()) {
+            if(attributeKey.matches("(.*ID.*|.*identifier.*|.*name.*)")){
+                return attributes.get(attributeKey);
+            }
+        }
+        return "";
+    }
+    
+    public String getTypeAttribute(){   
+        return getAttribute(TYPE_ATTR);
     }
 }

@@ -13,7 +13,7 @@ package org.eclipse.viatra.transformation.debug.ui.util;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.RuleActivation;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
-import org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.AdaptableTransformationBrowser;
+import org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser.TransformationBrowserView;
 
 
 public class ViatraDebuggerPropertyTester extends PropertyTester {
@@ -23,8 +23,8 @@ public class ViatraDebuggerPropertyTester extends PropertyTester {
 
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-        if (receiver instanceof AdaptableTransformationBrowser) {
-            AdaptableTransformationBrowser debugView = (AdaptableTransformationBrowser) receiver;
+        if (receiver instanceof TransformationBrowserView) {
+            TransformationBrowserView debugView = (TransformationBrowserView) receiver;
 
             switch (property) {
             case ACTIVATION_SELECTED:

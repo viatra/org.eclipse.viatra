@@ -22,12 +22,13 @@ import org.eclipse.viatra.transformation.debug.model.breakpoint.RuleBreakpoint;
 import com.google.common.collect.Lists;
 
 public class BreakpointCacheUtil {
+    public static String BKP_CACHE_NAME = "/persistentbreakpoints.bpkt"; 
     
     public static String getBreakpointCacheLocation(){
         TransformationDebugActivator activator = new TransformationDebugActivator();
         IPath stateLocation = activator.getStateLocation();
         String location = stateLocation.toString();
-        String fileLocation = location+"/persistentbreakpoints.brpkt";
+        String fileLocation = location+BKP_CACHE_NAME;
         
         return fileLocation;
     }
