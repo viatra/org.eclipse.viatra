@@ -46,7 +46,6 @@ import com.google.common.collect.Maps;
 
 public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentListener {
     private static final String DEBUG_VIEW = "org.eclipse.debug.ui.DebugView";
-
     public static final String ID = "org.eclipse.viatra.transformation.ui.debug.TransformationViewer";
 
     private CTabFolder tabFolder;
@@ -289,8 +288,5 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
                 fActiveProvider.setSelection(selection);
             }
         }
-    }
-    
-    
-    
+    }  
 }

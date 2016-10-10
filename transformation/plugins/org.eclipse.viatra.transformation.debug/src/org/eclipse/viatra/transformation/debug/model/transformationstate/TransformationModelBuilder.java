@@ -23,27 +23,27 @@ import com.google.common.collect.Maps;
 @SuppressWarnings("unchecked")
 public class TransformationModelBuilder {
     private Map<TransformationModelElement, EObject> elementMap = Maps.newHashMap();
-    
-    public void reset(){
+
+    public synchronized void reset() {
         elementMap.clear();
     }
-    
-    public TransformationModelElement getTransformationElement(EObject eobject){
-        for(TransformationModelElement trElement : elementMap.keySet()){
-            if(elementMap.get(trElement).equals(eobject)){
+
+    public synchronized TransformationModelElement getTransformationElement(EObject eobject) {
+        for (TransformationModelElement trElement : elementMap.keySet()) {
+            if (elementMap.get(trElement).equals(eobject)) {
                 return trElement;
             }
         }
-        
+
         TransformationModelElement element = createTransformationElement(eobject);
         return element;
     }
-    
-    private TransformationModelElement createTransformationElement(EObject eobject){
+
+    private TransformationModelElement createTransformationElement(EObject eobject) {
         TransformationModelElement element = new TransformationModelElement();
-        for(EAttribute attribute : eobject.eClass().getEAllAttributes()){
+        for (EAttribute attribute : eobject.eClass().getEAllAttributes()) {
             Object eGet = eobject.eGet(attribute);
-            if(eGet != null && !attribute.getName().equals(TransformationModelElement.TYPE_ATTR)){
+            if (eGet != null && !attribute.getName().equals(TransformationModelElement.TYPE_ATTR)) {
                 element.addAttribute(attribute.getName(), eobject.eGet(attribute).toString());
             }
         }
@@ -51,56 +51,59 @@ public class TransformationModelBuilder {
         elementMap.put(element, eobject);
         return element;
     }
-    
-    public Map<String, List<TransformationModelElement>> createChildElements(TransformationModelElement element){
+
+    public synchronized Map<String, List<TransformationModelElement>> createChildElements(TransformationModelElement element) {
         EObject eobject = getEObject(element);
-        for(EReference reference : eobject.eClass().getEReferences()){
-            if(reference.isContainment()){
-                Object eGet = eobject.eGet(reference);
-                if(eGet instanceof List){
-                    List<EObject> referenceList = Lists.newArrayList(((List<EObject>)eGet)); 
-                    for(EObject object : referenceList){
-                        element.addContainedElement(reference.getName(), getTransformationElement(object));
+        if (eobject != null) {
+            for (EReference reference : eobject.eClass().getEReferences()) {
+                if (reference.isContainment()) {
+                    Object eGet = eobject.eGet(reference);
+                    if (eGet instanceof List) {
+                        List<EObject> referenceList = Lists.newArrayList(((List<EObject>) eGet));
+                        for (EObject object : referenceList) {
+                            element.addContainedElement(reference.getName(), getTransformationElement(object));
+                        }
+                    } else if (eGet instanceof EObject) {
+                        element.addContainedElement(reference.getName(), getTransformationElement((EObject) eGet));
+                    } else {
+                        element.addEmptyContainment(reference.getName());
                     }
-                }else if (eGet instanceof EObject){
-                    element.addContainedElement(reference.getName(), getTransformationElement((EObject) eGet));
-                } else {
-                    element.addEmptyContainment(reference.getName());
                 }
             }
         }
         return element.getContainments();
     }
-    
-    public Map<String, List<TransformationModelElement>> createCrossReferenceElements(TransformationModelElement element){
+
+    public synchronized Map<String, List<TransformationModelElement>> createCrossReferenceElements(
+            TransformationModelElement element) {
         EObject eobject = getEObject(element);
-        for(EReference reference : eobject.eClass().getEReferences()){
-            if(!reference.isContainment()){
-                Object eGet = eobject.eGet(reference);
-                if(eGet instanceof List){
-                    List<EObject> referenceList = Lists.newArrayList(((List<EObject>)eGet)); 
-                    for(EObject object : referenceList){
-                        element.addCrossReference(reference.getName(), getTransformationElement(object));
+        if (eobject != null) {
+            for (EReference reference : eobject.eClass().getEReferences()) {
+                if (!reference.isContainment()) {
+                    Object eGet = eobject.eGet(reference);
+                    if (eGet instanceof List) {
+                        List<EObject> referenceList = Lists.newArrayList(((List<EObject>) eGet));
+                        for (EObject object : referenceList) {
+                            element.addCrossReference(reference.getName(), getTransformationElement(object));
+                        }
+                    } else if (eGet instanceof EObject) {
+                        element.addCrossReference(reference.getName(), getTransformationElement((EObject) eGet));
+                    } else {
+                        element.addEmptyCrossReference(reference.getName());
                     }
-                }else if (eGet instanceof EObject){
-                    element.addCrossReference(reference.getName(), getTransformationElement((EObject) eGet));
-                }else {
-                    element.addEmptyCrossReference(reference.getName());
                 }
             }
         }
         return element.getCrossReferences();
     }
-    
-    private EObject getEObject(TransformationModelElement element){
-        for(TransformationModelElement keyElement : elementMap.keySet()){
-            if(keyElement.getId().equals(element.getId())){
+
+    private EObject getEObject(TransformationModelElement element) {
+        for (TransformationModelElement keyElement : elementMap.keySet()) {
+            if (keyElement.getId().equals(element.getId())) {
                 return elementMap.get(keyElement);
             }
         }
         return null;
     }
-    
-    
-    
+
 }

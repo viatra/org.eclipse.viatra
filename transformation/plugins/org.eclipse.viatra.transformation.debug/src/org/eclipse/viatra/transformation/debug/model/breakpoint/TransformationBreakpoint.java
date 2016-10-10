@@ -28,7 +28,6 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
  */
 public class TransformationBreakpoint extends Breakpoint implements ITransformationBreakpoint{
     private static final long serialVersionUID = -2412809220911146065L;
-    private DefaultActivationCoder activationCoder = new DefaultActivationCoder();
     private ActivationTrace trace;
     private boolean enabled = true;
     //private Activation<?> activation;
@@ -50,7 +49,7 @@ public class TransformationBreakpoint extends Breakpoint implements ITransformat
      */
     @Override
     public boolean shouldBreak(Activation<?> a) {
-        return ActivationTraceUtil.compareActivationCodes(trace, activationCoder.createActivationCode(a));
+        return ActivationTraceUtil.compareActivationCodes(trace, new DefaultActivationCoder().createActivationCode(a));
     }
    
     @Override
@@ -85,17 +84,17 @@ public class TransformationBreakpoint extends Breakpoint implements ITransformat
     
     @Override
     public void setEnabled(boolean enabled) throws CoreException {
-        try{
-            super.setEnabled(enabled);
-        }catch(CoreException e){
-            throw e;
-        }finally {
-            this.enabled = enabled;
+        if(getMarker() != null){
+            super.setEnabled(enabled); 
         }
+        this.enabled = enabled;
     }
 
     @Override
     public boolean isEnabled() throws CoreException {
+        if(getMarker() != null){
+            return super.isEnabled(); 
+        }
         return enabled;
     }
 }

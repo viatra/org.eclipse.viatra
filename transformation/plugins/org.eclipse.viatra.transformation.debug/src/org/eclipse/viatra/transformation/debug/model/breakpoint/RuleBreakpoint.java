@@ -80,13 +80,10 @@ public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpo
     
     @Override
     public void setEnabled(boolean enabled) throws CoreException {
-        try{
-            super.setEnabled(enabled);
-        }catch(CoreException e){
-            throw e;
-        }finally {
-            this.enabled = enabled;
+        if(getMarker() != null){
+            super.setEnabled(enabled); 
         }
+        this.enabled = enabled;
     }
 
     @Override

@@ -10,7 +10,15 @@
  */
 package org.eclipse.viatra.transformation.debug.activator;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
+import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
+import org.eclipse.viatra.transformation.debug.util.BreakpointCacheUtil;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -26,11 +34,31 @@ public class TransformationDebugActivator extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        
+        
+        if(BreakpointCacheUtil.breakpointCacheExists()){
+            ImportBreakpointsOperation operation = new ImportBreakpointsOperation(
+                    BreakpointCacheUtil.getBreakpointCacheLocation().trim(), 
+                    false, 
+                    false);
+            try {
+                operation.run(null);
+            } catch (InvocationTargetException e) {
+                ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+            }
+        }
     }
 
     public void stop(BundleContext context) throws Exception {
         plugin = null;
         super.stop(context);
+        
+        ExportBreakpointsOperation operation = new ExportBreakpointsOperation(
+                BreakpointCacheUtil.filterBreakpoints(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()),
+                BreakpointCacheUtil.getBreakpointCacheLocation());
+        operation.run(new NullProgressMonitor());
+        
+        
     }
 
     public static TransformationDebugActivator getDefault() {

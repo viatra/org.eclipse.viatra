@@ -46,7 +46,7 @@ import com.google.inject.Injector;
 public class ConditionalTransformationBreakpoint extends Breakpoint implements ITransformationBreakpoint, IMatchUpdateListener {
     private static final long serialVersionUID = 8541374098762126605L;
     private String patternString;
-    private String stringRep;
+    private String stringRep = "";
     private boolean matcherChanged = false;
     private boolean enabled = true;
     
@@ -102,6 +102,7 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
     public void setMarker(IMarker marker) throws CoreException {
         super.setMarker(marker);
         this.enabled = super.isEnabled();
+        stringRep = "Conditional Transformation Breakpoint - "+marker.getResource().getName();
         if(patternString != null){
             marker.setAttribute("pattern", patternString);
         }else{
@@ -111,12 +112,11 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
     
     public void setEngine(ViatraQueryEngine engine) {
         AdvancedViatraQueryEngine advancedEngine = AdvancedViatraQueryEngine.from(engine);
-        stringRep = "Conditional Transformation Breakpoint - ";
+        
         ViatraQueryMatcher<? extends IPatternMatch> matcher;
         try {
             List<IQuerySpecification<?>> parsePatterns = parsePatterns();
             for (IQuerySpecification<?> iQuerySpecification : parsePatterns) {
-                stringRep += "Query specification name: "+iQuerySpecification.getFullyQualifiedName();
                 matcher = advancedEngine.getMatcher(iQuerySpecification);
                 advancedEngine.addMatchUpdateListener(matcher, this, false);
             }
@@ -161,17 +161,17 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
     
     @Override
     public void setEnabled(boolean enabled) throws CoreException {
-        try{
-            super.setEnabled(enabled);
-        }catch(CoreException e){
-            throw e;
-        }finally {
-            this.enabled = enabled;
+        if(getMarker() != null){
+            super.setEnabled(enabled); 
         }
+        this.enabled = enabled;
     }
 
     @Override
     public boolean isEnabled() throws CoreException {
+        if(getMarker() != null){
+            return super.isEnabled(); 
+        }
         return enabled;
     }
 }
