@@ -27,7 +27,12 @@
     <genClasses ecoreClass="typetest.ecore#//Red">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Red/redness"/>
     </genClasses>
-    <genClasses ecoreClass="typetest.ecore#//Circle"/>
+    <genClasses ecoreClass="typetest.ecore#//Circle">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference typetest.ecore#//Circle/red"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Circle/diameter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Circle/circumference"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute typetest.ecore#//Circle/area"/>
+    </genClasses>
     <genClasses ecoreClass="typetest.ecore#//WhatEver">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference typetest.ecore#//WhatEver/someRef"/>
     </genClasses>

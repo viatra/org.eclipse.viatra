@@ -29,10 +29,9 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
@@ -59,6 +58,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 import org.eclipse.xtext.common.types.JvmDeclaredType;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.xbase.XExpression;
+import org.eclipse.xtext.xbase.XNumberLiteral;
+import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -310,22 +311,22 @@ public class PatternBodyTransformer {
 
     private String getVariableName(ValueReference reference, PatternModelAcceptor<?> acceptor)
             throws SpecificationBuilderException {
-        if (reference instanceof VariableValue)
+        if (reference instanceof VariableValue) {
             return getVariableName(((VariableValue) reference).getValue(), acceptor);
-        else if (reference instanceof AggregatedValue)
+        } else if (reference instanceof AggregatedValue) {
             return aggregate((AggregatedValue) reference, acceptor);
-        else if (reference instanceof FunctionEvaluationValue)
+        } else if (reference instanceof FunctionEvaluationValue) {
             return eval((FunctionEvaluationValue) reference, acceptor);
-        else if (reference instanceof IntValue)
-            return acceptor.createConstantVariable(((IntValue) reference).getValue());
-        else if (reference instanceof StringValue)
+        } else if (reference instanceof NumberValue) {
+            NumberLiterals literals = new NumberLiterals();
+            XNumberLiteral literal = ((NumberValue) reference).getValue();
+            return acceptor.createConstantVariable(literals.numberValue(literal, literals.getJavaType(literal)));
+        } else if (reference instanceof StringValue) {
             return acceptor.createConstantVariable(((StringValue) reference).getValue());
-        else if (reference instanceof EnumValue) // EMF-specific
+        } else if (reference instanceof EnumValue) {// EMF-specific
             return acceptor.createConstantVariable(((EnumValue) reference).getLiteral().getInstance());
-        else if (reference instanceof DoubleValue) {
-            return acceptor.createConstantVariable(((DoubleValue) reference).getValue());
         } else if (reference instanceof BoolValue) {
-            return acceptor.createConstantVariable(((BoolValue) reference).isValue());
+            return acceptor.createConstantVariable(CorePatternLanguageHelper.getValue(reference, Boolean.class));
         } else
             throw new SpecificationBuilderException(
                     "Unsupported value reference of type {1} from EPackage {2} currently unsupported by pattern builder in pattern {3}.",

@@ -278,4 +278,135 @@ class LiteralAndComputationTypeTest extends AbstractValidatorTest {
 		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
 	}
 
+    @Test
+    def longVariable() {
+        val model = parseHelper.parse('''
+            package test
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+            
+            pattern circleDiameter1(c : Circle, d : java Long) {
+                Circle.diameter(c, d);
+            }
+        '''
+        )
+        model.assertNoErrors
+		tester.validate(model).assertOK
+    }
+    
+    @Test
+    def mistypedLongVariable() {
+        val model = parseHelper.parse('''
+            package test
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+            
+            pattern circleDiameter2(c : Circle, d : java Integer) {
+                Circle.diameter(c, d);
+            }
+        '''
+        )
+		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+    }
+    
+    @Test
+    def longConstant() {
+        val model = parseHelper.parse('''
+            package test
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+            
+            pattern circleConstantDiameter1(c : Circle) {
+                Circle.diameter(c, 3l);
+            }
+        '''
+        )
+        model.assertNoErrors
+		tester.validate(model).assertOK
+    }
+    
+    @Test
+    def mistypedLongConstant() {
+        val model = parseHelper.parse('''
+            package test
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+            
+            pattern circleConstantDiameter2(c : Circle) {
+                Circle.diameter(c, 3);
+            }
+        '''
+        )
+		tester.validate(model).assertError(EMFIssueCodes::LITERAL_OR_COMPUTATION_TYPE_MISMATCH_IN_PATH_EXPRESSION)
+    }
+    
+    @Test
+    def floatAttribute() {
+        val model = parseHelper.parse('''
+            package test
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+            
+            pattern checkCircumference1(c : Circle, d : java Long, cf : java Float) {
+                Circle.diameter(c, d);
+                Circle.circumference(c, cf);
+                cf == eval(d * 3.14f);
+            }
+        '''
+        )
+        model.assertNoErrors
+		tester.validate(model).assertOK
+    }
+    
+    @Test
+    def mistypedFloatAttribute() {
+        val model = parseHelper.parse('''
+            package test
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+            
+            pattern checkCircumference2(c : Circle, d : java Long, cf : java Float) {
+                Circle.diameter(c, d);
+                Circle.circumference(c, cf);
+                cf == eval(d * 3.14);
+            }
+        '''
+        )
+		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+    }
+    
+    @Test
+    def doubleAttribute() {
+        val model = parseHelper.parse('''
+            package test
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+            
+            pattern checkArea1(c : Circle, d : java Long, a : java Double) {
+                Circle.diameter(c, d);
+                Circle.area(c, a);
+                a == eval(0.5 * d * 3.14);
+            }
+        '''
+        )
+        model.assertNoErrors
+		tester.validate(model).assertOK
+    }
+    
+    @Test
+    def mistypedDoubleAttribute() {
+        val model = parseHelper.parse('''
+            package test
+            
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
+            
+            pattern checkArea2(c : Circle, d : java Long, a : java Double) {
+                Circle.diameter(c, d);
+                Circle.area(c, a);
+                a == eval(0.5f * d * 3.14f);
+            }
+        '''
+        )
+		tester.validate(model).assertError(EMFIssueCodes::VARIABLE_TYPE_INVALID_ERROR)
+    }
 }

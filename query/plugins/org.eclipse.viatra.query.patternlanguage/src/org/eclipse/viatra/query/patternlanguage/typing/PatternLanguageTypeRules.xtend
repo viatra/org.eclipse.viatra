@@ -19,10 +19,8 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareFeature
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
@@ -40,6 +38,8 @@ import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.JavaType
+import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue
 
 /**
  * @author Zoltan Ujhelyi
@@ -49,6 +49,7 @@ class PatternLanguageTypeRules {
    
    @Inject ITypeSystem typeSystem
    @Inject IBatchTypeResolver typeResolver
+   @Inject NumberLiterals literals
    @Inject Logger logger
    
    def dispatch void inferTypes(Pattern pattern, TypeInformation information) {
@@ -184,12 +185,11 @@ class PatternLanguageTypeRules {
        information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(Boolean)))
    }
    
-   def dispatch void inferTypes(DoubleValue reference, TypeInformation information) {
-       information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(Double)))
-   }
-   
-   def dispatch void inferTypes(IntValue reference, TypeInformation information) {
-       information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(Integer)))
+   def dispatch void inferTypes(NumberValue reference, TypeInformation information) {
+       if (reference.value != null && !reference.value.eIsProxy) {
+           val type = literals.getJavaType(reference.value)
+           information.provideType(new TypeJudgement(reference, new JavaTransitiveInstancesKey(type)))
+       }
    }
    
    def dispatch void inferTypes(ListValue reference, TypeInformation information) {

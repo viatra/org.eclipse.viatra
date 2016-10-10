@@ -224,7 +224,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         // 6. keepCache (if set) is correct for the kind
         ref = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "keepCache");
         if (ref instanceof BoolValue) {
-            boolean keepCache = ((BoolValue) ref).isValue();
+            boolean keepCache = CorePatternLanguageHelper.getValue(ref, Boolean.class); 
             if(!keepCache) {
                 switch (kind) {
                 case SINGLE_REFERENCE:
@@ -247,7 +247,7 @@ public class QueryBasedFeaturePatternValidator implements IPatternAnnotationAddi
         	ValueReference useModelCodeRef = CorePatternLanguageHelper.getFirstAnnotationParameter(annotation, "generateIntoModelCode");
         	boolean useModelCode = false;
         	if(useModelCodeRef != null){
-        		useModelCode = ((BoolValue)useModelCodeRef).isValue();
+        		useModelCode = CorePatternLanguageHelper.getValue(useModelCodeRef, Boolean.class);
         	}
         	String patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
 			boolean annotationsOK = QueryBasedFeatures.checkEcoreAnnotation(ePackage, feature, patternFQN, useModelCode);

@@ -160,28 +160,26 @@ AnnotationValueReference returns ValueReference:
 ;
 
 LiteralValueReference returns ValueReference:
-	IntValue | StringValue | DoubleValue | BoolValue;
-
-IntValue returns LiteralValueReference:
-	{IntValue} value=INTNUMBER;
-
-INTNUMBER returns ecore::EInt:
-	('-')? INT;
+	NumberValue | StringValue | BoolValue;
 
 StringValue returns LiteralValueReference:
 	{StringValue} value=STRING;
 
-BoolValue returns LiteralValueReference:
-	{BoolValue} value=BOOLEAN;
+NumberValue returns LiteralValueReference:
+    {NumberValue} value=XNumberLiteral
+;
 
-BOOLEAN returns ecore::EBoolean:
-	'true' | 'false' | 'TRUE' | 'FALSE';
+XNumberLiteral returns xbase::XNumberLiteral :
+    {XNumberLiteral} value=Number;
 
-DoubleValue returns LiteralValueReference:
-	{DoubleValue} value=DOUBLE;
 
-DOUBLE returns ecore::EDouble:
-	('-')? INT '.' INT;
+BoolValue returns LiteralValueReference: 
+    {BoolValue} value = XBooleanLiteral
+;
+
+XBooleanLiteral returns xbase::XBooleanLiteral:
+	{XBooleanLiteral} ('false' | 'FALSE' | value?='true' | value?="TRUE")
+;
 
 VariableValue returns ValueReference:
 	{VariableValue} value=VariableReference;

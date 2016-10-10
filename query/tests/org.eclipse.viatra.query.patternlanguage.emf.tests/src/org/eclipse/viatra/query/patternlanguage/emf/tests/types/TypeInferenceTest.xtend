@@ -27,7 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.junit.Assert.*
-import org.junit.Ignoreimport org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem
 import org.eclipse.emf.ecore.EcorePackage
