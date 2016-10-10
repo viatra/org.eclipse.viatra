@@ -543,6 +543,7 @@ public class DesignSpaceExplorer {
      */
     public static void turnOnLoggingWithBasicConfig(DseLoggingLevel dseLoggingLevel) {
         BasicConfigurator.configure();
+        Logger.getRootLogger().setLevel(Level.WARN);
         turnOnLogging(dseLoggingLevel);
     }
 
