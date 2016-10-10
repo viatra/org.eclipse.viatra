@@ -33,8 +33,8 @@ public class TransformationThreadFactory {
         return instance;
     }
     
-    public TransformationThread createTransformationThread(String name, IDebuggerHostAgent agent, TransformationDebugTarget target, IType transformationClass){
-        TransformationThread thread = new TransformationThread(name, agent, target, transformationClass);
+    public TransformationThread createTransformationThread(IDebuggerHostAgent agent, TransformationDebugTarget target, IType transformationClass){
+        TransformationThread thread = new TransformationThread(agent, target, transformationClass);
                 
         threads.add(thread);
         return thread;

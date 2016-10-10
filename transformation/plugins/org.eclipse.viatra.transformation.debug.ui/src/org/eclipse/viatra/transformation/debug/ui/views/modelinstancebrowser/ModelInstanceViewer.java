@@ -13,7 +13,6 @@ package org.eclipse.viatra.transformation.debug.ui.views.modelinstancebrowser;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -100,12 +99,6 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
                             if(!currentThread.isTerminated()){
                                 maintainTabs();
                                 currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
-                            }else {
-                                currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(ModelInstanceViewer.this);
-                                for (CTabItem item : tabFolder.getItems()) {
-                                    item.getControl().dispose();
-                                    item.dispose();
-                                } 
                             }
                             
                         } else if(firstElement instanceof TransformationStackFrame){
@@ -114,12 +107,6 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
                             if(!currentThread.isTerminated()){
                                 maintainTabs();
                                 currentThread.getHostAgent().registerDebuggerHostAgentListener(ModelInstanceViewer.this);
-                            }else{
-                                currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(ModelInstanceViewer.this);
-                                for (CTabItem item : tabFolder.getItems()) {
-                                    item.getControl().dispose();
-                                    item.dispose();
-                                }
                             }
                         }
                     } catch (Exception e) {
@@ -140,10 +127,7 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
         List<TransformationModelElement> rootElements = currentThread.getModelProvider().getRootElements();
         
         tabMap.clear();
-        for (CTabItem item : tabFolder.getItems()) {
-            item.getControl().dispose();
-            item.dispose();
-        }
+        disposeTabs();
         for (TransformationModelElement element : rootElements) {
             CTabItem ritem = new CTabItem(tabFolder, SWT.NONE);
             String nameAttribute = ((TransformationModelElement) element).getNameAttribute();
@@ -168,15 +152,20 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
         }
 
     }
-
     
-    
-    
+    private void disposeTabs() {
+        for (CTabItem item : tabFolder.getItems()) {
+            item.dispose();
+        }
+        if(contentProvider!=null){
+            contentProvider.dispose();
+        }
+    }
     
     @Override
     public void transformationStateChanged(TransformationState state) {
         if(currentThread.getTransformationState().equals(state)){
-            tabFolder.getDisplay().syncExec(new Runnable() {
+            tabFolder.getDisplay().asyncExec(new Runnable() {
                 @Override
                 public void run() {
                     maintainTabs();
@@ -187,18 +176,16 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
     }
 
     @Override
-    public void terminated(IDebuggerHostAgent agent) throws CoreException {
+    public void terminated(IDebuggerHostAgent agent) {
         if(currentThread.getHostAgent().equals(agent)){
-            tabFolder.getDisplay().syncExec(new Runnable() {
+            tabFolder.getDisplay().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    contentProvider.dispose();
-                    currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(ModelInstanceViewer.this);
-                    for (CTabItem item : tabFolder.getItems()) {
-                        item.getControl().dispose();
-                        item.dispose();
-                    }
+                    disposeTabs();
+                    currentThread = null;
                 }
+
+                
             });
         }
         
@@ -212,6 +199,9 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
     @Override
     public void dispose() {
         selectionProviderWrapper.dispose();
+        if(currentThread!=null){
+            currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(this);
+        }
         super.dispose();
     }
     

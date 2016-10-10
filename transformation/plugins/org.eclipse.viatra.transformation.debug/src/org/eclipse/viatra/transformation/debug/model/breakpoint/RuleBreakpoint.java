@@ -19,7 +19,7 @@ import org.eclipse.viatra.transformation.evm.api.Activation;
 public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpoint {
     private static final long serialVersionUID = -7229317025288796666L;
     private String ruleId;
-    private boolean enabled = true;
+    private boolean enabled;
     
     public RuleBreakpoint() {
     }
@@ -88,6 +88,9 @@ public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpo
 
     @Override
     public boolean isEnabled() throws CoreException {
+        if(getMarker() != null){
+            this.enabled = super.isEnabled(); 
+        }
         return enabled;
     }
 }

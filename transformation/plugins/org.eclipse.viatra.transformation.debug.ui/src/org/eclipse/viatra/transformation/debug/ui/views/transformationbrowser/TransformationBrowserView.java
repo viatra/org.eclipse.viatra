@@ -12,7 +12,6 @@ package org.eclipse.viatra.transformation.debug.ui.views.transformationbrowser;
 
 import java.util.Collection;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -120,7 +119,9 @@ public class TransformationBrowserView extends ViewPart
     public void dispose() {
         super.dispose();
         expandedElementsMap.clear();
-        currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(this);
+        if(currentThread!=null){
+            currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(this);
+        }
     }
 
     @Override
@@ -189,7 +190,7 @@ public class TransformationBrowserView extends ViewPart
     @Override
     public void transformationStateChanged(final TransformationState state) {
         if(currentThread.getTransformationState().equals(state)){
-            treeViewer.getControl().getDisplay().syncExec(new Runnable() {
+            treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
 
                 @Override
                 public void run() {
@@ -202,15 +203,13 @@ public class TransformationBrowserView extends ViewPart
     }
 
     @Override
-    public void terminated(final IDebuggerHostAgent agent) throws CoreException {
+    public void terminated(final IDebuggerHostAgent agent){
         if(currentThread.getHostAgent().equals(agent)){
-            treeViewer.getControl().getDisplay().syncExec(new Runnable() {
+            treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
                 @Override
                 public void run() {
                     treeViewer.setInput(new Object[0]);
-                    currentThread.getHostAgent().unRegisterDebuggerHostAgentListener(TransformationBrowserView.this);
                     currentThread = null;
-                    
                 }
             });
         }

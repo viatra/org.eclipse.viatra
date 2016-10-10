@@ -10,6 +10,7 @@
  */
 package org.eclipse.viatra.transformation.debug.model;
 
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 
@@ -38,37 +39,45 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 public class TransformationThread extends TransformationDebugElement implements IThread, IDebuggerHostAgentListener, IBreakpointListener {
+    private static final String CONNECTING = " connecting...";
     private boolean stepping = false;
     private boolean suspended = true;
     private boolean terminated = false;
+    private boolean connecting = false;
+    private String name = "Model Transformation Debugger Session";
     
     private final TransformationModelProvider modelProvider;
     
-    private String name;
-
     private IType transformationClass;
     private TransformationState state;
     private IDebuggerHostAgent agent;
     
-    protected TransformationThread(String name, IDebuggerHostAgent agent, TransformationDebugTarget target, IType transformationClass) {
+    private IStackFrame[] frames;
+    
+    protected TransformationThread(IDebuggerHostAgent agent, TransformationDebugTarget target, IType transformationClass) {
         super(target);
         Preconditions.checkNotNull(transformationClass, "Transformation Class must not be null.");
+        frames = new IStackFrame[0];
         modelProvider = new TransformationModelProvider(agent);
         this.transformationClass = transformationClass;
-        this.name = name;
         this.agent = agent;
         //Register breakpoint listener
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);        
-        
+        //Register host agent listener
+        agent.registerDebuggerHostAgentListener(this);
         //get initial breakpoints from the manager
         IBreakpoint[] transfBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(MODEL_ID);
         for (IBreakpoint iBreakpoint : transfBreakpoints) {
             breakpointAdded(iBreakpoint);
         }
         
+        try {
+            stepOver();
+        } catch (DebugException e) {
+            ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+        }
         
-        //Register host agent listener
-        agent.registerDebuggerHostAgentListener(this);
+        
     }
 
     @Override
@@ -90,7 +99,11 @@ public class TransformationThread extends TransformationDebugElement implements 
     public void resume() throws DebugException {
         stepping = false;
         suspended = false;
+        
+        startConnecting();
         agent.sendContinueMessage();
+        endConnecting();
+        
         fireResumeEvent(DebugEvent.CLIENT_REQUEST);
         
     }
@@ -126,7 +139,11 @@ public class TransformationThread extends TransformationDebugElement implements 
     @Override
     public void stepOver() throws DebugException {
         stepping = true;
+        
+        startConnecting();
         agent.sendStepMessage();
+        endConnecting();
+
         fireResumeEvent(DebugEvent.STEP_OVER);
     }
 
@@ -146,30 +163,14 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public void terminate() throws DebugException {
+        startConnecting();
         agent.sendDisconnectMessage();
+        endConnecting();
     }
 
     @Override
     public IStackFrame[] getStackFrames() throws DebugException {
-        if (isSuspended()) {           
-            List<TransformationStackFrame> frames = Lists.newArrayList();
-            
-            if (state != null) {
-                Stack<RuleActivation> activationStack = new Stack<RuleActivation>();
-                activationStack.addAll(state.getActivationStack());
-                while(!activationStack.isEmpty()){
-                    try {
-                        frames.add(new TransformationStackFrame(this, activationStack.pop(), modelProvider));
-                    } catch (Exception e) {
-                        throw new DebugException(new Status(IStatus.ERROR, TransformationDebugActivator.PLUGIN_ID,
-                                "No transformation rules detected"));
-                    }
-                }
-            }
-            return frames.toArray(new TransformationStackFrame[frames.size()]); 
-        } else {
-            return new IStackFrame[0];
-        }
+        return frames;
     }
     
     public TransformationModelProvider getModelProvider() {
@@ -178,7 +179,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public boolean hasStackFrames() throws DebugException {
-        return isSuspended();
+        return getStackFrames().length > 0;
     }
 
     @Override
@@ -197,7 +198,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public String getName() throws DebugException {
-        return name;
+        return (connecting) ? name+CONNECTING : name;
     }
 
     @Override
@@ -208,15 +209,19 @@ public class TransformationThread extends TransformationDebugElement implements 
 
 
     @Override
-    public void terminated(IDebuggerHostAgent agent) throws CoreException, DebugException {
+    public void terminated(IDebuggerHostAgent agent){
         terminated = true;
         stepping = false;
         suspended = false;
+        frames = new IStackFrame[0];
         
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
         TransformationThreadFactory.getInstance().deleteTransformationThread(this);
-        
-        ((TransformationDebugTarget)getDebugTarget()).requestTermination();
+        try {
+            ((TransformationDebugTarget)getDebugTarget()).requestTermination();
+        } catch (DebugException e) {
+            ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+        }
         fireTerminateEvent();
     }
 
@@ -233,7 +238,17 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     //Manual guidance
     public void setNextActivation(RuleActivation act){
+        startConnecting();
         agent.sendNextActivationMessage(act.getTrace());
+        endConnecting();
+    }
+
+    private void endConnecting() {
+        connecting = false;
+    }
+
+    private void startConnecting() {
+        connecting = true;
     }
         
     //BreakpointListener
@@ -241,14 +256,18 @@ public class TransformationThread extends TransformationDebugElement implements 
     @Override
     public void breakpointAdded(IBreakpoint breakpoint) {
         if(breakpoint instanceof ITransformationBreakpoint){
-            agent.sendAddBreakpointMessage((ITransformationBreakpoint) breakpoint);           
+            startConnecting();
+            agent.sendAddBreakpointMessage((ITransformationBreakpoint) breakpoint);  
+            endConnecting();
         }
     }
 
     @Override
     public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
         if(breakpoint instanceof ITransformationBreakpoint){
+            startConnecting();
             agent.sendRemoveBreakpointMessage((ITransformationBreakpoint) breakpoint);
+            endConnecting();
         }
     }
 
@@ -256,11 +275,13 @@ public class TransformationThread extends TransformationDebugElement implements 
     public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
         if(breakpoint instanceof ITransformationBreakpoint){
             try {
+                startConnecting();
                 if(breakpoint.isEnabled()){
                     agent.sendEnableBreakpointMessage((ITransformationBreakpoint) breakpoint);
                 }else{
                     agent.sendDisableBreakpointMessage((ITransformationBreakpoint) breakpoint);
                 }
+                endConnecting();
             } catch (CoreException e1) {
                 ViatraQueryLoggingUtil.getDefaultLogger().error(e1.getMessage(), e1);
             }
@@ -270,9 +291,25 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public void transformationStateChanged(TransformationState state) {
+        List<TransformationStackFrame> frames = Lists.newArrayList();
+        
+        if (state != null) {
+            Stack<RuleActivation> activationStack = new Stack<RuleActivation>();
+            activationStack.addAll(state.getActivationStack());
+            while(!activationStack.isEmpty()){
+                try {
+                    frames.add(new TransformationStackFrame(this, activationStack.pop(), modelProvider));
+                } catch (EmptyStackException | DebugException e) {
+                    ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage());
+                }
+            }
+        }
+        this.frames = frames.toArray(new TransformationStackFrame[frames.size()]);
+        
         suspended = true;
         fireSuspendEvent(DebugEvent.BREAKPOINT);
         this.state = state;
+        this.name = state.getID();
     }
     
     public TransformationState getTransformationState() {
@@ -282,9 +319,6 @@ public class TransformationThread extends TransformationDebugElement implements 
     public IDebuggerHostAgent getHostAgent() {
         return agent;
     }
-        
-  
-
 }
 
 

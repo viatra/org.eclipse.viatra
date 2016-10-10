@@ -10,31 +10,34 @@
  */
 package org.eclipse.viatra.transformation.debug.communication;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import javax.management.InstanceNotFoundException;
 
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelElement;
 import org.eclipse.viatra.transformation.debug.transformationtrace.model.ActivationTrace;
 
 public interface DebuggerTargetEndpointMBean {
-    public void stepForward();
-    public void continueExecution();
+    public void stepForward() throws InstanceNotFoundException, IOException;
+    public void continueExecution() throws InstanceNotFoundException, IOException;
     
-    public void setNextActivation(ActivationTrace activation);
+    public void setNextActivation(ActivationTrace activation) throws InstanceNotFoundException, IOException;
 
-    public void addBreakpoint(ITransformationBreakpoint breakpoint);
-    public void removeBreakpoint(ITransformationBreakpoint breakpoint);
-    public void disableBreakpoint(ITransformationBreakpoint breakpoint);
-    public void enableBreakpoint(ITransformationBreakpoint breakpoint);
+    public void addBreakpoint(ITransformationBreakpoint breakpoint) throws InstanceNotFoundException, IOException;
+    public void removeBreakpoint(ITransformationBreakpoint breakpoint) throws InstanceNotFoundException, IOException;
+    public void disableBreakpoint(ITransformationBreakpoint breakpoint) throws InstanceNotFoundException, IOException;
+    public void enableBreakpoint(ITransformationBreakpoint breakpoint) throws InstanceNotFoundException, IOException;
     
-    public void disconnect();
+    public void disconnect() throws InstanceNotFoundException, IOException;
     
-    public String getID();
+    public String getID() throws InstanceNotFoundException, IOException;
     
-    public List<TransformationModelElement> getRootElements();
-    public Map<String, List<TransformationModelElement>> getChildren(TransformationModelElement parent);
-    public Map<String, List<TransformationModelElement>> getCrossReferences(TransformationModelElement parent);
+    public List<TransformationModelElement> getRootElements() throws InstanceNotFoundException, IOException;
+    public Map<String, List<TransformationModelElement>> getChildren(TransformationModelElement parent) throws InstanceNotFoundException, IOException;
+    public Map<String, List<TransformationModelElement>> getCrossReferences(TransformationModelElement parent) throws InstanceNotFoundException, IOException;
     
     
 }

@@ -12,8 +12,11 @@ package org.eclipse.viatra.transformation.debug.activator;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointListener;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
 import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -26,7 +29,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @author Peter Lunk
  */
-public class TransformationDebugActivator extends AbstractUIPlugin {
+public class TransformationDebugActivator extends AbstractUIPlugin implements IBreakpointListener{
     public static final String PLUGIN_ID = "org.eclipse.viatra.transformation.debug"; //$NON-NLS-1$
 
     private static TransformationDebugActivator plugin;
@@ -47,22 +50,45 @@ public class TransformationDebugActivator extends AbstractUIPlugin {
                 ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
             }
         }
+        DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
     }
 
+    
+    
     public void stop(BundleContext context) throws Exception {
+        DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+        
         plugin = null;
         super.stop(context);
-        
-        ExportBreakpointsOperation operation = new ExportBreakpointsOperation(
-                BreakpointCacheUtil.filterBreakpoints(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()),
-                BreakpointCacheUtil.getBreakpointCacheLocation());
-        operation.run(new NullProgressMonitor());
-        
-        
     }
 
     public static TransformationDebugActivator getDefault() {
         return plugin;
     }
 
+    @Override
+    public void breakpointAdded(IBreakpoint breakpoint) {
+        saveBreakPoints();
+    }
+
+    @Override
+    public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
+        saveBreakPoints();
+    }
+
+    @Override
+    public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+        saveBreakPoints();
+    }
+
+    private void saveBreakPoints() {
+        ExportBreakpointsOperation operation = new ExportBreakpointsOperation(
+                BreakpointCacheUtil.filterBreakpoints(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints()),
+                BreakpointCacheUtil.getBreakpointCacheLocation());
+        try {
+            operation.run(new NullProgressMonitor());
+        } catch (InvocationTargetException e) {
+            ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+        }
+    }
 }

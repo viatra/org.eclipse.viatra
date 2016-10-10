@@ -10,6 +10,10 @@
  */
 package org.eclipse.viatra.transformation.debug.communication;
 
+import static org.eclipse.viatra.transformation.debug.communication.DebuggerCommunicationConstants.TERMINATED;
+import static org.eclipse.viatra.transformation.debug.communication.DebuggerCommunicationConstants.URL_HEAD;
+import static org.eclipse.viatra.transformation.debug.communication.DebuggerCommunicationConstants.URL_TAIL;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,12 +29,18 @@ import javax.management.MalformedObjectNameException;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import javax.management.ObjectName;
+import javax.management.remote.JMXConnectionNotification;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
+import org.eclipse.viatra.transformation.debug.activator.TransformationDebugActivator;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ITransformationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationModelElement;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
@@ -40,83 +50,115 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DebuggerHostEndpoint implements IDebuggerHostAgent, IDebuggerHostEndpoint, NotificationListener {
+    public static final String ERROR_MSG = "Communication with the VIATRA Debugger Agent has been interrupted. Perhaps the target application has been closed abruptly or was not running at all.";
+    public static final String ERROR_TITLE = "Debugger Connection Interrupted";
     private String name;
     private List<IDebuggerHostAgentListener> listeners = Lists.newArrayList();
     private DebuggerTargetEndpointMBean mbeanProxy;
     private ObjectName mbeanName;
     private MBeanServerConnection mbsc;
     private JMXConnector jmxc;
-    private boolean isClosed = false;
     
     public DebuggerHostEndpoint(String ID){
         this.name = ID;
-        JMXServiceURL url;
-        try {
-            url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi");
-            jmxc = JMXConnectorFactory.connect(url, null);
-            mbsc = jmxc.getMBeanServerConnection();
-            mbsc.queryNames(null, null);
-            mbeanName = new ObjectName(name);
-            mbeanProxy = JMX.newMBeanProxy(mbsc, mbeanName, 
-                    DebuggerTargetEndpointMBean.class, true);
-            mbsc.addNotificationListener(mbeanName, this, null, null);
-            
-        } catch (IOException | MalformedObjectNameException | InstanceNotFoundException e) {
-            ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
-        }
+        
+    }
+    
+    public void connectTo(int port) throws IOException, MalformedObjectNameException, InstanceNotFoundException{
+        JMXServiceURL url = new JMXServiceURL(URL_HEAD+port+URL_TAIL);
+        jmxc = JMXConnectorFactory.connect(url, null);
+        mbsc = jmxc.getMBeanServerConnection();
+        mbsc.queryNames(null, null);
+        mbeanName = new ObjectName(name);
+        mbeanProxy = JMX.newMBeanProxy(mbsc, mbeanName, 
+                DebuggerTargetEndpointMBean.class, true);
+        mbsc.addNotificationListener(mbeanName, this, null, null);
+        jmxc.addConnectionNotificationListener(this, null, null);
     }
     
     @Override
     public void sendStepMessage() {
-        mbeanProxy.stepForward();
+        try {
+            mbeanProxy.stepForward();
+        } catch (InstanceNotFoundException | IOException e) {
+            handleCommunicationError(e);
+        }
         
     }
 
     @Override
     public void sendContinueMessage() {
-        mbeanProxy.continueExecution();
+        try {
+            mbeanProxy.continueExecution();
+        } catch (InstanceNotFoundException | IOException e) {
+            handleCommunicationError(e);
+        }
         
     }
 
     @Override
     public void sendNextActivationMessage(ActivationTrace activation) {
-        mbeanProxy.setNextActivation(activation);
+        try {
+            mbeanProxy.setNextActivation(activation);
+        } catch (InstanceNotFoundException | IOException e) {
+            handleCommunicationError(e);
+        }
     }
 
     @Override
     public void sendAddBreakpointMessage(ITransformationBreakpoint breakpoint) {
-        mbeanProxy.addBreakpoint(breakpoint);
+        try {
+            mbeanProxy.addBreakpoint(breakpoint);
+        } catch (InstanceNotFoundException | IOException e) {
+            handleCommunicationError(e);
+        }
     }
 
     @Override
     public void sendRemoveBreakpointMessage(ITransformationBreakpoint breakpoint) {
-        mbeanProxy.removeBreakpoint(breakpoint);
+        try {
+            mbeanProxy.removeBreakpoint(breakpoint);
+        } catch (InstanceNotFoundException | IOException e) {
+            handleCommunicationError(e);
+        }
     }
 
     @Override
     public void sendDisableBreakpointMessage(ITransformationBreakpoint breakpoint) {
-        mbeanProxy.disableBreakpoint(breakpoint);
+        try {
+            mbeanProxy.disableBreakpoint(breakpoint);
+        } catch (InstanceNotFoundException | IOException e) {
+            handleCommunicationError(e);
+        }
     }
 
     @Override
     public void sendEnableBreakpointMessage(ITransformationBreakpoint breakpoint) {
-        mbeanProxy.enableBreakpoint(breakpoint);
+        try {
+            mbeanProxy.enableBreakpoint(breakpoint);
+        } catch (InstanceNotFoundException | IOException e) {
+            handleCommunicationError(e);
+        }
     }
 
     @Override
     public void sendDisconnectMessage() {
-        mbeanProxy.disconnect();
+        try {
+            mbeanProxy.disconnect();
+        } catch (InstanceNotFoundException | IOException e) {
+            handleCommunicationError(e);
+        }
     }
 
     @Override
-    public void registerDebuggerHostAgentListener(IDebuggerHostAgentListener listener) {
+    public synchronized void registerDebuggerHostAgentListener(IDebuggerHostAgentListener listener) {
         if(!listeners.contains(listener)){
             listeners.add(listener);
         }
     }
 
     @Override
-    public void unRegisterDebuggerHostAgentListener(IDebuggerHostAgentListener listener) {
+    public synchronized void unRegisterDebuggerHostAgentListener(IDebuggerHostAgentListener listener) {
         if(listeners.contains(listener)){
             listeners.remove(listener);
         }
@@ -140,12 +182,16 @@ public class DebuggerHostEndpoint implements IDebuggerHostAgent, IDebuggerHostEn
     @Override
     public void terminated() throws CoreException {
         try {
-            isClosed = true;
             mbsc.removeNotificationListener(mbeanName, this, null, null);
             jmxc.close();
+            terminateListeners();
         } catch (InstanceNotFoundException | ListenerNotFoundException | IOException e) {
-            ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+            ViatraQueryLoggingUtil.getDefaultLogger().debug(e.getMessage());
         }
+        
+    }
+
+    private void terminateListeners(){
         for (IDebuggerHostAgentListener listener : listeners) {
             listener.terminated(this);
         }
@@ -157,26 +203,38 @@ public class DebuggerHostEndpoint implements IDebuggerHostAgent, IDebuggerHostEn
     @Override
     public void handleNotification(Notification notification, Object arg1) {
         if (notification instanceof AttributeChangeNotification) {
-            //Transformation State changed
-            AttributeChangeNotification acn =
-                (AttributeChangeNotification) notification;
-            if(acn.getAttributeType().equals("TransformationState")){
+            // Transformation State changed
+            AttributeChangeNotification acn = (AttributeChangeNotification) notification;
+            if (acn.getAttributeType().equals("TransformationState")) {
                 try {
-                    ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream((byte[])acn.getNewValue()));
+                    ObjectInputStream objectInputStream = new ObjectInputStream(
+                            new ByteArrayInputStream((byte[]) acn.getNewValue()));
                     TransformationState state = (TransformationState) objectInputStream.readObject();
                     transformationStateChanged(state);
                 } catch (IOException | ClassNotFoundException e) {
-                    ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+                    ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage());
                 }
             }
 
-        }else{
-           String message = notification.getType();
-            if(message.equals(DebuggerTargetEndpoint.TERMINATED)){
+        } else if (notification instanceof JMXConnectionNotification) {
+            // connection lost
+            String message = notification.getType();
+            // Transformation State changed
+            if (message.equals(JMXConnectionNotification.CLOSED)) {
                 try {
                     terminated();
                 } catch (CoreException e) {
-                    ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
+                    ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage());
+                }
+            }
+
+        } else {
+            String message = notification.getType();
+            if (message.equals(TERMINATED)) {
+                try {
+                    terminated();
+                } catch (CoreException e) {
+                    ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage());
                 }
             }
         }
@@ -184,25 +242,39 @@ public class DebuggerHostEndpoint implements IDebuggerHostAgent, IDebuggerHostEn
 
     @Override
     public List<TransformationModelElement> getRootElements(){
-        if(!isClosed){
+        try {
             return mbeanProxy.getRootElements();
+        } catch (InstanceNotFoundException | IOException e) {
+            return Lists.newArrayList();
         }
-        return Lists.newArrayList();
     }
 
     @Override
     public Map<String, List<TransformationModelElement>> getChildren(TransformationModelElement parent){
-        if(!isClosed){
+        try {
             return mbeanProxy.getChildren(parent);
+        } catch (InstanceNotFoundException | IOException e) {
+            return Maps.newHashMap();
         }
-        return Maps.newHashMap();
     }
     
     @Override
     public Map<String, List<TransformationModelElement>> getCrossReferences(TransformationModelElement parent) {
-        if(!isClosed){
+        try {
             return mbeanProxy.getCrossReferences(parent);
+        } catch (InstanceNotFoundException | IOException e) {
+            return Maps.newHashMap();
         }
-        return Maps.newHashMap();
+    }
+    
+    private void handleCommunicationError(final Exception e) {
+        terminateListeners();
+        ViatraQueryLoggingUtil.getDefaultLogger().error("Communication error: "+e.getMessage());
+        PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                Shell activeShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+                ErrorDialog.openError(activeShell, ERROR_TITLE, ERROR_MSG, new Status(Status.ERROR, TransformationDebugActivator.PLUGIN_ID, e.getMessage())); 
+            }
+        });
     }
 }

@@ -27,7 +27,11 @@ class TransformationDebuggerConfiguration implements IAdapterConfiguration {
     List<IEVMListener> listeners
 
     new() {
-        val id = "Transformation_"+System.nanoTime.toString;
+        new TransformationDebuggerConfiguration("Transformation_"+System.nanoTime.toString)
+    }
+    
+    new(String ID) {
+        val id = ID
         adapters = Lists.newArrayList
         listeners = Lists.newArrayList
         val debugger = new TransformationDebugger(id)

@@ -37,14 +37,13 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     private List<TransformationThread> threads = new ArrayList<>();
     private boolean terminated = false;
     
-    public TransformationDebugTarget(ILaunch launch, IDebuggerHostAgent agent, IType transformationType, String name) throws CoreException {
+    public TransformationDebugTarget(ILaunch launch, IDebuggerHostAgent agent, IType transformationType) throws CoreException {
         super(null);
         this.launch = launch;
-        this.name = name;
+        this.name = "Model Transformation Debugger Session";
         this.process = new TransformationDebugProcess(launch, name);
         
-        threads.add(TransformationThreadFactory.getInstance().createTransformationThread(name, agent, this, transformationType));
-        
+        threads.add(TransformationThreadFactory.getInstance().createTransformationThread(agent, this, transformationType));
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
         fireCreationEvent();
     }

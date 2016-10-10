@@ -37,7 +37,6 @@ public class TransformationValue extends TransformationDebugElement implements I
     private boolean initialized = false;
     private final TransformationModelProvider modelProvider;
     
-
     public Object getValue() {
         return value;
     }
@@ -87,52 +86,56 @@ public class TransformationValue extends TransformationDebugElement implements I
     @Override
     public IVariable[] getVariables() throws DebugException {
         if (!initialized) {
-            if (value instanceof EObject) {
-                EObject eObject = (EObject) value;
-                EList<EStructuralFeature> eStructuralFeatures = eObject.eClass().getEStructuralFeatures();
-                for (EStructuralFeature eSFeature : eStructuralFeatures) {
-                    Object eValue = eObject.eGet(eSFeature);
-                    String label = eSFeature.getName();
-                    transformationVariables.add(createTransformationVariable(eValue, label));
-                }
-            } else if (value instanceof TransformationModelElement) {
-                TransformationModelElement element = (TransformationModelElement) value;
-                modelProvider.loadElementContent(element);
-                
-                //Attributes
-                Map<String, String> attributes = element.getAttributes();
-                for (String attrLabel : attributes.keySet()) {
-                    if(!attrLabel.equals(TransformationModelElement.TYPE_ATTR)){
-                        transformationVariables.add(createTransformationVariable("\""+attributes.get(attrLabel)+"\"", attrLabel));
-                    }
-                }
-                //CrossReferences
-                Map<String, List<TransformationModelElement>> crossReferences = element.getCrossReferences();
-                for (String referenceLabel : crossReferences.keySet()) {
-                    Collection<TransformationModelElement> collection = crossReferences.get(referenceLabel);
-                    if(collection.size()==1){
-                        transformationVariables.add(createTransformationVariable(crossReferences.get(referenceLabel).iterator().next(), referenceLabel));
-                    }else{
-                        transformationVariables.add(createTransformationVariable(crossReferences.get(referenceLabel), referenceLabel));
-                    }
-                }
-                //Children
-                Map<String, List<TransformationModelElement>> children = element.getContainments();
-                for (String containmentLabel : children.keySet()) {
-                    transformationVariables.add(createTransformationVariable(children.get(containmentLabel), containmentLabel));
-                }
-                
-            } else if (value instanceof List<?>) {
-                List<?> eList = (List<?>) value;
-                for (Object object : eList) {
-                    String label = "["+Integer.toString(eList.indexOf(object))+"]";
-                    transformationVariables.add(createTransformationVariable(object, label));
-                }
-            }
+            initialize();
             initialized = true;
         }
         
         return transformationVariables.toArray(new IVariable[transformationVariables.size()]);
+    }
+
+    private void initialize() {
+        if (value instanceof EObject) {
+            EObject eObject = (EObject) value;
+            EList<EStructuralFeature> eStructuralFeatures = eObject.eClass().getEStructuralFeatures();
+            for (EStructuralFeature eSFeature : eStructuralFeatures) {
+                Object eValue = eObject.eGet(eSFeature);
+                String label = eSFeature.getName();
+                transformationVariables.add(createTransformationVariable(eValue, label));
+            }
+        } else if (value instanceof TransformationModelElement) {
+            TransformationModelElement element = (TransformationModelElement) value;
+            modelProvider.loadElementContent(element);
+            
+            //Attributes
+            Map<String, String> attributes = element.getAttributes();
+            for (String attrLabel : attributes.keySet()) {
+                if(!attrLabel.equals(TransformationModelElement.TYPE_ATTR)){
+                    transformationVariables.add(createTransformationVariable("\""+attributes.get(attrLabel)+"\"", attrLabel));
+                }
+            }
+            //CrossReferences
+            Map<String, List<TransformationModelElement>> crossReferences = element.getCrossReferences();
+            for (String referenceLabel : crossReferences.keySet()) {
+                Collection<TransformationModelElement> collection = crossReferences.get(referenceLabel);
+                if(collection.size()==1){
+                    transformationVariables.add(createTransformationVariable(crossReferences.get(referenceLabel).iterator().next(), referenceLabel));
+                }else{
+                    transformationVariables.add(createTransformationVariable(crossReferences.get(referenceLabel), referenceLabel));
+                }
+            }
+            //Children
+            Map<String, List<TransformationModelElement>> children = element.getContainments();
+            for (String containmentLabel : children.keySet()) {
+                transformationVariables.add(createTransformationVariable(children.get(containmentLabel), containmentLabel));
+            }
+            
+        } else if (value instanceof List<?>) {
+            List<?> eList = (List<?>) value;
+            for (Object object : eList) {
+                String label = "["+Integer.toString(eList.indexOf(object))+"]";
+                transformationVariables.add(createTransformationVariable(object, label));
+            }
+        }
     }
 
     protected TransformationVariable createTransformationVariable(Object value, String parameterName) {
@@ -151,7 +154,10 @@ public class TransformationValue extends TransformationDebugElement implements I
 
     @Override
     public boolean hasVariables() throws DebugException {
-        return !initialized || !transformationVariables.isEmpty();
+        if(!initialized){
+            initialize();
+        }
+        return !transformationVariables.isEmpty();
     }
 
 }

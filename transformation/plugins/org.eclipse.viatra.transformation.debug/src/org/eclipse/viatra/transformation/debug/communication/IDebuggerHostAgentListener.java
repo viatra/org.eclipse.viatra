@@ -10,12 +10,11 @@
  */
 package org.eclipse.viatra.transformation.debug.communication;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.viatra.transformation.debug.model.transformationstate.TransformationState;
 
 public interface IDebuggerHostAgentListener {
     
     public void transformationStateChanged(TransformationState state);
         
-    public void terminated(IDebuggerHostAgent agent) throws CoreException;
+    public void terminated(IDebuggerHostAgent agent);
 }

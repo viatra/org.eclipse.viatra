@@ -54,14 +54,12 @@ import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.xtext.xbase.lib.Pair;
 
 import com.google.common.collect.Lists;
+import static org.eclipse.viatra.transformation.debug.communication.DebuggerCommunicationConstants.*;
 
 public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport implements IDebuggerTargetAgent, DebuggerTargetEndpointMBean{
     private String ID;
     private TransformationDebugger debugger;
-    public static final String MBEANNAME = "org.eclipse.viatra.transformation.debug.communication.impl:type=DebuggerTargetEndpoint";
-    public static final String SUSPENDED = "Suspended";
-    public static final String TERMINATED = "Terminated";
-    
+
     
     private long sequenceNumber = 1;
     //TargetEndpoint
@@ -69,11 +67,10 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
         builder.setID(ID);
         this.ID = ID;
         this.debugger  = debugger;
-        //DebuggerEndpointService.getInstance().registerTargetEndpoint(ID, this);
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         ObjectName name;
         try {
-            name = new ObjectName(MBEANNAME+ID);
+            name = new ObjectName(MBEANNAME+"_"+CURRENTVERSION+"_"+ID);
             mbs.registerMBean(this, name); 
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
             e.printStackTrace();
@@ -167,7 +164,7 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer(); 
         ObjectName name;
         try {
-            name = new ObjectName(MBEANNAME+ID);
+            name = new ObjectName(MBEANNAME+"_"+CURRENTVERSION+"_"+ID);
             mbs.unregisterMBean(name); 
         } catch (MalformedObjectNameException | MBeanRegistrationException | InstanceNotFoundException e) {
             e.printStackTrace();
