@@ -39,10 +39,9 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareFeature;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
@@ -89,6 +88,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
+import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
 
 import com.google.common.base.Objects;
@@ -179,6 +179,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     private IExpectedPackageNameProvider packageNameProvider;
     @Inject
     private TypeReferences typeReferences;
+    @Inject
+    private NumberLiterals numberLiterals;
     
     /**
      * Checks if an aggregate {@link VariableReference} is used only in the right context, that is, in an
@@ -619,10 +621,8 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     private String getTypeName(Class<? extends ValueReference> typeClass) {
-        if (IntValue.class.isAssignableFrom(typeClass)) {
-            return "Integer";
-        } else if (DoubleValue.class.isAssignableFrom(typeClass)) {
-            return "Double";
+        if (NumberValue.class.isAssignableFrom(typeClass)) {
+            return "Number";
         } else if (BoolValue.class.isAssignableFrom(typeClass)) {
             return "Boolean";
         } else if (StringValue.class.isAssignableFrom(typeClass)) {
@@ -636,12 +636,10 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     }
 
     private String getConstantAsString(ValueReference ref) {
-        if (ref instanceof IntValue) {
-            return Integer.toString(((IntValue) ref).getValue());
-        } else if (ref instanceof DoubleValue) {
-            return Double.toString(((DoubleValue) ref).getValue());
+        if (ref instanceof NumberValue) {
+            return numberLiterals.toJavaLiteral(((NumberValue) ref).getValue());
         } else if (ref instanceof BoolValue) {
-            return Boolean.toString(((BoolValue) ref).isValue());
+            return Boolean.toString(CorePatternLanguageHelper.getValue(ref, Boolean.class));
         } else if (ref instanceof StringValue) {
             return "\"" + ((StringValue) ref).getValue() + "\"";
         } else if (ref instanceof ListValue) {

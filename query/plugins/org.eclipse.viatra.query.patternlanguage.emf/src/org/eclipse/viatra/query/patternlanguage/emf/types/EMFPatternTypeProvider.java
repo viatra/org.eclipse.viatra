@@ -41,11 +41,10 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstrain
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareFeature;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ComputationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.LiteralValueReference;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
@@ -69,6 +68,7 @@ import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
+import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
 
 import com.google.common.base.Predicate;
@@ -108,6 +108,9 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
 
     @Inject
     private IMetamodelProvider metamodelProvider;
+    
+    @Inject
+    private NumberLiterals literals;
 
     private static final int RECURSION_CALLING_LEVEL_LIMIT = 5;
 
@@ -439,14 +442,17 @@ public class EMFPatternTypeProvider implements IEMFTypeProvider {
     @Override
     public EClassifier getClassifierForLiteralComputationEnumValueReference(ValueReference valueReference) {
         if (valueReference instanceof LiteralValueReference) {
-            if (valueReference instanceof IntValue) {
-                return EcorePackage.Literals.EINT;
+            if (valueReference instanceof NumberValue) {
+                Class<? extends Number> javaType = literals.getJavaType(((NumberValue) valueReference).getValue());
+                if (javaType.isAssignableFrom(Integer.class)) {
+                    return EcorePackage.Literals.EINT;
+                } else if (javaType.isAssignableFrom(Double.class)) {
+                    return EcorePackage.Literals.EDOUBLE;
+                }
             } else if (valueReference instanceof StringValue) {
                 return EcorePackage.Literals.ESTRING;
             } else if (valueReference instanceof BoolValue) {
                 return EcorePackage.Literals.EBOOLEAN;
-            } else if (valueReference instanceof DoubleValue) {
-                return EcorePackage.Literals.EDOUBLE;
             } else if (valueReference instanceof ListValue) {
                 return null;
             }

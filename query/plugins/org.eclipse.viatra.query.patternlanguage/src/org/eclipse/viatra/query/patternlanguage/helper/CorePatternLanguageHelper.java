@@ -31,12 +31,11 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParame
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
@@ -55,9 +54,11 @@ import org.eclipse.xtext.common.types.JvmFormalParameter;
 import org.eclipse.xtext.util.OnChangeEvictingCache;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XFeatureCall;
+import org.eclipse.xtext.xbase.XNumberLiteral;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -405,7 +406,7 @@ public final class CorePatternLanguageHelper {
         ValueReference useAsSurrogateRef = getFirstAnnotationParameter(annotation,parameterName);
         if(useAsSurrogateRef != null){
         	if(useAsSurrogateRef instanceof BoolValue){
-        		return ((BoolValue) useAsSurrogateRef).isValue();
+        		return getValue(useAsSurrogateRef, Boolean.class);
         	} else {
         		return defaultValue;
         	}
@@ -540,14 +541,35 @@ public final class CorePatternLanguageHelper {
         return result;
     }
 
+    /**
+     * Extracts the value stored by a selected reference
+     * 
+     * @param ref
+     *            The value reference to extract the value from
+     * @param clazz
+     *            The class to cast the results; if the value of the reference cannot be expressed with this class, an
+     *            {@link IllegalArgumentException} is thrown.
+     * @since 1.5
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getValue(ValueReference ref, Class<T> clazz) {
+        Object value = getValue(ref);
+        Preconditions.checkArgument(clazz.isInstance(value),
+                "Value reference %s does not refer to a class %s", ref.getClass().getName(), clazz.getName());
+        return (T) value;
+    }
+    
+    
+    
+    @SuppressWarnings("restriction")
     private static Object getValue(ValueReference ref) {
         Object value = null;
         if (ref instanceof BoolValue) {
-            value = ((BoolValue)ref).isValue();
-        } else if (ref instanceof DoubleValue) {
-            value = ((DoubleValue)ref).getValue();
-        } else if (ref instanceof IntValue) {
-            value = ((IntValue)ref).getValue();
+            value = ((BoolValue)ref).getValue().isIsTrue();
+        } else if (ref instanceof NumberValue) {
+            NumberLiterals literals = new NumberLiterals();
+            XNumberLiteral xLiteral = ((NumberValue)ref).getValue();
+            value = literals.numberValue(xLiteral, literals.getJavaType(xLiteral));
         } else if (ref instanceof StringValue) {
             value = ((StringValue)ref).getValue();
         } else if (ref instanceof VariableReference) {

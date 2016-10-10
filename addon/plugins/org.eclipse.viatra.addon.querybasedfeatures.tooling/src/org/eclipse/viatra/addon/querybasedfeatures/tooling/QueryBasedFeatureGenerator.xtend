@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue
@@ -155,9 +154,9 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
       } else if (ap.name.matches("kind")) {
         kindTmp = (ap.value as StringValue).value
       } else if (ap.name.matches("keepCache")) {
-        keepCacheTmp = (ap.value as BoolValue).value
+        keepCacheTmp = ap.value.getValue(Boolean)
       } else if (ap.name.matches("useAsSurrogate")) {
-        useAsSurrogate = (ap.value as BoolValue).value
+        useAsSurrogate = ap.value.getValue(Boolean)
       }
     }
 
@@ -227,7 +226,7 @@ class QueryBasedFeatureGenerator implements IGenerationFragment {
           val useModelCodeRef = annotation.getFirstAnnotationParameter("generateIntoModelCode");
           var useModelCode = false;
           if(useModelCodeRef != null){
-            useModelCode = (useModelCodeRef as BoolValue).value
+            useModelCode = useModelCodeRef.getValue(Boolean)
           }
           val annotationsOK = QueryBasedFeatures::checkEcoreAnnotation(pckg, feature, pattern.fullyQualifiedName, useModelCode)
           if(!annotationsOK){

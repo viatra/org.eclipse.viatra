@@ -23,15 +23,15 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
+import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareFeature;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionHead;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PathExpressionTail;
@@ -43,6 +43,8 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.xtext.util.Strings;
+import org.eclipse.xtext.xbase.XNumberLiteral;
+import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 import org.eclipse.xtext.xbase.ui.labeling.XbaseLabelProvider;
 
 import com.google.inject.Inject;
@@ -54,6 +56,9 @@ import com.google.inject.Inject;
  */
 public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
 
+    @Inject 
+    private NumberLiterals literals;
+    
     @Inject
     public EMFPatternLanguageLabelProvider(AdapterFactoryLabelProvider delegate) {
         super(delegate);
@@ -151,12 +156,11 @@ public class EMFPatternLanguageLabelProvider extends XbaseLabelProvider {
     String getValueText(ValueReference ref) {
         if (ref instanceof VariableValue) {
             return ((VariableValue) ref).getValue().getVar();
-        } else if (ref instanceof IntValue) {
-            return Integer.toString(((IntValue) ref).getValue());
+        } else if (ref instanceof NumberValue) {
+            XNumberLiteral literal = ((NumberValue) ref).getValue();
+            return literals.toJavaLiteral(literal);
         } else if (ref instanceof BoolValue) {
-            return Boolean.toString(((BoolValue) ref).isValue());
-        } else if (ref instanceof DoubleValue) {
-            return Double.toString(((DoubleValue) ref).getValue());
+            return Boolean.toString(CorePatternLanguageHelper.getValue(ref, Boolean.class));
         } else if (ref instanceof ListValue) {
             EList<ValueReference> values = ((ListValue) ref).getValues();
             List<String> valueStrings = new ArrayList<String>();

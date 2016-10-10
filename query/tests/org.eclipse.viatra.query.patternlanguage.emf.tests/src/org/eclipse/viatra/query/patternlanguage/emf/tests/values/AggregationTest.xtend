@@ -59,6 +59,7 @@ class AggregationTest extends AbstractValidatorTest {
 		parseHelper.parse(
 			'''package org.eclipse.viatra.query.patternlanguage.emf.tests
 			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+			import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
 
 			pattern calledPattern(p : Pattern, v: Variable) = {
 				Pattern(p);
@@ -66,11 +67,8 @@ class AggregationTest extends AbstractValidatorTest {
 			}
 
 			pattern callerPattern(output) = {
-				output == count find calledPattern(anyp, anyv);	// anyp and anyv should be single variables, e.g. _anyp, _anyv
-				Pattern(anyp);									// Then these lines...
-				Variable(anyv);									// ...can be deleted.
-				IntValue.value(h, output);	// h should be a single variable, e.g. _h
-				IntValue(h);				// Then this line can be deleted.
+				output == count find calledPattern(_anyp, _anyv);
+				Red.redness(_h, output);
 			}'''
 		).assertNoErrors
 	}
@@ -80,6 +78,7 @@ class AggregationTest extends AbstractValidatorTest {
 		parseHelper.parse(
 			'''package org.eclipse.viatra.query.patternlanguage.emf.tests
 			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+			import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
 
 			pattern calledPattern(p : Pattern, v: Variable) = {
 				Pattern(p);
@@ -88,10 +87,8 @@ class AggregationTest extends AbstractValidatorTest {
 
 			pattern callerPattern(p : Pattern, output) = {
 				Pattern(p);
-				output == count find calledPattern(p, anyv);	// anyv should be a single variable, e.g. _anyv
-				Variable(anyv);									// Then this line can be deleted.
-				IntValue.value(h, output);	// h should be a single variable, e.g. _h
-				IntValue(h);				// Then this line can be deleted.
+				output == count find calledPattern(p, _anyv);
+				Red.redness(_h, output);
 			}'''
 		).assertNoErrors
 	}
@@ -109,8 +106,7 @@ class AggregationTest extends AbstractValidatorTest {
 
 			pattern callerPattern(p : Pattern) = {
 				Pattern(p);
-				3 == count find calledPattern(p, anyv);	// anyv should be a single variable, e.g. _anyv
-				Variable(anyv);							// Then this line can be deleted.
+				3 == count find calledPattern(p, _anyv);
 			}'''
 		).assertNoErrors
 	}
@@ -120,18 +116,17 @@ class AggregationTest extends AbstractValidatorTest {
 		parseHelper.parse(
 			'''package org.eclipse.viatra.query.patternlanguage.emf.tests
 			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+			import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
 
-			pattern calledPattern(p : Pattern, v: Variable) = {
-				Pattern(p);
-				Variable(v);
+			pattern calledPattern(c : Circle, v: Red) = {
+				Circle.red(c,v);
 			}
 
-			pattern callerPattern(p : Pattern, output) = {
-				Pattern(p);
-				Variable(v);
-				output == count find calledPattern(p, v);
-				IntValue.value(h, output);	// h should be a single variable, e.g. _h
-				IntValue(h);				// Then this line can be deleted.
+			pattern callerPattern(c : Circle, output) = {
+				Circle(c);
+				Red(v);
+				output == count find calledPattern(c, v);
+				Red.redness(_h, output);
 			}'''
 		).assertNoErrors
 	}
@@ -220,25 +215,25 @@ class AggregationTest extends AbstractValidatorTest {
 			
 			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
 			import "http://www.eclipse.org/emf/2002/Ecore"
+			import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
 					
-			pattern belowAverage(call : PatternCall, parameter : IntValue) {
-				PatternCall.parameters(call, parameter);
-				IntValue.value(parameter, value);
+			pattern belowAverage(c : Circle, r : Red) {
+				Circle.red(c, r);
+				Red.redness(r, value);
 
-				C == count find extractParameter(call, _);
-				S == sum find extractValue(parameter, #v);
+				C == count find extractRed(c, _);
+				S == sum find extractValue(r, #v);
 				A == eval(S / C);
 				check(value < A as Integer);
 			}		
 			
 			// helper patterns
-			pattern extractValue(reference : IntValue, value : EInt) {
-				IntValue(reference);
-				IntValue.value(reference, value);
+			pattern extractValue(r : Red, value : EInt) {
+				Red.redness(r, value);
 			}
 			
-			pattern extractParameter(call : PatternCall, parameter : ValueReference) {
-				PatternCall.parameters(call, parameter);
+			pattern extractRed(c : Circle, r : Red) {
+				Circle.red(c, r);
 			}
 			'''
 		)
@@ -274,18 +269,18 @@ class AggregationTest extends AbstractValidatorTest {
 			'''
 			package org.eclipse.viatra.query.patternlanguage.emf.tests
 			
-			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+			import "http://www.eclipse.org/viatra/query/patternlanguage/emf/test"
 			import "http://www.eclipse.org/emf/2002/Ecore"
 			
-			pattern smallestValue(call : PatternCall, value : EInt) {
-				PatternCall.parameters(call, parameter);
-				value == min find extractValue(parameter, #_);
+			pattern smallestValue(c : Circle, redness : EInt) {
+				Circle.red(c, parameter);
+				redness == min find extractRedness(parameter, #_);
 			}
 						
 			// helper patterns
-			pattern extractValue(reference : IntValue, value : EInt) {
-				IntValue(reference);
-				IntValue.value(reference, value);
+			pattern extractRedness(reference : Red, value : EInt) {
+				Red(reference);
+				Red.redness(reference, value);
 			}
 			'''
 		)

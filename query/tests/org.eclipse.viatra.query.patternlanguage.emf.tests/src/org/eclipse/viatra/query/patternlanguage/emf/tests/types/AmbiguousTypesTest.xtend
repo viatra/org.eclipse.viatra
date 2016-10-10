@@ -20,19 +20,12 @@ import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFPatternLanguag
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.eclipse.xtext.junit4.validation.ValidatorTester
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import static org.junit.Assert.*
-import org.junit.Ignoreimport org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
-import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
-import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem
-import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey
-import org.eclipse.viatra.query.patternlanguage.emf.tests.pltest.PltestPackage
+import org.eclipse.viatra.query.patternlanguage.emf.tests.util.AbstractValidatorTest
 import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes
 
 @RunWith(typeof(XtextRunner))
@@ -51,16 +44,7 @@ class AmbiguousTypesTest extends AbstractValidatorTest {
 	@Inject
 	Injector injector
 	
-	@Inject
-	private ITypeInferrer typeInferrer
-	@Inject
-	extension private EMFTypeSystem typeSystem
-	
-	
 	ValidatorTester<EMFPatternLanguageJavaValidator> tester
-	
-	@Inject extension ValidationTestHelper
-	extension PltestPackage pltestPackage = PltestPackage::eINSTANCE
 	
 	@Before
 	def void initialize() {

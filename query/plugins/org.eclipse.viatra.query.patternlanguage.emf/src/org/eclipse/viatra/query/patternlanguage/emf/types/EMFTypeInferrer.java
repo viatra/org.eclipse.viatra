@@ -19,10 +19,9 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Expression;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
@@ -33,6 +32,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.common.JavaTransitiveInstancesKey;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.util.IResourceScopeCache;
+import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
@@ -52,6 +52,8 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
     private EMFPatternLanguageTypeRules rules;
     @Inject
     private IResourceScopeCache cache;
+    @Inject
+    private NumberLiterals literals;
 
     /**
      * @since 1.3
@@ -70,10 +72,9 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
     public IInputKey getDeclaredType(Expression ex) {
         if (ex instanceof BoolValue) {
             return new JavaTransitiveInstancesKey(Boolean.class);
-        } else if (ex instanceof DoubleValue) {
-            return new JavaTransitiveInstancesKey(Double.class);
-        } else if (ex instanceof IntValue) {
-            return new JavaTransitiveInstancesKey(Integer.class);
+        } else if (ex instanceof NumberValue) {
+            Class<? extends Number> javaType = literals.getJavaType(((NumberValue) ex).getValue());
+            return new JavaTransitiveInstancesKey(javaType);
         } else if (ex instanceof ListValue) {
             return new JavaTransitiveInstancesKey(List.class);
         } else if (ex instanceof StringValue) {

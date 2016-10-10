@@ -17,9 +17,8 @@ import org.eclipse.viatra.query.patternlanguage.annotations.PatternAnnotationPro
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AnnotationParameter;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.DoubleValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.IntValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
@@ -46,9 +45,11 @@ public class PatternAnnotationValidator implements IPatternAnnotationValidator {
     private final IPatternAnnotationAdditionalValidator validator;
 
     private static final ImmutableMap<String, Class<? extends ValueReference>> TYPEMAPPING = new ImmutableMap.Builder<String, Class<? extends ValueReference>>()
-            .put(PatternAnnotationParameter.INT, IntValue.class)
+            // TODO this validator is less specific; needs some enhancements
+            .put(PatternAnnotationParameter.INT, NumberValue.class)
             .put(PatternAnnotationParameter.STRING, StringValue.class)
-            .put(PatternAnnotationParameter.DOUBLE, DoubleValue.class)
+            // TODO this validator is less specific; needs some enhancements
+            .put(PatternAnnotationParameter.DOUBLE, NumberValue.class)
             .put(PatternAnnotationParameter.BOOLEAN, BoolValue.class)
             .put(PatternAnnotationParameter.LIST, ListValue.class)
             .put(PatternAnnotationParameter.VARIABLEREFERENCE, VariableValue.class).build();
