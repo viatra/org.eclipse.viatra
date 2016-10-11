@@ -19,6 +19,7 @@ import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -60,6 +61,7 @@ public class PluginXmlModifier {
         try {
             pluginXml = project.getFile("plugin.xml");
             if (pluginXml.exists()) {
+                pluginXml.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
                 document = XmlDocumentHelper.loadDocument(pluginXml.getContents());
             } else {
                 document = XmlDocumentHelper.getEmptyXmlDocument();
@@ -85,6 +87,7 @@ public class PluginXmlModifier {
         try {
             InputStream stream = XmlDocumentHelper.saveDocument(document);
             if (pluginXml.exists()) {
+                pluginXml.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
                 pluginXml.setContents(stream, false, true, new NullProgressMonitor());
             } else {
                 pluginXml.create(stream, false, new NullProgressMonitor());
