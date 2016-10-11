@@ -28,11 +28,8 @@
        <skipTocGen>true</skipTocGen>
        <javadocOptions>
         <additionalArguments>
-         <additionalArgument>${javadoc-args}</additionalArgument>
-         <additionalArgument>
-          -link
-          http://docs.oracle.com/javase/7/docs/api/
-         </additionalArgument>
+         <additionalArgument>-noindex</additionalArgument>
+         <additionalArgument>-linkoffline http://docs.oracle.com/javase/7/docs/api/</additionalArgument>
          <additionalArgument>-public</additionalArgument>
          <!-- API tools tags -->
          <additionalArgument>-tag 'noimplement:a:No Implement:'</additionalArgument>
