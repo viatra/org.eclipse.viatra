@@ -248,7 +248,7 @@ public abstract class ProjectGenerationHelper {
         bundleDesc.setExtensionRegistry(true);
         bundleDesc.setBinIncludes(additionalBinIncludes);
 
-        bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(new IBundleClasspathEntry[0], service));
+        bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(new IBundleClasspathEntry[0], SOURCEFOLDERS, service));
         bundleDesc.setExecutionEnvironments(new String[] { ViatraQueryNature.EXECUTION_ENVIRONMENT });
         // Adding dependencies
         IRequiredBundleDescription[] reqBundles = Lists.transform(dependencies,
@@ -716,8 +716,37 @@ public abstract class ProjectGenerationHelper {
      *            an existing, open plug-in project
      * @param monitor
      * @throws CoreException
+     * @deprecated Use {@link #ensureSourceFolders(IProject,List,IProgressMonitor)} instead
      */
     public static void ensureSourceFolders(IProject project, IProgressMonitor monitor) throws CoreException {
+        ensureSourceFolders(project, SOURCEFOLDERS, monitor);
+    }
+    
+    /**
+     * Ensures that the project contains the required folder as source folder.
+     *
+     * @param project
+     *            an existing, open plug-in project
+     * @param folder a project-relative path encoded as a string           
+     * @param monitor
+     * @throws CoreException
+     * @since 1.5
+     */
+    public static void ensureSourceFolder(IProject project, String folder, IProgressMonitor monitor) throws CoreException {
+        ensureSourceFolders(project, ImmutableList.of(folder), monitor);
+    }
+
+    /**
+     * Ensures that the project contains the provided folders as source folders.
+     *
+     * @param project
+     *            an existing, open plug-in project
+     * @param requiredSourceFolders a list of strings representing project-relative paths for source folders
+     * @param monitor
+     * @throws CoreException
+     * @since 1.5
+     */
+    public static void ensureSourceFolders(IProject project, List<String> requiredSourceFolders, IProgressMonitor monitor) throws CoreException {
         Preconditions.checkArgument(project.exists() && project.isOpen() && (PDE.hasPluginNature(project)),
         		String.format(INVALID_PROJECT_MESSAGE, project.getName()));
         BundleContext context = null;
@@ -727,7 +756,7 @@ public abstract class ProjectGenerationHelper {
             ref = context.getServiceReference(IBundleProjectService.class);
             final IBundleProjectService service = context.getService(ref);
             IBundleProjectDescription bundleDesc = service.getDescription(project);
-            bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(bundleDesc.getBundleClasspath(), service));
+            bundleDesc.setBundleClasspath(getUpdatedBundleClasspathEntries(bundleDesc.getBundleClasspath(), requiredSourceFolders, service));
             bundleDesc.apply(monitor);
         } finally {
             if (context != null && ref != null) {
@@ -743,7 +772,7 @@ public abstract class ProjectGenerationHelper {
      * @return
      */
     private static IBundleClasspathEntry[] getUpdatedBundleClasspathEntries(final IBundleClasspathEntry[] oldClasspath,
-            final IBundleProjectService service) {
+            final List<String> requiredSourceFolders, final IBundleProjectService service) {
         Collection<IBundleClasspathEntry> classPathSourceList = Collections2.filter(Lists.newArrayList(oldClasspath),
                 new Predicate<IBundleClasspathEntry>() {
                     @Override
@@ -758,7 +787,7 @@ public abstract class ProjectGenerationHelper {
                         return entry.getSourcePath().toString();
                     }
                 });
-        Collection<String> missingSourceFolders = Collections2.filter(SOURCEFOLDERS, new Predicate<String>() {
+        Collection<String> missingSourceFolders = Collections2.filter(requiredSourceFolders, new Predicate<String>() {
             @Override
             public boolean apply(String entry) {
                 return !existingSourceEntries.contains(entry);

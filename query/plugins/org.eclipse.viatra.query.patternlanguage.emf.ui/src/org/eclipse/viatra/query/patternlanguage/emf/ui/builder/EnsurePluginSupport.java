@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
+import org.eclipse.viatra.query.tooling.core.project.ViatraQueryNature;
 import org.eclipse.xtext.xbase.lib.Functions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -181,11 +182,11 @@ public class EnsurePluginSupport {
 
     private void ensureSourceFolders(IProject modelProject, IProgressMonitor monitor) throws CoreException {
         // ensure classpath entries on the projects
-        ProjectGenerationHelper.ensureSourceFolders(modelProject, monitor);
+        ProjectGenerationHelper.ensureSourceFolder(modelProject, ViatraQueryNature.SRCGEN_DIR, monitor);
         for (IGenerationFragment fragment : fragmentProvider.getAllFragments()) {
             IProject fragmentProject = fragmentProvider.getFragmentProject(modelProject, fragment);
             if (fragmentProject.exists()) {
-                ProjectGenerationHelper.ensureSourceFolders(fragmentProject, monitor);
+                ProjectGenerationHelper.ensureSourceFolder(fragmentProject, ViatraQueryNature.SRCGEN_DIR, monitor);
             }
         }
     }
