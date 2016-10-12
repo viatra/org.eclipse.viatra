@@ -16,31 +16,35 @@
    </requires>
 
    <plugin
-         id="org.eclipse.viatra.transformation.debug"
+         id="org.eclipse.viatra.transformation.tooling.debug"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra.transformation.tracer"
+         id="org.eclipse.viatra.transformation.tooling.debug.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.viatra.transformation.debug.transformationtrace"
+         id="org.eclipse.viatra.transformation.runtime.debug"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.viatra.transformation.debug.ui"
+         id="org.eclipse.viatra.transformation.runtime.tracer"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.viatra.transformation.runtime.transformationtrace"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

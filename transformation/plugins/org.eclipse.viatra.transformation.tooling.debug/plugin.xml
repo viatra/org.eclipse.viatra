@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.eclipse.viatra.transformation.debug.launch.TransformationLaunchConfigurationDelegate"
+            id="org.eclipse.viatra.transformation.debug.launchViatraTransformation"
+            modes="debug"
+            name="VIATRA Transformation Remote Debugging"
+            public="true">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.breakpoints">
+      <breakpoint
+            class="org.eclipse.viatra.transformation.debug.model.breakpoint.ActivationBreakpoint"
+            id="org.eclipse.viatra.transformation.debug.TransformationBreakpoint"
+            markerType="org.eclipse.viatra.transformation.debug.model"
+            name="VIATRA Activation Breakpoint">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.viatra.transformation.debug.model.breakpoint.ConditionalTransformationBreakpoint"
+            id="org.eclipse.viatra.transformation.debug.ConditionalTransformationBreakpoint"
+            markerType="org.eclipse.viatra.transformation.debug.model.conditional"
+            name="VIATRA Conditional Transformation Breakpoint">
+      </breakpoint>
+      <breakpoint
+            class="org.eclipse.viatra.transformation.debug.model.breakpoint.RuleBreakpoint"
+            id="org.eclipse.viatra.transformation.debug.RuleBreakpoint"
+            markerType="org.eclipse.viatra.transformation.debug.model.rule"
+            name="VIATRA Rule Breakpoint">
+      </breakpoint>
+   </extension>
+   <extension
+         id="org.eclipse.viatra.transformation.debug.model"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="false">
+      </persistent>
+      <super
+            type="org.eclipse.debug.core.breakpointMarker">
+      </super>
+   </extension>
+   <extension
+         id="org.eclipse.viatra.transformation.debug.model.rule"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.debug.core.breakpointMarker">
+      </super>
+      <attribute
+            name="content">
+      </attribute>
+   </extension>
+   <extension
+         id="org.eclipse.viatra.transformation.debug.model.conditional"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.debug.core.breakpointMarker">
+      </super>
+      <attribute
+            name="pattern">
+      </attribute>
+   </extension>
+
+
+</plugin>
