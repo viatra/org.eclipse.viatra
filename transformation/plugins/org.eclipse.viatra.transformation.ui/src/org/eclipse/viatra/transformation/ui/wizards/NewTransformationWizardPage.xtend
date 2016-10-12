@@ -33,6 +33,7 @@ import org.eclipse.xtend.ide.wizards.XtendTypeCreatorUtil
 class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
     var TransformationType type
     var boolean withDebugger
+    var String transformationSessionName
     var boolean withLogging
     
     new() {
@@ -80,10 +81,11 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
         }
     }
     
-    def int createType(TransformationType type, boolean withDebugger, boolean withLogging) {
+    def int createType(TransformationType type, boolean withDebugger, boolean withLogging, String transformationSessionName) {
         this.type = type
         this.withDebugger = withDebugger
         this.withLogging = withLogging
+        this.transformationSessionName = transformationSessionName
         return createType
     }
 
@@ -98,9 +100,7 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
             import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule
             import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
             import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
-            «IF withDebugger»import org.eclipse.viatra.transformation.debug.breakpoints.impl.TransformationBreakpoint
-            import org.eclipse.viatra.transformation.debug.configuration.TransformationDebuggerConfiguration
-            import org.eclipse.viatra.transformation.debug.controller.impl.ConsoleDebugger«ENDIF»
+            «IF withDebugger»import org.eclipse.viatra.transformation.debug.configuration.TransformationDebuggerConfiguration«ENDIF»
             import org.eclipse.emf.ecore.resource.Resource
             
             class «typeName» {
@@ -148,11 +148,7 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
                         //Breakpoints can be rendered to the individual transformation rule activations, or global conditions.
                         //During the execution: if a breakpoint activation is about to be fired, or the global condition is met, the execution of the transformation is halted.
                         //At this point, the user can specify the next course of action: step to the next activation firing, or continue the execution till the next breakpoint.
-                        new TransformationDebuggerConfiguration(
-                            //Breakpoints can be attached to given rules, or rule activations. This way if a given activation, or an activation of a rule is about to be fired, the execution will be halted.
-                            //Transformation execution is halted once a Host rule activation is about to be fired.
-                            //new TransformationBreakpoint(getExampleRule.ruleSpecification)
-                            ))«ENDIF»
+                        new TransformationDebuggerConfiguration(«IF transformationSessionName!=""»"«transformationSessionName»"«ENDIF»))«ENDIF»
                     .build
                     //Initialize batch transformation statements
                     statements = transformation.transformationStatements
@@ -183,9 +179,7 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
             «IF withLogging»import org.apache.log4j.Logger«ENDIF»
             import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
             import org.eclipse.viatra.query.runtime.emf.EMFScope
-            «IF withDebugger»import org.eclipse.viatra.transformation.debug.breakpoints.impl.TransformationBreakpoint
-            import org.eclipse.viatra.transformation.debug.configuration.TransformationDebuggerConfiguration
-            import org.eclipse.viatra.transformation.debug.controller.impl.ConsoleDebugger«ENDIF»
+            «IF withDebugger»import org.eclipse.viatra.transformation.debug.configuration.TransformationDebuggerConfiguration«ENDIF»
             import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations
             import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory
             import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRule
@@ -237,11 +231,7 @@ class NewTransformationWizardPage extends AbstractNewXtendElementWizardPage {
                             //Breakpoints can be rendered to the individual transformation rule activations, or global conditions.
                             //During the execution: if a breakpoint activation is about to be fired, or the global condition is met, the execution of the transformation is halted.
                             //At this point, the user can specify the next course of action: step to the next activation firing, or continue the execution till the next breakpoint.
-                            new TransformationDebuggerConfiguration(
-                                //Breakpoints can be attached to given rules, or rule activations. This way if a given activation, or an activation of a rule is about to be fired, the execution will be halted.
-                                //Transformation execution is halted once a Host rule activation is about to be fired.
-                                //new TransformationBreakpoint(getExampleRule.ruleSpecification)
-                                ))«ENDIF»
+                            new TransformationDebuggerConfiguration(«IF transformationSessionName!=""»"«transformationSessionName»"«ENDIF»))«ENDIF»
                         .build
                 }
                 

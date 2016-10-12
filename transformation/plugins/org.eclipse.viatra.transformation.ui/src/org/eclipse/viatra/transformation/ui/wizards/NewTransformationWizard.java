@@ -87,7 +87,7 @@ public class NewTransformationWizard extends NewElementWizard {
     @Override
     public boolean performFinish() {
         final int size = this.page.createType(typePage.getTransformationType(), typePage.isDebugger(),
-                typePage.isLogging());
+                typePage.isLogging(), typePage.getTransformationSessionName());
         final IResource resource = page.getResource();
         if (resource != null) {
 
@@ -130,8 +130,7 @@ public class NewTransformationWizard extends NewElementWizard {
                 "org.eclipse.viatra.query.runtime", "org.eclipse.viatra.transformation.runtime.emf",
                 "org.eclipse.viatra.transformation.evm");
         if (typePage.isDebugger()) {
-            dependencies.addAll(Lists.newArrayList("org.eclipse.viatra.transformation.debug",
-                    "org.eclipse.viatra.transformation.debug.ui"));
+            dependencies.addAll(Lists.newArrayList("org.eclipse.viatra.transformation.runtime.debug"));
         }
         return dependencies;
     }

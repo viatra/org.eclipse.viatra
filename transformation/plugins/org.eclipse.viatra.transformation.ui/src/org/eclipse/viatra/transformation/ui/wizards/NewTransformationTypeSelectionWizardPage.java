@@ -18,6 +18,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
@@ -30,6 +32,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import com.google.inject.Inject;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * New transformation wizard page that enables the user to define optional details of the created transformation.
@@ -45,6 +48,10 @@ public class NewTransformationTypeSelectionWizardPage extends WizardPage {
     private TransformationType transformationType = TransformationType.BatchTransformation;
     private boolean logging = false;
     private boolean debugger = false;
+    private String transformationSessionName = "";
+    private Text sessionNameText;
+    private Label lblSelectViatraDebugger;
+    private FormData fd_sessionNameText;
 
     @Inject
     protected NewTransformationTypeSelectionWizardPage() {
@@ -62,6 +69,10 @@ public class NewTransformationTypeSelectionWizardPage extends WizardPage {
         return logging;
     }
 
+    public String getTransformationSessionName() {
+        return transformationSessionName;
+    }
+    
     public boolean isDebugger() {
         return debugger;
     }
@@ -87,14 +98,12 @@ public class NewTransformationTypeSelectionWizardPage extends WizardPage {
         Label transformationTypeLabel = new Label(composite, SWT.NONE);
         FormData fd_transformationTypeLabel = new FormData();
         fd_transformationTypeLabel.top = new FormAttachment(0, 29);
-        fd_transformationTypeLabel.left = new FormAttachment(0, 28);
         transformationTypeLabel.setLayoutData(fd_transformationTypeLabel);
         transformationTypeLabel.setText("Select VIATRA Transformation Type:");
 
         final ComboViewer transformationTypeViewer = new ComboViewer(composite, SWT.NONE);
         Combo transformationTypeCombo = transformationTypeViewer.getCombo();
         FormData fd_transformationTypeCombo = new FormData();
-        fd_transformationTypeCombo.right = new FormAttachment(0, 569);
         fd_transformationTypeCombo.top = new FormAttachment(0, 25);
         fd_transformationTypeCombo.left = new FormAttachment(0, 247);
         transformationTypeCombo.setLayoutData(fd_transformationTypeCombo);
@@ -146,12 +155,32 @@ public class NewTransformationTypeSelectionWizardPage extends WizardPage {
         fd_debuggerCheckbox.left = new FormAttachment(0, 28);
         debuggerCheckbox.setLayoutData(fd_debuggerCheckbox);
         debuggerCheckbox.setText("VIATRA debugger support");
+        
+        lblSelectViatraDebugger = new Label(composite, SWT.NONE);
+        fd_transformationTypeLabel.right = new FormAttachment(lblSelectViatraDebugger, 188);
+        fd_transformationTypeLabel.left = new FormAttachment(lblSelectViatraDebugger, 0, SWT.LEFT);
+        lblSelectViatraDebugger.setEnabled(false);
+        lblSelectViatraDebugger.setText("Select VIATRA Debugger Session Name:");
+        FormData fd_lblSelectViatraDebugger = new FormData();
+        fd_lblSelectViatraDebugger.top = new FormAttachment(transformationTypeLabel, 36);
+        fd_lblSelectViatraDebugger.left = new FormAttachment(0, 8);
+        lblSelectViatraDebugger.setLayoutData(fd_lblSelectViatraDebugger);
+        
+        sessionNameText = new Text(composite, SWT.BORDER);
+        sessionNameText.setEnabled(false);
+        fd_transformationTypeCombo.right = new FormAttachment(sessionNameText, 0, SWT.RIGHT);
+        fd_sessionNameText = new FormData();
+        fd_sessionNameText.left = new FormAttachment(lblSelectViatraDebugger, 31);
+        fd_sessionNameText.right = new FormAttachment(100, -10);
+        fd_sessionNameText.bottom = new FormAttachment(lblSelectViatraDebugger, 0, SWT.BOTTOM);
+        sessionNameText.setLayoutData(fd_sessionNameText);
         debuggerCheckbox.addSelectionListener(new SelectionListener() {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
                  debugger = debuggerCheckbox.getSelection();
-
+                 lblSelectViatraDebugger.setEnabled(true);
+                 sessionNameText.setEnabled(true);
             }
 
             @Override
@@ -160,11 +189,18 @@ public class NewTransformationTypeSelectionWizardPage extends WizardPage {
 
             }
         });
+        
+        sessionNameText.addModifyListener(new ModifyListener() {
+            
+            @Override
+            public void modifyText(ModifyEvent e) {
+                transformationSessionName = sessionNameText.getText();
+            }
+        });
     }
 
 
     public enum TransformationType {
         BatchTransformation, EventDrivenTransformation
     }
-
 }
