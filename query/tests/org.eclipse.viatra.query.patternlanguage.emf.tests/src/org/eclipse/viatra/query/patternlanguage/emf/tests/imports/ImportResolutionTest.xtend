@@ -51,6 +51,49 @@ class ImportResolutionTest {
 	}
 	
 	@Test
+    def importResolutionMultiplePackages() {
+        val model = parseHelper.parse('
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+            import "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage"
+
+            pattern resolutionTest(b : PatternBody, c : EClassifierConstraint) = {
+                PatternBody(b);
+                PatternBody.constraints(b, c);
+            }
+        ')
+        model.assertNoErrors
+    }
+	
+	@Test
+	def importResolutionExtended() {
+		val model = parseHelper.parse('
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as avql
+
+			pattern resolutionTest(name : Pattern) = {
+				avql::Pattern(name);
+			}
+		')
+		model.assertNoErrors
+	}
+	
+	@Test
+	def importResolutionExtendedMultiplePackages() {
+		val model = parseHelper.parse('
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage" as avql
+			import "http://www.eclipse.org/viatra/query/patternlanguage/emf/EMFPatternLanguage" as vql
+
+			pattern resolutionTest(b : PatternBody, c : vql::EClassifierConstraint) = {
+				avql::PatternBody(b);
+                PatternBody.constraints(b, c);
+			}
+		')
+		model.assertNoErrors
+	}
+	
+	@Test
 	def multipleImportResolution() {
 		val model = parseHelper.parse('
 			package org.eclipse.viatra.query.patternlanguage.emf.tests
