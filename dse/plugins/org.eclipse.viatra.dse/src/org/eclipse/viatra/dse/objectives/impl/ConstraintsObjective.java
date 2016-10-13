@@ -201,8 +201,8 @@ public class ConstraintsObjective extends BaseObjective {
     @Override
     public Double getFitness(ThreadContext context) {
 
-        if (softConstraints.isEmpty() && satisifiesHardObjective(null)) {
-            return new Double(1d);
+        if (softConstraints.isEmpty()) {
+            return new Double(0d);
         }
 
         double result = 0;
