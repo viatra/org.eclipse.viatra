@@ -194,6 +194,36 @@ class BatchTransformationStatements {
             ruleEngine.addRule(ruleSpecification, filter as EventFilter<IPatternMatch>)
         ]
     }
+    
+    /**
+     * Returns the number of current activations of the rule.
+     * 
+     * @since 1.5
+     */
+    def <Match extends IPatternMatch> countAllCurrent(BatchTransformationRule<Match, ?> rule) {
+        val filter = rule.ruleSpecification.createEmptyFilter
+        rule.ruleSpecification.countAllCurrent(filter)
+    }
+    
+    /**
+     * Returns the number of current activations of the rule.
+     * 
+     * @since 1.5
+     */
+    def <Match extends IPatternMatch> countAllCurrent(BatchTransformationRule<Match, ?> rule,
+        Pair<String, ? extends Object>... parameterFilter) {
+        rule.ruleSpecification.countAllCurrent(new MatchParameterFilter(parameterFilter))
+    }
+    
+    /**
+     * Returns the number of current activations of the rule.
+     * 
+     * @since 1.5
+     */
+    def <Match extends IPatternMatch> countAllCurrent(BatchTransformationRule<Match, ?> rule,
+        EventFilter<? super Match> filter) {
+        rule.ruleSpecification.countAllCurrent(filter)
+    }
 
     def <Match extends IPatternMatch> disposeRule(RuleSpecification<Match> ruleSpecification) {
         ruleSpecification.disposeRule(ruleSpecification.createEmptyFilter)
@@ -272,6 +302,20 @@ class BatchTransformationStatements {
 
         conflictSet.dispose
         disposeRule(ruleSpecification, filter)
+    }
+    
+    private def <Match extends IPatternMatch> countAllCurrent(
+        RuleSpecification<Match> ruleSpecification,
+        EventFilter<? super Match> filter
+    ) {
+        registerRule(ruleSpecification, filter)
+
+        val ScopedConflictSet conflictSet = ruleEngine.createScopedConflictSet(ruleSpecification, filter)
+        var count = conflictSet.conflictingActivations.size
+
+        conflictSet.dispose
+        disposeRule(ruleSpecification, filter)
+        return count
     }
 
     private def <Match extends IPatternMatch> fireUntil(
