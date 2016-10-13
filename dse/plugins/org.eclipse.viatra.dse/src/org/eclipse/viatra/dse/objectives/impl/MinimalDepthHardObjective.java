@@ -23,6 +23,7 @@ public class MinimalDepthHardObjective extends BaseObjective {
 
     private static final String DEFAULT_NAME = "MinimalDepthHardObjective";
     protected int minDepth;
+    private ThreadContext context;
 
     public MinimalDepthHardObjective(int minDepth) {
         super(DEFAULT_NAME);
@@ -35,8 +36,14 @@ public class MinimalDepthHardObjective extends BaseObjective {
     }
 
     @Override
+    public void init(ThreadContext context) {
+        super.init(context);
+        this.context = context;
+    }
+
+    @Override
     public Double getFitness(ThreadContext context) {
-        return context.getDepth() <= minDepth ? 1d : 0d;
+        return 0d;
     }
 
     @Override
@@ -46,12 +53,12 @@ public class MinimalDepthHardObjective extends BaseObjective {
 
     @Override
     public boolean satisifiesHardObjective(Double fitness) {
-        return fitness > 0.5d;
+        return context.getDepth() <= minDepth;
     }
 
     @Override
     public IObjective createNew() {
-        return this;
+        return new MinimalDepthHardObjective(name, minDepth);
     }
 
 }

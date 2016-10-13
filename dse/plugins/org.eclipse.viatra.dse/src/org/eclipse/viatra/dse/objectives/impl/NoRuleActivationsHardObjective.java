@@ -21,6 +21,7 @@ import org.eclipse.viatra.dse.objectives.IObjective;
 public class NoRuleActivationsHardObjective extends BaseObjective {
 
     protected static final String DEFAULT_NAME = "NoMoreActivationHardObjective";
+    private ThreadContext context;
 
     public NoRuleActivationsHardObjective(String name) {
         super(name);
@@ -32,16 +33,18 @@ public class NoRuleActivationsHardObjective extends BaseObjective {
 
     @Override
     public Double getFitness(ThreadContext context) {
-        return context.getConflictSet().getNextActivations().isEmpty() ? 1d : 0d;
+        return 0d;
     }
 
     @Override
     public void init(ThreadContext context) {
+        super.init(context);
+        this.context = context;
     }
 
     @Override
     public IObjective createNew() {
-        return this;
+        return new NoRuleActivationsHardObjective(name);
     }
 
     @Override
@@ -51,7 +54,7 @@ public class NoRuleActivationsHardObjective extends BaseObjective {
 
     @Override
     public boolean satisifiesHardObjective(Double fitness) {
-        return fitness.doubleValue() > 0.5d;
+        return context.getConflictSet().getNextActivations().isEmpty();
     }
 
 }
