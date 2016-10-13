@@ -819,7 +819,7 @@
       <setupTask
           xsi:type="setup:VariableTask"
           name="bugzilla.version"
-          value="1.4"/>
+          value="1.5"/>
       <setupTask
           xsi:type="mylyn:MylynBuildsTask"
           serverURL="https://hudson.eclipse.org/viatra"
