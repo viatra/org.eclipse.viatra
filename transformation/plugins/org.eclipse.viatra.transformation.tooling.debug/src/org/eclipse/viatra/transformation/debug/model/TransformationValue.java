@@ -156,6 +156,7 @@ public class TransformationValue extends TransformationDebugElement implements I
     public boolean hasVariables() throws DebugException {
         if(!initialized){
             initialize();
+            initialized = true;
         }
         return !transformationVariables.isEmpty();
     }
