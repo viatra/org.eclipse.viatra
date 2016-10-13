@@ -11,19 +11,13 @@
  *******************************************************************************/
 package org.eclipse.viatra.transformation.evm.specific;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
-import org.eclipse.viatra.transformation.evm.api.Agenda;
 import org.eclipse.viatra.transformation.evm.api.EventDrivenVM;
 import org.eclipse.viatra.transformation.evm.api.ExecutionSchema;
-import org.eclipse.viatra.transformation.evm.api.Executor;
-import org.eclipse.viatra.transformation.evm.api.IExecutor;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
-import org.eclipse.viatra.transformation.evm.api.ScheduledExecution;
-import org.eclipse.viatra.transformation.evm.api.Scheduler;
 import org.eclipse.viatra.transformation.evm.api.Scheduler.ISchedulerFactory;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm;
@@ -59,12 +53,7 @@ public class ExecutionSchemas {
      */
     public static ExecutionSchema createViatraQueryExecutionSchema(final ViatraQueryEngine engine,
             final ISchedulerFactory schedulerFactory) {
-        checkNotNull(schedulerFactory, "Cannot create execution schema with null scheduler factory");
-        IExecutor executor = new Executor();
-        ScheduledExecution execution = new ScheduledExecution(ViatraQueryEventRealm.create(engine), new Agenda(),
-                executor);
-        Scheduler scheduler = schedulerFactory.prepareScheduler(execution);
-        return ExecutionSchema.create(scheduler);
+        return createViatraQueryExecutionSchema(engine, schedulerFactory, Collections.<RuleSpecification<?>>emptySet());
     }
 
     /**

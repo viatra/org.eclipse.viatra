@@ -34,7 +34,6 @@ public class RuleEngines {
      * @return the prepared rule engine
      */
     public static RuleEngine createViatraQueryRuleEngine(final ViatraQueryEngine engine) {
-        //return EventDrivenVM.createRuleEngine(ViatraQueryEventRealm.create(engine));
         return EventDrivenVM.createRuleEngine(ViatraQueryEventRealm.create(engine));
     }
 
