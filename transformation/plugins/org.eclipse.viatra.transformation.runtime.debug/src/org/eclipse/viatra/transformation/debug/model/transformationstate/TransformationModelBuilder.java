@@ -63,6 +63,9 @@ public class TransformationModelBuilder {
                         for (EObject object : referenceList) {
                             element.addContainedElement(reference.getName(), getTransformationElement(object));
                         }
+                        if(referenceList.isEmpty()){
+                            element.addEmptyContainment(reference.getName());
+                        }
                     } else if (eGet instanceof EObject) {
                         element.addContainedElement(reference.getName(), getTransformationElement((EObject) eGet));
                     } else {
@@ -85,6 +88,9 @@ public class TransformationModelBuilder {
                         List<EObject> referenceList = Lists.newArrayList(((List<EObject>) eGet));
                         for (EObject object : referenceList) {
                             element.addCrossReference(reference.getName(), getTransformationElement(object));
+                        }
+                        if(referenceList.isEmpty()){
+                            element.addEmptyContainment(reference.getName());
                         }
                     } else if (eGet instanceof EObject) {
                         element.addCrossReference(reference.getName(), getTransformationElement((EObject) eGet));

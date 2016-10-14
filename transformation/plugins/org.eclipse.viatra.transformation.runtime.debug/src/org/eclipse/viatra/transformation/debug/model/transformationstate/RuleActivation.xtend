@@ -60,6 +60,6 @@ class RuleActivation implements Serializable{
     
     override String toString() {
        
-        '''Activation - State: «state» - Parameters: «FOR ActivationParameter param : parameters SEPARATOR ','» «param.name» : «param.value.toString»«ENDFOR»'''
+        '''State: «state» - Parameters(«FOR ActivationParameter param : parameters SEPARATOR ','» «param.name» = «param.value.toString»«ENDFOR»)'''
     }
 }

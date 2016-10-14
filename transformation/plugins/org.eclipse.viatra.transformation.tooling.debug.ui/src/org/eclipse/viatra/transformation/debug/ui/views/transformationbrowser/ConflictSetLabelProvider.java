@@ -24,7 +24,7 @@ public class ConflictSetLabelProvider extends RuleBrowserLabelProvider {
     @Override
     public String getText(Object element) {
         if (element instanceof RuleActivation) {
-            return element.toString();
+            return "Rule: "+((RuleActivation) element).getRuleName()+" - "+element.toString();
         } else if (element instanceof CompositeItem) {
             return ((CompositeItem) element).getName();
         } else {

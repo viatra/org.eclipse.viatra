@@ -249,7 +249,7 @@ public class TransformationDebugger extends AbstractEVMListener implements IEVMA
     }
 
     private boolean hasBreakpoint(Activation<?> activation) {
-        for (ITransformationBreakpointHandler breakpoint : breakpoints) {
+        for (ITransformationBreakpointHandler breakpoint : breakpoints.toArray(new ITransformationBreakpointHandler[breakpoints.size()])) {
             if (breakpoint.isEnabled() && breakpoint.shouldBreak(activation)) {
                 for (IDebuggerTargetAgent listener : agents) {
                     listener.breakpointHit(breakpoint);

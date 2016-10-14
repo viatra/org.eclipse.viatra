@@ -19,6 +19,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.viatra.transformation.debug.model.TransformationDebugTarget;
 import org.eclipse.viatra.transformation.debug.model.TransformationStackFrame;
 import org.eclipse.viatra.transformation.debug.model.TransformationThread;
+import org.eclipse.viatra.transformation.debug.model.breakpoint.ActivationBreakpoint;
 import org.eclipse.viatra.transformation.debug.model.breakpoint.ActivationBreakpointHandler;
 import org.eclipse.viatra.transformation.debug.transformationtrace.model.RuleParameterTrace;
 import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugUIActivator;
@@ -33,13 +34,13 @@ public class DebugModelPresentation extends LabelProvider implements IDebugModel
     @Override
     public String getText(Object element) {
         try {
-            if (element instanceof ActivationBreakpointHandler) {
-                ActivationBreakpointHandler breakpoint = (ActivationBreakpointHandler) element;
+            if (element instanceof ActivationBreakpoint) {
+                ActivationBreakpoint breakpoint = (ActivationBreakpoint) element;
                 String parameters = "";
-                for (RuleParameterTrace parameterTrace : breakpoint.getTrace().getRuleParameterTraces()) {
+                for (RuleParameterTrace parameterTrace : ((ActivationBreakpointHandler) breakpoint.getHandler()).getTrace().getRuleParameterTraces()) {
                     parameters = parameters.concat(parameterTrace.getParameterName() + " : " + parameterTrace.getObjectId() + " ");
                 }
-                return "Transformation Activation Breakpoint - Rule: " + breakpoint.getTrace().getRuleName() + "(" + parameters + ")";
+                return "Transformation Activation Breakpoint - Rule: " + ((ActivationBreakpointHandler) breakpoint.getHandler()).getTrace().getRuleName() + "(" + parameters + ")";
 
             } else if (element instanceof TransformationStackFrame) {
                 return ((TransformationStackFrame) element).getName();
