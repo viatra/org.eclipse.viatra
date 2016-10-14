@@ -173,6 +173,16 @@ public class GenModelMetamodelProviderService extends BaseMetamodelProviderServi
     public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
         return (findGenPackage(set, ePackage) != null) || super.isGeneratedCodeAvailable(ePackage, set);
     }
+    
+    @Override
+    public String getModelPluginId(EPackage ePackage, ResourceSet set) {
+        String modelPluginId = getModelPluginId(findGenPackage(set, ePackage));
+        if(modelPluginId != null){
+            return modelPluginId;
+        } else {
+            return super.getModelPluginId(ePackage, set);
+        }
+    }
 
     @Override
     public ViatraQueryGeneratorModel getGeneratorModel(EObject pattern) {

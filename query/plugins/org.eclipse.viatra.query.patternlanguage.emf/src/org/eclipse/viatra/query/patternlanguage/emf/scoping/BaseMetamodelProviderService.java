@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
+import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
@@ -85,10 +87,36 @@ public abstract class BaseMetamodelProviderService implements IMetamodelProvider
                 final String instanceClassName = it.next().getInstanceClassName();
                 missingNameFound = Strings.isNullOrEmpty(instanceClassName);
             }
-            return !missingNameFound || getGenmodelRegistry().findGenPackage(ePackage.getNsURI(), set) != null;
+            GenPackage genPackage = getGenmodelRegistry().findGenPackage(ePackage.getNsURI(), set);
+            return !missingNameFound || genPackage != null;
         } else {
             return false;
         }
+    }
+    
+    /**
+     * @since 1.5
+     */
+    @Override
+    public String getModelPluginId(EPackage ePackage, ResourceSet set) {
+        if (getProvidedMetamodels().contains(ePackage.getNsURI())) {
+            GenPackage genPackage = getGenmodelRegistry().findGenPackage(ePackage.getNsURI(), set);
+            return getModelPluginId(genPackage);
+        }
+        return null;
+    }
+
+    /**
+     * @since 1.5
+     */
+    protected String getModelPluginId(GenPackage genPackage) {
+        if(genPackage != null) {
+            GenModel genModel = genPackage.getGenModel();
+            if (genModel != null) {
+                return genModel.getModelPluginID();
+            }
+        }
+        return null;
     }
 
     @Override

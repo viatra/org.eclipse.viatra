@@ -56,6 +56,11 @@ public class TargetPlatformMetamodelProviderService extends
     public boolean isGeneratedCodeAvailable(EPackage ePackage, ResourceSet set) {
         return (metamodelLoader.loadGenPackage(set, ePackage.getNsURI()) != null);
     }
+    
+    @Override
+    public String getModelPluginId(EPackage ePackage, ResourceSet set) {
+        return getModelPluginId(metamodelLoader.loadGenPackage(set, ePackage.getNsURI()));
+    }
 
     @Override
     protected Collection<String> getProvidedMetamodels() {
