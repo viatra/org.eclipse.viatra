@@ -24,12 +24,7 @@ public class ConflictSetLabelProvider extends RuleBrowserLabelProvider {
     @Override
     public String getText(Object element) {
         if (element instanceof RuleActivation) {
-            RuleActivation activation = (RuleActivation) element;
-            // TransformationState state = view.getStateForActivation(activation);
-
-            return activation.getRuleName() + " Activation, State: " + activation.getState()
-                    + activation.getParameters();
-
+            return element.toString();
         } else if (element instanceof CompositeItem) {
             return ((CompositeItem) element).getName();
         } else {
