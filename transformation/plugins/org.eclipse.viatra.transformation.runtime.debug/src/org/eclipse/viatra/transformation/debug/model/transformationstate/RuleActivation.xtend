@@ -57,4 +57,9 @@ class RuleActivation implements Serializable{
      def TransformationState getTransformationState() {
         return transformationState
     }
+    
+    override String toString() {
+       
+        '''Activation - State: «state» - Parameters: «FOR ActivationParameter param : parameters SEPARATOR ','» «param.name» : «param.value.toString»«ENDFOR»'''
+    }
 }

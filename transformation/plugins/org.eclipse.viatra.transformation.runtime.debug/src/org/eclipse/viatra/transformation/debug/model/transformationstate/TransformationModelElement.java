@@ -132,4 +132,9 @@ public class TransformationModelElement implements Serializable{
     public String getTypeAttribute(){   
         return getAttribute(TYPE_ATTR);
     }
+    
+    @Override
+    public String toString() {
+        return getTypeAttribute() + ((getNameAttribute() == "") ? " " : (" \"" + getNameAttribute() + "\" "));
+    }
 }
