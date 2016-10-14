@@ -80,6 +80,19 @@ public class CompoundMetamodelProviderService implements IMetamodelProvider {
         return codeFound;
     }
 
+    /**
+     * @since 1.5
+     */
+    @Override
+    public String getModelPluginId(EPackage ePackage, ResourceSet set) {
+        String idFound = null;
+        Iterator<IMetamodelProviderInstance> it = sortedProviders.iterator();
+        while (idFound == null && it.hasNext()) {
+            idFound = it.next().getModelPluginId(ePackage, set);
+        }
+        return idFound;
+    }
+    
     @Override
     public String getQualifiedClassName(EClassifier classifier, EObject context) {
         String fqn = null;

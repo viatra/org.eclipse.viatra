@@ -17,7 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguagePackage;
@@ -58,45 +60,58 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
 		return null;
     }
     
-    @Check
+    @Check(CheckType.NORMAL)
     public void checkImportDependency(PackageImport importDecl) {
         Resource res = importDecl.eResource();
         if (projectProvider == null || res == null) {
             return;
         }
-        IJavaProject javaProject = projectProvider.getJavaProject(res.getResourceSet());
+        ResourceSet resourceSet = res.getResourceSet();
+        IJavaProject javaProject = projectProvider.getJavaProject(resourceSet);
         if (javaProject == null) {
         	return;
         }
 		IProject project = javaProject.getProject();
-        GenPackage genPackage = genmodelProvider.findGenPackage(importDecl, importDecl.getEPackage());
+        EPackage ePackage = importDecl.getEPackage();
+        GenPackage genPackage = genmodelProvider.findGenPackage(importDecl, ePackage);
         if (genPackage != null) {
             final GenModel genmodel = genPackage.getGenModel();
             if (genmodel != null) {
                 String modelPluginID = genmodel.getModelPluginID();
-                try {
-                    if (modelPluginID != null && !modelPluginID.isEmpty() && !modelPluginID.equals(project.getName())
-                            && !ProjectGenerationHelper.checkBundleDependency(project, modelPluginID)) {
-                        warning(String.format(
-                                "To refer elements from the Package %s the bundle %s must be added as dependency",
-                                importDecl.getEPackage().getNsURI(), modelPluginID), importDecl,
-                                EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
-                                EMFIssueCodes.IMPORT_DEPENDENCY_MISSING, modelPluginID);
-                    }
-                } catch (CoreException e) {
-                    logger.error("Error while checking the dependencies of the import declaration", e);
-                }
+                checkModelPluginDependencyOnProject(importDecl, project, ePackage, modelPluginID);
             }
+        } else {
+            String contributorId = metamodelProvider.getModelPluginId(ePackage, resourceSet);
+            if(contributorId != null) {
+                checkModelPluginDependencyOnProject(importDecl, project, ePackage, contributorId);
+            }
+        }
+    }
+
+    protected void checkModelPluginDependencyOnProject(PackageImport importDecl, IProject project, EPackage ePackage,
+            String modelPluginID) {
+        try {
+            if (modelPluginID != null && !modelPluginID.isEmpty() && !modelPluginID.equals(project.getName())
+                    && !ProjectGenerationHelper.checkBundleDependency(project, modelPluginID)) {
+                warning(String.format(
+                        "To refer elements from the Package %s the bundle %s must be added as dependency",
+                        ePackage.getNsURI(), modelPluginID), importDecl,
+                        EMFPatternLanguagePackage.Literals.PACKAGE_IMPORT__EPACKAGE,
+                        EMFIssueCodes.IMPORT_DEPENDENCY_MISSING, modelPluginID);
+            }
+        } catch (CoreException e) {
+            logger.error("Error while checking the dependencies of the import declaration", e);
         }
     }
     
     @Check(CheckType.NORMAL)
     public void checkClassPath(ClassType typeDecl) {
         Resource resource = typeDecl.eResource();
-        if (resource == null || resource.getResourceSet() == null) {
+        ResourceSet resourceSet = resource.getResourceSet();
+        if (resource == null || resourceSet == null) {
             return;
         }
-        IJavaProject javaProject = projectProvider.getJavaProject(resource.getResourceSet());
+        IJavaProject javaProject = projectProvider.getJavaProject(resourceSet);
         if (javaProject == null) {
             return;
         }
