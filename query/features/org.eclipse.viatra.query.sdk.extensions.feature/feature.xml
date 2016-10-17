@@ -18,7 +18,7 @@
    <requires>
       <import feature="org.eclipse.jdt"/>
       <import feature="org.eclipse.pde"/>
-      <import feature="org.eclipse.xtext.ui" version="2.10.0" match="compatible"/>
+      <import feature="org.eclipse.xtext.ui" version="2.9.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.viatra.query.sdk.feature"/>
    </requires>
 

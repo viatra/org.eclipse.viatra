@@ -8,7 +8,7 @@ location "http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.2/R
 location "http://download.itemis.com/updates/releases/2.1.1/" {
     de.itemis.xtext.antlr.feature.feature.group
 }
-location "http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0" {
+location "http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.9.2" {
     org.eclipse.xtext.sdk.feature.group
 }
 location "http://archive.eclipse.org/facet/updates/release/1.0.1/" {
