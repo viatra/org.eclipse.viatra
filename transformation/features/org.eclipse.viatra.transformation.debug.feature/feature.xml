@@ -12,7 +12,7 @@
    </description>
 
    <requires>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.2.0.qualifier"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.2.0.qualifier" match="greaterOrEqual"/>
    </requires>
 
    <plugin
