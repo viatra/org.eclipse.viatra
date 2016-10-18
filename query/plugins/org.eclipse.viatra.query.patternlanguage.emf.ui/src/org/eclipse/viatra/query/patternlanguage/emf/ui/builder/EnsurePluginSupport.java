@@ -53,7 +53,7 @@ public class EnsurePluginSupport {
     @Inject
     private EMFPatternLanguageBuilderPreferenceAccess builderPreferenceAccess;
 
-    private Multimap<IProject, String> exportedPackageMap = ArrayListMultimap.create();
+    private Multimap<IProject, String> exportedPackageMap = HashMultimap.create();
     private Multimap<IProject, ExtensionData> appendableExtensionMap = ArrayListMultimap.create();
     private Multimap<IProject, Pair<String, String>> removableExtensionMap = ArrayListMultimap.create();
     private Multimap<IProject, String> modelBundleIds = HashMultimap.create();

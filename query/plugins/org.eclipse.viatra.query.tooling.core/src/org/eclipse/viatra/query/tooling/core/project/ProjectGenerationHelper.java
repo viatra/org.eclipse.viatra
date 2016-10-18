@@ -602,17 +602,15 @@ public abstract class ProjectGenerationHelper {
     static void ensurePackageExports(final IBundleProjectService service, IBundleProjectDescription bundleDesc,
             final Collection<String> exports) {
         IPackageExportDescription[] packageExports = bundleDesc.getPackageExports();
-        List<String> missingExports = new ArrayList<String>(exports);
-        List<IPackageExportDescription> exportList = new ArrayList<IPackageExportDescription>();
+        Set<String> missingExports = new HashSet<>(exports);
+        List<IPackageExportDescription> exportList = new ArrayList<>();
         if (packageExports != null) {
             for (IPackageExportDescription export : packageExports) {
-                if (!missingExports.contains(export.getName())) {
-                    missingExports.remove(export.getName());
-                }
+                missingExports.remove(export.getName());
                 exportList.add(export);
             }
         }
-        exportList.addAll(Lists.transform(missingExports, new Function<String, IPackageExportDescription>() {
+        exportList.addAll(Collections2.transform(missingExports, new Function<String, IPackageExportDescription>() {
 
             @Override
             public IPackageExportDescription apply(String input) {
