@@ -1025,12 +1025,36 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             }
 
         };
-        if (constraint.isNegative() && Iterables.all(constraint.getCall().getParameters(), isSingleUseVariable)) {
-            warning("This negative pattern call is a global constraint: "
-                    + "it expresses that there are no matches of the called pattern at all. "
-                    + "Make sure this is intentional!",
-                    PatternLanguagePackage.Literals.PATTERN_COMPOSITION_CONSTRAINT__CALL,
-                    IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES);
+        if (constraint.isNegative()) {
+            List<ValueReference> callVariables = constraint.getCall().getParameters();
+            List<Variable> patternParameters = constraint.getCall().getPatternRef().getParameters();
+            //maxIndex is used to avoid overindexing in case of incorrect number of parameters
+            int maxIndex = Math.max(callVariables.size(), patternParameters.size());
+            
+            if (Iterables.all(callVariables, isSingleUseVariable)) {
+                warning("This negative pattern call is a global constraint: "
+                        + "it expresses that there are no matches of the called pattern at all. "
+                        + "Make sure this is intentional!",
+                        PatternLanguagePackage.Literals.PATTERN_COMPOSITION_CONSTRAINT__CALL,
+                        IssueCodes.NEGATIVE_PATTERN_CALL_WITH_ONLY_SINGLE_USE_VARIABLES);
+            }
+            
+            for (int i = 0; i < maxIndex; i++ ) {
+                IInputKey actualType = typeInferrer.getType(callVariables.get(i));
+                IInputKey expectedType = typeInferrer.getType(patternParameters.get(i));
+                
+                if (actualType != null && expectedType != null && 
+                        // If the expression matches the parameter type, it is valid 
+                        !( typeSystem.isConformant(expectedType, actualType) 
+                        // The inverse relation is also valid: the neg only applies to a subset of the class 
+                        || typeSystem.isConformant(actualType, expectedType))) {
+                    // Parameter variable will never match pattern, suggest mistyping
+                    warning(String.format(
+                            "Expression type %s does not match type of the parameter type %s of the called pattern.",
+                            typeSystem.typeString(actualType), typeSystem.typeString(expectedType)),
+                            callVariables.get(i), null, IssueCodes.MISTYPED_PARAMETER);
+                }
+            }
         }
     }
 

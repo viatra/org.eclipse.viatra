@@ -809,4 +809,20 @@ class TypeInferenceTest extends AbstractValidatorTest {
 	    assertEquals(classifierToInputKey(EClassifier), typeInferrer.getType(param))
 	}
 	
+	@Test
+	def mistypedNegativePatternCall() {
+	    val model = parseHelper.parse('''
+	       import "http://www.eclipse.org/viatra/query/patternlanguage/PatternLanguage"
+	       
+	       pattern helper(v : VariableValue) = {
+	           VariableValue(v);
+	       }
+	       
+	       pattern testPattern(n : NumberValue) = {
+	           neg find helper(n);
+	       }
+	    ''')
+	    
+	    tester.validate(model).assertWarning(IssueCodes::MISTYPED_PARAMETER)
+	}
 }
