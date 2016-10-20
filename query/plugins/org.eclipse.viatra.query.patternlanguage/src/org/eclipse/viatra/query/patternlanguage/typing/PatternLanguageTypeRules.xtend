@@ -82,8 +82,11 @@ class PatternLanguageTypeRules {
    }
    
    def dispatch void inferTypes(PatternCompositionConstraint constraint, TypeInformation information) {
-       val call = constraint.call
-       inferCallTypes(call, information)
+       if (!constraint.isNegative) {
+           // No type information can be inferred from negative calls
+           val call = constraint.call
+           inferCallTypes(call, information)
+       }
    }
    
    private def void inferCallTypes(PatternCall call, TypeInformation information) {
