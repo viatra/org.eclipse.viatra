@@ -779,4 +779,34 @@ class TypeInferenceTest extends AbstractValidatorTest {
 		assertEquals(classifierToInputKey(EClass), typeInferrer.getInferredType(localVariable)) 
 	}
 	
+		@Test
+	def noTypeInferenceFromNegativePatternCall() {
+	    val model = parseHelper.parse('''
+	       import "http://www.eclipse.org/emf/2002/Ecore"
+	       
+	       pattern helper(v) = {
+	           EClass(v);
+	       }
+	       
+	       pattern testPattern(n) = {
+	           EClassifier(n);
+	           neg find helper(n);
+	       }
+	    ''')
+	    tester.validate(model).assertAll(
+	        getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE),
+	        getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
+	    )
+	    
+	    val helperPattern = model.patterns.get(0)
+	    val helperParam = helperPattern.parameters.get(0)
+	    //Helper pattern should have a type of EClass
+	    assertEquals(classifierToInputKey(EClass), typeInferrer.getType(helperParam))
+	    
+	    val pattern = model.patterns.get(1)
+	    val param = pattern.parameters.get(0)
+	    //Helper pattern should have a type of EClass
+	    assertEquals(classifierToInputKey(EClassifier), typeInferrer.getType(param))
+	}
+	
 }
