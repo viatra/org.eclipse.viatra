@@ -84,8 +84,7 @@ public class PluginXmlModifier {
      * @throws CoreException
      */
     public void savePluginXml() throws CoreException {
-        try {
-            InputStream stream = XmlDocumentHelper.saveDocument(document);
+        try (InputStream stream = XmlDocumentHelper.saveDocument(document)) {
             if (pluginXml.exists()) {
                 pluginXml.refreshLocal(IResource.DEPTH_ZERO, new NullProgressMonitor());
                 pluginXml.setContents(stream, false, true, new NullProgressMonitor());

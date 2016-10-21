@@ -217,15 +217,15 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
                     
                     
                     JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:"+portID+"/jmxrmi");
-                    JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
-                    MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
-                    List<ObjectName> queryNames = Lists.newArrayList(mbsc.queryNames(null, null));
-                    for (ObjectName objectName : queryNames) {
-                        if (objectName.toString().contains(MBEANNAME)) {
-                            filteredNames.add(objectName.toString());
+                    try (JMXConnector jmxc = JMXConnectorFactory.connect(url, null)) {
+                        MBeanServerConnection mbsc = jmxc.getMBeanServerConnection();
+                        List<ObjectName> queryNames = Lists.newArrayList(mbsc.queryNames(null, null));
+                        for (ObjectName objectName : queryNames) {
+                            if (objectName.toString().contains(MBEANNAME)) {
+                                filteredNames.add(objectName.toString());
+                            }
                         }
                     }
-                    jmxc.close();
                     
                     if (!filteredNames.isEmpty()) {
                         comboViewer.setInput(filteredNames);

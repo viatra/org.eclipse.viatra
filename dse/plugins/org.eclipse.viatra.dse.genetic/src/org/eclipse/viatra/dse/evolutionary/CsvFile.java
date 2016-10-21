@@ -65,18 +65,11 @@ public class CsvFile {
             return false;
         }
 
-        PrintWriter out = null;
-
-        try {
-            out = new PrintWriter(new BufferedWriter(new FileWriter(path.toString(), true)));
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path.toString(), true)))){
             out.println(getHeaderString());
             return true;
         } catch (IOException e) {
             Logger.getLogger(getClass()).error("Couldn't write csv file.", e);
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
         return false;
     }
@@ -86,18 +79,11 @@ public class CsvFile {
             throw new RuntimeException("Csv file is not created yet.");
         }
 
-        PrintWriter out = null;
-
-        try {
-            out = new PrintWriter(new BufferedWriter(new FileWriter(path.toString(), true)));
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path.toString(), true)))) {
             out.println(rowIntoString(row));
             return true;
         } catch (IOException e) {
             Logger.getLogger(getClass()).error("Couldn't write csv file.", e);
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
         return false;
     }
