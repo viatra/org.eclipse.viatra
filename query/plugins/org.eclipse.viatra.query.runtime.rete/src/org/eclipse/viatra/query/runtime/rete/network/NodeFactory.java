@@ -27,6 +27,9 @@ import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNod
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputStatelessFilterNode;
 import org.eclipse.viatra.query.runtime.rete.eval.CachedFunctionEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.eval.CachedPredicateEvaluatorNode;
+import org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore;
+import org.eclipse.viatra.query.runtime.rete.eval.MemorylessEvaluatorNode;
+import org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.index.ExistenceNode;
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.index.JoinNode;
@@ -41,6 +44,7 @@ import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorDispatcherReci
 import org.eclipse.viatra.query.runtime.rete.recipes.EqualityFilterRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.EvalRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionDefinition;
+import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.InequalityFilterRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.InputFilterRecipe;
@@ -146,10 +150,8 @@ class NodeFactory {
 			return instantiateNode(reteContainer, (TrimmerRecipe)recipe);
 		if (recipe instanceof TransitiveClosureRecipe) 
 			return instantiateNode(reteContainer, (TransitiveClosureRecipe)recipe);
-		if (recipe instanceof CheckRecipe) 
-			return instantiateNode(reteContainer, (CheckRecipe)recipe);
-		if (recipe instanceof EvalRecipe) 
-			return instantiateNode(reteContainer, (EvalRecipe)recipe);
+		if (recipe instanceof ExpressionEnforcerRecipe) 
+			return instantiateNode(reteContainer, (ExpressionEnforcerRecipe)recipe);
         if (recipe instanceof CountAggregatorRecipe) 
             return instantiateNode(reteContainer, (CountAggregatorRecipe)recipe);
         if (recipe instanceof SingleColumnAggregatorRecipe) 
@@ -202,16 +204,17 @@ class NodeFactory {
 		return new TransparentNode(reteContainer);
 	}
 
-	private Supplier instantiateNode(ReteContainer reteContainer, EvalRecipe recipe) {
+	private Supplier instantiateNode(ReteContainer reteContainer, ExpressionEnforcerRecipe recipe) {
 		final IExpressionEvaluator evaluator = toIExpressionEvaluator(recipe.getExpression());
 		final Map<String, Integer> posMapping = toStringIndexMap(recipe.getMappedIndices());
-		return new CachedFunctionEvaluatorNode(reteContainer, logger, evaluator, posMapping, recipe.getParent().getArity());
-	}
-
-	private Supplier instantiateNode(ReteContainer reteContainer, CheckRecipe recipe) {
-		final IExpressionEvaluator evaluator = toIExpressionEvaluator(recipe.getExpression());
-		final Map<String, Integer> posMapping = toStringIndexMap(recipe.getMappedIndices());
-		return new CachedPredicateEvaluatorNode(reteContainer, logger, evaluator, posMapping, recipe.getParent().getArity());
+		int sourceTupleWidth = recipe.getParent().getArity();
+		EvaluatorCore core = (recipe instanceof CheckRecipe) ?
+		        new EvaluatorCore.PredicateEvaluatorCore(logger, evaluator, posMapping, sourceTupleWidth):
+		        new EvaluatorCore.FunctionEvaluatorCore( logger, evaluator, posMapping, sourceTupleWidth);
+		if (recipe.isCacheOutput())
+		    return new OutputCachingEvaluatorNode(reteContainer, core);
+		else
+            return new MemorylessEvaluatorNode(reteContainer, core);
 	}
 
     private Supplier instantiateNode(ReteContainer reteContainer, SingleColumnAggregatorRecipe recipe) {

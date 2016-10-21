@@ -24,27 +24,63 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
  * @author Bergmann Gabor
  *
  */
-public abstract class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
+public class MemorylessEvaluatorNode extends AbstractEvaluatorNode {
 
-	public MemorylessEvaluatorNode(ReteContainer reteContainer,
-			Logger logger, IExpressionEvaluator evaluator,
-            Map<String, Integer> parameterPositions, int tupleWidth) {
-		super(reteContainer, logger, evaluator, parameterPositions, tupleWidth);
-	}
+	/**
+     * @since 1.5
+     */
+    public MemorylessEvaluatorNode(ReteContainer reteContainer, EvaluatorCore core) {
+        super(reteContainer, core);
+    }
 
 	@Override
 	public void pullInto(Collection<Tuple> collector) {
 		Collection<Tuple> parentTuples = new ArrayList<Tuple>();
 		propagatePullInto(parentTuples);
 		for (Tuple incomingTuple : parentTuples) {
-			collector.add(tupleFromResult(incomingTuple, evaluateTerm(incomingTuple)));
+			Tuple evaluated = core.performEvaluation(incomingTuple);
+            if (evaluated != null) 
+                collector.add(evaluated);
 		}
 	}
 
 	@Override
 	public void update(Direction direction, Tuple updateElement) {
-		propagateUpdate(direction, tupleFromResult(updateElement, evaluateTerm(updateElement)));
+        Tuple evaluated = core.performEvaluation(updateElement);
+        if (evaluated != null) 
+            propagateUpdate(direction, evaluated);
 	}
+
+
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    public MemorylessEvaluatorNode(ReteContainer reteContainer,
+            Logger logger, IExpressionEvaluator evaluator,
+            Map<String, Integer> parameterPositions, int tupleWidth) {
+        super(reteContainer, logger, evaluator, parameterPositions, tupleWidth);
+    }
+
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    @Override
+    protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    @Override
+    protected String logNodeName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 	
 	
 

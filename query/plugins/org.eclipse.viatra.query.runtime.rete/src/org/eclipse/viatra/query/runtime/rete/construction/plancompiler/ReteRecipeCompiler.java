@@ -43,6 +43,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
+import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -607,10 +608,20 @@ public class ReteRecipeCompiler {
         final PVariable outputVariable = constraint.getOutputVariable();
 		final boolean booleanCheck = outputVariable == null;
         
+		// TODO determine whether expression is costly
+		boolean cacheOutput = ReteHintOptions.cacheOutputOfEvaluatorsByDefault.getValueOrDefault(getHints(plan));
+//		for (PAnnotation pAnnotation : plan.getBody().getPattern().getAnnotationsByName(EXPRESSION_EVALUATION_ANNOTATION"")) {
+//            for (Object value : pAnnotation.getAllValues("expensive")) {
+//                if (value instanceof Boolean)
+//                    cacheOutput = (boolean) value;
+//            }
+//        }
+		
 		ExpressionEnforcerRecipe enforcerRecipe = 
 				booleanCheck ? FACTORY.createCheckRecipe() : FACTORY.createEvalRecipe();
 		enforcerRecipe.setParent(parentCompiled.getRecipe());
 		enforcerRecipe.setExpression(RecipesHelper.expressionDefinition(constraint.getEvaluator()));
+		enforcerRecipe.setCacheOutput(cacheOutput);
 		for (Entry<String, Integer> entry : tupleNameMap.entrySet()) {
 			enforcerRecipe.getMappedIndices().put(entry.getKey(), entry.getValue());			
 		}

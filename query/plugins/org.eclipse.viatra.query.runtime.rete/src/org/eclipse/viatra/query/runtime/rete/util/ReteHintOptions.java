@@ -26,6 +26,8 @@ public class ReteHintOptions {
     public static final QueryHintOption<Boolean> prioritizeConstantFiltering = 
             hintOption("prioritizeConstantFiltering", true);
 
+    public static final QueryHintOption<Boolean> cacheOutputOfEvaluatorsByDefault = 
+            hintOption("cacheOutputOfEvaluatorsByDefault", false);
     
     // internal helper for conciseness
     private static <T> QueryHintOption<T> hintOption(String hintKeyLocalName, T defaultValue) {
