@@ -268,7 +268,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 				baseIndex.processAllFeatureInstances(feature, new IEStructuralFeatureProcessor() {
 					public void process(EStructuralFeature feature, EObject source, Object target) {
 						result.add(new FlatTuple(source, target));
-					};
+					}
 				});
 			} else if (seedSource != null && seedTarget == null) { 
 				final Set<Object> results = baseIndex.getFeatureTargets((EObject) seedSource, feature);

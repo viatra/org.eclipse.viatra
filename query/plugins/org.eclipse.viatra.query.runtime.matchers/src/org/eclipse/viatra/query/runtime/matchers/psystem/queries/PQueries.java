@@ -29,7 +29,7 @@ public final class PQueries {
     /**
      * Hidden constructor for utility class
      */
-    private PQueries(){};
+    private PQueries(){}
 
     /**
      * Predicate checking for the status of selected queries

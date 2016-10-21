@@ -64,8 +64,6 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.CompilerHelper.JoinHelper;
-import org.eclipse.viatra.query.runtime.rete.misc.ConstantNode;
-import org.eclipse.viatra.query.runtime.rete.network.Node;
 import org.eclipse.viatra.query.runtime.rete.recipes.AntiJoinRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ConstantRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.CountAggregatorRecipe;

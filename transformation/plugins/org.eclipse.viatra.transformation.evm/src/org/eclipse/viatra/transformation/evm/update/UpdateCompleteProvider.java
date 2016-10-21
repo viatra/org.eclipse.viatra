@@ -44,9 +44,9 @@ public abstract class UpdateCompleteProvider implements IUpdateCompleteProvider 
         return added;
     }
     
-    protected void firstListenerAdded() {};
+    protected void firstListenerAdded() {}
     
-    protected void lastListenerRemoved() {};
+    protected void lastListenerRemoved() {}
 
     @Override
     public boolean removeUpdateCompleteListener(final IUpdateCompleteListener listener) {

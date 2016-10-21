@@ -24,9 +24,6 @@ public class TransformationBasedCompiler {
 
     private Pattern2AutomatonMapping mapping;
 
-    public TransformationBasedCompiler() {
-    }
-
     public void compile(ResourceSet resourceSet) {
         Preconditions.checkArgument(mapping == null);
         mapping = new Pattern2AutomatonMapping(resourceSet);

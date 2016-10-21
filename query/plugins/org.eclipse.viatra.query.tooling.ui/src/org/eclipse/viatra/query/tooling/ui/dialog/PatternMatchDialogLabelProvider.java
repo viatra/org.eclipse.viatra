@@ -11,8 +11,7 @@
 package org.eclipse.viatra.query.tooling.ui.dialog;
 
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
@@ -23,23 +22,11 @@ import org.eclipse.viatra.query.tooling.ui.queryexplorer.util.DisplayUtil;
  * @author Mark Czotter
  * 
  */
-public class PatternMatchDialogLabelProvider implements ILabelProvider {
-
-    @Override
-    public void addListener(ILabelProviderListener listener) {
-    }
-
-    @Override
-    public void dispose() {
-    }
+public class PatternMatchDialogLabelProvider extends LabelProvider {
 
     @Override
     public boolean isLabelProperty(Object element, String property) {
         return false;
-    }
-
-    @Override
-    public void removeListener(ILabelProviderListener listener) {
     }
 
     @Override

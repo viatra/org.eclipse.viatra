@@ -84,9 +84,6 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 	private LocalSearchDebugger debugger;
 
 
-	public LocalSearchDebugView() {
-    }
-    
 	public void setDebugger(LocalSearchDebugger localSearchDebugger) {
 		this.debugger = localSearchDebugger;
 		//Casting is required for backward compatibility with old platform versions

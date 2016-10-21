@@ -1,7 +1,5 @@
 package org.eclipse.viatra.query.runtime.tests.api;
 
-import java.util.Collections;
-
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;

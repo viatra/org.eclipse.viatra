@@ -13,7 +13,7 @@ package org.eclipse.viatra.transformation.evm.transactions.update;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain.Lifecycle;
 import org.eclipse.emf.transaction.TransactionalEditingDomainEvent;
-import org.eclipse.emf.transaction.TransactionalEditingDomainListener;
+import org.eclipse.emf.transaction.TransactionalEditingDomainListenerImpl;
 import org.eclipse.emf.transaction.impl.EMFCommandTransaction;
 import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.viatra.transformation.evm.transactions.specific.job.RecordingJob;
@@ -62,23 +62,7 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
      * @author Abel Hegedus
      *
      */
-    private class TransactionListener implements TransactionalEditingDomainListener {
-
-        @Override
-        public void transactionStarting(final TransactionalEditingDomainEvent event) {
-        }
-
-        @Override
-        public void transactionInterrupted(final TransactionalEditingDomainEvent event) {
-        }
-
-        @Override
-        public void transactionStarted(final TransactionalEditingDomainEvent event) {
-        }
-
-        @Override
-        public void transactionClosing(final TransactionalEditingDomainEvent event) {
-        }
+    private class TransactionListener extends TransactionalEditingDomainListenerImpl {
 
         @Override
         public void transactionClosed(final TransactionalEditingDomainEvent event) {
@@ -98,10 +82,6 @@ public class TransactionUpdateCompleteProvider extends UpdateCompleteProvider {
             if (needsNotification) {
                 sendTransactionUpdateCompleted();
             }
-        }
-
-        @Override
-        public void editingDomainDisposing(final TransactionalEditingDomainEvent event) {
         }
     }
 

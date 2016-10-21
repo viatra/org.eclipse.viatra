@@ -74,9 +74,6 @@ public class QBEView extends ViewPart {
 
     private int defaultDepth = 1;
 
-    public QBEView() {
-    }
-
     /**
      * This is a callback that will allow us to create the viewer and initialize it.
      */

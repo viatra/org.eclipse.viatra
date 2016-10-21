@@ -335,7 +335,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 statsStore.removeInstance(eAttributeType);
             }
         }
-    };
+    }
 
     @Override
     public void visitInternalContainment(EObject source, EReference feature, EObject target) {
@@ -348,7 +348,7 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
         if (isInsertion) {
             navigationHelper.considerForExpansion(target);
         }
-    };
+    }
 
     private void visitReference(EObject source, EReference feature, EObject target) {
         Object featureKey = toKey(feature);

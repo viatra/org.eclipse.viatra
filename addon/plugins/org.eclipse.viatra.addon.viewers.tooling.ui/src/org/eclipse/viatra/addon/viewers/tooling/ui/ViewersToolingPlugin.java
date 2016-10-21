@@ -12,12 +12,6 @@ public class ViewersToolingPlugin extends AbstractUIPlugin {
     // The shared instance
     private static ViewersToolingPlugin plugin;
 
-    /**
-     * The constructor
-     */
-    public ViewersToolingPlugin() {
-    }
-
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);

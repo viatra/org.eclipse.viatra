@@ -41,7 +41,7 @@ public class ViatraQueryEventRealm implements EventRealm {
                 (ViatraQueryEventSourceSpecification<Match>) sourceSpecification);
         eventSource.prepareSource();
         return eventSource;
-    };
+    }
     
     
     public static ViatraQueryEventRealm create(ViatraQueryEngine engine) {

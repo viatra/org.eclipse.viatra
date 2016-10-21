@@ -28,8 +28,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -142,18 +142,13 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
 		});
 		
 		
-		folder.addMouseListener(new MouseListener() {
+		folder.addMouseListener(new MouseAdapter() {
 			
 			@Override
 			public void mouseUp(MouseEvent e) {
 				host.setCurrentComponent(ViewersMultiSandboxViewComponent.this);
 			}
 			
-			@Override
-			public void mouseDown(MouseEvent e) { }
-			
-			@Override
-			public void mouseDoubleClick(MouseEvent e) { }
 		});
 		
 		setBackGround();

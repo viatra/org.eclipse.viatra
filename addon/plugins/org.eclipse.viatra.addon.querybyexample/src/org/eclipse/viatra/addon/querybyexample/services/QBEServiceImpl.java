@@ -49,9 +49,6 @@ public class QBEServiceImpl implements IQBEService {
     private VariableRegister register;
     private Set<EObject> selectionSet = Collections.emptySet();
 
-    public QBEServiceImpl() {
-    }
-
     @Override
     public void init(Collection<EObject> selection) {
 

@@ -101,6 +101,7 @@ public class EclipseLogAppender extends AppenderSkeleton {
         return new Status(severity, BUNDLE_NAME, message, throwable);
     }
 
+    @Override
     public void close() {
     }
 

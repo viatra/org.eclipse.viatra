@@ -42,8 +42,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -166,11 +166,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
         });
 
         Button btnSearchButton = new Button(transformationTypeGrp, SWT.NONE);
-        btnSearchButton.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-            }
-
+        btnSearchButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 handleSearchButtonSelected();
@@ -205,7 +201,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
         btnSearchButton.setText("Search");
 
                 
-        btnPortQuery.addSelectionListener(new SelectionListener() {
+        btnPortQuery.addSelectionListener(new SelectionAdapter() {
             
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -252,11 +248,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
                     portNumberDecorator.show();
                     
                 }
-            }
-            
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-            }
+            }            
         });
         
     }

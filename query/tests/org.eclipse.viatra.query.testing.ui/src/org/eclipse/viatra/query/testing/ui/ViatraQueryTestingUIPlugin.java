@@ -25,12 +25,6 @@ public class ViatraQueryTestingUIPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static ViatraQueryTestingUIPlugin plugin;
 	
-	/**
-	 * The constructor
-	 */
-	public ViatraQueryTestingUIPlugin() {
-	}
-
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);

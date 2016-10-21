@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.tooling.ui.queryresult;
 
-import java.util.HashMap;
 import java.util.Set;
 
 import org.eclipse.emf.edit.ui.dnd.LocalTransfer;

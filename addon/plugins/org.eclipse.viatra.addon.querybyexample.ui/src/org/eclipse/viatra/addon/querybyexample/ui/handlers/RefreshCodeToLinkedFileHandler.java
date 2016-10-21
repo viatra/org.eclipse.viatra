@@ -27,9 +27,6 @@ public class RefreshCodeToLinkedFileHandler extends AbstractHandler {
 
     private QBEView qbeView;
 
-    public RefreshCodeToLinkedFileHandler() {
-    }
-
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
 

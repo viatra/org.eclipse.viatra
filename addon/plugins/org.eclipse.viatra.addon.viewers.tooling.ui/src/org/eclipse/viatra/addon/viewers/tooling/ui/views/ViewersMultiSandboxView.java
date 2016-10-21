@@ -224,7 +224,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     			additionalComponents.remove(target);
     			container.layout();
     		}
-    	};
+    	}
     	
 //    	public boolean isEnabled() {
 //    		if (defaultComponent!=null && currentComponent!=null) {
@@ -254,7 +254,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
 			}
     		//container.pack();
     		container.layout();
-    	};
+    	}
     };
     
     boolean isVerticalSashing = true;
@@ -272,7 +272,7 @@ public class ViewersMultiSandboxView extends ViewPart implements ISelectionProvi
     			container.setOrientation(SWT.HORIZONTAL);
     		}
     		setState();
-    	};
+    	}
     	
     	void setState() {
     		setChecked(isVerticalSashing);

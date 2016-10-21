@@ -28,7 +28,6 @@ import org.eclipse.viatra.query.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.BuildHelper;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PApply;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PEnumerate;
-import org.eclipse.viatra.query.runtime.matchers.planning.operations.PJoin;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PProject;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.DeferredPConstraint;

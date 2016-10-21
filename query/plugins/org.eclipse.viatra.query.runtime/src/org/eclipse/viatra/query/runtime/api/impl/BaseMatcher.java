@@ -262,12 +262,12 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     @Override
     public void forEachMatch(IMatchProcessor<? super Match> processor) {
         rawForEachMatch(emptyArray(), processor);
-    };
+    }
 
     @Override
     public void forEachMatch(Match match, IMatchProcessor<? super Match> processor) {
         rawForEachMatch(match.toArray(), processor);
-    };
+    }
 
     // with input binding as pattern-specific parameters: not declared in interface
 
@@ -279,7 +279,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     @Override
     public boolean forOneArbitraryMatch(Match partialMatch, IMatchProcessor<? super Match> processor) {
         return rawForOneArbitraryMatch(partialMatch.toArray(), processor);
-    };
+    }
 
     /**
      * Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed
@@ -324,7 +324,7 @@ public abstract class BaseMatcher<Match extends IPatternMatch> extends QueryResu
     @Override
     public Set<Object> getAllValues(final String parameterName, Match partialMatch) {
         return rawGetAllValues(getPositionOfParameter(parameterName), partialMatch.toArray());
-    };
+    }
 
     /**
      * Retrieve the set of values that occur in matches for the given parameterName, that conforms to the given fixed

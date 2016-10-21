@@ -18,9 +18,6 @@ import org.eclipse.viatra.addon.querybyexample.ui.ui.QBEView;
 
 public class AutoAdjustHandler extends AbstractHandler {
 
-    public AutoAdjustHandler() {
-    }
-
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         QBEView qbeView = QBEViewUtils.getQBEView(event);

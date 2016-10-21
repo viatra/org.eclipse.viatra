@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.api;
 
-import java.util.AbstractMap;
-import java.util.Collections;
-import java.util.Map;
+
+import java.util.Objects;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
 
 /**
  * This class is intended to provide options to a created {@link ViatraQueryEngine} instance. The {@link #DEFAULT}
@@ -135,7 +131,7 @@ public final class ViatraQueryEngineOptions {
     @Override
     public String toString() {
         // TODO defaultCachingBackendFactory is ignored
-        if(Objects.equal(engineDefaultHints, DEFAULT.engineDefaultHints)) 
+        if(Objects.equals(engineDefaultHints, DEFAULT.engineDefaultHints)) 
             return "defaults";
         else
             return engineDefaultHints.toString();

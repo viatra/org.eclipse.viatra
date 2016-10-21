@@ -17,9 +17,6 @@ import org.eclipse.viatra.addon.querybyexample.ui.ui.QBEView;
 
 public class StartHandler extends AbstractEObjectSelectionHandler {
 
-    public StartHandler() {
-    }
-
     @Override
     protected void handleSelection(QBEView qbeView, Collection<EObject> selectedEObjects) {
         qbeView.start(selectedEObjects);

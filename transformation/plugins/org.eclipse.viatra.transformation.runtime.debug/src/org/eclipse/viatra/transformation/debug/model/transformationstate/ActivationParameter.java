@@ -32,7 +32,7 @@ public class ActivationParameter implements Serializable{
 
     public String getName() {
         return name;
-    };
+    }
     
     
 }

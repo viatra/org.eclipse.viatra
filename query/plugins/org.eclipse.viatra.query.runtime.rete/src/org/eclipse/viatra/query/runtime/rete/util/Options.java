@@ -12,7 +12,6 @@
 package org.eclipse.viatra.query.runtime.rete.util;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.viatra.query.runtime.rete.construction.basiclinear.BasicLinearLayout;
 import org.eclipse.viatra.query.runtime.rete.construction.quasitree.QuasiTreeLayout;

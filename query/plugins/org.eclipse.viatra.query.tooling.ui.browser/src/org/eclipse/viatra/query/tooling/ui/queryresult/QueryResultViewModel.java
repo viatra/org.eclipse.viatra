@@ -28,7 +28,6 @@ import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.IModelConnector;
 import org.eclipse.viatra.query.tooling.ui.queryexplorer.preference.PreferenceConstants;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**

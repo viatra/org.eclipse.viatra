@@ -33,7 +33,7 @@ public class ValidationPartListener implements IPartListener {
     }
 
     protected ValidationPartListener() {
-
+        // Hiding public constructor
     }
 
     @Override

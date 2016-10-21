@@ -69,7 +69,7 @@ public final class ReteContainer {
                 @Override
                 public void run() {
                     messageConsumptionCycle();
-                };
+                }
             };
             consumerThread.start();
         }

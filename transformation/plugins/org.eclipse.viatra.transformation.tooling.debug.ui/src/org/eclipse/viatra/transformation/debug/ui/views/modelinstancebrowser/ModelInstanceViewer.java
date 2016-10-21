@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -72,17 +73,13 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
 
         selectionProviderWrapper = new TabbedSelectionProviderWrapper();
         getSite().setSelectionProvider(selectionProviderWrapper);
-        tabFolder.addSelectionListener(new SelectionListener() {
+        tabFolder.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
                 if (e.item instanceof CTabItem) {
                     selectionProviderWrapper.setActiveProvider(tabMap.get(tabFolder.getSelection()));
                 }
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
             }
 
         });

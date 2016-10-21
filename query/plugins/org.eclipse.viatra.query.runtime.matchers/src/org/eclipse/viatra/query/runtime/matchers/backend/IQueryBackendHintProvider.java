@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.backend;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**

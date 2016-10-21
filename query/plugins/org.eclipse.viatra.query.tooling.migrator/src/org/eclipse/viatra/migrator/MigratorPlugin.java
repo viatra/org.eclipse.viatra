@@ -24,12 +24,6 @@ public class MigratorPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static MigratorPlugin plugin;
 	
-	/**
-	 * The constructor
-	 */
-	public MigratorPlugin() {
-	}
-
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);

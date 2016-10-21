@@ -89,12 +89,12 @@ public class MatchUpdateAdapter<Match extends IPatternMatch> implements IMatchUp
     public void notifyAppearance(Match match) {
         if (appearCallback != null)
             appearCallback.process(match);
-    };
+    }
 
     @Override
     public void notifyDisappearance(Match match) {
         if (disappearCallback != null)
             disappearCallback.process(match);
-    };
+    }
 
 }

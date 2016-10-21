@@ -13,7 +13,7 @@ package org.eclipse.viatra.query.tooling.ui.wizards.internal;
 
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
@@ -24,23 +24,11 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * @author Tamas Szabo
  * 
  */
-public class ObjectParameterConfigurationLabelProvider implements ILabelProvider {
-
-    @Override
-    public void addListener(ILabelProviderListener listener) {
-    }
-
-    @Override
-    public void dispose() {
-    }
+public class ObjectParameterConfigurationLabelProvider extends LabelProvider {
 
     @Override
     public boolean isLabelProperty(Object element, String property) {
         return false;
-    }
-
-    @Override
-    public void removeListener(ILabelProviderListener listener) {
     }
 
     @Override

@@ -24,12 +24,6 @@ public class ViewersRuntimePlugin extends Plugin {
 	// The shared instance
 	private static ViewersRuntimePlugin plugin;
 	
-	/**
-	 * The constructor
-	 */
-	public ViewersRuntimePlugin() {
-	}
-
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;

@@ -22,8 +22,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -119,11 +119,7 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
         
         int operations = DND.DROP_COPY | DND.DROP_MOVE;
         Transfer[] transferTypes = new Transfer[]{LocalTransfer.getInstance()};
-        queryTreeViewer.addDragSupport(operations, transferTypes, new DragSourceListener() {
-            
-            @Override
-            public void dragStart(DragSourceEvent event) {
-            }
+        queryTreeViewer.addDragSupport(operations, transferTypes, new DragSourceAdapter() {
             
             @Override
             public void dragSetData(DragSourceEvent event) {
@@ -131,10 +127,6 @@ public class QueryRegistryView extends ViewPart implements ITabbedPropertySheetP
                 if(LocalTransfer.getInstance().isSupportedType(event.dataType)) {
                     event.data = selection;
                 }
-            }
-            
-            @Override
-            public void dragFinished(DragSourceEvent event) {
             }
         });
         

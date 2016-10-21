@@ -21,12 +21,6 @@ public class ViewersZestPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static ViewersZestPlugin plugin;
 
-	/**
-	 * The constructor
-	 */
-	public ViewersZestPlugin() {
-	}
-
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
