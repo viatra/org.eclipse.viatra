@@ -42,10 +42,12 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EMFPatternLanguageFactory;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageImport;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.ExecutionType;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Parameter;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguageFactory;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.tooling.ui.ViatraQueryGUIPlugin;
 import org.eclipse.viatra.query.tooling.ui.wizards.internal.ObjectParameter;
 
@@ -171,9 +173,15 @@ public class NewVqlFileWizard extends Wizard implements INewWizard {
             PatternBody body = PatternLanguageFactory.eINSTANCE.createPatternBody();
             pattern.getBodies().add(body);
 
+            // Setting modifiers
+            Modifiers modifiers = PatternLanguageFactory.eINSTANCE.createModifiers();
+            modifiers.setPrivate(false);
+            modifiers.setExecution(ExecutionType.UNSPECIFIED);
+            pattern.setModifiers(modifiers);
+            
             // Setting pattern parameters
             for (ObjectParameter parameter : parameters) {
-                Variable var = PatternLanguageFactory.eINSTANCE.createVariable();
+                Parameter var = PatternLanguageFactory.eINSTANCE.createParameter();
                 var.setName(parameter.getParameterName());
 
                 ClassType classType = EMFPatternLanguageFactory.eINSTANCE.createClassType();

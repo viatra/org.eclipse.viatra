@@ -21,8 +21,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -89,14 +89,14 @@ public class ObjectParameterConfigurationDialog extends Dialog {
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         gridData.horizontalSpan = 3;
         parameterName.setLayoutData(gridData);
-        parameterName.addKeyListener(new KeyAdapter() {
+        parameterName.addModifyListener(new ModifyListener() {
+            
             @Override
-            public void keyReleased(KeyEvent e) {
+            public void modifyText(ModifyEvent e) {
                 result.setParameterName(parameterName.getText());
-                super.keyReleased(e);
+                
             }
         });
-
         label = new Label(composite, SWT.NULL);
         label.setText(PARAMETER_TYPE);
         gridData = new GridData(GridData.FILL_HORIZONTAL);
