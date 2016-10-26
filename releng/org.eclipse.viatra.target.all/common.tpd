@@ -2,37 +2,13 @@ target "VIATRA"
 environment JavaSE-1.7
 with source requirements
 
-location "http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.2/R201511170833/mwe/" {
-    org.eclipse.emf.mwe2.runtime.sdk.feature.group
-}
-location "http://download.itemis.com/updates/releases/2.1.1/" {
-    de.itemis.xtext.antlr.feature.feature.group
-}
-location "http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.9.2" {
-    org.eclipse.xtext.sdk.feature.group
-}
+include "../org.eclipse.viatra.target.core/common.tpd"
+
 location "http://archive.eclipse.org/facet/updates/release/1.0.1/" {
     org.eclipse.emf.facet.sdk.feature.feature.group
 }
-location "http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/" {
-    com.google.inject [3.0.0,3.0.1)
-    com.google.inject.multibindings [3.0.0,3.0.1)
-    org.junit [4.11.0,4.12.0)
-    org.mockito [1.9.5,2.0.0)
-    org.hamcrest [1.1.0,1.2.0)
-}
 location "http://download.eclipse.org/modeling/emf/emf/updates/2.11/" {
     org.eclipse.emf.ecore.xcore.sdk.feature.group
-    org.eclipse.emf.sdk.feature.group
-}
-location "http://download.eclipse.org/modeling/tmf/xtext/updates/releases/xpand/R201406030414" {
-    org.eclipse.xpand.feature.group
-}
-location "http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.2/R201511170842/mwe2lang/" {
-    org.eclipse.emf.mwe2.language.sdk.feature.group
-}
-location "http://download.eclipse.org/cbi/updates/license/" {
-    org.eclipse.license.feature.group
 }
 location "http://download.eclipse.org/modeling/mdt/uml2/updates/5.0/R201502020947//" {
     org.eclipse.uml2.sdk.feature.group
