@@ -166,18 +166,6 @@
 					<version>${tycho.version}</version>
 				</plugin>
 				<plugin>
-				    <groupId>org.eclipse.viatra</groupId>
-				    <artifactId>viatra-maven-plugin</artifactId>
-				    <version>${project.version}</version>
-					<dependencies>
-					   <dependency>
-                            <groupId>com.google.guava</groupId>
-                            <artifactId>guava</artifactId>
-                            <version>15.0</version>
-                        </dependency>
-					</dependencies>
-				</plugin>
-				<plugin>
 					<groupId>org.eclipse.xtend</groupId>
 					<artifactId>xtend-maven-plugin</artifactId>
 					<version>${xtend.compiler.version}</version>
@@ -185,13 +173,6 @@
 						<!-- need to prefix by basedir to generate to currently built module -->
 						<outputDirectory>${basedir}/xtend-gen</outputDirectory>
 					</configuration>
-					<dependencies>
-					   <dependency>
-                            <groupId>com.google.guava</groupId>
-                            <artifactId>guava</artifactId>
-                            <version>15.0</version>
-                        </dependency>
-					</dependencies>
 				</plugin>
 				<plugin>
 					<groupId>org.jacoco</groupId>
