@@ -60,6 +60,8 @@ import org.eclipse.xtext.xbase.lib.Pair;
 import com.google.common.collect.Lists;
 
 public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport implements IDebuggerTargetAgent, DebuggerTargetEndpointMBean{
+    private static final String NOTIFICATION_TYPE = "TransformationState";
+    private static final String NOTIFICATION_MSG = "State changed";
     private String ID;
     private TransformationDebugger debugger;
 
@@ -76,7 +78,7 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
             name = new ObjectName(MBEANNAME+"_"+CURRENTVERSION+"_"+ID);
             mbs.registerMBean(this, name); 
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
-            e.printStackTrace();
+            ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage(), e);
         } 
         
         
@@ -145,7 +147,7 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
             byte[] stateString = serializeObject(state, new ByteArrayOutputStream());
             Notification n = new AttributeChangeNotification(this,
                     sequenceNumber++, System.currentTimeMillis(),
-                    "State changed", "TransformationState", "TransformationState",
+                    NOTIFICATION_MSG, NOTIFICATION_TYPE, NOTIFICATION_TYPE,
                     stateString, stateString);
 
             sendNotification(n);
@@ -210,7 +212,7 @@ public class DebuggerTargetEndpoint extends NotificationBroadcasterSupport imple
             byte[] stateString = serializeObject(state, new ByteArrayOutputStream());
             Notification n = new AttributeChangeNotification(this,
                     sequenceNumber++, System.currentTimeMillis(),
-                    "State changed", "TransformationState", "TransformationState",
+                    NOTIFICATION_MSG, NOTIFICATION_TYPE, NOTIFICATION_TYPE,
                     stateString, stateString);
 
             sendNotification(n);

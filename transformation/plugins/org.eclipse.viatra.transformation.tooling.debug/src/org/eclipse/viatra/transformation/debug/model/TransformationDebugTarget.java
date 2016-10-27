@@ -139,6 +139,7 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
     }
     
     //IBreakpointListener
+    //Instead of the debug target, debug threads handle breakpoints
     @Override
     public void breakpointAdded(IBreakpoint breakpoint) {}
 
@@ -155,8 +156,10 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
         return false;
     }
 
+    //Disconnect is not supported, Terminate is used instead
     @Override
     public void disconnect() throws DebugException {
+        throw new UnsupportedOperationException("Disconnect is not supported");
     }
 
     @Override
@@ -180,6 +183,4 @@ public class TransformationDebugTarget extends TransformationDebugElement implem
         terminated = true;
         fireTerminateEvent();
     }
-    
-
 }

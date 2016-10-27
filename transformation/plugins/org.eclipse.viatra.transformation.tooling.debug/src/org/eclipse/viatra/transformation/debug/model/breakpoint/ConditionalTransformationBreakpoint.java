@@ -61,7 +61,7 @@ public class ConditionalTransformationBreakpoint extends Breakpoint implements I
         super.setMarker(marker);
         delegatedHandler.setEnabled(super.isEnabled());
         delegatedHandler.setStringRep("Conditional Transformation Breakpoint - "+marker.getResource().getName());
-        if(delegatedHandler.getPatternString() != ""){
+        if(!delegatedHandler.getPatternString().isEmpty()){
             marker.setAttribute("pattern", delegatedHandler.getPatternString());
         }
         delegatedHandler.setPatternString(marker.getAttribute("pattern", ""));

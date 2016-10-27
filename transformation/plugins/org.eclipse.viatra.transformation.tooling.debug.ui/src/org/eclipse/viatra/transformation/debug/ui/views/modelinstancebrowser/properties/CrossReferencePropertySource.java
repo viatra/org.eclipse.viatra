@@ -63,11 +63,11 @@ public class CrossReferencePropertySource implements IPropertySource{
     
     @Override
     public void resetPropertyValue(Object id) {
-
+        //do nothing
     }
     
     @Override
     public void setPropertyValue(Object id, Object value) {
-        
+        //do nothing
     }
 }

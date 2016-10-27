@@ -35,7 +35,7 @@ public class TransformationModelElementContentProvider implements ITreeContentPr
     
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        
+        //do nothing
     }
     
     @Override

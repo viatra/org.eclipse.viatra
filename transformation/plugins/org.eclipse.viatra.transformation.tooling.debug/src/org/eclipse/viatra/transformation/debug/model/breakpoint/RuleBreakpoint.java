@@ -51,7 +51,7 @@ public class RuleBreakpoint extends Breakpoint implements ITransformationBreakpo
     public void setMarker(IMarker marker) throws CoreException {
         super.setMarker(marker);
         delegatedHandler.setEnabled(super.isEnabled());
-        if (delegatedHandler.getRuleId() != "") {
+        if (!delegatedHandler.getRuleId().isEmpty()) {
             marker.setAttribute("content", delegatedHandler.getRuleId());
         }
         delegatedHandler.setRuleId(marker.getAttribute("content", ""));

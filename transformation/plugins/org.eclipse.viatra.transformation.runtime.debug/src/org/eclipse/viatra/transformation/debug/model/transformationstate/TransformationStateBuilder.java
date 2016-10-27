@@ -10,9 +10,10 @@
  */
 package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -31,7 +32,7 @@ public class TransformationStateBuilder {
     private String ID;
     private Set<Pair<RuleSpecification<?>, EventFilter<?>>> rules = Sets.newHashSet();
     
-    private Stack<Activation<?>> startedActivations = new Stack<Activation<?>>();
+    private Deque<Activation<?>> startedActivations = new ArrayDeque<Activation<?>>();
 
     private Set<Activation<?>> nextActivations = Sets.newHashSet();
     private Set<Activation<?>> conflictingActivations = Sets.newHashSet();
@@ -111,15 +112,15 @@ public class TransformationStateBuilder {
         }
         
         //Next Activations
-        List<RuleActivation> nextActivations = Lists.newArrayList();
+        List<RuleActivation> nextActivationsToAdd = Lists.newArrayList();
         
         for (Activation<?> activation : this.nextActivations) {
-            nextActivations.add(createActivation(state, activation));
+            nextActivationsToAdd.add(createActivation(state, activation));
         }
         //Conflicting Activations
-        List<RuleActivation> conflictingActivations = Lists.newArrayList();
+        List<RuleActivation> conflictingActivationsToAdd = Lists.newArrayList();
         for (Activation<?> activation : this.conflictingActivations) {
-            conflictingActivations.add(createActivation(state, activation));
+            conflictingActivationsToAdd.add(createActivation(state, activation));
         }
         //Activation Stack
         List<RuleActivation> activationStack = Lists.newArrayList();
@@ -129,8 +130,8 @@ public class TransformationStateBuilder {
         
         state.setActivationStack(activationStack);
         state.setBreakpointHit(breakpointHit);
-        state.setConflictingActivations(conflictingActivations);
-        state.setNextActivations(nextActivations);
+        state.setConflictingActivations(conflictingActivationsToAdd);
+        state.setNextActivations(nextActivationsToAdd);
         state.setRules(stateRules);
         
         return state;

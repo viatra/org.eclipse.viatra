@@ -10,9 +10,10 @@
  */
 package org.eclipse.viatra.transformation.debug.model;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.EmptyStackException;
 import java.util.List;
-import java.util.Stack;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
@@ -39,12 +40,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 public class TransformationThread extends TransformationDebugElement implements IThread, IDebuggerHostAgentListener, IBreakpointListener {
-    private static final String CONNECTING = " connecting...";
+    private static final String CONNECTING_DECORATOR_STRING = " connecting...";
+    private String name = "Model Transformation Debugger Session";
+    
+    
     private boolean stepping = false;
     private boolean suspended = true;
     private boolean terminated = false;
     private boolean connecting = false;
-    private String name = "Model Transformation Debugger Session";
+   
     
     private final TransformationModelProvider modelProvider;
     
@@ -110,6 +114,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public void suspend() throws DebugException {
+        throw new UnsupportedOperationException("Suspend is not supported");
     }
 
     @Override
@@ -134,6 +139,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public void stepInto() throws DebugException {
+        throw new UnsupportedOperationException("Step into operation is not supported");
     }
 
     @Override
@@ -149,6 +155,7 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public void stepReturn() throws DebugException {
+        throw new UnsupportedOperationException("Step return operation is not supported");
     }
 
     @Override
@@ -189,16 +196,16 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public IStackFrame getTopStackFrame() throws DebugException {
-        IStackFrame[] frames = getStackFrames();
-        if (frames.length > 0) {
-            return frames[frames.length-1];
+        IStackFrame[] stackFrames = getStackFrames();
+        if (stackFrames.length > 0) {
+            return stackFrames[frames.length-1];
         }
         throw new DebugException(new Status(IStatus.ERROR, TransformationDebugActivator.PLUGIN_ID, "No transformation rules detected"));
     }
 
     @Override
     public String getName() throws DebugException {
-        return (connecting) ? name+CONNECTING : name;
+        return (connecting) ? name+CONNECTING_DECORATOR_STRING : name;
     }
 
     @Override
@@ -291,20 +298,20 @@ public class TransformationThread extends TransformationDebugElement implements 
 
     @Override
     public void transformationStateChanged(TransformationState state) {
-        List<TransformationStackFrame> frames = Lists.newArrayList();
+        List<TransformationStackFrame> stackFrames = Lists.newArrayList();
         
         if (state != null) {
-            Stack<RuleActivation> activationStack = new Stack<RuleActivation>();
+            Deque<RuleActivation> activationStack = new ArrayDeque<RuleActivation>();
             activationStack.addAll(state.getActivationStack());
             while(!activationStack.isEmpty()){
                 try {
-                    frames.add(new TransformationStackFrame(this, activationStack.pop(), modelProvider));
+                    stackFrames.add(new TransformationStackFrame(this, activationStack.pop(), modelProvider));
                 } catch (EmptyStackException | DebugException e) {
                     ViatraQueryLoggingUtil.getDefaultLogger().error(e.getMessage());
                 }
             }
         }
-        this.frames = frames.toArray(new TransformationStackFrame[frames.size()]);
+        this.frames = stackFrames.toArray(new TransformationStackFrame[stackFrames.size()]);
         
         suspended = true;
         fireSuspendEvent(DebugEvent.BREAKPOINT);

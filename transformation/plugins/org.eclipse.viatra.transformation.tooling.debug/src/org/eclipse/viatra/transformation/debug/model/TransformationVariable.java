@@ -29,10 +29,12 @@ public class TransformationVariable extends TransformationDebugElement implement
     
     @Override
     public void setValue(String expression) throws DebugException {
+        throw new UnsupportedOperationException("Value modification is not supported");
     }
 
     @Override
     public void setValue(IValue value) throws DebugException {
+        throw new UnsupportedOperationException("Value modification is not supported");
     }
 
     @Override

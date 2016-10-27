@@ -26,7 +26,6 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -129,7 +128,7 @@ public class ModelInstanceViewer extends ViewPart implements IDebuggerHostAgentL
             CTabItem ritem = new CTabItem(tabFolder, SWT.NONE);
             String nameAttribute = ((TransformationModelElement) element).getNameAttribute();
             ritem.setText(((TransformationModelElement) element).getTypeAttribute()
-                    + ((nameAttribute == "") ? " " : (" \"" + nameAttribute + "\" ")));
+                    + ((nameAttribute.isEmpty()) ? " " : (" \"" + nameAttribute + "\" ")));
             
             TreeViewer treeViewer = new TreeViewer(tabFolder, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.VIRTUAL);
 

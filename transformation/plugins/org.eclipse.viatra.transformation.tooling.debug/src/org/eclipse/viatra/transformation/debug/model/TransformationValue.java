@@ -69,7 +69,7 @@ public class TransformationValue extends TransformationDebugElement implements I
             return "NULL";
         } else if (value instanceof TransformationModelElement){
             String nameAttribute = ((TransformationModelElement) value).getNameAttribute();
-            return ((TransformationModelElement)value).getTypeAttribute()+((nameAttribute=="" )? " " : (" \""+nameAttribute+"\" "))+"ID="+((TransformationModelElement)value).getId();
+            return ((TransformationModelElement)value).getTypeAttribute()+((nameAttribute.isEmpty() )? " " : (" \""+nameAttribute+"\" "))+"ID="+((TransformationModelElement)value).getId();
         } else if (value instanceof List<?>){
             Type[] arguments = ((ParameterizedType) value.getClass().getGenericSuperclass()).getActualTypeArguments();
             return value.getClass().getSimpleName()+"<"+Joiner.on(",").join(arguments)+">";

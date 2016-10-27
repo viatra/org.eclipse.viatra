@@ -29,6 +29,7 @@ import org.eclipse.viatra.transformation.debug.ui.activator.TransformationDebugU
 public class TransformationBrowserConfigurationControl extends WorkbenchWindowControlContribution{
 
     public TransformationBrowserConfigurationControl() {
+        super();
     }
 
     public TransformationBrowserConfigurationControl(String id) {

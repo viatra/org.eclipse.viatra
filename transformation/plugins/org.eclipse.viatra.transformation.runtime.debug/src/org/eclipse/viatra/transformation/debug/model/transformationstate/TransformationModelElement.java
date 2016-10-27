@@ -135,6 +135,6 @@ public class TransformationModelElement implements Serializable{
     
     @Override
     public String toString() {
-        return getTypeAttribute() + ((getNameAttribute() == "") ? " " : (" \"" + getNameAttribute() + "\" "));
+        return getTypeAttribute() + ((getNameAttribute().isEmpty()) ? " " : (" \"" + getNameAttribute() + "\" "));
     }
 }
