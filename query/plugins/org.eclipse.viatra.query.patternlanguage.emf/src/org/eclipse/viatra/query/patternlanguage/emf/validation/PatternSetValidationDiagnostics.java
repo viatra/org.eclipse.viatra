@@ -16,10 +16,11 @@ import org.apache.log4j.Logger;
 import org.eclipse.xtext.util.IAcceptor;
 import org.eclipse.xtext.validation.Issue;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * Stateless validator for a set of patterns.
+ * Stateless validator for a set of patterns. Used to validate patterns for editor-less environments.
  * 
  * @author Zoltan Ujhelyi
  * 
@@ -28,8 +29,25 @@ public final class PatternSetValidationDiagnostics implements IAcceptor<Issue> {
     Set<Issue> foundErrors = Sets.newHashSet();
     Set<Issue> foundWarnings = Sets.newHashSet();
 
+    /**
+     * A set of issue codes to ignore in this validator.   
+     */
+    private final ImmutableSet<String> ignoredIssues = ImmutableSet.of(
+            /* Classpath validators are ignored as they are only relevant during code generation. */
+            EMFIssueCodes.IQR_NOT_ON_CLASSPATH,
+            EMFIssueCodes.JDK_NOT_ON_CLASSPATH,
+            EMFIssueCodes.TYPE_NOT_ON_CLASSPATH
+            );
+            
+    
     @Override
     public void accept(Issue issue) {
+        //XXX This is a workaround of some classpath validation issue reported, but there is no available reproduction
+        if (ignoredIssues.contains(issue.getCode())) {
+            // Ignored issue kinds are not added to the sets
+            return;
+        }
+        
         switch (issue.getSeverity()) {
         case ERROR:
             foundErrors.add(issue);
