@@ -27,9 +27,9 @@
 							<filesets>
 								<fileset>
 									<directory>src-gen</directory>
-                                                        		<excludes>
-                                                                		<exclude>.gitignore</exclude>
-                                                        		</excludes>
+                                    <excludes>
+                                        <exclude>.gitignore</exclude>
+                                    </excludes>
 								</fileset>
 							</filesets>
 						</configuration>
@@ -55,13 +55,6 @@
 						</metamodel>
 					</metamodels>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.viatra</groupId>
-						<artifactId>org.eclipse.viatra.query.runtime.rete.recipes</artifactId>
-						<version>${viatra.main.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
