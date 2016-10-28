@@ -29,6 +29,8 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.eclipse.xtend.lib.annotations.Data
 import org.junit.Test
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions
+import org.eclipse.viatra.query.runtime.api.IPatternMatch
+import com.google.common.base.Function
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements of the base index and
@@ -70,7 +72,7 @@ abstract class QueryPerformanceTest {
      * @since 1.3
      */
     protected AdvancedViatraQueryEngine queryEngine
-    Map<String, QueryPerformanceData> results = Maps.newTreeMap()
+    protected Map<String, QueryPerformanceData> results = Maps.newTreeMap()
 
     /**
      * This method shall return a scope that identifies the input artifact used for performance testing the queries.
@@ -127,7 +129,18 @@ abstract class QueryPerformanceTest {
         prepare()
 
         info("Starting query performance test")
+        
+        measureEntireGroup()
 
+        info("Finished query performance test")
+
+        printResults()
+    }
+
+    /**
+     * @since 1.5
+     */
+    protected def measureEntireGroup() {
         val specifications = queryGroup.getSpecifications
         val numOfSpecifications = specifications.length
         var current = 0
@@ -137,46 +150,66 @@ abstract class QueryPerformanceTest {
             val usedHeapBefore = _specification.wipe
             performMeasurements(_specification, current, usedHeapBefore)
         }
-
-        info("Finished query performance test")
-
-        printResults()
     }
 
     /**
      * @since 1.3
      */
     def wipe(IQuerySpecification<?> _specification) {
+        wipeAndMeasure
+    }
+    
+    /**
+     * @since 1.5
+     */
+    def wipeAndMeasure() {
         queryEngine.wipe
         val usedHeapBefore = logMemoryProperties("Wiped engine before building")
         return usedHeapBefore
     }
-
+    
     /**
      * @since 1.3
      */
-    def performMeasurements(IQuerySpecification<?> _specification, int current, long usedHeapBefore) {
-
-        val specification = _specification as IQuerySpecification<? extends ViatraQueryMatcher>
+    def performMeasurements(IQuerySpecification<?> specification, int current, long usedHeapBefore) {
+        val _specification = specification as IQuerySpecification
+        return performMeasurements(specification.getFullyQualifiedName, current, usedHeapBefore) [getMatcher(_specification)]
+    }
+    
+    /**
+     * The measured action may OPTIONALLY return a matcher, in which case the matches will be counted.
+     * @since 1.5
+     */
+    def performMeasurements(String queryName, int sequence, long usedHeapBefore, 
+        Function<AdvancedViatraQueryEngine,ViatraQueryMatcher> measuredAction
+    ) {
         debug("Building Rete")
         val watch = Stopwatch.createStarted
-        val matcher = queryEngine.getMatcher(specification)
+        val matcher = measuredAction.apply(queryEngine)
         watch.stop()
-        val countMatches = matcher.countMatches
-        val usedHeapAfter = logMemoryProperties("Matcher created")
-
-        val usedHeap = usedHeapAfter - usedHeapBefore
+        val countMatches = if (matcher == null) -1 else matcher.countMatches
         val elapsed = watch.elapsed(TimeUnit.MILLISECONDS)
-        val result = new QueryPerformanceData(current, countMatches, usedHeapBefore, usedHeapAfter, usedHeap, elapsed)
-        results.put(specification.getFullyQualifiedName, result)
+        
+        return concludeMeasurement(queryName, sequence, countMatches, elapsed, usedHeapBefore)
+    }
+    
+    /**
+     * Includes logging and wipe. 
+     * @since 1.5
+     */
+    def concludeMeasurement(String queryName, int sequence, int countMatches, long elapsed, long usedHeapBefore) {
+        val usedHeapAfter = logMemoryProperties("Matcher created")
+        val usedHeap = usedHeapAfter - usedHeapBefore
+        val result = new QueryPerformanceData(sequence, countMatches, usedHeapBefore, usedHeapAfter, usedHeap, elapsed)
+        results.put(queryName, result)
         info(
-            "Query " + specification.fullyQualifiedName + "( " + countMatches + " matches, used " + usedHeap +
+            "Query " + queryName + "( " + countMatches + " matches, used " + usedHeap +
                 " kByte heap, took " + elapsed + " ms)")
 
         queryEngine.wipe
         logMemoryProperties("Wiped engine after building")
         debug("\n-------------------------------------------\n")
-
+        
         return result
     }
 
