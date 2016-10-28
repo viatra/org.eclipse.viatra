@@ -147,6 +147,8 @@ public class NavigationHelperImpl implements NavigationHelper {
     private final BaseIndexOptions baseIndexOptions;
 
     private EMFModelComprehension comprehension;
+    
+    private boolean loggedRegistrationMessage = false;
 
     EMFBaseIndexMetaStore metaStore;
     EMFBaseIndexInstanceStore instanceStore;
@@ -193,7 +195,13 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public boolean isInWildcardMode() {
-        return wildcardMode == IndexingLevel.FULL;
+        return isInWildcardMode(IndexingLevel.FULL);
+    }
+  
+    // XXX In 1.5 this functionality will be API
+    private boolean isInWildcardMode(IndexingLevel level) {
+        // XXX In 1.5 IndexingLevel will have a dedicated method providing the following comparison
+        return wildcardMode.merge(level) == wildcardMode;
     }
 
     @Override
@@ -799,7 +807,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     protected void processingError(final Throwable ex, final String task) {
         notifyErrorListener(logTaskFormat(task), ex);
     }
-
+    
     public void notifyErrorListener(String message, Throwable t) {
         logger.error(message, t);
         for (IEMFIndexingErrorListener listener : errorListeners) {
@@ -1009,8 +1017,7 @@ public class NavigationHelperImpl implements NavigationHelper {
     @Override
     public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes,
             Set<? extends EStructuralFeature> features, final IndexingLevel level) {
-        ensureNotInWildcardMode();
-        if (classes != null || features != null || dataTypes != null) {
+        if (isRegistrationNecessary(level) && (classes != null || features != null || dataTypes != null)) {
             final Set<Object> resolvedFeatures = resolveFeaturesToKey(features);
             final Set<Object> resolvedClasses = resolveClassifiersToKey(classes);
             final Set<Object> resolvedDatatypes = resolveClassifiersToKey(dataTypes);
@@ -1052,8 +1059,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void registerEStructuralFeatures(Set<? extends EStructuralFeature> features, final IndexingLevel level) {
-        ensureNotInWildcardMode();
-        if (features != null) {
+        if (isRegistrationNecessary(level) && features != null) {
             final Set<Object> resolved = resolveFeaturesToKey(features);
 
             try {
@@ -1081,8 +1087,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEStructuralFeatures(Set<? extends EStructuralFeature> features) {
-        ensureNotInWildcardMode();
-        if (features != null) {
+        if (isRegistrationNecessary(IndexingLevel.FULL) && features != null) {
             final Set<Object> resolved = resolveFeaturesToKey(features);
             ensureNoListeners(resolved, getFeatureListeners());
             observedFeatures.keySet().removeAll(resolved);
@@ -1102,8 +1107,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void registerEClasses(Set<EClass> classes, final IndexingLevel level) {
-        ensureNotInWildcardMode();
-        if (classes != null) {
+        if (isRegistrationNecessary(level) && classes != null) {
             final Set<Object> resolvedClasses = resolveClassifiersToKey(classes);
 
             try {
@@ -1141,8 +1145,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEClasses(Set<EClass> classes) {
-        ensureNotInWildcardMode();
-        if (classes != null) {
+        if (isRegistrationNecessary(IndexingLevel.FULL) && classes != null) {
             final Set<Object> resolved = resolveClassifiersToKey(classes);
             ensureNoListeners(resolved, getInstanceListeners());
             directlyObservedClasses.keySet().removeAll(resolved);
@@ -1157,8 +1160,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void registerEDataTypes(Set<EDataType> dataTypes, final IndexingLevel level) {
-        ensureNotInWildcardMode();
-        if (dataTypes != null) {
+        if (isRegistrationNecessary(level) && dataTypes != null) {
             final Set<Object> resolved = resolveClassifiersToKey(dataTypes);
 
             try {
@@ -1186,8 +1188,7 @@ public class NavigationHelperImpl implements NavigationHelper {
 
     @Override
     public void unregisterEDataTypes(Set<EDataType> dataTypes) {
-        ensureNotInWildcardMode();
-        if (dataTypes != null) {
+        if (isRegistrationNecessary(IndexingLevel.FULL) && dataTypes != null) {
             final Set<Object> resolved = resolveClassifiersToKey(dataTypes);
             ensureNoListeners(resolved, getDataTypeListeners());
             observedDataTypes.keySet().removeAll(resolved);
@@ -1422,11 +1423,14 @@ public class NavigationHelperImpl implements NavigationHelper {
     public Set<EClass> getAllCurrentClasses() {
         return instanceStore.getAllCurrentClasses();
     }
-
-    private void ensureNotInWildcardMode() {
-        if (isInWildcardMode()) {
-            throw new IllegalStateException("Cannot register/unregister observed classes in wildcard mode");
+    
+    private boolean isRegistrationNecessary(IndexingLevel level) {
+        boolean wildcardMode = isInWildcardMode(level);
+        if (wildcardMode && !loggedRegistrationMessage) {
+            loggedRegistrationMessage = true;
+            logger.warn("Type registration/unregistration not required in wildcard mode. This message will not be repeated for future occurences.");
         }
+        return !wildcardMode;
     }
 
     private <X, Y> void ensureNoListeners(Set<Object> unobservedTypes,
@@ -1575,7 +1579,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (level == null) {
             level = delayedClasses.get(key);
         }
-        return level == null ? IndexingLevel.NONE : level;
+        // Wildcard mode is never null
+        return wildcardMode.merge(level);
     }
 
     @Override
@@ -1585,7 +1590,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (level == null) {
             level = delayedDataTypes.get(key);
         }
-        return level == null ? IndexingLevel.NONE : level;
+        // Wildcard mode is never null
+        return wildcardMode.merge(level);
     }
 
     @Override
@@ -1595,7 +1601,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (level == null) {
             level = delayedFeatures.get(key);
         }
-        return level == null ? IndexingLevel.NONE : level;
+        // Wildcard mode is never null
+        return wildcardMode.merge(level);
     }
     
     @Override
