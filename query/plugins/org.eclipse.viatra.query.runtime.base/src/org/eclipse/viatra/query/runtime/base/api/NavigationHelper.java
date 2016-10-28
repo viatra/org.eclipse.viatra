@@ -95,6 +95,15 @@ public interface NavigationHelper {
     public boolean isInWildcardMode();
     
     /**
+     * Indicates whether indexing is performed in <em>wildcard mode</em> for a selected indexing level
+     * 
+     * @return true if everything is indexed, false if manual registration of interesting EClassifiers and
+     *         EStructuralFeatures is required.
+     * @since 1.5
+     */
+    public boolean isInWildcardMode(IndexingLevel level);
+    
+    /**
      * Returns the current {@link IndexingLevel} applied to all model elements. For specific types it is possible to request a higher indexing levels, but cannot be lowered.
      * @return the current level of index specified
      * @since 1.4

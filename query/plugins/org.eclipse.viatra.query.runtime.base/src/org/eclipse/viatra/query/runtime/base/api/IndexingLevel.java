@@ -110,4 +110,11 @@ public enum IndexingLevel {
         return this == IndexingLevel.FULL;
     }
     
+    /**
+     * Returns whether the current indexing level includes all features from the parameter level
+     * @since 1.5
+     */
+    public boolean providesLevel(IndexingLevel level) {
+        return this.merge(level) == this;
+    }
 }

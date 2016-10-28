@@ -412,8 +412,10 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 	public void ensureIndexed(EClass eClass, IndexingService service) {
         if (addIndexingService(indexedClasses, eClass, service)) {
             final Set<EClass> newClasses = Collections.singleton(eClass);
-            if (!baseIndex.isInWildcardMode())
-                baseIndex.registerEClasses(newClasses, IndexingLevel.toLevel(service));
+            IndexingLevel level = IndexingLevel.toLevel(service);
+            if (!baseIndex.isInWildcardMode(level)) {
+                baseIndex.registerEClasses(newClasses, level);
+            }
             //baseIndex.addInstanceListener(newClasses, listener);
         }
     }
@@ -433,8 +435,10 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     public void ensureIndexed(EDataType eDataType, IndexingService service) {
         if (addIndexingService(indexedDataTypes, eDataType, service)) {
             final Set<EDataType> newDataTypes = Collections.singleton(eDataType);
-            if (!baseIndex.isInWildcardMode())
-                baseIndex.registerEDataTypes(newDataTypes, IndexingLevel.toLevel(service));
+            IndexingLevel level = IndexingLevel.toLevel(service);
+            if (!baseIndex.isInWildcardMode(level)) {
+                baseIndex.registerEDataTypes(newDataTypes, level);
+            }
             //baseIndex.addDataTypeListener(newDataTypes, listener);
         }
     }
@@ -454,8 +458,10 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     public void ensureIndexed(EStructuralFeature feature, IndexingService service) {
         if (addIndexingService(indexedFeatures, feature, service)) {
             final Set<EStructuralFeature> newFeatures = Collections.singleton(feature);
-            if (!baseIndex.isInWildcardMode())
-                baseIndex.registerEStructuralFeatures(newFeatures, IndexingLevel.toLevel(service));
+            IndexingLevel level = IndexingLevel.toLevel(service);
+            if (!baseIndex.isInWildcardMode(level)) {
+                baseIndex.registerEStructuralFeatures(newFeatures, level);
+            }
             //baseIndex.addFeatureListener(newFeatures, listener);
         }
     }
