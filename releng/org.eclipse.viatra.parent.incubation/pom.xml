@@ -40,6 +40,7 @@
 
 		<!-- DSE -->
 		<module>../org.eclipse.viatra.parent.dse</module>
+		<module>../../dse/features/org.eclipse.viatra.dse.feature</module>
 
 		<!-- Addons -->
 		<module>../../addon/plugins/org.eclipse.viatra.addon.querybyexample</module>

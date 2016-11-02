@@ -13,7 +13,6 @@
 		<!-- DSE -->
 		<module>../../dse/plugins/org.eclipse.viatra.dse</module>
 		<module>../../dse/plugins/org.eclipse.viatra.dse.genetic</module>
-		<module>../../dse/features/org.eclipse.viatra.dse.feature</module>
 		<module>../../maven/viatra-dse-runtime</module>
 
 	</modules>
