@@ -153,7 +153,7 @@ class NamingProvider {
 	}
 
 	def isRule(QualifiedName fqn) {
-		return fqn.toString.contains(RULES_PACKAGE_NAME_ELEMENT)
+	    return fqn.skipLast(1).toString.endsWith(RULES_PACKAGE_NAME_ELEMENT)
 	}
 
 	def getType(QualifiedName fqn) {
@@ -171,7 +171,7 @@ class NamingProvider {
 			} else {
 				"complex event pattern"
 			}
-		} else if (fqn.toString.contains(RULES_PACKAGE_NAME_ELEMENT)) {
+		} else if (fqn.skipLast(1).toString.contains(RULES_PACKAGE_NAME_ELEMENT)) {
 			"rule"
 		}
 	}
