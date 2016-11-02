@@ -413,7 +413,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         if (addIndexingService(indexedClasses, eClass, service)) {
             final Set<EClass> newClasses = Collections.singleton(eClass);
             IndexingLevel level = IndexingLevel.toLevel(service);
-            if (!baseIndex.isInWildcardMode(level)) {
+            if (!baseIndex.getIndexingLevel(eClass).providesLevel(level)) {
                 baseIndex.registerEClasses(newClasses, level);
             }
             //baseIndex.addInstanceListener(newClasses, listener);
@@ -436,7 +436,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         if (addIndexingService(indexedDataTypes, eDataType, service)) {
             final Set<EDataType> newDataTypes = Collections.singleton(eDataType);
             IndexingLevel level = IndexingLevel.toLevel(service);
-            if (!baseIndex.isInWildcardMode(level)) {
+            if (!baseIndex.getIndexingLevel(eDataType).providesLevel(level)) {
                 baseIndex.registerEDataTypes(newDataTypes, level);
             }
             //baseIndex.addDataTypeListener(newDataTypes, listener);
@@ -459,7 +459,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
         if (addIndexingService(indexedFeatures, feature, service)) {
             final Set<EStructuralFeature> newFeatures = Collections.singleton(feature);
             IndexingLevel level = IndexingLevel.toLevel(service);
-            if (!baseIndex.isInWildcardMode(level)) {
+            if (!baseIndex.getIndexingLevel(feature).providesLevel(level)) {
                 baseIndex.registerEStructuralFeatures(newFeatures, level);
             }
             //baseIndex.addFeatureListener(newFeatures, listener);

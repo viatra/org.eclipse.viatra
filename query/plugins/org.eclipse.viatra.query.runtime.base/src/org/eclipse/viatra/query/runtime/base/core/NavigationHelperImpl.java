@@ -75,6 +75,9 @@ import com.google.common.collect.Table;
 
 public class NavigationHelperImpl implements NavigationHelper {
 
+    /**
+     * This is never null.
+     */
     protected IndexingLevel wildcardMode;
 
     protected Notifier notifier;
@@ -1578,7 +1581,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (level == null) {
             level = delayedClasses.get(key);
         }
-        return level == null ? IndexingLevel.NONE : level;
+        // Wildcard mode is never null
+        return wildcardMode.merge(level);
     }
 
     @Override
@@ -1588,7 +1592,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (level == null) {
             level = delayedDataTypes.get(key);
         }
-        return level == null ? IndexingLevel.NONE : level;
+        // Wildcard mode is never null
+        return wildcardMode.merge(level);
     }
 
     @Override
@@ -1598,7 +1603,8 @@ public class NavigationHelperImpl implements NavigationHelper {
         if (level == null) {
             level = delayedFeatures.get(key);
         }
-        return level == null ? IndexingLevel.NONE : level;
+        // Wildcard mode is never null
+        return wildcardMode.merge(level);
     }
     
     @Override
