@@ -12,7 +12,8 @@
     </parent>
 
     <properties>
-        <emf.edit.version>2.10.1</emf.edit.version>
+        <emf.version>2.10.1</emf.version>
+        <emf.ecore.change.version>2.10.0.v20150123-0348</emf.ecore.change.version>
     </properties>
 
     <dependencies>
@@ -51,12 +52,17 @@
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.edit</artifactId>
-            <version>${emf.edit.version}</version>
+            <version>${emf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-            <version>${emf.edit.version}</version>
+            <version>${emf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.birt.runtime</groupId>
+            <artifactId>org.eclipse.emf.ecore.change</artifactId>
+            <version>${emf.ecore.change.version}</version>
         </dependency>
     </dependencies>
 
