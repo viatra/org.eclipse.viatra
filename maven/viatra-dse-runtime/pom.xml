@@ -11,6 +11,10 @@
         <relativePath>../../releng/org.eclipse.viatra.parent.dse/pom.xml</relativePath>
     </parent>
 
+    <properties>
+        <emf.edit.version>2.10.1</emf.edit.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.eclipse.viatra</groupId>
@@ -43,6 +47,11 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.emf</groupId>
+            <artifactId>org.eclipse.emf.edit</artifactId>
+            <version>${emf.edit.version}</version>
         </dependency>
     </dependencies>
 
