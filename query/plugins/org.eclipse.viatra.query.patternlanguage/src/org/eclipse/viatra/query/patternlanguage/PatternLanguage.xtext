@@ -178,7 +178,7 @@ BoolValue returns LiteralValueReference:
 ;
 
 XBooleanLiteral returns xbase::XBooleanLiteral:
-	{XBooleanLiteral} ('false' | 'FALSE' | value?='true' | value?="TRUE")
+	{XBooleanLiteral} ('false' | 'FALSE' | isTrue?='true' | isTrue?="TRUE")
 ;
 
 VariableValue returns ValueReference:
