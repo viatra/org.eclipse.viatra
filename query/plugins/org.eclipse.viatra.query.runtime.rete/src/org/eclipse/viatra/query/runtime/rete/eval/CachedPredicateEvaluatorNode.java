@@ -19,22 +19,31 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 
 /**
  * @author Bergmann Gabor
- *
+ * @deprecated Use {@link OutputCachingEvaluatorNode} (non-abstract since 1.5) with {@link EvaluationCore}.
  */
+@Deprecated
 public class CachedPredicateEvaluatorNode extends OutputCachingEvaluatorNode {
 
 	public CachedPredicateEvaluatorNode(ReteContainer reteContainer,
 			Logger logger, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions,
 			int sourceTupleWidth) {
-		super(reteContainer, logger, evaluator, parameterPositions, sourceTupleWidth);
+		super(reteContainer, new EvaluatorCore.PredicateEvaluatorCore(logger, evaluator, parameterPositions, sourceTupleWidth));
 	}
 
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
 	@Override
 	protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
 		return Boolean.TRUE.equals(evaluationresult) ? incoming : null;
 	}
 
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
 	@Override
 	protected String logNodeName() {
 		return "check()";

@@ -22,48 +22,95 @@ import org.eclipse.viatra.query.runtime.rete.tuple.TupleValueProvider;
 
 /**
  * @author Bergmann Gabor
- *
  */
-public abstract class AbstractEvaluatorNode extends SingleInputNode {
-	
-	protected abstract Tuple tupleFromResult(Tuple incoming, Object evaluationresult); 
-//	protected abstract Iterable<Tuple> allTuples(); 
-	/**
-	 * E.g. "eval()"
-	 */
-	protected abstract String logNodeName(); 
-	
+public abstract class AbstractEvaluatorNode extends SingleInputNode implements IEvaluatorNode {
+    
+    /**
+     * @since 1.5
+     */
+    protected EvaluatorCore core;
 
-	
+
+    /**
+     * @since 1.5
+     */
+    public AbstractEvaluatorNode(ReteContainer reteContainer, EvaluatorCore core) {
+        super(reteContainer);
+        this.core = core;
+        core.init(this);
+    }
+    
+    /**
+     * @since 1.5
+     */
+    @Override
+    public ReteContainer getReteContainer() {
+        return getContainer();
+    }
+    
+    /**
+     * @since 1.5
+     */
+    @Override
+    public String prettyPrintTraceInfoPatternList() {
+        return getTraceInfoPatternsEnumerated();
+    }
+    
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    protected abstract Tuple tupleFromResult(Tuple incoming, Object evaluationresult); 
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    protected abstract String logNodeName(); 
+    
+
+    
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
     protected Logger logger;
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
     protected IExpressionEvaluator evaluator;    
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
     int sourceTupleWidth;
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
     private Map<String, Integer> parameterPositions;
-	protected IQueryRuntimeContext runtimeContext;
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    protected IQueryRuntimeContext runtimeContext;
     
     
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
     public AbstractEvaluatorNode(ReteContainer reteContainer, Logger logger, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions, int sourceTupleWidth) {
-		super(reteContainer);
-		this.logger = logger;
-		this.evaluator = evaluator;
-        this.parameterPositions = parameterPositions;
-		this.sourceTupleWidth = sourceTupleWidth;
-		runtimeContext = reteContainer.getNetwork().getEngine().getRuntimeContext();
-	}
-//    protected Map<Tuple, Object> cachedResults = CollectionsFactory.getMap(); 
-	
-//	@Override
-//	public void pullInto(Collection<Tuple> collector) {
-//		for (Tuple tuple : allTuples()) {
-//			collector.add(tuple);
-//		}
-//	}
-	
-    protected Object evaluateTerm(Tuple ps) {
-//        // clearing ASMfunction traces
-//        clearTraces(ps);
+        super(reteContainer);
+        throw new UnsupportedOperationException();
+    }
 
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    protected Object evaluateTerm(Tuple ps) {
         // actual evaluation
         Object result = null;
         try {
@@ -71,30 +118,36 @@ public abstract class AbstractEvaluatorNode extends SingleInputNode {
             result = evaluator.evaluateExpression(tupleParameters);
         } catch (Exception e) {
             logger.warn(
-            		String.format(
-            				"The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
-            				logNodeName(), 
-            				getTraceInfoPatternsEnumerated(), 
-            				prettyPrintTuple(ps), 
-            				e.getMessage(), e.getClass().getSimpleName(), 
-            				this
-            		), 
+                    String.format(
+                            "The incremental pattern matcher encountered an error during %s evaluation for pattern(s) %s over values %s. Error message: %s. (Developer note: %s in %s)",
+                            logNodeName(), 
+                            getTraceInfoPatternsEnumerated(), 
+                            prettyPrintTuple(ps), 
+                            e.getMessage(), e.getClass().getSimpleName(), 
+                            this
+                    ), 
             e);
             // engine.logEvaluatorException(e);
 
             result = errorResult();
         }
 
-//        // saving ASMFunction traces
-//        saveTraces(ps, evaluator.getTraces());
-
         return result;
     }
     
-	protected String prettyPrintTuple(Tuple ps) {
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    protected String prettyPrintTuple(Tuple ps) {
         return ps.toString();
     }
-	protected Object errorResult() {return null; }
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    protected Object errorResult() {return null; }
+	
 
 	
 }

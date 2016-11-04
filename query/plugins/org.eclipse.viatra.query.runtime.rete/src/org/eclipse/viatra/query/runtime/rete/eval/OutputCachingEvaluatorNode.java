@@ -25,16 +25,31 @@ import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
  * @author Bergmann Gabor
  *
  */
-public abstract class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements Clearable {
+public class OutputCachingEvaluatorNode extends AbstractEvaluatorNode implements Clearable {
 	
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
 	public OutputCachingEvaluatorNode(ReteContainer reteContainer,
 			Logger logger, IExpressionEvaluator evaluator,
             Map<String, Integer> parameterPositions, int sourceTupleWidth) {
 		super(reteContainer, logger, evaluator, parameterPositions, sourceTupleWidth);
 		reteContainer.registerClearable(this);
 	}
+	
+	
+    /**
+     * @since 1.5
+     */
+    public OutputCachingEvaluatorNode(ReteContainer reteContainer, EvaluatorCore core) {
+        super(reteContainer, core);
+        reteContainer.registerClearable(this);
+    }
 
-	Map<Tuple, Tuple> outputCache = CollectionsFactory.getMap();
+
+
+    Map<Tuple, Tuple> outputCache = CollectionsFactory.getMap();
 	//Map<Tuple, SoftReference<Object>> opportunisticCacheResults = new WeakHashMap<Tuple, SoftReference<Object>>();
 	
 	@Override
@@ -53,7 +68,7 @@ public abstract class OutputCachingEvaluatorNode extends AbstractEvaluatorNode i
 	public void update(Direction direction, Tuple updateElement) {
 		switch (direction) {
 			case INSERT:
-				final Tuple insertedOutput = tupleFromResult(updateElement, evaluateTerm(updateElement));
+				final Tuple insertedOutput = core.performEvaluation(updateElement);
 				if (insertedOutput != null) {
 					outputCache.put(updateElement, insertedOutput);
 					propagateUpdate(direction, insertedOutput);
@@ -66,6 +81,28 @@ public abstract class OutputCachingEvaluatorNode extends AbstractEvaluatorNode i
 				}				
 		}
 	}
+
+
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    @Override
+    protected Tuple tupleFromResult(Tuple incoming, Object evaluationresult) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    /**
+     * @deprecated use {@link EvaluationCore}
+     */
+    @Deprecated
+    @Override
+    protected String logNodeName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 	// TODO
 //    @Override

@@ -94,7 +94,7 @@ public abstract class BaseNode implements Node {
     }
     
     /**
-     * Decendants should use this in e.g. logging
+     * Descendants should use this in e.g. logging
      */
     protected String getTraceInfoPatternsEnumerated() {
     	TreeSet<String> patternNames = new TreeSet<String>();

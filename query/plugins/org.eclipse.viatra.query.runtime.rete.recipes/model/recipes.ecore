@@ -236,6 +236,7 @@
         <details key="documentation" value="String -> Index map.&#xA;Maps variable names in the expression to tuple indices."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cacheOutput" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CheckRecipe" eSuperTypes="#//ExpressionEnforcerRecipe">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
