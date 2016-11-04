@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.viatra.query.patternlanguage.emf.EMFPatternLanguageScopeHelper;
@@ -53,6 +54,8 @@ import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
+import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor.Delegate;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.xbase.ui.hover.XbaseInformationControlInput;
 
 import com.google.common.base.Function;
@@ -265,4 +268,50 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
         // This override prohibits the content assist to suggest incorrect parameters.
     }
 
+    @Override
+    public void completePackageImport_EPackage(EObject model, Assignment assignment, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        super.completePackageImport_EPackage(model, assignment, context, new StringProposalDelegate(acceptor, context));
+    }
+    
+    /**
+     * Remove extra double quote from proposal if the next character is already a double quote.
+     * Based on the work of Christian Dietrich in {@link https://christiandietrich.wordpress.com/2015/03/19/xtext-and-strings-as-cross-references/} 
+     * 
+     * @author Abel Hegedus
+     *
+     */
+    static class StringProposalDelegate extends Delegate {
+        
+        ContentAssistContext ctx;
+ 
+        StringProposalDelegate(ICompletionProposalAcceptor delegate, ContentAssistContext ctx) {
+            super(delegate);
+            this.ctx = ctx;
+        }
+ 
+        public void accept(ICompletionProposal proposal) {
+            if (proposal instanceof ConfigurableCompletionProposal) {
+                ConfigurableCompletionProposal prop = (ConfigurableCompletionProposal) proposal;
+                int replacementLength = prop.getReplacementLength();
+                int endPos = prop.getReplacementOffset() + replacementLength; 
+                IXtextDocument document = ctx.getDocument();
+                if (document != null && document.getLength() > endPos) {
+                    // We are not at the end of the file
+                    try {
+                        if ("\"".equals(document.get(endPos, 1))) {
+                            prop.setReplacementLength(replacementLength-1);
+                            String replacementString = prop.getReplacementString();
+                            prop.setReplacementString(replacementString.substring(0,replacementString.length()-1));
+                        }
+                    } catch (BadLocationException e) {
+                        // never happens, as we already checked that the given range is valid 
+                        throw new IllegalStateException("No content at position inside the document", e);
+                    }
+                }
+            }
+            super.accept(proposal);
+        }
+ 
+    }
 }
