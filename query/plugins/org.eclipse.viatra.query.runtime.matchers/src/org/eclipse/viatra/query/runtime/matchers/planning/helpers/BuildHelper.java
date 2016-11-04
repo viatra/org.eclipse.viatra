@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PProject;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 
 /**
@@ -50,11 +51,12 @@ public class BuildHelper {
      * <li> have all their constraints already enforced in the subplan,
      * </ul> and thus will not be needed anymore.
      * 
-     * @param onlyIfNotDetermined if true, no trimming performed unless there is at least one such variable  
+     * @param onlyIfNotDetermined if true, no trimming performed unless there is at least one variable that is not functionally determined
      * @return the plan after the trimming (possibly the original)
+     * @since 1.5
      */
     public static SubPlan trimUnneccessaryVariables(SubPlanFactory planFactory, /*IOperationCompiler buildable,*/
-            SubPlan plan, boolean onlyIfNotDetermined, IQueryMetaContext context) {
+            SubPlan plan, boolean onlyIfNotDetermined, QueryAnalyzer analyzer) {
     	Set<PVariable> canBeTrimmed = new HashSet<PVariable>();
     	Set<PVariable> variablesInPlan = plan.getVisibleVariables();
     	for (PVariable trimCandidate : variablesInPlan) {
@@ -64,32 +66,67 @@ public class BuildHelper {
     		}
     	}
 		final Set<PVariable> retainedVars = setMinus(variablesInPlan, canBeTrimmed);   	
-    	if (!canBeTrimmed.isEmpty() && !(onlyIfNotDetermined && areVariablesDetermined(plan, retainedVars, canBeTrimmed, context))) {
+    	if (!canBeTrimmed.isEmpty() && !(onlyIfNotDetermined && areVariablesDetermined(plan, retainedVars, canBeTrimmed, analyzer, false))) {
     		// TODO add smart ordering? 
     		plan = planFactory.createSubPlan(new PProject(retainedVars), plan);
     	}
     	return plan;
     }
     
+    /**
+     * @deprecated use {@link BuildHelper#trimUnneccessaryVariables(SubPlanFactory, SubPlan, boolean, QueryAnalyzer)}
+     */
+    @Deprecated
+    public static SubPlan trimUnneccessaryVariables(SubPlanFactory planFactory, /*IOperationCompiler buildable,*/
+            SubPlan plan, boolean onlyIfNotDetermined, IQueryMetaContext metaContext) {
+        return trimUnneccessaryVariables(planFactory, plan, onlyIfNotDetermined, new QueryAnalyzer(metaContext));
+    }
     
     /**
      * @return true iff a set of given variables functionally determine all visible variables in the subplan according to the subplan's constraints
+     * @param strict if true, only "hard" dependencies are taken into account that are strictly enforced by the model representation; 
+     *  if false, user-provided soft dependencies are included as well, that are anticipated but not guaranteed by the storage mechanism;
+     *  use true if superfluous dependencies may taint the correctness of a computation, false if they would merely impact performance
+     * @since 1.5
      */
-    public static boolean areAllVariablesDetermined(SubPlan plan, Collection<PVariable> determining, IQueryMetaContext context) {
-		return areVariablesDetermined(plan, determining, plan.getVisibleVariables(), context);
+    public static boolean areAllVariablesDetermined(SubPlan plan, Collection<PVariable> determining, QueryAnalyzer analyzer, boolean strict) {
+		return areVariablesDetermined(plan, determining, plan.getVisibleVariables(), analyzer, strict);
 	}
     
     /**
-     * @return true iff one set of given variables functionally determine the other set according to the subplan's constraints
+     * @deprecated use {@link BuildHelper#areAllVariablesDetermined(SubPlan, Collection, QueryAnalyzer, boolean)}
      */
-    public static boolean areVariablesDetermined(SubPlan plan, Collection<PVariable> determining, Collection<PVariable> determined, IQueryMetaContext context) {
-        Map<Set<PVariable>, Set<PVariable>> dependencies = new HashMap<Set<PVariable>, Set<PVariable>>();
-        for (PConstraint pConstraint : plan.getAllEnforcedConstraints())
-            dependencies.putAll(pConstraint.getFunctionalDependencies(context));
+    @Deprecated
+    public static boolean areAllVariablesDetermined(SubPlan plan, Collection<PVariable> determining, IQueryMetaContext metaContext) {
+        return areAllVariablesDetermined(plan, determining, new QueryAnalyzer(metaContext), true);
+    }
+
+    
+    
+    /**
+     * @return true iff one set of given variables functionally determine the other set according to the subplan's constraints
+     * @param strict if true, only "hard" dependencies are taken into account that are strictly enforced by the model representation; 
+     *  if false, user-provided soft dependencies are included as well, that are anticipated but not guaranteed by the storage mechanism;
+     *  use true if superfluous dependencies may taint the correctness of a computation, false if they would merely impact performance
+     * @since 1.5
+     */
+    public static boolean areVariablesDetermined(SubPlan plan, Collection<PVariable> determining, Collection<PVariable> determined, 
+            QueryAnalyzer analyzer, boolean strict) {
+        Map<Set<PVariable>, Set<PVariable>> dependencies = analyzer.getFunctionalDependencies(plan.getAllEnforcedConstraints(), strict);
 		final Set<PVariable> closure = FunctionalDependencyHelper.closureOf(determining, dependencies);
 		final boolean isDetermined = closure.containsAll(determined);
 		return isDetermined;
 	}
+    
+    /**
+     * @deprecated use {@link BuildHelper#areVariablesDetermined(SubPlan, Collection, Collection, QueryAnalyzer, boolean)}
+     */
+    @Deprecated
+    public static boolean areVariablesDetermined(SubPlan plan, Collection<PVariable> determining, Collection<PVariable> determined, 
+            IQueryMetaContext metaContext) {
+        return areVariablesDetermined(plan, determining, determined, new QueryAnalyzer(metaContext), true);
+    }
+
 
 	private static <T> Set<T> setMinus(Set<T> a, Set<T> b) {
 		Set<T> difference = new HashSet<T>(a);

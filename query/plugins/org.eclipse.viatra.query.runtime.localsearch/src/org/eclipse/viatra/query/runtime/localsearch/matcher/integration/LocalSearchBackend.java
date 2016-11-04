@@ -29,6 +29,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -46,6 +47,7 @@ public class LocalSearchBackend implements IQueryBackend {
 
     IQueryBackendHintProvider hintProvider;
 	IQueryRuntimeContext runtimeContext;
+	QueryAnalyzer queryAnalyzer;
 	IQueryResultProviderAccess resultProviderAccess;
 	Logger logger;
 	IPlanProvider planProvider;
@@ -65,6 +67,7 @@ public class LocalSearchBackend implements IQueryBackend {
 		this.runtimeContext = context.getRuntimeContext();
 		this.resultProviderAccess = context.getResultProviderAccess();
         this.hintProvider = context.getHintProvider();
+        this.queryAnalyzer = context.getQueryAnalyzer();
         this.eAttributesByTypeForEClass = HashBasedTable.create();
         this.planProvider = new CachingPlanProvider(logger);
     }
@@ -122,6 +125,15 @@ public class LocalSearchBackend implements IQueryBackend {
         return runtimeContext;
     }
     
+    
+    /**
+     * @since 1.5
+     */
+    public QueryAnalyzer getQueryAnalyzer() {
+        return queryAnalyzer;
+    }
+
+
     /**
      * @since 1.4
      */

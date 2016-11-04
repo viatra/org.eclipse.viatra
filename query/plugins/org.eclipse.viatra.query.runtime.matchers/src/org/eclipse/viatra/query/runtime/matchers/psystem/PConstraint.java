@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 
 /**
  * @author Gabor Bergmann
@@ -36,6 +37,7 @@ public interface PConstraint {
     
     /**
      * A (preferably minimal) cover of known functional dependencies between variables.
+     * @noreference Use {@link QueryAnalyzer} instead to properly handle dependencies of pattern calls. 
      * @return non-trivial functional dependencies in the form of {variables} --> {variables}, where dependencies with the same lhs are unified.   
      */
     public Map<Set<PVariable>,Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context);  

@@ -17,6 +17,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer
 
 /** 
  * Wraps a PConstraint together with information required for the planner. Currently contains information about the expected binding state of
@@ -32,8 +33,10 @@ class PConstraintInfo implements IConstraintEvaluationContext {
 	private Set<PVariable> freeMaskVariables
 	private Set<PConstraintInfo> sameWithDifferentBindings
 	private IQueryRuntimeContext runtimeContext
+    private QueryAnalyzer queryAnalyzer
 
 	private double cost
+    
 
 	/** 
 	 * Instantiates the wrapper
@@ -46,12 +49,15 @@ class PConstraintInfo implements IConstraintEvaluationContext {
 	 * @param runtimeContextthe runtime query context
 	 */
 	new(PConstraint constraint, Set<PVariable> boundMaskVariables, Set<PVariable> freeMaskVariables,
-		Set<PConstraintInfo> sameWithDifferentBindings, IQueryRuntimeContext runtimeContext, Function<IConstraintEvaluationContext, Double> costFunction) {
+		Set<PConstraintInfo> sameWithDifferentBindings, 
+		IQueryRuntimeContext runtimeContext, QueryAnalyzer queryAnalyzer,
+		Function<IConstraintEvaluationContext, Double> costFunction) {
 		this.constraint = constraint
 		this.boundMaskVariables = boundMaskVariables
 		this.freeMaskVariables = freeMaskVariables
 		this.sameWithDifferentBindings = sameWithDifferentBindings
 		this.runtimeContext = runtimeContext
+		this.queryAnalyzer = queryAnalyzer
 
 		// Calculate cost of the constraint based on its type
 		this.cost = costFunction.apply(this);
@@ -59,6 +65,10 @@ class PConstraintInfo implements IConstraintEvaluationContext {
 	
     override getRuntimeContext() {
         runtimeContext
+    }
+
+    override getQueryAnalyzer() {
+        return queryAnalyzer
     }
 
 	override PConstraint getConstraint() {
@@ -93,7 +103,7 @@ class PConstraintInfo implements IConstraintEvaluationContext {
     }
 
 	override String toString()
-		'''«String.format("\n")»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''	
+		'''«String.format("\n")»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''
 	
 
 }

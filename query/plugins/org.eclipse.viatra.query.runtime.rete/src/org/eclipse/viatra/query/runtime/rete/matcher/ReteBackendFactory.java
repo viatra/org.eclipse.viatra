@@ -32,14 +32,15 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     public IQueryBackend create(IQueryBackendContext context) 
     {
 	    ReteEngine engine;
-	    engine = new ReteEngine(context.getLogger(), context.getRuntimeContext(), reteThreads);
+	    engine = new ReteEngine(context, reteThreads);
 	    ReteRecipeCompiler compiler = 
 	    		new ReteRecipeCompiler(
-	    				Options.builderMethod.layoutStrategy(context.getHintProvider()), 
+	    				Options.builderMethod.layoutStrategy(context), 
 	    				context.getLogger(),
 	    				context.getRuntimeContext().getMetaContext(),
 	    				context.getQueryCacheContext(),
-	    				context.getHintProvider());
+	    				context.getHintProvider(),
+	    				context.getQueryAnalyzer());
 	    //EPMBuilder builder = new EPMBuilder(buildable, context);
 	    engine.setCompiler(compiler);
 	    return engine;

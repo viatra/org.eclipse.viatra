@@ -12,6 +12,7 @@
 package org.eclipse.viatra.query.runtime.rete.util;
 
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.viatra.query.runtime.rete.construction.basiclinear.BasicLinearLayout;
 import org.eclipse.viatra.query.runtime.rete.construction.quasitree.QuasiTreeLayout;
@@ -19,7 +20,7 @@ import org.eclipse.viatra.query.runtime.rete.construction.quasitree.QuasiTreeLay
 /**
  * Feature switches.
  * @author Gabor Bergmann
- *
+ * @noreference
  */
 public class Options {
 
@@ -53,15 +54,23 @@ public class Options {
                                                     // free to contain pattern
                                                     // bodies, 1 otherwise
 
+    /**
+     * 
+     * @author Gabor Bergmann
+     * @noreference
+     */
     public enum BuilderMethod {
         LEGACY, // ONLY with GTASM
         PSYSTEM_BASIC_LINEAR, PSYSTEM_QUASITREE;
-        public IQueryPlannerStrategy layoutStrategy(IQueryBackendHintProvider hintProvider) {
+        /**
+         * @since 1.5
+         */
+        public IQueryPlannerStrategy layoutStrategy(IQueryBackendContext bContext) {
             switch (this) {
             case PSYSTEM_BASIC_LINEAR:
-                return new BasicLinearLayout(hintProvider);
+                return new BasicLinearLayout(bContext);
             case PSYSTEM_QUASITREE:
-                return new QuasiTreeLayout(hintProvider);
+                return new QuasiTreeLayout(bContext);
             default:
             	throw new UnsupportedOperationException();
             }

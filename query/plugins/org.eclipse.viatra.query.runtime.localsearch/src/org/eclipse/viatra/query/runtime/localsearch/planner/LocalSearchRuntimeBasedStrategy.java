@@ -32,6 +32,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -67,10 +68,12 @@ public class LocalSearchRuntimeBasedStrategy {
      * @since 1.4
      */
     public SubPlan plan(PBody pBody, Logger logger, Set<PVariable> initialBoundVariables,
-            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, LocalSearchHints configuration) {
+            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, QueryAnalyzer queryAnalyzer, 
+            LocalSearchHints configuration) {
 
         final ICostFunction costFunction = configuration.getCostFunction();
-        PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(configuration.isUseBase(), 
+        PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(
+                configuration.isUseBase(), runtimeContext, queryAnalyzer,
                 new Function<IConstraintEvaluationContext, Double>() {
 
                     @Override
@@ -87,7 +90,8 @@ public class LocalSearchRuntimeBasedStrategy {
         SubPlan plan = subPlanFactory.createSubPlan(new PStart(initialBoundVariables));
         // Create mask infos
         Set<PConstraint> constraintSet = pBody.getConstraints();
-        List<PConstraintInfo> constraintInfos = pConstraintInfoInferrer.createPConstraintInfos(constraintSet, runtimeContext);
+        List<PConstraintInfo> constraintInfos = 
+                pConstraintInfoInferrer.createPConstraintInfos(constraintSet);
 
         // Calculate the characteristic function
         // The characteristic function tells whether a given adornment is backward reachable from the (B)* state, where

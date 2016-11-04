@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.context;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 
 /**
  * This interface is a collector which holds every API that is provided by the engine to control
@@ -32,4 +33,5 @@ public interface IQueryBackendContext {
     
     IQueryResultProviderAccess getResultProviderAccess();
     
+    QueryAnalyzer getQueryAnalyzer();
 }

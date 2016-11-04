@@ -25,6 +25,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
@@ -57,9 +58,15 @@ class PConstraintInfoInferrer {
     private final boolean useIndex;
     private final Function<IConstraintEvaluationContext, Double> costFunction;
     private final EMFModelComprehension modelComprehension;
+    private final IQueryRuntimeContext runtimeContext;
+    private final QueryAnalyzer queryAnalyzer;
     
-    public PConstraintInfoInferrer(boolean useIndex, Function<IConstraintEvaluationContext, Double> costFunction) {
+    public PConstraintInfoInferrer(boolean useIndex, 
+            IQueryRuntimeContext runtimeContext, QueryAnalyzer queryAnalyzer, 
+            Function<IConstraintEvaluationContext, Double> costFunction) {
         this.useIndex = useIndex;
+        this.runtimeContext = runtimeContext;
+        this.queryAnalyzer = queryAnalyzer;
         this.costFunction = costFunction;
         this.modelComprehension = new EMFModelComprehension(new BaseIndexOptions());
     }
@@ -72,67 +79,67 @@ class PConstraintInfoInferrer {
      * @param runtimeContext the model dependent runtime contest
      * @return a collection of the wrapper PConstraintInfo objects with all the allowed application conditions
      */
-    public List<PConstraintInfo> createPConstraintInfos(Set<PConstraint> constraintSet, IQueryRuntimeContext runtimeContext) {
+    public List<PConstraintInfo> createPConstraintInfos(Set<PConstraint> constraintSet) {
         List<PConstraintInfo> constraintInfos = Lists.newArrayList();
 
         for (PConstraint pConstraint : constraintSet) {
-            createPConstraintInfoDispatch(constraintInfos, pConstraint, runtimeContext);
+            createPConstraintInfoDispatch(constraintInfos, pConstraint);
         }
         return constraintInfos;
     }
 
-    private void createPConstraintInfoDispatch(List<PConstraintInfo> resultList, PConstraint pConstraint, IQueryRuntimeContext runtimeContext){
+    private void createPConstraintInfoDispatch(List<PConstraintInfo> resultList, PConstraint pConstraint){
         if(pConstraint instanceof ExportedParameter){
-            createConstraintInfoExportedParameter(resultList, runtimeContext, (ExportedParameter) pConstraint);
+            createConstraintInfoExportedParameter(resultList, (ExportedParameter) pConstraint);
         } else if(pConstraint instanceof TypeConstraint){
-            createConstraintInfoTypeConstraint(resultList, runtimeContext, (TypeConstraint)pConstraint);
+            createConstraintInfoTypeConstraint(resultList, (TypeConstraint)pConstraint);
         } else if(pConstraint instanceof TypeFilterConstraint){
-            createConstraintInfoTypeFilterConstraint(resultList, runtimeContext, (TypeFilterConstraint)pConstraint);
+            createConstraintInfoTypeFilterConstraint(resultList, (TypeFilterConstraint)pConstraint);
         } else if(pConstraint instanceof ConstantValue){
-            createConstraintInfoConstantValue(resultList, runtimeContext, (ConstantValue)pConstraint);
+            createConstraintInfoConstantValue(resultList, (ConstantValue)pConstraint);
         } else if (pConstraint instanceof Inequality){
-            createConstraintInfoInequality(resultList, runtimeContext, (Inequality) pConstraint);
+            createConstraintInfoInequality(resultList, (Inequality) pConstraint);
         } else if (pConstraint instanceof ExpressionEvaluation){
-            createConstraintInfoExpressionEvaluation(resultList, runtimeContext, (ExpressionEvaluation)pConstraint);
+            createConstraintInfoExpressionEvaluation(resultList, (ExpressionEvaluation)pConstraint);
         } else if (pConstraint instanceof AggregatorConstraint){
-            createConstraintInfoAggregatorConstraint(resultList, runtimeContext, pConstraint, ((AggregatorConstraint) pConstraint).getResultVariable());
+            createConstraintInfoAggregatorConstraint(resultList, pConstraint, ((AggregatorConstraint) pConstraint).getResultVariable());
         } else if (pConstraint instanceof PatternMatchCounter){
-            createConstraintInfoAggregatorConstraint(resultList, runtimeContext, pConstraint, ((PatternMatchCounter) pConstraint).getResultVariable());   
+            createConstraintInfoAggregatorConstraint(resultList, pConstraint, ((PatternMatchCounter) pConstraint).getResultVariable());   
         } else if (pConstraint instanceof PositivePatternCall){
-            createConstraintInfoPositivePatternCall(resultList, runtimeContext, (PositivePatternCall) pConstraint);
+            createConstraintInfoPositivePatternCall(resultList, (PositivePatternCall) pConstraint);
         } else{
-            createConstraintInfoGeneric(resultList, runtimeContext, pConstraint);
+            createConstraintInfoGeneric(resultList, pConstraint);
         }
     }
     
-    private void createConstraintInfoConstantValue(List<PConstraintInfo> resultList,
-            IQueryRuntimeContext runtimeContext, ConstantValue pConstraint) {
+    private void createConstraintInfoConstantValue(List<PConstraintInfo> resultList, 
+            ConstantValue pConstraint) {
         // A ConstantValue constraint has a single variable, which is allowed to be unbound 
         // (extending through ConstantValue is considered a cheap operation)
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
         Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
-        doCreateConstraintInfos(runtimeContext, resultList, pConstraint, affectedVariables, bindings);
+        doCreateConstraintInfos(resultList, pConstraint, affectedVariables, bindings);
     }
 
 
-    private void createConstraintInfoPositivePatternCall(List<PConstraintInfo> resultList,
-            IQueryRuntimeContext runtimeContext, PositivePatternCall pCall) {
+    private void createConstraintInfoPositivePatternCall(List<PConstraintInfo> resultList, 
+            PositivePatternCall pCall) {
         // A pattern call can have any of its variables unbound
         Set<PVariable> affectedVariables = pCall.getAffectedVariables();
         Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
-        doCreateConstraintInfos(runtimeContext, resultList, pCall, affectedVariables, bindings);
+        doCreateConstraintInfos(resultList, pCall, affectedVariables, bindings);
     }
 
 
-    private void createConstraintInfoExportedParameter(List<PConstraintInfo> resultList,
-            IQueryRuntimeContext runtimeContext, ExportedParameter parameter) {
+    private void createConstraintInfoExportedParameter(List<PConstraintInfo> resultList, 
+            ExportedParameter parameter) {
         // In case of an exported parameter constraint, the parameter must be bound in order to execute
         Set<PVariable> affectedVariables = parameter.getAffectedVariables();
-        doCreateConstraintInfos(runtimeContext, resultList, parameter, affectedVariables, Collections.singleton(affectedVariables));
+        doCreateConstraintInfos(resultList, parameter, affectedVariables, Collections.singleton(affectedVariables));
     }
     
-    private void createConstraintInfoExpressionEvaluation(List<PConstraintInfo> resultList,
-            IQueryRuntimeContext runtimeContext, ExpressionEvaluation expressionEvaluation) {
+    private void createConstraintInfoExpressionEvaluation(List<PConstraintInfo> resultList, 
+            ExpressionEvaluation expressionEvaluation) {
         // An expression evaluation can only have its output variable unbound. All other variables shall be bound
         PVariable output = expressionEvaluation.getOutputVariable();
         Set<Set<PVariable>> bindings = Sets.newHashSet();
@@ -141,22 +148,25 @@ class PConstraintInfoInferrer {
         bindings.add(affectedVariables);
         // Output variable is not bound -> extend
         bindings.add(Sets.difference(affectedVariables, Collections.singleton(output)));
-        doCreateConstraintInfos(runtimeContext, resultList, expressionEvaluation, affectedVariables, bindings);
+        doCreateConstraintInfos(resultList, expressionEvaluation, affectedVariables, bindings);
     }
 
-    private void createConstraintInfoTypeFilterConstraint(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, TypeFilterConstraint filter){
+    private void createConstraintInfoTypeFilterConstraint(List<PConstraintInfo> resultList, 
+            TypeFilterConstraint filter){
         // In case of type filter, all affected variables must be bound in order to execute
         Set<PVariable> affectedVariables = filter.getAffectedVariables();
-        doCreateConstraintInfos(runtimeContext, resultList, filter, affectedVariables, Collections.singleton(affectedVariables));
+        doCreateConstraintInfos(resultList, filter, affectedVariables, Collections.singleton(affectedVariables));
     }
     
-    private void createConstraintInfoInequality(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, Inequality inequality){
+    private void createConstraintInfoInequality(List<PConstraintInfo> resultList, 
+            Inequality inequality){
         // In case of inequality, all affected variables must be bound in order to execute
         Set<PVariable> affectedVariables = inequality.getAffectedVariables();
-        doCreateConstraintInfos(runtimeContext, resultList, inequality, affectedVariables, Collections.singleton(affectedVariables));
+        doCreateConstraintInfos(resultList, inequality, affectedVariables, Collections.singleton(affectedVariables));
     }
     
-    private void createConstraintInfoAggregatorConstraint(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, PConstraint pConstraint, PVariable resultVariable){
+    private void createConstraintInfoAggregatorConstraint(List<PConstraintInfo> resultList, 
+            PConstraint pConstraint, PVariable resultVariable){
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
         
         // The only variables which can be unbound are the ones which cannot be deduced by any constraint and the result variable
@@ -164,7 +174,7 @@ class PConstraintInfoInferrer {
        
         Set<Set<PVariable>> bindings = calculatePossibleBindings(canBeUnboundVariables, affectedVariables);
         
-        doCreateConstraintInfos(runtimeContext, resultList, pConstraint, affectedVariables, bindings);
+        doCreateConstraintInfos(resultList, pConstraint, affectedVariables, bindings);
     }
     
     /**
@@ -185,7 +195,7 @@ class PConstraintInfoInferrer {
         }));
     }
     
-    private void createConstraintInfoGeneric(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, PConstraint pConstraint){
+    private void createConstraintInfoGeneric(List<PConstraintInfo> resultList, PConstraint pConstraint){
         Set<PVariable> affectedVariables = pConstraint.getAffectedVariables();
         
         // The only variables which can be unbound are the ones which cannot be deduced by any constraint
@@ -193,7 +203,7 @@ class PConstraintInfoInferrer {
        
         Set<Set<PVariable>> bindings = calculatePossibleBindings(canBeUnboundVariables, affectedVariables);
         
-        doCreateConstraintInfos(runtimeContext, resultList, pConstraint, affectedVariables, bindings);
+        doCreateConstraintInfos(resultList, pConstraint, affectedVariables, bindings);
     }
     
     private boolean canPerformInverseNavigation(EStructuralFeature feature){
@@ -205,7 +215,8 @@ class PConstraintInfoInferrer {
                  ));
     }
     
-    private void createConstraintInfoTypeConstraint(List<PConstraintInfo> resultList, IQueryRuntimeContext runtimeContext, TypeConstraint typeConstraint) {
+    private void createConstraintInfoTypeConstraint(List<PConstraintInfo> resultList, 
+            TypeConstraint typeConstraint) {
         Set<PVariable> affectedVariables = typeConstraint.getAffectedVariables();
         Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
         
@@ -218,15 +229,16 @@ class PConstraintInfoInferrer {
                 bindings = excludeUnnavigableOperationMasks(typeConstraint, bindings);
             }
         }
-        doCreateConstraintInfos(runtimeContext, resultList, typeConstraint, affectedVariables, bindings);
+        doCreateConstraintInfos(resultList, typeConstraint, affectedVariables, bindings);
     }
     
-    private void doCreateConstraintInfos(IQueryRuntimeContext runtimeContext, List<PConstraintInfo> constraintInfos,
+    private void doCreateConstraintInfos(List<PConstraintInfo> constraintInfos,
             PConstraint pConstraint, Set<PVariable> affectedVariables, Set<Set<PVariable>> bindings) {
         Set<PConstraintInfo> sameWithDifferentBindings = Sets.newHashSet();
         for (Set<PVariable> boundVariables : bindings) {
             PConstraintInfo info = new PConstraintInfo(pConstraint, boundVariables, Sets.difference(
-                    affectedVariables, boundVariables), sameWithDifferentBindings, runtimeContext, costFunction);
+                    affectedVariables, boundVariables), sameWithDifferentBindings, 
+                    runtimeContext, queryAnalyzer, costFunction);
             constraintInfos.add(info);
             sameWithDifferentBindings.add(info);
         }

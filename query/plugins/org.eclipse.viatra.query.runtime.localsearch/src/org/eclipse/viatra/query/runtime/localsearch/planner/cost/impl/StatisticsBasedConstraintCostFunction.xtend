@@ -74,6 +74,8 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
         val boundMaskVariables = input.boundVariables
         val constraint = input.constraint
         var metaContext = input.runtimeContext.getMetaContext()
+        val queryAnalyzer = input.queryAnalyzer
+        
         var Collection<InputKeyImplication> implications = metaContext.getImplications(supplierKey)
         // TODO prepare for cases when this info is not available - use only metamodel related cost calculation (see TODO at the beginning of the function)
         var double srcCount = -1
@@ -121,7 +123,8 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
             } else {
                 // At least one of the end variables had no restricting type information
                 // Strategy: try to navigate along many-to-one relations
-                var Map<Set<PVariable>, Set<PVariable>> functionalDependencies = constraint.getFunctionalDependencies(metaContext);
+                var Map<Set<PVariable>, Set<PVariable>> functionalDependencies = 
+                    queryAnalyzer.getFunctionalDependencies(#{constraint}, false);
                 var impliedVariables = functionalDependencies.get(boundMaskVariables)
                 if(impliedVariables != null && impliedVariables.containsAll(freeMaskVariables)){
                     return 1.0;

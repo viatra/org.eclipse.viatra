@@ -53,6 +53,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
@@ -111,6 +112,11 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
      * The current engine default hints
      */
     private final ViatraQueryEngineOptions engineOptions;
+    
+    /**
+     * Common query analysis provided to backends
+     */
+    private QueryAnalyzer queryAnalyzer;
     
     private final LifecycleProvider lifecycleProvider;
     private final ModelUpdateProvider modelUpdateProvider;
@@ -301,13 +307,21 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
                     public IQueryResultProviderAccess getResultProviderAccess() {
                         return ViatraQueryEngineImpl.this;
                     }
+                    
+                    @Override
+                    public QueryAnalyzer getQueryAnalyzer() {
+                        if (queryAnalyzer == null)
+                            queryAnalyzer = 
+                                new QueryAnalyzer(queryRuntimeContext.getMetaContext());
+                        return queryAnalyzer;
+                    }
                 });
             	queryBackends.put(iQueryBackendFactory, iQueryBackend);            	
             }        	
         }
 		return iQueryBackend;
     }
-
+    
     ///////////////// advanced stuff /////////////
     
     @Override
@@ -337,7 +351,6 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
         	throw new UnsupportedOperationException(
         			String.format("Cannot wipe() managed VIATRA Query Engine. Attempted for scope %s.", scope));
         }
-        // TODO generalize for each query backend
         if (queryBackends != null) {
         	for (IQueryBackend backend : queryBackends.values()) {
 				backend.dispose();
@@ -345,6 +358,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
             queryBackends.clear();
         }
         matchers.clear();
+        queryAnalyzer = null;
         lifecycleProvider.engineWiped();
     }
 

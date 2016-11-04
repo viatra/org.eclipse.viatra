@@ -408,7 +408,7 @@ class PatternQuerySpecificationClassInferrer {
     		«FOR annotation : pattern.annotations»
         		{
         			«PAnnotation» annotation = new «PAnnotation»("«annotation.name»");
-        			«FOR attribute : CorePatternLanguageHelper.evaluateAnnotationParameters(annotation).entrySet»
+        			«FOR attribute : CorePatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries»
         				annotation.addAttribute("«attribute.key»", «outputAnnotationParameter(attribute.value)»);
         			«ENDFOR»
         			addAnnotation(annotation);

@@ -11,8 +11,10 @@
 package org.eclipse.viatra.query.runtime.tests;
 
 import static org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDependencyHelper.closureOf;
+import static org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDependencyHelper.projectDependencies;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,6 +68,13 @@ public class FunctionalDependencyHelperTest {
         assertEquals(ImmutableSet.of(a, b, c, d, e), closureOf(ImmutableSet.of(a, c), testDependencies));
         assertEquals(ImmutableSet.of(b), closureOf(ImmutableSet.of(b), testDependencies));
         assertEquals(ImmutableSet.of(d, e), closureOf(ImmutableSet.of(d), testDependencies));
+    }
+    
+    @Test
+    public void testProject() {
+        assertEquals(Collections.emptyMap(), projectDependencies(testDependencies, ImmutableSet.of(a)));
+        assertEquals(ImmutableMap.of(Collections.singleton(a), ImmutableSet.of(a, e)), 
+                projectDependencies(testDependencies, ImmutableSet.of(a, c, e)));
     }
 
 }

@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -45,6 +46,7 @@ public class ReteEngine implements IQueryBackend {
     protected final int reteThreads;
     protected ReteBoundary boundary;
 
+    private IQueryBackendContext context;
 	private Logger logger;
     protected IQueryRuntimeContext runtimeContext;
 
@@ -73,10 +75,11 @@ public class ReteEngine implements IQueryBackend {
      *            the number of threads to operate the RETE network with; 0 means single-threaded operation, 1 starts an
      *            asynchronous thread to operate the RETE net, >1 uses multiple RETE containers.
      */
-    public ReteEngine(Logger logger, IQueryRuntimeContext runtimeContext, int reteThreads) {
+    public ReteEngine(IQueryBackendContext context, int reteThreads) {
         super();
-		this.logger = logger;
-		this.runtimeContext = runtimeContext;
+        this.context = context;
+		this.logger = context.getLogger();
+		this.runtimeContext = context.getRuntimeContext();
         this.reteThreads = reteThreads;
         this.parallelExecutionEnabled = reteThreads > 0;
         // this.framework = new WeakReference<IFramework>(context.getFramework());

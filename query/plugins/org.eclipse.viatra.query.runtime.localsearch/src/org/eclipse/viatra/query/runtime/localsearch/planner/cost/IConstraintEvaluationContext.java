@@ -14,6 +14,7 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import java.util.Collection;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 
 /**
  * This interface denotes the evaluation context of a constraint, intended for cost estimation. Provides access to information
@@ -21,7 +22,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
  * 
  * @author Grill Balázs
  * @since 1.4
- *
+ * @noimplement
  */
 public interface IConstraintEvaluationContext {
 
@@ -44,5 +45,10 @@ public interface IConstraintEvaluationContext {
     public Collection<PVariable> getBoundVariables();
     
     public IQueryRuntimeContext getRuntimeContext();
+    
+    /**
+     * @since 1.5
+     */
+    public QueryAnalyzer getQueryAnalyzer();
     
 }

@@ -25,14 +25,17 @@ import org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDepe
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PJoin;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Gabor Bergmann
  * 
  */
 class JoinCandidate {
-	private IQueryMetaContext context;
+    private QueryAnalyzer analyzer;
 	
     SubPlan primary;
     SubPlan secondary;
@@ -45,11 +48,11 @@ class JoinCandidate {
     List<PConstraint> consSecondary;
     
 
-    JoinCandidate(SubPlan primary, SubPlan secondary, IQueryMetaContext context) {
+    JoinCandidate(SubPlan primary, SubPlan secondary, QueryAnalyzer analyzer) {
         super();
-		this.context = context;
         this.primary = primary;
         this.secondary = secondary;
+        this.analyzer = analyzer;
 
         varPrimary = getPrimary().getVisibleVariables();
         varSecondary = getSecondary().getVisibleVariables();
@@ -146,12 +149,11 @@ class JoinCandidate {
     // it is a Heath-join iff common variables functionally determine either all primary or all secondary variables
     public boolean isHeath() {
         if (heath == null) {
-            Map<Set<PVariable>, Set<PVariable>> dependencies = new HashMap<Set<PVariable>, Set<PVariable>>();
-            for (PConstraint pConstraint : primary.getAllEnforcedConstraints())
-                dependencies.putAll(pConstraint.getFunctionalDependencies(context));
-            for (PConstraint pConstraint : secondary.getAllEnforcedConstraints())
-                dependencies.putAll(pConstraint.getFunctionalDependencies(context));
-
+            Map<Set<PVariable>, Set<PVariable>> dependencies = 
+                    analyzer.getFunctionalDependencies(Sets.union(
+                            primary.getAllEnforcedConstraints(), 
+                            secondary.getAllEnforcedConstraints()
+                    ), false);
             // does varCommon determine either varPrimary or varSecondary?
             Set<PVariable> varCommonClosure = FunctionalDependencyHelper.closureOf(varCommon, dependencies);
 

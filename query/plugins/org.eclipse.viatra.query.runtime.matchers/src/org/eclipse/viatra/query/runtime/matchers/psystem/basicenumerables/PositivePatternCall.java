@@ -43,11 +43,11 @@ public class PositivePatternCall extends KeyedEnumerablePConstraint<PQuery> impl
         return supplierKey.getFullyQualifiedName();
     }
 
-    @Override
-    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
-    	// TODO insert inferred functional dependencies here
-		return super.getFunctionalDependencies(context);
-    }
+    // Note: #getFunctionalDependencies is intentionally not implemented - use QueryAnalyzer instead!
+//    @Override
+//    public Map<Set<PVariable>, Set<PVariable>> getFunctionalDependencies(IQueryMetaContext context) {
+//        return super.getFunctionalDependencies(context);
+//    }
 
     @Override
     public PQuery getReferredQuery() {

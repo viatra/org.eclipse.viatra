@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
@@ -111,24 +113,44 @@ public class ReteRecipeCompiler {
 	private IQueryBackendHintProvider hintProvider;
 	private IQueryCacheContext queryCacheContext;
 	private PDisjunctionRewriter normalizer;
+	private QueryAnalyzer queryAnalyzer;
 	private Logger logger;
 	
+	/**
+	 * @since 1.5
+	 */
 	public ReteRecipeCompiler(
 			IQueryPlannerStrategy plannerStrategy, 
 			Logger logger, 
 			IQueryMetaContext metaContext, 
 			IQueryCacheContext queryCacheContext, 
-			IQueryBackendHintProvider hintProvider) 
+			IQueryBackendHintProvider hintProvider, 
+			QueryAnalyzer queryAnalyzer) 
 	{
 		super();
 		this.plannerStrategy = plannerStrategy;
 		this.logger = logger;
 		this.metaContext = metaContext;
 		this.queryCacheContext = queryCacheContext;
+        this.queryAnalyzer = queryAnalyzer;
 		this.normalizer = new PDisjunctionRewriterCacher(new SurrogateQueryRewriter(), new PBodyNormalizer(metaContext));
 		this.hintProvider = hintProvider;
 	}
 
+	/**
+	 * @deprecated use {@link #ReteRecipeCompiler(IQueryPlannerStrategy, Logger, IQueryMetaContext, IQueryCacheContext, IQueryBackendHintProvider, QueryAnalyzer)}
+	 */
+	@Deprecated
+    public ReteRecipeCompiler(
+            IQueryPlannerStrategy plannerStrategy, 
+            Logger logger, 
+            IQueryMetaContext metaContext, 
+            IQueryCacheContext queryCacheContext, 
+            IQueryBackendHintProvider hintProvider) 
+    {
+	    this(plannerStrategy, logger, metaContext, queryCacheContext, hintProvider, new QueryAnalyzer(metaContext));
+	}
+	
 	final static RecipesFactory FACTORY = RecipesFactory.eINSTANCE;
 	
 	// INTERNALLY CACHED
@@ -676,13 +698,19 @@ public class ReteRecipeCompiler {
 		final List<CompiledSubPlan> compiledParents = getCompiledFormOfParents(plan);
 		final CompiledSubPlan compiledParent = compiledParents.get(0);
 		
-		// TODO add smarter ordering here?
 		List<PVariable> projectedVariables = new ArrayList<PVariable>(operation.getToVariables());
+		// Determinizing... TODO add smarter ordering here?
+		Collections.sort(projectedVariables, new Comparator<PVariable>() {
+            @Override
+            public int compare(PVariable o1, PVariable o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
 		
 		final TrimmerRecipe trimmerRecipe = CompilerHelper.makeTrimmerRecipe(compiledParent, projectedVariables);
 		
-		if (BuildHelper.areAllVariablesDetermined(plan.getParentPlans().get(0), projectedVariables, metaContext)) {
-			// skip uniqueness enforcement if unneeded?
+		if (BuildHelper.areAllVariablesDetermined(plan.getParentPlans().get(0), projectedVariables, queryAnalyzer, true)) {
+			// skip uniqueness enforcement if unneeded
 			return new CompiledSubPlan(plan, projectedVariables, trimmerRecipe, compiledParent);
 		} else {
 			RecipeTraceInfo trimTrace = new PlanningTrace(plan, projectedVariables, trimmerRecipe, compiledParent);

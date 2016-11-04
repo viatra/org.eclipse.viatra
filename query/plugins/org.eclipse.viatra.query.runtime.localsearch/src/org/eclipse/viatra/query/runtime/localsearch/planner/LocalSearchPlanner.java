@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
@@ -82,6 +83,7 @@ public class LocalSearchPlanner{
     private final IQueryMetaContext metaContext;
     private final IQueryRuntimeContext runtimeContext;
     private final LocalSearchHints configuration;
+    private final QueryAnalyzer queryAnalyzer;
 
     /**
      * @since 1.4
@@ -89,6 +91,7 @@ public class LocalSearchPlanner{
     public LocalSearchPlanner(LocalSearchBackend backend, Logger logger, final LocalSearchHints configuration) {
         
         this.runtimeContext = backend.getRuntimeContext();
+        this.queryAnalyzer = backend.getQueryAnalyzer();
         this.configuration = configuration;
         flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
         normalizer = new PBodyNormalizer(runtimeContext.getMetaContext(), false);
@@ -122,7 +125,7 @@ public class LocalSearchPlanner{
             // 2. Plan creation
             // Context has matchers for the referred Queries (IQuerySpecifications)
             Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundParameters, normalizedBody);
-            SubPlan plan = plannerStrategy.plan(normalizedBody, logger, boundVariables, metaContext, runtimeContext, configuration);
+            SubPlan plan = plannerStrategy.plan(normalizedBody, logger, boundVariables, metaContext, runtimeContext, queryAnalyzer, configuration);
             // 3. PConstraint -> POperation compilation step
             // TODO finish (revisit?) the implementation of the compile function
             // * Pay extra caution to extend operations, when more than one variables are unbound

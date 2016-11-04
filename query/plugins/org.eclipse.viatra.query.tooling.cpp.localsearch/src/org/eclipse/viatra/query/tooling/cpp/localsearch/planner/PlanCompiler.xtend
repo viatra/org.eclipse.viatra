@@ -29,6 +29,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.DefaultFlatte
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PQueryFlattener
 import org.eclipse.viatra.query.tooling.cpp.localsearch.model.PatternDescriptor
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer
 
 /**
  * @author Robert Doczi
@@ -117,7 +118,8 @@ class PlanCompiler {
 												 .toSet
 
 			val acceptor = new CPPSearchOperationAcceptor(counter.getAndIncrement, frameRegistry)
-			pBody.plan(Logger::getLogger(PlanCompiler), boundPVariables, EMFQueryMetaContext.INSTANCE, null, configuration)
+			val metaContext = EMFQueryMetaContext.INSTANCE
+			pBody.plan(Logger::getLogger(PlanCompiler), boundPVariables, metaContext, null, new QueryAnalyzer(metaContext), configuration)
 				 .compile(pBody, boundPVariables, acceptor)
 			dependencies += acceptor.dependencies
 			return acceptor.patternBodyStub

@@ -13,11 +13,13 @@ package org.eclipse.viatra.query.patternlanguage.helper;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -66,9 +68,13 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 
@@ -207,6 +213,7 @@ public final class CorePatternLanguageHelper {
     }
 
     public static List<Variable> getUsedVariables(XExpression xExpression, Iterable<Variable> allVariables){
+        if (xExpression == null) return Collections.emptyList();
         List<EObject> contents = Lists.newArrayList(xExpression.eAllContents());
     	Iterable<XFeatureCall> featuredCalls = Iterables.filter(contents, XFeatureCall.class);
         final Set<String> valNames = Sets.newHashSet(Iterables.transform(featuredCalls, new Function<XFeatureCall,String>() {
@@ -526,8 +533,13 @@ public final class CorePatternLanguageHelper {
     }
 
 
-    public static Map<String, Object> evaluateAnnotationParameters(Annotation annotation) {
-        Map<String, Object> result = Maps.newHashMap();
+    /**
+     * Retains all parameters, even those with duplicate names.
+     * Parameter values of the same name are traversible in their original order.
+     * @since 1.5
+     */
+    public static LinkedHashMultimap<String, Object> evaluateAnnotationParametersWithMultiplicity(Annotation annotation) {
+        LinkedHashMultimap<String, Object> result = LinkedHashMultimap.create();
         for (AnnotationParameter param : annotation.getParameters()) {
             String parameterName = param.getName();
             ValueReference ref = param.getValue();
@@ -539,6 +551,17 @@ public final class CorePatternLanguageHelper {
             }
         }
         return result;
+    }
+    /**
+     * Retains the first parameter of each parameter name.
+     */
+    public static Map<String, Object> evaluateAnnotationParameters(Annotation annotation) {
+       Map<String, Object> result = new HashMap<String, Object>();
+       for (Entry<String, Object> entry : evaluateAnnotationParametersWithMultiplicity(annotation).entries()) {
+           if (! result.containsKey(entry.getKey()))
+               result.put(entry.getKey(), entry.getValue());
+       }
+       return result;
     }
 
     /**

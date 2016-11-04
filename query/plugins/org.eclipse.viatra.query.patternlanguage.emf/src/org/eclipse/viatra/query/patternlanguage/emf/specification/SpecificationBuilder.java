@@ -246,7 +246,9 @@ public class SpecificationBuilder {
             throws ViatraQueryException {
         for (Annotation annotation : pattern.getAnnotations()) {
             PAnnotation pAnnotation = new PAnnotation(annotation.getName());
-            for (Entry<String, Object> attribute : CorePatternLanguageHelper.evaluateAnnotationParameters(annotation).entrySet()) {
+            for (Entry<String, Object> attribute : 
+                CorePatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries()) 
+            {
                 pAnnotation.addAttribute(attribute.getKey(), attribute.getValue());
             }
             query.addAnnotation(pAnnotation);

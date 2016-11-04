@@ -20,6 +20,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.IQueryPlannerStrategy;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -33,6 +34,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.construction.RetePatternBuildException;
@@ -51,12 +53,16 @@ import com.google.common.collect.Sets.SetView;
 public class QuasiTreeLayout implements IQueryPlannerStrategy {
 
     private IQueryBackendHintProvider hintProvider;
+    private IQueryBackendContext backendContext;
+    private QueryAnalyzer queryAnalyzer;
 
     /**
      * @param hintProvider
      */
-    public QuasiTreeLayout(IQueryBackendHintProvider hintProvider) {
-        this.hintProvider = hintProvider;
+    public QuasiTreeLayout(IQueryBackendContext backendContext) {
+        this.backendContext = backendContext;
+        this.hintProvider = backendContext.getHintProvider();
+        queryAnalyzer = backendContext.getQueryAnalyzer();
     }
 
     @Override
@@ -152,7 +158,7 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
                 for (SubPlan a : forefront) {
                     if (aIndex++ >= bIndex)
                         break;
-                    candidates.add(new JoinCandidate(a, b, context));
+                    candidates.add(new JoinCandidate(a, b, queryAnalyzer));
                 }
                 bIndex++;
             }
@@ -174,7 +180,8 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
         	// (check only if there are unenforced enumerables, so that there are still upcoming joins)
         	if (Options.planTrimOption != Options.PlanTrimOption.OFF &&
         			!plan.getAllEnforcedConstraints().containsAll(enumerableConstraints)) {
-        		final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(planFactory, plan, true, context);
+        		final SubPlan trimmed = BuildHelper.trimUnneccessaryVariables(
+        		        planFactory, plan, true, queryAnalyzer);
 				plan = trimmed;
         	}        	
         	// are there any checkable constraints?
