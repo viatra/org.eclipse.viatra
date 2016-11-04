@@ -76,7 +76,7 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
         builder.append("extend from ")
         .append(sourcePosition)
         .append(" to type ")
-    	.append(feature.getContainerClass().getSimpleName())
+    	.append(feature.getEContainingClass().getName())
     	.append('.')
     	.append(feature.getName())
     	.append(" on position ")
