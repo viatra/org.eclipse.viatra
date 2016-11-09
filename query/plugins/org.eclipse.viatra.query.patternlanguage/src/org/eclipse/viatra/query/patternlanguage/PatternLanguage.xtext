@@ -99,9 +99,9 @@ Type returns Type:
 	{EntityType}
 	typename=ID;
 
-JavaType returns Type:
+JavaType returns EntityType:
     {JavaType}
-    typename='java' classRef=[types::JvmDeclaredType|QualifiedName]
+    'java' classRef=[types::JvmDeclaredType|QualifiedName]
 ;
 
 //These types are not meant to be written directly, just in the desc languages
