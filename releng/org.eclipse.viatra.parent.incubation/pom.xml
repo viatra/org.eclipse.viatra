@@ -9,6 +9,7 @@
 	<url>http://eclipse.org/viatra</url>
 	<packaging>pom</packaging>
 	<modules>
+	
 		<!-- Query -->
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.localsearch.ui</module>
 		<module>../../query/plugins/org.eclipse.viatra.query.tooling.ui.retevis</module>
@@ -23,6 +24,7 @@
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.transformationtrace</module>
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.tracer</module>
 		<module>../../transformation/features/org.eclipse.viatra.transformation.debug.feature</module>
+		<module>../../transformation/features/org.eclipse.viatra.transformation.runtime.debug.feature</module>
 		
 		<!-- CEP -->
 		<module>../../cep/plugins/org.eclipse.viatra.cep.core</module>
