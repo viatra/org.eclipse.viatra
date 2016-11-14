@@ -57,6 +57,7 @@
 		<module>../../addon/features/org.eclipse.viatra.addon.viewers.tooling.feature</module>
 
 		<!-- Integration -->
+		<module>../../integration/plugins/org.eclipse.viatra.integration.evm.jdt</module>
 		<module>../../integration/plugins/org.eclipse.viatra.integration.graphiti</module>
 		<module>../../integration/plugins/org.eclipse.viatra.integration.modisco</module>
 		<module>../../integration/plugins/org.eclipse.viatra.integration.mwe2</module>
