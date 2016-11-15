@@ -9,4 +9,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/matcher/ReteBackendFactory.java" type="org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory">
+        <filter comment="Adjusted implementation" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory"/>
+                <message_argument value="create(Logger, IQueryRuntimeContext, IQueryCacheContext, IQueryBackendHintProvider)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

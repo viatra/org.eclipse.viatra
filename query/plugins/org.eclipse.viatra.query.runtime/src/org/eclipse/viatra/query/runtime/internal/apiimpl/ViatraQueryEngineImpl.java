@@ -48,6 +48,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvid
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -114,8 +115,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     private final ModelUpdateProvider modelUpdateProvider;
     private Logger logger;
 	private boolean disposed = false;
-    
-    
+	
     /**
      * @param manager
      *            null if unmanaged
@@ -274,7 +274,28 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
             if (iQueryBackend == null) {
             	
             	// need to instantiate the backend
-            	iQueryBackend = iQueryBackendFactory.create(logger, queryRuntimeContext, ViatraQueryEngineImpl.this, ViatraQueryEngineImpl.this);
+            	iQueryBackend = iQueryBackendFactory.create(new IQueryBackendContext() {
+                    
+                    @Override
+                    public IQueryRuntimeContext getRuntimeContext() {
+                        return queryRuntimeContext;
+                    }
+                    
+                    @Override
+                    public IQueryCacheContext getQueryCacheContext() {
+                        return ViatraQueryEngineImpl.this;
+                    }
+                    
+                    @Override
+                    public Logger getLogger() {
+                        return logger;
+                    }
+                    
+                    @Override
+                    public IQueryBackendHintProvider getHintProvider() {
+                        return ViatraQueryEngineImpl.this;
+                    }
+                });
             	queryBackends.put(iQueryBackendFactory, iQueryBackend);            	
             }        	
         }

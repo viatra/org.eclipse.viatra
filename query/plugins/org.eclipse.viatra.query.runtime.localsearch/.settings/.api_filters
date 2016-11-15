@@ -8,4 +8,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/localsearch/matcher/integration/LocalSearchBackendFactory.java" type="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory">
+        <filter comment="Adjusted implementation" id="372346978">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory"/>
+                <message_argument value="create(Logger, IQueryRuntimeContext, IQueryCacheContext, IQueryBackendHintProvider)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.runtime.matchers.backend;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -29,12 +30,10 @@ public interface IQueryBackendFactory {
 	 * Creates a new {@link IQueryBackend} instance tied to the given context elements. 
 	 * 
 	 * @return an instance of the class returned by {@link #getBackendClass()} that operates in the given context.
+	 * @since 1.5
 	 */
 	public IQueryBackend 
-		create(Logger logger,
-				IQueryRuntimeContext runtimeContext,
-				IQueryCacheContext queryCacheContext,
-				IQueryBackendHintProvider hintProvider);
+		create(IQueryBackendContext context);
 	
 	
 	/**

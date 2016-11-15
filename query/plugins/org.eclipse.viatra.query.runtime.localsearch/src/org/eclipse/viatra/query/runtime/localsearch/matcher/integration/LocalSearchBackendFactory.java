@@ -16,6 +16,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -28,16 +29,16 @@ public enum LocalSearchBackendFactory implements IQueryBackendFactory {
 	
 	INSTANCE;
     
+    /**
+     * @since 1.5
+     */
     @Override
-    public IQueryBackend create(Logger logger,
-    		IQueryRuntimeContext runtimeContext,
-    		IQueryCacheContext queryCacheContext,
-    		IQueryBackendHintProvider hintProvider) {
+    public IQueryBackend create(IQueryBackendContext context) {
         return new LocalSearchBackend(
-        		logger, 
-        		runtimeContext,
-        		queryCacheContext,
-        		hintProvider);
+        		context.getLogger(), 
+        		context.getRuntimeContext(),
+        		context.getQueryCacheContext(),
+        		context.getHintProvider());
     }
     
     @Override

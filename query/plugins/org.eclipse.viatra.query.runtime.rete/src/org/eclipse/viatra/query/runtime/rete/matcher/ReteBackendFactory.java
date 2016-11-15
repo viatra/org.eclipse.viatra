@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.rete.matcher;
 
-import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.ReteRecipeCompiler;
 import org.eclipse.viatra.query.runtime.rete.util.Options;
@@ -28,21 +25,21 @@ public class ReteBackendFactory implements IQueryBackendFactory {
      */
     private final static int reteThreads = 0;
     
+    /**
+     * @since 1.5
+     */
     @Override
-    public IQueryBackend create(Logger logger,
-    		IQueryRuntimeContext runtimeContext,
-    		IQueryCacheContext queryCacheContext,
-    		IQueryBackendHintProvider hintProvider) 
+    public IQueryBackend create(IQueryBackendContext context) 
     {
 	    ReteEngine engine;
-	    engine = new ReteEngine(logger, runtimeContext, reteThreads);
+	    engine = new ReteEngine(context.getLogger(), context.getRuntimeContext(), reteThreads);
 	    ReteRecipeCompiler compiler = 
 	    		new ReteRecipeCompiler(
-	    				Options.builderMethod.layoutStrategy(hintProvider), 
-	    				logger,
-	    				runtimeContext.getMetaContext(),
-	    				queryCacheContext,
-	    				hintProvider);
+	    				Options.builderMethod.layoutStrategy(context.getHintProvider()), 
+	    				context.getLogger(),
+	    				context.getRuntimeContext().getMetaContext(),
+	    				context.getQueryCacheContext(),
+	    				context.getHintProvider());
 	    //EPMBuilder builder = new EPMBuilder(buildable, context);
 	    engine.setCompiler(compiler);
 	    return engine;
