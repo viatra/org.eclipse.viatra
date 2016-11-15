@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
@@ -38,7 +38,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
@@ -59,10 +59,12 @@ import com.google.common.collect.Sets;
  */
 public class LocalSearchResultProvider implements IQueryResultProvider {
 
-    private final IQueryBackend backend;
+    private final LocalSearchBackend backend;
     private final IQueryBackendHintProvider hintProvider;
+    private final AdvancedViatraQueryEngine engine;
+    private final IQueryRuntimeContext runtimeContext;
     private final PQuery query;
-    private IQueryCacheContext cacheContext;
+    private final IQueryResultProviderAccess resultProviderAccess;
     private final QueryEvaluationHint userHints;
 
     private final IPlanProvider planProvider;
@@ -71,12 +73,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         return ((LocalSearchBackend)backend).getRuntimeContext();
     }
     
-    private IPlanDescriptor createPlan(MatcherReference key, IPlanProvider planProvider,
-            final ISearchContext searchContext) throws QueryProcessingException {
-
-        LocalSearchHints configuration = overrideDefaultHints(key.getQuery());
-        
-        IPlanDescriptor plan = planProvider.getPlan((LocalSearchBackend) backend, configuration, key);
+    private LocalSearchMatcher createMatcher(IPlanDescriptor plan, final ISearchContext searchContext){
         Collection<SearchPlanForBody> compiledPlans = Lists.newArrayList(plan.getPlan());
 
         Collection<SearchPlanExecutor> executors = Collections2.transform(compiledPlans,
@@ -102,9 +99,13 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
                     }
                 });
 
-        final LocalSearchMatcher matcher = new LocalSearchMatcher(key.getQuery(), executors,
+        return new LocalSearchMatcher(plan.getQuery(), executors,
                 Collections.max(parameterSizes));
-        searchContext.loadMatcher(key, matcher);
+    }
+    
+    private IPlanDescriptor createPlan(MatcherReference key, IPlanProvider planProvider) throws QueryProcessingException {
+        LocalSearchHints configuration = overrideDefaultHints(key.getQuery());
+        IPlanDescriptor plan = planProvider.getPlan((LocalSearchBackend) backend, configuration, key);
         return plan;
     }
 
@@ -132,12 +133,12 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     /**
      * @throws QueryProcessingException 
-     * @since 1.4
+     * @since 1.5
      */
-    public LocalSearchResultProvider(IQueryBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
-            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, PQuery query,
+    public LocalSearchResultProvider(LocalSearchBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
+            IQueryResultProviderAccess resultProviderAccess, IQueryBackendHintProvider hintProvider, PQuery query,
             IPlanProvider planProvider) throws QueryProcessingException {
-        this(backend, logger, runtimeContext, cacheContext, hintProvider, query, planProvider, null);
+        this(backend, logger, runtimeContext, resultProviderAccess, hintProvider, query, planProvider, null);
     }
 
     private Iterator<MatcherReference> computeExpectedAdornments(final PQuery query, final QueryEvaluationHint hints){
@@ -152,20 +153,30 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     
     /**
      * @throws QueryProcessingException 
-     * @since 1.4
+     * @since 1.5
      */
-    public LocalSearchResultProvider(IQueryBackend backend, Logger logger, final IQueryRuntimeContext runtimeContext,
-            IQueryCacheContext cacheContext, IQueryBackendHintProvider hintProvider, final PQuery query,
+    public LocalSearchResultProvider(LocalSearchBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
+            IQueryResultProviderAccess resultProviderAccess, IQueryBackendHintProvider hintProvider, PQuery query,
             IPlanProvider planProvider, QueryEvaluationHint userHints) throws QueryProcessingException {
         this.backend = backend;
-        this.cacheContext = cacheContext;
+        this.resultProviderAccess = resultProviderAccess;
         this.hintProvider = hintProvider;
+        // XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
+        engine = (AdvancedViatraQueryEngine) hintProvider;
         this.query = query;
 
         this.planProvider = planProvider;
         this.userHints = userHints;
+        this.runtimeContext = runtimeContext;
         
-        // Request statistic indexing
+    }
+    
+    /**
+     * Prepare this result provider. This phase is separated from the constructor to allow the backend to cache its instance before
+     * requesting preparation for its dependencies.
+     * @since 1.5
+     */
+    public void prepare() throws QueryProcessingException{
         try {
             runtimeContext.coalesceTraversals(new Callable<Void>() {
 
@@ -217,12 +228,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters)
             throws ViatraQueryException, QueryProcessingException {
-        // XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
-        ViatraQueryEngine engine = (ViatraQueryEngine) hintProvider;
-
-        final ISearchContext searchContext = new ISearchContext.SearchContext(engine.getBaseIndex());
-
-        Set<IInputKey> iteratedKeys = Collections.emptySet();
+        final ISearchContext searchContext = new ISearchContext.SearchContext(engine.getBaseIndex(), resultProviderAccess, userHints);
 
         final Set<PParameter> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.length; i++) {
@@ -232,26 +238,19 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         }
 
         final MatcherReference reference = new MatcherReference(query, adornment, userHints);
-        Set<MatcherReference> dependencies = Sets.newHashSet(reference);
-        Set<MatcherReference> processedDependencies = Sets.newHashSet();
-        Set<MatcherReference> todo = Sets.difference(dependencies, processedDependencies);
-
-        while (!todo.isEmpty()) {
-            final MatcherReference dependency = todo.iterator().next();
-            IPlanDescriptor plan = createPlan(dependency, planProvider, searchContext);
-            if (overrideDefaultHints(dependency.getQuery()).isUseBase()){
-                iteratedKeys = Sets.union(iteratedKeys, plan.getIteratedKeys());
+        
+        IPlanDescriptor plan = createPlan(reference, planProvider);
+        if (overrideDefaultHints(reference.getQuery()).isUseBase()){
+            try {
+                indexKeys(plan.getIteratedKeys());
+            } catch (InvocationTargetException e) {
+                throw new ViatraQueryException("Could not index keys","Could not index keys", e);
             }
-            collectDependencies(plan.getPlan(), dependencies);
-            processedDependencies.add(dependency);
         }
-
-        try {
-            indexKeys(iteratedKeys);
-        } catch (InvocationTargetException e) {
-            throw new ViatraQueryException("Could not index keys","Could not index keys", e);
-        }
-        return searchContext.getMatcher(reference);
+        
+        LocalSearchMatcher matcher = createMatcher(plan, searchContext);
+        matcher.addAdapters(backend.getAdapters());
+        return matcher;
     }
     
     private void indexKeys(final Iterable<IInputKey> keys) throws InvocationTargetException{

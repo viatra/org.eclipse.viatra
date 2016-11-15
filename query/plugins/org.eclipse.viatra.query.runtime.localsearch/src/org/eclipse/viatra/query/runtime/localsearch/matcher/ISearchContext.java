@@ -10,21 +10,28 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.matcher;
 
-import java.util.Map;
+import java.util.Collections;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.runtime.api.scope.IBaseIndex;
-import org.eclipse.viatra.query.runtime.base.api.ViatraBaseFactory;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
-import org.eclipse.viatra.query.runtime.base.exception.ViatraBaseException;
 import org.eclipse.viatra.query.runtime.emf.EMFBaseIndexWrapper;
-
-import com.google.common.collect.Maps;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.IAdornmentProvider;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * The {@link ISearchContext} interface allows search operations to reuse platform services such as the indexer.
@@ -42,43 +49,32 @@ public interface ISearchContext{
      * @param features
      */
     void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features);
-
-    /**
-     * Temporary load function for storing local search matchers
-     * @param matcher
-     */
-    void loadMatcher(MatcherReference reference, LocalSearchMatcher matcher);
     
     /**
      * Returns a matcher for a selected query specification.
      * 
-     * TODO should return a generic concept, based on the current ViatraQueryEngine
      * @param reference
+     * @throws QueryProcessingException 
+     * @since 1.5
      */
-    LocalSearchMatcher getMatcher(MatcherReference reference);
+    IQueryResultProvider getMatcher(MatcherReference reference) throws LocalSearchException;
     
     public class SearchContext implements ISearchContext {
 
         final NavigationHelper navigationHelper;
+        final IQueryResultProviderAccess resultProviderAccess;
+        final QueryEvaluationHint overrideHints;
         
         final Logger logger = Logger.getLogger(getClass());
         
-        Map<MatcherReference, LocalSearchMatcher> knownMatchers = Maps.newHashMap();
-        
-        public SearchContext(IBaseIndex baseIndex) {
+        /**
+         * @since 1.5
+         */
+        public SearchContext(IBaseIndex baseIndex, IQueryResultProviderAccess resultProviderAccess, QueryEvaluationHint overrideHints) throws ViatraQueryException {
             //XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
             this.navigationHelper = ((EMFBaseIndexWrapper)baseIndex).getNavigationHelper();
-        }
-        
-        public SearchContext(ResourceSet set, Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) throws ViatraBaseException {
-            navigationHelper = ViatraBaseFactory.getInstance().createNavigationHelper(set, false, logger);
-            navigationHelper.registerObservedTypes(classes, dataTypes, features);
-        }
-        
-        public SearchContext(IBaseIndex baseIndex, Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
-            //XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
-            this.navigationHelper = ((EMFBaseIndexWrapper)baseIndex).getNavigationHelper();
-            this.navigationHelper.registerObservedTypes(classes, dataTypes, features);
+            this.resultProviderAccess = resultProviderAccess;
+            this.overrideHints = overrideHints;
         }
 
         public void registerObservedTypes(Set<EClass> classes, Set<EDataType> dataTypes, Set<EStructuralFeature> features) {
@@ -86,7 +82,7 @@ public interface ISearchContext{
                 // In wildcard mode, everything is registered (+ register throws an exception)
                 return;
             }
-            this.navigationHelper.registerObservedTypes(classes, dataTypes, features);
+            this.navigationHelper.registerObservedTypes(classes, dataTypes, features, IndexingLevel.FULL);
         }
         
         @Override
@@ -94,19 +90,34 @@ public interface ISearchContext{
             return navigationHelper;
         }
 
+        /**
+         * @throws QueryProcessingException 
+         * @since 1.5
+         */
         @Override
-        public void loadMatcher(MatcherReference reference, LocalSearchMatcher matcher) {
-            knownMatchers.put(reference, matcher);
-            
-        }
-
-        @Override
-        public LocalSearchMatcher getMatcher(MatcherReference reference) {
-            if (!knownMatchers.containsKey(reference)) {
-                //TODO a generic local search matcher could be initialized here
-                throw new UnsupportedOperationException(String.format("No matcher for query %s initialized.", reference.getQuery().getFullyQualifiedName()));
+        public IQueryResultProvider getMatcher(final MatcherReference reference) throws LocalSearchException {
+            // Inject adornment for referenced pattern
+            IAdornmentProvider adornmentProvider = new IAdornmentProvider() {
+                
+                @Override
+                public Iterable<Set<PParameter>> getAdornments(PQuery query) {
+                    if (query.equals(reference.query)){
+                        return Collections.singleton(reference.adornment);
+                    }
+                    return Collections.emptySet();
+                }
+            };
+            @SuppressWarnings("rawtypes")
+            QueryEvaluationHint hints = new QueryEvaluationHint(Collections.<QueryHintOption, Object>singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
+            if (overrideHints != null){
+                hints = overrideHints.overrideBy(hints);
             }
-            return knownMatchers.get(reference);
+                    
+            try {
+                return resultProviderAccess.getResultProvider(reference.getQuery(), overrideHints);
+            } catch (QueryProcessingException e) {
+                throw new LocalSearchException("Could not access referenced query: "+reference, e);
+            }
         }
         
     }

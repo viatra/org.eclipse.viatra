@@ -44,7 +44,7 @@ public class CheckPositivePatternCall extends AbstractPositivePatternCallOperati
     }
     
     private boolean check(MatchingFrame frame) throws LocalSearchException {
-        return getCalledMatcher().hasMatch(mapFrame(frame));
+        return getCalledMatcher().getOneArbitraryMatch(mapFrame(frame)) != null;
     }
 
     public CheckPositivePatternCall(PQuery calledQuery, Map<Integer, PParameter> frameMapping) {

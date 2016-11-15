@@ -22,7 +22,6 @@ import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdaptable;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
-import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -109,6 +108,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 				}
 			});
 		}
+        
 		runningMatchers.push(lsMatcher);
 	}
 
@@ -218,13 +218,6 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
         }
 		viewModel.stepInto();
 
-		LocalSearchMatcher matcher = null;
-		matcher = getMatcherIfExists(planExecutor, frame);
-		if (matcher != null) {
-			List<SearchOperationViewerNode> viewNodeList = createOperationsListFromExecutor(matcher.getPlan().get(0));
-			viewModel.insertForCurrent(viewNodeList);
-		}
-
 		checkForBreakPoint();
 	}
 
@@ -283,22 +276,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		
 		return nodes;
 	}
-
-	private LocalSearchMatcher getMatcherIfExists(SearchPlanExecutor planExecutor, MatchingFrame frame) {
-
-		int currentOperationIndex = planExecutor.getCurrentOperation();
-		if (currentOperationIndex <= 0 || currentOperationIndex >= planExecutor.getSearchPlan().getOperations().size()) {
-			return null;
-		}
-		ISearchOperation currentOperation = planExecutor.getSearchPlan().getOperations().get(currentOperationIndex);
-
-		LocalSearchMatcher calledMatcher = null;
-		if (currentOperation instanceof IMatcherBasedOperation) {
-			calledMatcher = ((IMatcherBasedOperation) currentOperation).getAndPrepareCalledMatcher(frame,planExecutor.getContext());
-		}
-		return calledMatcher;
-	}
-
+	
 	private String getSimpleQueryName(PQuery query) {
 		String[] stringTokens = query.getFullyQualifiedName().split("\\.");
 		String queryName = stringTokens[stringTokens.length - 1];

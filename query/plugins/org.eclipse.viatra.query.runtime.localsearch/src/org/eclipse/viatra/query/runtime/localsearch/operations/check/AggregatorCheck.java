@@ -23,6 +23,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
@@ -42,14 +43,17 @@ import com.google.common.collect.Sets;
 public class AggregatorCheck extends CheckOperation implements IMatcherBasedOperation{
 
     private PQuery calledQuery;
-    private LocalSearchMatcher matcher;
+    private IQueryResultProvider matcher;
     Map<Integer, PParameter> parameterMapping;
     Map<Integer, Integer> frameMapping;
     private int position;
     private final AggregatorConstraint aggregator;
     
+	/**
+     * @since 1.5
+     */
 	@Override
-	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
+	public IQueryResultProvider getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
 		Set<PParameter> adornment = Sets.newHashSet();
 		for (Entry<Integer, PParameter> mapping : parameterMapping.entrySet()) {
 		    Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
@@ -63,8 +67,11 @@ public class AggregatorCheck extends CheckOperation implements IMatcherBasedOper
         return matcher;
 	}
 
+	/**
+     * @since 1.5
+     */
 	@Override
-	public LocalSearchMatcher getCalledMatcher(){
+	public IQueryResultProvider getCalledMatcher(){
 		return matcher;
 	}
     
@@ -89,17 +96,15 @@ public class AggregatorCheck extends CheckOperation implements IMatcherBasedOper
 
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
-        Object[] parameterValues = new Object[matcher.getParameterCount()];
+        Object[] parameterValues = new Object[calledQuery.getParameters().size()];
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             parameterValues[entry.getValue()] = frame.getValue(entry.getKey());
         }
-        mappedFrame.setParameterValues(parameterValues);
-        Object result = doAggregate(aggregator.getAggregator().getOperator(), mappedFrame);
+        Object result = doAggregate(aggregator.getAggregator().getOperator(), parameterValues);
         return result == null ? false : Objects.equals(frame.getValue(position), result);
     }
     
-    private <Domain, Accumulator, AggregateResult> AggregateResult doAggregate(IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, MatchingFrame initialFrame) throws LocalSearchException{
+    private <Domain, Accumulator, AggregateResult> AggregateResult doAggregate(IMultisetAggregationOperator<Domain, Accumulator, AggregateResult> operator, Object[] initialFrame) throws LocalSearchException{
         Accumulator accumulator = operator.createNeutral();
         for(Tuple match : matcher.getAllMatches(initialFrame)){
             @SuppressWarnings("unchecked")

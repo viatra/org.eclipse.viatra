@@ -20,6 +20,8 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -41,7 +43,7 @@ public abstract class AbstractPositivePatternCallOperation implements ISearchOpe
     private final PQuery calledQuery;
     private final Map<Integer, PParameter> parameterMapping;
     private final Map<Integer, Integer> frameMapping;
-    LocalSearchMatcher matcher;
+    IQueryResultProvider matcher;
     Set<PParameter> adornment;
     Set<Integer> filledVariables;
     
@@ -52,14 +54,15 @@ public abstract class AbstractPositivePatternCallOperation implements ISearchOpe
         frameMapping = CallOperationHelper.calculateFrameMapping(calledQuery, parameterMapping);
     }
     
-    protected MatchingFrame mapFrame(MatchingFrame frameInCaller){
-        final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
-        Object[] parameterValues = new Object[matcher.getParameterCount()];
+    /**
+     * @since 1.5
+     */
+    protected Object[] mapFrame(MatchingFrame frameInCaller){
+        Object[] parameterValues = new Object[calledQuery.getParameters().size()];
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             parameterValues[entry.getValue()] = frameInCaller.getValue(entry.getKey());
         }
-        mappedFrame.setParameterValues(parameterValues);
-        return mappedFrame;
+        return parameterValues;
     }
     
     protected boolean fillInResult(MatchingFrame frame, Tuple tuple){
@@ -93,8 +96,12 @@ public abstract class AbstractPositivePatternCallOperation implements ISearchOpe
         }
     }
     
+    /**
+     * @throws LocalSearchException 
+     * @since 1.5
+     */
     @Override
-    public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
+    public IQueryResultProvider getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         adornment = Sets.newHashSet();
         for (Entry<Integer, PParameter> mapping : parameterMapping.entrySet()) {
             Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
@@ -108,8 +115,11 @@ public abstract class AbstractPositivePatternCallOperation implements ISearchOpe
         return matcher;
     }
 
+    /**
+     * @since 1.5
+     */
     @Override
-    public LocalSearchMatcher getCalledMatcher(){
+    public IQueryResultProvider getCalledMatcher(){
         return matcher;
     }
     

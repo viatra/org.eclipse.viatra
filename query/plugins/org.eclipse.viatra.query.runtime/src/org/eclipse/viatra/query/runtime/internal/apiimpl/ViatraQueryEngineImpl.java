@@ -50,6 +50,7 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryCacheContext;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
@@ -75,7 +76,7 @@ import com.google.common.collect.Multimap;
  * 
  * @author Bergmann Gábor
  */
-public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements IQueryBackendHintProvider, IQueryCacheContext {
+public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine implements IQueryBackendHintProvider, IQueryCacheContext, IQueryResultProviderAccess{
     
     /**
      * 
@@ -293,6 +294,11 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
                     
                     @Override
                     public IQueryBackendHintProvider getHintProvider() {
+                        return ViatraQueryEngineImpl.this;
+                    }
+                    
+                    @Override
+                    public IQueryResultProviderAccess getResultProviderAccess() {
                         return ViatraQueryEngineImpl.this;
                     }
                 });
@@ -518,10 +524,20 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
      * to make sure engine and query specific hints are correctly applied.
      */
     private IQueryResultProvider getResultProviderInternal(IQuerySpecification<?> query, QueryEvaluationHint hint) throws ViatraQueryException, QueryProcessingException{
+        return getResultProviderInternal(query.getInternalQueryRepresentation(), hint);
+    }
+    
+    /**
+     * This method returns the result provider exactly as described by the passed hint. 
+     * Query and hint cannot be null!
+     * Use {@link #getQueryEvaluationHint(IQuerySpecification, QueryEvaluationHint)} before passing a hint to this method
+     * to make sure engine and query specific hints are correctly applied.
+     */
+    private IQueryResultProvider getResultProviderInternal(PQuery query, QueryEvaluationHint hint) throws ViatraQueryException, QueryProcessingException{
         Preconditions.checkArgument(query != null, "Query cannot be null!");
         Preconditions.checkArgument(hint != null, "Hint cannot be null!");
         final IQueryBackend backend = getQueryBackend(hint.getQueryBackendFactory());
-        return backend.getResultProvider(query.getInternalQueryRepresentation(), hint);
+        return backend.getResultProvider(query, hint);
     }
 	
 	/**
@@ -646,6 +662,20 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     @Override
     public IQueryResultProvider getResultProviderOfMatcher(ViatraQueryMatcher<? extends IPatternMatch> matcher) {
         return ((QueryResultWrapper)matcher).backend;
+    }
+    
+    @Override
+    public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint overrideHints) throws QueryProcessingException {
+        try {
+            return getResultProviderInternal(query, getQueryEvaluationHint(query).overrideBy(overrideHints));
+        } catch (ViatraQueryException e) {
+            getLogger().error("Error while accessing query evaluator backend", e);
+            throw new QueryProcessingException(
+                    "Error while attempting to consult query evaluator backend for evaluating query {1}", 
+                    new String[] {query.getFullyQualifiedName()}, 
+                    "Error while accessing query evaluator backends", 
+                    query, e);
+        }
     }
     
     // /**

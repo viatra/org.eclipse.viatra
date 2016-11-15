@@ -22,6 +22,7 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -37,13 +38,16 @@ import com.google.common.collect.Sets;
 public class CountCheck extends CheckOperation implements IMatcherBasedOperation{
 
     private PQuery calledQuery;
-    private LocalSearchMatcher matcher;
+    private IQueryResultProvider matcher;
     Map<Integer, PParameter> parameterMapping;
     Map<Integer, Integer> frameMapping;
     private int position;
     
+	/**
+     * @since 1.5
+     */
 	@Override
-	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
+	public IQueryResultProvider getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
 		Set<PParameter> adornment = Sets.newHashSet();
 		for (Entry<Integer, PParameter> mapping : parameterMapping.entrySet()) {
 		    Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
@@ -57,8 +61,11 @@ public class CountCheck extends CheckOperation implements IMatcherBasedOperation
         return matcher;
 	}
 
+	/**
+     * @since 1.5
+     */
 	@Override
-	public LocalSearchMatcher getCalledMatcher(){
+	public IQueryResultProvider getCalledMatcher(){
 		return matcher;
 	}
     
@@ -82,13 +89,11 @@ public class CountCheck extends CheckOperation implements IMatcherBasedOperation
 
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
-        Object[] parameterValues = new Object[matcher.getParameterCount()];
+        Object[] parameterValues = new Object[calledQuery.getParameters().size()];
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             parameterValues[entry.getValue()] = frame.getValue(entry.getKey());
         }
-        mappedFrame.setParameterValues(parameterValues);
-        int count = matcher.countMatches(mappedFrame);
+        int count = matcher.countMatches(parameterValues);
         return ((Integer)frame.getValue(position)) == count;
     }
 

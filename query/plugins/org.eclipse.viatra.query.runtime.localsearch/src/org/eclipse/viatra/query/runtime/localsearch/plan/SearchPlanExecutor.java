@@ -24,8 +24,6 @@ import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchExcept
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdaptable;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ILocalSearchAdapter;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
-import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 
@@ -93,7 +91,6 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
             for (ILocalSearchAdapter adapter : adapters) {
             	adapter.executorInitializing(this,frame);
             }
-            addAdaptersWhenNeeded(operation,frame);
 			operation.onInitialize(frame, context);
         } else if (currentOperation == operations.size()) {
             currentOperation--;
@@ -122,14 +119,12 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
                 operationSelected(frame);
                 if (currentOperation <= upperBound) {
                     ISearchOperation operation = operations.get(currentOperation);
-                    addAdaptersWhenNeeded(operation,frame);
 					operation.onInitialize(frame, context);
                 }
             } else {
                 operationExecuted(frame);
                 ISearchOperation operation = operations.get(currentOperation);
 				operation.onBacktrack(frame, context);
-                removeAdaptersWhenNeeded(operation);
 				currentOperation--;
 				operationSelected(frame);
             }
@@ -152,30 +147,6 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     		Logger.getRootLogger().debug("[" + i + "]\t" + operations.get(i).toString());
     	}
     }
-
-    private void addAdaptersWhenNeeded(ISearchOperation currentSearchOperation, MatchingFrame frame) {
-		LocalSearchMatcher calledMatcher = null;
-		if (currentSearchOperation instanceof IMatcherBasedOperation) {
-			calledMatcher = ((IMatcherBasedOperation) currentSearchOperation).getAndPrepareCalledMatcher(frame, context);
-		}
-		if(calledMatcher != null){
-			for (ILocalSearchAdapter adapter : adapters) {
-				calledMatcher.addAdapter(adapter);
-			}
-		}
-	}
-
-	private void removeAdaptersWhenNeeded(ISearchOperation currentSearchOperation) {
-		LocalSearchMatcher calledMatcher = null;
-		if(currentSearchOperation instanceof IMatcherBasedOperation){
-			calledMatcher = ((IMatcherBasedOperation) currentSearchOperation).getCalledMatcher();
-		}
-		if(calledMatcher != null){
-			for (ILocalSearchAdapter adapter : adapters) {
-				calledMatcher.removeAdapter(adapter);
-			}
-		}
-	}
     
     private void operationExecuted(MatchingFrame frame) {
         for (ILocalSearchAdapter adapter : adapters) {

@@ -28,7 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
  */
 public class ExtendPositivePatternCall extends AbstractPositivePatternCallOperation {
 
-    private Iterator<Tuple> matches = null;
+    private Iterator<? extends Tuple> matches = null;
     
     public ExtendPositivePatternCall(PQuery calledQuery, Map<Integer, PParameter> frameMapping) {
        super(calledQuery, frameMapping);

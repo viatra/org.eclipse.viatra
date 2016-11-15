@@ -18,10 +18,10 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -37,12 +37,15 @@ import com.google.common.collect.Sets;
 public class NACOperation extends CheckOperation implements IMatcherBasedOperation {
 
     PQuery calledQuery;
-    LocalSearchMatcher matcher;
+    IQueryResultProvider matcher;
     final Map<Integer, Integer> frameMapping;
     final Map<Integer, PParameter> parameterMapping;
     
+	/**
+     * @since 1.5
+     */
 	@Override
-	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
+	public IQueryResultProvider getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
 		Set<PParameter> adornment = Sets.newHashSet();
 		for (Entry<Integer, PParameter> mapping : parameterMapping.entrySet()) {
 		    Preconditions.checkNotNull(mapping.getKey(), "Mapping frame must not contain null keys");
@@ -56,8 +59,11 @@ public class NACOperation extends CheckOperation implements IMatcherBasedOperati
         return matcher;
 	}
 
+	/**
+     * @since 1.5
+     */
 	@Override
-	public LocalSearchMatcher getCalledMatcher() {
+	public IQueryResultProvider getCalledMatcher() {
 		return matcher;
 	}
 
@@ -81,13 +87,11 @@ public class NACOperation extends CheckOperation implements IMatcherBasedOperati
 
     @Override
     protected boolean check(MatchingFrame frame) throws LocalSearchException {
-        final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
-        Object[] parameterValues = new Object[matcher.getParameterCount()];
+        Object[] parameterValues = new Object[calledQuery.getParameters().size()];
         for (Entry<Integer, Integer> entry : frameMapping.entrySet()) {
             parameterValues[entry.getValue()] = frame.getValue(entry.getKey());
         }
-        mappedFrame.setParameterValues(parameterValues);
-        return !matcher.hasMatch(mappedFrame);
+        return matcher.getOneArbitraryMatch(parameterValues) == null;
     }
     
     

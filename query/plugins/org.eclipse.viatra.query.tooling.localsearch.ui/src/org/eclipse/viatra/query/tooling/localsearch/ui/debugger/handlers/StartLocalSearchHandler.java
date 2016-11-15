@@ -24,6 +24,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
@@ -59,7 +60,15 @@ public class StartLocalSearchHandler extends AbstractHandler {
                     
                     final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend
                             .getResultProvider(specification.getInternalQueryRepresentation());
-                    
+                    final LocalSearchBackend localSearchBackend = (LocalSearchBackend)lsBackend;
+                    final LocalSearchDebugger debugger = new LocalSearchDebugger(){
+                        @Override
+                        public void dispose() {
+                            localSearchBackend.removeAdapter(this);
+                            super.dispose();
+                        }
+                    };
+                    localSearchBackend.addAdapter(debugger);
                     
                     // Create and start the matcher thread
                     Runnable planExecutorRunnable = new Runnable() {
@@ -67,8 +76,6 @@ public class StartLocalSearchHandler extends AbstractHandler {
                         public void run() {
                             try {
                                 final LocalSearchMatcher localSearchMatcher = lsResultProvider.newLocalSearchMatcher(adornment);
-                                LocalSearchDebugger debugger = new LocalSearchDebugger();
-                                localSearchMatcher.addAdapter(debugger);
                                 debugger.setStartHandlerCalled(true);
                                 
                                 // Initiate the matching

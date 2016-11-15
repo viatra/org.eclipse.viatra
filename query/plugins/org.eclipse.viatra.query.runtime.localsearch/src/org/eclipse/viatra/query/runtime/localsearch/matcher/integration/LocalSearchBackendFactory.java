@@ -30,11 +30,7 @@ public enum LocalSearchBackendFactory implements IQueryBackendFactory {
      */
     @Override
     public IQueryBackend create(IQueryBackendContext context) {
-        return new LocalSearchBackend(
-        		context.getLogger(), 
-        		context.getRuntimeContext(),
-        		context.getQueryCacheContext(),
-        		context.getHintProvider());
+        return new LocalSearchBackend(context);
     }
     
     @Override

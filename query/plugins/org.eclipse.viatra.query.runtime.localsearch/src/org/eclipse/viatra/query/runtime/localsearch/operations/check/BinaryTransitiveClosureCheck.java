@@ -19,6 +19,8 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -37,19 +39,25 @@ import com.google.common.collect.Sets;
 public class BinaryTransitiveClosureCheck extends CheckOperation implements IMatcherBasedOperation {
 
     private PQuery calledQuery;
-    private LocalSearchMatcher matcher;
+    private IQueryResultProvider matcher;
     private final int sourcePosition;
     private final int targetPosition;
     private final ImmutableSet<PParameter> adornment;
 
+    /**
+     * @since 1.5
+     */
     @Override
-	public LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) {
+	public IQueryResultProvider getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
         return matcher;
 	}
 
+    /**
+     * @since 1.5
+     */
     @Override
-    public LocalSearchMatcher getCalledMatcher(){
+    public IQueryResultProvider getCalledMatcher(){
     	return matcher;
     }
     
@@ -89,8 +97,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IMat
             Object currentValue = sourcesToEvaluate.iterator().next();
             sourcesToEvaluate.remove(currentValue);
             sourceEvaluated.add(currentValue);
-            final MatchingFrame mappedFrame = matcher.editableMatchingFrame();
-            mappedFrame.setParameterValues(new Object[]{currentValue, null});
+            final Object[] mappedFrame = new Object[]{currentValue, null};
             for (Tuple match : matcher.getAllMatches(mappedFrame)) {
                 Object foundTarget = match.get(1);
                 if (targetValue.equals(foundTarget)) {

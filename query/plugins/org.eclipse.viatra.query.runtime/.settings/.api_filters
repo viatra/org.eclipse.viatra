@@ -29,5 +29,11 @@
                 <message_argument value="IQueryBackendContext"/>
             </message_arguments>
         </filter>
+        <filter comment="It is the ViatraQueryEngineImpl which should implement IQueryResultProviderAccess" id="574619656">
+            <message_arguments>
+                <message_argument value="IQueryResultProviderAccess"/>
+                <message_argument value="ViatraQueryEngineImpl"/>
+            </message_arguments>
+        </filter>
     </resource>
 </component>

@@ -11,14 +11,17 @@
 package org.eclipse.viatra.query.runtime.localsearch.operations;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
+import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * A common interface for local search operations that execute by calling an additional matcher
  * 
  * @author Marton Bur
- *
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMatcherBasedOperation {
 
@@ -28,14 +31,17 @@ public interface IMatcherBasedOperation {
 	 * @param frame the current matching frame
 	 * @param context the search context
 	 * @return the called local search matcher
+	 * @throws LocalSearchException 
+	 * @since 1.5
 	 */
-	LocalSearchMatcher getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context);
+	IQueryResultProvider getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) throws LocalSearchException;
 	
 	/**
 	 * Gets the called matcher associated with the operation
 	 * 
 	 * @return the called local search matcher or null if no matcher assigned
+	 * @since 1.5
 	 */
-	LocalSearchMatcher getCalledMatcher();
+	IQueryResultProvider getCalledMatcher();
 	
 }
