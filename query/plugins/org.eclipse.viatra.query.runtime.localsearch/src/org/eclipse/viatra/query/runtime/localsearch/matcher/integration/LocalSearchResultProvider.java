@@ -68,6 +68,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     private final QueryEvaluationHint userHints;
 
     private final IPlanProvider planProvider;
+    private final ISearchContext searchContext;
 
     private IQueryRuntimeContext getRuntimeContext(){
         return ((LocalSearchBackend)backend).getRuntimeContext();
@@ -168,7 +169,11 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         this.planProvider = planProvider;
         this.userHints = userHints;
         this.runtimeContext = runtimeContext;
-        
+        try {
+            searchContext = new ISearchContext.SearchContext(engine.getBaseIndex(), resultProviderAccess, userHints);
+        } catch (ViatraQueryException e) {
+            throw new QueryProcessingException("Could not create search context for {1}", new String[]{query.getFullyQualifiedName()}, e.getMessage(), query, e);
+        }
     }
     
     /**
@@ -207,12 +212,24 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         Iterator<MatcherReference> iterator = computeExpectedAdornments(query, userHints);
         while(iterator.hasNext()){
             IPlanDescriptor plan = planProvider.getPlan((LocalSearchBackend) backend, overrideDefaultHints(query), iterator.next());
+            // Index keys
             try {
                 indexKeys(plan.getIteratedKeys());
             } catch (InvocationTargetException e) {
                 throw new QueryProcessingException(e.getMessage(), null, e.getMessage(), query, e);
             }
+            //Prepare dependencies
+            for(SearchPlanForBody body: plan.getPlan()){
+                for(MatcherReference dependency : body.getDependencies()){
+                    try {
+                        searchContext.getMatcher(dependency);
+                    } catch (LocalSearchException e) {
+                        throw new QueryProcessingException("Could not prepare dependency {1}", new String[]{dependency.toString()}, e.getMessage(), query, e);
+                    }
+                }
+            }
         }
+
     }
 
     private LocalSearchMatcher initializeMatcher(Object[] parameters) {
@@ -228,7 +245,6 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
 
     public LocalSearchMatcher newLocalSearchMatcher(Object[] parameters)
             throws ViatraQueryException, QueryProcessingException {
-        final ISearchContext searchContext = new ISearchContext.SearchContext(engine.getBaseIndex(), resultProviderAccess, userHints);
 
         final Set<PParameter> adornment = Sets.newHashSet();
         for (int i = 0; i < parameters.length; i++) {
