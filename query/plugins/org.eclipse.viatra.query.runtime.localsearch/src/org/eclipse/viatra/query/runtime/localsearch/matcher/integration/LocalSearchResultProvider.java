@@ -44,8 +44,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueries;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -142,16 +140,12 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         this(backend, logger, runtimeContext, cacheContext, hintProvider, query, planProvider, null);
     }
 
-    private Iterator<MatcherReference> computeAllPossibleAdornments(final PQuery query, final QueryEvaluationHint hints){
-        final Set<PParameter> ins = Sets.filter(Sets.newHashSet(query.getParameters()), PQueries.parameterDirectionPredicate(PParameterDirection.IN));
-        Set<PParameter> inouts = Sets.filter(Sets.newHashSet(query.getParameters()), PQueries.parameterDirectionPredicate(PParameterDirection.INOUT));
-        Set<Set<PParameter>> possibleInouts = Sets.powerSet(inouts);
-        return Iterators.transform(possibleInouts.iterator(), new Function<Set<PParameter>, MatcherReference>() {
+    private Iterator<MatcherReference> computeExpectedAdornments(final PQuery query, final QueryEvaluationHint hints){
+        return Iterators.transform(LocalSearchHints.getDefaultOverriddenBy(hints).getAdornmentProvider().getAdornments(query).iterator(), new Function<Set<PParameter>, MatcherReference>() {
 
             @Override
             public MatcherReference apply(Set<PParameter> input) {
-                Set<PParameter> adornment = Sets.union(ins, input);
-                return new MatcherReference(query, adornment, hints);
+                return new MatcherReference(query, input, hints);
             }
         });
     }
@@ -183,7 +177,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
                         @Override
                         public void run() {
                             try {
-                                preparePlansForPossibleAdornments();
+                                preparePlansForExpectedAdornments();
                             } catch (QueryProcessingException e) {
                                 throw new RuntimeException(e);
                             }
@@ -197,9 +191,9 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         }
     }
     
-    private void preparePlansForPossibleAdornments() throws QueryProcessingException{
+    private void preparePlansForExpectedAdornments() throws QueryProcessingException{
      // Plan for possible adornments
-        Iterator<MatcherReference> iterator = computeAllPossibleAdornments(query, userHints);
+        Iterator<MatcherReference> iterator = computeExpectedAdornments(query, userHints);
         while(iterator.hasNext()){
             IPlanDescriptor plan = planProvider.getPlan((LocalSearchBackend) backend, overrideDefaultHints(query), iterator.next());
             try {

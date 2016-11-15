@@ -42,6 +42,13 @@ public class LocalSearchHintOptions {
     public static final QueryHintOption<IFlattenCallPredicate> FLATTEN_CALL_PREDICATE = 
             hintOption("FLATTEN_CALL_PREDICATE", (IFlattenCallPredicate) new NeverFlattenCallPredicate());
     
+    /**
+     * A provider of expected adornments {@link IAdornmentProvider}
+     * @since 1.5
+     */
+    public static final QueryHintOption<IAdornmentProvider> ADORNMENT_PROVIDER = 
+            hintOption("ADORNMENT_PROVIDER", (IAdornmentProvider)new AllValidAdornments());
+    
     // internal helper for conciseness
     private static <T> QueryHintOption<T> hintOption(String hintKeyLocalName, T defaultValue) {
         return new QueryHintOption<T>(LocalSearchHintOptions.class, hintKeyLocalName, defaultValue);

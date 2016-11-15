@@ -14,6 +14,7 @@ import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.L
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.PLANNER_COST_FUNCTION;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.PLANNER_TABLE_ROW_COUNT;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.USE_BASE_INDEX;
+import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.ADORNMENT_PROVIDER;
 
 import java.util.Map;
 
@@ -47,6 +48,8 @@ public final class LocalSearchHints implements IMatcherCapability {
     
     private IFlattenCallPredicate flattenCallPredicate = null;
     
+    private IAdornmentProvider adornmentProvider = null;
+    
     private LocalSearchHints() {}
 
     /**
@@ -65,6 +68,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.rowCount = PLANNER_TABLE_ROW_COUNT.getDefaultValue();
         result.costFunction = PLANNER_COST_FUNCTION.getDefaultValue();
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getDefaultValue();
+        result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
         return result;
     }
     
@@ -78,6 +82,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.rowCount = 4;
         result.costFunction = new IndexerBasedConstraintCostFunction();
         result.flattenCallPredicate = new DefaultFlattenCallPredicate();
+        result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
         return result;
     }
     
@@ -90,6 +95,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.rowCount = 4;
         result.costFunction = new VariableBindingBasedCostFunction();
         result.flattenCallPredicate = new NeverFlattenCallPredicate();
+        result.adornmentProvider = ADORNMENT_PROVIDER.getDefaultValue();
         return result;
     }
     
@@ -100,6 +106,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.rowCount = PLANNER_TABLE_ROW_COUNT.getValueOrNull(hint);
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getValueOrNull(hint);
         result.costFunction = PLANNER_COST_FUNCTION.getValueOrNull(hint);
+        result.adornmentProvider = ADORNMENT_PROVIDER.getValueOrNull(hint);
         
         return result;
     }
@@ -118,6 +125,9 @@ public final class LocalSearchHints implements IMatcherCapability {
         }
         if (flattenCallPredicate != null){
             FLATTEN_CALL_PREDICATE.insertOverridingValue(map, flattenCallPredicate);
+        }
+        if (adornmentProvider != null){
+            ADORNMENT_PROVIDER.insertOverridingValue(map, adornmentProvider);
         }
         return new QueryEvaluationHint(map, LocalSearchBackendFactory.INSTANCE);
     }
@@ -144,6 +154,13 @@ public final class LocalSearchHints implements IMatcherCapability {
 
     public Integer getRowCount() {
         return rowCount;
+    }
+    
+    /**
+     * @since 1.5
+     */
+    public IAdornmentProvider getAdornmentProvider() {
+        return adornmentProvider;
     }
 
     /**
@@ -174,6 +191,14 @@ public final class LocalSearchHints implements IMatcherCapability {
         return this;
     }
     
+    /**
+     * @since 1.5
+     */
+    public LocalSearchHints setAdornmentProvider(IAdornmentProvider adornmentProvider) {
+        this.adornmentProvider = adornmentProvider;
+        return this;
+    }
+    
     public static LocalSearchHints customizeUseBase(boolean useBase){
         return new LocalSearchHints().setUseBase(useBase);
     }
@@ -193,6 +218,13 @@ public final class LocalSearchHints implements IMatcherCapability {
     public static LocalSearchHints customizeFlattenCallPredicate(IFlattenCallPredicate predicate){
         return new LocalSearchHints().setFlattenCallPredicate(predicate);
     }
+    
+    /**
+     * @since 1.5
+     */
+    public static LocalSearchHints customizeAdornmentProvider(IAdornmentProvider adornmentProvider){
+        return new LocalSearchHints().setAdornmentProvider(adornmentProvider);
+    }
 
     @Override
     public boolean canBeSubstitute(IMatcherCapability capability) {
@@ -204,7 +236,8 @@ public final class LocalSearchHints implements IMatcherCapability {
             return Objects.equal(other.useBase, useBase) && 
                     Objects.equal(other.costFunction, costFunction) &&
                     Objects.equal(other.flattenCallPredicate, flattenCallPredicate) &&
-                    Objects.equal(other.rowCount, rowCount);
+                    Objects.equal(other.rowCount, rowCount) &&
+                    Objects.equal(other.adornmentProvider, adornmentProvider);
         }
         /*
          * For any other cases (e.g. for Rete), we cannot assume
