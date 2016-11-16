@@ -15,17 +15,7 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IStopCondition;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
-public class ConstantParetoFrontStopCondition implements IStopCondition {
-
-    private int constantIterations;
-
-    /**
-     * 
-     * @param constantIterations
-     */
-    public ConstantParetoFrontStopCondition(int constantIterations) {
-        this.constantIterations = constantIterations;
-    }
+public class DummyStopCondition implements IStopCondition {
 
     @Override
     public void init(ThreadContext context) {
@@ -33,12 +23,7 @@ public class ConstantParetoFrontStopCondition implements IStopCondition {
 
     @Override
     public boolean checkStopCondition(Collection<TrajectoryFitness> survivedPopulation) {
-        for (TrajectoryFitness trajectory : survivedPopulation) {
-            if (trajectory.rank == 1 && trajectory.survive < constantIterations) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 
 }

@@ -11,9 +11,16 @@ package org.eclipse.viatra.dse.evolutionary.interfaces;
 
 import java.util.Collection;
 
+import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public interface IStopCondition {
+
+    /**
+     * Initializes the stop condition.
+     * @param context
+     */
+    void init(ThreadContext context);
 
     /**
      * Returns true if the exploration process has to stop.

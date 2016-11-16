@@ -11,10 +11,15 @@ package org.eclipse.viatra.dse.evolutionary.stopconditions;
 
 import java.util.Collection;
 
+import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IStopCondition;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public class ParetoFrontHasOnlyGoalSolutionsStopCondition implements IStopCondition {
+
+    @Override
+    public void init(ThreadContext context) {
+    }
 
     @Override
     public boolean checkStopCondition(Collection<TrajectoryFitness> survivedPopulation) {

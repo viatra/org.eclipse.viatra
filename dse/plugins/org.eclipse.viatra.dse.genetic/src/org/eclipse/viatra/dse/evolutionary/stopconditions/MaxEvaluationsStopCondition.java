@@ -12,33 +12,33 @@ package org.eclipse.viatra.dse.evolutionary.stopconditions;
 import java.util.Collection;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.evolutionary.EvolutionaryStrategy;
+import org.eclipse.viatra.dse.evolutionary.EvolutionaryStrategy.EvolutionaryStrategySharedObject;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IStopCondition;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
-public class ConstantParetoFrontStopCondition implements IStopCondition {
+public class MaxEvaluationsStopCondition implements IStopCondition {
 
-    private int constantIterations;
-
-    /**
-     * 
-     * @param constantIterations
-     */
-    public ConstantParetoFrontStopCondition(int constantIterations) {
-        this.constantIterations = constantIterations;
+    private int maxEvaluations;
+    private int evals = 0;
+    private EvolutionaryStrategy.EvolutionaryStrategySharedObject so;
+    
+    public MaxEvaluationsStopCondition(int maxEvaluations) {
+        this.maxEvaluations = maxEvaluations;
     }
-
+    
     @Override
     public void init(ThreadContext context) {
+        so = (EvolutionaryStrategySharedObject) context.getSharedObject();
     }
 
     @Override
     public boolean checkStopCondition(Collection<TrajectoryFitness> survivedPopulation) {
-        for (TrajectoryFitness trajectory : survivedPopulation) {
-            if (trajectory.rank == 1 && trajectory.survive < constantIterations) {
-                return false;
-            }
+        evals += so.childPopulationSize;
+        if (evals >= maxEvaluations) {
+            return true;
         }
-        return true;
+        return false;
     }
 
 }

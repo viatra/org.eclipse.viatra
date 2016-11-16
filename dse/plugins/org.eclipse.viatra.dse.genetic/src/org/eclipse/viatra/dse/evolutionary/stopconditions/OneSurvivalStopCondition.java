@@ -11,6 +11,7 @@ package org.eclipse.viatra.dse.evolutionary.stopconditions;
 
 import java.util.Collection;
 
+import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IStopCondition;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
@@ -24,6 +25,10 @@ public class OneSurvivalStopCondition implements IStopCondition {
      */
     public OneSurvivalStopCondition(int surviviedIterations) {
         this.surviviedIterations = surviviedIterations;
+    }
+
+    @Override
+    public void init(ThreadContext context) {
     }
 
     @Override

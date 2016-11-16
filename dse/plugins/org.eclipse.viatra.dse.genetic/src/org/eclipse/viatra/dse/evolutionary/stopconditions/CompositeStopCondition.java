@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IStopCondition;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
@@ -49,6 +50,13 @@ public class CompositeStopCondition implements IStopCondition {
     public CompositeStopCondition withCompositeType(CompositeType type) {
         this.type = type;
         return this;
+    }
+
+    @Override
+    public void init(ThreadContext context) {
+        for (IStopCondition stopCondition : stopConditions) {
+            stopCondition.init(context);
+        }
     }
 
     @Override

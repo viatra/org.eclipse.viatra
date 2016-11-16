@@ -112,6 +112,8 @@ public class EvolutionaryStrategy implements IStrategy {
             so.evaluationStrategy.init(context);
             localParentSelector = so.parentSelectionStrategy;
 
+            so.stopCondition.init(context);
+
             logger.info("Evolutionary exploration strategy is inited.");
         } else {
             so = (EvolutionaryStrategySharedObject) context.getSharedObject();
