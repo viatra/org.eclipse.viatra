@@ -10,36 +10,26 @@
 package org.eclipse.viatra.dse.evolutionary.mutations;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
-import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
-import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public class AddRandomTransitionMutation implements IMutation {
 
     @Override
-    public TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context) {
+    public boolean mutate(TrajectoryFitness parent, ThreadContext context) {
 
         context.executeTrajectoryWithoutStateCoding(parent.trajectory);
 
         boolean succesful = context.executeRandomActivationId();
         if (!succesful) {
             context.backtrackUntilRoot();
-            return null;
         }
 
-        Fitness calculateFitness = context.calculateFitness();
-        TrajectoryInfo trajectoryInfo = context.getTrajectoryInfo();
-        TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
-
-        context.backtrackUntilRoot();
-
-        return child;
+        return succesful;
     }
 
     @Override
     public IMutation createNew() {
-        return new AddRandomTransitionMutation();
+        return this;
     }
 }

@@ -17,11 +17,8 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.GeneticHelper;
-import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
-import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
@@ -35,21 +32,24 @@ public class ModifyTransitionByPriorityMutation implements IMutation {
     }
 
     @Override
-    public TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context) {
+    public boolean mutate(TrajectoryFitness parent, ThreadContext context) {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         Object[] trajectory = parent.trajectory;
 
         int trajectorySize = trajectory.length;
+        if (trajectorySize < 1) {
+            return false;
+        }
         int index = rnd.nextInt(trajectorySize);
 
         dsm.executeTrajectoryWithoutStateCoding(trajectory, index);
 
         Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
         int transitionsSize = transitions.size();
-        if (transitionsSize == 0) {
+        if (transitionsSize < 1) {
             dsm.undoUntilRoot();
-            return null;
+            return false;
         }
 
         int bestPriority = Integer.MIN_VALUE;
@@ -74,13 +74,7 @@ public class ModifyTransitionByPriorityMutation implements IMutation {
             GeneticHelper.tryFireRightTransition(dsm, trajectory[i]);
         }
 
-        Fitness calculateFitness = context.calculateFitness();
-        TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
-        TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
-
-        dsm.undoUntilRoot();
-
-        return child;
+        return true;
     }
 
     @Override

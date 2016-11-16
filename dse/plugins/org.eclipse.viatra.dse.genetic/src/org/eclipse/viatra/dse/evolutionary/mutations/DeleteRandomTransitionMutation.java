@@ -14,10 +14,7 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
-import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
-import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public class DeleteRandomTransitionMutation implements IMutation {
@@ -25,12 +22,16 @@ public class DeleteRandomTransitionMutation implements IMutation {
     private Random rnd = new Random();
 
     @Override
-    public TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context) {
+    public boolean mutate(TrajectoryFitness parent, ThreadContext context) {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
         Object[] trajectory = parent.trajectory;
 
         int trajectorySize = trajectory.length;
+        if (trajectorySize < 1) {
+            return false;
+        }
+        
         int index = rnd.nextInt(trajectorySize);
         
         dsm.executeTrajectoryWithoutStateCoding(trajectory, index);
@@ -39,13 +40,7 @@ public class DeleteRandomTransitionMutation implements IMutation {
         
         dsm.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd);
 
-        Fitness calculateFitness = context.calculateFitness();
-        TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
-        TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
-
-        dsm.undoUntilRoot();
-
-        return child;
+        return true;
     }
 
     @Override

@@ -25,6 +25,7 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategy;
 import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
+import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IEvaluationStrategy;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IEvolutionaryStrategyAdapter;
@@ -35,6 +36,7 @@ import org.eclipse.viatra.dse.evolutionary.interfaces.IParentSelectionStrategy;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IReproductionStrategy;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IStopCondition;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ISurvivalStrategy;
+import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 import com.google.common.util.concurrent.AtomicDouble;
@@ -232,8 +234,13 @@ public class EvolutionaryStrategy implements IStrategy {
                 int index = random.nextInt(mutations.size());
                 IMutation mutation = mutations.get(index);
                 TrajectoryFitness parent = localParentSelector.getNextParent();
-                TrajectoryFitness child = mutation.mutate(parent, context);
-                if (child != null) {
+                boolean succesful = mutation.mutate(parent, context);
+                if (succesful) {
+                    Fitness calculateFitness = context.calculateFitness();
+                    TrajectoryInfo trajectoryInfo = context.getTrajectoryInfo();
+                    TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
+                    context.backtrackUntilRoot();
+                    // TODO fitness calc after duplication check
                     boolean shouldBreak = addToChildren(child);
                     if (shouldBreak) {
                         break;

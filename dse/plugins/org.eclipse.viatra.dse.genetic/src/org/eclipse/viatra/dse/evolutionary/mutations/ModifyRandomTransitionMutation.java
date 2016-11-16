@@ -13,10 +13,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
-import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
-import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public class ModifyRandomTransitionMutation implements IMutation {
@@ -24,14 +21,14 @@ public class ModifyRandomTransitionMutation implements IMutation {
     private Random rnd = new Random();
 
     @Override
-    public TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context) {
+    public boolean mutate(TrajectoryFitness parent, ThreadContext context) {
 
         Object[] trajectory = parent.trajectory;
 
         int trajectorySize = trajectory.length;
 
         if (trajectorySize < 1) {
-            return null;
+            return false;
         }
 
         int index = rnd.nextInt(trajectorySize);
@@ -41,19 +38,12 @@ public class ModifyRandomTransitionMutation implements IMutation {
         boolean succesful = context.executeRandomActivationId();
         if (!succesful) {
             context.backtrackUntilRoot();
-            return null;
+        } else {
+            Object[] trajectoryEnd = Arrays.copyOfRange(trajectory, index + 1, trajectory.length);
+            context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd);
         }
-        
-        Object[] trajectoryEnd = Arrays.copyOfRange(trajectory, index + 1, trajectory.length);
-        context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd);
 
-        Fitness calculateFitness = context.calculateFitness();
-        TrajectoryInfo trajectoryInfo = context.getTrajectoryInfo();
-        TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
-
-        context.backtrackUntilRoot();
-
-        return child;
+        return succesful;
     }
 
     @Override

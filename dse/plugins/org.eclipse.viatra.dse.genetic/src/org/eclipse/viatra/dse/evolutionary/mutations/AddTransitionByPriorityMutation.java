@@ -17,10 +17,7 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
-import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IMutation;
-import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
@@ -34,7 +31,7 @@ public class AddTransitionByPriorityMutation implements IMutation {
     }
 
     @Override
-    public TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context) {
+    public boolean mutate(TrajectoryFitness parent, ThreadContext context) {
 
         DesignSpaceManager dsm = context.getDesignSpaceManager();
 
@@ -44,7 +41,7 @@ public class AddTransitionByPriorityMutation implements IMutation {
         int size = transitions.size();
         if (size == 0) {
             dsm.undoUntilRoot();
-            return null;
+            return false;
         }
 
         int bestPriority = Integer.MIN_VALUE;
@@ -65,13 +62,7 @@ public class AddTransitionByPriorityMutation implements IMutation {
 
         dsm.fireActivation(transition);
 
-        Fitness calculateFitness = context.calculateFitness();
-        TrajectoryInfo trajectoryInfo = dsm.getTrajectoryInfo();
-        TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
-
-        dsm.undoUntilRoot();
-
-        return child;
+        return true;
     }
 
     @Override

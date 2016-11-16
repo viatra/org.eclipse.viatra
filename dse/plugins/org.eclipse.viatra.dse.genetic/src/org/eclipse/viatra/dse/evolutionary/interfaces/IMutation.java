@@ -14,8 +14,25 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public interface IMutation {
 
-    TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context);
+    /**
+     * Based on the parent solution, it creates one child solution by leaving the DSE in the child solution's state
+     * (model and trajectory is reachable via the context). If the child generation was unsuccessful, it backtracks to
+     * the initial model: leaving the state with an empty trajectory.
+     * 
+     * @param parent
+     *            The parent solution (trajectory)
+     * @param context
+     *            Context of the design space exploration
+     * @return True if the child generation was successful and the context is in the child's state.
+     */
+    boolean mutate(TrajectoryFitness parent, ThreadContext context);
 
+    /**
+     * Creates a new instance. Required for multi-threaded execution. Can return the same instance (e.g. this) if the
+     * implementation is stateless.
+     * 
+     * @return An instance.
+     */
     IMutation createNew();
 
 }
