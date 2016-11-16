@@ -14,9 +14,7 @@ import java.util.Random;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
-import org.eclipse.viatra.dse.evolutionary.TrajectoryWithStateFitness;
 import org.eclipse.viatra.dse.evolutionary.interfaces.ICrossover;
-import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 /**
@@ -29,49 +27,49 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 public class CutAndSpliceCrossover implements ICrossover {
 
     private Random random = new Random();
+    private Object[] parent1ts;
+    private Object[] parent2ts;
+    private int p1Size;
+    private int p2Size;
+    private int index1;
+    private int index2;
 
     @Override
-    public TrajectoryFitness[] mutate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
+    public boolean mutate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
 
-        TrajectoryWithStateFitness[] children = new TrajectoryWithStateFitness[2];
         DesignSpaceManager dsm = context.getDesignSpaceManager();
 
-        Object[] parent1t = parent1.trajectory;
-        Object[] parent2t = parent2.trajectory;
-        int p1Size = parent1t.length;
-        int p2Size = parent2t.length;
+        parent1ts = parent1.trajectory;
+        parent2ts = parent2.trajectory;
+        p1Size = parent1ts.length;
+        p2Size = parent2ts.length;
 
         if (p1Size < 2 || p2Size < 2) {
-            dsm.undoUntilRoot();
-            return null;
+            return false;
         }
 
-        int index1 = random.nextInt(p1Size - 1) + 1;
-        int index2 = random.nextInt(p2Size - 1) + 1;
+        index1 = random.nextInt(p1Size - 1) + 1;
+        index2 = random.nextInt(p2Size - 1) + 1;
 
-        dsm.executeTrajectoryWithoutStateCoding(parent1t, index1);
-        Object[] trajectoryEnd1 = Arrays.copyOfRange(parent2t, index2, p2Size);
+        dsm.executeTrajectoryWithoutStateCoding(parent1ts, index1);
+        Object[] trajectoryEnd1 = Arrays.copyOfRange(parent2ts, index2, p2Size);
         context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd1);
 
-        Fitness fitness = context.calculateFitness();
-        children[0] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);
+        return true;
+    }
 
-        dsm.undoUntilRoot();
-
-        dsm.executeTrajectory(parent2t, index2);
-        Object[] trajectoryEnd2 = Arrays.copyOfRange(parent1t, index1, p1Size);
+    @Override
+    public boolean mutateAlternate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context) {
+        // TODO Auto-generated method stub
+        context.getDesignSpaceManager().executeTrajectory(parent2ts, index2);
+        Object[] trajectoryEnd2 = Arrays.copyOfRange(parent1ts, index1, p1Size);
         context.executeTrajectoryByTryingWithoutStateCoding(trajectoryEnd2);
-
-        fitness = context.calculateFitness();
-        children[1] = new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), fitness);
-
-        dsm.undoUntilRoot();
-
-        return children;
+        return true;
     }
 
     @Override
     public ICrossover createNew() {
         return new CutAndSpliceCrossover();
     }
+
 }

@@ -251,13 +251,24 @@ public class EvolutionaryStrategy implements IStrategy {
                 ICrossover crossover = crossovers.get(index);
                 TrajectoryFitness parent1 = localParentSelector.getNextParent();
                 TrajectoryFitness parent2 = localParentSelector.getNextParent();
-                TrajectoryFitness[] children = crossover.mutate(parent1, parent2, context);
-                if (children != null) {
-                    boolean shouldBreak = addToChildren(children[0]);
+                boolean successful = crossover.mutate(parent1, parent2, context);
+                if (successful) {
+                    Fitness calculateFitness = context.calculateFitness();
+                    TrajectoryInfo trajectoryInfo = context.getTrajectoryInfo();
+                    TrajectoryFitness child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
+                    context.backtrackUntilRoot();
+                    // TODO fitness calc after duplication check
+                    boolean shouldBreak = addToChildren(child);
                     if (shouldBreak) {
                         break;
                     }
-                    shouldBreak = addToChildren(children[1]);
+                    crossover.mutateAlternate(parent2, parent1, context);
+                    calculateFitness = context.calculateFitness();
+                    trajectoryInfo = context.getTrajectoryInfo();
+                    child = new TrajectoryWithStateFitness(trajectoryInfo, calculateFitness);
+                    context.backtrackUntilRoot();
+                    // TODO fitness calc after duplication check
+                    shouldBreak = addToChildren(child);
                     if (shouldBreak) {
                         break;
                     }

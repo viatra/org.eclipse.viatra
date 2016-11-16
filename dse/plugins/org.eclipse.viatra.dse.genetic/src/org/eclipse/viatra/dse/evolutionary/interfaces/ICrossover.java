@@ -14,7 +14,9 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 public interface ICrossover {
 
-    TrajectoryFitness[] mutate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context);
+    boolean mutate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context);
+
+    boolean mutateAlternate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context);
 
     ICrossover createNew();
 
