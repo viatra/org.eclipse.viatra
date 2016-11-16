@@ -98,6 +98,10 @@ public class EvolutionaryStrategy implements IStrategy {
 
             so.childPopulation = new HashSet<>(so.childPopulationSize);
 
+            if (logger.isDebugEnabled()) {
+                adapters.add(new EvolutionaryStrategyDebugAdapter());
+            }
+
             for (IEvolutionaryStrategyAdapter adapter : adapters) {
                 adapter.init(context);
             }
