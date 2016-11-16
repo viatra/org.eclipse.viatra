@@ -10,7 +10,9 @@
     <artifactId>viatra-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>VIATRA Maven Plug-in</name>
-
+    <properties>
+        <xtend.compiler.version>2.10.0</xtend.compiler.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>

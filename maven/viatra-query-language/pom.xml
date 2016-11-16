@@ -3,6 +3,9 @@
   <artifactId>viatra-query-language</artifactId>
   <name>VIATRA Query Language</name>
   <description>Maven module for VIATRA Query Language and Generic API</description>
+  <properties>
+        <xtend.compiler.version>2.10.0</xtend.compiler.version>
+    </properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.viatra</groupId>
