@@ -15,4 +15,7 @@ import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 public interface IMutation {
 
     TrajectoryFitness mutate(TrajectoryFitness parent, ThreadContext context);
+
+    IMutation createNew();
+
 }

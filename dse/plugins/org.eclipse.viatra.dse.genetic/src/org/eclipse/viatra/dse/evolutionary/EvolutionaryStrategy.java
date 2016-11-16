@@ -64,6 +64,8 @@ public class EvolutionaryStrategy implements IStrategy {
     }
 
     protected EvolutionaryStrategySharedObject so;
+    protected List<ICrossover> crossovers = new ArrayList<>();
+    protected List<IMutation> mutations = new ArrayList<>();
 
     protected List<IEvolutionaryStrategyAdapter> adapters = new ArrayList<>();
 
@@ -91,6 +93,9 @@ public class EvolutionaryStrategy implements IStrategy {
 
             isFirstThread = true;
 
+            mutations = so.mutations;
+            crossovers = so.crossovers;
+
             so.childPopulation = new HashSet<>(so.childPopulationSize);
 
             for (IEvolutionaryStrategyAdapter adapter : adapters) {
@@ -100,11 +105,17 @@ public class EvolutionaryStrategy implements IStrategy {
             context.setSharedObject(so);
             so.evaluationStrategy.init(context);
             localParentSelector = so.parentSelectionStrategy;
-            
+
             logger.info("Evolutionary exploration strategy is inited.");
         } else {
             so = (EvolutionaryStrategySharedObject) context.getSharedObject();
             localParentSelector = so.parentSelectionStrategy.createNew();
+            for (IMutation mutation : so.mutations) {
+                mutations.add(mutation.createNew());
+            }
+            for (ICrossover crossover : so.crossovers) {
+                crossovers.add(crossover.createNew());
+            }
         }
 
     }
@@ -138,7 +149,7 @@ public class EvolutionaryStrategy implements IStrategy {
         List<TrajectoryFitness> currentPopulation = so.initialPopulationSelector.getInitialPopulation();
 
         logger.info("Initial population has been generated.");
-        
+
         dsm.setDesignSpace(null);
 
         if (isInterrupted.get()) {
@@ -214,8 +225,8 @@ public class EvolutionaryStrategy implements IStrategy {
             // TODO no sync between child generation => may generate children unnecessarily => performance issues
 
             if (random.nextDouble() < so.mutationChance.get()) {
-                int index = random.nextInt(so.mutations.size());
-                IMutation mutation = so.mutations.get(index);
+                int index = random.nextInt(mutations.size());
+                IMutation mutation = mutations.get(index);
                 TrajectoryFitness parent = localParentSelector.getNextParent();
                 TrajectoryFitness child = mutation.mutate(parent, context);
                 if (child != null) {
@@ -225,8 +236,8 @@ public class EvolutionaryStrategy implements IStrategy {
                     }
                 }
             } else {
-                int index = random.nextInt(so.crossovers.size());
-                ICrossover crossover = so.crossovers.get(index);
+                int index = random.nextInt(crossovers.size());
+                ICrossover crossover = crossovers.get(index);
                 TrajectoryFitness parent1 = localParentSelector.getNextParent();
                 TrajectoryFitness parent2 = localParentSelector.getNextParent();
                 TrajectoryFitness[] children = crossover.mutate(parent1, parent2, context);

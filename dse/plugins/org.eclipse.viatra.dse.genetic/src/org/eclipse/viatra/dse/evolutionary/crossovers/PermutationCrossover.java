@@ -84,4 +84,8 @@ public class PermutationCrossover implements ICrossover {
         }
     }
 
+    @Override
+    public ICrossover createNew() {
+        return new PermutationCrossover();
+    }
 }

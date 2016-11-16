@@ -38,4 +38,8 @@ public class AddRandomTransitionMutation implements IMutation {
         return child;
     }
 
+    @Override
+    public IMutation createNew() {
+        return new AddRandomTransitionMutation();
+    }
 }

@@ -69,4 +69,9 @@ public class CutAndSpliceCrossover implements ICrossover {
 
         return children;
     }
+
+    @Override
+    public ICrossover createNew() {
+        return new CutAndSpliceCrossover();
+    }
 }

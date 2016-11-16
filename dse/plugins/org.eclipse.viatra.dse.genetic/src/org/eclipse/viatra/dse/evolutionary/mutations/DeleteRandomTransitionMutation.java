@@ -48,4 +48,8 @@ public class DeleteRandomTransitionMutation implements IMutation {
         return child;
     }
 
+    @Override
+    public IMutation createNew() {
+        return new DeleteRandomTransitionMutation();
+    }
 }

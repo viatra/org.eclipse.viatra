@@ -29,6 +29,11 @@ public class ModifyRandomTransitionMutation implements IMutation {
         Object[] trajectory = parent.trajectory;
 
         int trajectorySize = trajectory.length;
+
+        if (trajectorySize < 1) {
+            return null;
+        }
+
         int index = rnd.nextInt(trajectorySize);
 
         context.executeTrajectoryWithoutStateCoding(trajectory, index);
@@ -51,4 +56,8 @@ public class ModifyRandomTransitionMutation implements IMutation {
         return child;
     }
 
+    @Override
+    public IMutation createNew() {
+        return new ModifyRandomTransitionMutation();
+    }
 }

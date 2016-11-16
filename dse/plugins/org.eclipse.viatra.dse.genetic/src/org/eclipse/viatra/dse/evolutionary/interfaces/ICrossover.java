@@ -16,4 +16,6 @@ public interface ICrossover {
 
     TrajectoryFitness[] mutate(TrajectoryFitness parent1, TrajectoryFitness parent2, ThreadContext context);
 
+    ICrossover createNew();
+
 }

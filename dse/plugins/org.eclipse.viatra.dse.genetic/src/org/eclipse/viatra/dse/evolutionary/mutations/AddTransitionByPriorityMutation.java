@@ -74,4 +74,8 @@ public class AddTransitionByPriorityMutation implements IMutation {
         return child;
     }
 
+    @Override
+    public IMutation createNew() {
+        return new AddTransitionByPriorityMutation(priorities);
+    }
 }

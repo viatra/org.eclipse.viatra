@@ -72,4 +72,8 @@ public class SwapTransitionCrossover implements ICrossover {
         return children;
     }
 
+    @Override
+    public ICrossover createNew() {
+        return new SwapTransitionCrossover();
+    }
 }
