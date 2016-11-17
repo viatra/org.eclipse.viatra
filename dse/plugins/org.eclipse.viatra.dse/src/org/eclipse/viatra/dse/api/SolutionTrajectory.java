@@ -302,7 +302,11 @@ public class SolutionTrajectory {
         if (this == obj) {
             return true;
         }
-        return activationCodes.equals(obj);
+        if (obj instanceof SolutionTrajectory) {
+            SolutionTrajectory that = (SolutionTrajectory) obj;
+            return activationCodes.equals(that.activationCodes);
+        }
+        return false;
     }
 
     public Solution getSolution() {

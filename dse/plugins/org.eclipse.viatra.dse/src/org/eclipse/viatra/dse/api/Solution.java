@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class Solution {
 
-    private List<SolutionTrajectory> trajectories;
+    private Set<SolutionTrajectory> trajectories;
     private final Object stateId;
 
     public Solution(Object stateId, SolutionTrajectory trajectory) {
         this.stateId = stateId;
-        trajectories = new ArrayList<>();
+        trajectories = new HashSet<>();
         trajectories.add(trajectory);
     }
 
@@ -30,22 +31,23 @@ public class Solution {
     }
 
     public SolutionTrajectory getArbitraryTrajectory() {
-        return trajectories.get(0);
+        return trajectories.iterator().next();
     }
 
     public SolutionTrajectory getShortestTrajectory() {
-        if (trajectories.size() == 1) {
-            return trajectories.get(0);
-        }
-        SolutionTrajectory shortestTrajecotry = trajectories.get(0);
+        Iterator<SolutionTrajectory> iterator = trajectories.iterator();
+        SolutionTrajectory shortestTrajecotry = iterator.next();
         int minSize = shortestTrajecotry.getTrajectoryLength();
-        for (SolutionTrajectory traj : trajectories) {
+
+        while (iterator.hasNext()) {
+            SolutionTrajectory traj = iterator.next();
             int size = traj.getTrajectoryLength();
             if (size < minSize) {
                 shortestTrajecotry = traj;
                 minSize = size;
             }
         }
+
         return shortestTrajecotry;
     }
 
