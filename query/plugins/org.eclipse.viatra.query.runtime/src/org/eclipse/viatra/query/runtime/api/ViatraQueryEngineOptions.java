@@ -52,11 +52,19 @@ public final class ViatraQueryEngineOptions {
             this.defaultCachingBackendFactory = from.defaultCachingBackendFactory;
         }
 
+        /**
+         * Note that the backend factory in the hint is overridden by a factory added with
+         * {@link #withDefaultBackend(IQueryBackendFactory)}.
+         */
         public Builder withDefaultHint(QueryEvaluationHint engineDefaultHints) {
             this.engineDefaultHints = engineDefaultHints;
             return this;
         }
 
+        /**
+         * Note that this backend factory overrides the factory defined by the hint added by
+         * {@link #withDefaultHint(QueryEvaluationHint)}.
+         */
         public Builder withDefaultBackend(IQueryBackendFactory defaultBackendFactory) {
             this.defaultBackendFactory = defaultBackendFactory;
             return this;
@@ -68,16 +76,36 @@ public final class ViatraQueryEngineOptions {
         }
 
         public ViatraQueryEngineOptions build() {
-            IQueryBackendFactory defaultFactory = (defaultBackendFactory == null) ? new ReteBackendFactory()
-                    : defaultBackendFactory;
-            IQueryBackendFactory defaultCachingFactory = (defaultCachingBackendFactory == null)
-                    ? new ReteBackendFactory() // TODO this should be defaultFactory if it is caching
-                    : defaultBackendFactory;
-
-            QueryEvaluationHint hint = (engineDefaultHints == null)
-                    ? (new QueryEvaluationHint(null, defaultFactory))
-                    : engineDefaultHints.overrideBy(new QueryEvaluationHint(null, defaultFactory));
+            IQueryBackendFactory defaultFactory = getDefaultBackend();
+            IQueryBackendFactory defaultCachingFactory = getDefaultCachingBackend();
+            QueryEvaluationHint hint = getEngineDefaultHints(defaultFactory);
             return new ViatraQueryEngineOptions(hint, defaultCachingFactory);
+        }
+
+        private IQueryBackendFactory getDefaultBackend() {
+            if (defaultBackendFactory != null){
+                return defaultBackendFactory;
+            } else if (engineDefaultHints != null) {
+                return engineDefaultHints.getQueryBackendFactory();
+            } else {
+                return new ReteBackendFactory();
+            }
+        }
+
+        private IQueryBackendFactory getDefaultCachingBackend() {
+            if (defaultCachingBackendFactory != null) {
+                return defaultBackendFactory;
+            } else {
+                return new ReteBackendFactory(); // TODO this should be defaultFactory if it is caching
+            }
+        }
+
+        private QueryEvaluationHint getEngineDefaultHints(IQueryBackendFactory defaultFactory) {
+            if (engineDefaultHints != null){
+                return engineDefaultHints.overrideBy(new QueryEvaluationHint(null, defaultFactory));
+            } else {
+                return new QueryEvaluationHint(null, defaultFactory);
+            }
         }
     }
 
