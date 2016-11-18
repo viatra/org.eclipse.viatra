@@ -165,8 +165,12 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
             // fall-through
         case Notification.UNSET:
         case Notification.SET:
-            featureUpdate(false, notifier, feature, oldValue, position);
-            featureUpdate(true, notifier, feature, newValue, position);
+            if(!feature.isMany()){
+                featureUpdate(false, notifier, feature, oldValue, position);
+                featureUpdate(true, notifier, feature, newValue, position);
+            } else {
+                notifyLightweightObservers = false;
+            }
             break;
         default:
             notifyLightweightObservers = false;
