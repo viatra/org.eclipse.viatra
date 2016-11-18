@@ -21,6 +21,7 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PackageIm
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
@@ -94,6 +95,8 @@ public class EverythingDynamicTest {
         importSection.getPackageImport().add(packageImport);
 
         Pattern pattern = PatternLanguageFactory.eINSTANCE.createPattern();
+        Modifiers modifiers = PatternLanguageFactory.eINSTANCE.createModifiers();
+        pattern.setModifiers(modifiers);
         PatternBody patternBody = PatternLanguageFactory.eINSTANCE.createPatternBody();
         Variable variable = PatternLanguageFactory.eINSTANCE.createVariable();
         variable.setName("X");

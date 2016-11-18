@@ -23,12 +23,16 @@ import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.Patte
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternSanitizer;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Annotation;
+import org.eclipse.viatra.query.patternlanguage.patternLanguage.Modifiers;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.InitializablePQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
@@ -37,6 +41,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
+import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -186,7 +191,9 @@ public class SpecificationBuilder {
             // Initializing new query specifications
             for (Pattern newPattern : newPatterns) {
                 String patternFqn = CorePatternLanguageHelper.getFullyQualifiedName(newPattern);
-                GenericQuerySpecification specification = new GenericQuerySpecification(new GenericEMFPatternPQuery(newPattern, true));
+                GenericEMFPatternPQuery pquery = new GenericEMFPatternPQuery(newPattern, true);
+                pquery.setEvaluationHints(buildHints(newPattern));
+                GenericQuerySpecification specification = new GenericQuerySpecification(pquery);
                 patternMap.put(patternFqn, specification);
                 patternNameMap.put(patternFqn, newPattern);
                 newSpecifications.add(specification);
@@ -311,5 +318,29 @@ public class SpecificationBuilder {
         Set<IQuerySpecification<?>> forgottenSpecifications = Sets.newHashSet();
         forgetSpecificationTransitively(specification, forgottenSpecifications);
         return forgottenSpecifications;
+    }
+    
+    /**
+     * Build a {@link QueryEvaluationHint} based on the pattern modifiers and annotations.
+     * @since 1.5
+     */
+    protected QueryEvaluationHint buildHints(Pattern pattern){
+        IQueryBackendFactory backendFactory = null;
+        Modifiers modifiers = pattern.getModifiers();
+        if (modifiers != null){
+            switch(modifiers.getExecution()){
+            case INCREMENTAL:
+                backendFactory = new ReteBackendFactory();
+                break;
+            case SEARCH:
+                backendFactory = LocalSearchBackendFactory.INSTANCE;
+                break;
+            case UNSPECIFIED:
+            default:
+                backendFactory = null;
+                break;
+            }
+        }
+        return new QueryEvaluationHint(null, backendFactory);
     }
 }

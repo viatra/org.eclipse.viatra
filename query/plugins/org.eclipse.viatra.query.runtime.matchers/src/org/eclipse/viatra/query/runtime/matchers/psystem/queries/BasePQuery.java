@@ -93,7 +93,10 @@ public abstract class BasePQuery implements PQuery {
 	    Preconditions.checkState(isMutable(), "Cannot edit query definition " + getFullyQualifiedName());
 	}
 
-	protected void setEvaluationHints(QueryEvaluationHint hints) {
+	/**
+     * @since 1.5
+     */
+	public void setEvaluationHints(QueryEvaluationHint hints) {
 	    checkMutability();
 	    this.evaluationHints = hints;
 	}
