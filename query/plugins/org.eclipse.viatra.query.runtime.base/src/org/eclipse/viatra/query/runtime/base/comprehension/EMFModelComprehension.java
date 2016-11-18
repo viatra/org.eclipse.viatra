@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.eclipse.emf.ecore.util.FeatureMap.Entry;
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
+import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -58,11 +59,18 @@ public class EMFModelComprehension {
      * {@link #representable(EStructuralFeature)} is true.
      */
     public boolean untraversableDirectly(EStructuralFeature feature) {
-        if((feature instanceof EReference && ((EReference)feature).isContainer())) {
+
+	if((feature instanceof EReference && ((EReference)feature).isContainer())) {
             // container features are always represented through their opposite
             return true;
         }
-        
+
+	//If the feature is filtered by the feature filter specified in the BaseIndexOptions, return true
+        final IBaseIndexFeatureFilter featureFilter = options.getFeatureFilterConfiguration();
+        if(featureFilter != null && featureFilter.isFiltered(feature)){
+            return true;
+        }
+
         boolean suspect = onlySamplingFeature(feature);
         if(suspect) {
             // even if the feature can only be sampled, it may be used if the proper base index option is set

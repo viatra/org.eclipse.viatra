@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.base.api;
 
+import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexFeatureFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexObjectFilter;
 import org.eclipse.viatra.query.runtime.base.api.filters.IBaseIndexResourceFilter;
 
@@ -60,6 +61,7 @@ public class BaseIndexOptions {
     protected IndexingLevel wildcardMode = WILDCARD_MODE_DEFAULT;
     protected IBaseIndexObjectFilter notifierFilterConfiguration;
     protected IBaseIndexResourceFilter resourceFilterConfiguration;
+    protected IBaseIndexFeatureFilter featureFilterConfiguration;
 
     /**
      * Creates a base index options with the default values.
@@ -135,6 +137,28 @@ public class BaseIndexOptions {
     public IBaseIndexResourceFilter getResourceFilterConfiguration() {
         return resourceFilterConfiguration;
     }
+    
+    
+    /**
+     * Returns a copy of the configuration with a specified feature filter
+     * 
+     * @param filter
+     * @since 1.5
+     */
+    public BaseIndexOptions withFeatureFilterConfiguration(IBaseIndexFeatureFilter filter) {
+        BaseIndexOptions result = copy();
+        result.featureFilterConfiguration = filter;
+        return result;
+    }
+
+    /**
+     * @return the selected feature filter, or null if not set 
+     * @since 1.5
+     */
+    public IBaseIndexFeatureFilter getFeatureFilterConfiguration() {
+        return featureFilterConfiguration;
+    }
+    
 
     /**
      * @return whether the base index option has dynamic EMF mode set
@@ -199,6 +223,7 @@ public class BaseIndexOptions {
         baseIndexOptions.traverseOnlyWellBehavingDerivedFeatures = this.traverseOnlyWellBehavingDerivedFeatures;
         baseIndexOptions.notifierFilterConfiguration = this.notifierFilterConfiguration;
         baseIndexOptions.resourceFilterConfiguration = this.resourceFilterConfiguration;
+        baseIndexOptions.featureFilterConfiguration = this.featureFilterConfiguration;
         return baseIndexOptions;
     }
 
@@ -215,6 +240,10 @@ public class BaseIndexOptions {
 				* result
 				+ ((resourceFilterConfiguration == null) ? 0
 						: resourceFilterConfiguration.hashCode());
+		result = prime
+                * result
+                + ((featureFilterConfiguration == null) ? 0
+                        : featureFilterConfiguration.hashCode());
 		result = prime * result
 				+ (traverseOnlyWellBehavingDerivedFeatures ? 1231 : 1237);
 		result = prime * result + (1231 + wildcardMode.ordinal() * 6);
@@ -242,8 +271,18 @@ public class BaseIndexOptions {
 			if (other.resourceFilterConfiguration != null)
 				return false;
 		} else if (!resourceFilterConfiguration
-				.equals(other.resourceFilterConfiguration))
+				.equals(other.resourceFilterConfiguration)){
 			return false;
+		}
+		
+		if (featureFilterConfiguration == null) {
+            if (other.featureFilterConfiguration != null)
+                return false;
+        } else if (!featureFilterConfiguration
+                .equals(other.featureFilterConfiguration)){
+            return false;
+        }
+		
 		if (traverseOnlyWellBehavingDerivedFeatures != other.traverseOnlyWellBehavingDerivedFeatures)
 			return false;
 		if (wildcardMode != other.wildcardMode)
@@ -260,6 +299,7 @@ public class BaseIndexOptions {
     	appendModifier(sb, traverseOnlyWellBehavingDerivedFeatures, TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT, "wellBehavingOnly");
     	appendModifier(sb, notifierFilterConfiguration, null, "notifierFilter=");
     	appendModifier(sb, resourceFilterConfiguration, null, "resourceFilter=");
+    	appendModifier(sb, featureFilterConfiguration, null, "featureFilterConfiguration=");
     	final String result = sb.toString();
 		return result.isEmpty() ? "defaults" : result;
     }
