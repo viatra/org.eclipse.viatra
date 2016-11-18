@@ -14,7 +14,6 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl.IndexerBasedConstraintCostFunction;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
-import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.NeverFlattenCallPredicate;
 
 /**
  * 
@@ -40,7 +39,7 @@ public class LocalSearchHintOptions {
      * @since 1.4
      */
     public static final QueryHintOption<IFlattenCallPredicate> FLATTEN_CALL_PREDICATE = 
-            hintOption("FLATTEN_CALL_PREDICATE", (IFlattenCallPredicate) new NeverFlattenCallPredicate());
+            hintOption("FLATTEN_CALL_PREDICATE", (IFlattenCallPredicate) new DontFlattenIncrementalPredicate());
     
     /**
      * A provider of expected adornments {@link IAdornmentProvider}
