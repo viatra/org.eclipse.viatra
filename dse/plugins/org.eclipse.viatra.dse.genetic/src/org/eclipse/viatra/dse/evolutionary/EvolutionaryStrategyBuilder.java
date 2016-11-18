@@ -50,8 +50,8 @@ public class EvolutionaryStrategyBuilder {
 
     public static EvolutionaryStrategyBuilder createNsga2Builder(int populationSize) {
         EvolutionaryStrategyBuilder builder = new EvolutionaryStrategyBuilder();
-        builder.setInitialPopulationSize(populationSize * 2);
-        builder.setChildPopulationSize(populationSize * 2);
+        builder.setInitialPopulationSize(populationSize);
+        builder.setChildPopulationSize(populationSize);
         builder.setEvaluationStrategy(new FrontsAndCrowdingDistanceEvaluationStrategy());
         builder.setParentSelectionStrategy(new CrowdedTournementParentSelector());
         builder.setSurvivalStrategy(new FirstNSolutionsSurvivalStrategy(populationSize));
@@ -77,8 +77,8 @@ public class EvolutionaryStrategyBuilder {
 
     public static EvolutionaryStrategyBuilder createPesaBuilder(int populationSize) {
         EvolutionaryStrategyBuilder builder = new EvolutionaryStrategyBuilder();
-        builder.setInitialPopulationSize(populationSize * 2);
-        builder.setChildPopulationSize(populationSize * 2);
+        builder.setInitialPopulationSize(populationSize);
+        builder.setChildPopulationSize(populationSize);
         builder.setEvaluationStrategy(new FrontsAndCrowdingDistanceEvaluationStrategy());
         builder.setParentSelectionStrategy(new RandomParentSelector());
         builder.setSurvivalStrategy(new ParetoSurvivalStrategy(populationSize));

@@ -228,7 +228,7 @@ public class EvolutionaryStrategy implements IStrategy {
 
         localParentSelector.init(so.parentPopulation.get());
 
-        while (so.childPopulationSize > so.childPopulation.size()) {
+        while (so.childPopulationSize * 2 > so.childPopulation.size()) {
 
             // TODO no sync between child generation => may generate children unnecessarily => performance issues
 
@@ -286,7 +286,7 @@ public class EvolutionaryStrategy implements IStrategy {
      */
     protected boolean addToChildren(TrajectoryFitness child) {
         synchronized (so.barrierBeforeChildGeneration) {
-            if (so.childPopulationSize > so.childPopulation.size()) {
+            if (so.childPopulationSize * 2 > so.childPopulation.size()) {
                 so.childPopulation.add(child);
                 return false;
             } else {
