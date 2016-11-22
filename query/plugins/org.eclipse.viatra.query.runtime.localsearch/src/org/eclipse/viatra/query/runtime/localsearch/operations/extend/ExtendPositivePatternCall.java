@@ -37,14 +37,14 @@ public class ExtendPositivePatternCall extends AbstractPositivePatternCallOperat
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
-        matches = getCalledMatcher().getAllMatches(mapFrame(frame)).iterator();
+        matches = call.getAllMatches(frame).iterator();
     }
 
     @Override
     public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         if (matches.hasNext()){
             Tuple tuple = matches.next();
-            while(!fillInResult(frame, tuple) && matches.hasNext()){
+            while(!call.fillInResult(frame, tuple) && matches.hasNext()){
                 tuple = matches.next();
             }
             return true;
@@ -55,7 +55,6 @@ public class ExtendPositivePatternCall extends AbstractPositivePatternCallOperat
 
     @Override
     public void onBacktrack(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        super.onBacktrack(frame, context);
-        matches = null;
+        call.backtrack(frame);
     }
 }

@@ -16,15 +16,12 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
-import org.eclipse.viatra.query.runtime.localsearch.operations.IMatcherBasedOperation;
-import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -36,30 +33,12 @@ import com.google.common.collect.Sets;
  * @author Zoltan Ujhelyi
  * 
  */
-public class BinaryTransitiveClosureCheck extends CheckOperation implements IMatcherBasedOperation {
+public class BinaryTransitiveClosureCheck extends CheckOperation{
 
-    private PQuery calledQuery;
-    private IQueryResultProvider matcher;
+    private final PatternCallHelper helper;
+    private PatternCall call;
     private final int sourcePosition;
     private final int targetPosition;
-    private final ImmutableSet<PParameter> adornment;
-
-    /**
-     * @since 1.5
-     */
-    @Override
-	public IQueryResultProvider getAndPrepareCalledMatcher(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
-        return matcher;
-	}
-
-    /**
-     * @since 1.5
-     */
-    @Override
-    public IQueryResultProvider getCalledMatcher(){
-    	return matcher;
-    }
     
     /**
      * The source position will be matched in the called pattern to the first parameter; while target to the second.
@@ -70,21 +49,19 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IMat
      */
     public BinaryTransitiveClosureCheck(PQuery calledQuery, int sourcePosition, int targetPosition) {
         super();
-        this.calledQuery = calledQuery;
         this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
-        // Second parameter is NOT bound during execution, but the first is
-        this.adornment = ImmutableSet.of(calledQuery.getParameters().get(0));
-    }
 
-    public PQuery getCalledQuery() {
-        return calledQuery;
+        helper = new PatternCallHelper(calledQuery, ImmutableMap.of(
+                sourcePosition, calledQuery.getParameters().get(0), 
+                targetPosition, calledQuery.getParameters().get(1)));
     }
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
         super.onInitialize(frame, context);
-		getAndPrepareCalledMatcher(frame, context);
+        // Second parameter is NOT bound during execution, but the first is
+		call = helper.createCall(ImmutableSet.of(0), context);
     }
     
     @Override
@@ -98,7 +75,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IMat
             sourcesToEvaluate.remove(currentValue);
             sourceEvaluated.add(currentValue);
             final Object[] mappedFrame = new Object[]{currentValue, null};
-            for (Tuple match : matcher.getAllMatches(mappedFrame)) {
+            for (Tuple match : call.getAllMatches(mappedFrame)) {
                 Object foundTarget = match.get(1);
                 if (targetValue.equals(foundTarget)) {
                     return true;
@@ -114,7 +91,7 @@ public class BinaryTransitiveClosureCheck extends CheckOperation implements IMat
     public String toString() {
     	StringBuilder builder = new StringBuilder();
     	builder.append("Check binary transitive closure of ")
-    		.append(calledQuery.getFullyQualifiedName().substring(calledQuery.getFullyQualifiedName().lastIndexOf('.') + 1))
+    		.append(helper.toString())
     		.append(" from ").append(sourcePosition).append(" to ").append(targetPosition);
     	return builder.toString();
     }

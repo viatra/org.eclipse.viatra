@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.operations.check;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.AbstractPositivePatternCallOperation;
+import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -24,33 +26,32 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  * @since 1.4
  *
  */
-public class CheckPositivePatternCall extends AbstractPositivePatternCallOperation {
+public class CheckPositivePatternCall extends CheckOperation {
 
-    /**
-     * The executed field ensures that the second call of the check always returns false, resulting in a quick
-     * backtracking.
-     */
-    private boolean executed;
+    private final PatternCallHelper helper;
+    private PatternCall call;
 
     @Override
     public void onInitialize(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        executed = false;
-    }
-
-    @Override
-    public boolean execute(MatchingFrame frame, ISearchContext context) throws LocalSearchException {
-        executed = executed ? false : check(frame);
-        return executed;
+        super.onInitialize(frame, context);
+        call = helper.createCall(frame, context);
     }
     
-    private boolean check(MatchingFrame frame) throws LocalSearchException {
-        return getCalledMatcher().getOneArbitraryMatch(mapFrame(frame)) != null;
+    /**
+     * @since 1.5
+     */
+    public boolean check(MatchingFrame frame) throws LocalSearchException {
+        return call.has(frame);
     }
 
     public CheckPositivePatternCall(PQuery calledQuery, Map<Integer, PParameter> frameMapping) {
-        super(calledQuery, frameMapping);
+        super();
+        helper = new PatternCallHelper(calledQuery, frameMapping);
     }
 
-
+    @Override
+    public List<Integer> getVariablePositions() {
+        return helper.getVariablePositions();
+    }
 
 }

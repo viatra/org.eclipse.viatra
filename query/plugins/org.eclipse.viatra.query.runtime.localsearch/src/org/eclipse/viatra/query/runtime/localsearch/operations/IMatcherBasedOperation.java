@@ -13,16 +13,16 @@ package org.eclipse.viatra.query.runtime.localsearch.operations;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.matcher.LocalSearchMatcher;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
-import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 
 /**
  * A common interface for local search operations that execute by calling an additional matcher
  * 
  * @author Marton Bur
  * @noimplement This interface is not intended to be implemented by clients.
+ * @deprecated Do not use this interface
  */
+@Deprecated
 public interface IMatcherBasedOperation {
 
 	/**
