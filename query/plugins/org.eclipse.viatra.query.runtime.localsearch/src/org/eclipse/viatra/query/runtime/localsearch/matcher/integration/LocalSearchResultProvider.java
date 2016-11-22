@@ -100,7 +100,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
                     }
                 });
 
-        return new LocalSearchMatcher(plan.getQuery(), executors,
+        return new LocalSearchMatcher(plan, executors,
                 Collections.max(parameterSizes));
     }
     

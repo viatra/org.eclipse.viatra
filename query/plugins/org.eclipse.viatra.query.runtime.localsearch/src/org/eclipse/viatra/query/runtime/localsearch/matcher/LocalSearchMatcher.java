@@ -18,6 +18,7 @@ import java.util.NoSuchElementException;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingTable;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
+import org.eclipse.viatra.query.runtime.localsearch.plan.IPlanDescriptor;
 import org.eclipse.viatra.query.runtime.localsearch.plan.SearchPlanExecutor;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
@@ -29,13 +30,13 @@ import com.google.common.collect.UnmodifiableIterator;
 
 /**
  * @author Zoltan Ujhelyi
- *
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class LocalSearchMatcher implements ILocalSearchAdaptable {
 
     private ImmutableList<SearchPlanExecutor> plan;
     private int frameSize;
-    private PQuery query;
+    private IPlanDescriptor planDescriptor;
     private List<ILocalSearchAdapter> adapters = Lists.newLinkedList();
 
     public ImmutableList<SearchPlanExecutor> getPlan() {
@@ -115,26 +116,39 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     /**
      * If a descendant initializes a matcher using the default constructor, it is expected that it also calls the
      * {@link #setPlan(SearchPlanExecutor)} and {@link #setFramesize(int)} methods manually.
+     * @since 1.5
      */
-    protected LocalSearchMatcher(PQuery query) {
+    protected LocalSearchMatcher(IPlanDescriptor query) {
         Preconditions.checkArgument(query != null, "Cannot initialize matcher with null query.");
-        this.query = query;
+        this.planDescriptor = query;
     }
 
-    public LocalSearchMatcher(PQuery query, SearchPlanExecutor plan, int frameSize) {
-        this(query, ImmutableList.of(plan), frameSize);
+    /**
+     * @since 1.5
+     */
+    public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor plan, int frameSize) {
+        this(planDescriptor, ImmutableList.of(plan), frameSize);
     }
     
-    public LocalSearchMatcher(PQuery query, SearchPlanExecutor[] plan, int frameSize) {
-        this(query, ImmutableList.copyOf(plan), frameSize);
+    /**
+     * @since 1.5
+     */
+    public LocalSearchMatcher(IPlanDescriptor planDescriptor, SearchPlanExecutor[] plan, int frameSize) {
+        this(planDescriptor, ImmutableList.copyOf(plan), frameSize);
     }
     
-    public LocalSearchMatcher(PQuery query, Collection<SearchPlanExecutor> plan, int frameSize) {
-        this(query, ImmutableList.copyOf(plan), frameSize);
+    /**
+     * @since 1.5
+     */
+    public LocalSearchMatcher(IPlanDescriptor planDescriptor, Collection<SearchPlanExecutor> plan, int frameSize) {
+        this(planDescriptor, ImmutableList.copyOf(plan), frameSize);
     }
     
-    protected LocalSearchMatcher(PQuery query, ImmutableList<SearchPlanExecutor> plan, int frameSize) {
-        this(query);
+    /**
+     * @since 1.5
+     */
+    protected LocalSearchMatcher(IPlanDescriptor planDescriptor, ImmutableList<SearchPlanExecutor> plan, int frameSize) {
+        this(planDescriptor);
         this.plan = plan;
         this.frameSize = frameSize;
         this.adapters = Lists.newLinkedList(adapters);
@@ -217,7 +231,7 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
     }
     
     public int getParameterCount() {
-        return query.getParameters().size();
+        return planDescriptor.getQuery().getParameters().size();
     }
 
     public MatchingFrame getOneArbitraryMatch() throws LocalSearchException {
@@ -271,6 +285,14 @@ public class LocalSearchMatcher implements ILocalSearchAdaptable {
      * @return never null
      */
     public PQuery getQuerySpecification() {
-        return query;
+        return planDescriptor.getQuery();
+    }
+    
+    
+    /**
+     * @since 1.5
+     */
+    public IPlanDescriptor getPlanDescriptor() {
+        return planDescriptor;
     }
 }

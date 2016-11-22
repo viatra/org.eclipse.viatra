@@ -20,5 +20,6 @@ Export-Package: org.eclipse.viatra.query.runtime.localsearch,
  org.eclipse.viatra.query.runtime.localsearch.plan,
  org.eclipse.viatra.query.runtime.localsearch.planner,
  org.eclipse.viatra.query.runtime.localsearch.planner.cost,
- org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl
+ org.eclipse.viatra.query.runtime.localsearch.planner.cost.impl,
+ org.eclipse.viatra.query.runtime.localsearch.profiler
 Import-Package: org.apache.log4j;version="1.2.15"
