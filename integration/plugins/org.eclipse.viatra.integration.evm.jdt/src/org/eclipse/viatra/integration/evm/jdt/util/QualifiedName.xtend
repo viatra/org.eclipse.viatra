@@ -38,7 +38,7 @@ abstract class QualifiedName implements Iterable<String> {
 	override toString() {
 		val builder = new StringBuilder()
 		if(parent.present){
-			builder.append(parent.toString).append(separator)
+			builder.append(parent.get.toString).append(separator)
 		}
 		return builder.append(name).toString		 
 	}
