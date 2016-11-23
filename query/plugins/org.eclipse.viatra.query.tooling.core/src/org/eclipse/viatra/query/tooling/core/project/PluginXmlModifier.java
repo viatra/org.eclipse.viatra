@@ -37,6 +37,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
+import com.google.common.collect.TreeBasedTable;
 
 /**
  * Stateful helper class for updating the extension definitions in a plugin.xml file of a PDE plug-in project.
@@ -103,7 +104,7 @@ public class PluginXmlModifier {
      * available, it updates them instead.
      */
     public void addExtensions(Iterable<ExtensionData> contributedExtensions) {
-        Table<String, String, List<ExtensionData>> table = HashBasedTable.create();
+        Table<String, String, List<ExtensionData>> table = TreeBasedTable.create();
         for (ExtensionData data : contributedExtensions) {
             addExtensionToMap(data, table);
         }
@@ -126,15 +127,46 @@ public class PluginXmlModifier {
                     removeNode(data.getNode());
                 }
             } else {
-                // New items, adding nodes to the end
+                // New items, adding nodes in lexicographical order
                 for (ExtensionData data : cell.getValue()) {
                     document.adoptNode(data.getNode());
                     final Node root = document.getDocumentElement();
-                    root.appendChild(data.getNode());
+                    Node nextIdChild = findExtensionFollowingId(cell.getRowKey(), root);
+                    if(nextIdChild != null){
+                        root.insertBefore(data.getNode(), nextIdChild);
+                    } else {
+                        // no following id, insert to end
+                        root.appendChild(data.getNode());
+                    }
                 }
             }
             extensionTable.put(cell.getRowKey(), cell.getColumnKey(), cell.getValue());
         }
+    }
+
+    /**
+     * Find the extension node in the document node that has an id lexicographically following the given extensionId.
+     * 
+     * @param extensionId
+     *            the id that should be lexicographically preceding the returned node
+     * @param root
+     *            the node whose children are explored
+     * @return the node that is named "extension" and has attribute "id" with value lexicographically following the
+     *         given extensionId.
+     */
+    private Node findExtensionFollowingId(String extensionId, final Node root) {
+        Node child = root.getFirstChild();
+        Node nextIdChild = null;
+        while(nextIdChild == null && child != null){
+            if("extension".equals(child.getNodeName())){
+                Node namedItem = child.getAttributes().getNamedItem("id");
+                if(namedItem != null && namedItem.getNodeValue().compareTo(extensionId) > 0) {
+                    nextIdChild = child;
+                }
+            }
+            child = child.getNextSibling();
+        }
+        return nextIdChild;
     }
 
     /**
