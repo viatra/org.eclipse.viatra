@@ -16,8 +16,8 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper.PatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -27,12 +27,12 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  */
 public class NACOperation extends CheckOperation {
 
-    PatternCallHelper helper;
+    CallOperationHelper helper;
     PatternCall call;
 
-    public NACOperation(PQuery calledQuery, Map<Integer, PParameter> parameterMapping) {
+    public NACOperation(PQuery calledQuery, Map<PParameter, Integer> parameterMapping) {
         super();
-        helper = new PatternCallHelper(calledQuery, parameterMapping);
+        helper = new CallOperationHelper(calledQuery, parameterMapping);
     }
 
     @Override

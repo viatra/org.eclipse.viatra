@@ -16,8 +16,8 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper.PatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -35,7 +35,7 @@ import com.google.common.collect.Sets;
  */
 public class BinaryTransitiveClosureCheck extends CheckOperation{
 
-    private final PatternCallHelper helper;
+    private final CallOperationHelper helper;
     private PatternCall call;
     private final int sourcePosition;
     private final int targetPosition;
@@ -52,9 +52,9 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
         this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
 
-        helper = new PatternCallHelper(calledQuery, ImmutableMap.of(
-                sourcePosition, calledQuery.getParameters().get(0), 
-                targetPosition, calledQuery.getParameters().get(1)));
+        helper = new CallOperationHelper(calledQuery, ImmutableMap.of(
+                calledQuery.getParameters().get(0), sourcePosition,
+                calledQuery.getParameters().get(1), targetPosition));
     }
 
     @Override

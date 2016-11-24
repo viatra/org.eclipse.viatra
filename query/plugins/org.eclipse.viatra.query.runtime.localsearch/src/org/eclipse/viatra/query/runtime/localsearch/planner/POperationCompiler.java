@@ -63,6 +63,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedP
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.NegativePatternCall;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternCallBasedDeferred;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.PatternMatchCounter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.BinaryTransitiveClosure;
@@ -98,6 +99,37 @@ public class POperationCompiler {
     private final EMFQueryRuntimeContext runtimeContext;
     private final IQueryBackend backend;
 
+    private class FrameMapping{
+        final Map<PParameter, Integer> frameMapping = Maps.newHashMap();
+        final Set<PParameter> adornment = Sets.newHashSet();
+        
+        public FrameMapping(PatternCallBasedDeferred constraint, Map<PVariable, Integer> variableMapping) {
+            final Set<Integer> bindings = variableBindings.get(constraint);
+            int keySize = constraint.getActualParametersTuple().getSize();
+            for (int i = 0; i < keySize; i++) {
+                PParameter symbolicParameter = constraint.getReferredQuery().getParameters().get(i);
+                PVariable parameter = (PVariable) constraint.getActualParametersTuple().get(i);
+                frameMapping.put(symbolicParameter, variableMapping.get(parameter));
+                if (bindings.contains(variableMapping.get(parameter))) {
+                    adornment.add(symbolicParameter);
+                }
+            }
+        }
+        
+        public FrameMapping(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping){
+            final Set<Integer> bindings = variableBindings.get(pCall);
+            int keySize = pCall.getVariablesTuple().getSize();
+            for (int i = 0; i < keySize; i++) {
+                PParameter symbolicParameter = pCall.getReferredQuery().getParameters().get(i);
+                PVariable parameter = (PVariable) pCall.getVariablesTuple().get(i);
+                frameMapping.put(symbolicParameter, variableMapping.get(parameter));
+                if (bindings.contains(variableMapping.get(parameter))) {
+                    adornment.add(symbolicParameter);
+                }
+            }
+        }
+    }
+    
     public POperationCompiler(IQueryRuntimeContext runtimeContext, IQueryBackend backend) {
         this(runtimeContext, backend, false);
     }
@@ -232,42 +264,17 @@ public class POperationCompiler {
      * @param variableMapping
      */
     private void createCheck(PatternMatchCounter counter, Map<PVariable, Integer> variableMapping) {
-        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
-        // Create frame mapping
-        Map<Integer, PParameter> frameMapping = Maps.newHashMap();
-        Set<PParameter> adornment = Sets.newHashSet();
-        final Set<Integer> bindings = variableBindings.get(counter);
-        int keySize = counter.getActualParametersTuple().getSize();
-        for (int i = 0; i < keySize; i++) {
-            PParameter symbolicParameter = counter.getReferredQuery().getParameters().get(i);
-            PVariable parameter = (PVariable) counter.getActualParametersTuple().get(i);
-            frameMapping.put(variableMapping.get(parameter), symbolicParameter);
-            if (bindings.contains(variableMapping.get(parameter))) {
-                adornment.add(symbolicParameter);
-            }
-        }
+        FrameMapping mapping = new FrameMapping(counter, variableMapping);
 
         PQuery referredQuery = counter.getReferredQuery();
-        operations.add(new CountCheck(referredQuery, frameMapping, variableMapping.get(counter.getResultVariable())));
-        dependencies.add(new MatcherReference(referredQuery, adornment));
+        operations.add(new CountCheck(referredQuery, mapping.frameMapping, variableMapping.get(counter.getResultVariable())));
+        dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
 
     private void createCheck(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
-        Map<Integer, PParameter> frameMapping = Maps.newHashMap();
-        Set<PParameter> adornment = Sets.newHashSet();
-        final Set<Integer> bindings = variableBindings.get(pCall);
-        int keySize = pCall.getVariablesTuple().getSize();
-        for (int i = 0; i < keySize; i++) {
-            PParameter symbolicParameter = pCall.getReferredQuery().getParameters().get(i);
-            PVariable parameter = (PVariable) pCall.getVariablesTuple().get(i);
-            frameMapping.put(variableMapping.get(parameter), symbolicParameter);
-            if (bindings.contains(variableMapping.get(parameter))) {
-                adornment.add(symbolicParameter);
-            }
-        }
-        
-        operations.add(new CheckPositivePatternCall(pCall.getReferredQuery(), frameMapping));
-        dependencies.add(new MatcherReference(pCall.getReferredQuery(), adornment));
+        FrameMapping mapping = new FrameMapping(pCall, variableMapping);
+        operations.add(new CheckPositivePatternCall(pCall.getReferredQuery(), mapping.frameMapping));
+        dependencies.add(new MatcherReference(pCall.getReferredQuery(), mapping.adornment));
     }
 
     private void createCheck(ConstantValue constant, Map<PVariable, Integer> variableMapping) {
@@ -338,45 +345,18 @@ public class POperationCompiler {
     }    
     
     private void createCheck(AggregatorConstraint aggregator, Map<PVariable, Integer> variableMapping) {
-        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
-        // Create frame mapping
-        Map<Integer, PParameter> frameMapping = Maps.newHashMap();
-        Set<PParameter> adornment = Sets.newHashSet();
-        final Set<Integer> bindings = variableBindings.get(aggregator);
-        int keySize = aggregator.getActualParametersTuple().getSize();
-        for (int i = 0; i < keySize; i++) {
-            PParameter symbolicParameter = aggregator.getReferredQuery().getParameters().get(i);
-            PVariable parameter = (PVariable) aggregator.getActualParametersTuple().get(i);
-            frameMapping.put(variableMapping.get(parameter), symbolicParameter);
-            if (bindings.contains(variableMapping.get(parameter))) {
-                adornment.add(symbolicParameter);
-            }
-        }
+        FrameMapping mapping = new FrameMapping(aggregator, variableMapping);
         
         PQuery referredQuery = aggregator.getReferredQuery();
-        operations.add(new AggregatorCheck(referredQuery, aggregator, frameMapping, variableMapping.get(aggregator.getResultVariable())));
-        dependencies.add(new MatcherReference(referredQuery, adornment));
+        operations.add(new AggregatorCheck(referredQuery, aggregator, mapping.frameMapping, variableMapping.get(aggregator.getResultVariable())));
+        dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
     
     private void createCheck(NegativePatternCall negativePatternCall, Map<PVariable, Integer> variableMapping) {
-        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
-        // Create frame mapping
-        Map<Integer, PParameter> frameMapping = Maps.newHashMap();
-        int keySize = negativePatternCall.getActualParametersTuple().getSize();
-        Set<PParameter> adornment = Sets.newHashSet();
-        final Set<Integer> bindings = variableBindings.get(negativePatternCall);
-        for (int i = 0; i < keySize; i++) {
-            PParameter symbolicParameter = negativePatternCall.getReferredQuery().getParameters().get(i);
-            PVariable parameter = (PVariable) negativePatternCall.getActualParametersTuple().get(i);
-            frameMapping.put(variableMapping.get(parameter), symbolicParameter);
-            if (bindings.contains(variableMapping.get(parameter))) {
-                adornment.add(symbolicParameter);
-            }
-            
-        }
+        FrameMapping mapping = new FrameMapping(negativePatternCall, variableMapping);
         PQuery referredQuery = negativePatternCall.getReferredQuery();
-        operations.add(new NACOperation(referredQuery, frameMapping));
-        dependencies.add(new MatcherReference(referredQuery, adornment));
+        operations.add(new NACOperation(referredQuery, mapping.frameMapping));
+        dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
     
     private void createCheck(Inequality inequality, Map<PVariable, Integer> variableMapping) {
@@ -414,21 +394,10 @@ public class POperationCompiler {
     }
 
     private void createExtend(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
-        Map<Integer, PParameter> frameMapping = Maps.newHashMap();
-        Set<PParameter> adornment = Sets.newHashSet();
-        final Set<Integer> bindings = variableBindings.get(pCall);
-        int keySize = pCall.getVariablesTuple().getSize();
-        for (int i = 0; i < keySize; i++) {
-            PParameter symbolicParameter = pCall.getReferredQuery().getParameters().get(i);
-            PVariable parameter = (PVariable) pCall.getVariablesTuple().get(i);
-            frameMapping.put(variableMapping.get(parameter), symbolicParameter);
-            if (bindings.contains(variableMapping.get(parameter))) {
-                adornment.add(symbolicParameter);
-            }
-        }
+        FrameMapping mapping = new FrameMapping(pCall, variableMapping);
         
-        operations.add(new ExtendPositivePatternCall(pCall.getReferredQuery(), frameMapping));
-        dependencies.add(new MatcherReference(pCall.getReferredQuery(), adornment));
+        operations.add(new ExtendPositivePatternCall(pCall.getReferredQuery(), mapping.frameMapping));
+        dependencies.add(new MatcherReference(pCall.getReferredQuery(), mapping.adornment));
     }
 
     private void createExtend(ConstantValue constant, Map<PVariable, Integer> variableMapping) {
@@ -530,45 +499,19 @@ public class POperationCompiler {
     }
     
     private void createExtend(AggregatorConstraint aggregator, Map<PVariable, Integer> variableMapping) {
-        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
-        // Create frame mapping
-        Map<Integer, PParameter> frameMapping = Maps.newHashMap();
-        Set<PParameter> adornment = Sets.newHashSet();
-        final Set<Integer> bindings = variableBindings.get(aggregator);
-        int keySize = aggregator.getActualParametersTuple().getSize();
-        for (int i = 0; i < keySize; i++) {
-            PParameter symbolicParameter = aggregator.getReferredQuery().getParameters().get(i);
-            PVariable parameter = (PVariable) aggregator.getActualParametersTuple().get(i);
-            frameMapping.put(variableMapping.get(parameter), symbolicParameter);
-            if (bindings.contains(variableMapping.get(parameter))) {
-                adornment.add(symbolicParameter);
-            }
-        }
+        FrameMapping mapping = new FrameMapping(aggregator, variableMapping);
         
         PQuery referredQuery = aggregator.getReferredQuery();
-        operations.add(new AggregatorExtend(referredQuery, aggregator, frameMapping, variableMapping.get(aggregator.getResultVariable())));
-        dependencies.add(new MatcherReference(referredQuery, adornment));
+        operations.add(new AggregatorExtend(referredQuery, aggregator, mapping.frameMapping, variableMapping.get(aggregator.getResultVariable())));
+        dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
     
     private void createExtend(PatternMatchCounter patternMatchCounter, Map<PVariable, Integer> variableMapping) {
-        // Fill unbound variables with null; simply copy all variables. Unbound variables will be null anyway
-        // Create frame mapping
-        Map<Integer, PParameter> frameMapping = Maps.newHashMap();
-        Set<PParameter> adornment = Sets.newHashSet();
-        final Set<Integer> bindings = variableBindings.get(patternMatchCounter);
-        int keySize = patternMatchCounter.getActualParametersTuple().getSize();
-        for (int i = 0; i < keySize; i++) {
-            PParameter symbolicParameter = patternMatchCounter.getReferredQuery().getParameters().get(i);
-            PVariable parameter = (PVariable) patternMatchCounter.getActualParametersTuple().get(i);
-            frameMapping.put(variableMapping.get(parameter), symbolicParameter);
-            if (bindings.contains(variableMapping.get(parameter))) {
-                adornment.add(symbolicParameter);
-            }
-        }
+        FrameMapping mapping = new FrameMapping(patternMatchCounter, variableMapping);
         
         PQuery referredQuery = patternMatchCounter.getReferredQuery();
-        operations.add(new CountOperation(referredQuery, frameMapping, variableMapping.get(patternMatchCounter.getResultVariable())));
-        dependencies.add(new MatcherReference(referredQuery, adornment));
+        operations.add(new CountOperation(referredQuery, mapping.frameMapping, variableMapping.get(patternMatchCounter.getResultVariable())));
+        dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
     
     public Set<MatcherReference> getDependencies() {

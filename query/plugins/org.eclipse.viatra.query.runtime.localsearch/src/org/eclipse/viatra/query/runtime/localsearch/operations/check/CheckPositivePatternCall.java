@@ -16,8 +16,8 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper.PatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -28,7 +28,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  */
 public class CheckPositivePatternCall extends CheckOperation {
 
-    private final PatternCallHelper helper;
+    private final CallOperationHelper helper;
     private PatternCall call;
 
     @Override
@@ -44,9 +44,9 @@ public class CheckPositivePatternCall extends CheckOperation {
         return call.has(frame);
     }
 
-    public CheckPositivePatternCall(PQuery calledQuery, Map<Integer, PParameter> frameMapping) {
+    public CheckPositivePatternCall(PQuery calledQuery, Map<PParameter, Integer> frameMapping) {
         super();
-        helper = new PatternCallHelper(calledQuery, frameMapping);
+        helper = new CallOperationHelper(calledQuery, frameMapping);
     }
 
     @Override

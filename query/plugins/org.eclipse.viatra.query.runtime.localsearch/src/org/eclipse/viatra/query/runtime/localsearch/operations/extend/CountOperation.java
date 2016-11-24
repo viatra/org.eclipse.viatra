@@ -16,8 +16,8 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper.PatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -30,13 +30,13 @@ import com.google.common.collect.Iterators;
  */
 public class CountOperation extends ExtendOperation<Integer>{
 
-    private final PatternCallHelper helper;
+    private final CallOperationHelper helper;
     private PatternCall call;
 
 	
-    public CountOperation(PQuery calledQuery, Map<Integer, PParameter> parameterMapping, int position) {
+    public CountOperation(PQuery calledQuery, Map<PParameter, Integer> parameterMapping, int position) {
         super(position);
-        helper = new PatternCallHelper(calledQuery, parameterMapping);
+        helper = new CallOperationHelper(calledQuery, parameterMapping);
     }
 
     @Override

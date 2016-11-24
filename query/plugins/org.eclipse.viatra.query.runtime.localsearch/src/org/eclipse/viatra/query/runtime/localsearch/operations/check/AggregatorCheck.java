@@ -17,8 +17,8 @@ import java.util.Objects;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper.PatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -33,15 +33,15 @@ import com.google.common.collect.Lists;
  */
 public class AggregatorCheck extends CheckOperation{
 
-    private final PatternCallHelper helper;
+    private final CallOperationHelper helper;
     private PatternCall call;
     private int position;
     private final AggregatorConstraint aggregator;
     
     
-    public AggregatorCheck(PQuery calledQuery, AggregatorConstraint aggregator, Map<Integer, PParameter> parameterMapping, int position) {
+    public AggregatorCheck(PQuery calledQuery, AggregatorConstraint aggregator, Map<PParameter, Integer> parameterMapping, int position) {
         super();
-        helper = new PatternCallHelper(calledQuery, parameterMapping);
+        helper = new CallOperationHelper(calledQuery, parameterMapping);
         this.position = position;
         this.aggregator = aggregator;
     }

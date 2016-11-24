@@ -16,7 +16,7 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
-import org.eclipse.viatra.query.runtime.localsearch.operations.PatternCallHelper.PatternCall;
+import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
@@ -27,14 +27,14 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
  */
 public abstract class AbstractPositivePatternCallOperation implements ISearchOperation {
 
-    private final PatternCallHelper helper;
+    private final CallOperationHelper helper;
     /**
      * @since 1.5
      */
     protected PatternCall call;
     
-    protected AbstractPositivePatternCallOperation(PQuery calledQuery, Map<Integer, PParameter> parameterMapping) {
-        helper = new PatternCallHelper(calledQuery, parameterMapping);
+    protected AbstractPositivePatternCallOperation(PQuery calledQuery, Map<PParameter, Integer> parameterMapping) {
+        helper = new CallOperationHelper(calledQuery, parameterMapping);
     }
     
     @Override

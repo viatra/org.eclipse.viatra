@@ -30,7 +30,7 @@ public class ExtendPositivePatternCall extends AbstractPositivePatternCallOperat
 
     private Iterator<? extends Tuple> matches = null;
     
-    public ExtendPositivePatternCall(PQuery calledQuery, Map<Integer, PParameter> frameMapping) {
+    public ExtendPositivePatternCall(PQuery calledQuery, Map<PParameter, Integer> frameMapping) {
        super(calledQuery, frameMapping);
     }
 
