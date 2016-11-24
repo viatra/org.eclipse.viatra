@@ -56,15 +56,15 @@ pattern uniquenessEnforcerRecipe(recipe : UniquenessEnforcerRecipe) {
 	UniquenessEnforcerRecipe(recipe);
 }
 
-@Item(item = recipe, label = "Check")
+@Item(item = recipe, label = "Check (cache=$cache$)")
 @QueryExplorer(checked = false)
-pattern checkRecipe(recipe : CheckRecipe) {
-	CheckRecipe(recipe);
+pattern checkRecipe(recipe : CheckRecipe, cache: java Boolean) {
+	CheckRecipe.cacheOutput(recipe, cache);
 }
-@Item(item = recipe, label = "Eval")
+@Item(item = recipe, label = "Eval (cache=$cache$)")
 @QueryExplorer(checked = false)
-pattern evalRecipe(recipe : EvalRecipe) {
-	EvalRecipe(recipe);
+pattern evalRecipe(recipe : EvalRecipe, cache: java Boolean) {
+	EvalRecipe.cacheOutput(recipe, cache);
 }
 
 @Item(item = recipe, label = "InequalityFilter: $recipe.subject$ != $recipe.inequals$")
