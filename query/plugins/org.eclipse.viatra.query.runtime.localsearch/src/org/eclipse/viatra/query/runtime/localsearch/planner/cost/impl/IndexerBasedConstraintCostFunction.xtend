@@ -21,7 +21,11 @@ import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 class IndexerBasedConstraintCostFunction extends StatisticsBasedConstraintCostFunction {
     
     override countTuples(IConstraintEvaluationContext input, IInputKey supplierKey) {
-        input.runtimeContext.countTuples(supplierKey, null)
+        if (supplierKey.enumerable)
+            input.runtimeContext.countTuples(supplierKey, null)
+        else{
+            Math.round(DEFAULT_COST)
+        }
     }
     
 }

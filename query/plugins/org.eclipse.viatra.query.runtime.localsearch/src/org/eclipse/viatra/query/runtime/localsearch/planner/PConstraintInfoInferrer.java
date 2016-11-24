@@ -245,9 +245,16 @@ class PConstraintInfoInferrer {
     private void createConstraintInfoTypeConstraint(List<PConstraintInfo> resultList, 
             TypeConstraint typeConstraint) {
         Set<PVariable> affectedVariables = typeConstraint.getAffectedVariables();
-        Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
+        Set<Set<PVariable>> bindings = null;
         
         IInputKey inputKey = typeConstraint.getSupplierKey();
+        if(inputKey.isEnumerable()){
+            bindings = Sets.powerSet(affectedVariables);
+        }else{
+            // For not enumerable types, this constraint can only be a check
+            bindings = Collections.singleton(affectedVariables);
+        }
+        
         if(inputKey instanceof EStructuralFeatureInstancesKey){
             final EStructuralFeature feature = ((EStructuralFeatureInstancesKey) inputKey).getEmfKey();
             if(!canPerformInverseNavigation(feature)){

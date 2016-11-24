@@ -33,8 +33,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeCo
  * @since 1.4
  */
 abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
-    static double MAX_COST = 250.0
-    static double DEFAULT_COST = MAX_COST - 100.0
+    protected static double MAX_COST = 250.0
+    protected static double DEFAULT_COST = MAX_COST - 100.0
 
     def abstract long countTuples(IConstraintEvaluationContext input, IInputKey supplierKey);
 
