@@ -223,4 +223,8 @@ public abstract class BasePQuery implements PQuery {
 	 */
 	protected abstract Set<PBody> doGetContainedBodies() throws QueryInitializationException;
 
+	@Override
+	public String toString() {
+	    return String.format("PQuery<%s>=%s", getFullyQualifiedName(), super.toString());
+	}
 }

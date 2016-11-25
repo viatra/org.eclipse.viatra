@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Production;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
+import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery;
 import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 
 /**
@@ -55,5 +56,16 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
     public void acceptPropagatedTraceInfo(TraceInfo traceInfo) {
     	if (traceInfo.propagateToProductionNodeParentAlso())
     		super.acceptPropagatedTraceInfo(traceInfo);
+    }
+    
+    @Override
+    public String toString() {
+        for (TraceInfo traceInfo : this.traceInfos) {
+            if (traceInfo instanceof CompiledQuery) {
+                String patternName = ((CompiledQuery) traceInfo).getPatternName();
+                return String.format("ProductionNode<%s>=%s", patternName, super.toString());
+            }
+        }
+        return super.toString();
     }
 }
