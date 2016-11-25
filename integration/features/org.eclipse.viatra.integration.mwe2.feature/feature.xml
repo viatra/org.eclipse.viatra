@@ -11,6 +11,10 @@
       VIATRA EMF MWE2 Integration
    </description>
 
+   <url>
+      <update label="VIATRA" url="http://download.eclipse.org/viatra/updates/release/"/>
+   </url>
+   
    <requires>
       <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.2.0.qualifier"/>
    </requires>
