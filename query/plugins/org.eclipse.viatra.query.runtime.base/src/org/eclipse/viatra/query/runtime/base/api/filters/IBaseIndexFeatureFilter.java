@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
  * {@link IBaseIndexResourceFilter} or {@link IBaseIndexObjectFilter}.   
  * 
  * @author Peter Lunk
+ * @since 1.5
  * 
  */
 public interface IBaseIndexFeatureFilter {

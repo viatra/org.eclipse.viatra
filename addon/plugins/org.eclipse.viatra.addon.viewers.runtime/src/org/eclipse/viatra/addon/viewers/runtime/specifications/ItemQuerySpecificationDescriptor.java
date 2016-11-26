@@ -26,9 +26,9 @@ import com.google.common.collect.ArrayListMultimap;
 public class ItemQuerySpecificationDescriptor extends AbstractQuerySpecificationDescriptor {
 
     public static final String ANNOTATION_ID = "Item";
-    private static final String SOURCE = "item";
-    private static final String LABEL = "label";
-    private static final String HIERARCHY = "hierarchy";
+    private static final String SOURCE_PARAMETER_NAME = "item";
+    private static final String LABEL_PARAMETER_NAME = "label";
+    private static final String HIERARCHY_PARAMETER_NAME = "hierarchy";
 
     private String source;
     private String label;
@@ -41,15 +41,15 @@ public class ItemQuerySpecificationDescriptor extends AbstractQuerySpecification
         super(specification, ArrayListMultimap.<PParameter, PParameter> create(), Collections
                 .<PParameter, String> emptyMap());
 
-        ParameterReference parameterName = (ParameterReference) annotation.getFirstValue(SOURCE);
+        ParameterReference parameterName = (ParameterReference) annotation.getFirstValue(SOURCE_PARAMETER_NAME);
         String parameterNameValue = parameterName.getName();
         source = parameterNameValue;
 
-        Object parameterLabel = annotation.getFirstValue(LABEL);
+        Object parameterLabel = annotation.getFirstValue(LABEL_PARAMETER_NAME);
         String parameterLabelValue = parameterLabel == null ? "" : (String) parameterLabel;
         label = parameterLabelValue;
 
-        Object parameterHierarchy = annotation.getFirstValue(HIERARCHY);
+        Object parameterHierarchy = annotation.getFirstValue(HIERARCHY_PARAMETER_NAME);
         HierarchyPolicy parameterHierarchyPolicy = parameterHierarchy == null ? HierarchyPolicy.ALWAYS
                 : HierarchyPolicy.valueOf(((String) parameterHierarchy).toUpperCase());
         policy = parameterHierarchyPolicy;

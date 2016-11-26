@@ -100,7 +100,6 @@ public abstract class ProjectGenerationHelper {
     /**
      * Return true if the given project exists, is open and has PDE plug-in nature configured
      * @param project
-     * @return
      */
     public static boolean isOpenPDEProject(IProject project){
     	return project.exists() && project.isOpen() && (PDE.hasPluginNature(project));
@@ -354,6 +353,14 @@ public abstract class ProjectGenerationHelper {
     }
 
     /**
+     * @deprecated Misspelled method, call {@link #replaceBundledependencies(IProject, Map, Map, IProgressMonitor)} instead.
+     */
+    @Deprecated
+    public static void replaceBundledependencies(IProject project, 
+            final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions, IProgressMonitor monitor) throws CoreException{
+        replaceBundleDependencies(project, replacedDependencies, versions, monitor);
+    }
+    /**
      * Updates the plugin dependency settings of the given project by replacing entries according to the given map. This
      * method preserves optional and re-export flags, and updates version settings (if was originally set)
      * 
@@ -362,8 +369,9 @@ public abstract class ProjectGenerationHelper {
      * @param versions version ranges to set for the new entries
      * @param monitor
      * @throws CoreException
+     * @since 1.5
      */
-    public static void replaceBundledependencies(IProject project, 
+    public static void replaceBundleDependencies(IProject project, 
     		final Map<String, String> replacedDependencies, final Map<String, VersionRange> versions, IProgressMonitor monitor) throws CoreException{
     	checkOpenPDEProject(project);
     	BundleContext context = null;

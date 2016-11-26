@@ -61,6 +61,9 @@ public class BaseIndexOptions {
     protected IndexingLevel wildcardMode = WILDCARD_MODE_DEFAULT;
     protected IBaseIndexObjectFilter notifierFilterConfiguration;
     protected IBaseIndexResourceFilter resourceFilterConfiguration;
+    /**
+     * @since 1.5
+     */
     protected IBaseIndexFeatureFilter featureFilterConfiguration;
 
     /**

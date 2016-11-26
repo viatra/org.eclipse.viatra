@@ -65,7 +65,10 @@ public class CsvFile {
             return false;
         }
 
-        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path.toString(), true)))){
+        try (
+                FileWriter fw = new FileWriter(path.toString(), true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                PrintWriter out = new PrintWriter(bw)){
             out.println(getHeaderString());
             return true;
         } catch (IOException e) {
@@ -79,7 +82,10 @@ public class CsvFile {
             throw new RuntimeException("Csv file is not created yet.");
         }
 
-        try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path.toString(), true)))) {
+        try (
+                FileWriter fw = new FileWriter(path.toString(), true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                PrintWriter out = new PrintWriter(bw)) {
             out.println(rowIntoString(row));
             return true;
         } catch (IOException e) {

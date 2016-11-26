@@ -27,9 +27,9 @@ import com.google.common.collect.Multimap;
 public class EdgeQuerySpecificationDescriptor extends AbstractQuerySpecificationDescriptor {
 
     public static final String ANNOTATION_ID = "Edge";
-    private static final String SOURCE = "source";
-    private static final String TARGET = "target";
-    private static final String LABEL = "label";
+    private static final String SOURCE_PARAMETER_NAME = "source";
+    private static final String TARGET_PARAMETER_NAME = "target";
+    private static final String LABEL_PARAMETER_NAME = "label";
 
     private String source, target, label;
     private PAnnotation formatAnnotation;
@@ -38,15 +38,15 @@ public class EdgeQuerySpecificationDescriptor extends AbstractQuerySpecification
             throws QueryInitializationException {
         super(specification, getTraceSource(specification, annotation), Collections.<PParameter, String> emptyMap());
 
-        ParameterReference parameterSource = (ParameterReference) annotation.getFirstValue(SOURCE);
+        ParameterReference parameterSource = (ParameterReference) annotation.getFirstValue(SOURCE_PARAMETER_NAME);
         String parameterSourceValue = parameterSource.getName();
         source = parameterSourceValue;
 
-        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET);
+        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET_PARAMETER_NAME);
         String parameterTargetValue = parameterTarget.getName();
         target = parameterTargetValue;
 
-        Object parameterLabel = annotation.getFirstValue(LABEL);
+        Object parameterLabel = annotation.getFirstValue(LABEL_PARAMETER_NAME);
         String parameterLabelValue = parameterLabel == null ? "" : (String) parameterLabel;
         label = parameterLabelValue;
 
@@ -56,8 +56,8 @@ public class EdgeQuerySpecificationDescriptor extends AbstractQuerySpecification
     private static Multimap<PParameter, PParameter> getTraceSource(IQuerySpecification<?> specification,
             PAnnotation annotation) {
         Multimap<PParameter, PParameter> traces = ArrayListMultimap.create();
-        ParameterReference parameterSource = (ParameterReference) annotation.getFirstValue(SOURCE);
-        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET);
+        ParameterReference parameterSource = (ParameterReference) annotation.getFirstValue(SOURCE_PARAMETER_NAME);
+        ParameterReference parameterTarget = (ParameterReference) annotation.getFirstValue(TARGET_PARAMETER_NAME);
 
         insertToTraces(specification, traces, parameterSource.getName());
         insertToTraces(specification, traces, parameterTarget.getName());

@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.tooling.ui.dialog;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -40,7 +41,7 @@ public class PatternMatchDialogContentProvider implements ITreeContentProvider {
 
     @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        if (newInput instanceof ViatraQueryMatcher<?> && newInput != oldInput) {
+        if (newInput instanceof ViatraQueryMatcher<?> && !Objects.equals(newInput, oldInput)) {
             this.matcher = (ViatraQueryMatcher<?>) newInput;
             this.matches = matcher.getAllMatches();
         }

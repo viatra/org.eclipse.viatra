@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.scoping;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EEnum;
@@ -44,10 +45,10 @@ public class EMFPatternLanguageLinkingService extends DefaultLinkingService {
 
     @Override
     public List<EObject> getLinkedObjects(EObject context, EReference ref, INode node) {
-        if (ref == EMFPatternLanguagePackage.eINSTANCE.getPackageImport_EPackage() && context instanceof PackageImport
+        if (Objects.equals(ref, EMFPatternLanguagePackage.eINSTANCE.getPackageImport_EPackage()) && context instanceof PackageImport
                 && node instanceof ILeafNode) {
             return getPackage((PackageImport) context, (ILeafNode) node);
-        } else if (ref == EMFPatternLanguagePackage.eINSTANCE.getEnumValue_Literal() && context instanceof EnumValue
+        } else if (Objects.equals(ref, EMFPatternLanguagePackage.eINSTANCE.getEnumValue_Literal()) && context instanceof EnumValue
                 && node instanceof ILeafNode) {
             return getEnumLiteral((EnumValue) context, node);
         }
