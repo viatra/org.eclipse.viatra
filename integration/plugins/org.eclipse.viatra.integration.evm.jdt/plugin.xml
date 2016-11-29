@@ -11,6 +11,11 @@
  -->
 <plugin>
   <extension id="jdtBuildNotifierParticipant" name="jdtBuildNotifierParticipantName" point="org.eclipse.jdt.core.compilationParticipant">
-    <compilationParticipant class="org.eclipse.viatra.integration.evm.jdt.BuildNotifierCompilationParticipant" id="com.incquerylabs.evm.jdt.jdtBuildNotifierParticipant" modifiesEnvironment="false" requiredSourceLevel="1.8"/>
+    <compilationParticipant
+          class="org.eclipse.viatra.integration.evm.jdt.BuildNotifierCompilationParticipant"
+          createsProblems="false"
+          id="org.eclipse.viatra.integration.evm.jdt.jdtBuildNotifierParticipant"
+          modifiesEnvironment="false"
+          requiredSourceLevel="1.6"/>
   </extension>
 </plugin>

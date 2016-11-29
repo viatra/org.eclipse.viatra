@@ -12,19 +12,19 @@ package org.eclipse.viatra.integration.evm.jdt
 
 import com.google.common.collect.Sets
 import java.util.Set
-import org.apache.log4j.Level
-import org.apache.log4j.Logger
-import org.eclipse.viatra.transformation.evm.api.event.EventRealm
 import org.eclipse.jdt.core.ElementChangedEvent
 import org.eclipse.jdt.core.IElementChangedListener
 import org.eclipse.jdt.core.IJavaElement
 import org.eclipse.jdt.core.IJavaElementDelta
 import org.eclipse.jdt.core.JavaCore
+import org.eclipse.viatra.transformation.evm.api.event.EventRealm
+import org.eclipse.xtend.lib.annotations.Accessors
 
 class JDTRealm implements EventRealm {
 	Set<JDTEventSource> sources = Sets.newHashSet()
-	extension val Logger logger = Logger.getLogger(this.class)
 	IElementChangedListener listener
+	@Accessors(PROTECTED_GETTER)
+	boolean active = false
 	
 	private static JDTRealm instance = null
 	
@@ -32,12 +32,10 @@ class JDTRealm implements EventRealm {
 	 * Constructor hidden for singleton class.
 	 */
 	protected new() {
-		logger.level = Level.DEBUG
 		listener = [ ElementChangedEvent event |
 			val delta = event.delta
 			notifySources(delta)
 		]
-		JavaCore.addElementChangedListener(listener)
 	}
 	
 	static def JDTRealm getInstance() {
@@ -60,6 +58,10 @@ class JDTRealm implements EventRealm {
 	}
 	
 	def protected void addSource(JDTEventSource source) {
+	    if(sources.empty) {
+	        JavaCore.addElementChangedListener(listener)
+	        active = true
+	    }
 		sources.add(source)
 	}
 	
