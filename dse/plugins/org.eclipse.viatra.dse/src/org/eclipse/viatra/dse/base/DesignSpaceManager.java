@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.base;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,22 +28,16 @@ import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
 import org.eclipse.viatra.dse.objectives.ActivationFitnessProcessor;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
-import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.visualizer.IExploreEventHandler;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.transformation.evm.api.Activation;
 import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 public class DesignSpaceManager {
 
     private final IStateCoder stateCoder;
-    private final IStateCoderFactory serializerFactory;
     private final EditingDomain domain;
     private Notifier model;
 
@@ -66,33 +58,25 @@ public class DesignSpaceManager {
     private Map<BatchTransformationRule<?, ?>, String> activationFitnessProcessorNames;
     private ThreadContext context;
 
-    private BiMap<Activation<?>, Object> activationIds;
+    private DseActivationNotificationListener dseActivationNotificationListener;
     private ChangeableConflictSet conflictSet;
     
     private Random random = new Random();
 
-    public DesignSpaceManager(ThreadContext context, Notifier model, EditingDomain domain, IStateCoderFactory factory,
-            IDesignSpace designSpace, ViatraQueryEngine engine) {
-        checkNotNull(designSpace, "Cannot initialize crawler on a null design space!");
-        checkNotNull(domain, "Cannot initialize crawler on a null editing domain!");
-        checkNotNull(factory, "Cannot initialize crawler without a serializer factory!");
+    public DesignSpaceManager(ThreadContext context) {
 
         this.context = context;
-        this.model = model;
-        this.designSpace = designSpace;
-        this.domain = domain;
-        this.serializerFactory = factory;
-        activationIds = HashBiMap.create();
+        model = context.getModel();
+        designSpace = context.getGlobalContext().getDesignSpace();
+        domain = context.getEditingDomain();
 
         conflictSet = context.getConflictResolver().conflictSet;
 
-        // init serializer
-        stateCoder = factory.createStateCoder();
-        stateCoder.init(model);
-
+        stateCoder = context.getStateCoder();
         Object initialStateId = stateCoder.createStateCode();
-        generateTransitions();
         designSpace.addState(null, null, initialStateId);
+
+        dseActivationNotificationListener = context.getDseActivationNotificationListener();
 
         this.trajectory = new TrajectoryInfo(initialStateId);
 
@@ -163,7 +147,7 @@ public class DesignSpaceManager {
         domain.getCommandStack().execute(rc);
 
         Object newStateId = stateCoder.createStateCode();
-        generateTransitions();
+        dseActivationNotificationListener.updateActivationCodes();
 
         if (designSpace != null) {
             isNewState = !designSpace.isTraversed(newStateId);
@@ -242,7 +226,7 @@ public class DesignSpaceManager {
         }
         for (int i = 0; i < excludedIndex; i++) {
             Object activationId = trajectoryToExecute[i];
-            final Activation<?> activation = getActivationByIdFromConflictSet(activationId);
+            final Activation<?> activation = getActivationById(activationId);
 
             if (activation == null) {
                 logger.debug("Couldn't execute activation: " + activationId);
@@ -281,6 +265,7 @@ public class DesignSpaceManager {
             if (createStateCode) {
                 newStateId = stateCoder.createStateCode();
             }
+            dseActivationNotificationListener.updateActivationCodes();
 
             trajectory.addStep(activationId, rule, newStateId, measureCosts);
 
@@ -289,19 +274,17 @@ public class DesignSpaceManager {
         if (!createStateCode) {
             trajectory.modifyLastStateCode(stateCoder.createStateCode());
         }
-        generateTransitions();
         logger.debug("Trajectory execution finished.");
         return unsuccesfulIndex;
 
     }
 
     public Object getTransitionByActivation(Activation<?> activation) {
-        return activationIds.get(activation);
+        return dseActivationNotificationListener.getActivationId(activation);
     }
 
     public Activation<?> getActivationById(Object activationId) {
-        Activation<?> activation = activationIds.inverse().get(activationId);
-        return activation;
+        return dseActivationNotificationListener.getActivation(activationId);
     }
     
     public BatchTransformationRule<?, ?> getRuleByActivation(Activation<?> activation) {
@@ -325,7 +308,7 @@ public class DesignSpaceManager {
     }
 
     public Collection<Object> getTransitionsFromCurrentState() {
-        return activationIds.values();
+        return dseActivationNotificationListener.activationIds.values();
     }
 
     public Collection<Object> getUntraversedTransitionsFromCurrentState() {
@@ -336,7 +319,7 @@ public class DesignSpaceManager {
         Collection<Object> traversedIds = designSpace.getActivationIds(currentState);
 
         List<Object> untraversedTransitions = new ArrayList<>();
-        for (Object activationId : activationIds.values()) {
+        for (Object activationId : dseActivationNotificationListener.activationIds.values()) {
             if (!traversedIds.contains(activationId)) {
                 untraversedTransitions.add(activationId);
             }
@@ -352,8 +335,8 @@ public class DesignSpaceManager {
         }
 
         domain.getCommandStack().undo();
-
-        generateTransitions();
+        dseActivationNotificationListener.updateActivationCodes();
+        
         Object lastActivationId = trajectory.getLastActivationId();
 
         trajectory.backtrack();
@@ -373,8 +356,8 @@ public class DesignSpaceManager {
         while(trajectory.canStepBack()) {
             domain.getCommandStack().undo();
             trajectory.backtrack();
+            dseActivationNotificationListener.updateActivationCodes();
         }
-        generateTransitions();
         logger.debug("Backtracked to root.");
     }
     
@@ -384,25 +367,6 @@ public class DesignSpaceManager {
 
     public Object getCurrentState() {
         return trajectory.getCurrentStateId();
-    }
-
-    private void generateTransitions() {
-
-        activationIds.clear();
-
-        for (Activation<?> activation : conflictSet.getNextActivations()) {
-
-            // we ignore not fireable Activations. These shouldn't be here
-            // anyway TODO check if this code makes sense
-            if (!activation.isEnabled()) {
-                continue;
-            }
-
-            IPatternMatch match = (IPatternMatch) activation.getAtom();
-            Object activationId = stateCoder.createActivationCode(match);
-
-            activationIds.put(activation, activationId);
-        }
     }
 
     private Activation<?> getActivationByIdFromConflictSet(Object soughtActivationId) {
@@ -424,7 +388,7 @@ public class DesignSpaceManager {
     }
 
     public SolutionTrajectory createSolutionTrajectroy() {
-        return trajectory.createSolutionTrajectory(serializerFactory);
+        return trajectory.createSolutionTrajectory(context.getGlobalContext().getStateCoderFactory());
     }
 
     public TrajectoryInfo getTrajectoryInfo() {

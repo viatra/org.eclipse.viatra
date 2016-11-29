@@ -37,12 +37,14 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.Activation;
+import org.eclipse.viatra.transformation.evm.api.Agenda;
+import org.eclipse.viatra.transformation.evm.api.RuleBase;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSet;
-import org.eclipse.viatra.transformation.evm.specific.RuleEngines;
+import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 /**
@@ -66,6 +68,9 @@ public class ThreadContext implements IDseStrategyContext{
     private List<IGlobalConstraint> globalConstraints;
     private Fitness lastFitness;
     private ObjectiveComparatorHelper objectiveComparatorHelper;
+    private IStateCoder stateCoder;
+    private SingletonSetConflictResolver conflictResolver;
+    private DseActivationNotificationListener dseActivationNotificationListener;
 
     /**
      * This value is true after the {@link ThreadContext} has been initialized in it's own thread.
@@ -96,8 +101,6 @@ public class ThreadContext implements IDseStrategyContext{
         }
         
     }
-    
-    private SingletonSetConflictResolver conflictResolver;
     
     public SingletonSetConflictResolver getConflictResolver() {
         return conflictResolver;
@@ -152,13 +155,26 @@ public class ThreadContext implements IDseStrategyContext{
             // initialize query engine
             final EMFScope scope = new EMFScope(model);
             queryEngine = ViatraQueryEngine.on(scope);
-            ruleEngine = RuleEngines.createViatraQueryRuleEngine(queryEngine);
+            
             ConflictResolver conflictResolverToWrap = globalContext.getConflictResolver();
             conflictResolver = new SingletonSetConflictResolver(conflictResolverToWrap);
+
+            stateCoder = getGlobalContext().getStateCoderFactory().createStateCoder();
+            stateCoder.init(model);
+            stateCoder.createStateCode();
+
+            Agenda agenda = new Agenda(conflictResolver);
+            dseActivationNotificationListener = new DseActivationNotificationListener(agenda, stateCoder);
+            agenda.setActivationListener(dseActivationNotificationListener);
+            RuleBase ruleBase = new DseEvmRuleBase(ViatraQueryEventRealm.create(queryEngine), agenda);
+            ruleEngine = RuleEngine.create(ruleBase);
             ruleEngine.setConflictResolver(conflictResolver);
             for (BatchTransformationRule<?, ?> tr : globalContext.getTransformations()) {
                 ruleEngine.addRule(tr.getRuleSpecification(), (EventFilter<IPatternMatch>) tr.getFilter());
             }
+            dseActivationNotificationListener.updateActivationCodes();
+
+
         } catch (ViatraQueryException e) {
             throw new DSEException("Failed to create unmanaged ViatraQueryEngine on the model.", e);
         }
@@ -190,8 +206,7 @@ public class ThreadContext implements IDseStrategyContext{
         }
         // create the thread specific DesignSpaceManager
         this.domain = EMFHelper.createEditingDomain(model);
-        designSpaceManager = new DesignSpaceManager(this, model, domain, globalContext.getStateCoderFactory(),
-                globalContext.getDesignSpace(), queryEngine);
+        designSpaceManager = new DesignSpaceManager(this);
 
         for (IObjective objective : objectives) {
             objective.init(this);
@@ -353,7 +368,7 @@ public class ThreadContext implements IDseStrategyContext{
 
     @Override
     public IStateCoder getStateCoder() {
-        return designSpaceManager.getStateCoder();
+        return stateCoder;
     }
 
     @Override
@@ -489,6 +504,10 @@ public class ThreadContext implements IDseStrategyContext{
     @Override
     public boolean isCurrentStateInTrajectory() {
         return designSpaceManager.isCurentStateInTrajectory();
+    }
+
+    public DseActivationNotificationListener getDseActivationNotificationListener() {
+        return dseActivationNotificationListener;
     }
 
 }
