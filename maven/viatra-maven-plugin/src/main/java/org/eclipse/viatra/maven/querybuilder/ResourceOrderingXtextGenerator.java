@@ -217,6 +217,98 @@ public class ResourceOrderingXtextGenerator extends AbstractMojo {
     public void setLanguages(List<Language> languages) {
         this.languages = languages;
     }
+    
+    public String getTmpClassDirectory() {
+        return tmpClassDirectory;
+    }
+
+    public void setTmpClassDirectory(String tmpClassDirectory) {
+        this.tmpClassDirectory = tmpClassDirectory;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
+    public MavenProject getProject() {
+        return project;
+    }
+
+    public void setProject(MavenProject project) {
+        this.project = project;
+    }
+
+    public List<String> getSourceRoots() {
+        return sourceRoots;
+    }
+
+    public void setSourceRoots(List<String> sourceRoots) {
+        this.sourceRoots = sourceRoots;
+    }
+
+    public List<String> getJavaSourceRoots() {
+        return javaSourceRoots;
+    }
+
+    public void setJavaSourceRoots(List<String> javaSourceRoots) {
+        this.javaSourceRoots = javaSourceRoots;
+    }
+
+    public Boolean getSkip() {
+        return skip;
+    }
+
+    public void setSkip(Boolean skip) {
+        this.skip = skip;
+    }
+
+    public Boolean getFailOnValidationError() {
+        return failOnValidationError;
+    }
+
+    public void setFailOnValidationError(Boolean failOnValidationError) {
+        this.failOnValidationError = failOnValidationError;
+    }
+
+    public String getCompilerSourceLevel() {
+        return compilerSourceLevel;
+    }
+
+    public void setCompilerSourceLevel(String compilerSourceLevel) {
+        this.compilerSourceLevel = compilerSourceLevel;
+    }
+
+    public String getCompilerTargetLevel() {
+        return compilerTargetLevel;
+    }
+
+    public void setCompilerTargetLevel(String compilerTargetLevel) {
+        this.compilerTargetLevel = compilerTargetLevel;
+    }
+
+    public String getClassPathLookupFilter() {
+        return classPathLookupFilter;
+    }
+
+    public void setClassPathLookupFilter(String classPathLookupFilter) {
+        this.classPathLookupFilter = classPathLookupFilter;
+    }
+
+    public ClusteringConfig getClusteringConfig() {
+        return clusteringConfig;
+    }
+
+    public void setClusteringConfig(ClusteringConfig clusteringConfig) {
+        this.clusteringConfig = clusteringConfig;
+    }
+
+    public void setClasspathElements(List<String> classpathElements) {
+        this.classpathElements = classpathElements;
+    }
 
     private void configureDefaults() {
         if (sourceRoots == null) {

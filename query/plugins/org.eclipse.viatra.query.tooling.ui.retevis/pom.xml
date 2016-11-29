@@ -49,6 +49,7 @@
 				</executions>
 				<configuration>
 					<outputDirectory>src-gen</outputDirectory>
+					<useProjectDependencies>true</useProjectDependencies>
 					<metamodels>
 						<metamodel>
 							<packageClass>org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage</packageClass>

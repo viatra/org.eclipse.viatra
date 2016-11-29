@@ -93,6 +93,7 @@
 				</executions>
 				<configuration>
 					<outputDirectory>src-gen</outputDirectory>
+					<useProjectDependencies>true</useProjectDependencies>
 					<metamodels>
 						<metamodel>
 							<genmodelUri>model/notation.genmodel</genmodelUri>

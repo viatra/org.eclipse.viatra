@@ -70,7 +70,7 @@
 		<relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
 	</parent>
 	<properties>
-		<core.repository.url>file://${basedir}/../../../releng/org.eclipse.viatra.update.core/target/repository</core.repository.url>
+		<core.repository.url>file:/${basedir}/../../releng/org.eclipse.viatra.update.core/target/repository</core.repository.url>
 		<target.classifier>indigo</target.classifier>
 	</properties>
 	<repositories>

@@ -49,6 +49,7 @@
 				</executions>
 				<configuration>
 					<outputDirectory>src-gen</outputDirectory>
+					<useProjectDependencies>true</useProjectDependencies>
 					<metamodels>
 						<metamodel>
 							<packageClass>org.eclipse.uml2.uml.UMLPackage</packageClass>
@@ -58,25 +59,7 @@
 						</metamodel>
 					</metamodels>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.uml2</groupId>
-						<artifactId>org.eclipse.uml2.uml</artifactId>
-						<version>5.0.1.v20140910-1354</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.uml2</groupId>
-						<artifactId>org.eclipse.uml2.types</artifactId>
-						<version>2.0.0.v20140910-1354</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
-		<repository>
-			<id>acceleo-releases</id>
-			<url>https://repo.eclipse.org/content/repositories/acceleo-releases/</url>
-		</repository>
-	</repositories>
 </project>

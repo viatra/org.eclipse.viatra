@@ -13,6 +13,7 @@ package org.eclipse.viatra.maven.querybuilder;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +21,9 @@ import java.util.List;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
 import org.eclipse.emf.common.util.URI;
@@ -87,6 +90,15 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
+     * The plugin descriptor
+     * 
+     * @parameter default-value="${plugin}"
+     * @readonly
+     * @required
+     */
+    protected PluginDescriptor descriptor;
+    
+    /**
      * Project classpath.
      * 
      * @parameter default-value="${project.compileClasspathElements}"
@@ -118,9 +130,18 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
      * @parameter expression="${maven.compiler.target}" default-value="1.6"
      */
     private String compilerTargetLevel;
+    
+    /**
+     * whether the dependencies of the project should be added to the classpath of the plugin.
+     * 
+     * @parameter
+     */
+    private boolean useProjectDependencies = false;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
+        prepareClasspath();
+        
         registerGenmodelExtension();
 
         registerMetamodels();
@@ -131,6 +152,32 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
 
         generator.execute();
 
+    }
+
+    /**
+     * The classpath of the Maven plugin does not include the dependencies of the Maven project
+     * that the plugin runs on. However, the dependencies of the project are passed by Maven to
+     * the plugin in the {@link #classpathElements} list. These URLs can be added to the realm
+     * of the plugin.
+     * 
+     * @throws MojoExecutionException
+     */
+    protected void prepareClasspath() throws MojoExecutionException {
+        if(useProjectDependencies) {
+            ClassRealm realm = descriptor.getClassRealm();
+            getLog().info("Adding project dependencies to classpath");
+            for (String element : classpathElements)
+            {
+                File elementFile = new File(element);
+                try {
+                    realm.addURL(elementFile.toURI().toURL());
+                } catch (MalformedURLException e) {
+                    final String msg = "Error while adding classpath URL " + element;
+                    getLog().error(msg);
+                    throw new MojoExecutionException(msg, e);
+                }
+            }
+        }
     }
 
     /**
@@ -160,47 +207,14 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
         languageList.add(language);
 
         generator.setLanguages(languageList);
-
-        try {
-
-            Class<?> generatorClass = generator.getClass();
-
-            Field skipField = generatorClass.getDeclaredField("skip");
-            skipField.setAccessible(true);
-            skipField.set(generator, Boolean.FALSE);
-
-            Field failOnErrorField = generatorClass.getDeclaredField("failOnValidationError");
-            failOnErrorField.setAccessible(true);
-            failOnErrorField.set(generator, Boolean.TRUE);
-
-            Field projectField = generatorClass.getDeclaredField("project");
-            projectField.setAccessible(true);
-            projectField.set(generator, project);
-
-            Field classpathField = generatorClass.getDeclaredField("classpathElements");
-            classpathField.setAccessible(true);
-            classpathField.set(generator, classpathElements);
-
-            Field tmpDirectoryField = generatorClass.getDeclaredField("tmpClassDirectory");
-            tmpDirectoryField.setAccessible(true);
-            tmpDirectoryField.set(generator, tmpClassDirectory);
-
-            Field encodingField = generatorClass.getDeclaredField("encoding");
-            encodingField.setAccessible(true);
-            encodingField.set(generator, encoding);
-
-            Field sourceLevelField = generatorClass.getDeclaredField("compilerSourceLevel");
-            sourceLevelField.setAccessible(true);
-            sourceLevelField.set(generator, compilerSourceLevel);
-
-            Field targetLevelField = generatorClass.getDeclaredField("compilerTargetLevel");
-            targetLevelField.setAccessible(true);
-            targetLevelField.set(generator, compilerTargetLevel);
-
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e1) {
-            //Should never happen
-            throw new MojoFailureException("Error initializing Xtext Generator " + e1.getMessage(), e1);
-        }
+        generator.setSkip(false);
+        generator.setFailOnValidationError(true);
+        generator.setProject(project);
+        generator.setClasspathElements(classpathElements);
+        generator.setTmpClassDirectory(tmpClassDirectory);
+        generator.setEncoding(encoding);
+        generator.setCompilerSourceLevel(compilerSourceLevel);
+        generator.setCompilerTargetLevel(compilerTargetLevel);
     }
 
     /**
@@ -224,6 +238,9 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
             }
             
             if (!Strings.isNullOrEmpty(fqnOfEPackageClass)) {
+                /*
+                 * Note that we only ensure that the class can be loaded at this point to fail early.
+                 */
                 loadNSUriFromClass(fqnOfEPackageClass);
             }
             

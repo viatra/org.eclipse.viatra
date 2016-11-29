@@ -36,6 +36,7 @@
 				</executions>
 				<configuration>
 					<outputDirectory>src-gen</outputDirectory>
+					<useProjectDependencies>true</useProjectDependencies>
 					<metamodels>
 						<metamodel>
 							<packageClass>org.eclipse.viatra.cep.core.metamodels.events.EventsPackage</packageClass>
@@ -45,13 +46,6 @@
 						</metamodel>
 					</metamodels>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.viatra</groupId>
-						<artifactId>org.eclipse.viatra.cep.core.metamodels</artifactId>
-						<version>${project.version}</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
