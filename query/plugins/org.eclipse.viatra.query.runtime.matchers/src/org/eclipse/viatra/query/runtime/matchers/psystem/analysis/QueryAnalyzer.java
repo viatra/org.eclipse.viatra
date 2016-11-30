@@ -110,35 +110,35 @@ public final class QueryAnalyzer {
                     dependencies.put(left, right);
                 }
                 
-                // add soft dependencies
-                if (!strict) {
-                    outer:
-                        for (PAnnotation annotation : query.getAnnotationsByName("FunctionalDependency")) {
-                            Set<Integer> lefts = new HashSet<Integer>();
-                            Set<Integer> rights = new HashSet<Integer>();
-                            
-                            for (Object object : annotation.getAllValues("forEach")) {
-                                ParameterReference parameter = (ParameterReference) object;
-                                Integer position = query.getPositionOfParameter(parameter.getName());
-                                if (position == null) continue outer;
-                                lefts.add(position);
-                            }
-                            for (Object object : annotation.getAllValues("unique")) {
-                                ParameterReference parameter = (ParameterReference) object;
-                                Integer position = query.getPositionOfParameter(parameter.getName());
-                                if (position == null) continue outer;
-                                rights.add(position);
-                            }
-                            
-                            FunctionalDependencyHelper.includeDependency(dependencies, lefts, rights);
-                        }
-                }
-                
             } else {
                 // Disjunctive case, no dependencies are inferred
                 // TODO: we can still salvage the intersection of dependencies IF 
                 // - all bodies have disjoint match sets
                 // - and we avoid recursion
+            }
+            
+            // add annotation-based soft dependencies (regardless of number of bodies)
+            if (!strict) {
+                outer:
+                    for (PAnnotation annotation : query.getAnnotationsByName("FunctionalDependency")) {
+                        Set<Integer> lefts = new HashSet<Integer>();
+                        Set<Integer> rights = new HashSet<Integer>();
+                        
+                        for (Object object : annotation.getAllValues("forEach")) {
+                            ParameterReference parameter = (ParameterReference) object;
+                            Integer position = query.getPositionOfParameter(parameter.getName());
+                            if (position == null) continue outer;
+                            lefts.add(position);
+                        }
+                        for (Object object : annotation.getAllValues("unique")) {
+                            ParameterReference parameter = (ParameterReference) object;
+                            Integer position = query.getPositionOfParameter(parameter.getName());
+                            if (position == null) continue outer;
+                            rights.add(position);
+                        }
+                        
+                        FunctionalDependencyHelper.includeDependency(dependencies, lefts, rights);
+                    }
             }
         }
         
