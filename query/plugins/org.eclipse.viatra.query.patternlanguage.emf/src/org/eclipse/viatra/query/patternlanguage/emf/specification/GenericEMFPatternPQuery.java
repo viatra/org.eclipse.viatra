@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Parameter;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
@@ -40,6 +41,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.inject.Injector;
 
 /**
  * This is a generic (i.e. not pattern-specific) class for the internal representation of VIATRA queries, for "interpretative" query execution. 
@@ -135,7 +137,9 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
                             
                             }
                         }
-                        ITypeInferrer typeProvider = XtextInjectorProvider.INSTANCE.getInjector().getInstance(ITypeInferrer.class);
+                        Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+                        ITypeInferrer typeProvider = injector.getInstance(ITypeInferrer.class);
+                        EMFTypeSystem typeSystem = injector.getInstance(EMFTypeSystem.class);
                         JvmTypeReference ref = typeProvider.getJvmType(var, var);
                         // bug 411866: JvmUnknownTypeReference.getType() returns null in Xtext 2.4
                         String clazz = (ref == null || ref instanceof JvmUnknownTypeReference) ? "" : ref.getType()
@@ -143,8 +147,8 @@ public class GenericEMFPatternPQuery extends BasePQuery implements Initializable
                         
                         IInputKey unaryDeclaredType = null; 
                         Type type = var.getType();
-    					if (type instanceof ClassType) 
-                        	unaryDeclaredType = PatternBodyTransformer.classifierToInputKey(((ClassType) type).getClassname());
+    					if (type != null) 
+                        	unaryDeclaredType = typeSystem.extractTypeDescriptor(type);
                         
     					return new PParameter(var.getName(), clazz, unaryDeclaredType, direction);
                     }

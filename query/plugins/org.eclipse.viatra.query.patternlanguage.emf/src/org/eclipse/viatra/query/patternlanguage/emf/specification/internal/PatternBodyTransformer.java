@@ -22,6 +22,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EnumValue;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ReferenceType;
+import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.helper.JavaTypesHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.AggregatedValue;
@@ -65,6 +67,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.inject.Injector;
 
 /**
  * Transforms a {@link PatternBody}.
@@ -75,11 +78,15 @@ public class PatternBodyTransformer {
 
     private final Pattern pattern;
     private final String patternFQN;
+    private EMFTypeSystem typeSystem;
 
     public PatternBodyTransformer(Pattern pattern) {
         super();
         this.pattern = pattern;
         patternFQN = CorePatternLanguageHelper.getFullyQualifiedName(pattern);
+        
+        Injector injector = XtextInjectorProvider.INSTANCE.getInjector();
+        typeSystem = injector.getInstance(EMFTypeSystem.class);
     }
 
     /**
@@ -110,7 +117,7 @@ public class PatternBodyTransformer {
         for (Variable variable : parameters) {
             if (variable.getType() instanceof ClassType) {
                 EClassifier classifier = ((ClassType) variable.getType()).getClassname();
-                IInputKey inputKey = classifierToInputKey(classifier);
+                IInputKey inputKey = typeSystem.classifierToInputKey(classifier);
                 acceptor.acceptTypeConstraint(ImmutableList.of(variable.getName()), inputKey);
             } else if (variable.getType() instanceof JavaType) {
                 JvmDeclaredType classRef = ((JavaType) variable.getType()).getClassRef();
@@ -121,6 +128,10 @@ public class PatternBodyTransformer {
         acceptor.acceptExportedParameters(parameters);
     }
 
+    /**
+     * 
+     * @deprecated use {@link EMFTypeSystem#classifierToInputKey(EClassifier)} instead.
+     */
     public static IInputKey classifierToInputKey(EClassifier classifier) {
         IInputKey key = classifier == null ? null
                 : classifier instanceof EClass ? new EClassTransitiveInstancesKey((EClass) classifier)
@@ -180,7 +191,7 @@ public class PatternBodyTransformer {
         Type headType = head.getType();
         if (headType instanceof ClassType) {
             EClassifier headClassname = ((ClassType) headType).getClassname();
-            acceptor.acceptTypeConstraint(ImmutableList.of(currentSrcName), classifierToInputKey(headClassname));
+            acceptor.acceptTypeConstraint(ImmutableList.of(currentSrcName), typeSystem.classifierToInputKey(headClassname));
         } else {
             throw new SpecificationBuilderException("Unsupported path expression head type {1} in pattern {2}: {3}",
                     new String[] { headType.eClass().getName(), patternFQN, typeStr(headType) },
@@ -263,7 +274,7 @@ public class PatternBodyTransformer {
     private void gatherClassifierConstraint(EClassifierConstraint constraint, PatternModelAcceptor<?> acceptor) {
         String variableName = getVariableName(constraint.getVar(), acceptor);
         EClassifier classname = ((ClassType) constraint.getType()).getClassname();
-        IInputKey inputKey = classifierToInputKey(classname);
+        IInputKey inputKey = typeSystem.classifierToInputKey(classname); 
         acceptor.acceptTypeConstraint(ImmutableList.of(variableName), inputKey);
     }
     
