@@ -17,12 +17,14 @@ import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEval
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.context.InputKeyImplication
+import org.eclipse.viatra.query.runtime.matchers.planning.helpers.FunctionalDependencyHelper
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint
 
 /**
  * Cost function which calculates cost based on the cardinality of items in the runtime model
@@ -152,6 +154,29 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
         return 0.0;
     }
 
+    def dispatch double calculateCost(PositivePatternCall patternCall, IConstraintEvaluationContext input){
+        val dependencies = input.queryAnalyzer.getFunctionalDependencies(#{patternCall}, false)
+        val boundOrImplied = FunctionalDependencyHelper.closureOf( input.boundVariables, dependencies)
+        val parameters = patternCall.referredQuery.parameters
+        var result = 1.0
+        // TODO this is currently works with declared types only. For better results, information from 
+        // the Type inferrer should be included in the PSystem
+        for(var i=0;i<parameters.size;i++){
+            val variable = patternCall.getVariableInTuple(i)
+            result = result * if (boundOrImplied.contains(variable)){
+                    0.9
+                } else {
+                    val type = parameters.get(i).declaredUnaryType
+                    if (type == null){
+                        DEFAULT_COST
+                    } else {
+                        countTuples(input, type)
+                    }
+                }  
+        }
+        return result
+    }
+    
     /**
      * Default cost calculation strategy
      */
