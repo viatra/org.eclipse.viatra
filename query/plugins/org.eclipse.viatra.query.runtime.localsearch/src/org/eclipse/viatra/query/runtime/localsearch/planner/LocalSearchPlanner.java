@@ -77,10 +77,10 @@ public class LocalSearchPlanner{
     private final PQueryFlattener flattener;
     private final LocalSearchRuntimeBasedStrategy plannerStrategy;
     private final PBodyNormalizer normalizer;
-    private final POperationCompiler operationCompiler;
     private final IQueryRuntimeContext runtimeContext;
     private final LocalSearchHints configuration;
     private final IQueryBackendContext context;
+    private final LocalSearchBackend backend;
 
     /**
      * @since 1.4
@@ -93,7 +93,7 @@ public class LocalSearchPlanner{
         normalizer = new PBodyNormalizer(runtimeContext.getMetaContext(), false);
         
         plannerStrategy = new LocalSearchRuntimeBasedStrategy();
-        operationCompiler = new POperationCompiler(runtimeContext, backend, configuration.isUseBase());
+        this.backend = backend;
         
         context = backend.getBackendContext();
     }
@@ -122,8 +122,8 @@ public class LocalSearchPlanner{
             Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundParameters, normalizedBody);
             SubPlan plan = plannerStrategy.plan(normalizedBody, boundVariables, context , configuration);
             // 3. PConstraint -> POperation compilation step
-            // TODO finish (revisit?) the implementation of the compile function
             // * Pay extra caution to extend operations, when more than one variables are unbound
+            POperationCompiler operationCompiler = new POperationCompiler(runtimeContext, backend, configuration.isUseBase());
             List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundParameters);
             // Store the variable mappings for the plans for debug purposes (traceability information)
             SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody, operationCompiler.getVariableMappings(), plan, compiledOperations, operationCompiler.getDependencies());
