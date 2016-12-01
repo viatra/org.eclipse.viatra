@@ -15,6 +15,7 @@ import static org.eclipse.xtext.xbase.validation.IssueCodes.IMPORT_UNUSED;
 
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -389,7 +390,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         Iterable<Variable> parameterReferences = Iterables.filter(
                 CorePatternLanguageHelper.getLocalReferencesOfParameter(variable), Predicates.notNull());
         
-        IInputKey inferredType = typeInferrer.getType(variable);
+        final IInputKey inferredType = typeInferrer.getType(variable);
         if (variable.getType() == null) {
             // Missing type validation
             Set<IInputKey> possibleTypes = Sets.newHashSet();
@@ -454,12 +455,25 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
                     return typeInferrer.getInferredType(input);
                 }
             }), Predicates.notNull());
-            Set<IInputKey> aggregatedTypes = typeSystem.minimizeTypeInformation(Sets.newHashSet(referenceTypes), true);
-            if (aggregatedTypes.size() == 1 && inferredType != null) {
-                IInputKey aggregatedType = aggregatedTypes.iterator().next();
-                if (!Objects.equals(inferredType, aggregatedType) && Objects.equals(inferredType.getClass(), aggregatedType.getClass()) && typeSystem.isConformant(inferredType, aggregatedType)) {
-                    warning("Declared type " + typeSystem.typeString(inferredType) + " is less specific then the type " + typeSystem.typeString(aggregatedType) + " inferred from bodies", variable, null,
-                            EMFIssueCodes.PARAMETER_TYPE_INVALID);                
+            boolean allTypesMoreSpecific = Iterables.all(referenceTypes, new Predicate<IInputKey>() {
+
+                @Override
+                public boolean apply(IInputKey aggregatedType) {
+                    return !Objects.equals(inferredType, aggregatedType) 
+                            && Objects.equals(inferredType.getClass(), aggregatedType.getClass())
+                            && typeSystem.isConformant(inferredType, aggregatedType);
+                }
+                
+            });
+            Iterator<IInputKey> it = referenceTypes.iterator();
+            if (it.hasNext() && allTypesMoreSpecific) {
+                Set<IInputKey> aggregatedTypes = typeSystem.minimizeTypeInformation(Sets.newHashSet(referenceTypes), true);
+                if (aggregatedTypes.size() == 1 && inferredType != null) {
+                    IInputKey aggregatedType = aggregatedTypes.iterator().next();
+                    if (!Objects.equals(inferredType, aggregatedType) && Objects.equals(inferredType.getClass(), aggregatedType.getClass()) && typeSystem.isConformant(inferredType, aggregatedType)) {
+                        warning("Declared type " + typeSystem.typeString(inferredType) + " is less specific then the type " + typeSystem.typeString(aggregatedType) + " inferred from bodies", variable, null,
+                                EMFIssueCodes.PARAMETER_TYPE_INVALID);                
+                    }
                 }
             }
         }

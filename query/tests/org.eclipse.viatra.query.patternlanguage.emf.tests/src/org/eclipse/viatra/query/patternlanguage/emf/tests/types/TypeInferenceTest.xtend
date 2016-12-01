@@ -593,6 +593,24 @@ class TypeInferenceTest extends AbstractValidatorTest {
         model.assertNoErrors
         tester.validate(model).assertOK
     }
+    
+        
+    @Test
+    def supertypeAsParameter7() {
+        //Testing regression reported in bug 508046
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+            
+            pattern packageInPackage(parent : EClassifier) {
+                EClassifier(parent);
+            } or {
+                EClass(parent);
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertOK
+    }
 	
 	@Test
     def ambiguousParameterType1() {
