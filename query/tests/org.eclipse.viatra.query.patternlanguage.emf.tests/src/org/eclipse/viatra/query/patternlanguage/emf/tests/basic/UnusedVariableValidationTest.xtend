@@ -452,4 +452,48 @@ class UnusedVariableValidationTest extends AbstractValidatorTest {
 			getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
+	
+	
+	@Test
+	def testEvalParameterReferences1() {
+	    // Test case provided in bug 508181
+		val model = parseHelper.parse('''
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			
+			pattern bug(name : java String) {
+			     neg find eClassName(_, temp);
+			     name == eval(temp);
+			}
+			
+			private pattern eClassName(eClass : EClass, name : java String) {
+			     EClass.name(eClass, name);
+			}
+		''')
+		tester.validate(model).assertAll(
+			getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE)
+		)
+	}
+	
+	@Test
+	def testEvalParameterReferences2() {
+	    // Test case provided in bug 508181
+		val model = parseHelper.parse('''
+			package org.eclipse.viatra.query.patternlanguage.emf.tests
+			import "http://www.eclipse.org/emf/2002/Ecore"
+			
+			pattern bug(eClass : EClass, name : java String) {
+			     neg find eClassName(eClass, temp);
+			     name == eval(temp);
+			}
+			
+			private pattern eClassName(eClass : EClass, name : java String) {
+			     EClass.name(eClass, name);
+			}
+		''')
+		tester.validate(model).assertAll(
+			getErrorCode(IssueCodes::LOCAL_VARIABLE_NO_POSITIVE_REFERENCE),
+			getWarningCode(EMFIssueCodes::CARTESIAN_SOFT_WARNING)
+		)
+	}
 }

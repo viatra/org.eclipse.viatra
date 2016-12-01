@@ -68,13 +68,10 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Provider;
 
@@ -194,28 +191,36 @@ public final class CorePatternLanguageHelper {
     public static Set<Variable> getReferencedPatternVariablesOfXExpression(XExpression xExpression, IJvmModelAssociations associations) {
         Set<Variable> result = new HashSet<Variable>();
         if (xExpression != null) {
+            collectVariableFromExpression(xExpression, associations, result, xExpression);
             TreeIterator<EObject> eAllContents = xExpression.eAllContents();
             while (eAllContents.hasNext()) {
                 EObject expression = eAllContents.next();
-                EList<EObject> eCrossReferences = expression.eCrossReferences();
-                for (EObject eObject : eCrossReferences) {
-                    if (eObject instanceof JvmFormalParameter && !EcoreUtil.isAncestor(xExpression, eObject)) {
-                    	for (EObject obj : associations.getSourceElements(eObject)) {
-                    		if (obj instanceof Variable) {
-                    		result.add((Variable) obj);
-                    		}
-                    	}
-                    }
-                }
+                collectVariableFromExpression(xExpression, associations, result, expression);
             }
         }
         return result;
     }
 
+    private static void collectVariableFromExpression(XExpression xExpression, IJvmModelAssociations associations,
+            Set<Variable> result, EObject expression) {
+        EList<EObject> eCrossReferences = expression.eCrossReferences();
+        for (EObject eObject : eCrossReferences) {
+            if (eObject instanceof JvmFormalParameter && !EcoreUtil.isAncestor(xExpression, eObject)) {
+            	for (EObject obj : associations.getSourceElements(eObject)) {
+            		if (obj instanceof Variable) {
+            		result.add((Variable) obj);
+            		}
+            	}
+            }
+        }
+    }
+
     public static List<Variable> getUsedVariables(XExpression xExpression, Iterable<Variable> allVariables){
         if (xExpression == null) return Collections.emptyList();
         List<EObject> contents = Lists.newArrayList(xExpression.eAllContents());
-    	Iterable<XFeatureCall> featuredCalls = Iterables.filter(contents, XFeatureCall.class);
+    	Iterable<XFeatureCall> featuredCalls = (xExpression instanceof XFeatureCall) ? 
+    	        Iterables.concat(ImmutableList.of((XFeatureCall)xExpression), Iterables.filter(contents, XFeatureCall.class))
+    	        : Iterables.filter(contents, XFeatureCall.class);
         final Set<String> valNames = Sets.newHashSet(Iterables.transform(featuredCalls, new Function<XFeatureCall,String>() {
             @Override
             public String apply(final XFeatureCall call) {
