@@ -34,6 +34,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilte
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -123,10 +125,38 @@ class PConstraintInfoInferrer {
             PositivePatternCall pCall) {
         // A pattern call can have any of its variables unbound
         Set<PVariable> affectedVariables = pCall.getAffectedVariables();
-        Set<Set<PVariable>> bindings = Sets.powerSet(affectedVariables);
+        // IN parameters cannot be unbound and
+        // OUT parameters cannot be bound
+        Tuple variables = pCall.getVariablesTuple();
+        final Set<PVariable> inVariables = Sets.newHashSet();
+        Set<PVariable> inoutVariables = Sets.newHashSet();
+        List<PParameter> parameters = pCall.getReferredQuery().getParameters();
+        for(int i=0;i<parameters.size();i++){
+            switch(parameters.get(i).getDirection()){
+            case IN:
+                inVariables.add((PVariable) variables.get(i));
+                break;
+            case INOUT:
+                inoutVariables.add((PVariable) variables.get(i));
+                break;
+            case OUT:
+            default:
+                break;
+            
+            }
+        }
+        Iterable<Set<PVariable>> bindings = Iterables.transform(Sets.powerSet(inoutVariables), new Function<Set<PVariable>, Set<PVariable>>() {
+
+            @Override
+            public Set<PVariable> apply(Set<PVariable> input) {
+                return Sets.union(inVariables, input);
+            }
+        });
+        
         doCreateConstraintInfos(resultList, pCall, affectedVariables, bindings);
     }
-
+    
+    
 
     private void createConstraintInfoExportedParameter(List<PConstraintInfo> resultList, 
             ExportedParameter parameter) {
@@ -230,7 +260,7 @@ class PConstraintInfoInferrer {
     }
     
     private void doCreateConstraintInfos(List<PConstraintInfo> constraintInfos,
-            PConstraint pConstraint, Set<PVariable> affectedVariables, Set<Set<PVariable>> bindings) {
+            PConstraint pConstraint, Set<PVariable> affectedVariables, Iterable<Set<PVariable>> bindings) {
         Set<PConstraintInfo> sameWithDifferentBindings = Sets.newHashSet();
         for (Set<PVariable> boundVariables : bindings) {
             PConstraintInfo info = new PConstraintInfo(pConstraint, boundVariables, Sets.difference(
