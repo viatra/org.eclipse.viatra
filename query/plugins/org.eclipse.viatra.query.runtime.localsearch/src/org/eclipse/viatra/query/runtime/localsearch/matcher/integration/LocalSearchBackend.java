@@ -13,7 +13,6 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -26,7 +25,6 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvid
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
@@ -45,11 +43,7 @@ import com.google.common.collect.Table;
  */
 public class LocalSearchBackend implements IQueryBackend {
 
-    IQueryBackendHintProvider hintProvider;
-	IQueryRuntimeContext runtimeContext;
-	QueryAnalyzer queryAnalyzer;
-	IQueryResultProviderAccess resultProviderAccess;
-	Logger logger;
+    IQueryBackendContext context;
 	IPlanProvider planProvider;
 	private final Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
 	
@@ -63,13 +57,9 @@ public class LocalSearchBackend implements IQueryBackend {
      */
     public LocalSearchBackend(IQueryBackendContext context) {
         super();
-		this.logger = context.getLogger();
-		this.runtimeContext = context.getRuntimeContext();
-		this.resultProviderAccess = context.getResultProviderAccess();
-        this.hintProvider = context.getHintProvider();
-        this.queryAnalyzer = context.getQueryAnalyzer();
+		this.context = context;
         this.eAttributesByTypeForEClass = HashBasedTable.create();
-        this.planProvider = new CachingPlanProvider(logger);
+        this.planProvider = new CachingPlanProvider(context.getLogger());
     }
 
 
@@ -85,14 +75,14 @@ public class LocalSearchBackend implements IQueryBackend {
     public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints)
             throws QueryProcessingException {
         
-        IMatcherCapability requestedCapability = hintProvider.getQueryEvaluationHint(query).overrideBy(hints).calculateRequiredCapability(query);
+        IMatcherCapability requestedCapability = getHintProvider().getQueryEvaluationHint(query).overrideBy(hints).calculateRequiredCapability(query);
         for(LocalSearchResultProvider existingResultProvider : resultProviderCache.get(query)){
             if (requestedCapability.canBeSubstitute(existingResultProvider.getCapabilites())){
                 return existingResultProvider;
             }
         }
         
-        LocalSearchResultProvider resultProvider = new LocalSearchResultProvider(this, logger, runtimeContext, resultProviderAccess, hintProvider, query, planProvider, hints);
+        LocalSearchResultProvider resultProvider = new LocalSearchResultProvider(this, context, query, planProvider, hints);
         resultProviderCache.put(query, resultProvider);
         resultProvider.prepare();
         return resultProvider;
@@ -122,7 +112,7 @@ public class LocalSearchBackend implements IQueryBackend {
 	 * @since 1.4
      */
     public IQueryRuntimeContext getRuntimeContext() {
-        return runtimeContext;
+        return context.getRuntimeContext();
     }
     
     
@@ -130,7 +120,7 @@ public class LocalSearchBackend implements IQueryBackend {
      * @since 1.5
      */
     public QueryAnalyzer getQueryAnalyzer() {
-        return queryAnalyzer;
+        return context.getQueryAnalyzer();
     }
 
 
@@ -138,7 +128,7 @@ public class LocalSearchBackend implements IQueryBackend {
      * @since 1.4
      */
     public IQueryBackendHintProvider getHintProvider() {
-        return hintProvider;
+        return context.getHintProvider();
     }
     
     /**
@@ -160,6 +150,13 @@ public class LocalSearchBackend implements IQueryBackend {
      */
     List<ILocalSearchAdapter> getAdapters() {
         return Lists.newArrayList(adapters);
+    }
+    
+    /**
+     * @since 1.5
+     */
+    public IQueryBackendContext getBackendContext() {
+        return context;
     }
     
 }

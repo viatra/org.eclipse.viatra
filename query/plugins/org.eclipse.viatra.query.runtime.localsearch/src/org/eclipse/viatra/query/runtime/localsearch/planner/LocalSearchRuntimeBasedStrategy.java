@@ -15,15 +15,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.ICostFunction;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.OperationCostComparator;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlanFactory;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PApply;
@@ -32,7 +30,6 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -59,21 +56,19 @@ public class LocalSearchRuntimeBasedStrategy {
      * The implementation of a local search-based algorithm to create a search plan for a flattened (and normalized)
      * PBody
      * @param pBody for which the plan is to be created
-     * @param logger that logs the happenings
      * @param initialBoundVariables variables that are known to have already assigned values
-     * @param metaContext the metamodel related information
-     * @param runtimeContext the instance model related information
+     * @param context the backend context
      * @param configuration the planner configuration
      * @return the complete search plan for the given {@link PBody}
-     * @since 1.4
+     * @since 1.5
      */
-    public SubPlan plan(PBody pBody, Logger logger, Set<PVariable> initialBoundVariables,
-            IQueryMetaContext metaContext, IQueryRuntimeContext runtimeContext, QueryAnalyzer queryAnalyzer, 
+    public SubPlan plan(PBody pBody, Set<PVariable> initialBoundVariables,
+            IQueryBackendContext context, 
             LocalSearchHints configuration) {
 
         final ICostFunction costFunction = configuration.getCostFunction();
         PConstraintInfoInferrer pConstraintInfoInferrer = new PConstraintInfoInferrer(
-                configuration.isUseBase(), runtimeContext, queryAnalyzer,
+                configuration.isUseBase(), context,
                 new Function<IConstraintEvaluationContext, Double>() {
 
                     @Override

@@ -18,6 +18,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess
 
 /** 
  * Wraps a PConstraint together with information required for the planner. Currently contains information about the expected binding state of
@@ -34,6 +36,7 @@ class PConstraintInfo implements IConstraintEvaluationContext {
 	private Set<PConstraintInfo> sameWithDifferentBindings
 	private IQueryRuntimeContext runtimeContext
     private QueryAnalyzer queryAnalyzer
+    private IQueryResultProviderAccess resultProviderAccess
 
 	private double cost
     
@@ -46,18 +49,19 @@ class PConstraintInfo implements IConstraintEvaluationContext {
 	 * @param sameWithDifferentBindingsduring the planning process, multiple operation adornments are considered for a constraint, so that it
 	 * is represented by multiple plan infos. This parameter contains all plan infos that are for the same
 	 * constraint, but with different adornment
-	 * @param runtimeContextthe runtime query context
+	 * @param context the query backend context
 	 */
 	new(PConstraint constraint, Set<PVariable> boundMaskVariables, Set<PVariable> freeMaskVariables,
 		Set<PConstraintInfo> sameWithDifferentBindings, 
-		IQueryRuntimeContext runtimeContext, QueryAnalyzer queryAnalyzer,
+		IQueryBackendContext context,
 		Function<IConstraintEvaluationContext, Double> costFunction) {
 		this.constraint = constraint
 		this.boundMaskVariables = boundMaskVariables
 		this.freeMaskVariables = freeMaskVariables
 		this.sameWithDifferentBindings = sameWithDifferentBindings
-		this.runtimeContext = runtimeContext
-		this.queryAnalyzer = queryAnalyzer
+		this.runtimeContext = context.runtimeContext
+		this.queryAnalyzer = context.queryAnalyzer
+		this.resultProviderAccess = context.resultProviderAccess
 
 		// Calculate cost of the constraint based on its type
 		this.cost = costFunction.apply(this);
@@ -104,6 +108,9 @@ class PConstraintInfo implements IConstraintEvaluationContext {
 
 	override String toString()
 		'''«String.format("\n")»«constraint.toString», bound variables: «boundMaskVariables», cost: «String.format("%.2f",cost)»'''
-	
+
+    override resultProviderAccess() {
+        this.resultProviderAccess
+    }
 
 }

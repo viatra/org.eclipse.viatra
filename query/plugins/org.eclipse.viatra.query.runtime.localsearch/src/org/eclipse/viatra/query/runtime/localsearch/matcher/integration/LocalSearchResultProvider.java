@@ -13,11 +13,13 @@ package org.eclipse.viatra.query.runtime.localsearch.matcher.integration;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -38,13 +40,17 @@ import org.eclipse.viatra.query.runtime.matchers.backend.IUpdateable;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
+import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
+import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 import com.google.common.base.Function;
@@ -124,22 +130,13 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         return hintProvider.getQueryEvaluationHint(pQuery).overrideBy(userHints);
     }
 
-    private void collectDependencies(Iterable<SearchPlanForBody> compiledPlans, Set<MatcherReference> dependencies) {
-        for (SearchPlanForBody plan : compiledPlans) {
-            for (MatcherReference dependency : plan.getDependencies()) {
-                dependencies.add(new MatcherReference(dependency.getQuery(), dependency.getAdornment(), userHints));
-            }
-        }
-    }
-
     /**
      * @throws QueryProcessingException 
      * @since 1.5
      */
-    public LocalSearchResultProvider(LocalSearchBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
-            IQueryResultProviderAccess resultProviderAccess, IQueryBackendHintProvider hintProvider, PQuery query,
+    public LocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
             IPlanProvider planProvider) throws QueryProcessingException {
-        this(backend, logger, runtimeContext, resultProviderAccess, hintProvider, query, planProvider, null);
+        this(backend, context, query, planProvider, null);
     }
 
     private Iterator<MatcherReference> computeExpectedAdornments(final PQuery query, final QueryEvaluationHint hints){
@@ -156,19 +153,18 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
      * @throws QueryProcessingException 
      * @since 1.5
      */
-    public LocalSearchResultProvider(LocalSearchBackend backend, Logger logger, IQueryRuntimeContext runtimeContext,
-            IQueryResultProviderAccess resultProviderAccess, IQueryBackendHintProvider hintProvider, PQuery query,
+    public LocalSearchResultProvider(LocalSearchBackend backend, IQueryBackendContext context, PQuery query,
             IPlanProvider planProvider, QueryEvaluationHint userHints) throws QueryProcessingException {
         this.backend = backend;
-        this.resultProviderAccess = resultProviderAccess;
-        this.hintProvider = hintProvider;
+        this.resultProviderAccess = context.getResultProviderAccess();
+        this.hintProvider = context.getHintProvider();
         // XXX this is a problematic (and in long-term unsupported) solution, see bug 456815
         engine = (AdvancedViatraQueryEngine) hintProvider;
         this.query = query;
 
         this.planProvider = planProvider;
         this.userHints = userHints;
-        this.runtimeContext = runtimeContext;
+        this.runtimeContext = context.getRuntimeContext();
         try {
             searchContext = new ISearchContext.SearchContext(engine.getBaseIndex(), resultProviderAccess, userHints);
         } catch (ViatraQueryException e) {
@@ -188,6 +184,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
                 @Override
                 public Void call() throws Exception {
                     runtimeContext.ensureWildcardIndexing(IndexingService.STATISTICS);
+                    prepareDirectDependencies();
                     runtimeContext.executeAfterTraversal(new Runnable() {
                         
                         @Override
@@ -230,6 +227,51 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
             }
         }
 
+    }
+    
+    private void prepareDirectDependencies() throws QueryProcessingException{
+        // Do not prepare for any adornment at this point
+        IAdornmentProvider adornmentProvider = new IAdornmentProvider() {
+            
+            @Override
+            public Iterable<Set<PParameter>> getAdornments(PQuery query) {
+                return Collections.emptySet();
+            }
+        };
+        @SuppressWarnings("rawtypes")
+        QueryEvaluationHint hints = new QueryEvaluationHint(Collections.<QueryHintOption, Object>singletonMap(LocalSearchHintOptions.ADORNMENT_PROVIDER, adornmentProvider), null);
+        for(PQuery dep : getDirectPositiveDependencies()){
+            resultProviderAccess.getResultProvider(dep, hints);
+        }
+    }
+    
+    private Set<PQuery> getDirectPositiveDependencies(){
+        IFlattenCallPredicate flattenPredicate = overrideDefaultHints(query).getFlattenCallPredicate();
+        Queue<PQuery> queue = new LinkedList<PQuery>();
+        Set<PQuery> visited = new HashSet<PQuery>();
+        Set<PQuery> result = new HashSet<PQuery>();
+        queue.add(query);
+        
+        while(!queue.isEmpty()){
+            PQuery next = queue.poll();
+            visited.add(next);
+            for(PBody body : next.getDisjunctBodies().getBodies()){
+                for(PConstraint pc : body.getConstraints()){
+                    if (pc instanceof PositivePatternCall){
+                        PositivePatternCall ppc = (PositivePatternCall)pc;
+                        PQuery dep = ppc.getSupplierKey();
+                        if (flattenPredicate.shouldFlatten(ppc)){
+                            if (!visited.contains(dep)){
+                                queue.add(dep);
+                            }
+                        }else{
+                            result.add(dep);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     private LocalSearchMatcher initializeMatcher(Object[] parameters) {

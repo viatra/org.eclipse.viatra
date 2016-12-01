@@ -22,10 +22,9 @@ import org.eclipse.viatra.query.runtime.base.comprehension.EMFModelComprehension
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.planner.cost.IConstraintEvaluationContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExpressionEvaluation;
@@ -58,15 +57,13 @@ class PConstraintInfoInferrer {
     private final boolean useIndex;
     private final Function<IConstraintEvaluationContext, Double> costFunction;
     private final EMFModelComprehension modelComprehension;
-    private final IQueryRuntimeContext runtimeContext;
-    private final QueryAnalyzer queryAnalyzer;
+    private final IQueryBackendContext context;
     
     public PConstraintInfoInferrer(boolean useIndex, 
-            IQueryRuntimeContext runtimeContext, QueryAnalyzer queryAnalyzer, 
+            IQueryBackendContext backendContext, 
             Function<IConstraintEvaluationContext, Double> costFunction) {
         this.useIndex = useIndex;
-        this.runtimeContext = runtimeContext;
-        this.queryAnalyzer = queryAnalyzer;
+        this.context = backendContext;
         this.costFunction = costFunction;
         this.modelComprehension = new EMFModelComprehension(new BaseIndexOptions());
     }
@@ -238,7 +235,7 @@ class PConstraintInfoInferrer {
         for (Set<PVariable> boundVariables : bindings) {
             PConstraintInfo info = new PConstraintInfo(pConstraint, boundVariables, Sets.difference(
                     affectedVariables, boundVariables), sameWithDifferentBindings, 
-                    runtimeContext, queryAnalyzer, costFunction);
+                    context, costFunction);
             constraintInfos.add(info);
             sameWithDifferentBindings.add(info);
         }

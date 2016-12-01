@@ -20,14 +20,13 @@ import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSea
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints;
 import org.eclipse.viatra.query.runtime.localsearch.operations.ISearchOperation;
 import org.eclipse.viatra.query.runtime.localsearch.planner.util.SearchPlanForBody;
-import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
-import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
@@ -79,11 +78,9 @@ public class LocalSearchPlanner{
     private final LocalSearchRuntimeBasedStrategy plannerStrategy;
     private final PBodyNormalizer normalizer;
     private final POperationCompiler operationCompiler;
-    private final Logger logger;
-    private final IQueryMetaContext metaContext;
     private final IQueryRuntimeContext runtimeContext;
     private final LocalSearchHints configuration;
-    private final QueryAnalyzer queryAnalyzer;
+    private final IQueryBackendContext context;
 
     /**
      * @since 1.4
@@ -91,7 +88,6 @@ public class LocalSearchPlanner{
     public LocalSearchPlanner(LocalSearchBackend backend, Logger logger, final LocalSearchHints configuration) {
         
         this.runtimeContext = backend.getRuntimeContext();
-        this.queryAnalyzer = backend.getQueryAnalyzer();
         this.configuration = configuration;
         flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
         normalizer = new PBodyNormalizer(runtimeContext.getMetaContext(), false);
@@ -99,8 +95,7 @@ public class LocalSearchPlanner{
         plannerStrategy = new LocalSearchRuntimeBasedStrategy();
         operationCompiler = new POperationCompiler(runtimeContext, backend, configuration.isUseBase());
         
-        this.logger = logger;
-        this.metaContext = runtimeContext.getMetaContext();
+        context = backend.getBackendContext();
     }
 
     /**
@@ -125,7 +120,7 @@ public class LocalSearchPlanner{
             // 2. Plan creation
             // Context has matchers for the referred Queries (IQuerySpecifications)
             Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundParameters, normalizedBody);
-            SubPlan plan = plannerStrategy.plan(normalizedBody, logger, boundVariables, metaContext, runtimeContext, queryAnalyzer, configuration);
+            SubPlan plan = plannerStrategy.plan(normalizedBody, boundVariables, context , configuration);
             // 3. PConstraint -> POperation compilation step
             // TODO finish (revisit?) the implementation of the compile function
             // * Pay extra caution to extend operations, when more than one variables are unbound

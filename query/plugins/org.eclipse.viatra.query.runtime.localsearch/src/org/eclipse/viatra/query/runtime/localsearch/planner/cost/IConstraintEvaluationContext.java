@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.localsearch.planner.cost;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryResultProviderAccess;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import java.util.Collection;
@@ -50,5 +51,10 @@ public interface IConstraintEvaluationContext {
      * @since 1.5
      */
     public QueryAnalyzer getQueryAnalyzer();
+    
+    /**
+     * @since 1.5
+     */
+    public IQueryResultProviderAccess resultProviderAccess();
     
 }
