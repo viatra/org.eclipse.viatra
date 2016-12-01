@@ -46,7 +46,6 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IndexingService;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
-import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -256,17 +255,14 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
             PQuery next = queue.poll();
             visited.add(next);
             for(PBody body : next.getDisjunctBodies().getBodies()){
-                for(PConstraint pc : body.getConstraints()){
-                    if (pc instanceof PositivePatternCall){
-                        PositivePatternCall ppc = (PositivePatternCall)pc;
-                        PQuery dep = ppc.getSupplierKey();
-                        if (flattenPredicate.shouldFlatten(ppc)){
-                            if (!visited.contains(dep)){
-                                queue.add(dep);
-                            }
-                        }else{
-                            result.add(dep);
+                for(PositivePatternCall ppc : body.getConstraintsOfType(PositivePatternCall.class)){
+                    PQuery dep = ppc.getSupplierKey();
+                    if (flattenPredicate.shouldFlatten(ppc)){
+                        if (!visited.contains(dep)){
+                            queue.add(dep);
                         }
+                    }else{
+                        result.add(dep);
                     }
                 }
             }
