@@ -122,12 +122,26 @@ import com.google.inject.Inject;
 public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJavaValidator {
 
     private final static class InputKeyToData implements Function<IInputKey, String> {
+        
+        EMFTypeSystem typeSystem;
+        
+        public InputKeyToData(EMFTypeSystem typeSystem) {
+            this.typeSystem = typeSystem;
+        }
+        
         @Override
         public String apply(IInputKey input) {
             if (input instanceof EClassTransitiveInstancesKey) {
                 return ((EClassTransitiveInstancesKey) input).getEmfKey().getName();
             } else if (input instanceof EDataTypeInSlotsKey) {
-                    return ((EDataTypeInSlotsKey) input).getEmfKey().getName();
+                EDataType datatype = ((EDataTypeInSlotsKey) input).getEmfKey();
+                if (datatype instanceof EEnum) {
+                    return datatype.getName();
+                } else {
+                    // In case of non-enum datatypes use corresponding Java type instead
+                    Class<?> clazz = typeSystem.getJavaClass((EDataTypeInSlotsKey) input);
+                    return EMFIssueCodes.JAVA_TYPE_PREFIX + new JavaTransitiveInstancesKey(clazz).getWrappedKey();
+                }
             } else if (input instanceof JavaTransitiveInstancesKey) {
                 return EMFIssueCodes.JAVA_TYPE_PREFIX + ((JavaTransitiveInstancesKey) input).getWrappedKey();
             }
@@ -483,7 +497,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
         if (possibleTypes.size() == 0) {
             return;
         } else if (possibleTypes.size() == 1) {
-            String[] issueData = new String[]{new InputKeyToData().apply(inferredType)};
+            String[] issueData = new String[]{new InputKeyToData(typeSystem).apply(inferredType)};
             info("Type not defined for variable " + parameter.getName() + ", inferred type " + typeSystem.typeString(inferredType) + " is used instead.",
                     PatternLanguagePackage.Literals.VARIABLE__NAME, EMFIssueCodes.MISSING_PARAMETER_TYPE,
                     issueData);
@@ -510,7 +524,7 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
             Set<String> superClasses = (Iterables.any(possibleTypes, new EClassType())) 
                     ? ImmutableSet.of("EObject")
                     : ImmutableSet.of(EMFIssueCodes.JAVA_TYPE_PREFIX + "java.lang.Object");
-            Iterable<String> typeNames = Iterables.concat(Iterables.filter(Iterables.transform(orderedTypes, new InputKeyToData()), Predicates.notNull()), superClasses);
+            Iterable<String> typeNames = Iterables.concat(Iterables.filter(Iterables.transform(orderedTypes, new InputKeyToData(typeSystem)), Predicates.notNull()), superClasses);
             String[] issueData = Iterables.toArray(typeNames, String.class);
             if (issueData.length > 0) {
                 info("Type not defined for variable " + parameter.getName() + ", inferred type " + typeSystem.typeString(inferredType) + " is used instead.",

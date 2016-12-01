@@ -157,13 +157,19 @@ public class EMFTypeSystem extends AbstractTypeSystem {
         return false
     }
 
-    private def getJavaClass(EDataTypeInSlotsKey key) {
+    /**
+     * @since 1.5
+     */
+    def Class<?> getJavaClass(EDataTypeInSlotsKey key) {
         var dataTypeClass = key.getEmfKey().instanceClass
         if(dataTypeClass.isPrimitive) dataTypeClass = dataTypeClass.wrapperClassForType
         return dataTypeClass
     }
 
-    private def getJavaClass(JavaTransitiveInstancesKey javaKey) {
+    /**
+     * @since 1.5
+     */
+    def Class<?> getJavaClass(JavaTransitiveInstancesKey javaKey) {
         var javaTypeClass = javaKey.instanceClass
         if(javaTypeClass.isPrimitive) javaTypeClass = javaTypeClass.wrapperClassForType
         return javaTypeClass
