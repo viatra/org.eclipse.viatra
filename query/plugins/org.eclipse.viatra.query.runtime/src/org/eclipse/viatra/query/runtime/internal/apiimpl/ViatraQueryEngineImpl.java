@@ -528,7 +528,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     {
         Preconditions.checkState(!disposed, QUERY_ON_DISPOSED_ENGINE_MESSAGE);
         
-        return getResultProviderInternal(query, getQueryEvaluationHint(query, hint));
+        return getResultProviderInternal(query, hint);
     }
 
     /**
@@ -550,7 +550,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     private IQueryResultProvider getResultProviderInternal(PQuery query, QueryEvaluationHint hint) throws ViatraQueryException, QueryProcessingException{
         Preconditions.checkArgument(query != null, "Query cannot be null!");
         Preconditions.checkArgument(hint != null, "Hint cannot be null!");
-        final IQueryBackend backend = getQueryBackend(hint.getQueryBackendFactory());
+        final IQueryBackend backend = getQueryBackend(getQueryEvaluationHint(query, hint).getQueryBackendFactory());
         return backend.getResultProvider(query, hint);
     }
 	
@@ -607,6 +607,10 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
 	private QueryEvaluationHint getQueryEvaluationHint(IQuerySpecification<?> querySpecification, QueryEvaluationHint optionalOverrideHints) {
 	    return getQueryEvaluationHint(querySpecification.getInternalQueryRepresentation()).overrideBy(optionalOverrideHints);
 	}
+	
+	private QueryEvaluationHint getQueryEvaluationHint(PQuery query, QueryEvaluationHint optionalOverrideHints) {
+        return getQueryEvaluationHint(query).overrideBy(optionalOverrideHints);
+    }
 	
 	private IMatcherCapability getRequestedCapability(IQuerySpecification<?> querySpecification, QueryEvaluationHint optionalOverrideHints){
 	    return getQueryEvaluationHint(querySpecification, optionalOverrideHints).calculateRequiredCapability(querySpecification.getInternalQueryRepresentation());
@@ -681,7 +685,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     @Override
     public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint overrideHints) throws QueryProcessingException {
         try {
-            return getResultProviderInternal(query, getQueryEvaluationHint(query).overrideBy(overrideHints));
+            return getResultProviderInternal(query, overrideHints);
         } catch (ViatraQueryException e) {
             getLogger().error("Error while accessing query evaluator backend", e);
             throw new QueryProcessingException(

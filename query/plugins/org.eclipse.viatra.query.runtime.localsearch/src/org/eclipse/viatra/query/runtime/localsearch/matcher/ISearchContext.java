@@ -114,7 +114,7 @@ public interface ISearchContext{
             }
                     
             try {
-                return resultProviderAccess.getResultProvider(reference.getQuery(), overrideHints);
+                return resultProviderAccess.getResultProvider(reference.getQuery(), hints);
             } catch (QueryProcessingException e) {
                 throw new LocalSearchException("Could not access referenced query: "+reference, e);
             }
