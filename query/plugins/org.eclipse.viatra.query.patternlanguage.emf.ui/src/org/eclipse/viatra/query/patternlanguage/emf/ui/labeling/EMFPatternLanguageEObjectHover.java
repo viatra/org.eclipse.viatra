@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.emf.ui.labeling;
 
-import java.util.Objects;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.viatra.query.patternlanguage.emf.vql.PatternLanguagePackage;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider.IInformationControlCreatorProvider;
 import org.eclipse.xtext.xbase.ui.hover.XbaseDispatchingEObjectTextHover;
@@ -37,15 +34,11 @@ public class EMFPatternLanguageEObjectHover extends XbaseDispatchingEObjectTextH
     
     @Override
     public Object getHoverInfo(EObject first, ITextViewer textViewer, IRegion hoverRegion) {
-        if (Objects.equals(PatternLanguagePackage.eNS_URI, first.eClass().getEPackage().getNsURI())) {
-            IInformationControlCreatorProvider creatorProvider = hoverProvider.getHoverInfo(first, textViewer, hoverRegion);
-            if (creatorProvider==null)
-                return null;
-            this.lastCreatorProvider = creatorProvider;
-            return lastCreatorProvider.getInfo();
-        } else {
-            return super.getHoverInfo(first, textViewer, hoverRegion);
-        }
+        IInformationControlCreatorProvider creatorProvider = hoverProvider.getHoverInfo(first, textViewer, hoverRegion);
+        if (creatorProvider==null)
+            return null;
+        this.lastCreatorProvider = creatorProvider;
+        return lastCreatorProvider.getInfo();
     }
 
 }

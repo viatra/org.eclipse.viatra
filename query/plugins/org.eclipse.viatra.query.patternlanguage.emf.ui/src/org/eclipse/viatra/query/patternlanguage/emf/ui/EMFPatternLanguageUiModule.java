@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.viatra.query.patternlanguage.emf.GenmodelExtensionLoader;
 import org.eclipse.viatra.query.patternlanguage.emf.IGenmodelMappingLoader;
@@ -31,9 +32,12 @@ import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMF
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderConfigurationBlock;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.labeling.EMFPatternLanguageEObjectHover;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverDocumentationProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.labeling.EMFPatternLanguageHoverProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageTypeProviderFactory;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.types.EMFPatternLanguageTypeScopeProvider;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.util.EMFPatternLanguageSourceViewerConfiguration;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.IWorkspaceUtilities;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectClassLoaderProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.util.JavaProjectExpectedPackageNameProvider;
@@ -63,10 +67,13 @@ import org.eclipse.xtext.generator.IShouldGenerate;
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
+import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.embedded.IEditedResourceProvider;
+import org.eclipse.xtext.ui.editor.hover.DefaultCompositeHover;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
+import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.hover.html.IEObjectHoverDocumentationProvider;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -271,6 +278,24 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
      */
     @Override
     public Class<? extends IEObjectHover> bindIEObjectHover() {
-        return XbaseDispatchingEObjectTextHover.class;
+        return EMFPatternLanguageEObjectHover.class;
     }
+    
+    
+    
+    /**
+     * @since 2.0
+     */
+    @Override
+    public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
+        return EMFPatternLanguageHoverProvider.class;
+    }
+
+    /**
+     * @since 2.0
+     */
+    public Class<? extends XtextSourceViewerConfiguration> bindXtextSourceViewerConfiguration() {
+        return EMFPatternLanguageSourceViewerConfiguration.class;
+    }
+ 
 }

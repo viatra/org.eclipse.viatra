@@ -11,13 +11,13 @@
 package org.eclipse.viatra.query.patternlanguage.emf.ui.labeling;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
-import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.annotations.PatternAnnotationProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.PackageImport;
@@ -25,7 +25,9 @@ import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.ITypeSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Annotation;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.AnnotationParameter;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Pattern;
+import org.eclipse.viatra.query.patternlanguage.emf.vql.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.Variable;
 import org.eclipse.viatra.query.patternlanguage.emf.vql.VariableReference;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
@@ -106,10 +108,75 @@ public class EMFPatternLanguageHoverDocumentationProvider extends XbaseHoverDocu
             }
             sb.append("</ul>");
             return sb.toString();
+        } else if (object instanceof ClassType) {
+            ClassType type = (ClassType) object;
+            StringBuilder sb = new StringBuilder();
+            sb.append(super.computeDocumentation(type));
+            EClassifier classifier = type.getClassname();
+            appendEClassifierHover(sb, classifier); 
+            return sb.toString();
+        } else if (object instanceof ReferenceType) {
+            ReferenceType type = (ReferenceType) object;
+            StringBuilder sb = new StringBuilder();
+            sb.append(super.computeDocumentation(type));
+            EStructuralFeature feature = type.getRefname();
+            appendStructuralFeatureHover(sb, feature); 
+            return sb.toString();
+        } else if (object instanceof EClassifier) {
+            EClassifier classifier = (EClassifier) object;
+            StringBuilder sb = new StringBuilder();
+            sb.append(super.computeDocumentation(classifier));
+            appendEClassifierHover(sb, classifier); 
+            return sb.toString();
+        } else if (object instanceof EStructuralFeature) {
+            EStructuralFeature feature = (EStructuralFeature) object;
+            StringBuilder sb = new StringBuilder();
+            sb.append(super.computeDocumentation(feature));
+            appendStructuralFeatureHover(sb, feature); 
+            return sb.toString();
         }
-        return computeDocumentation(object);
+        return super.computeDocumentation(object);
     }
     
+    private void appendStructuralFeatureHover(StringBuilder sb, EStructuralFeature feature) {
+        sb.append("<p><strong>Defined in:</strong> " + feature.getEContainingClass().getName() + "</p>");
+        sb.append("<p><strong>Takes value of:</strong> " + feature.getEType().getName() + "</p>");
+        if (feature.isMany())
+            sb.append("<p><strong>Multiplicity:</strong> <em>to-many</em></p>");
+        else
+            sb.append("<p><strong>Multiplicity:</strong> <em>to-one</em></p>");
+        sb.append("<p><strong>Derived:</strong> " + feature.isDerived() + "</p>");
+        sb.append("<p><strong>Transient:</strong> " + feature.isTransient() + "</p>");
+        if (feature instanceof EReference) {
+            EReference reference = (EReference) feature;
+            sb.append("<p><strong>Containment:</strong> " + reference.isContainment() + "</p>");
+            sb.append("<p><strong>Container:</strong> " + reference.isContainer() + "</p>");
+            EReference eOpposite = reference.getEOpposite();
+            if (eOpposite != null) {
+                sb.append("<p><strong>EOpposite:</strong> " + eOpposite.getName() + "</p>");
+            }
+        }
+    }
+
+    private void appendEClassifierHover(StringBuilder sb, EClassifier classifier) {
+        if (classifier instanceof EClass) {
+            EClass eClass = (EClass) classifier;
+            List<EClass> eAllSuperTypes = eClass.getEAllSuperTypes();
+            if (eAllSuperTypes.isEmpty()) {
+                sb.append("<p><strong>EAllSupertypes:</strong> (none)</p>");
+            } else {
+                sb.append("<p><strong>EAllSupertypes:</strong></p>");
+                sb.append("<ul>");
+                for (EClass superType : eAllSuperTypes) {
+                    sb.append("<li>");
+                    sb.append(superType.getName());
+                    sb.append("</li>");
+                }
+                sb.append("</ul>");
+            }
+        }
+    }
+
     private String calculateVariableHover(Variable variable) {
         JvmTypeReference type = typeInferrer.getJvmType(variable, variable); 
         IInputKey emfType = typeInferrer.getType(variable); 
