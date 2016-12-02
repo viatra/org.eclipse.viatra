@@ -125,9 +125,9 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
             } else {
                 // At least one of the end variables had no restricting type information
                 // Strategy: try to navigate along many-to-one relations
-                var Map<Set<PVariable>, Set<PVariable>> functionalDependencies = 
+                val Map<Set<PVariable>, Set<PVariable>> functionalDependencies = 
                     queryAnalyzer.getFunctionalDependencies(#{constraint}, false);
-                var impliedVariables = functionalDependencies.get(boundMaskVariables)
+                val impliedVariables = FunctionalDependencyHelper.closureOf(boundMaskVariables, functionalDependencies)
                 if(impliedVariables != null && impliedVariables.containsAll(freeMaskVariables)){
                     return 1.0;
                 } else {
