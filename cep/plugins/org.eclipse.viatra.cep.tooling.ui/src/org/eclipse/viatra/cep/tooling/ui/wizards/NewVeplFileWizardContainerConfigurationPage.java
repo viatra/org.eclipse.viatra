@@ -153,7 +153,7 @@ public class NewVeplFileWizardContainerConfigurationPage extends NewTypeWizardPa
             return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
         }
         IStatus status = JavaConventionsUtil.validatePackageName(text, project);
-        if (!text.equals(text.toLowerCase())) {
+        if (!text.equalsIgnoreCase(text)) {
             return new Status(IStatus.ERROR, Activator.PLUGIN_ID, PACKAGE_NAME_WARNING);
         }
         return status;

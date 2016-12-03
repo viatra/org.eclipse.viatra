@@ -82,6 +82,10 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     /**
      * 
      */
+    private static final String ERROR_ACCESSING_BACKEND = "Error while accessing query evaluator backend";
+    /**
+     * 
+     */
     private static final String QUERY_ON_DISPOSED_ENGINE_MESSAGE = "Cannot evaluate query on disposed engine!";
     /**
      * The engine manager responsible for this engine. Null if this engine is unmanaged.
@@ -576,7 +580,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
 		try {
 			return null != getCachingQueryBackend(query).peekExistingResultProvider(query);
 		} catch (ViatraQueryException iqe)  {
-			getLogger().error("Error while accessing query evaluator backend", iqe);
+			getLogger().error(ERROR_ACCESSING_BACKEND, iqe);
 			return false;
 		}
 	}
@@ -586,7 +590,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
 		try {
 			return getCachingQueryBackend(query).getResultProvider(query);
 		} catch (ViatraQueryException iqe)  {
-			getLogger().error("Error while accessing query evaluator backend", iqe);
+			getLogger().error(ERROR_ACCESSING_BACKEND, iqe);
 			throw new QueryProcessingException(
 					"Error while attempting to consult caching query evaluator backend for evaluating query {1}", 
 					new String[] {query.getFullyQualifiedName()}, 
@@ -687,7 +691,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
         try {
             return getResultProviderInternal(query, overrideHints);
         } catch (ViatraQueryException e) {
-            getLogger().error("Error while accessing query evaluator backend", e);
+            getLogger().error(ERROR_ACCESSING_BACKEND, e);
             throw new QueryProcessingException(
                     "Error while attempting to consult query evaluator backend for evaluating query {1}", 
                     new String[] {query.getFullyQualifiedName()}, 

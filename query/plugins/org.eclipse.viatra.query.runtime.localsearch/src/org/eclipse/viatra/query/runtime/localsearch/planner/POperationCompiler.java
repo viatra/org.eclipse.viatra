@@ -100,7 +100,7 @@ public class POperationCompiler {
     private final IQueryBackend backend;
 
     private class FrameMapping{
-        final Map<PParameter, Integer> frameMapping = Maps.newHashMap();
+        final Map<PParameter, Integer> mapping = Maps.newHashMap();
         final Set<PParameter> adornment = Sets.newHashSet();
         
         public FrameMapping(PatternCallBasedDeferred constraint, Map<PVariable, Integer> variableMapping) {
@@ -109,7 +109,7 @@ public class POperationCompiler {
             for (int i = 0; i < keySize; i++) {
                 PParameter symbolicParameter = constraint.getReferredQuery().getParameters().get(i);
                 PVariable parameter = (PVariable) constraint.getActualParametersTuple().get(i);
-                frameMapping.put(symbolicParameter, variableMapping.get(parameter));
+                mapping.put(symbolicParameter, variableMapping.get(parameter));
                 if (bindings.contains(variableMapping.get(parameter))) {
                     adornment.add(symbolicParameter);
                 }
@@ -122,7 +122,7 @@ public class POperationCompiler {
             for (int i = 0; i < keySize; i++) {
                 PParameter symbolicParameter = pCall.getReferredQuery().getParameters().get(i);
                 PVariable parameter = (PVariable) pCall.getVariablesTuple().get(i);
-                frameMapping.put(symbolicParameter, variableMapping.get(parameter));
+                mapping.put(symbolicParameter, variableMapping.get(parameter));
                 if (bindings.contains(variableMapping.get(parameter))) {
                     adornment.add(symbolicParameter);
                 }
@@ -267,13 +267,13 @@ public class POperationCompiler {
         FrameMapping mapping = new FrameMapping(counter, variableMapping);
 
         PQuery referredQuery = counter.getReferredQuery();
-        operations.add(new CountCheck(referredQuery, mapping.frameMapping, variableMapping.get(counter.getResultVariable())));
+        operations.add(new CountCheck(referredQuery, mapping.mapping, variableMapping.get(counter.getResultVariable())));
         dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
 
     private void createCheck(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
         FrameMapping mapping = new FrameMapping(pCall, variableMapping);
-        operations.add(new CheckPositivePatternCall(pCall.getReferredQuery(), mapping.frameMapping));
+        operations.add(new CheckPositivePatternCall(pCall.getReferredQuery(), mapping.mapping));
         dependencies.add(new MatcherReference(pCall.getReferredQuery(), mapping.adornment));
     }
 
@@ -348,14 +348,14 @@ public class POperationCompiler {
         FrameMapping mapping = new FrameMapping(aggregator, variableMapping);
         
         PQuery referredQuery = aggregator.getReferredQuery();
-        operations.add(new AggregatorCheck(referredQuery, aggregator, mapping.frameMapping, variableMapping.get(aggregator.getResultVariable())));
+        operations.add(new AggregatorCheck(referredQuery, aggregator, mapping.mapping, variableMapping.get(aggregator.getResultVariable())));
         dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
     
     private void createCheck(NegativePatternCall negativePatternCall, Map<PVariable, Integer> variableMapping) {
         FrameMapping mapping = new FrameMapping(negativePatternCall, variableMapping);
         PQuery referredQuery = negativePatternCall.getReferredQuery();
-        operations.add(new NACOperation(referredQuery, mapping.frameMapping));
+        operations.add(new NACOperation(referredQuery, mapping.mapping));
         dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
     
@@ -396,7 +396,7 @@ public class POperationCompiler {
     private void createExtend(PositivePatternCall pCall, Map<PVariable, Integer> variableMapping) {
         FrameMapping mapping = new FrameMapping(pCall, variableMapping);
         
-        operations.add(new ExtendPositivePatternCall(pCall.getReferredQuery(), mapping.frameMapping));
+        operations.add(new ExtendPositivePatternCall(pCall.getReferredQuery(), mapping.mapping));
         dependencies.add(new MatcherReference(pCall.getReferredQuery(), mapping.adornment));
     }
 
@@ -502,7 +502,7 @@ public class POperationCompiler {
         FrameMapping mapping = new FrameMapping(aggregator, variableMapping);
         
         PQuery referredQuery = aggregator.getReferredQuery();
-        operations.add(new AggregatorExtend(referredQuery, aggregator, mapping.frameMapping, variableMapping.get(aggregator.getResultVariable())));
+        operations.add(new AggregatorExtend(referredQuery, aggregator, mapping.mapping, variableMapping.get(aggregator.getResultVariable())));
         dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
     
@@ -510,7 +510,7 @@ public class POperationCompiler {
         FrameMapping mapping = new FrameMapping(patternMatchCounter, variableMapping);
         
         PQuery referredQuery = patternMatchCounter.getReferredQuery();
-        operations.add(new CountOperation(referredQuery, mapping.frameMapping, variableMapping.get(patternMatchCounter.getResultVariable())));
+        operations.add(new CountOperation(referredQuery, mapping.mapping, variableMapping.get(patternMatchCounter.getResultVariable())));
         dependencies.add(new MatcherReference(referredQuery, mapping.adornment));
     }
     

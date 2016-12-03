@@ -1427,12 +1427,12 @@ public class NavigationHelperImpl implements NavigationHelper {
     }
     
     private boolean isRegistrationNecessary(IndexingLevel level) {
-        boolean wildcardMode = isInWildcardMode(level);
-        if (wildcardMode && !loggedRegistrationMessage) {
+        boolean inWildcardMode = isInWildcardMode(level);
+        if (inWildcardMode && !loggedRegistrationMessage) {
             loggedRegistrationMessage = true;
             logger.warn("Type registration/unregistration not required in wildcard mode. This message will not be repeated for future occurences.");
         }
-        return !wildcardMode;
+        return !inWildcardMode;
     }
 
     private <X, Y> void ensureNoListeners(Set<Object> unobservedTypes,
