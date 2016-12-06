@@ -239,7 +239,7 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
             
             if (!Strings.isNullOrEmpty(fqnOfEPackageClass)) {
                 /*
-                 * Note that we only ensure that the class can be loaded at this point to fail early.
+                 * Note that the side effect of this call is that the EPackage will be added to the Registry 
                  */
                 loadNSUriFromClass(fqnOfEPackageClass);
             }
@@ -273,6 +273,15 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * Returns the nsUri of the EPackage loaded from the class for the given qualified name.<br/>
+     * 
+     * IMPORTANT: as a side effect, the EPackage will be added to the {@link EPackage.Registry}! 
+     * 
+     * @param fqnOfEPackageClass the qualified name of the EPackage class
+     * @return the nsUri of the EPackage that was loaded
+     * @throws MojoExecutionException if the EPackage cannot be loaded or processed
+     */
     private String loadNSUriFromClass(String fqnOfEPackageClass) throws MojoExecutionException {
         try {
             Class<?> ePackageClass = Class.forName(fqnOfEPackageClass);
@@ -287,7 +296,8 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
                                 + ". It's type of " + instanceFieldType.getCanonicalName() + ".");
                 throw new MojoExecutionException("Execution failed due to wrong type of eINSTANCE");
             }
-
+            
+            // This call will load the EPackage into the Registry!  
             EPackage ePackage = (EPackage)instanceField.get(null);
             return ePackage.getNsURI();
 
