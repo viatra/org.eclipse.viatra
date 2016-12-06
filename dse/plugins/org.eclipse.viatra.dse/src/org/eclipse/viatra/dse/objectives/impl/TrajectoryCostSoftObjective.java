@@ -136,8 +136,10 @@ public class TrajectoryCostSoftObjective extends BaseObjective {
     public void init(ThreadContext context) {
         super.init(context);
         DesignSpaceManager dsm = context.getDesignSpaceManager();
-        for (Entry<BatchTransformationRule<?, ?>, ActivationFitnessProcessor> entry : activationCostProcessors.entrySet()) {
-            dsm.registerActivationCostProcessor(name, entry.getKey(), entry.getValue());
+        if (activationCostProcessors != null) {
+            for (Entry<BatchTransformationRule<?, ?>, ActivationFitnessProcessor> entry : activationCostProcessors.entrySet()) {
+                dsm.registerActivationCostProcessor(name, entry.getKey(), entry.getValue());
+            }
         }
     }
 
