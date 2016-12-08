@@ -53,7 +53,7 @@ public class ContainmentCheck extends CheckOperation {
     
     @Override
     public String toString() {
-        return "Check whether "+containerPosition+" contains "+childPosition+(transitive ? " transitively" : " directly");
+        return "check     containment +"+containerPosition+" <>--> +"+childPosition+(transitive ? " transitively" : " directly");
     }
 
     @Override

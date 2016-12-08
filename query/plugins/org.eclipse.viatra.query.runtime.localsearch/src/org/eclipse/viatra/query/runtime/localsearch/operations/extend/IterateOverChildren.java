@@ -56,12 +56,7 @@ public class IterateOverChildren extends ExtendOperation<EObject> {
     
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("extend ")
-            .append(transitive ? "transitive" : "direct")
-            .append(" children of position ").append(sourcePosition).append(" to ")
-        	.append(position);
-        return builder.toString();
+        return "extend    containment +"+sourcePosition+" <>--> -"+position+(transitive ? " transitively" : " directly");
     }
     
     @Override

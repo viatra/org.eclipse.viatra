@@ -45,8 +45,9 @@ public class InstanceOfClassCheck extends CheckOperation {
 
     @Override
     public String toString() {
-        return String.format("check position %d for EClass %s", position, clazz.getName());
+        return "check     "+clazz.getName()+"(+"+ position+")";
     }
+    
     @Override
 	public List<Integer> getVariablePositions() {
 		return Lists.asList(position, new Integer[0]);

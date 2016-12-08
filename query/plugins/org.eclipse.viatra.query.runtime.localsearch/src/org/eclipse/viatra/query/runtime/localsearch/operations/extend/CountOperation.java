@@ -16,10 +16,10 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Iterators;
 
@@ -34,7 +34,10 @@ public class CountOperation extends ExtendOperation<Integer>{
     private PatternCall call;
 
 	
-    public CountOperation(PQuery calledQuery, Map<PParameter, Integer> parameterMapping, int position) {
+    /**
+     * @since 1.5
+     */
+    public CountOperation(MatcherReference calledQuery, Map<PParameter, Integer> parameterMapping, int position) {
         super(position);
         helper = new CallOperationHelper(calledQuery, parameterMapping);
     }
@@ -45,21 +48,15 @@ public class CountOperation extends ExtendOperation<Integer>{
         it = Iterators.singletonIterator(call.count(frame));
         
     }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Extend count ")
-            .append(helper.toString())
-            .append("for position ").append(position);
-        return builder.toString();
-    }
     
     @Override
 	public List<Integer> getVariablePositions() {
     	return helper.getVariablePositions();
 	}
 
-
+    @Override
+    public String toString() {
+        return "extend    -"+position+" = count find "+helper.toString();
+    }
     
 }

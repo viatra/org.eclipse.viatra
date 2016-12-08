@@ -16,10 +16,10 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Lists;
 
@@ -34,7 +34,10 @@ public class CountCheck extends CheckOperation{
     private PatternCall call;
     private int position;
     
-    public CountCheck(PQuery calledQuery, Map<PParameter, Integer> parameterMapping, int position) {
+    /**
+     * @since 1.5
+     */
+    public CountCheck(MatcherReference calledQuery, Map<PParameter, Integer> parameterMapping, int position) {
         super();
         helper = new CallOperationHelper(calledQuery, parameterMapping);
         this.position = position;
@@ -59,12 +62,7 @@ public class CountCheck extends CheckOperation{
     
     @Override
     public String toString() {
-    	StringBuilder builder = new StringBuilder();
-    	builder.append("Check count ")
-    		.append(helper.toString())
-    		.append("for position ").append(position);
-    	return builder.toString();
+    	return "check     "+position+" = count find "+helper.toString();
     }
-
     
 }

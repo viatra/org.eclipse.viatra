@@ -16,10 +16,10 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * @author Grill Balázs
@@ -44,7 +44,10 @@ public class CheckPositivePatternCall extends CheckOperation {
         return call.has(frame);
     }
 
-    public CheckPositivePatternCall(PQuery calledQuery, Map<PParameter, Integer> frameMapping) {
+    /**
+     * @since 1.5
+     */
+    public CheckPositivePatternCall(MatcherReference calledQuery, Map<PParameter, Integer> frameMapping) {
         super();
         helper = new CallOperationHelper(calledQuery, frameMapping);
     }
@@ -52,6 +55,11 @@ public class CheckPositivePatternCall extends CheckOperation {
     @Override
     public List<Integer> getVariablePositions() {
         return helper.getVariablePositions();
+    }
+    
+    @Override
+    public String toString() {
+        return "check     find "+helper.toString();
     }
 
 }

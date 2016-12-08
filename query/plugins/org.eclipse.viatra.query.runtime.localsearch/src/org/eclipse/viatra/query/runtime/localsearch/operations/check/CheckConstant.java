@@ -46,7 +46,7 @@ public class CheckConstant extends CheckOperation {
     
     @Override
     public String toString() {
-        return "Check constant '"+value+"' for position "+position;
+        return "check     constant "+position+"='"+value+"'";
     }
     
 }

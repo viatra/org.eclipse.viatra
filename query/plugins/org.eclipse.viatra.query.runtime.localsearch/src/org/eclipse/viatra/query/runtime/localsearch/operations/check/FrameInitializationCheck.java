@@ -48,7 +48,7 @@ public class FrameInitializationCheck extends CheckOperation {
 
     @Override
     public String toString() {
-        return String.format("Parameter positions %s", Arrays.toString(parameterKeys));
+        return String.format("parameter positions %s", Arrays.toString(parameterKeys));
     }
 
 }

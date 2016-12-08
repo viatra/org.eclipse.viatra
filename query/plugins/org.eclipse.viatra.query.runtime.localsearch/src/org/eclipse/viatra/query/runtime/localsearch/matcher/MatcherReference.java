@@ -91,4 +91,16 @@ public class MatcherReference {
         return hints;
     }
     
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(query.getFullyQualifiedName());
+        sb.append("(");
+        for(PParameter p : query.getParameters()){
+            sb.append(adornment.contains(p) ? "b" : "f");
+        }
+        sb.append(")");
+        return sb.toString();
+    }
+    
 }

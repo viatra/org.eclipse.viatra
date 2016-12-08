@@ -27,11 +27,12 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -60,8 +61,11 @@ public class CallOperationHelper {
     }
     
     private final PQuery calledQuery;
+    private final Set<PParameter> adornment;
     private final Map<PParameter, Integer> parameterMapping;
     private final Multimap<Integer, Integer> frameMapping;
+
+
     
     /**
      * @since 1.5
@@ -108,6 +112,7 @@ public class CallOperationHelper {
                     this.adornment.add(entry.getKey());
                 }
             }
+            // TODO adornment calculation here is unnecessary as it's available upon creation. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=509266
             matcher = context.getMatcher(new MatcherReference(calledQuery, this.adornment));
         }
         
@@ -121,6 +126,7 @@ public class CallOperationHelper {
                     adornment.add(mapping.getKey());
                 }
             }
+            // TODO adornment calculation here is unnecessary as it's available upon creation. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=509266
             matcher = context.getMatcher(new MatcherReference(calledQuery, adornment));
         }
         
@@ -158,16 +164,18 @@ public class CallOperationHelper {
         public Collection<? extends Tuple> getAllMatches(MatchingFrame frameInCaller) {
             return matcher.getAllMatches(mapFrame(frameInCaller));
         }
+        
     }
     
     /**
      * @since 1.5
      */
-    public CallOperationHelper(PQuery calledQuery, Map<PParameter, Integer> parameterMapping) {
-        this.calledQuery = calledQuery;
+    public CallOperationHelper(MatcherReference calledQuery, Map<PParameter, Integer> parameterMapping) {
+        this.calledQuery = calledQuery.getQuery();
+        this.adornment = calledQuery.getAdornment();
         this.parameterMapping = parameterMapping;
         
-        frameMapping = CallOperationHelper.calculateFrameMapping(calledQuery, parameterMapping);
+        frameMapping = CallOperationHelper.calculateFrameMapping(calledQuery.getQuery(), parameterMapping);
     } 
 
     /**
@@ -190,11 +198,23 @@ public class CallOperationHelper {
      * @since 1.5
      */
     public List<Integer> getVariablePositions() {
-        return Lists.newArrayList(frameMapping.keySet());
+        List<Integer> variables = new ArrayList<Integer>(parameterMapping.size());
+        for(PParameter p : calledQuery.getParameters()){
+            variables.add(parameterMapping.get(p));
+        }
+        return variables;
     }
     
     @Override
     public String toString() {
-        return calledQuery.getFullyQualifiedName()+"("+Joiner.on(",").join(getVariablePositions())+")";
+        return calledQuery.getFullyQualifiedName()+"("+Joiner.on(",").join(
+                Iterables.transform(calledQuery.getParameters(), new Function<PParameter, String>() {
+
+                    @Override
+                    public String apply(PParameter input) {
+                        return (adornment.contains(input) ? "+" : "-") + parameterMapping.get(input);
+                    }
+                }))+")";
     }
+    
 }

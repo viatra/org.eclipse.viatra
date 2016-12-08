@@ -40,7 +40,7 @@ public class InstanceOfJavaClassCheck extends CheckOperation {
 
     @Override
     public String toString() {
-        return String.format("check position %d for Java Class %s", position, clazz.getName());
+        return "check     java "+clazz.getName()+"(+"+position+")";
     }
     @Override
 	public List<Integer> getVariablePositions() {

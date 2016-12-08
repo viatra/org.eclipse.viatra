@@ -55,7 +55,7 @@ public class ExpressionCheck extends CheckOperation {
     
     @Override
     public String toString() {
-        return String.format("Expression check %s", evaluator.getShortDescription());
+        return "check     expression "+evaluator.getShortDescription();
     }
     
 }

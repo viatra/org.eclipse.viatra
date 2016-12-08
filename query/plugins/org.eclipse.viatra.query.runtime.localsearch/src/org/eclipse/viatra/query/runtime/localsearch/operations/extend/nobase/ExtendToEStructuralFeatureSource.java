@@ -85,14 +85,7 @@ public class ExtendToEStructuralFeatureSource extends ExtendOperation<Object> {
     
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("extend to source ")
-    	.append(feature.getContainerClass().getSimpleName())
-    	.append('.')
-    	.append(feature.getName())
-        .append(" to position ")
-        .append(position);
-        return builder.toString();
+        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(-"+position+", +"+targetPosition+") iterating";
     }
 
     @Override

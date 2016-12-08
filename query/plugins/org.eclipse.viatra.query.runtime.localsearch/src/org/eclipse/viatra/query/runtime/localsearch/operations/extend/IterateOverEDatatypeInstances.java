@@ -52,15 +52,7 @@ public class IterateOverEDatatypeInstances extends ExtendOperation<Object> imple
     
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        String name = dataType.getName();
-
-        builder.append("extend ")
-        .append(name)
-        .append(" over position ")
-        .append(position);
-
-        return builder.toString();
+        return "extend    "+dataType.getName()+"(-"+position+") indexed";
     }
     
     @Override

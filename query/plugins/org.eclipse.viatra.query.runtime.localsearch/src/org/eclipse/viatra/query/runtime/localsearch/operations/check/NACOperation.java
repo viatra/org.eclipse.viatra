@@ -16,10 +16,10 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * @author Zoltan Ujhelyi
@@ -30,7 +30,10 @@ public class NACOperation extends CheckOperation {
     CallOperationHelper helper;
     PatternCall call;
 
-    public NACOperation(PQuery calledQuery, Map<PParameter, Integer> parameterMapping) {
+    /**
+     * @since 1.5
+     */
+    public NACOperation(MatcherReference calledQuery, Map<PParameter, Integer> parameterMapping) {
         super();
         helper = new CallOperationHelper(calledQuery, parameterMapping);
     }
@@ -49,7 +52,7 @@ public class NACOperation extends CheckOperation {
     
     @Override
     public String toString() {
-        return "NAC check "+helper.toString();
+        return "check     neg find "+helper.toString();
     }
     
     @Override

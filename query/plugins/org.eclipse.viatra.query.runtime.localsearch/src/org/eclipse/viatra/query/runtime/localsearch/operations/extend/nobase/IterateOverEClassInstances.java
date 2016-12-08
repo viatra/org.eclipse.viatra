@@ -53,15 +53,7 @@ public class IterateOverEClassInstances extends AbstractIteratingExtendOperation
     
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        String name = clazz.getName();
-
-        builder.append("extend ")
-        .append(name)
-        .append(" over position ")
-        .append(position);
-
-        return builder.toString();
+        return "extend    "+clazz.getName()+"(-"+ position+") iterating";
     }
     
     @Override

@@ -16,9 +16,9 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 /**
  * @author Grill Balázs
@@ -33,7 +33,10 @@ public abstract class AbstractPositivePatternCallOperation implements ISearchOpe
      */
     protected PatternCall call;
     
-    protected AbstractPositivePatternCallOperation(PQuery calledQuery, Map<PParameter, Integer> parameterMapping) {
+    /**
+     * @since 1.5
+     */
+    protected AbstractPositivePatternCallOperation(MatcherReference calledQuery, Map<PParameter, Integer> parameterMapping) {
         helper = new CallOperationHelper(calledQuery, parameterMapping);
     }
     
@@ -47,4 +50,9 @@ public abstract class AbstractPositivePatternCallOperation implements ISearchOpe
         return helper.getVariablePositions();
     }
 
+    @Override
+    public String toString() {
+        return helper.toString();
+    }
+    
 }

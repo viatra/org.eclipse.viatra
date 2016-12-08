@@ -17,11 +17,11 @@ import java.util.Objects;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Lists;
 
@@ -39,7 +39,10 @@ public class AggregatorCheck extends CheckOperation{
     private final AggregatorConstraint aggregator;
     
     
-    public AggregatorCheck(PQuery calledQuery, AggregatorConstraint aggregator, Map<PParameter, Integer> parameterMapping, int position) {
+    /**
+     * @since 1.5
+     */
+    public AggregatorCheck(MatcherReference calledQuery, AggregatorConstraint aggregator, Map<PParameter, Integer> parameterMapping, int position) {
         super();
         helper = new CallOperationHelper(calledQuery, parameterMapping);
         this.position = position;
@@ -65,7 +68,7 @@ public class AggregatorCheck extends CheckOperation{
     
     @Override
     public String toString() {
-        return String.format("Check aggregation of %s for position %d", aggregator.getAggregator().getOperator().getName(), helper.toString(), position);
+        return "check     "+position+" = " + aggregator.getAggregator().getOperator().getName()+" find "+helper.toString();
     }
 
     

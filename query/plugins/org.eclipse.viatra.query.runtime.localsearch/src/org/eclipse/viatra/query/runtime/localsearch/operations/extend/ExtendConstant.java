@@ -47,7 +47,7 @@ public class ExtendConstant extends ExtendOperation<Object> {
     
     @Override
     public String toString() {
-        return "Extend constant '"+value+"' to position "+position;
+        return "extend    constant -"+position+"='"+value+"'";
     }
     
 }

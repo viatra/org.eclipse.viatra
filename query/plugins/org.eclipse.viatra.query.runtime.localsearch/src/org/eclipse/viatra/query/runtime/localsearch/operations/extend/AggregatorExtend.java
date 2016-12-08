@@ -16,11 +16,11 @@ import java.util.Map;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -39,7 +39,10 @@ public class AggregatorExtend extends ExtendOperation<Object> {
     private final AggregatorConstraint aggregator;
     
     
-	public AggregatorExtend(PQuery calledQuery, AggregatorConstraint aggregator, Map<PParameter, Integer> parameterMapping, int position) {
+	/**
+     * @since 1.5
+     */
+	public AggregatorExtend(MatcherReference calledQuery, AggregatorConstraint aggregator, Map<PParameter, Integer> parameterMapping, int position) {
         super(position);
         helper = new CallOperationHelper(calledQuery, parameterMapping);
         this.aggregator = aggregator;
@@ -60,7 +63,7 @@ public class AggregatorExtend extends ExtendOperation<Object> {
     
     @Override
     public String toString() {
-        return String.format("Extend aggregation of %s to position %d", aggregator.getAggregator().getOperator().getName(), helper.toString(), position);
+        return "extend    -"+position+" = " + aggregator.getAggregator().getOperator().getName()+" find "+helper.toString();
     }
     
 }

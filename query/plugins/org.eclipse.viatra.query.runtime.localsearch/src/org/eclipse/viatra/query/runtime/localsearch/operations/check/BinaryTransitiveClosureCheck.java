@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
 import org.eclipse.viatra.query.runtime.localsearch.exceptions.LocalSearchException;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.ISearchContext;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper;
 import org.eclipse.viatra.query.runtime.localsearch.operations.CallOperationHelper.PatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -46,15 +47,16 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
      * @param calledQuery
      * @param sourcePosition
      * @param targetPosition
+     * @since 1.5
      */
-    public BinaryTransitiveClosureCheck(PQuery calledQuery, int sourcePosition, int targetPosition) {
+    public BinaryTransitiveClosureCheck(MatcherReference calledQuery, int sourcePosition, int targetPosition) {
         super();
         this.sourcePosition = sourcePosition;
         this.targetPosition = targetPosition;
 
         helper = new CallOperationHelper(calledQuery, ImmutableMap.of(
-                calledQuery.getParameters().get(0), sourcePosition,
-                calledQuery.getParameters().get(1), targetPosition));
+                calledQuery.getQuery().getParameters().get(0), sourcePosition,
+                calledQuery.getQuery().getParameters().get(1), targetPosition));
     }
 
     @Override
@@ -89,18 +91,14 @@ public class BinaryTransitiveClosureCheck extends CheckOperation{
     
     @Override
     public String toString() {
-    	StringBuilder builder = new StringBuilder();
-    	builder.append("Check binary transitive closure of ")
-    		.append(helper.toString())
-    		.append(" from ").append(sourcePosition).append(" to ").append(targetPosition);
-    	return builder.toString();
+        String c = helper.toString();
+        int p = c.indexOf('(');
+    	return "check     find "+c.substring(0, p)+"+"+c.substring(p);
     }
 
 	@Override
 	public List<Integer> getVariablePositions() {
 		return Lists.asList(sourcePosition, targetPosition, new Integer[0]);
 	}
-
-
 
 }

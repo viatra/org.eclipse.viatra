@@ -85,12 +85,7 @@ public class IterateOverEStructuralFeatureInstances implements IIteratingSearchO
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("extend ")
-        	.append(feature.getContainerClass().getSimpleName())
-        	.append('.')
-        	.append(feature.getName());
-        return builder.toString();
+        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(-"+sourcePosition+", -"+targetPosition+") indexed";
     }
 
     @Override

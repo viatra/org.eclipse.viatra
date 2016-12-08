@@ -62,7 +62,7 @@ public class ScopeCheck extends CheckOperation {
 
     @Override
     public String toString() {
-        return "Check scope of position "+position;
+        return "check    +"+position+" in scope "+scope;
     }
     @Override
     public List<Integer> getVariablePositions() {

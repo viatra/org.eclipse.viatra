@@ -65,6 +65,6 @@ public class ExpressionEvalCheck extends CheckOperation {
 
     @Override
     public String toString() {
-        return String.format("Expression check %s for position %d", evaluator.getShortDescription(), outputPosition);
+        return "check     "+outputPosition+" = expression "+evaluator.getShortDescription();
     }
 }

@@ -71,8 +71,7 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
     
     @Override
     public String toString() {
-        return String.format("extend using feature %s.%s from position %d to position %d",
-                feature.getContainerClass().getSimpleName(), feature.getName(), sourcePosition, position);
+        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(+"+sourcePosition+", -"+position+")";
     }
 
     @Override
