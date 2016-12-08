@@ -3,9 +3,9 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.viatra.query.runtime.rete.recipes/src-gen"
     modelPluginID="org.eclipse.viatra.query.runtime.rete.recipes" runtimeJar="true"
     forceOverwrite="true" modelName="Rete-recipes" updateClasspath="false" nonNLSMarkers="true"
-    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    testsDirectory="" importerID="org.eclipse.emf.importer.ecore"
-    containmentProxies="true" complianceLevel="7.0" language="en" operationReflection="true">
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" testsDirectory=""
+    importerID="org.eclipse.emf.importer.ecore" containmentProxies="true" complianceLevel="7.0"
+    language="en" operationReflection="true">
   <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel/exporter/org.eclipse.xsd.ecore.exporter">
     <genAnnotations source="selectedPackages">
       <details key="http://www.eclipse.org/emf/2002/Ecore" value="Ecore.xsd"/>
@@ -46,6 +46,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//ProductionRecipe/mappedIndices"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ProductionRecipe/pattern"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//ProductionRecipe/patternFQN"/>
+      <genOperations ecoreOperation="recipes.ecore#//ProductionRecipe/getArity"/>
     </genClasses>
     <genClasses image="false" ecoreClass="recipes.ecore#//IndexerRecipe">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//IndexerRecipe/mask"/>
