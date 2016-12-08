@@ -231,13 +231,9 @@ public final class LocalSearchHints implements IMatcherCapability {
         if (capability instanceof LocalSearchHints){
             LocalSearchHints other = (LocalSearchHints)capability;
             /*
-             * We allow substitution of matchers if their settings are equal.
+             * We allow substitution of matchers if their functionally relevant settings are equal.
              */
-            return Objects.equal(other.useBase, useBase) && 
-                    Objects.equal(other.costFunction, costFunction) &&
-                    Objects.equal(other.flattenCallPredicate, flattenCallPredicate) &&
-                    Objects.equal(other.rowCount, rowCount) &&
-                    Objects.equal(other.adornmentProvider, adornmentProvider);
+            return Objects.equal(other.useBase, useBase);
         }
         /*
          * For any other cases (e.g. for Rete), we cannot assume
