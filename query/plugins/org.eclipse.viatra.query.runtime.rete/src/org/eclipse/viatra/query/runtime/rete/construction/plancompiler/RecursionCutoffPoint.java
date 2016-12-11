@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.construction.plancompiler;
 
 import java.util.Collections;
 
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.rete.recipes.ProductionRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
@@ -34,11 +35,13 @@ public class RecursionCutoffPoint {
 	final RecipeTraceInfo.ParentTraceList futureTraceList;
 	final CompiledQuery compiledQuery;
 	final ProductionRecipe recipe;
+	final QueryEvaluationHint hint;
 
-	public RecursionCutoffPoint(PQuery query) {
+	public RecursionCutoffPoint(PQuery query, QueryEvaluationHint hint) {
 		super();
+		this.hint = hint;
 		this.futureTraceList = new RecipeTraceInfo.ParentTraceList();
-		this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceList, Collections.<ReteNodeRecipe>emptySet());
+		this.compiledQuery = CompilerHelper.makeQueryTrace(query, futureTraceList, Collections.<ReteNodeRecipe>emptySet(), hint);
 		this.recipe = (ProductionRecipe)compiledQuery.getRecipe();
 		Preconditions.checkArgument(
 				compiledQuery.getParentRecipeTraces().isEmpty(), 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Gabor Bergmann - initial API and implementation
+ *    Tamás Szabó - delete and rederive algorithm implementation
  *******************************************************************************/
 
 package org.eclipse.viatra.query.runtime.rete.single;
@@ -20,6 +21,7 @@ import org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -34,10 +36,12 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
  * 
  * @author Gabor Bergmann
  */
-public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
+public class UniquenessEnforcerNode extends StandardNode implements Tunnel, RederivableNode {
 
     protected Collection<Supplier> parents;
     protected TupleMemory memory;
+    protected TupleMemory rederivableMemory;
+    protected boolean deleteRederiveEvaluation;
 
     public TupleMemory getMemory() {
         return memory;
@@ -50,52 +54,120 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
     private final TupleMask nullMask;
     private final TupleMask identityMask;
 
-    public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth) {
+    public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth, boolean deleteRederiveEvaluation) {
         super(reteContainer);
-        parents = new ArrayList<Supplier>();
-        memory = new TupleMemory();
+        this.parents = new ArrayList<Supplier>();
+        this.memory = new TupleMemory();
+        this.rederivableMemory = new TupleMemory();
         this.tupleWidth = tupleWidth;
-        reteContainer.registerClearable(memory);
-        nullMask = TupleMask.linear(0, tupleWidth);
-        identityMask = TupleMask.identity(tupleWidth);
-        // if (Options.employTrivialIndexers) {
-        // memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory, this, this);
-        // reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, memoryNullIndexer);
-        // memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory, this, this);
-        // reteContainer.getLibrary().registerSpecializedProjectionIndexer(this, memoryIdentityIndexer);
-        // }
+        reteContainer.registerClearable(this.memory);
+        reteContainer.registerClearable(this.rederivableMemory);
+        this.nullMask = TupleMask.linear(0, tupleWidth);
+        this.identityMask = TupleMask.identity(tupleWidth);
+        this.deleteRederiveEvaluation = deleteRederiveEvaluation;
     }
 
     @Override
-    public void update(Direction direction, Tuple updateElement) {
-        boolean change;
-        if (direction == Direction.INSERT) {
-            change = memory.add(updateElement);
-        } else { // REVOKE
-            try {
-                change = memory.remove(updateElement);
-            } catch (java.lang.NullPointerException ex) {
-                // TODO UGLY, but will it find our problems?
-                change = false;
-                reteContainer
-                        .getNetwork()
-                        .getEngine()
-                        .getLogger()
-                        .error(
-                                "[INTERNAL ERROR] Duplicate deletion of " + updateElement
-                                        + " was detected in UniquenessEnforcer " + this 
-                                        + " for pattern(s) " + getTraceInfoPatternsEnumerated(), ex);
+    public void update(Direction direction, Tuple update) {
+        boolean propagate = false;
+
+        if (this.deleteRederiveEvaluation) {
+            if (direction == Direction.INSERT) {
+                // INSERT
+                boolean containedAlready = memory.demandAdd(update);
+
+                if (!containedAlready) {
+                    // memory == 0
+                    if (rederivableMemory.add(update)) {
+                        // the node has now a new re-derived tuple
+                        reteContainer.registerRederivable(this);
+                    }
+                }
+            } else {
+                // DELETE
+                int memoryCount = memory.get(update);
+                int rederivableCount = rederivableMemory.get(update);
+
+                if (memoryCount > 0) {
+                    if (rederivableCount != 0) {
+                        issueError("[INTERNAL ERROR] Re-derivation memory for " + update
+                                + " must be empty before the re-derivation phase in UniquenessEnforcer " + this
+                                + " for pattern(s) " + getTraceInfoPatternsEnumerated(), null);
+                    }
+                    int count = memoryCount - 1;
+                    if (count > 0) {
+                        // the node still has re-derivable tuple
+                        reteContainer.registerRederivable(this);
+                        rederivableMemory.add(update, count);
+                    }
+                    memory.clear(update);
+                    propagate = true;
+                } else {
+                    // memory == 0
+                    try {
+                        rederivableMemory.remove(update);
+                    } catch (NullPointerException ex) {
+                        issueError("[INTERNAL ERROR] Duplicate deletion of " + update
+                                + " was detected in UniquenessEnforcer " + this + " for pattern(s) "
+                                + getTraceInfoPatternsEnumerated(), ex);
+                    }
+                    if (rederivableMemory.size() == 0) {
+                        // the tuple lost all of its derivations
+                        reteContainer.unregisterRederivable(this);
+                    }
+                }
+            }
+        } else {
+            if (direction == Direction.INSERT) {
+                // INSERT
+                propagate = this.memory.add(update);
+            } else {
+                // DELETE
+                try {
+                    propagate = this.memory.remove(update);
+                } catch (NullPointerException ex) {
+                    propagate = false;
+                    issueError(
+                            "[INTERNAL ERROR] Duplicate deletion of " + update + " was detected in UniquenessEnforcer "
+                                    + this + " for pattern(s) " + getTraceInfoPatternsEnumerated(),
+                            ex);
+                }
             }
         }
-        if (change) {
-            propagateUpdate(direction, updateElement);
 
-            // trivial projectionIndexers
-            if (memoryIdentityIndexer != null)
-                memoryIdentityIndexer.propagate(direction, updateElement);
-            if (memoryNullIndexer != null)
-                memoryNullIndexer.propagate(direction, updateElement);
+        if (propagate) {
+            propagate(direction, update);
+        }
+    }
 
+    private void issueError(String message, Exception ex) {
+        if (ex == null) {
+            this.reteContainer.getNetwork().getEngine().getLogger().error(message);
+        } else {
+            this.reteContainer.getNetwork().getEngine().getLogger().error(message, ex);
+        }
+    }
+
+    @Override
+    public void rederiveOne() {
+        Tuple update = rederivableMemory.iterator().next();
+        int count = rederivableMemory.get(update);
+        rederivableMemory.clear(update);
+        memory.add(update, count);
+        if (this.rederivableMemory.size() == 0) {
+            reteContainer.unregisterRederivable(this);
+        }
+        propagate(Direction.INSERT, update);
+    }
+
+    protected void propagate(Direction direction, Tuple update) {
+        propagateUpdate(direction, update);
+
+        if (memoryIdentityIndexer != null) {
+            memoryIdentityIndexer.propagate(direction, update);
+        }
+        if (memoryNullIndexer != null) {
+            memoryNullIndexer.propagate(direction, update);
         }
     }
 
@@ -104,12 +176,15 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
         if (Options.employTrivialIndexers) {
             if (nullMask.equals(mask)) {
                 final MemoryNullIndexer indexer = getNullIndexer();
-                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);                
-				return indexer;
-            } if (identityMask.equals(mask)) {
+                for (TraceInfo traceInfo : traces)
+                    indexer.assignTraceInfo(traceInfo);
+                return indexer;
+            }
+            if (identityMask.equals(mask)) {
                 final MemoryIdentityIndexer indexer = getIdentityIndexer();
-                for (TraceInfo traceInfo : traces) indexer.assignTraceInfo(traceInfo);                
-				return indexer;
+                for (TraceInfo traceInfo : traces)
+                    indexer.assignTraceInfo(traceInfo);
+                return indexer;
             }
         }
         return super.constructIndex(mask, traces);
@@ -149,33 +224,10 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel {
 
     @Override
     public void assignTraceInfo(TraceInfo traceInfo) {
-    	super.assignTraceInfo(traceInfo);
-    	if (traceInfo.propagateFromStandardNodeToSupplierParent())
-    		for (Supplier parent : parents)
-    			parent.acceptPropagatedTraceInfo(traceInfo);
+        super.assignTraceInfo(traceInfo);
+        if (traceInfo.propagateFromStandardNodeToSupplierParent())
+            for (Supplier parent : parents)
+                parent.acceptPropagatedTraceInfo(traceInfo);
     }
-
-    
-    //
-    // public void tearOff() {
-    // for (Supplier parent : new LinkedList<Supplier>(parents) )
-    // {
-    // network.disconnectAndDesynchronize(parent, this);
-    // }
-    // }
-    //
-    // /**
-    // * @return the dirty
-    // */
-    // public boolean isDirty() {
-    // return dirty;
-    // }
-    //
-    // /**
-    // * @param dirty the dirty to set
-    // */
-    // public void setDirty(boolean dirty) {
-    // this.dirty = dirty;
-    // }
 
 }

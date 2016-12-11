@@ -45,7 +45,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator;
 import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer;
-import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
@@ -93,7 +92,6 @@ import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan;
 import org.eclipse.viatra.query.runtime.rete.traceability.ParameterProjectionTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
-import org.eclipse.viatra.query.runtime.rete.util.Options;
 import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
 
 import com.google.common.collect.HashMultimap;
@@ -183,7 +181,7 @@ public class ReteRecipeCompiler {
 		if (compiled == null) {
 			boolean reentrant = ! compilationInProgress.add(query);
 			if (reentrant) { // oops, recursion into body in progress
-				RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query);
+				RecursionCutoffPoint cutoffPoint = new RecursionCutoffPoint(query, getHints(query));
 				recursionCutoffPoints.put(query, cutoffPoint);
 				return cutoffPoint.getCompiledQuery();
 			} else { // not reentrant, therefore no recursion, do the compilation
@@ -283,7 +281,7 @@ public class ReteRecipeCompiler {
 			}
 		}
 		
-		CompiledQuery compiled = CompilerHelper.makeQueryTrace(query, bodyFinalTraces, bodyFinalRecipes);
+		CompiledQuery compiled = CompilerHelper.makeQueryTrace(query, bodyFinalTraces, bodyFinalRecipes, getHints(query));
 		
 		return compiled;
 	}
@@ -715,6 +713,8 @@ public class ReteRecipeCompiler {
 		} else {
 			RecipeTraceInfo trimTrace = new PlanningTrace(plan, projectedVariables, trimmerRecipe, compiledParent);
 			UniquenessEnforcerRecipe uniquenessEnforcerRecipe = FACTORY.createUniquenessEnforcerRecipe();
+			boolean deleteRederiveEvaluation = ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(getHints(plan));
+			uniquenessEnforcerRecipe.setDeleteRederiveEvaluation(deleteRederiveEvaluation);
 			uniquenessEnforcerRecipe.getParents().add(trimmerRecipe);			
 			return new CompiledSubPlan(plan, projectedVariables, uniquenessEnforcerRecipe, trimTrace);
 		}							
