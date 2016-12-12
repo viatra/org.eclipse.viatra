@@ -138,12 +138,12 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
         this(backend, context, query, planProvider, null);
     }
 
-    private Iterator<MatcherReference> computeExpectedAdornments(final PQuery query, final QueryEvaluationHint hints){
-        return Iterators.transform(LocalSearchHints.getDefaultOverriddenBy(hints).getAdornmentProvider().getAdornments(query).iterator(), new Function<Set<PParameter>, MatcherReference>() {
+    private Iterator<MatcherReference> computeExpectedAdornments(){
+        return Iterators.transform(overrideDefaultHints(query).getAdornmentProvider().getAdornments(query).iterator(), new Function<Set<PParameter>, MatcherReference>() {
 
             @Override
             public MatcherReference apply(Set<PParameter> input) {
-                return new MatcherReference(query, input, hints);
+                return new MatcherReference(query, input, userHints);
             }
         });
     }
@@ -205,7 +205,7 @@ public class LocalSearchResultProvider implements IQueryResultProvider {
     
     private void preparePlansForExpectedAdornments() throws QueryProcessingException{
      // Plan for possible adornments
-        Iterator<MatcherReference> iterator = computeExpectedAdornments(query, userHints);
+        Iterator<MatcherReference> iterator = computeExpectedAdornments();
         while(iterator.hasNext()){
             IPlanDescriptor plan = planProvider.getPlan((LocalSearchBackend) backend, overrideDefaultHints(query), iterator.next());
             // Index keys

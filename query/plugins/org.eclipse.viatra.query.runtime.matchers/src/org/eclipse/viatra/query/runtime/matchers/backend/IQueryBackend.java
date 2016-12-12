@@ -37,6 +37,7 @@ public interface IQueryBackend {
 	
 	/**
      * Returns a result provider for a given query. Repeated calls may return the same instance.
+     * @param optional hints that may override engine and query defaults (as provided by {@link IQueryBackendHintProvider}). Can be null.
      * @throws QueryProcessingException 
 	 * @since 1.4
      */

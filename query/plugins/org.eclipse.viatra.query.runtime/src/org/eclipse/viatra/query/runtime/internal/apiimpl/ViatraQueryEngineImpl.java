@@ -172,7 +172,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     
     @Override
 	public <Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> Matcher getMatcher(IQuerySpecification<Matcher> querySpecification) throws ViatraQueryException {
-        return getMatcher(querySpecification, getQueryEvaluationHint(querySpecification.getInternalQueryRepresentation()));
+        return getMatcher(querySpecification, null);
     }
     
     @Override
@@ -516,7 +516,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
 	{
 		Preconditions.checkState(!disposed, QUERY_ON_DISPOSED_ENGINE_MESSAGE);
         
-		return getResultProviderInternal(query, getQueryEvaluationHint(query.getInternalQueryRepresentation()));
+		return getResultProviderInternal(query, null);
 	}
 	
 	/**
@@ -537,7 +537,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
 
     /**
      * This method returns the result provider exactly as described by the passed hint. 
-     * Query and hint cannot be null!
+     * Query cannot be null!
      * Use {@link #getQueryEvaluationHint(IQuerySpecification, QueryEvaluationHint)} before passing a hint to this method
      * to make sure engine and query specific hints are correctly applied.
      */
@@ -547,13 +547,12 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
     
     /**
      * This method returns the result provider exactly as described by the passed hint. 
-     * Query and hint cannot be null!
+     * Query cannot be null!
      * Use {@link #getQueryEvaluationHint(IQuerySpecification, QueryEvaluationHint)} before passing a hint to this method
      * to make sure engine and query specific hints are correctly applied.
      */
     private IQueryResultProvider getResultProviderInternal(PQuery query, QueryEvaluationHint hint) throws ViatraQueryException, QueryProcessingException{
         Preconditions.checkArgument(query != null, "Query cannot be null!");
-        Preconditions.checkArgument(hint != null, "Hint cannot be null!");
         final IQueryBackend backend = getQueryBackend(getQueryEvaluationHint(query, hint).getQueryBackendFactory());
         return backend.getResultProvider(query, hint);
     }
@@ -649,8 +648,7 @@ public final class ViatraQueryEngineImpl extends AdvancedViatraQueryEngine imple
                     @Override
                     public Void call() throws Exception {
                         for (IQuerySpecification<?> query : specifications) {
-                            QueryEvaluationHint queryEvaluationHint = getQueryEvaluationHint(query, optionalEvaluationHints);
-                            getResultProviderInternal(query, queryEvaluationHint);
+                            getResultProviderInternal(query, optionalEvaluationHints);
                         }
                         return null;
                     }

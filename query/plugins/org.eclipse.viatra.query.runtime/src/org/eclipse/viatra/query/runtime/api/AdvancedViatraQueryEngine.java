@@ -14,6 +14,7 @@ import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl;
+import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
@@ -192,10 +193,13 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
     
 	/**
 	 * Access a pattern matcher based on a {@link IQuerySpecification}, overriding some of the default query evaluation hints. 
-	 * Multiple calls may return the same matcher depending on the actual evaluation hints. It is guaranteed that this method
-	 * always return a matcher instance which is functionally compatible to the requested functionality in hints.
+	 * Multiple calls may return the same matcher depending on the actual evaluation hints. 
 	 * 
-	 * <p> Hints are only effective the first time a matcher is created.
+	 * <p> It is guaranteed that this method will always return a matcher instance which is functionally compatible 
+	 *   with the requested functionality (see {@link IMatcherCapability}). 
+	 *   Otherwise, the query evaluator is free to ignore any hints.
+	 * 
+	 * <p> For stateful query backends (Rete), hints may be effective only the first time a matcher is created.
 	 * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query
 	 * @return a pattern matcher corresponding to the specification
      * @param optionalEvaluationHints additional / overriding options on query evaluation; passing null means default options associated with the query
@@ -312,7 +316,7 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
 	/**
 	 * Access an existing pattern matcher based on a {@link IQuerySpecification}, and optional hints override.
      * @param querySpecification a {@link IQuerySpecification} that describes a VIATRA query specification
-     * @param optionalOverrideHints a {@link QueryEvaluationHint} that may override the pattern hints
+     * @param optionalOverrideHints a {@link QueryEvaluationHint} that may override the pattern hints (can be null)
      * @return a pattern matcher corresponding to the specification, <code>null</code> if a matcher does not exist yet.
      * @since 1.4
      */
