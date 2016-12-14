@@ -19,9 +19,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
+import org.eclipse.viatra.query.runtime.rete.network.Mailbox.MessagePostEffect;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
 import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
@@ -54,6 +56,9 @@ public final class ReteContainer {
     protected Map<ReteContainer, Long> terminationCriteria = null;
 
     protected Set<RederivableNode> rederivables;
+    protected Set<Mailbox> activeMailboxes;
+    
+    protected final Logger logger;
 
     /**
      * @param threaded
@@ -63,8 +68,10 @@ public final class ReteContainer {
         super();
         this.network = network;
         rederivables = new LinkedHashSet<RederivableNode>();
+        activeMailboxes = new LinkedHashSet<Mailbox>();
         nodesById = CollectionsFactory.getMap();// new HashMap<Long, Node>();
         clearables = new LinkedList<Clearable>();
+        logger = network.getEngine().getLogger();
 
         connectionFactory = new ConnectionFactory(this);
         nodeProvisioner = new NodeProvisioner(this);
@@ -84,7 +91,8 @@ public final class ReteContainer {
     /**
      * Registers the given {@link RederivableNode} as re-derivable.
      * 
-     * @param node the node
+     * @param node
+     *            the node
      * @return true if the node was not in the set of re-derivable ones
      * @since 1.6
      */
@@ -93,9 +101,10 @@ public final class ReteContainer {
     }
 
     /**
-     * Unregisters the given {@link RederivableNode} from the set of re-derivable ones. 
+     * Unregisters the given {@link RederivableNode} from the set of re-derivable ones.
      * 
-     * @param node the node
+     * @param node
+     *            the node
      * @return true if the node has already been registered as re-derivable
      * @since 1.6
      */
@@ -262,24 +271,25 @@ public final class ReteContainer {
     }
 
     /**
-     * Sends an update message to the receiver node, indicating a newly found or lost partial matching. NOT to be called
-     * from user threads.
+     * Sends an update message to the receiver node by placing the message into its mailbox.
+     * NOT to be called from user threads. 
      */
     public void sendUpdateInternal(Receiver receiver, Direction direction, Tuple updateElement) {
-        // sendUpdateExternal(receiver, direction, updateElement);
-        // if (org.eclipse.viatra.query.runtime.rete.util.Options.synchronous) receiver.update(direction,
-        // updateElement);
-        // else {
-        UpdateMessage message = new UpdateMessage(receiver, direction, updateElement);
-        internalMessageQueue.add(message);
-        // synchronized(externalMessageQueue)
-        // {
-        // externalMessageQueue.add(message);
-        // // no notifyAll() needed, since we are in the message consumption
-        // thread
-        // }
-        // }
+        Mailbox mailbox = receiver.getMailbox();
+        MessagePostEffect effect = mailbox.postMessage(direction, updateElement);
 
+        if (effect == MessagePostEffect.BECAME_ACTIVE) {
+            boolean result = activeMailboxes.add(mailbox);
+            if (!result) {
+                logger.error("[INTERNAL ERROR] Mailbox " + mailbox + " was already active and it became active again!");
+            }
+        } else if (effect == MessagePostEffect.BECAME_INACTIVE) {
+            boolean result = activeMailboxes.remove(mailbox);
+            if (!result) {
+                logger.error(
+                        "[INTERNAL ERROR] Mailbox " + mailbox + " was already inactive and it became inactive again!");
+            }
+        }
     }
 
     /**
@@ -499,12 +509,15 @@ public final class ReteContainer {
      * Iteratively consumes update messages until there are none left. Requires single-threaded behaviour.
      */
     void messageConsumptionSingleThreaded() {
-        while (!internalMessageQueue.isEmpty() || getFirstRederivable() != null) {
-            while (!internalMessageQueue.isEmpty()) {
-                UpdateMessage message = internalMessageQueue.removeFirst();
-                message.receiver.update(message.direction, message.updateElement);
+        while (!activeMailboxes.isEmpty() || getFirstRederivable() != null) {
+            // first deliver all the messages ...
+            while (!activeMailboxes.isEmpty()) {
+                Mailbox mailbox = activeMailboxes.iterator().next();
+                activeMailboxes.remove(mailbox);
+                mailbox.deliverMessages();
             }
 
+            // ... and then start a re-derivation phase
             RederivableNode node = getFirstRederivable();
             if (node != null) {
                 node.rederiveOne();

@@ -35,7 +35,7 @@ public abstract class StandardNode extends BaseNode implements Supplier {
     public StandardNode(ReteContainer reteContainer) {
         super(reteContainer);
     }
-
+    
     protected void propagateUpdate(Direction direction, Tuple updateElement) {
         for (Receiver r : children)
             reteContainer.sendUpdateInternal(r, direction, updateElement);

@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -28,10 +30,28 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 public abstract class SingleInputNode extends StandardNode implements Tunnel {
 
     protected Supplier parent;
-
+    protected final Mailbox mailbox;
+    
     public SingleInputNode(ReteContainer reteContainer) {
         super(reteContainer);
+        mailbox = instantiateMailbox();
+        reteContainer.registerClearable(mailbox);
         parent = null;
+    }
+    
+    /**
+     * Instantiates the {@link Mailbox} of this receiver.
+     * Subclasses may override this method to provide their own mailbox implementation.
+     * 
+     * @return the mailbox
+     */
+    protected Mailbox instantiateMailbox() {
+        return new DefaultMailbox(this);
+    }
+    
+    @Override
+    public Mailbox getMailbox() {
+        return mailbox;
     }
 
     @Override

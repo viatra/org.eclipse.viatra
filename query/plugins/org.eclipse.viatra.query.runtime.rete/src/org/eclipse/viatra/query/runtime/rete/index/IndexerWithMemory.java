@@ -16,7 +16,9 @@ import java.util.Collections;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
+import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -29,19 +31,37 @@ import org.eclipse.viatra.query.runtime.rete.tuple.MaskedTupleMemory;
 public abstract class IndexerWithMemory extends StandardIndexer implements Receiver {
 
     protected MaskedTupleMemory memory;
-
-    public MaskedTupleMemory getMemory() {
-        return memory;
-    }
-
+    protected final Mailbox mailbox;
+    
     /**
      * @param reteContainer
      * @param mask
      */
     public IndexerWithMemory(ReteContainer reteContainer, TupleMask mask) {
         super(reteContainer, mask);
-        this.memory = new MaskedTupleMemory(mask);
+        memory = new MaskedTupleMemory(mask);
         reteContainer.registerClearable(memory);
+        mailbox = instantiateMailbox();
+        reteContainer.registerClearable(mailbox);
+    }
+    
+    /**
+     * Instantiates the {@link Mailbox} of this receiver.
+     * Subclasses may override this method to provide their own mailbox implementation.
+     * 
+     * @return the mailbox
+     */
+    protected Mailbox instantiateMailbox() {
+        return new DefaultMailbox(this);
+    }
+    
+    @Override
+    public Mailbox getMailbox() {
+        return mailbox;
+    }
+    
+    public MaskedTupleMemory getMemory() {
+        return memory;
     }
 
     @Override

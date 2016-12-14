@@ -18,7 +18,9 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContextListener;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteEngine;
+import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Network;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -43,13 +45,31 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
 	private Network network;
 	private Address<? extends Receiver> myAddress;
 	private boolean parallelExecutionEnabled;
+	protected final Mailbox mailbox;
 
 	public ExternalInputEnumeratorNode(ReteContainer reteContainer) {
 		super(reteContainer);
-		this.myAddress = Address.of(this);
-		this.network = reteContainer.getNetwork();
-		this.inputConnector = network.getInputConnector();
+		myAddress = Address.of(this);
+		network = reteContainer.getNetwork();
+		inputConnector = network.getInputConnector();
+		mailbox = instantiateMailbox();
+        reteContainer.registerClearable(mailbox);
 	}
+	
+	/**
+     * Instantiates the {@link Mailbox} of this receiver.
+     * Subclasses may override this method to provide their own mailbox implementation.
+     * 
+     * @return the mailbox
+     */
+    protected Mailbox instantiateMailbox() {
+        return new DefaultMailbox(this);
+    }
+	
+	@Override
+    public Mailbox getMailbox() {
+        return mailbox;
+    }
 	
 	public void connectThroughContext(ReteEngine engine, IInputKey inputKey, Tuple globalSeed) {
 		this.inputKey = inputKey;

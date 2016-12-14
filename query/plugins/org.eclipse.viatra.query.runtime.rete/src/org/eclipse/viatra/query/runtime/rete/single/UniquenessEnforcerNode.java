@@ -20,7 +20,9 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryNullIndexer;
 import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
+import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
+import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
@@ -48,15 +50,10 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
      * @since 1.6
      */
     protected boolean deleteRederiveEvaluation;
-
-    public TupleMemory getMemory() {
-        return memory;
-    }
-
     protected MemoryNullIndexer memoryNullIndexer;
     protected MemoryIdentityIndexer memoryIdentityIndexer;
     protected final int tupleWidth;
-
+    protected final Mailbox mailbox;
     private final TupleMask nullMask;
     private final TupleMask identityMask;
 
@@ -78,8 +75,29 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
         this.nullMask = TupleMask.linear(0, tupleWidth);
         this.identityMask = TupleMask.identity(tupleWidth);
         this.deleteRederiveEvaluation = deleteRederiveEvaluation;
+        this.mailbox = instantiateMailbox();
+        reteContainer.registerClearable(this.mailbox);
+    }
+    
+    /**
+     * Instantiates the {@link Mailbox} of this receiver.
+     * Subclasses may override this method to provide their own mailbox implementation.
+     * 
+     * @return the mailbox
+     */
+    protected Mailbox instantiateMailbox() {
+        return new DefaultMailbox(this);
+    }
+    
+    public TupleMemory getMemory() {
+        return memory;
     }
 
+    @Override
+    public Mailbox getMailbox() {
+        return mailbox;
+    }
+    
     @Override
     public void update(Direction direction, Tuple update) {
         boolean propagate = false;
@@ -97,6 +115,8 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
                     }
                 }
             } else {
+                // monotonous = true/false no need to put the remaining to the rederivable
+                
                 // DELETE
                 int memoryCount = memory.get(update);
                 int rederivableCount = rederivableMemory.get(update);

@@ -28,6 +28,13 @@ public interface Receiver extends Node {
     public void update(Direction direction, Tuple updateElement);
 
     /**
+     * Returns the {@link Mailbox} of this receiver.
+     * 
+     * @return the mailbox
+     */
+    public Mailbox getMailbox();
+        
+    /**
      * appends a parent that will continously send insert and revoke updates to this supplier
      */
     void appendParent(Supplier supplier);

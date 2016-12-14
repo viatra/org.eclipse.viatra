@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.viatra.query.runtime.rete.network.BaseNode;
+import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.Supplier;
@@ -26,14 +28,32 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 public abstract class SimpleReceiver extends BaseNode implements Receiver {
 
     protected Supplier parent = null;
-
+    protected final Mailbox mailbox;
+    
     /**
      * @param reteContainer
      */
     public SimpleReceiver(ReteContainer reteContainer) {
         super(reteContainer);
+        mailbox = instantiateMailbox();
+        reteContainer.registerClearable(mailbox);
     }
 
+    /**
+     * Instantiates the {@link Mailbox} of this receiver.
+     * Subclasses may override this method to provide their own mailbox implementation.
+     * 
+     * @return the mailbox
+     */
+    protected Mailbox instantiateMailbox() {
+        return new DefaultMailbox(this);
+    }
+    
+    @Override
+    public Mailbox getMailbox() {
+        return mailbox;
+    }
+    
     @Override
     public void appendParent(Supplier supplier) {
         if (parent == null)
