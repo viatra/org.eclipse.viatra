@@ -65,6 +65,8 @@ abstract class StatisticsBasedConstraintCostFunction implements ICostFunction {
                 isInverse = true
             }
             return calculateBinaryExtendCost(supplierKey, srcVariable, dstVariable, isInverse, edgeCount, input)
+            // Make inverse navigation slightly more expensive than forward navigation https://bugs.eclipse.org/bugs/show_bug.cgi?id=501078
+            + if (isInverse) 1.0 else 0.0
         } else {
             // n-ary constraint
             throw new RuntimeException('''Cost calculation for arity «arity» is not implemented yet''')
