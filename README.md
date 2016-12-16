@@ -3,7 +3,7 @@
 ## Most important links
 
  * [Project homepage](http://eclipse.org/viatra)
- * [Download links](http://http://eclipse.org/viatra/downloads.php)
+ * [Download links](http://eclipse.org/viatra/downloads.php)
  * [Documentation pages](http://wiki.eclipse.org/VIATRA)
  * [Contributing](http://wiki.eclipse.org/VIATRA/Contributing)
 
