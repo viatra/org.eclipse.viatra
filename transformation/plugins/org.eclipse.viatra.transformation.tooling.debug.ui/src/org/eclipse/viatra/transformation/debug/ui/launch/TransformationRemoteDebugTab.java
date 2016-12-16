@@ -70,7 +70,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
     private String typeName;
     private String selectedID;
     private Text portText;
-    private String portID;
+    private String portID = "";
     /**
      * @wbp.parser.entryPoint
      */
@@ -86,6 +86,7 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
         grpPort.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
 
         portText = new Text(grpPort, SWT.BORDER);
+        portText.setText(portID);
         portText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         
         final ControlDecoration portNumberDecorator = new ControlDecoration(portText, SWT.TOP|SWT.RIGHT);
@@ -255,8 +256,10 @@ public class TransformationRemoteDebugTab extends AbstractLaunchConfigurationTab
 
     @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-        portText.setText(""+1099);
-        portID=portText.getText();
+        portID = "" + 1099;
+        if (portText != null) {
+            portText.setText(portID);
+        }
     }
     
     @Override

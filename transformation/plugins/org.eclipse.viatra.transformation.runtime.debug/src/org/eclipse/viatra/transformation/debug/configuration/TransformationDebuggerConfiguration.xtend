@@ -16,6 +16,7 @@ import org.eclipse.viatra.transformation.debug.TransformationDebugger
 import org.eclipse.viatra.transformation.evm.api.adapter.IAdapterConfiguration
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMAdapter
 import org.eclipse.viatra.transformation.evm.api.adapter.IEVMListener
+import java.util.Collections
 
 /**
  * Configuration class that defines the debugger.
@@ -23,28 +24,26 @@ import org.eclipse.viatra.transformation.evm.api.adapter.IEVMListener
  * @author Peter Lunk
  */
 class TransformationDebuggerConfiguration implements IAdapterConfiguration {
-    List<IEVMAdapter> adapters
-    List<IEVMListener> listeners
+    List<IEVMAdapter> adapters = Lists.newArrayList
+    List<IEVMListener> listeners = Lists.newArrayList
 
     new() {
-        new TransformationDebuggerConfiguration("Transformation_"+System.nanoTime.toString)
+        this("Transformation_"+System.nanoTime.toString)
     }
     
     new(String ID) {
         val id = ID
-        adapters = Lists.newArrayList
-        listeners = Lists.newArrayList
         val debugger = new TransformationDebugger(id)
         listeners.add(debugger)
         adapters.add(debugger)
     }
 
     override getAdapters() {
-        return adapters
+        return Collections.unmodifiableList(adapters)
     }
 
     override getListeners() {
-        return listeners;
+        return Collections.unmodifiableList(listeners);
     }
 
 }
