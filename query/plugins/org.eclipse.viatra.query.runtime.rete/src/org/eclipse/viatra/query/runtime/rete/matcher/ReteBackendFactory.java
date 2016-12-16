@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.rete.matcher;
 import org.eclipse.viatra.query.runtime.matchers.backend.IMatcherCapability;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
@@ -33,13 +34,14 @@ public class ReteBackendFactory implements IQueryBackendFactory {
     {
 	    ReteEngine engine;
 	    engine = new ReteEngine(context, reteThreads);
+	    IQueryBackendHintProvider hintConfiguration = engine.getHintConfiguration();
 	    ReteRecipeCompiler compiler = 
 	    		new ReteRecipeCompiler(
-	    				Options.builderMethod.layoutStrategy(context), 
+	    				Options.builderMethod.layoutStrategy(context, hintConfiguration), 
 	    				context.getLogger(),
 	    				context.getRuntimeContext().getMetaContext(),
 	    				context.getQueryCacheContext(),
-	    				context.getHintProvider(),
+	    				hintConfiguration,
 	    				context.getQueryAnalyzer());
 	    //EPMBuilder builder = new EPMBuilder(buildable, context);
 	    engine.setCompiler(compiler);

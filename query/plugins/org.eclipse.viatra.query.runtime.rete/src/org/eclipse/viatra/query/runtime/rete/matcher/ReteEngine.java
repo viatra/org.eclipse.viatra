@@ -19,6 +19,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryResultProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
@@ -63,6 +64,8 @@ public class ReteEngine implements IQueryBackend {
     protected final boolean parallelExecutionEnabled; // TRUE if model manipulation can go on
 
     private boolean disposedOrUninitialized = true;
+    
+    private HintConfigurator hintConfigurator;
 
     // while RETE does its job.
 
@@ -97,6 +100,9 @@ public class ReteEngine implements IQueryBackend {
         this.disconnectables = new LinkedList<Disconnectable>();
         // this.caughtExceptions = new LinkedBlockingQueue<Throwable>();
 
+        
+        this.hintConfigurator = new HintConfigurator(context.getHintProvider());
+        
         this.reteNet = new Network(reteThreads, this);
         this.boundary = new ReteBoundary(this); // prerequisite: network
 
@@ -128,6 +134,8 @@ public class ReteEngine implements IQueryBackend {
 
         this.reteNet = null;
         this.boundary = null;
+        
+        this.hintConfigurator = null;
 
         // this.machineListener = new MachineListener(this); // prerequisite:
         // framework, disconnectables
@@ -501,7 +509,7 @@ public class ReteEngine implements IQueryBackend {
     @Override
     public IQueryResultProvider getResultProvider(PQuery query, QueryEvaluationHint hints)
             throws QueryProcessingException {
-        // TODO Take user hints into account
+        hintConfigurator.storeHint(query, hints);
         return accessMatcher(query);
     }
 
@@ -520,5 +528,13 @@ public class ReteEngine implements IQueryBackend {
 	public boolean isCaching() {
 		return true;
 	}
+
+    /**
+     * @since 1.5
+     * @noreference Internal API, subject to change
+     */
+    public IQueryBackendHintProvider getHintConfiguration() {
+        return hintConfigurator;
+    }
 
 }

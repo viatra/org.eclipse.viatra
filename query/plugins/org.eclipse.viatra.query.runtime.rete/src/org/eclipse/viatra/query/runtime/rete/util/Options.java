@@ -65,12 +65,12 @@ public class Options {
         /**
          * @since 1.5
          */
-        public IQueryPlannerStrategy layoutStrategy(IQueryBackendContext bContext) {
+        public IQueryPlannerStrategy layoutStrategy(IQueryBackendContext bContext, IQueryBackendHintProvider hintProvider) {
             switch (this) {
             case PSYSTEM_BASIC_LINEAR:
                 return new BasicLinearLayout(bContext);
             case PSYSTEM_QUASITREE:
-                return new QuasiTreeLayout(bContext);
+                return new QuasiTreeLayout(bContext, hintProvider);
             default:
             	throw new UnsupportedOperationException();
             }

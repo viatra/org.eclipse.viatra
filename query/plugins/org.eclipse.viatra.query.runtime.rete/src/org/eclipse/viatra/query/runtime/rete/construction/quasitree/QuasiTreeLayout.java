@@ -56,12 +56,13 @@ public class QuasiTreeLayout implements IQueryPlannerStrategy {
     private IQueryBackendContext backendContext;
     private QueryAnalyzer queryAnalyzer;
 
-    /**
-     * @param hintProvider
-     */
     public QuasiTreeLayout(IQueryBackendContext backendContext) {
+        this(backendContext, backendContext.getHintProvider());
+    }
+
+    public QuasiTreeLayout(IQueryBackendContext backendContext, IQueryBackendHintProvider hintProvider) {
         this.backendContext = backendContext;
-        this.hintProvider = backendContext.getHintProvider();
+        this.hintProvider = hintProvider;
         queryAnalyzer = backendContext.getQueryAnalyzer();
     }
 
