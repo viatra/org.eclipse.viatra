@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Base Query Language UI Contribution
 Bundle-Vendor: Eclipse VIATRA Project
-Bundle-Version: 1.5.0.qualifier
+Bundle-Version: 1.6.0.qualifier
 Bundle-SymbolicName: org.eclipse.viatra.query.patternlanguage.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.viatra.query.patternlanguage;bundle-version="0.8.0";visibility:=reexport,

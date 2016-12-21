@@ -3,8 +3,7 @@
       <!-- @generated notation -->
       <package
             uri="http://www.eclipse.org/viatra/addon/viewers/notation/1.0"
-            class="org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage"
-            genModel="model/notation.genmodel"/>
+            class="org.eclipse.viatra.addon.viewers.runtime.notation.NotationPackage"/>
    </extension>
   <extension point="org.eclipse.viatra.query.patternlanguage.annotation">
     <annotation additionalValidator="org.eclipse.viatra.addon.viewers.runtime.validators.ItemValidator" description="An element to display in a JFace viewer" name="Item">
