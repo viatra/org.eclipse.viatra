@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA DSE framework Base (Incubation)
 Bundle-SymbolicName: org.eclipse.viatra.dse;singleton:=true
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.15.1.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.5.0,1.6.0)";visibility:=reexport,
- org.eclipse.viatra.transformation.evm;bundle-version="[1.5.0,1.6.0)";visibility:=reexport,
+Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.5.1,1.6.0)";visibility:=reexport,
+ org.eclipse.viatra.transformation.evm;bundle-version="[1.5.1,1.6.0)";visibility:=reexport,
  org.eclipse.emf.ecore,
  com.google.guava,
  org.eclipse.emf.ecore.xmi;bundle-version="2.7.0",

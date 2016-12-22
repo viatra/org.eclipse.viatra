@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Transformation Runtime
 Bundle-SymbolicName: org.eclipse.viatra.transformation.runtime.emf
-Bundle-Version: 1.5.0.qualifier
+Bundle-Version: 1.5.1.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.5.0,1.6.0)",
- org.eclipse.viatra.transformation.evm;bundle-version="[1.5.0,1.6.0)",
+Require-Bundle: org.eclipse.viatra.query.runtime;bundle-version="[1.5.1,1.6.0)",
+ org.eclipse.viatra.transformation.evm;bundle-version="[1.5.1,1.6.0)",
  org.eclipse.xtext.xbase.lib;bundle-version="[2.8.0,3.0.0)",
  org.eclipse.xtend.lib;bundle-version="[2.8.0,3.0.0)",
  org.eclipse.emf.edit;bundle-version="2.9.0";resolution:=optional

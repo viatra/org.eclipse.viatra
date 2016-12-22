@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.querybyexample.feature"
       label="VIATRA Query-by-Example (Incubation)"
-      version="0.15.0.qualifier"
+      version="0.15.1.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
