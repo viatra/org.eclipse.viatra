@@ -61,7 +61,7 @@ public abstract class InitializeViewersHandler extends AbstractHandler {
             } catch (ViatraQueryException e) {
                 throw new ExecutionException("Error initializing pattern matcher.", e);
             } catch (IllegalArgumentException e) {
-                throw new ExecutionException("Invalid selrection", e);
+                throw new ExecutionException("Invalid selection", e);
             }
         }
 
