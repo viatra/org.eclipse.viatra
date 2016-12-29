@@ -39,6 +39,7 @@ import org.eclipse.viatra.dse.evolutionary.interfaces.ISurvivalStrategy;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 
 public class EvolutionaryStrategy implements IStrategy {
@@ -154,7 +155,7 @@ public class EvolutionaryStrategy implements IStrategy {
         so.initialPopulationSelector.setPopulationSize(so.initialPopulationSize);
         so.initialPopulationSelector.initStrategy(context);
         so.initialPopulationSelector.explore();
-        List<TrajectoryFitness> currentPopulation = so.initialPopulationSelector.getInitialPopulation();
+        List<TrajectoryFitness> currentPopulation = Lists.newArrayList(so.initialPopulationSelector.getInitialPopulation());
 
         logger.info("Initial population has been generated.");
 

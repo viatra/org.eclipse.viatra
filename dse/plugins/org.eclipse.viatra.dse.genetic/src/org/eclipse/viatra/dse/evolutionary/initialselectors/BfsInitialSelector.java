@@ -10,11 +10,12 @@
 package org.eclipse.viatra.dse.evolutionary.initialselectors;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Set;
 
+import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.designspace.api.TrajectoryInfo;
@@ -33,7 +34,7 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
     private int populationSize;
     private float chanceOfSelection = 1;
 
-    private List<TrajectoryFitness> initialPopulation;
+    private Set<TrajectoryFitness> initialPopulation;
 
     private Random random = new Random();
 
@@ -59,7 +60,7 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
     @Override
     public void initStrategy(ThreadContext context) {
         this.context = context;
-        initialPopulation = new ArrayList<TrajectoryFitness>(populationSize);
+        initialPopulation = new HashSet<TrajectoryFitness>(populationSize);
         dsm = context.getDesignSpaceManager();
         trajectoryInfo = dsm.getTrajectoryInfo();
     }
@@ -89,6 +90,9 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
 
             dsm.undoUntilRoot();
             Object[] nextTrajectory = queue.poll();
+            if (nextTrajectory == null) {
+				throw new DSEException("Could not generate enough initial solutions.");
+			}
             for (Object iTransition : nextTrajectory) {
                 dsm.fireActivation(iTransition);
             }
@@ -108,7 +112,7 @@ public class BfsInitialSelector implements IInitialPopulationSelector {
     }
 
     @Override
-    public List<TrajectoryFitness> getInitialPopulation() {
+    public Set<TrajectoryFitness> getInitialPopulation() {
         return initialPopulation;
     }
 

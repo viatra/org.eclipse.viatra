@@ -9,11 +9,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.evolutionary.initialselectors;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.eclipse.viatra.dse.base.DesignSpaceManager;
 import org.eclipse.viatra.dse.base.ThreadContext;
@@ -25,10 +23,9 @@ public class RandomInitalSelector implements IInitialPopulationSelector {
 
     private ThreadContext context;
     private DesignSpaceManager dsm;
-    private List<TrajectoryFitness> initialPopulation;
+    private Set<TrajectoryFitness> initialPopulation;
 
     private int populationSize;
-    private int foundInstances = 0;
     private int minDepth;
     private int maxDepth;
 
@@ -51,7 +48,7 @@ public class RandomInitalSelector implements IInitialPopulationSelector {
         this.context = context;
         dsm = context.getDesignSpaceManager();
         lengthRemaining = newLength();
-        initialPopulation = new ArrayList<TrajectoryFitness>(populationSize);
+        initialPopulation = new HashSet<TrajectoryFitness>(populationSize);
     }
 
     private int newLength() {
@@ -61,26 +58,21 @@ public class RandomInitalSelector implements IInitialPopulationSelector {
     @Override
     public void explore() {
 
-        while (!(isInterrupted || foundInstances >= populationSize)) {
+        while (!(isInterrupted || initialPopulation.size() >= populationSize)) {
 
             while (lengthRemaining > 0) {
                 lengthRemaining--;
 
-                Collection<Object> transitions = dsm.getTransitionsFromCurrentState();
-                int index = random.nextInt(transitions.size());
-                Object transition = getByIndex(transitions, index);
-                dsm.fireActivation(transition);
+                context.executeRandomActivationId();
 
                 boolean gcSatisfied = context.checkGlobalConstraints();
                 if (!gcSatisfied) {
-                    dsm.undoLastTransformation();
+                    context.backtrack();
                     lengthRemaining++;
-                    // TODO could do smarter
                 }
 
             }
 
-            foundInstances++;
             initialPopulation.add(new TrajectoryWithStateFitness(dsm.getTrajectoryInfo(), context.calculateFitness()));
             dsm.undoUntilRoot();
             lengthRemaining = newLength();
@@ -92,22 +84,8 @@ public class RandomInitalSelector implements IInitialPopulationSelector {
         isInterrupted = true;
     }
 
-    private static Object getByIndex(Collection<Object> availableTransitions, int index) {
-        int i = 0;
-        Iterator<Object> iterator = availableTransitions.iterator();
-        while (iterator.hasNext()) {
-            Object transition = iterator.next();
-            if (i == index) {
-                return transition;
-            } else {
-                ++i;
-            }
-        }
-        throw new IndexOutOfBoundsException("size: " + availableTransitions.size() + ", index: " + index);
-    }
-
     @Override
-    public List<TrajectoryFitness> getInitialPopulation() {
+    public Set<TrajectoryFitness> getInitialPopulation() {
         return initialPopulation;
     }
 

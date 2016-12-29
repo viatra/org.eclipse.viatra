@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.base;
 
+import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 
@@ -20,9 +21,13 @@ import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 public class SingletonSetConflictResolver implements ConflictResolver {
 
     protected ChangeableConflictSet conflictSet;
+    protected ConflictResolver conflictResolver;
+    protected ConflictResolver prevConflictResolver;
+    protected RuleEngine ruleEngine;
 
-    public SingletonSetConflictResolver(ConflictResolver resolver) {
-        conflictSet = resolver.createConflictSet();
+    public SingletonSetConflictResolver(ConflictResolver conflictResolver) {
+        this.conflictResolver = conflictResolver;
+        conflictSet = conflictResolver.createConflictSet();
     }
 
     @Override
@@ -30,4 +35,20 @@ public class SingletonSetConflictResolver implements ConflictResolver {
         return conflictSet;
     }
 
+    public void changeConflictResolver(ConflictResolver conflictResolver) {
+        ConflictResolver tmp = this.conflictResolver;
+        this.conflictResolver = conflictResolver;
+        prevConflictResolver = tmp;
+        conflictSet = conflictResolver.createConflictSet();
+        ruleEngine.setConflictResolver(this);
+    }
+
+    public void changeConflictResolverBack() {
+        changeConflictResolver(prevConflictResolver);
+    }
+
+    public void setRuleEngine(RuleEngine ruleEngine) {
+        this.ruleEngine = ruleEngine;
+        ruleEngine.setConflictResolver(this);
+    }
 }

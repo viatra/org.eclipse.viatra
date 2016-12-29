@@ -168,7 +168,7 @@ public class ThreadContext implements IDseStrategyContext{
             agenda.setActivationListener(dseActivationNotificationListener);
             RuleBase ruleBase = new DseEvmRuleBase(ViatraQueryEventRealm.create(queryEngine), agenda);
             ruleEngine = RuleEngine.create(ruleBase);
-            ruleEngine.setConflictResolver(conflictResolver);
+            conflictResolver.setRuleEngine(ruleEngine);
             for (BatchTransformationRule<?, ?> tr : globalContext.getTransformations()) {
                 ruleEngine.addRule(tr.getRuleSpecification(), (EventFilter<IPatternMatch>) tr.getFilter());
             }
@@ -509,5 +509,13 @@ public class ThreadContext implements IDseStrategyContext{
     public DseActivationNotificationListener getDseActivationNotificationListener() {
         return dseActivationNotificationListener;
     }
+    
+    public void changeConflictResolver(ConflictResolver conflictResolver) {
+        this.conflictResolver.changeConflictResolver(conflictResolver);
+        ruleEngine.setConflictResolver(this.conflictResolver);
+    }
 
+    public void changeConflictResolverBack() {
+        this.conflictResolver.changeConflictResolverBack();
+    }
 }

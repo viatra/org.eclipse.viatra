@@ -22,6 +22,7 @@ import org.eclipse.emf.edit.command.ChangeCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.base.DseIdPoolHelper;
 import org.eclipse.viatra.dse.base.DseIdPoolHelper.IGetRuleExecutions;
+import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
 import org.eclipse.viatra.dse.util.EMFHelper;
@@ -53,7 +54,7 @@ public class SolutionTrajectory {
     private final List<Object> activationCodes;
     private final List<BatchTransformationRule<?, ?>> transformationRules;
     private final IStateCoderFactory stateCoderFactory;
-    private Map<String, Double> fitness;
+    private Fitness fitness;
     private Solution solution;
     
     private ViatraQueryEngine engine;
@@ -273,11 +274,11 @@ public class SolutionTrajectory {
         return activationCodes.size();
     }
 
-    public Map<String, Double> getFitness() {
+    public Fitness getFitness() {
         return fitness;
     }
 
-    public void setFitness(Map<String, Double> fitness) {
+    public void setFitness(Fitness fitness) {
         this.fitness = fitness;
     }
 
