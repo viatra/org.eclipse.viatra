@@ -512,7 +512,6 @@ public class ThreadContext implements IDseStrategyContext{
     
     public void changeConflictResolver(ConflictResolver conflictResolver) {
         this.conflictResolver.changeConflictResolver(conflictResolver);
-        ruleEngine.setConflictResolver(this.conflictResolver);
     }
 
     public void changeConflictResolverBack() {
