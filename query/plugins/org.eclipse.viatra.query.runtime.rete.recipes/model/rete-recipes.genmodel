@@ -39,8 +39,12 @@
     <genClasses image="false" ecoreClass="recipes.ecore#//AlphaRecipe"/>
     <genClasses image="false" ecoreClass="recipes.ecore#//MultiParentNodeRecipe">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//MultiParentNodeRecipe/parents"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//MultiParentNodeRecipe/deleteRederiveEvaluation"/>
       <genOperations ecoreOperation="recipes.ecore#//MultiParentNodeRecipe/getArity"/>
+    </genClasses>
+    <genClasses ecoreClass="recipes.ecore#//MonotonicityInfo">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//MonotonicityInfo/coreMask"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//MonotonicityInfo/posetMask"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//MonotonicityInfo/posetComparator"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//UniquenessEnforcerRecipe"/>
     <genClasses ecoreClass="recipes.ecore#//ProductionRecipe" labelFeature="#//recipes/ProductionRecipe/patternFQN">
@@ -129,9 +133,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//InputFilterRecipe/mask"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//SingleColumnAggregatorRecipe">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//SingleColumnAggregatorRecipe/groupByMask"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//SingleColumnAggregatorRecipe/aggregableIndex"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//SingleColumnAggregatorRecipe/multisetAggregationOperator"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//SingleColumnAggregatorRecipe/aggregableIndex"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//SingleColumnAggregatorRecipe/groupByMask"/>
       <genOperations ecoreOperation="recipes.ecore#//SingleColumnAggregatorRecipe/getArity"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//DiscriminatorDispatcherRecipe">
@@ -141,6 +145,10 @@
     <genClasses ecoreClass="recipes.ecore#//DiscriminatorBucketRecipe">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//DiscriminatorBucketRecipe/bucketKey"/>
       <genOperations ecoreOperation="recipes.ecore#//DiscriminatorBucketRecipe/getArity"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="recipes.ecore#//RederivableNodeRecipe">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//RederivableNodeRecipe/deleteRederiveEvaluation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference recipes.ecore#//RederivableNodeRecipe/optionalMonotonicityInfo"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

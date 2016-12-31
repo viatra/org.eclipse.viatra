@@ -11,11 +11,11 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.igraph;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * This interface extends the functionality of IGraphDataSource with an extra method. One can query the source nodes of
- * those edges which have a given target node.
+ * A bi-directional graph data source supports all operations that an {@link IGraphDataSource} does, but it 
+ * also makes it possible to query the incoming edges of nodes, not only the outgoing edges. 
  * 
  * @author Tamas Szabo
  * 
@@ -24,12 +24,15 @@ import java.util.List;
 public interface IBiDirectionalGraphDataSource<V> extends IGraphDataSource<V> {
 
     /**
-     * Returns the source nodes of those edges that end in target. The nodes are returned as a {@link List} as
-     * multiple edges can be present between two arbitrary nodes. If no such node can be found than the method should
-     * return null.
+     * Returns the source nodes for the given target node.  
+     * The returned data structure is a map because of potential parallel edges in the graph data source.
+     * The values in the returned map represent the count of the given (source, target) edge. 
+     * 
+     * The method must not return null.
      * 
      * @param target the target node
-     * @return the list of source nodes or null if no sources can be found
+     * @return the source nodes with their count values
      */
-    public List<V> getSourceNodes(V target);
+    public Map<V, Integer> getSourceNodes(V target);
+    
 }

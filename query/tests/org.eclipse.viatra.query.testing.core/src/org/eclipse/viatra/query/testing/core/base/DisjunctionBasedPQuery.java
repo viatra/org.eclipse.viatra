@@ -30,33 +30,33 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
  * @author Marton Bur
  *
  */
-public class DisjunctionBasedPQuery implements PQuery  {
+public class DisjunctionBasedPQuery implements PQuery {
 
     private PDisjunction pDisjunction;
     private PQuery wrapped;
 
     /**
-     * The constructor. 
+     * The constructor.
      * 
-     * @param wrapped is the basis of the new query
-     * @param pDisjunction the returned PDisjunction instance when the getDisjunctbodes() method is called
+     * @param wrapped
+     *            is the basis of the new query
+     * @param pDisjunction
+     *            the returned PDisjunction instance when the getDisjunctbodes() method is called
      */
-    public DisjunctionBasedPQuery(
-    		PQuery wrapped, PDisjunction pDisjunction) {
+    public DisjunctionBasedPQuery(PQuery wrapped, PDisjunction pDisjunction) {
         this.pDisjunction = pDisjunction;
         this.wrapped = wrapped;
     }
-    
+
     @Override
     public PDisjunction getDisjunctBodies() {
-    	return pDisjunction;
+        return pDisjunction;
     }
-    
+
     @Override
     public String getFullyQualifiedName() {
         return wrapped.getFullyQualifiedName();
     }
-
 
     @Override
     public Set<PQuery> getDirectReferredQueries() {
@@ -118,25 +118,26 @@ public class DisjunctionBasedPQuery implements PQuery  {
         return wrapped.getFirstAnnotationByName(annotationName);
     }
 
-	@Override
-	public QueryEvaluationHint getEvaluationHints() {
-		return wrapped.getEvaluationHints();
-	}
+    @Override
+    public QueryEvaluationHint getEvaluationHints() {
+        return wrapped.getEvaluationHints();
+    }
 
-	@Override
-	public void ensureInitialized() throws QueryInitializationException {
-		wrapped.ensureInitialized();
-	}
+    @Override
+    public void ensureInitialized() throws QueryInitializationException {
+        wrapped.ensureInitialized();
+    }
 
-	List<Object> specificationTraces = new ArrayList<Object>();
-	@Override
-	public List<Object> publishedAs() {
-		return specificationTraces;
-	}
+    List<Object> specificationTraces = new ArrayList<Object>();
 
-	@Override
-	public Set<TypeJudgement> getTypeGuarantees() {
-		return Collections.emptySet();
-	}
+    @Override
+    public List<Object> publishedAs() {
+        return specificationTraces;
+    }
+
+    @Override
+    public Set<TypeJudgement> getTypeGuarantees() {
+        return Collections.emptySet();
+    }
 
 }

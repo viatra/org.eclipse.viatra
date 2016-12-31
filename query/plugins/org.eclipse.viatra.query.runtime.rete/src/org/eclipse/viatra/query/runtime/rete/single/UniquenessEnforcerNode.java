@@ -15,6 +15,7 @@ package org.eclipse.viatra.query.runtime.rete.single;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.index.MemoryIdentityIndexer;
@@ -23,6 +24,8 @@ import org.eclipse.viatra.query.runtime.rete.index.ProjectionIndexer;
 import org.eclipse.viatra.query.runtime.rete.network.DefaultMailbox;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Mailbox;
+import org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareMailbox;
+import org.eclipse.viatra.query.runtime.rete.network.MonotonicityAwareReceiver;
 import org.eclipse.viatra.query.runtime.rete.network.RederivableNode;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
@@ -36,9 +39,15 @@ import org.eclipse.viatra.query.runtime.rete.util.Options;
  * Ensures that no identical copies get to the output. Only one replica of each pattern substitution may traverse this
  * node.
  * 
+ * The node is capable of operating in the delete and re-derive mode. In this mode, it is also possible to equip the
+ * node with an {@link IPosetComparator} to identify monotone changes; thus, ensuring that a fix-point can be reached
+ * during the evaluation.
+ * 
  * @author Gabor Bergmann
+ * @author Tamas Szabo
  */
-public class UniquenessEnforcerNode extends StandardNode implements Tunnel, RederivableNode {
+public class UniquenessEnforcerNode extends StandardNode
+        implements Tunnel, RederivableNode, MonotonicityAwareReceiver {
 
     protected Collection<Supplier> parents;
     protected TupleMemory memory;
@@ -64,7 +73,17 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
     /**
      * @since 1.6
      */
+    // OPTIONAL ELEMENTS - ONLY PRESENT IF MONOTONICITY INFO WAS AVAILABLE
+    protected final TupleMask coreMask;
+    protected final TupleMask posetMask;
+    protected final IPosetComparator posetComparator;
+
     public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth, boolean deleteRederiveEvaluation) {
+        this(reteContainer, tupleWidth, deleteRederiveEvaluation, null, null, null);
+    }
+
+    public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth, boolean deleteRederiveEvaluation,
+            TupleMask coreMask, TupleMask posetMask, IPosetComparator posetComparator) {
         super(reteContainer);
         this.parents = new ArrayList<Supplier>();
         this.memory = new TupleMemory();
@@ -75,20 +94,36 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
         this.nullMask = TupleMask.linear(0, tupleWidth);
         this.identityMask = TupleMask.identity(tupleWidth);
         this.deleteRederiveEvaluation = deleteRederiveEvaluation;
+        this.coreMask = coreMask;
+        this.posetMask = posetMask;
+        this.posetComparator = posetComparator;
         this.mailbox = instantiateMailbox();
         reteContainer.registerClearable(this.mailbox);
     }
-    
-    /**
-     * Instantiates the {@link Mailbox} of this receiver.
-     * Subclasses may override this method to provide their own mailbox implementation.
-     * 
-     * @return the mailbox
-     */
-    protected Mailbox instantiateMailbox() {
-        return new DefaultMailbox(this);
+
+    @Override
+    public TupleMask getCoreMask() {
+        return coreMask;
     }
-    
+
+    @Override
+    public TupleMask getPosetMask() {
+        return posetMask;
+    }
+
+    @Override
+    public IPosetComparator getPosetComparator() {
+        return posetComparator;
+    }
+
+    protected Mailbox instantiateMailbox() {
+        if (coreMask != null && posetMask != null && posetComparator != null) {
+            return new MonotonicityAwareMailbox(this, this.reteContainer);
+        } else {
+            return new DefaultMailbox(this, this.reteContainer);
+        }
+    }
+
     public TupleMemory getMemory() {
         return memory;
     }
@@ -97,88 +132,105 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
     public Mailbox getMailbox() {
         return mailbox;
     }
-    
+
     @Override
     public void update(Direction direction, Tuple update) {
-        boolean propagate = false;
+        update(direction, update, false);
+    }
 
+    @Override
+    public void update(Direction direction, Tuple update, boolean monotone) {
         if (this.deleteRederiveEvaluation) {
-            if (direction == Direction.INSERT) {
-                // INSERT
-                boolean containedAlready = memory.demandAdd(update);
-
-                if (!containedAlready) {
-                    // memory == 0
-                    if (rederivableMemory.add(update)) {
-                        // the node has now a new re-derived tuple
-                        reteContainer.registerRederivable(this);
-                    }
-                }
-            } else {
-                // monotonous = true/false no need to put the remaining to the rederivable
-                
-                // DELETE
-                int memoryCount = memory.get(update);
-                int rederivableCount = rederivableMemory.get(update);
-
-                if (memoryCount > 0) {
-                    if (rederivableCount != 0) {
-                        issueError("[INTERNAL ERROR] Re-derivation memory for " + update
-                                + " must be empty before the re-derivation phase in UniquenessEnforcer " + this
-                                + " for pattern(s) " + getTraceInfoPatternsEnumerated(), null);
-                    }
-                    int count = memoryCount - 1;
-                    if (count > 0) {
-                        // the node still has re-derivable tuple
-                        reteContainer.registerRederivable(this);
-                        rederivableMemory.add(update, count);
-                    }
-                    memory.clear(update);
-                    propagate = true;
-                } else {
-                    // memory == 0
-                    try {
-                        rederivableMemory.remove(update);
-                    } catch (NullPointerException ex) {
-                        issueError("[INTERNAL ERROR] Duplicate deletion of " + update
-                                + " was detected in UniquenessEnforcer " + this + " for pattern(s) "
-                                + getTraceInfoPatternsEnumerated(), ex);
-                    }
-                    if (rederivableMemory.size() == 0) {
-                        // the tuple lost all of its derivations
-                        reteContainer.unregisterRederivable(this);
-                    }
-                }
+            if (updateWithDeleteAndRederive(direction, update, monotone)) {
+                propagate(direction, update);
             }
         } else {
-            if (direction == Direction.INSERT) {
-                // INSERT
-                propagate = this.memory.add(update);
+            if (updateDefault(direction, update)) {
+                propagate(direction, update);
+            }
+        }
+    }
+
+    protected boolean updateWithDeleteAndRederive(Direction direction, Tuple update, boolean monotone) {
+        boolean propagate = false;
+
+        int memoryCount = memory.get(update);
+        int rederivableCount = rederivableMemory.get(update);
+
+        if (direction == Direction.INSERT) {
+            // INSERT
+            if (rederivableCount != 0) {
+                // the tuple is in the re-derivable memory
+                rederivableMemory.add(update);
+                if (rederivableMemory.isEmpty()) {
+                    // there is nothing left to be re-derived
+                    // this can happen if the INSERT cancelled out a DELETE
+                    reteContainer.getTracker().removeRederivable(this);
+                }
             } else {
-                // DELETE
+                // the tuple is in the main memory
+                propagate = memory.add(update);
+            }
+        } else {
+            // DELETE
+            if (rederivableCount != 0) {
+                // the tuple is in the re-derivable memory
+                if (memoryCount != 0) {
+                    issueError("[INTERNAL ERROR] Inconsistent state for " + update
+                            + " because it is present both in the main and re-derivable memory in the UniquenessEnforcerNode "
+                            + this + " for pattern(s) " + getTraceInfoPatternsEnumerated(), null);
+                }
+
                 try {
-                    propagate = this.memory.remove(update);
+                    rederivableMemory.remove(update);
                 } catch (NullPointerException ex) {
-                    propagate = false;
                     issueError(
                             "[INTERNAL ERROR] Duplicate deletion of " + update + " was detected in UniquenessEnforcer "
                                     + this + " for pattern(s) " + getTraceInfoPatternsEnumerated(),
                             ex);
                 }
+                if (rederivableMemory.isEmpty()) {
+                    // there is nothing left to be re-derived
+                    reteContainer.getTracker().removeRederivable(this);
+                }
+            } else {
+                // the tuple is in the main memory
+                if (monotone) {
+                    propagate = memory.remove(update);
+                } else {
+                    int count = memoryCount - 1;
+                    if (count > 0) {
+                        if (rederivableMemory.isEmpty()) {
+                            // there is now something to be re-derived
+                            reteContainer.getTracker().addRederivable(this);
+                        }
+                        rederivableMemory.add(update, count);
+                    }
+                    memory.clear(update);
+                    propagate = true;
+                }
             }
         }
 
-        if (propagate) {
-            propagate(direction, update);
-        }
+        return propagate;
     }
 
-    private void issueError(String message, Exception ex) {
-        if (ex == null) {
-            this.reteContainer.getNetwork().getEngine().getLogger().error(message);
+    protected boolean updateDefault(Direction direction, Tuple update) {
+        boolean propagate = false;
+        if (direction == Direction.INSERT) {
+            // INSERT
+            propagate = memory.add(update);
         } else {
-            this.reteContainer.getNetwork().getEngine().getLogger().error(message, ex);
+            // DELETE
+            try {
+                propagate = memory.remove(update);
+            } catch (NullPointerException ex) {
+                propagate = false;
+                issueError("[INTERNAL ERROR] Duplicate deletion of " + update + " was detected in UniquenessEnforcer "
+                        + this + " for pattern(s) " + getTraceInfoPatternsEnumerated(), ex);
+            }
         }
+        return propagate;
     }
 
     /**
@@ -190,8 +242,9 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
         int count = rederivableMemory.get(update);
         rederivableMemory.clear(update);
         memory.add(update, count);
-        if (this.rederivableMemory.size() == 0) {
-            reteContainer.unregisterRederivable(this);
+        // if there is no other re-derivable tuple, then unregister the node itself
+        if (this.rederivableMemory.isEmpty()) {
+            reteContainer.getTracker().removeRederivable(this);
         }
         propagate(Direction.INSERT, update);
     }
@@ -235,14 +288,18 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
     }
 
     public MemoryNullIndexer getNullIndexer() {
-        if (memoryNullIndexer == null)
+        if (memoryNullIndexer == null) {
             memoryNullIndexer = new MemoryNullIndexer(reteContainer, tupleWidth, memory, this, this);
+            reteContainer.getTracker().registerDependency(this, memoryNullIndexer);
+        }
         return memoryNullIndexer;
     }
 
     public MemoryIdentityIndexer getIdentityIndexer() {
-        if (memoryIdentityIndexer == null)
+        if (memoryIdentityIndexer == null) {
             memoryIdentityIndexer = new MemoryIdentityIndexer(reteContainer, tupleWidth, memory, this, this);
+            reteContainer.getTracker().registerDependency(this, memoryIdentityIndexer);
+        }
         return memoryIdentityIndexer;
     }
 

@@ -127,7 +127,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
     }
 
     PBody normalizeBodyInternal(PBody body) throws QueryProcessingException {
-        // UNIFICATION AND WEAK INEQUALITY ELMINATION
+        // UNIFICATION AND WEAK INEQUALITY ELIMINATION
         unifyVariablesAlongEqualities(body);
         eliminateWeakInequalities(body);
         removeMootEqualities(body);

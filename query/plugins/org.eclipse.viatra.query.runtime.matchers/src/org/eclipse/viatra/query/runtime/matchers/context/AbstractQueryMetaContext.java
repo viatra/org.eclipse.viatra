@@ -62,4 +62,15 @@ public abstract class AbstractQueryMetaContext implements IQueryMetaContext {
     public Collection<InputKeyImplication> getWeakenedAlternatives(IInputKey implyingKey) {
         return Collections.emptySet();
     }    
+
+    @Override
+    public boolean isPosetKey(IInputKey key) {
+        return false;
+    }
+
+    @Override
+    public IPosetComparator getPosetComparator(Iterable<IInputKey> key) {
+        return null;
+    }
+
 }

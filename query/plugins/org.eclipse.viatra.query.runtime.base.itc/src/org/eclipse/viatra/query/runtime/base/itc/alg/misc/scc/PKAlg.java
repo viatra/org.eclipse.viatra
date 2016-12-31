@@ -135,32 +135,26 @@ public class PKAlg<V> implements IGraphObserver<V> {
         node2mark.put(node, true);
         RB.add(node);
 
-        List<V> sources = gds.getSourceNodes(node);
+        for (V sn : gds.getSourceNodes(node).keySet()) {
+            int top_id = index2topsort.get(node2index.get(sn));
 
-        if (sources != null)
-            for (V sn : sources) {
-                int top_id = index2topsort.get(node2index.get(sn));
-
-                if (!node2mark.get(sn) && lower_bound < top_id)
-                    dfsBackward(sn);
-            }
+            if (!node2mark.get(sn) && lower_bound < top_id)
+                dfsBackward(sn);
+        }
     }
 
     private void dfsForward(V node) {
         node2mark.put(node, true);
         RF.add(node);
 
-        List<V> targets = gds.getTargetNodes(node);
+        for (V tn : gds.getTargetNodes(node).keySet()) {
+            int top_id = index2topsort.get(node2index.get(tn));
 
-        if (targets != null)
-            for (V tn : targets) {
-                int top_id = index2topsort.get(node2index.get(tn));
-
-                if (top_id == upper_bound)
-                    System.out.println("!!!Cycle detected!!!");
-                else if (!node2mark.get(tn) && top_id < upper_bound)
-                    dfsForward(tn);
-            }
+            if (top_id == upper_bound)
+                System.out.println("!!!Cycle detected!!!");
+            else if (!node2mark.get(tn) && top_id < upper_bound)
+                dfsForward(tn);
+        }
     }
 
     @Override

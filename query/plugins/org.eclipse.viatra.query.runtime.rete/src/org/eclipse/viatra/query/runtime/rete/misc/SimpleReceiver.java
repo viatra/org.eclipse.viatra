@@ -46,7 +46,7 @@ public abstract class SimpleReceiver extends BaseNode implements Receiver {
      * @return the mailbox
      */
     protected Mailbox instantiateMailbox() {
-        return new DefaultMailbox(this);
+        return new DefaultMailbox(this, this.reteContainer);
     }
     
     @Override

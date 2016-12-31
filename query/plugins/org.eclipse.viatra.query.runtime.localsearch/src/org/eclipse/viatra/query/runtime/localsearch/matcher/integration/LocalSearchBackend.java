@@ -62,7 +62,11 @@ public class LocalSearchBackend implements IQueryBackend {
         this.planProvider = new CachingPlanProvider(context.getLogger());
     }
 
-
+    @Override
+    public void flushUpdates() {
+        
+    }
+    
     @Override
     public IQueryResultProvider getResultProvider(PQuery query) throws QueryProcessingException {
         return getResultProvider(query, null);

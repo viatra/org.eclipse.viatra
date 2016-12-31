@@ -12,12 +12,12 @@ package org.eclipse.viatra.query.runtime.rete.network;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
- * Default mailbox implementation. 
- * The mailbox performs counting of messages so that they can cancel each other out. 
+ * Default mailbox implementation. The mailbox performs counting of messages so that they can cancel each other out.
  * 
  * @author Tamas Szabo
  */
@@ -26,14 +26,22 @@ public class DefaultMailbox implements Mailbox {
     protected Map<Tuple, Integer> queue;
     protected Map<Tuple, Integer> buffer;
     protected final Receiver receiver;
+    protected final ReteContainer container;
     protected boolean delivering;
+    protected final CommunicationTracker tracker;
 
-    public DefaultMailbox(Receiver receiver) {
+    public DefaultMailbox() {
+        this(null, null);
+    }
+
+    public DefaultMailbox(Receiver receiver, ReteContainer container) {
         this.receiver = receiver;
+        this.container = container;
+        this.tracker = container == null ? null : container.getTracker();
         this.queue = new LinkedHashMap<Tuple, Integer>();
         this.buffer = new LinkedHashMap<Tuple, Integer>();
     }
-    
+
     protected Map<Tuple, Integer> getActiveQueue() {
         if (this.delivering) {
             return this.buffer;
@@ -42,11 +50,22 @@ public class DefaultMailbox implements Mailbox {
         }
     }
 
+    protected Integer get(Tuple key) {
+        return getActiveQueue().get(key);
+    }
+
+    protected boolean isEmpty() {
+        return getActiveQueue().isEmpty();
+    }
+
+    protected Set<Tuple> keySet() {
+        return getActiveQueue().keySet();
+    }
+
     @Override
-    public MessagePostEffect postMessage(Direction direction, Tuple update) {
+    public void postMessage(Direction direction, Tuple update) {
         Map<Tuple, Integer> activeQueue = getActiveQueue();
-        
-        boolean wasEmpty = activeQueue.isEmpty();
+
         Integer count = activeQueue.get(update);
         if (count == null) {
             count = 0;
@@ -60,46 +79,40 @@ public class DefaultMailbox implements Mailbox {
 
         if (count == 0) {
             activeQueue.remove(update);
-            if (activeQueue.isEmpty()) {
-                // no messages left thus the mailbox became inactive
-                return MessagePostEffect.BECAME_INACTIVE;
-            } else {
-                // still messages left thus the mailbox status has not changed
-                return MessagePostEffect.UNCHANGED;
-            }
         } else {
             activeQueue.put(update, count);
-            if (wasEmpty) {
-                // it has now a message thus the mailbox became active
-                return MessagePostEffect.BECAME_ACTIVE;
+        }
+
+        if (container != null) {
+            if (activeQueue.isEmpty()) {
+                tracker.notifyLostAllMessages(this);
             } else {
-                // already had messages thus the mailbox status has not changed
-                return MessagePostEffect.UNCHANGED;
+                tracker.notifyHasMessage(this);
             }
         }
     }
 
     @Override
-    public void deliverMessages() {
+    public void deliverAll(MessageKind kind) {
         // use the buffer during delivering so that there is a clear separation between the stages
         this.delivering = true;
-        
+
         for (Tuple update : this.queue.keySet()) {
             int count = this.queue.get(update);
-            assert count != 0;
             Direction direction = count < 0 ? Direction.REVOKE : Direction.INSERT;
             for (int i = 0; i < Math.abs(count); i++) {
                 this.receiver.update(direction, update);
             }
         }
-        
+
         this.delivering = false;
-        Map<Tuple, Integer> tmp = this.queue;        
+
+        Map<Tuple, Integer> tmpQueue = this.queue;
         this.queue = this.buffer;
-        this.buffer = tmp;
+        this.buffer = tmpQueue;
         this.buffer.clear();
     }
-    
+
     @Override
     public String toString() {
         return "MBOX (" + this.receiver + ") " + this.queue;

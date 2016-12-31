@@ -12,11 +12,11 @@
 package org.eclipse.viatra.query.runtime.base.itc.igraph;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * This interface is used to provide information about the graph to the observers.
+ * The interface prescribes the set of operations that a graph data source must support. 
  * 
  * @author Tamas Szabo
  * 
@@ -26,36 +26,43 @@ import java.util.Set;
 public interface IGraphDataSource<V> extends Serializable {
 
     /**
-     * Attach a new graph observer.
-     * 
-     * Note that the order of attaching the observers may be important (some observers will be notified earlier than
-     * others).
-     * 
-     * @param go
-     *            the graph observer
+     * Attaches a new graph observer to this graph data source. Observers will be notified in the order they have been registered.   
+     *
+     * @param observer the graph observer
      */
-    public void attachObserver(IGraphObserver<V> go);
+    public void attachObserver(IGraphObserver<V> observer);
+    
+    /**
+     * Attaches a new graph observer to this graph data source as the first one. 
+     * In the notification order this observer will be the first one as long as another call to this method happens.
+     *
+     * @param observer the graph observer
+     */
+    public void attachAsFirstObserver(IGraphObserver<V> observer);
 
     /**
-     * Detach an existing observer.
+     * Detaches an already registered graph observer from this graph data source. 
      * 
-     * @param go
-     *            the graph observer
+     * @param observer the graph observer
      */
-    public void detachObserver(IGraphObserver<V> go);
+    public void detachObserver(IGraphObserver<V> observer);
 
     /**
-     * Get all nodes of the graph.
+     * Returns the complete set of nodes in the graph data source. 
      * 
      * @return the set of all nodes
      */
     public Set<V> getAllNodes();
 
     /**
-     * Get those nodes that are the target of an edge starting with source. List is returned as multiple edges may be present. 
+     * Returns the target nodes for the given source node.  
+     * The returned data structure is a map because of potential parallel edges in the graph data source.
+     * The values in the returned map represent the count of the given (source, target) edge. 
+     * 
+     * The method must not return null.
      * 
      * @param source the source node
-     * @return the list of target nodes or null if no targets can be found
+     * @return the target nodes with their count values
      */
-    public List<V> getTargetNodes(V source);
+    public Map<V, Integer> getTargetNodes(V source);
 }

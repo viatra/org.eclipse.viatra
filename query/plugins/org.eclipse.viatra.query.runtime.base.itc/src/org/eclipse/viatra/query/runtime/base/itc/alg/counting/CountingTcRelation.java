@@ -17,12 +17,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.ITcRelation;
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.topsort.TopSort;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
-
-import java.util.Set;
 
 /**
  * Transitive closure relation implementation for the Counting algorithm.
@@ -280,10 +279,11 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
         CountingTcRelation<V> tc = new CountingTcRelation<V>(true);
         Collections.reverse(topologicalSorting);
         for (V n : topologicalSorting) {
-            List<V> sourceNodes = gds.getSourceNodes(n);
-            if (sourceNodes != null) {
-                Set<V> tupEnds = tc.getTupleEnds(n);
-                for (V s : sourceNodes) {
+            Map<V, Integer> sourceNodes = gds.getSourceNodes(n);
+            Set<V> tupEnds = tc.getTupleEnds(n);
+            for (Entry<V, Integer> entry : sourceNodes.entrySet()) {
+                for (int i = 0; i < entry.getValue(); i++) {
+                    V s = entry.getKey();
                     tc.addTuple(s, n, 1);
                     if (tupEnds != null) {
                         for (V t : tupEnds) {

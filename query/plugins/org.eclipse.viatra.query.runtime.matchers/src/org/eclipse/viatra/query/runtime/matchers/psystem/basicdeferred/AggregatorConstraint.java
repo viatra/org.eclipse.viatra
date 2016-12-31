@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +28,8 @@ import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
+ * The PSystem representation of an aggregation.
+ * 
  * @author Tamas Szabo
  * @since 1.4
  */
@@ -87,9 +90,11 @@ public class AggregatorConstraint extends PatternCallBasedDeferred implements IT
 
     @Override
     public Set<TypeJudgement> getImpliedJudgements(IQueryMetaContext context) {
+        Set<TypeJudgement> result = new HashSet<TypeJudgement>();
         IInputKey aggregateResultType = aggregator.getAggregateResultTypeAsInputKey();
-        if (aggregateResultType != null)
-            return Collections.singleton(new TypeJudgement(aggregateResultType, new FlatTuple(resultVariable)));
-        else return Collections.emptySet();
+        if (aggregateResultType != null) {
+            result.add(new TypeJudgement(aggregateResultType, new FlatTuple(resultVariable)));
+        }
+        return result;
     }
 }

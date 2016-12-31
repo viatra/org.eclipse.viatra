@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.DFSPathFinder;
@@ -170,19 +171,19 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             // Modify overestimate with those tuples that have alternative derivations
             // 1. q+(tc(x,y)) :- lv(x,y)
             for (V s : graphDataSource.getAllNodes()) {
-                List<V> targetNodes = graphDataSource.getTargetNodes(s);
-                if (targetNodes != null) {
-                    for (V t : targetNodes) {
+                Map<V, Integer> targetNodes = graphDataSource.getTargetNodes(s);
+                for (Entry<V, Integer> entry : targetNodes.entrySet()) {
+                    for (int i = 0; i < entry.getValue(); i++) {
+                        V t = entry.getKey();
                         if (!s.equals(t)) {
                             tc.addTuple(s, t);
-
                             Tuple<V> tuple = new Tuple<V>(s, t);
-
                             Integer count = tuples.get(tuple);
                             if (count != null && count == -1) {
                                 tuples.remove(tuple);
                             }
                         }
+                        
                     }
                 }
             }
@@ -200,12 +201,15 @@ public class DRedAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
                 for (V s : newTups.getTupleStarts()) {
                     for (V t : newTups.getTupleEnds(s)) {
-                        List<V> targetNodes = graphDataSource.getTargetNodes(t);
+                        Map<V, Integer> targetNodes = graphDataSource.getTargetNodes(t);
                         if (targetNodes != null) {
-                            for (V tn : targetNodes) {
-                                if (!s.equals(tn) && tc.addTuple(s, tn)) {
-                                    dtc.addTuple(s, tn);
-                                    tuples.remove(new Tuple<V>(s, tn));
+                            for (Entry<V, Integer> entry : targetNodes.entrySet()) {
+                                for (int i = 0; i < entry.getValue(); i++) {
+                                    V tn = entry.getKey();
+                                    if (!s.equals(tn) && tc.addTuple(s, tn)) {
+                                        dtc.addTuple(s, tn);
+                                        tuples.remove(new Tuple<V>(s, tn));
+                                    }
                                 }
                             }
                         }

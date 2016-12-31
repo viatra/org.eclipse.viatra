@@ -32,7 +32,7 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
 
     protected MaskedTupleMemory memory;
     protected final Mailbox mailbox;
-    
+
     /**
      * @param reteContainer
      * @param mask
@@ -44,22 +44,22 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
         mailbox = instantiateMailbox();
         reteContainer.registerClearable(mailbox);
     }
-    
+
     /**
-     * Instantiates the {@link Mailbox} of this receiver.
-     * Subclasses may override this method to provide their own mailbox implementation.
+     * Instantiates the {@link Mailbox} of this receiver. Subclasses may override this method to provide their own
+     * mailbox implementation.
      * 
      * @return the mailbox
      */
     protected Mailbox instantiateMailbox() {
-        return new DefaultMailbox(this);
+        return new DefaultMailbox(this, this.reteContainer);
     }
-    
+
     @Override
     public Mailbox getMailbox() {
         return mailbox;
     }
-    
+
     public MaskedTupleMemory getMemory() {
         return memory;
     }
@@ -67,8 +67,8 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
     @Override
     public void update(Direction direction, Tuple updateElement) {
         Tuple signature = mask.transform(updateElement);
-        boolean change = (direction == Direction.INSERT) ? memory.add(updateElement, signature) : memory.remove(
-                updateElement, signature);
+        boolean change = (direction == Direction.INSERT) ? memory.add(updateElement, signature)
+                : memory.remove(updateElement, signature);
         update(direction, updateElement, signature, change);
     }
 
@@ -91,8 +91,8 @@ public abstract class IndexerWithMemory extends StandardIndexer implements Recei
         if (parent == supplier)
             parent = null;
         else
-            throw new IllegalArgumentException("Illegal RETE edge removal: the parent of " + this + " is not "
-                    + supplier);
+            throw new IllegalArgumentException(
+                    "Illegal RETE edge removal: the parent of " + this + " is not " + supplier);
     }
 
     @Override

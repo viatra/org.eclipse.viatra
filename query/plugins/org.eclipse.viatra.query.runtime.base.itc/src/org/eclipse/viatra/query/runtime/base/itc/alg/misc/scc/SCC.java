@@ -11,10 +11,8 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -43,19 +41,19 @@ public class SCC<V> {
     public static <V> SCCResult<V> computeSCC(IGraphDataSource<V> g) {
         int index = 0;
         Set<Set<V>> ret = new HashSet<Set<V>>();
-        
+
         // stores the lowlink and index information for the given node
         Map<V, SCCProperty> nodeMap = new HashMap<V, SCCProperty>();
-        
+
         // stores all target nodes of a given node - the list will be modified
-        Map<V, List<V>> targetNodeMap = new HashMap<V, List<V>>();
-        
-        // stores those target nodes for a given node which have not been visited 
+        Map<V, Set<V>> targetNodeMap = new HashMap<V, Set<V>>();
+
+        // stores those target nodes for a given node which have not been visited
         Map<V, Set<V>> notVisitedMap = new HashMap<V, Set<V>>();
 
         // stores the nodes during the traversal
         Stack<V> nodeStack = new Stack<V>();
-        
+
         // stores the nodes which belong to an scc (there can be many sccs in the stack at the same time)
         Stack<V> sccStack = new Stack<V>();
 
@@ -88,33 +86,30 @@ public class SCC<V> {
 
                         // storing the target nodes of the actual node
                         if (g.getTargetNodes(currentNode) != null) {
-                            targetNodeMap.put(currentNode, new ArrayList<V>(g.getTargetNodes(currentNode)));
+                            targetNodeMap.put(currentNode, new HashSet<V>(g.getTargetNodes(currentNode).keySet()));
                         }
                     }
 
                     if (targetNodeMap.get(currentNode) != null) {
-                        
+
                         // remove node from stack, the exploration of its children has finished
                         if (targetNodeMap.get(currentNode).size() == 0) {
                             targetNodeMap.remove(currentNode);
 
                             nodeStack.pop();
 
-                            List<V> targets = g.getTargetNodes(currentNode);
-                            if (targets != null) {
-                                for (V targetNode : g.getTargetNodes(currentNode)) {
-                                    if (notVisitedMap.get(currentNode).contains(targetNode)) {
-                                        prop.setLowlink(Math.min(prop.getLowlink(), nodeMap.get(targetNode)
-                                                .getLowlink()));
-                                    } else if (sccStack.contains(targetNode)) {
-                                        prop.setLowlink(Math.min(prop.getLowlink(), nodeMap.get(targetNode).getIndex()));
-                                    }
+                            for (V targetNode : g.getTargetNodes(currentNode).keySet()) {
+                                if (notVisitedMap.get(currentNode).contains(targetNode)) {
+                                    prop.setLowlink(Math.min(prop.getLowlink(), nodeMap.get(targetNode).getLowlink()));
+                                } else if (sccStack.contains(targetNode)) {
+                                    prop.setLowlink(Math.min(prop.getLowlink(), nodeMap.get(targetNode).getIndex()));
                                 }
                             }
 
                             finishedTraversal = true;
                         } else {
-                            V targetNode = targetNodeMap.get(currentNode).remove(0);
+                            V targetNode = targetNodeMap.get(currentNode).iterator().next();
+                            targetNodeMap.get(currentNode).remove(targetNode);
                             // if the targetNode has not yet been visited push it to the stack
                             // and mark it in the notVisitedMap
                             if (nodeMap.get(targetNode).getIndex() == 0) {

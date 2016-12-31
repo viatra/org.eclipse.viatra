@@ -30,7 +30,7 @@ import org.eclipse.viatra.query.runtime.rete.traceability.TraceInfo;
 public abstract class SingleInputNode extends StandardNode implements Tunnel {
 
     protected Supplier parent;
-    protected final Mailbox mailbox;
+    protected Mailbox mailbox;
     
     public SingleInputNode(ReteContainer reteContainer) {
         super(reteContainer);
@@ -46,7 +46,7 @@ public abstract class SingleInputNode extends StandardNode implements Tunnel {
      * @return the mailbox
      */
     protected Mailbox instantiateMailbox() {
-        return new DefaultMailbox(this);
+        return new DefaultMailbox(this, this.reteContainer);
     }
     
     @Override

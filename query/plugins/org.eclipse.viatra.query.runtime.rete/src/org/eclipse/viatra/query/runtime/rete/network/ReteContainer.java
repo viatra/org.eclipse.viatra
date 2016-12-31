@@ -20,14 +20,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
-import org.eclipse.viatra.query.runtime.rete.network.Mailbox.MessagePostEffect;
+import org.eclipse.viatra.query.runtime.rete.network.CommunicationTracker.CommunicationGroup;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
-import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
 import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
+
+import com.google.common.base.Function;
 
 /**
  * @author Gabor Bergmann
@@ -54,11 +56,10 @@ public final class ReteContainer {
     protected Long clock = 1L; // even: steady state, odd: active queue; access
                                // ONLY with messageQueue locked!
     protected Map<ReteContainer, Long> terminationCriteria = null;
-
-    protected Set<RederivableNode> rederivables;
-    protected Set<Mailbox> activeMailboxes;
-    
     protected final Logger logger;
+    protected final CommunicationTracker tracker;
+
+    protected final IQueryBackendContext backendContext;
 
     /**
      * @param threaded
@@ -67,63 +68,29 @@ public final class ReteContainer {
     public ReteContainer(Network network, boolean threaded) {
         super();
         this.network = network;
-        rederivables = new LinkedHashSet<RederivableNode>();
-        activeMailboxes = new LinkedHashSet<Mailbox>();
-        nodesById = CollectionsFactory.getMap();// new HashMap<Long, Node>();
-        clearables = new LinkedList<Clearable>();
-        logger = network.getEngine().getLogger();
+        this.backendContext = network.getEngine().getBackendContext();
+        this.tracker = new CommunicationTracker();
+        this.nodesById = CollectionsFactory.getMap();
+        this.clearables = new LinkedList<Clearable>();
+        this.logger = network.getEngine().getLogger();
 
-        connectionFactory = new ConnectionFactory(this);
-        nodeProvisioner = new NodeProvisioner(this);
+        this.connectionFactory = new ConnectionFactory(this);
+        this.nodeProvisioner = new NodeProvisioner(this);
 
         if (threaded) {
-            terminationCriteria = CollectionsFactory.getMap();// new HashMap<ReteContainer, Long>();
-            consumerThread = new Thread("Rete thread of " + ReteContainer.super.toString()) {
+            this.terminationCriteria = CollectionsFactory.getMap();// new HashMap<ReteContainer, Long>();
+            this.consumerThread = new Thread("Rete thread of " + ReteContainer.super.toString()) {
                 @Override
                 public void run() {
                     messageConsumptionCycle();
                 }
             };
-            consumerThread.start();
+            this.consumerThread.start();
         }
     }
 
-    /**
-     * Registers the given {@link RederivableNode} as re-derivable.
-     * 
-     * @param node
-     *            the node
-     * @return true if the node was not in the set of re-derivable ones
-     * @since 1.6
-     */
-    public boolean registerRederivable(RederivableNode node) {
-        return this.rederivables.add(node);
-    }
-
-    /**
-     * Unregisters the given {@link RederivableNode} from the set of re-derivable ones.
-     * 
-     * @param node
-     *            the node
-     * @return true if the node has already been registered as re-derivable
-     * @since 1.6
-     */
-    public boolean unregisterRederivable(UniquenessEnforcerNode node) {
-        return this.rederivables.remove(node);
-    }
-
-    /**
-     * Returns the first {@link RederivableNode} node.
-     * 
-     * @return the first node
-     * @since 1.6
-     */
-    public RederivableNode getFirstRederivable() {
-        if (this.rederivables.isEmpty()) {
-            return null;
-        } else {
-            return this.rederivables.iterator().next();
-        }
+    public CommunicationTracker getTracker() {
+        return tracker;
     }
 
     /**
@@ -204,6 +171,7 @@ public final class ReteContainer {
     public void connect(Supplier supplier, Receiver receiver) {
         supplier.appendChild(receiver);
         receiver.appendParent(supplier);
+        tracker.registerDependency(supplier, receiver);
     }
 
     /**
@@ -212,6 +180,7 @@ public final class ReteContainer {
     public void disconnect(Supplier supplier, Receiver receiver) {
         supplier.removeChild(receiver);
         receiver.removeParent(supplier);
+        tracker.unregisterDependency(supplier, receiver);
     }
 
     /**
@@ -222,6 +191,7 @@ public final class ReteContainer {
                         // supplier BEFORE connecting
         supplier.appendChild(receiver);
         receiver.appendParent(supplier);
+        tracker.registerDependency(supplier, receiver);
 
         Collection<Tuple> pulled = pullContents(supplier);
         sendConstructionUpdates(receiver, Direction.INSERT, pulled);
@@ -238,6 +208,7 @@ public final class ReteContainer {
 
         supplier.removeChild(receiver);
         receiver.removeParent(supplier);
+        tracker.unregisterDependency(supplier, receiver);
 
         Collection<Tuple> pulled = pullContents(supplier);
         sendConstructionUpdates(receiver, Direction.REVOKE, pulled);
@@ -271,25 +242,12 @@ public final class ReteContainer {
     }
 
     /**
-     * Sends an update message to the receiver node by placing the message into its mailbox.
-     * NOT to be called from user threads. 
+     * Sends an update message to the receiver node by placing the message into its mailbox. NOT to be called from user
+     * threads.
      */
     public void sendUpdateInternal(Receiver receiver, Direction direction, Tuple updateElement) {
         Mailbox mailbox = receiver.getMailbox();
-        MessagePostEffect effect = mailbox.postMessage(direction, updateElement);
-
-        if (effect == MessagePostEffect.BECAME_ACTIVE) {
-            boolean result = activeMailboxes.add(mailbox);
-            if (!result) {
-                logger.error("[INTERNAL ERROR] Mailbox " + mailbox + " was already active and it became active again!");
-            }
-        } else if (effect == MessagePostEffect.BECAME_INACTIVE) {
-            boolean result = activeMailboxes.remove(mailbox);
-            if (!result) {
-                logger.error(
-                        "[INTERNAL ERROR] Mailbox " + mailbox + " was already inactive and it became inactive again!");
-            }
-        }
+        mailbox.postMessage(direction, updateElement);
     }
 
     /**
@@ -505,22 +463,74 @@ public final class ReteContainer {
         }
     }
 
-    /**
-     * Iteratively consumes update messages until there are none left. Requires single-threaded behaviour.
-     */
-    void messageConsumptionSingleThreaded() {
-        while (!activeMailboxes.isEmpty() || getFirstRederivable() != null) {
-            // first deliver all the messages ...
-            while (!activeMailboxes.isEmpty()) {
-                Mailbox mailbox = activeMailboxes.iterator().next();
-                activeMailboxes.remove(mailbox);
-                mailbox.deliverMessages();
-            }
+    public static final Function<Node, String> NAME_MAPPER = new Function<Node, String>() {
+        @Override
+        public String apply(Node input) {
+            return input.toString().substring(0, Math.min(30, input.toString().length()));
+        }
+    };
 
-            // ... and then start a re-derivation phase
-            RederivableNode node = getFirstRederivable();
-            if (node != null) {
-                node.rederiveOne();
+    /**
+     * Sends out all pending messages to their receivers. The delivery is governed by the communication tracker.
+     */
+    public void deliverMessagesSingleThreaded() {
+        if (!backendContext.areUpdatesDelayed()) {
+            final Set<CommunicationGroup> seenInThisCycle = new LinkedHashSet<CommunicationGroup>();
+            CommunicationGroup lastGroup = null;
+            
+            while (!tracker.isEmpty()) {
+                final CommunicationGroup group = tracker.getAndRemoveFirstGroup();
+                final Node representative = group.getRepresentative();
+                
+                /**
+                 * The current group does not violate the communication schema iff
+                 * (1) it was not seen before
+                 * OR
+                 * (2) the last one that was seen is exactly the same as the current one 
+                 *     this can happen if the group was added back because of in-group message passing
+                 */
+                boolean okGroup = (group == lastGroup) || !seenInThisCycle.contains(group);
+                
+                if (!okGroup) {
+                    logger.error(
+                            "[INTERNAL ERROR] Violation of communication schema! The communication component with representative "
+                                    + representative + " has already been processed!");
+                }
+                seenInThisCycle.add(group);
+
+                while (!group.getNonMonotoneMailboxes().isEmpty() || !group.getDefaultMailboxes().isEmpty()) {
+                    while (!group.getNonMonotoneMailboxes().isEmpty()) {
+                        Mailbox mailbox = group.getNonMonotoneMailboxes().iterator().next();
+                        group.getNonMonotoneMailboxes().remove(mailbox);
+                        mailbox.deliverAll(MessageKind.ANTI_MONOTONE);
+                    }
+                    while (!group.getDefaultMailboxes().isEmpty()) {
+                        Mailbox mailbox = group.getDefaultMailboxes().iterator().next();
+                        group.getDefaultMailboxes().remove(mailbox);
+                        mailbox.deliverAll(null);
+                    }
+                }
+
+                while (!group.getRederivables().isEmpty()) {
+                    // re-derivable nodes take care of their unregistration!!
+                    RederivableNode node = group.getRederivables().iterator().next();
+                    node.rederiveOne();
+                }
+
+                while (!group.getMonotoneMailboxes().isEmpty() || !group.getDefaultMailboxes().isEmpty()) {
+                    while (!group.getMonotoneMailboxes().isEmpty()) {
+                        Mailbox mailbox = group.getMonotoneMailboxes().iterator().next();
+                        group.getMonotoneMailboxes().remove(mailbox);
+                        mailbox.deliverAll(MessageKind.MONOTONE);
+                    }
+                    while (!group.getDefaultMailboxes().isEmpty()) {
+                        Mailbox mailbox = group.getDefaultMailboxes().iterator().next();
+                        group.getDefaultMailboxes().remove(mailbox);
+                        mailbox.deliverAll(null);
+                    }
+                }
+                
+                lastGroup = group;
             }
         }
     }

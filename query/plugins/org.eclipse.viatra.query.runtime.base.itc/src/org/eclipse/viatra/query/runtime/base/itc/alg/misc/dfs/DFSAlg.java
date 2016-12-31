@@ -12,7 +12,6 @@
 package org.eclipse.viatra.query.runtime.base.itc.alg.misc.dfs;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.dred.DRedTcRelation;
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
@@ -64,12 +63,9 @@ public class DFSAlg<V> implements IGraphObserver<V> {
 
         visited[nodeMap.get(act)] = 1;
 
-        List<V> targets = gds.getTargetNodes(act);
-        if (targets != null) {
-            for (V t : targets) {
-                if (visited[nodeMap.get(t)] == 0) {
-                    oneDFS(t, source);
-                }
+        for (V t : gds.getTargetNodes(act).keySet()) {
+            if (visited[nodeMap.get(t)] == 0) {
+                oneDFS(t, source);
             }
         }
     }

@@ -70,5 +70,13 @@ public abstract class StandardNode extends BaseNode implements Supplier {
         reteContainer.connectAndSynchronize(this, indexer);
         return indexer;
     }
+    
+    protected void issueError(String message, Exception ex) {
+        if (ex == null) {
+            this.reteContainer.getNetwork().getEngine().getLogger().error(message);
+        } else {
+            this.reteContainer.getNetwork().getEngine().getLogger().error(message, ex);
+        }
+    }
 
 }

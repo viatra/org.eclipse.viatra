@@ -50,6 +50,8 @@ public class LeftInheritanceTuple extends Tuple {
     // calcHash();
     // }
 
+    
+    
     /**
      * Creates a Tuple instance, lets it inherit from an ancestor, extends it with a given array. @pre: no elements are
      * null

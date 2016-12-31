@@ -28,17 +28,17 @@ public class PParameter {
     private final PParameterDirection direction;
 
     public PParameter(String name) {
-        this(name, (String)null);
+        this(name, (String) null);
     }
 
     public PParameter(String name, String typeName) {
-        this(name, typeName, (IInputKey)null);
+        this(name, typeName, (IInputKey) null);
     }
-    
-    public PParameter(String name, String typeName, IInputKey declaredUnaryType){
+
+    public PParameter(String name, String typeName, IInputKey declaredUnaryType) {
         this(name, typeName, declaredUnaryType, PParameterDirection.INOUT);
     }
-    
+
     /**
      * @since 1.4
      */
@@ -46,12 +46,13 @@ public class PParameter {
         super();
         this.name = name;
         this.typeName = typeName;
-		this.declaredUnaryType = declaredUnaryType;
-		this.direction = direction;
-		
-		if (declaredUnaryType != null && declaredUnaryType.getArity()!=1) {
-			throw new IllegalArgumentException("PParameter declared type must be unary instead of " + declaredUnaryType.getPrettyPrintableName());
-		}
+        this.declaredUnaryType = declaredUnaryType;
+        this.direction = direction;
+
+        if (declaredUnaryType != null && declaredUnaryType.getArity() != 1) {
+            throw new IllegalArgumentException(
+                    "PParameter declared type must be unary instead of " + declaredUnaryType.getPrettyPrintableName());
+        }
     }
 
     /**
@@ -61,7 +62,7 @@ public class PParameter {
     public PParameterDirection getDirection() {
         return direction;
     }
-    
+
     /**
      * @return the name of the parameter
      */
@@ -71,31 +72,33 @@ public class PParameter {
 
     /**
      * Returns a textual representation of the declared type of the parameter
+     * 
      * @return the type description, or null if not available
      */
     public String getTypeName() {
         return typeName;
     }
 
-	/**
-	 * Yield an {@link IInputKey} representation of the type declared for this parameter.
-	 * @return the unary type that was declared on this parameter in the query header, or null if not available
-	 */
-	public IInputKey getDeclaredUnaryType() {
-		return declaredUnaryType;
-	}
+    /**
+     * Yield an {@link IInputKey} representation of the type declared for this parameter.
+     * 
+     * @return the unary type that was declared on this parameter in the query header, or null if not available
+     */
+    public IInputKey getDeclaredUnaryType() {
+        return declaredUnaryType;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-	    if (obj instanceof PParameter) {
-	        return Objects.equals(name, ((PParameter) obj).name)
-	            && Objects.equals(typeName, ((PParameter) obj).typeName)
-	            && Objects.equals(declaredUnaryType, ((PParameter) obj).declaredUnaryType)
-	            && Objects.equals(direction, ((PParameter) obj).direction);
-	    }
-	    return false;
-	}
-	
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PParameter) {
+            return Objects.equals(name, ((PParameter) obj).name)
+                    && Objects.equals(typeName, ((PParameter) obj).typeName)
+                    && Objects.equals(declaredUnaryType, ((PParameter) obj).declaredUnaryType)
+                    && Objects.equals(direction, ((PParameter) obj).direction);
+        }
+        return false;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(name, typeName, declaredUnaryType);

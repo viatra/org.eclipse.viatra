@@ -83,4 +83,18 @@ public interface IQueryMetaContext {
 	 * @since 1.6
 	 */
 	boolean canLeadOutOfScope(IInputKey key);
+
+	/**
+	 * Returns true if the given {@link IInputKey} represents a poset type.    
+	 */
+	boolean isPosetKey(IInputKey key);
+	
+	/**
+	 * Returns an {@link IPosetComparator} for the given set of {@link IInputKey}s. 
+	 * 
+	 * @param keys an iterable collection of input keys
+	 * @return the poset comparator
+	 */
+	IPosetComparator getPosetComparator(Iterable<IInputKey> keys);
+	
 }

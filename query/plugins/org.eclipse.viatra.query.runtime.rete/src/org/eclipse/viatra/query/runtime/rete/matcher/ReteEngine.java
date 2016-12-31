@@ -35,6 +35,7 @@ import org.eclipse.viatra.query.runtime.rete.construction.plancompiler.ReteRecip
 import org.eclipse.viatra.query.runtime.rete.index.Indexer;
 import org.eclipse.viatra.query.runtime.rete.network.Network;
 import org.eclipse.viatra.query.runtime.rete.network.NodeProvisioner;
+import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
 
 /**
@@ -91,6 +92,10 @@ public class ReteEngine implements IQueryBackend {
 
         this.compiler = null;
     }
+    
+    public IQueryBackendContext getBackendContext() {
+        return context;
+    }
 
     /**
      * initializes engine components
@@ -115,6 +120,13 @@ public class ReteEngine implements IQueryBackend {
         // prerequisite: boundary, disconnectables
 //        this.traceListener = context.subscribePatternMatcherForTraceInfluences(this);
 
+    }
+    
+    @Override
+    public void flushUpdates() {
+        for (ReteContainer container : this.reteNet.getContainers()) {
+            container.deliverMessagesSingleThreaded();
+        }
     }
 
     /**

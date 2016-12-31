@@ -227,4 +227,5 @@ public abstract class BasePQuery implements PQuery {
 	public String toString() {
 	    return String.format("PQuery<%s>=%s", getFullyQualifiedName(), super.toString());
 	}
+	
 }

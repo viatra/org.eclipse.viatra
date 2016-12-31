@@ -63,7 +63,7 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
      * @return the mailbox
      */
     protected Mailbox instantiateMailbox() {
-        return new DefaultMailbox(this);
+        return new DefaultMailbox(this, this.reteContainer);
     }
 	
 	@Override
@@ -109,13 +109,14 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
 
 	/* Update from runtime context */
 	@Override
-	public void update(IInputKey key, Tuple updateTuple, boolean isInsertion) {
+	public void update(IInputKey key, Tuple update, boolean isInsertion) {
 		if (parallelExecutionEnabled) {
 			// send back to myself as an official external update, and then propagate it transparently
-			network.sendExternalUpdate(myAddress, direction(isInsertion), updateTuple);			
+			network.sendExternalUpdate(myAddress, direction(isInsertion), update);			
 		} else {
 			// just propagate the input
-			propagateUpdate(direction(isInsertion), updateTuple);
+		    mailbox.postMessage(direction(isInsertion), update);
+		    // if the the update method is called from within a delayed execution, the following invocation will be a no-op
 			network.waitForReteTermination();
 		}
 	}
@@ -152,7 +153,5 @@ public class ExternalInputEnumeratorNode extends StandardNode implements Disconn
 	public Tuple getGlobalSeed() {
 		return globalSeed;
 	}
-	
-	
 
 }

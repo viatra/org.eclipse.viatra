@@ -43,7 +43,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
     protected Production productionNode;
     protected RecipeTraceInfo productionNodeTrace;
     protected Map<String, Integer> posMapping;
-    protected Map<Object, Receiver> taggedChildren = //new HashMap<Object, Receiver>();
+    protected Map<Object, Receiver> taggedChildren = // new HashMap<Object, Receiver>();
             CollectionsFactory.getMap();
     protected boolean connected = false; // is rete-wise connected to the
                                          // production node?
@@ -58,19 +58,21 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         this.engine = engine;
         this.context = engine.getRuntimeContext();
         this.productionNodeTrace = productionNodeTrace;
-        final Address<? extends Node> productionAddress = reteContainer.getProvisioner().getOrCreateNodeByRecipe(productionNodeTrace);
+        final Address<? extends Node> productionAddress = reteContainer.getProvisioner()
+                .getOrCreateNodeByRecipe(productionNodeTrace);
         if (!reteContainer.isLocal(productionAddress))
-        	throw new IllegalArgumentException("@pre: Production must be local to the head container");
-		this.productionNode = (Production) reteContainer.resolveLocal(productionAddress);
+            throw new IllegalArgumentException("@pre: Production must be local to the head container");
+        this.productionNode = (Production) reteContainer.resolveLocal(productionAddress);
         this.posMapping = this.productionNode.getPosMapping();
+        this.reteContainer.getTracker().registerDependency(this.productionNode, this);
     }
 
     // /**
     // * @return the productionNode
     // */
-    // public Production getProductionNode() {
-    // return productionNode;
-    // }
+    public Production getProductionNode() {
+        return productionNode;
+    }
 
     public Tuple matchOneRandomly(Object[] inputMapping, boolean[] fixed) {
         ArrayList<Tuple> allMatches = matchAll(inputMapping, fixed);
@@ -86,7 +88,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
 
         AllMatchFetcher fetcher = new AllMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
-        		context.wrapTuple(inputSignature));
+                context.wrapTuple(inputSignature));
         engine.reteNet.waitForReteTermination(fetcher);
         ArrayList<Tuple> unscopedMatches = fetcher.getMatches();
 
@@ -104,7 +106,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
 
         SingleMatchFetcher fetcher = new SingleMatchFetcher(engine.accessProjection(productionNodeTrace, mask),
-        		context.wrapTuple(inputSignature));
+                context.wrapTuple(inputSignature));
         engine.reteNet.waitForReteTermination(fetcher);
         return fetcher.getMatch();
     }
@@ -119,7 +121,7 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
         Tuple inputSignature = mask.transform(new FlatTuple(inputMapping));
 
         CountFetcher fetcher = new CountFetcher(engine.accessProjection(productionNodeTrace, mask),
-        		context.wrapTuple(inputSignature));
+                context.wrapTuple(inputSignature));
         engine.reteNet.waitForReteTermination(fetcher);
 
         return fetcher.getCount();
@@ -314,46 +316,42 @@ public class RetePatternMatcher extends TransformerNode implements IQueryResultP
 
     }
 
-    
     private boolean[] notNull(Object[] parameters) {
         boolean[] notNull = new boolean[parameters.length];
         for (int i = 0; i < parameters.length; ++i)
             notNull[i] = parameters[i] != null;
         return notNull;
     }
-    
-	@Override
-	public int countMatches(Object[] parameters) {
-		return count(parameters, notNull(parameters));
-	}
 
-	@Override
-	public Tuple getOneArbitraryMatch(Object[] parameters) {
-		return matchOne(parameters, notNull(parameters));
-	}
+    @Override
+    public int countMatches(Object[] parameters) {
+        return count(parameters, notNull(parameters));
+    }
 
-	@Override
-	public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
-		return matchAll(parameters, notNull(parameters));
-	}
-	
-	@Override
-	public IQueryBackend getQueryBackend() {
-		return engine;
-	}
+    @Override
+    public Tuple getOneArbitraryMatch(Object[] parameters) {
+        return matchOne(parameters, notNull(parameters));
+    }
 
-	@Override
-	public void addUpdateListener(
-			final IUpdateable listener,
-			final Object listenerTag,
-			boolean fireNow) {
-		final CallbackNode callbackNode = new CallbackNode(this.reteContainer, listener);
-		connect(callbackNode, listenerTag, fireNow);
-	}
-	
-	@Override
-	public void removeUpdateListener(Object listenerTag) {
-		disconnectByTag(listenerTag);
-	}
+    @Override
+    public Collection<? extends Tuple> getAllMatches(Object[] parameters) {
+        return matchAll(parameters, notNull(parameters));
+    }
+
+    @Override
+    public IQueryBackend getQueryBackend() {
+        return engine;
+    }
+
+    @Override
+    public void addUpdateListener(final IUpdateable listener, final Object listenerTag, boolean fireNow) {
+        final CallbackNode callbackNode = new CallbackNode(this.reteContainer, listener);
+        connect(callbackNode, listenerTag, fireNow);
+    }
+
+    @Override
+    public void removeUpdateListener(Object listenerTag) {
+        disconnectByTag(listenerTag);
+    }
 
 }

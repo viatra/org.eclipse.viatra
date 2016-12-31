@@ -45,7 +45,7 @@
     </eAnnotations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MultiParentNodeRecipe" abstract="true"
-      eSuperTypes="#//ReteNodeRecipe">
+      eSuperTypes="#//ReteNodeRecipe #//RederivableNodeRecipe">
     <eOperations name="getArity" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="body" value="&lt;%org.eclipse.emf.common.util.EList%>&lt;&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe%>> _parents = this.getParents();&#xA;&lt;%org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe%> _get = _parents.get(0);&#xA;return _get.getArity();"/>
@@ -53,8 +53,13 @@
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parents" upperBound="-1"
         eType="#//ReteNodeRecipe"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="deleteRederiveEvaluation"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="false"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MonotonicityInfo">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="coreMask" eType="#//Mask"
+        containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="posetMask" eType="#//Mask"
+        containment="true" resolveProxies="false"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="posetComparator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="UniquenessEnforcerRecipe" eSuperTypes="#//MultiParentNodeRecipe">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -327,17 +332,17 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="mask" eType="#//Mask" containment="true"
         resolveProxies="false"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SingleColumnAggregatorRecipe" eSuperTypes="#//AlphaRecipe">
+  <eClassifiers xsi:type="ecore:EClass" name="SingleColumnAggregatorRecipe" eSuperTypes="#//AlphaRecipe #//RederivableNodeRecipe">
     <eOperations name="getArity" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="body" value="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.Mask%> _mask = this.getGroupByMask();&#xD;&#xA;&lt;%org.eclipse.emf.common.util.EList%>&lt;&lt;%java.lang.Integer%>> _sourceIndices = _mask.getSourceIndices();&#xD;&#xA;return 1 +  _sourceIndices.size();"/>
+        <details key="body" value="&lt;%org.eclipse.viatra.query.runtime.rete.recipes.MonotonicityInfo%> info = getOptionalMonotonicityInfo();&#xA;if (info == null) {&#xA;&#x9;return 1 + getGroupByMask().getSourceIndices().size();&#xA;} else {&#x9;&#xA;&#x9;return info.getCoreMask().getSourceIndices().size() + info.getPosetMask().getSourceIndices().size();&#xA;}"/>
       </eAnnotations>
     </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="groupByMask" eType="#//Mask"
-        containment="true" resolveProxies="false"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="aggregableIndex" eType="#//Index"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="multisetAggregationOperator"
         eType="#//AggregationOperator"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="aggregableIndex" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="groupByMask" lowerBound="1"
+        eType="#//Mask" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="AggregationOperator" instanceTypeName="org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IMultisetAggregationOperator&lt;?, ?, ?>"/>
   <eClassifiers xsi:type="ecore:EClass" name="DiscriminatorDispatcherRecipe" eSuperTypes="#//SingleParentNodeRecipe">
@@ -362,5 +367,11 @@
       </eAnnotations>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bucketKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RederivableNodeRecipe" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="deleteRederiveEvaluation"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean" defaultValueLiteral="false"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="optionalMonotonicityInfo"
+        eType="#//MonotonicityInfo" containment="true"/>
   </eClassifiers>
 </ecore:EPackage>

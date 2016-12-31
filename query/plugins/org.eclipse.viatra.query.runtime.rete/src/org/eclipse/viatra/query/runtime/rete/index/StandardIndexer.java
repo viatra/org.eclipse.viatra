@@ -61,10 +61,12 @@ public abstract class StandardIndexer extends BaseNode implements Indexer {
 
     public void attachListener(IndexerListener listener) {
         listeners.add(listener);
+        reteContainer.getTracker().registerDependency(this, listener.getOwner());
     }
 
     public void detachListener(IndexerListener listener) {
         listeners.remove(listener);
+        reteContainer.getTracker().unregisterDependency(this, listener.getOwner());
     }
 
     public Collection<IndexerListener> getListeners() {

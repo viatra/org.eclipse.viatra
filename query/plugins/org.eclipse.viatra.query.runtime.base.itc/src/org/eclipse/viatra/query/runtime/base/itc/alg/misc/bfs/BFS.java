@@ -45,21 +45,17 @@ public class BFS<V> {
         return ret;
     }
 
-    private static <V> boolean _isReachable(V target, IGraphDataSource<V> graph, List<V> nodeQueue,
-            Set<V> visited) {
+    private static <V> boolean _isReachable(V target, IGraphDataSource<V> graph, List<V> nodeQueue, Set<V> visited) {
 
         while (!nodeQueue.isEmpty()) {
             V node = nodeQueue.remove(0);
-            List<V> targets = graph.getTargetNodes(node);
-            if (targets != null) {
-                for (V t : targets) {
-                    if (t.equals(target)) {
-                        return true;
-                    }
-                    if (!visited.contains(t)) {
-                        visited.add(t);
-                        nodeQueue.add(t);
-                    }
+            for (V t : graph.getTargetNodes(node).keySet()) {
+                if (t.equals(target)) {
+                    return true;
+                }
+                if (!visited.contains(t)) {
+                    visited.add(t);
+                    nodeQueue.add(t);
                 }
             }
         }
@@ -77,18 +73,14 @@ public class BFS<V> {
         return retSet;
     }
 
-    private static <V> void _reachableSources(IBiDirectionalGraphDataSource<V> graph, List<V> nodeQueue, Set<V> retSet) {
+    private static <V> void _reachableSources(IBiDirectionalGraphDataSource<V> graph, List<V> nodeQueue,
+            Set<V> retSet) {
         while (!nodeQueue.isEmpty()) {
             V node = nodeQueue.remove(0);
-            List<V> sourceNodes = graph.getSourceNodes(node);
-
-            if (sourceNodes != null) {
-                for (V _node : graph.getSourceNodes(node)) {
-
-                    if (!retSet.contains(_node)) {
-                        retSet.add(_node);
-                        nodeQueue.add(_node);
-                    }
+            for (V _node : graph.getSourceNodes(node).keySet()) {
+                if (!retSet.contains(_node)) {
+                    retSet.add(_node);
+                    nodeQueue.add(_node);
                 }
             }
         }
@@ -109,7 +101,7 @@ public class BFS<V> {
         while (!nodeQueue.isEmpty()) {
             V node = nodeQueue.remove(0);
 
-            for (V _node : graph.getTargetNodes(node)) {
+            for (V _node : graph.getTargetNodes(node).keySet()) {
 
                 if (!retSet.contains(_node)) {
                     retSet.add(_node);
@@ -148,7 +140,7 @@ public class BFS<V> {
             path.add(node);
             return true;
         } else {
-            for (V _nodeT : graph.getTargetNodes(node)) {
+            for (V _nodeT : graph.getTargetNodes(node).keySet()) {
                 res = (_collectNodesAlongPath(_nodeT, target, graph, path)) || res;
             }
             if (res)

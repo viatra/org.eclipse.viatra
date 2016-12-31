@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.api;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
+
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -338,4 +341,30 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
 	 * @noreference This method is considered internal API
 	 */
 	public abstract IQueryResultProvider getResultProviderOfMatcher(ViatraQueryMatcher<? extends IPatternMatch> matcher);
+	
+	/**
+     * The given callable will be executed, and all update propagation will be delayed until the
+     * execution is done. 
+     * 
+     * It is optional to support the delaying of update propagation in a {@linkplain AdvancedViatraQueryEngine}. 
+     * In this case, the given callable shall be executed, and the update propagation shall happen just like in non-delayed execution. 
+     * 
+     * Example: in the RETE network, no messages will be propagated until the given callable is executed. 
+     * After the execution of the callable, all accumulated messages will be delivered. 
+     * 
+     * @param callable the callable to be executed
+     * @return the result of the callable
+     */
+    public abstract <V> V delayUpdatePropagation(Callable<V> callable) throws InvocationTargetException;
+    
+    /**
+     * Returns true if the update propagation in this engine is currently delayed, false otherwise. 
+     * The method must always return false for those engines that do not use mailbox-based communication.
+     * 
+     * See method {@linkplain AdvancedViatraQueryEngine.delayUpdatePropagation}.
+     * 
+     * @see the other method
+     */
+    public abstract boolean isUpdatePropagationDelayed();
+
 }

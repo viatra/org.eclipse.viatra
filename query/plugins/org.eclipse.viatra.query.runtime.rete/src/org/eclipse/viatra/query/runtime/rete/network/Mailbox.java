@@ -25,23 +25,19 @@ public interface Mailbox extends Clearable {
     /**
      * Posts a new message to this mailbox.
      * 
-     * The returned value indicates the effect of the message posting on the mailbox:
-     * <ul>
-     * <li>The mailbox can become active in response to posting if it had no messages before.</li>
-     * <li>The mailbox can become inactive if the newly posted message cancelled out the last message in the mailbox.</li>
-     * <li>The mailbox can remain unchanged if there are (still) messages to deliver after the posting of the new message.</li>
-     * </ul> 
-     * 
      * @param direction the direction of the update
      * @param update the update element
      * @return the effect of the message posting
      */
-    public MessagePostEffect postMessage(Direction direction, Tuple update);
-    
+    public void postMessage(Direction direction, Tuple update);
+        
     /**
-     * Delivers all messages to the {@link Receiver} of this mailbox.
+     * Delivers all messages of the given kind from this mailbox.
+     * The kind can also be null. In this case, there no special separation is expected between the messages. 
+     *  
+     * @param kind the message kind
      */
-    public void deliverMessages();
+    public void deliverAll(MessageKind kind);
     
     /**
      * Returns the {@link Receiver} of this mailbox.
@@ -49,11 +45,5 @@ public interface Mailbox extends Clearable {
      * @return the receiver
      */
     public Receiver getReceiver();
-    
-    public enum MessagePostEffect {
-        UNCHANGED,
-        BECAME_INACTIVE,
-        BECAME_ACTIVE
-    }
     
 }

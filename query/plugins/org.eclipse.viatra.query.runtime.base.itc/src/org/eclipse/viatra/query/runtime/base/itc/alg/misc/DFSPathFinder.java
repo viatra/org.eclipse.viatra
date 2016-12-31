@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
@@ -66,9 +67,9 @@ public class DFSPathFinder<V> implements IGraphPathFinder<V> {
     }
 
     protected Iterable<Deque<V>> getPaths(List<Deque<V>> paths, Deque<V> visited, Set<V> targetNodes) {
-        List<V> nodes = graph.getTargetNodes(visited.getLast());
+        Map<V, Integer> nodes = graph.getTargetNodes(visited.getLast());
         // examine adjacent nodes
-        for (V node : nodes) {
+        for (V node : nodes.keySet()) {
             if (visited.contains(node)) {
                 continue;
             }
@@ -81,8 +82,9 @@ public class DFSPathFinder<V> implements IGraphPathFinder<V> {
                 break;
             }
         }
+
         // in breadth-first, recursion needs to come after visiting connected nodes
-        for (V node : nodes) {
+        for (V node : nodes.keySet()) {
             if (visited.contains(node) || targetNodes.contains(node)) {
                 continue;
             }

@@ -26,49 +26,45 @@ import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord;
 
 public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider {
 
-    private QueryEvaluationHint hint;
+    private QueryEvaluationHint engineHints;
     private SnapshotHelper helper;
+    private AdvancedViatraQueryEngine engine;
 
     public PatternBasedMatchSetModelProvider(QueryEvaluationHint hint) {
-        this(hint,new HashMap<String, JavaObjectAccess>());
-    }
-    
-    public PatternBasedMatchSetModelProvider(QueryEvaluationHint hint, Map<String, JavaObjectAccess> accessmap) {
-        this.hint = hint;
-        this.helper = new SnapshotHelper(accessmap);
+        this(hint, new HashMap<String, JavaObjectAccess>());
     }
 
-    private AdvancedViatraQueryEngine engine;
+    public PatternBasedMatchSetModelProvider(QueryEvaluationHint engineHints, Map<String, JavaObjectAccess> accessmap) {
+        this.engineHints = engineHints;
+        this.helper = new SnapshotHelper(accessmap);
+    }
 
     @Override
     public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(EMFScope scope,
             IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
-                    throws ViatraQueryException {
-        
-        if (engine == null){
+            throws ViatraQueryException {
+
+        if (engine == null) {
             engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
         }
-        ViatraQueryMatcher<Match> matcher = (ViatraQueryMatcher<Match>) ((AdvancedViatraQueryEngine) engine)
-                .getMatcher(querySpecification, hint);
-        return helper.createMatchSetRecordForMatcher(matcher,
-                filter == null ? matcher.newEmptyMatch() : filter);
+        ViatraQueryMatcher<Match> matcher = (ViatraQueryMatcher<Match>) engine.getMatcher(querySpecification, engineHints);
+        return helper.createMatchSetRecordForMatcher(matcher, filter == null ? matcher.newEmptyMatch() : filter);
 
     }
 
-	@Override
-	public boolean updatedByModify() {
-		return true;
-	}
-
+    @Override
+    public boolean updatedByModify() {
+        return true;
+    }
 
     @Override
     public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet rs,
             IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
             throws ViatraQueryException {
-        
-       return getMatchSetRecord(new EMFScope(rs), querySpecification, filter);
+
+        return getMatchSetRecord(new EMFScope(rs), querySpecification, filter);
     }
-    
+
     @Override
     public void dispose() {
         if (engine != null) {
@@ -76,4 +72,5 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
             engine = null;
         }
     }
+
 }

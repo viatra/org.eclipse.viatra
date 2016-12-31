@@ -34,4 +34,7 @@ public interface IQueryBackendContext {
     IQueryResultProviderAccess getResultProviderAccess();
     
     QueryAnalyzer getQueryAnalyzer();
+    
+    boolean areUpdatesDelayed();
+    
 }

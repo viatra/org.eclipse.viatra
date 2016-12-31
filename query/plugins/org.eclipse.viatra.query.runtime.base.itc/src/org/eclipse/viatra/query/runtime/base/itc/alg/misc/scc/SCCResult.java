@@ -11,6 +11,7 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.alg.misc.scc;
 
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IGraphDataSource;
@@ -48,9 +49,10 @@ public class SCCResult<V> {
 
         for (Set<V> scc : sccs) {
             for (V source : scc) {
-                for (V target : gds.getTargetNodes(source)) {
-                    if (scc.contains(target))
-                        edgeSum++;
+                for (Entry<V, Integer> entry : gds.getTargetNodes(source).entrySet()) {
+                    if (scc.contains(entry.getKey())) {
+                        edgeSum += entry.getValue();
+                    }
                 }
             }
         }

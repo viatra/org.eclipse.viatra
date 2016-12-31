@@ -14,7 +14,9 @@ package org.eclipse.viatra.query.runtime.rete.single;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IPosetComparator;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.matchers.tuple.TupleMask;
 import org.eclipse.viatra.query.runtime.rete.network.Production;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery;
@@ -29,21 +31,18 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
 
     protected Map<String, Integer> posMapping;
 
-    // protected HashMap<TupleMask, Indexer> projections;
-
-    /**
-     * @param reteContainer
-     * @param posMapping
-     */
-    public DefaultProductionNode(ReteContainer reteContainer, Map<String, Integer> posMapping, boolean deleteRederiveEvaluation) {
-        super(reteContainer, posMapping.size(), deleteRederiveEvaluation);
-        this.posMapping = posMapping;
-        // this.projections= new HashMap<TupleMask, Indexer>();
+    public DefaultProductionNode(ReteContainer reteContainer, Map<String, Integer> posMapping,
+            boolean deleteRederiveEvaluation) {
+        this(reteContainer, posMapping, deleteRederiveEvaluation, null, null, null);
     }
 
-    /**
-     * @return the posMapping
-     */
+    public DefaultProductionNode(ReteContainer reteContainer, Map<String, Integer> posMapping,
+            boolean deleteRederiveEvaluation, TupleMask coreMask, TupleMask posetMask,
+            IPosetComparator posetComparator) {
+        super(reteContainer, posMapping.size(), deleteRederiveEvaluation, coreMask, posetMask, posetComparator);
+        this.posMapping = posMapping;
+    }
+
     public Map<String, Integer> getPosMapping() {
         return posMapping;
     }
@@ -54,10 +53,10 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
 
     @Override
     public void acceptPropagatedTraceInfo(TraceInfo traceInfo) {
-    	if (traceInfo.propagateToProductionNodeParentAlso())
-    		super.acceptPropagatedTraceInfo(traceInfo);
+        if (traceInfo.propagateToProductionNodeParentAlso())
+            super.acceptPropagatedTraceInfo(traceInfo);
     }
-    
+
     @Override
     public String toString() {
         for (TraceInfo traceInfo : this.traceInfos) {
@@ -68,4 +67,5 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
         }
         return super.toString();
     }
+
 }

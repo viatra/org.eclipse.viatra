@@ -77,15 +77,11 @@ public class TopSort<V> {
     private void oneDFS(int v) {
         visited[v] = 1;
         depthNumber[v] = ++depthCount;
-        List<V> targets = gds.getTargetNodes(forwardNodeMap.get(v));
-        if (targets != null) {
-            for (V t : targets) {
-
-                int u = backwardNodeMap.get(t);
-                sourceNumber[u] = v;
-                if (visited[u] == 0)
-                    oneDFS(u);
-            }
+        for (V t : gds.getTargetNodes(forwardNodeMap.get(v)).keySet()) {
+            int u = backwardNodeMap.get(t);
+            sourceNumber[u] = v;
+            if (visited[u] == 0)
+                oneDFS(u);
         }
         finishNumber[v] = ++finishCount;
         topologicalSorting.add(forwardNodeMap.get(v));

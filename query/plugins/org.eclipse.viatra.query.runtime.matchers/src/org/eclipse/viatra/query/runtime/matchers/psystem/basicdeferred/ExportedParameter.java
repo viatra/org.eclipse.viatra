@@ -29,25 +29,22 @@ public class ExportedParameter extends VariableDeferredPConstraint {
     PVariable parameterVariable;
     final String parameterName;
     final PParameter patternParameter;
-    
+
     /**
      * @since 1.4
      */
-    public ExportedParameter(PBody pBody, PVariable parameterVariable,
-            PParameter patternParameter) {
+    public ExportedParameter(PBody pBody, PVariable parameterVariable, PParameter patternParameter) {
         super(pBody, Collections.singleton(parameterVariable));
         this.parameterVariable = parameterVariable;
         this.patternParameter = patternParameter;
         parameterName = patternParameter.getName();
     }
-    
-    
+
     /**
      * @deprecated Use {@link #ExportedParameter(PBody, PVariable, PParameter)} instead
      */
     @Deprecated
-    public ExportedParameter(PBody pBody, PVariable parameterVariable,
-            String parameterName) {
+    public ExportedParameter(PBody pBody, PVariable parameterVariable, String parameterName) {
         super(pBody, Collections.singleton(parameterVariable));
         this.parameterVariable = parameterVariable;
         this.parameterName = parameterVariable.getName();
@@ -101,7 +98,7 @@ public class ExportedParameter extends VariableDeferredPConstraint {
             return patternParameter;
         }
     }
-    
+
     @Override
     public Set<PVariable> getDeferringVariables() {
         return Collections.singleton(parameterVariable);

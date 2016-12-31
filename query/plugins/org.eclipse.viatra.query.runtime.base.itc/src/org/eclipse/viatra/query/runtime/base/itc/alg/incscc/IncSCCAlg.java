@@ -12,9 +12,12 @@
 package org.eclipse.viatra.query.runtime.base.itc.alg.incscc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.counting.CountingAlg;
@@ -86,9 +89,10 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         }
 
         for (V source : gds.getAllNodes()) {
-            final List<V> targetNodes = gds.getTargetNodes(source);
-            if (targetNodes != null)
-                for (V target : targetNodes) {
+            final Map<V, Integer> targetNodes = gds.getTargetNodes(source);
+            for (Entry<V, Integer> entry : targetNodes.entrySet()) {
+                for (int i = 0; i < entry.getValue(); i++) {
+                    V target = entry.getKey();
                     V sourceRoot = sccs.find(source);
                     V targetRoot = sccs.find(target);
 
@@ -96,6 +100,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                         reducedGraph.insertEdge(sourceRoot, targetRoot);
                     }
                 }
+            }
         }
 
         counting = new CountingAlg<V>(reducedGraph);
@@ -136,13 +141,13 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                                 counting.getAllReachableTargets(sourceSCC))) {
                             boolean needsNotification = false;
 
-                            //Case 1. sourceSCC and targetSCC are the same and it is a one sized scc. 
-                            //Issue notifications only if there is no self-loop present at the moment
-                            if (sourceSCC.equals(targetSCC) && sccs.getPartition(sourceSCC).size() == 1
-                                    && GraphHelper.getEdgeCount(sccs.getPartition(sourceSCC).iterator().next(), gds) == 0) {
+                            // Case 1. sourceSCC and targetSCC are the same and it is a one sized scc.
+                            // Issue notifications only if there is no self-loop present at the moment
+                            if (sourceSCC.equals(targetSCC) && sccs.getPartition(sourceSCC).size() == 1 && GraphHelper
+                                    .getEdgeCount(sccs.getPartition(sourceSCC).iterator().next(), gds) == 0) {
                                 needsNotification = true;
-                            } 
-                            //Case 2. sourceSCC and targetSCC are different sccs. 
+                            }
+                            // Case 2. sourceSCC and targetSCC are different sccs.
                             else if (!sourceSCC.equals(targetSCC)) {
                                 needsNotification = true;
                             }
@@ -239,21 +244,27 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
             // if source is not reachable from target anymore
             if (!BFS.isReachable(source, target, g)) {
-                List<V> reachableSources = (reducedGraphIndexer.getSourceNodes(sourceRoot) == null) ? 
-                		new ArrayList<V>() : new ArrayList<V>(reducedGraphIndexer.getSourceNodes(sourceRoot));
-                List<V> reachableTargets = (reducedGraphIndexer.getTargetNodes(sourceRoot) == null) ? 
-                		new ArrayList<V>() : new ArrayList<V>(reducedGraphIndexer.getTargetNodes(sourceRoot));
+                Map<V, Integer> reachableSources = new HashMap<V, Integer>(
+                        reducedGraphIndexer.getSourceNodes(sourceRoot));
+                Map<V, Integer> reachableTargets = new HashMap<V, Integer>(
+                        reducedGraphIndexer.getTargetNodes(sourceRoot));
 
                 SCCResult<V> _newSccs = SCC.computeSCC(g);
 
                 // delete scc node (and with its edges too)
-				for (V s : reachableSources) {
-					reducedGraph.deleteEdge(s, sourceRoot);
-				}
+                for (Entry<V, Integer> entry : reachableSources.entrySet()) {
+                    for (int i = 0; i < entry.getValue(); i++) {
+                        V s = entry.getKey();
+                        reducedGraph.deleteEdge(s, sourceRoot);
+                    }
+                }
 
-				for (V t : reachableTargets) {
-					reducedGraph.deleteEdge(sourceRoot, t);
-				}
+                for (Entry<V, Integer> entry : reachableTargets.entrySet()) {
+                    for (int i = 0; i < entry.getValue(); i++) {
+                        V t = entry.getKey();
+                        reducedGraph.deleteEdge(sourceRoot, t);
+                    }
+                }
 
                 sccs.deleteSet(sourceRoot);
                 reducedGraph.deleteNode(sourceRoot);
@@ -298,13 +309,13 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
                                 counting.getAllReachableTargets(sourceSCC))) {
                             boolean needsNotification = false;
 
-                            //Case 1. sourceSCC and targetSCC are the same and it is a one sized scc. 
-                            //Issue notifications only if there is no self-loop present at the moment
-                            if (sourceSCC.equals(targetSCC) && sccs.getPartition(sourceSCC).size() == 1
-                                    && GraphHelper.getEdgeCount(sccs.getPartition(sourceSCC).iterator().next(), gds) == 0) {
+                            // Case 1. sourceSCC and targetSCC are the same and it is a one sized scc.
+                            // Issue notifications only if there is no self-loop present at the moment
+                            if (sourceSCC.equals(targetSCC) && sccs.getPartition(sourceSCC).size() == 1 && GraphHelper
+                                    .getEdgeCount(sccs.getPartition(sourceSCC).iterator().next(), gds) == 0) {
                                 needsNotification = true;
-                            } 
-                            //Case 2. sourceSCC and targetSCC are different sccs. 
+                            }
+                            // Case 2. sourceSCC and targetSCC are different sccs.
                             else if (!sourceSCC.equals(targetSCC)) {
                                 needsNotification = true;
                             }
@@ -334,17 +345,19 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
     @Override
     public void nodeDeleted(V n) {
-        List<V> sources = gds.getSourceNodes(n);
-        List<V> targets = gds.getTargetNodes(n);
+        Map<V, Integer> sources = gds.getSourceNodes(n);
+        Map<V, Integer> targets = gds.getTargetNodes(n);
 
-        if (sources != null) {
-            for (V source : sources) {
+        for (Entry<V, Integer> entry : sources.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                V source = entry.getKey();
                 edgeDeleted(source, n);
             }
         }
 
-        if (targets != null) {
-            for (V target : gds.getTargetNodes(n)) {
+        for (Entry<V, Integer> entry : targets.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                V target = entry.getKey();
                 edgeDeleted(n, target);
             }
         }
@@ -411,23 +424,23 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         else
             return counting.isReachable(sourceRoot, targetRoot);
     }
-    
+
     public List<V> getReachabilityPath(V source, V target) {
-    	if (!isReachable(source, target)) {
-    		return null;
-    	}
-    	else {
-    		Set<V> sccsInSubGraph = CollectionHelper.intersection(counting.getAllReachableTargets(source), counting.getAllReachableSources(target));
-    		sccsInSubGraph.add(sccs.find(source));
-    		sccsInSubGraph.add(sccs.find(target));
-    		Set<V> nodesInSubGraph = new HashSet<V>();
-    		
-    		for (V sccRoot : sccsInSubGraph) {
-    			nodesInSubGraph.addAll(sccs.getPartition(sccRoot));
-    		}
- 
-    		return GraphHelper.constructPath(source, target, nodesInSubGraph, gds);
-    	}
+        if (!isReachable(source, target)) {
+            return null;
+        } else {
+            Set<V> sccsInSubGraph = CollectionHelper.intersection(counting.getAllReachableTargets(source),
+                    counting.getAllReachableSources(target));
+            sccsInSubGraph.add(sccs.find(source));
+            sccsInSubGraph.add(sccs.find(target));
+            Set<V> nodesInSubGraph = new HashSet<V>();
+
+            for (V sccRoot : sccsInSubGraph) {
+                nodesInSubGraph.addAll(sccs.getPartition(sccRoot));
+            }
+
+            return GraphHelper.constructPath(source, target, nodesInSubGraph, gds);
+        }
     }
 
     // for JUnit
@@ -453,7 +466,7 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
 
         return true;
     }
-    
+
     /**
      * Return the SCCs from which the SCC represented by the root node is reachable. Note that an SCC can be present
      * multiple times in the returned list (multiple edges between the two SCCs).
@@ -465,12 +478,9 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         List<V> sourceSCCs = new ArrayList<V>();
 
         for (V containedNode : this.sccs.getPartition(root)) {
-            List<V> sourceNodes = this.gds.getSourceNodes(containedNode);
-
-            if (sourceNodes != null) {
-                for (V source : sourceNodes) {
-                    sourceSCCs.add(this.sccs.find(source));
-                }
+            Map<V, Integer> sourceNodes = this.gds.getSourceNodes(containedNode);
+            for (V source : sourceNodes.keySet()) {
+                sourceSCCs.add(this.sccs.find(source));
             }
         }
 
@@ -485,16 +495,12 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
      * @return the list of reachable target SCCs
      */
     private List<V> getTargetSCCsOfSCC(V root) {
-
         List<V> targetSCCs = new ArrayList<V>();
 
         for (V containedNode : this.sccs.getPartition(root)) {
-            List<V> targetNodes = this.gds.getTargetNodes(containedNode);
-
-            if (targetNodes != null) {
-                for (V target : targetNodes) {
-                    targetSCCs.add(this.sccs.find(target));
-                }
+            Map<V, Integer> targetNodes = this.gds.getTargetNodes(containedNode);
+            for (V target : targetNodes.keySet()) {
+                targetSCCs.add(this.sccs.find(target));
             }
         }
 
@@ -536,6 +542,10 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         }
     }
 
+    public V getRepresentative(V node) {
+        return sccs.find(node);
+    }
+
     public Set<Tuple<V>> getTcRelation() {
         Set<Tuple<V>> resultSet = new HashSet<Tuple<V>>();
 
@@ -565,14 +575,18 @@ public class IncSCCAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
     }
 
     public boolean isIsolated(V node) {
-        List<V> targets = gds.getTargetNodes(node);
-        List<V> sources = gds.getSourceNodes(node);
-        return ((targets == null) || (targets.isEmpty())) && ((sources == null) || (sources.isEmpty()));
+        Map<V, Integer> targets = gds.getTargetNodes(node);
+        Map<V, Integer> sources = gds.getSourceNodes(node);
+        return targets.isEmpty() && sources.isEmpty();
     }
 
     @Override
     public IGraphPathFinder<V> getPathFinder() {
         return new DFSPathFinder<V>(gds, this);
     }
-    
+
+    public Graph<V> getReducedGraph() {
+        return reducedGraph;
+    }
+
 }

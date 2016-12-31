@@ -160,5 +160,5 @@ public abstract class ViatraQueryEngine {
      * @return the scope of query evaluation; the definition of the set of model elements that this engine is operates on.
      */
 	public abstract QueryScope getScope();
-
+		
 }

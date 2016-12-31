@@ -12,7 +12,6 @@
 package org.eclipse.viatra.query.runtime.base.itc.alg.fw;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.dred.DRedTcRelation;
@@ -65,11 +64,9 @@ public class FloydWarshallAlg<V> implements IGraphObserver<V> {
         }
 
         for (V source : gds.getAllNodes()) {
-            List<V> targets = gds.getTargetNodes(source);
-            if (targets != null) {
-                for (V target : targets) {
-                    P[mapForw.get(source)][mapForw.get(target)] = 1;
-                }
+            Map<V, Integer> targets = gds.getTargetNodes(source);
+            for (V target : targets.keySet()) {
+                P[mapForw.get(source)][mapForw.get(target)] = 1;
             }
         }
 

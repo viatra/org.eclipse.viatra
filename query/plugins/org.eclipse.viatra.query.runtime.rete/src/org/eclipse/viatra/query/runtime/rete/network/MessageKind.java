@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2016, Tamas Szabo, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2017, Tamas Szabo, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,18 +11,21 @@
 package org.eclipse.viatra.query.runtime.rete.network;
 
 /**
- * A rederivable node can potentially re-derive tuples after the Rete network has finished the delivery of messages.  
+ * The enum represents the possible kinds of messages in the query backend. 
  * 
  * @author Tamas Szabo
- * @since 1.6
+ *
  */
-public interface RederivableNode extends Node {
-
+public enum MessageKind {
+    
     /**
-     * The method is called by the {@link ReteContainer} to re-derive tuples after the normal messages have been 
-     * delivered and consumed. The re-derivation process may trigger the creation and delivery of further messages 
-     * and further re-derivation rounds.  
+     * Inserts and delete-insert monotone change pairs
      */
-    public void rederiveOne();
+    MONOTONE,
+    
+    /**
+     * Deletes
+     */
+    ANTI_MONOTONE
     
 }

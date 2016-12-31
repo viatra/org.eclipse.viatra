@@ -349,7 +349,7 @@ public class Network {
                 }
             }
         } else
-            headContainer.messageConsumptionSingleThreaded();
+            headContainer.deliverMessagesSingleThreaded();
     }
 
     /**
@@ -375,7 +375,7 @@ public class Network {
                 action.run();
             }
         } else {
-            headContainer.messageConsumptionSingleThreaded();
+            headContainer.deliverMessagesSingleThreaded();
             action.run();
         }
 

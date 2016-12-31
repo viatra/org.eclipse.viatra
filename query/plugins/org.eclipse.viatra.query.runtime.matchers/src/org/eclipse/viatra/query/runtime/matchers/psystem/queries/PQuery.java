@@ -151,4 +151,5 @@ public interface PQuery extends PQueryHeader {
      * @return a non-null, but possibly empty list of query specification objects;
      */
     List<Object> publishedAs();
+    
 }

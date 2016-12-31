@@ -93,6 +93,9 @@ public abstract class DualInputNode extends StandardNode /* implements Pullable 
 	public void connectToIndexers(IterableIndexer primarySlot, Indexer secondarySlot) {
 		this.primarySlot = primarySlot;
         this.secondarySlot = secondarySlot;
+        
+        reteContainer.getTracker().registerDependency(primarySlot, this);
+        reteContainer.getTracker().registerDependency(secondarySlot, this);
   
         // beta nodes are stateless, no need to synch contents to children...
         // ...unless in a weird corner case of recursive queries, when there are already receivers attached

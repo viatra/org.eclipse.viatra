@@ -50,6 +50,12 @@ public interface IQueryBackend {
 	public IQueryResultProvider peekExistingResultProvider(PQuery query);
 
 	/**
+	 * Propagates all pending updates in this query backend. The implementation of this method is optional, and it 
+	 * can be ignored entirely if the backend does not use mailbox-based communication.   
+	 */
+	public void flushUpdates();
+	
+	/**
 	 * Disposes the query backend.
 	 */
 	public abstract void dispose();

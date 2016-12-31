@@ -11,9 +11,11 @@
 
 package org.eclipse.viatra.query.runtime.base.itc.alg.counting;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.DFSPathFinder;
@@ -57,7 +59,7 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             this.gds = new IBiDirectionalWrapper<V>(gds);
         }
 
-        observers = new ArrayList<ITcObserver<V>>();
+        observers = new LinkedList<ITcObserver<V>>();
         tc = new CountingTcRelation<V>(true);
         dtc = new CountingTcRelation<V>(false);
 
@@ -137,7 +139,7 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
         // 3. d(tc(x,y)) :- lv(x,z) & d(tc(z,y))
         CountingTcRelation<V> newTuples = new CountingTcRelation<V>(false);
         CountingTcRelation<V> tmp = null;
-        List<V> nodes = null;
+        Map<V, Integer> nodes = null;
         newTuples.union(dtc);
 
         while (!newTuples.isEmpty()) {
@@ -148,17 +150,13 @@ public class CountingAlg<V> implements IGraphObserver<V>, ITcDataSource<V> {
             newTuples.clear();
 
             for (V tS : dtc.getTupleStarts()) {
-
                 nodes = gds.getSourceNodes(tS);
-                if (nodes != null) {
-
-                    for (V nS : nodes) {
-
+                for (Entry<V, Integer> entry : nodes.entrySet()) {
+                    for (int i = 0; i < entry.getValue(); i++) {
+                        V nS = entry.getKey();
                         tupEnds = dtc.getTupleEnds(tS);
                         if (tupEnds != null) {
-
                             for (V tT : tupEnds) {
-
                                 if (!nS.equals(tT)) {
                                     if (tc.addTuple(nS, tT, dCount)) {
                                         newTuples.addTuple(nS, tT, dCount);
