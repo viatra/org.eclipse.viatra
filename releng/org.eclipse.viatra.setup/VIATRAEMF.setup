@@ -492,6 +492,38 @@
         name="1.3-maintenance"/>
     <stream
         name="1.4-maintenance"/>
+    <stream
+        name="1.5-maintenance">
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          name="Generate query code">
+        <setupTask
+            xsi:type="projects:ProjectsBuildTask"
+            id="viatra.query.prequerygen.15"
+            onlyNewProjects="true"
+            refresh="true"/>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateRetevisQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateTransformationViewsQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateUMLIntegrationQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateViewersRuntimeQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+      </setupTask>
+    </stream>
     <description>Viatra query and transformation framework</description>
   </project>
   <project name="tooling"
@@ -544,7 +576,14 @@
       <setupTask
           xsi:type="setup:VariableTask"
           name="viatra.hudson.ci.build.job.name"
-          value="viatra-maintenance-1.3"/>
+          value="viatra-maintenance-1.4"/>
+    </stream>
+    <stream
+        name="1.5-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="viatra.hudson.ci.build.job.name"
+          value="viatra-maintenance-1.5"/>
     </stream>
     <description>Installs the development environment of VIATRA into the host instance</description>
   </project>
@@ -584,6 +623,8 @@
         name="1.3-maintenance"/>
     <stream
         name="1.4-maintenance"/>
+    <stream
+        name="1.5-maintenance"/>
     <description>Design space exploration for VIATRA</description>
   </project>
   <project name="cep"
@@ -668,6 +709,30 @@
         name="1.3-maintenance"/>
     <stream
         name="1.4-maintenance"/>
+    <stream
+        name="1.5-maintenance">
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          name="Generate query code">
+        <setupTask
+            xsi:type="projects:ProjectsBuildTask"
+            id="viatra.cep.prequerygen.15"
+            onlyNewProjects="true"
+            refresh="true">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateCEPCoreQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+        <setupTask
+            xsi:type="launching:LaunchTask"
+            launcher="org.eclipse.viatra.setup/GenerateCEPMetamodelQueryCode.mwe2.launch">
+          <description></description>
+        </setupTask>
+      </setupTask>
+    </stream>
     <description>Complex Event Processing for VIATRA</description>
   </project>
   <project name="xcore"
@@ -738,6 +803,8 @@
         name="1.3-maintenance"/>
     <stream
         name="1.4-maintenance"/>
+    <stream
+        name="1.5-maintenance"/>
     <description></description>
   </project>
   <project name="mylyn"
@@ -819,7 +886,7 @@
       <setupTask
           xsi:type="setup:VariableTask"
           name="bugzilla.version"
-          value="1.5"/>
+          value="1.6"/>
       <setupTask
           xsi:type="mylyn:MylynBuildsTask"
           serverURL="https://hudson.eclipse.org/viatra"
@@ -878,6 +945,21 @@
             name="viatra-maintenance-1.4"/>
       </setupTask>
     </stream>
+    <stream
+        name="1.5-maintenance">
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="bugzilla.version"
+          value="1.5"/>
+      <setupTask
+          xsi:type="mylyn:MylynBuildsTask"
+          serverURL="https://hudson.eclipse.org/viatra"
+          userID="${bugzilla.id}"
+          password="${eclipse.user.password}">
+        <buildPlan
+            name="viatra-maintenance-1.5"/>
+      </setupTask>
+    </stream>
   </project>
   <stream name="master">
     <setupTask
@@ -914,9 +996,9 @@
     <setupTask
         xsi:type="pde:APIBaselineTask"
         name="viatraBaseline"
-        version="1.4"
-        location="${installation.location}/api/v1.4/"
-        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.1.4.0.zip"/>
+        version="1.5"
+        location="${installation.location}/api/v1.5/"
+        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.1.5.0.zip"/>
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
@@ -1165,6 +1247,75 @@
         version="1.3"
         location="${installation.location}/api/v1.3/"
         remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.1.3.0.zip"/>
+  </stream>
+  <stream name="1.5-maintenance">
+    <setupTask
+        xsi:type="setup.workingsets:WorkingSetTask">
+      <workingSet
+          name="VIATRA Releng"
+          id="">
+        <predicate
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:OrPredicate">
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/releng/.*"/>
+            <operand
+                xsi:type="predicates:LocationPredicate"
+                pattern=".*/setup/.*"/>
+            <operand
+                xsi:type="predicates:NaturePredicate"
+                nature="org.eclipse.pde.FeatureNature"/>
+          </operand>
+          <operand
+              xsi:type="predicates:RepositoryPredicate"
+              project="org.eclipse.viatra.setup"/>
+        </predicate>
+      </workingSet>
+      <description>The dynamic working sets for ${scope.project.label}</description>
+    </setupTask>
+    <setupTask
+        xsi:type="pde:APIBaselineTask"
+        name="viatraBaseline"
+        version="1.4"
+        location="${installation.location}/api/v1.4/"
+        remoteURI="http://download.eclipse.org/viatra/updates/zipped/org.eclipse.viatra.update.1.4.0.zip"/>
+    <setupTask
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.xtext.sdk.feature.group"
+          versionRange="[2.10.0,2.11.0)"/>
+      <requirement
+          name="de.itemis.xtext.antlr.feature.feature.group"/>
+      <repository
+          url="http://download.itemis.com/updates/releases"/>
+      <repository
+          url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
+      <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask"
+        predecessor="//@setupTasks.12"
+        successor="//@projects[name='cep']/@setupTasks.2 //@projects[name='cep']/@setupTasks.4"
+        targetName="">
+      <targlet
+          name="Xtext"
+          activeRepositoryList="">
+        <requirement
+            name="de.itemis.xtext.antlr.feature.feature.group"/>
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.10.0,2.11.0)"/>
+        <repositoryList
+            name="">
+          <repository
+              url="http://download.itemis.com/updates/releases"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
   </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
