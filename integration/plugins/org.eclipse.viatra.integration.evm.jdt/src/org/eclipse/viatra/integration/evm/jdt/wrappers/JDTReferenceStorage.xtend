@@ -29,7 +29,7 @@ class JDTReferenceStorage implements ReferenceStorage{
 			throw new IllegalArgumentException("Reference collection cannot be null")
 		}
 		try {
-			val qualifiedNameReferencesField = referenceCollection.class.getDeclaredField("qualifiedNameReferences")
+			val qualifiedNameReferencesField = ReferenceCollection.getDeclaredField("qualifiedNameReferences")
 			qualifiedNameReferencesField.accessible = true
 			val referredQualifiedNames = qualifiedNameReferencesField.get(referenceCollection) as char[][][]
 			this.qualifiedNameReferences = referredQualifiedNames.map[fqn | JDTInternalQualifiedName::create(fqn)].toSet
@@ -38,7 +38,7 @@ class JDTReferenceStorage implements ReferenceStorage{
 			this.qualifiedNameReferences = #{}
 		}
 		try {
-			val simpleNameReferencesField = referenceCollection.class.getDeclaredField("simpleNameReferences")
+			val simpleNameReferencesField = ReferenceCollection.getDeclaredField("simpleNameReferences")
 			simpleNameReferencesField.accessible = true
 			val referredSimpleNames = simpleNameReferencesField.get(referenceCollection) as char[][]
 			this.simpleNameReferences = referredSimpleNames.map[name | new String(name)].toSet
@@ -48,7 +48,7 @@ class JDTReferenceStorage implements ReferenceStorage{
 		}
 		
 		try {
-			val rootReferencesField = referenceCollection.class.getDeclaredField("rootReferences")
+			val rootReferencesField = ReferenceCollection.getDeclaredField("rootReferences")
 			rootReferencesField.accessible = true
 			val referredRootNames = rootReferencesField.get(referenceCollection) as char[][]
 			this.rootReferences = referredRootNames.map[name | new String(name)].toSet
