@@ -12,15 +12,19 @@ package org.eclipse.viatra.query.tooling.cpp.localsearch.planner
 
 import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Iterables
+import java.util.Collections
 import java.util.List
 import java.util.Map
 import java.util.Set
 import java.util.concurrent.atomic.AtomicInteger
 import org.apache.log4j.Logger
-import org.eclipse.viatra.query.runtime.emf.EMFQueryMetaContext
 import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHints
 import org.eclipse.viatra.query.runtime.localsearch.planner.LocalSearchRuntimeBasedStrategy
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryBackendContext
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody
+import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.ParameterReference
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter
@@ -29,12 +33,11 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.DefaultFlatte
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PQueryFlattener
 import org.eclipse.viatra.query.tooling.cpp.localsearch.model.PatternDescriptor
-import org.eclipse.viatra.query.runtime.matchers.psystem.analysis.QueryAnalyzer
 
 /**
  * @author Robert Doczi
  */
-class PlanCompiler {
+class PlanCompiler implements IQueryBackendContext {
 	
 	val PQueryFlattener flattener
 	val PBodyNormalizer normalizer
@@ -42,6 +45,7 @@ class PlanCompiler {
 	val Set<MatcherReference> dependencies
 	val MatchingFrameRegistry frameRegistry
     val LocalSearchHints configuration
+    val runtimeContext = new CppQueryRuntimeContext
 	
 	extension val	LocalSearchRuntimeBasedStrategy strategy	
 	extension val POperationCompiler compiler
@@ -118,8 +122,7 @@ class PlanCompiler {
 												 .toSet
 
 			val acceptor = new CPPSearchOperationAcceptor(counter.getAndIncrement, frameRegistry)
-			val metaContext = EMFQueryMetaContext.INSTANCE
-			pBody.plan(Logger::getLogger(PlanCompiler), boundPVariables, metaContext, null, new QueryAnalyzer(metaContext), configuration)
+			pBody.plan(boundPVariables, this, configuration)
 				 .compile(pBody, boundPVariables, acceptor)
 			dependencies += acceptor.dependencies
 			return acceptor.patternBodyStub
@@ -127,4 +130,35 @@ class PlanCompiler {
 		
 		return patternBodyStubs
 	}
+
+    override getHintProvider() {
+        new IQueryBackendHintProvider(){
+            
+            override getQueryEvaluationHint(PQuery query) {
+                return new QueryEvaluationHint(Collections.emptyMap(), null)
+            }
+            
+        }
+    }   
+
+    override getLogger() {
+        Logger::getLogger(PlanCompiler)
+    }
+
+    override getQueryAnalyzer() {
+        new QueryAnalyzer(runtimeContext.metaContext)
+    }
+
+    override getQueryCacheContext() {
+        null
+    }
+
+    override getResultProviderAccess() {
+        null
+    }
+
+    override getRuntimeContext() {
+        runtimeContext
+    }
+
 }
