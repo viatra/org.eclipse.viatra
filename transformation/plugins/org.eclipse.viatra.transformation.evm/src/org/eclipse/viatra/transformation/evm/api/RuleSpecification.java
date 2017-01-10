@@ -13,8 +13,8 @@ package org.eclipse.viatra.transformation.evm.api;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.viatra.transformation.evm.api.event.AbstractRuleInstanceBuilder;
 import org.eclipse.viatra.transformation.evm.api.event.ActivationState;
@@ -56,7 +56,7 @@ public class RuleSpecification<EventAtom> {
         this.sourceSpecification = sourceSpecification;
         this.lifeCycle = ActivationLifeCycle.copyOf(lifeCycle);
         this.jobs = HashMultimap.create();
-        Set<ActivationState> states = new TreeSet<ActivationState>();
+        Set<ActivationState> states = new HashSet<ActivationState>();
         if (jobs != null && !jobs.isEmpty()) {
             for (Job<EventAtom> job : jobs) {
                 ActivationState state = job.getActivationState();
