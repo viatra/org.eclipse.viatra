@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016, IncQuery Labs Ltd. and Ericsson AB
+ * Copyright (c) 2015-2016, IncQuery Labs Ltd., Ericsson AB, CEA LIST
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,23 +33,25 @@ class BuildNotifierCompilationParticipant extends CompilationParticipant {
 	}
 	
 	override buildFinished(IJavaProject project) {
-	    if(realm.active){
-    		val iproject = project.project
-    		val lastState = JavaModelManager.getJavaModelManager().getLastBuiltState(iproject, new NullProgressMonitor()) as State
-    		if(lastState != null) {
-    			val buildState = new JDTBuildState(lastState)
-    			val affectedFiles = buildState.getAffectedCompilationUnitsInProject
-    			debug('''Affected files are «FOR file : affectedFiles SEPARATOR ", "»«file»«ENDFOR»''')
-    			val compilationUnits = affectedFiles.map[fqn | project.findElement(new Path(fqn.toString))]
-    			debug('''Affected compilation units are «FOR cu : compilationUnits SEPARATOR ", "»«cu»«ENDFOR»''')
-    			
-    			compilationUnits.forEach[ compilationUnit |
-    				realm.notifySources(compilationUnit)
-    			]
-    		}
-    		
-    		debug('''Build of «project.elementName» has finished''')
-	    }
+		if (realm.active) {
+			val iproject = project.project
+			val lastState = JavaModelManager.getJavaModelManager().getLastBuiltState(iproject,
+				new NullProgressMonitor()) as State
+			if (lastState != null) {
+				val buildState = new JDTBuildState(lastState)
+				val affectedFiles = buildState.getAffectedCompilationUnitsInProject
+				debug('''Affected files are «FOR file : affectedFiles SEPARATOR ", "»«file»«ENDFOR»''')
+				val compilationUnits = affectedFiles.map[fqn|project.findElement(new Path(fqn.toString))]
+				debug('''Affected compilation units are «FOR cu : compilationUnits SEPARATOR ", "»«cu»«ENDFOR»''')
+
+				compilationUnits.forEach [ compilationUnit |
+					realm.notifySources(compilationUnit)
+				]
+				realm.buildFinishedOnProject(project)
+			}
+
+			debug('''Build of «project.elementName» has finished''')
+		}
 	}
 	
 	override aboutToBuild(IJavaProject project) {

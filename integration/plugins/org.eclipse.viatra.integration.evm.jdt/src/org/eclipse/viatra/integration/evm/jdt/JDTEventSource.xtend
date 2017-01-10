@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016, IncQuery Labs Ltd. and Ericsson AB
+ * Copyright (c) 2015-2016, IncQuery Labs Ltd., Ericsson AB, CEA LIST
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,26 +11,30 @@
 package org.eclipse.viatra.integration.evm.jdt
 
 import com.google.common.collect.Sets
-import org.eclipse.viatra.integration.evm.jdt.transactions.JDTTransactionalEventType
 import java.util.Set
-import org.eclipse.viatra.transformation.evm.api.event.EventFilter
-import org.eclipse.viatra.transformation.evm.api.event.EventHandler
-import org.eclipse.viatra.transformation.evm.api.event.EventRealm
-import org.eclipse.viatra.transformation.evm.api.event.EventSource
-import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification
+import org.apache.log4j.Logger
 import org.eclipse.jdt.core.IJavaElement
 import org.eclipse.jdt.core.IJavaElementDelta
 import org.eclipse.jdt.core.IJavaProject
 import org.eclipse.jdt.core.IPackageFragment
 import org.eclipse.jdt.core.IPackageFragmentRoot
+import org.eclipse.viatra.integration.evm.jdt.transactions.JDTTransactionalEventType
+import org.eclipse.viatra.transformation.evm.api.event.EventFilter
+import org.eclipse.viatra.transformation.evm.api.event.EventHandler
+import org.eclipse.viatra.transformation.evm.api.event.EventRealm
+import org.eclipse.viatra.transformation.evm.api.event.EventSource
+import org.eclipse.viatra.transformation.evm.api.event.EventSourceSpecification
 
 import static extension org.eclipse.viatra.integration.evm.jdt.util.JDTEventTypeDecoder.toEventType
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum
 
 class JDTEventSource implements EventSource<JDTEventAtom> {
 	JDTEventSourceSpecification spec
 	JDTRealm realm
 	Set<EventHandler<JDTEventAtom>> handlers = Sets::newHashSet()
 	
+	extension protected val Logger logger = Logger.getLogger(this.class)
+    
 	new(JDTEventSourceSpecification spec, JDTRealm realm) {
 		this.spec = spec
 		this.realm = realm
@@ -66,7 +70,7 @@ class JDTEventSource implements EventSource<JDTEventAtom> {
 	def createEventsForAppearedPackageContents(IJavaElementDelta delta) {
 		val eventType = delta.kind.toEventType
 		val element = delta.element
-		if(eventType == JDTEventType.APPEARED && element instanceof IPackageFragment){
+		if(eventType == CRUDEventTypeEnum.CREATED && element instanceof IPackageFragment){
 			handlers.forEach[ handler |
 				(element as IPackageFragment).compilationUnits.forEach[
 					handler.sendExistingEvents(it)
@@ -78,6 +82,7 @@ class JDTEventSource implements EventSource<JDTEventAtom> {
 	def void createReferenceRefreshEvent(IJavaElement javaElement) {
 		val eventAtom = new JDTEventAtom(javaElement)
 		val JDTEvent event = new JDTEvent(JDTTransactionalEventType::UPDATE_DEPENDENCY, eventAtom)
+		debug('''Created event with type UPDATE_DEPENDENCY for «eventAtom»''')
 		handlers.forEach[
 			handleEvent(event)
 		]
@@ -105,7 +110,7 @@ class JDTEventSource implements EventSource<JDTEventAtom> {
 	
 	def sendExistingEvents(EventHandler<JDTEventAtom> handler, IJavaElement element) {
 		val eventAtom = new JDTEventAtom(element)
-		val JDTEvent createEvent = new JDTEvent(JDTEventType::APPEARED, eventAtom)
+		val JDTEvent createEvent = new JDTEvent(CRUDEventTypeEnum.CREATED, eventAtom)
 		handler.handleEvent(createEvent)
 	}
 	

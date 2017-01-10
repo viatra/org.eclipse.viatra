@@ -22,6 +22,7 @@ import org.eclipse.viatra.transformation.evm.specific.lifecycle.UnmodifiableActi
 	  * <li>Committed -Delete-> Deleted</li>
 	  * <li>Committed -Fire-> Fired</li>
 	  * <li>Fired -Modify-> Modified</li>
+	  * <li>Fired -Commit-> Committed</li>
 	  * <li>Fired -Delete-> Deleted</li>
 	  * <li>Fired -Update dependency-> Dependency updated</li>
 	  * <li>Dependency updated -Fire-> Fired</li>
@@ -42,6 +43,7 @@ class JDTTransactionalLifecycle extends UnmodifiableActivationLifeCycle {
 		internalAddStateTransition(JDTTransactionalActivationState.COMMITTED, JDTTransactionalEventType.DELETE, JDTTransactionalActivationState.DELETED);
 		internalAddStateTransition(JDTTransactionalActivationState.COMMITTED, RuleEngineEventType.FIRE, JDTTransactionalActivationState.FIRED);
 		internalAddStateTransition(JDTTransactionalActivationState.FIRED, JDTTransactionalEventType.MODIFY, JDTTransactionalActivationState.MODIFIED);
+		internalAddStateTransition(JDTTransactionalActivationState.FIRED, JDTTransactionalEventType.COMMIT, JDTTransactionalActivationState.COMMITTED);
 		internalAddStateTransition(JDTTransactionalActivationState.FIRED, JDTTransactionalEventType.DELETE, JDTTransactionalActivationState.DELETED);
 		internalAddStateTransition(JDTTransactionalActivationState.FIRED, JDTTransactionalEventType.UPDATE_DEPENDENCY, JDTTransactionalActivationState.DEPENDENCY_UPDATED);
 		internalAddStateTransition(JDTTransactionalActivationState.DEPENDENCY_UPDATED, RuleEngineEventType.FIRE, JDTTransactionalActivationState.FIRED);

@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.viatra.integration.evm.jdt.util
 
-import org.eclipse.viatra.integration.evm.jdt.JDTEventType
 import org.eclipse.jdt.core.IJavaElementDelta
+import org.eclipse.viatra.transformation.evm.specific.crud.CRUDEventTypeEnum
 
 class JDTEventTypeDecoder {
 	public static def toEventType(int value) {
 		switch value {
 			case IJavaElementDelta.ADDED:
-				return JDTEventType.APPEARED
+				return CRUDEventTypeEnum.CREATED
 			case IJavaElementDelta.REMOVED:
-				return JDTEventType.DISAPPEARED
+				return CRUDEventTypeEnum.DELETED
 			case IJavaElementDelta.CHANGED:
-				return JDTEventType.UPDATED
+				return CRUDEventTypeEnum.UPDATED
 			default :
 				throw new IllegalArgumentException("Event type value is invalid.")
 				

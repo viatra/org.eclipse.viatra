@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2016, IncQuery Labs Ltd. and Ericsson AB
+ * Copyright (c) 2015-2016, IncQuery Labs Ltd., Ericsson AB, CEA LIST
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.viatra.transformation.evm.api.event.EventHandler
 import org.eclipse.jdt.core.IJavaElement
 
 class JDTTransactionalEventSource extends JDTEventSource implements EventSource<JDTEventAtom> {
-	extension val Logger logger = Logger.getLogger(this.class)
 	
 	new(JDTEventSourceSpecification spec, JDTRealm realm) {
 		super(spec, realm)
@@ -45,7 +44,6 @@ class JDTTransactionalEventSource extends JDTEventSource implements EventSource<
 				val event = new JDTEvent(eventTpye, eventAtom)
 				debug('''Created event with type «eventTpye» for «eventAtom.delta»''')
 				handlers.forEach[handleEvent(event)]
-				Thread.sleep(200)
 			]
 		} else {
 			createEventsForAppearedPackageContents(delta)
