@@ -187,13 +187,14 @@ public class SolutionTrajectory {
 
         // cast for the ".process(match)" method.
         BatchTransformationRule<?, ?> tr = transformationRules.get(index);
+        Object activationCode = activationCodes.get(index);
 
         ViatraQueryMatcher<?> matcher = tr.getPrecondition().getMatcher(engine);
 
         boolean isActivationFound = false;
         for (final IPatternMatch match : matcher.getAllMatches()) {
             Object matchHash = stateCoder.createActivationCode(match);
-            if (matchHash.equals(activationCodes.get(index))) {
+            if (matchHash.equals(activationCode)) {
                 @SuppressWarnings("rawtypes")
                 final IMatchProcessor action = tr.getAction();
 
@@ -215,7 +216,8 @@ public class SolutionTrajectory {
         }
         if (!isActivationFound) {
             throw new UncheckedExecutionException(
-                    "Activation was not found for transformation! Possible cause: wrong model, bad state coder.", null);
+                    "Activation was not found for transformation! Possible cause: wrong model, bad state coder. index: "
+                            + index + " Activation code: " + activationCode, null);
         }
     }
 
@@ -284,12 +286,15 @@ public class SolutionTrajectory {
 
     public String toPrettyString() {
         StringBuilder sb = new StringBuilder();
+        sb.append("Fitness: ");
+        sb.append(fitness.toString());
+        sb.append(" | Trajectory (");
+        sb.append(activationCodes.size());
+        sb.append("): ");
         for (Object object : activationCodes) {
             sb.append(object.toString());
             sb.append(" | ");
         }
-        sb.append("| Fitness: ");
-        sb.append(fitness.toString());
         return sb.toString();
     }
     

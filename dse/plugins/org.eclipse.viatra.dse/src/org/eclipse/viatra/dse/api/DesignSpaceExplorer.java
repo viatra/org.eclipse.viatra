@@ -462,7 +462,7 @@ public class DesignSpaceExplorer {
             sb.append(solution.getStateCode());
             sb.append("\n");
             for (SolutionTrajectory trajectory : solution.getTrajectories()) {
-                sb.append("  Trajectory: ");
+                sb.append("  ");
                 sb.append(trajectory.toPrettyString());
                 sb.append("\n");
             }
