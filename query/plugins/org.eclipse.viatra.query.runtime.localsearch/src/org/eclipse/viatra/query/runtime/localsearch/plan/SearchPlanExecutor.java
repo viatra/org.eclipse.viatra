@@ -13,10 +13,9 @@
  package org.eclipse.viatra.query.runtime.localsearch.plan;
 
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
@@ -32,7 +31,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * A search plan executor is used to execute {@link SearchPlan} instances.
@@ -42,9 +40,9 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     private int currentOperation;
     SearchPlan plan;
     private List<ISearchOperation> operations;
-    private ISearchContext context;
-    private Set<ILocalSearchAdapter> adapters = Sets.newHashSet();
-	private BiMap<Integer,PVariable> variableMapping;
+    private final ISearchContext context;
+    private final List<ILocalSearchAdapter> adapters = Lists.newArrayListWithCapacity(1);
+	private final BiMap<Integer,PVariable> variableMapping;
 
 	public BiMap<Integer, PVariable> getVariableMapping() {
 		return variableMapping;
@@ -60,17 +58,20 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     
     @Override
     public void addAdapters(List<ILocalSearchAdapter> adapters) {
-        this.adapters.addAll(adapters);
-        for (ILocalSearchAdapter adapter : adapters) {
-            adapter.adapterRegistered(this);
+        for(ILocalSearchAdapter adapter : adapters){
+            if (!this.adapters.contains(adapter)){
+                this.adapters.add(adapter);
+                adapter.adapterRegistered(this);
+            }
         }
     }
 
     @Override
     public void removeAdapters(List<ILocalSearchAdapter> adapters) {
-        this.adapters.removeAll(adapters);
         for (ILocalSearchAdapter adapter : adapters) {
-            adapter.adapterUnregistered(this);
+            if (this.adapters.remove(adapter)){
+                adapter.adapterUnregistered(this);
+            }
         }
     }
 
@@ -88,8 +89,10 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     	if (currentOperation == -1) {
             currentOperation++;
             ISearchOperation operation = operations.get(currentOperation);
-            for (ILocalSearchAdapter adapter : adapters) {
-            	adapter.executorInitializing(this,frame);
+            if (!adapters.isEmpty()){
+                for (ILocalSearchAdapter adapter : adapters) {
+                    adapter.executorInitializing(this,frame);
+                }
             }
 			operation.onInitialize(frame, context);
         } else if (currentOperation == operations.size()) {
@@ -131,9 +134,11 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
         }
         boolean matchFound = currentOperation > upperBound;
         if( matchFound ){
-        	for (ILocalSearchAdapter adapter : adapters) {
-				adapter.matchFound(this, frame);
-			}
+            if (!adapters.isEmpty()){
+                for (ILocalSearchAdapter adapter : adapters) {
+                    adapter.matchFound(this, frame);
+                }
+            }
         }
 		return matchFound;
     }
@@ -149,14 +154,18 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     }
     
     private void operationExecuted(MatchingFrame frame) {
-        for (ILocalSearchAdapter adapter : adapters) {
-            adapter.operationExecuted(this, frame);
+        if (!adapters.isEmpty()){
+            for (ILocalSearchAdapter adapter : adapters) {
+                adapter.operationExecuted(this, frame);
+            }
         }
     }
     
     private void operationSelected(MatchingFrame frame) {
-        for (ILocalSearchAdapter adapter : adapters) {
-            adapter.operationSelected(this, frame);
+        if (!adapters.isEmpty()){
+            for (ILocalSearchAdapter adapter : adapters) {
+                adapter.operationSelected(this, frame);
+            }
         }
     }
 
@@ -166,17 +175,17 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
 
     @Override
     public List<ILocalSearchAdapter> getAdapters() {
-        return new ArrayList<>(this.adapters);
+        return Collections.<ILocalSearchAdapter>unmodifiableList(this.adapters);
     }
 
     @Override
     public void addAdapter(ILocalSearchAdapter adapter) {
-        addAdapters(Lists.newArrayList(adapter));
+        addAdapters(Collections.singletonList(adapter));
     }
 
     @Override
     public void removeAdapter(ILocalSearchAdapter adapter) {
-        removeAdapters(Lists.newArrayList(adapter));
+        removeAdapters(Collections.singletonList(adapter));
     }
 
     @Override
