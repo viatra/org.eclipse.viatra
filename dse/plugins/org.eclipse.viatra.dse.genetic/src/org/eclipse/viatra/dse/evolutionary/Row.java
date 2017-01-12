@@ -11,7 +11,7 @@ package org.eclipse.viatra.dse.evolutionary;
 
 import java.util.HashMap;
 
-public class Row extends HashMap<String, String>{
+public class Row extends HashMap<String, String> {
 
     public void add(String key, String value) {
         put(key, value);
@@ -31,6 +31,10 @@ public class Row extends HashMap<String, String>{
 
     public void add(String key, double value) {
         put(key, Double.toString(value));
+    }
+
+    public void add(String key, boolean value) {
+        put(key, Boolean.toString(value));
     }
 
     public String getDefaultIfNullValueAsString(String key) {
@@ -55,6 +59,10 @@ public class Row extends HashMap<String, String>{
 
     public double getValueAsDouble(String key) {
         return Double.parseDouble(get(key));
+    }
+
+    public boolean getValueAsBoolean(String key) {
+        return Boolean.parseBoolean(get(key));
     }
 
 }

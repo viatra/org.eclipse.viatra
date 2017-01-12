@@ -18,21 +18,21 @@ public class DseCsvConstants {
     public static final String runId = "RunId";
     public static final String iteration = "Iteration";
     public static final String runTime = "RunTime[ms]";
-    public static final String length = "Length";
-    public static final String fitness = "Fitness";
-    public static final String trajectory = "Trajectory";
     public static final String rank = "Rank";
     public static final String survive = "Survive";
+    public static final String length = "Length";
+    public static final String trajectory = "Trajectory";
+    public static final String valid = "Valid";
 
     public static final List<String> resultConstants = Arrays.asList(
             configId,
             runId,
             iteration,
             runTime,
-            length,
-            fitness,
-            trajectory,
             rank,
-            survive
+            survive,
+            length,
+            trajectory,
+            valid
             );
 }

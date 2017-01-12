@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.evolutionary.interfaces.IEvolutionaryStrategyAdapter;
+import org.eclipse.viatra.dse.objectives.IObjective;
 import org.eclipse.viatra.dse.objectives.TrajectoryFitness;
 
 import com.google.common.base.Stopwatch;
@@ -25,7 +26,7 @@ public class EvolutionaryStrategyLogAdapter implements IEvolutionaryStrategyAdap
 
     public EvolutionaryStrategyLogAdapter() {
         csv = new CsvFile();
-        csv.columnNamesInOrder = DseCsvConstants.resultConstants;
+        csv.columnNamesInOrder.addAll(DseCsvConstants.resultConstants);
         csv.fileName = "evolutionary-log";
     }
 
@@ -34,9 +35,14 @@ public class EvolutionaryStrategyLogAdapter implements IEvolutionaryStrategyAdap
     private int iteration = 1;
     private Stopwatch stopwatch;
     private Row row = new Row();
+    private ThreadContext context;
 
     @Override
     public void init(ThreadContext context) {
+        this.context = context;
+        for (IObjective objective : context.getObjectives()) {
+            csv.columnNamesInOrder.add(objective.getName());
+        }
         csv.createCsvFile();
         stopwatch = Stopwatch.createStarted();
     }
@@ -49,7 +55,7 @@ public class EvolutionaryStrategyLogAdapter implements IEvolutionaryStrategyAdap
         stopwatch.stop();
         long elapsedTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
-        for (TrajectoryFitness trajectoryFitness : currentPopulation) {
+        for (TrajectoryFitness trajectoryFitness : survivedPopulation) {
 
             row.add(DseCsvConstants.configId, configId);
             row.add(DseCsvConstants.runId, runId);
@@ -57,11 +63,15 @@ public class EvolutionaryStrategyLogAdapter implements IEvolutionaryStrategyAdap
             row.add(DseCsvConstants.runTime, elapsedTime);
             row.add(DseCsvConstants.length, trajectoryFitness.trajectory.length);
 
-            row.add(DseCsvConstants.fitness, "\"" + trajectoryFitness.fitness + "\"");
             row.add(DseCsvConstants.trajectory, "\"" + Arrays.toString(trajectoryFitness.trajectory) + "\"");
 
-            row.add(DseCsvConstants.rank, trajectoryFitness.rank - 1);
+            row.add(DseCsvConstants.rank, trajectoryFitness.rank);
             row.add(DseCsvConstants.survive, trajectoryFitness.survive);
+
+            row.add(DseCsvConstants.valid, trajectoryFitness.fitness.isSatisifiesHardObjectives());
+            for (IObjective objective : context.getObjectives()) {
+                row.add(objective.getName(), trajectoryFitness.fitness.get(objective.getName()));
+            }
 
             csv.appendRow(row);
         }
