@@ -10,6 +10,7 @@
 package org.eclipse.viatra.dse.statecoding.simple;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.eclipse.viatra.dse.util.ValueComparableEObjectStringMap;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.base.api.FeatureListener;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFBaseIndexWrapper;
@@ -46,7 +48,6 @@ public class SimpleStateCoder implements IStateCoder {
     private Set<EClass> classes;
     private Set<EStructuralFeature> features;
     private NavigationHelper navigationHelper;
-    private MetaModelElements metaModelElements;
 
     private Map<EClass, Map<EObject, String>> objectCodes;
     private int maxDepth;
@@ -55,7 +56,6 @@ public class SimpleStateCoder implements IStateCoder {
     private Set<EObject> deletedClasses = new HashSet<EObject>();
 
     public SimpleStateCoder(MetaModelElements metaModelElements) {
-        this.metaModelElements = metaModelElements;
         this.maxDepth = 1;
 
         classes = metaModelElements.classes;
@@ -70,7 +70,7 @@ public class SimpleStateCoder implements IStateCoder {
             ViatraQueryEngine queryEngine = ViatraQueryEngine.on(scope);
             EMFBaseIndexWrapper baseIndex = (EMFBaseIndexWrapper) queryEngine.getBaseIndex();
             navigationHelper = baseIndex.getNavigationHelper();
-            navigationHelper.registerObservedTypes(classes, null, features);
+            navigationHelper.registerObservedTypes(classes, null, features, IndexingLevel.FULL);
         } catch (ViatraQueryException e) {
             throw new DSEException(e);
         }
@@ -119,9 +119,8 @@ public class SimpleStateCoder implements IStateCoder {
     private String createObjectCodeWithDepth(EObject eObject, int depth) {
 
         StringBuilder sb = new StringBuilder();
-        EClass eClass = eObject.eClass();
 
-        Set<EAttribute> attributes = metaModelElements.attributesOfClass.get(eClass);
+        Collection<EAttribute> attributes = eObject.eClass().getEAllAttributes();
         for (EAttribute eAttribute : attributes) {
             Object value = eObject.eGet(eAttribute);
             sb.append(value);
@@ -132,7 +131,7 @@ public class SimpleStateCoder implements IStateCoder {
         }
         if (depth > 0) {
             sb.append('-');
-            Set<EReference> eReferences = metaModelElements.referencesOfClass.get(eClass);
+            Collection<EReference> eReferences = eObject.eClass().getEAllReferences();
             for (EReference eReference : eReferences) {
                 Object value = eObject.eGet(eReference);
                 if (value == null) {
@@ -233,9 +232,7 @@ public class SimpleStateCoder implements IStateCoder {
         for (int i = 0; (param = match.get(i)) != null; i++) {
             EObject eObject = (EObject) param;
 
-            EClass eClass = eObject.eClass();
-
-            Set<EAttribute> attributes = metaModelElements.attributesOfClass.get(eClass);
+            Collection<EAttribute> attributes = eObject.eClass().getEAllAttributes();
             for (EAttribute eAttribute : attributes) {
                 Object value = eObject.eGet(eAttribute);
                 sb.append(value);
