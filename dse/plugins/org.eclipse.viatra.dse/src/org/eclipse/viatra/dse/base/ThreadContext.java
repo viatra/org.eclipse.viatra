@@ -37,14 +37,13 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.transformation.evm.api.Activation;
-import org.eclipse.viatra.transformation.evm.api.Agenda;
-import org.eclipse.viatra.transformation.evm.api.RuleBase;
 import org.eclipse.viatra.transformation.evm.api.RuleEngine;
 import org.eclipse.viatra.transformation.evm.api.RuleSpecification;
 import org.eclipse.viatra.transformation.evm.api.event.EventFilter;
+import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictResolver;
 import org.eclipse.viatra.transformation.evm.api.resolver.ConflictSet;
-import org.eclipse.viatra.transformation.evm.specific.event.ViatraQueryEventRealm;
+import org.eclipse.viatra.transformation.evm.specific.RuleEngines;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
 /**
@@ -69,8 +68,9 @@ public class ThreadContext implements IDseStrategyContext{
     private Fitness lastFitness;
     private ObjectiveComparatorHelper objectiveComparatorHelper;
     private IStateCoder stateCoder;
-    private SingletonSetConflictResolver conflictResolver;
-    private DseActivationNotificationListener dseActivationNotificationListener;
+    private DseConflictResolver dseConflictResolver;
+    private DseConflictSet dseConflictSet;
+    private ActivationCodesConflictSet activationCodesConflictSet;
 
     /**
      * This value is true after the {@link ThreadContext} has been initialized in it's own thread.
@@ -102,12 +102,12 @@ public class ThreadContext implements IDseStrategyContext{
         
     }
     
-    public SingletonSetConflictResolver getConflictResolver() {
-        return conflictResolver;
+    public DseConflictResolver getConflictResolver() {
+        return dseConflictResolver;
     }
 
     public ConflictSet getConflictSet() {
-        return conflictResolver.conflictSet;
+        return dseConflictSet;
     }
 
     /**
@@ -156,23 +156,22 @@ public class ThreadContext implements IDseStrategyContext{
             final EMFScope scope = new EMFScope(model);
             queryEngine = ViatraQueryEngine.on(scope);
             
-            ConflictResolver conflictResolverToWrap = globalContext.getConflictResolver();
-            conflictResolver = new SingletonSetConflictResolver(conflictResolverToWrap);
 
             stateCoder = getGlobalContext().getStateCoderFactory().createStateCoder();
             stateCoder.init(model);
             stateCoder.createStateCode();
 
-            Agenda agenda = new Agenda(conflictResolver);
-            dseActivationNotificationListener = new DseActivationNotificationListener(agenda, stateCoder);
-            agenda.setActivationListener(dseActivationNotificationListener);
-            RuleBase ruleBase = new DseEvmRuleBase(ViatraQueryEventRealm.create(queryEngine), agenda);
-            ruleEngine = RuleEngine.create(ruleBase);
-            conflictResolver.setRuleEngine(ruleEngine);
+            ConflictResolver activationOrderingCconflictResolver = globalContext.getConflictResolver();
+            dseConflictResolver = new DseConflictResolver(activationOrderingCconflictResolver, stateCoder);
+            
+            ruleEngine = RuleEngines.createViatraQueryRuleEngine(queryEngine);
+            ruleEngine.setConflictResolver(dseConflictResolver);
             for (BatchTransformationRule<?, ?> tr : globalContext.getTransformations()) {
                 ruleEngine.addRule(tr.getRuleSpecification(), (EventFilter<IPatternMatch>) tr.getFilter());
             }
-            dseActivationNotificationListener.updateActivationCodes();
+            dseConflictSet = dseConflictResolver.getLastCreatedConflictSet();
+            activationCodesConflictSet = dseConflictSet.getActivationCodesConflictSet();
+            activationCodesConflictSet.updateActivationCodes();
 
 
         } catch (ViatraQueryException e) {
@@ -506,15 +505,15 @@ public class ThreadContext implements IDseStrategyContext{
         return designSpaceManager.isCurentStateInTrajectory();
     }
 
-    public DseActivationNotificationListener getDseActivationNotificationListener() {
-        return dseActivationNotificationListener;
+    public ActivationCodesConflictSet getActivationCodesConflictSet() {
+        return activationCodesConflictSet;
     }
     
-    public void changeConflictResolver(ConflictResolver conflictResolver) {
-        this.conflictResolver.changeConflictResolver(conflictResolver);
+    public void changeActivationOrdering(ChangeableConflictSet activationOrderingConflictSet) {
+        this.dseConflictSet.changeActivationOrderingConflictSet(activationOrderingConflictSet);
     }
 
-    public void changeConflictResolverBack() {
-        this.conflictResolver.changeConflictResolverBack();
+    public void changeActivationOrderingBack() {
+        this.dseConflictSet.changeActivationOrderingConflictSetBack();
     }
 }

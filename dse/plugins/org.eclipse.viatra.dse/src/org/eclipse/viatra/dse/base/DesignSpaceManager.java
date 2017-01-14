@@ -58,7 +58,7 @@ public class DesignSpaceManager {
     private Map<BatchTransformationRule<?, ?>, String> activationFitnessProcessorNames;
     private ThreadContext context;
 
-    private DseActivationNotificationListener dseActivationNotificationListener;
+    private ActivationCodesConflictSet activationCodes;
     private ChangeableConflictSet conflictSet;
     
     private Random random = new Random();
@@ -70,13 +70,13 @@ public class DesignSpaceManager {
         designSpace = context.getGlobalContext().getDesignSpace();
         domain = context.getEditingDomain();
 
-        conflictSet = context.getConflictResolver().conflictSet;
+        conflictSet = context.getConflictResolver().getLastCreatedConflictSet();
 
         stateCoder = context.getStateCoder();
         Object initialStateId = stateCoder.createStateCode();
         designSpace.addState(null, null, initialStateId);
 
-        dseActivationNotificationListener = context.getDseActivationNotificationListener();
+        activationCodes = context.getActivationCodesConflictSet();
 
         this.trajectory = new TrajectoryInfo(initialStateId);
 
@@ -147,7 +147,7 @@ public class DesignSpaceManager {
         domain.getCommandStack().execute(rc);
 
         Object newStateId = stateCoder.createStateCode();
-        dseActivationNotificationListener.updateActivationCodes();
+        activationCodes.updateActivationCodes();
 
         if (designSpace != null) {
             isNewState = !designSpace.isTraversed(newStateId);
@@ -265,7 +265,7 @@ public class DesignSpaceManager {
             if (createStateCode) {
                 newStateId = stateCoder.createStateCode();
             }
-            dseActivationNotificationListener.updateActivationCodes();
+            activationCodes.updateActivationCodes();
 
             trajectory.addStep(activationId, rule, newStateId, measureCosts);
 
@@ -280,11 +280,11 @@ public class DesignSpaceManager {
     }
 
     public Object getTransitionByActivation(Activation<?> activation) {
-        return dseActivationNotificationListener.getActivationId(activation);
+        return activationCodes.getActivationId(activation);
     }
 
     public Activation<?> getActivationById(Object activationId) {
-        return dseActivationNotificationListener.getActivation(activationId);
+        return activationCodes.getActivation(activationId);
     }
     
     public BatchTransformationRule<?, ?> getRuleByActivation(Activation<?> activation) {
@@ -308,7 +308,7 @@ public class DesignSpaceManager {
     }
 
     public Collection<Object> getTransitionsFromCurrentState() {
-        return dseActivationNotificationListener.activationIds.values();
+        return activationCodes.getCurrentActivationCodes();
     }
 
     public Collection<Object> getUntraversedTransitionsFromCurrentState() {
@@ -319,7 +319,7 @@ public class DesignSpaceManager {
         Collection<Object> traversedIds = designSpace.getActivationIds(currentState);
 
         List<Object> untraversedTransitions = new ArrayList<>();
-        for (Object activationId : dseActivationNotificationListener.activationIds.values()) {
+        for (Object activationId : activationCodes.getCurrentActivationCodes()) {
             if (!traversedIds.contains(activationId)) {
                 untraversedTransitions.add(activationId);
             }
@@ -335,7 +335,7 @@ public class DesignSpaceManager {
         }
 
         domain.getCommandStack().undo();
-        dseActivationNotificationListener.updateActivationCodes();
+        activationCodes.updateActivationCodes();
         
         Object lastActivationId = trajectory.getLastActivationId();
 
@@ -356,7 +356,7 @@ public class DesignSpaceManager {
         while(trajectory.canStepBack()) {
             domain.getCommandStack().undo();
             trajectory.backtrack();
-            dseActivationNotificationListener.updateActivationCodes();
+            activationCodes.updateActivationCodes();
         }
         logger.debug("Backtracked to root.");
     }

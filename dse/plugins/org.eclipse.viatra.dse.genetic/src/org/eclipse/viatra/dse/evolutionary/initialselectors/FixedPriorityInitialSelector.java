@@ -52,6 +52,12 @@ public class FixedPriorityInitialSelector implements IInitialPopulationSelector 
         priorities = new HashMap<BatchTransformationRule<?,?>, Integer>();
     }
 
+    /**
+     * 
+     * @param rule
+     * @param priority Lower is better.
+     * @return
+     */
     public FixedPriorityInitialSelector withRulePriority(BatchTransformationRule<?,?> rule, int priority) {
         priorities.put(rule, priority);
         return this;
@@ -96,7 +102,7 @@ public class FixedPriorityInitialSelector implements IInitialPopulationSelector 
         for (Entry<BatchTransformationRule<?, ?>, Integer> entry : priorities.entrySet()) {
             fixedPriorityResolver.setPriority(entry.getKey().getRuleSpecification(), entry.getValue());
         }
-        context.changeConflictResolver(fixedPriorityResolver);
+        context.changeActivationOrdering(fixedPriorityResolver.createConflictSet());
 
         objective.init(context);
         
@@ -125,7 +131,7 @@ public class FixedPriorityInitialSelector implements IInitialPopulationSelector 
 
             dsm.executeRandomActivationId();
         }
-
+        context.changeActivationOrderingBack();
         logger.info("FixedPriorityInitialSelector finished.");
     }
 
