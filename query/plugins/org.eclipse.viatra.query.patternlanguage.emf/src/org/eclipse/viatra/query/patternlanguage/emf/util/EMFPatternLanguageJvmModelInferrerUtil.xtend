@@ -100,7 +100,6 @@ class EMFPatternLanguageJvmModelInferrerUtil {
     def String modelFileQualifiedName(Pattern pattern)
         '''«pattern.packageName».«pattern.modelFileName.toFirstUpper»'''
     
-    
 	/**
 	 * Returns the QuerySpecificationClass name based on the Pattern's name
 	 */

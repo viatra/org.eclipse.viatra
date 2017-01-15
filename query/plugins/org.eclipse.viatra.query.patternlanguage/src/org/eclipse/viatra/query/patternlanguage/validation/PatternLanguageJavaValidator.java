@@ -58,6 +58,7 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableValue;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer;
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
 import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil;
+import org.eclipse.viatra.query.patternlanguage.util.DuplicationChecker;
 import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
 import org.eclipse.viatra.query.patternlanguage.validation.VariableReferenceCount.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PureWhitelistExtensionLoader;
@@ -74,9 +75,7 @@ import org.eclipse.xtext.common.types.util.Primitives.Primitive;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
-import org.eclipse.xtext.resource.IContainer;
 import org.eclipse.xtext.resource.IEObjectDescription;
-import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.impl.LiveShadowedResourceDescriptions;
 import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.util.Strings;
@@ -174,13 +173,13 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     @Inject
     private IQualifiedNameProvider nameProvider;
     @Inject
-    private IContainer.Manager containerManager;
-    @Inject
     private IExpectedPackageNameProvider packageNameProvider;
     @Inject
     private TypeReferences typeReferences;
     @Inject
     private NumberLiterals numberLiterals;
+    @Inject
+    private DuplicationChecker duplicateChecker;
     
     /**
      * Checks if an aggregate {@link VariableReference} is used only in the right context, that is, in an
@@ -336,9 +335,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                         PatternLanguagePackage.Literals.PATTERN_CALL__TRANSITIVE,
                         IssueCodes.TRANSITIVE_PATTERNCALL_NOT_APPLICABLE);
             }
-
         }
-
     }
 
     @Check
@@ -348,47 +345,17 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
             // TODO: more precise calculation is needed for duplicate patterns
             // (number and type of pattern parameters)
             for (Pattern pattern : model.getPatterns()) {
-                QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
-                final Iterable<IEObjectDescription> shadowingPatternDescriptions = resourceDescriptions
-                        .getExportedObjects(PatternLanguagePackage.Literals.PATTERN, fullyQualifiedName, true);
-                for (IEObjectDescription shadowingPatternDescription : shadowingPatternDescriptions) {
-                    EObject shadowingPattern = shadowingPatternDescription.getEObjectOrProxy();
-                    if (shadowingPattern != pattern) {
-                        URI resourceUri = pattern.eResource().getURI();
-                        URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment(); // not using
-                                                                                                           // shadowingPattern
-                                                                                                           // because it
-                                                                                                           // might be
-                                                                                                           // proxy
-                        IResourceDescription resourceDescription = resourceDescriptions
-                                .getResourceDescription(resourceUri);
-                        IResourceDescription otherResourceDescription = resourceDescriptions
-                                .getResourceDescription(otherResourceUri);
-                        List<IContainer> visible = containerManager.getVisibleContainers(resourceDescription,
-                                resourceDescriptions);
-                        List<IContainer> visibleFromOther = containerManager
-                                .getVisibleContainers(otherResourceDescription, resourceDescriptions);
-                        if (Iterables.any(visible, contains(otherResourceDescription))
-                                || Iterables.any(visibleFromOther, contains(resourceDescription))) {
-                            String otherResourcePath = Objects.firstNonNull(otherResourceUri.toPlatformString(true),
-                                    otherResourceUri.toFileString());
-                            error(String.format(DUPLICATE_PATTERN_DEFINITION_MESSAGE, fullyQualifiedName,
-                                    otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
-                                    IssueCodes.DUPLICATE_PATTERN_DEFINITION);
-                        }
-                    }
+                for (IEObjectDescription shadowingPatternDescription : duplicateChecker.findDuplicates(pattern)) {
+                    QualifiedName fullyQualifiedName = nameProvider.getFullyQualifiedName(pattern);
+                    URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment(); 
+                    String otherResourcePath = Objects.firstNonNull(otherResourceUri.toPlatformString(true),
+                            otherResourceUri.toFileString());
+                    error(String.format(DUPLICATE_PATTERN_DEFINITION_MESSAGE, fullyQualifiedName,
+                            otherResourcePath), pattern, PatternLanguagePackage.Literals.PATTERN__NAME,
+                            IssueCodes.DUPLICATE_PATTERN_DEFINITION);
                 }
             }
         }
-    }
-
-    private static Predicate<IContainer> contains(final IResourceDescription resourceDescription) {
-        return new Predicate<IContainer>() {
-            @Override
-            public boolean apply(IContainer container) {
-                return Iterables.contains(container.getResourceDescriptions(), resourceDescription);
-            }
-        };
     }
 
     @Check

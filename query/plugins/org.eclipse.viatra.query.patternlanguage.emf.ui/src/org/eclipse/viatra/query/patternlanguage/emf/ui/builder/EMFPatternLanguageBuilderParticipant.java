@@ -277,19 +277,4 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
         }
     }
 
-    @Override
-    protected boolean shouldGenerate(Resource resource, IBuildContext context) {
-        try {
-            Iterable<Pair<IStorage, IProject>> storages = storage2UriMapper.getStorages(resource.getURI());
-            for (Pair<IStorage, IProject> pair : storages) {
-                if (pair.getFirst() instanceof IFile && pair.getSecond().equals(context.getBuiltProject())) {
-                    IFile file = (IFile) pair.getFirst();
-                    return file.findMaxProblemSeverity("org.eclipse.xtext.ui.check", true, IResource.DEPTH_INFINITE) != IMarker.SEVERITY_ERROR;
-                }
-            }
-            return false;
-        } catch (CoreException exc) {
-            throw new WrappedException(exc);
-        }
-    }
 }
