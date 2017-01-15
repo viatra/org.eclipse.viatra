@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage;
@@ -271,6 +272,9 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
                 ProjectGenerationHelper.initializePluginProject(targetProject, dependencies,
                         fragment.getAdditionalBinIncludes());
             } else {
+                if (!targetProject.isOpen()) {
+                    targetProject.open(new NullProgressMonitor());
+                }
                 ProjectGenerationHelper.ensureBundleDependencies(targetProject, dependencies);
             }
             return targetProject;

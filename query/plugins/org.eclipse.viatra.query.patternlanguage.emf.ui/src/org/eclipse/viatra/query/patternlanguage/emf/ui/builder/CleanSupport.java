@@ -239,6 +239,9 @@ public class CleanSupport {
                     fragment.cleanUp(pattern, fsa);
                     ensureSupport.removeAllExtension(targetProject, fragment.removeExtension(pattern));
                     // removing all fragment-related markers
+                    if (!targetProject.isOpen()) {
+                        targetProject.open(new NullProgressMonitor());
+                    }
                     targetProject.deleteMarkers(IErrorFeedback.FRAGMENT_ERROR_TYPE, true, IResource.DEPTH_INFINITE);
                 }
             } catch (Exception e) {
