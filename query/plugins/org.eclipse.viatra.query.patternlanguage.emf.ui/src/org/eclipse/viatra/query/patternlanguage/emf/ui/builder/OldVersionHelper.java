@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -107,7 +108,27 @@ public class OldVersionHelper {
         }
     }
 
+    /**
+     * Finds the version of the pattern stored by the previous run of the VIATRA builder.
+     * </p>
+     * 
+     * <strong>Note</strong>: This code should be called only when the proxyURI represents something in an existing
+     * project. It is not a problem is the proxyURI is unresolvable, but the project part has to exist.
+     */
     public Pattern findPattern(URI proxyURI) throws JavaModelException {
+        return findOldVersion(proxyURI);
+    }
+    
+    /**
+     * Finds the version of the object stored by the previous run of the VIATRA builder.
+     * </p>
+     * 
+     * <strong>Note</strong>: This code should be called only when the proxyURI represents something in an existing
+     * project. It is not a problem is the proxyURI is unresolvable, but the project part has to exist.
+     * @since 1.6
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends EObject> T findOldVersion(URI proxyURI) throws JavaModelException {
         final IPath absolutePath = new Path(proxyURI.toPlatformString(true));
         
         if (absolutePath.segmentCount() == 0) {
@@ -120,7 +141,7 @@ public class OldVersionHelper {
         if (copiedURI != null) {
             Resource res = set.getResource(copiedURI, true);
             String fragment = proxyURI.fragment();
-            return (Pattern) res.getEObject(fragment);
+            return (T) res.getEObject(fragment);
         }
         return null;
     }

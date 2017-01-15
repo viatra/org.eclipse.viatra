@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
@@ -67,6 +68,12 @@ public class CleanSupport {
 
     @Inject
     private Logger logger;
+    
+    @Inject
+    OldVersionHelper oldVersion;
+    
+    @Inject
+    EMFPatternLanguageJvmModelInferrerUtil inferrerUtil; 
 
 
     /**
@@ -165,11 +172,11 @@ public class CleanSupport {
             URI uri = delta.getUri();
             if (uri.isPlatformResource() && context.getBuiltProject().getName().equals(uri.segment(1))) {
                 if (delta.getOld() != null) {
-                    OldVersionHelper oldVersion = injector.getInstance(OldVersionHelper.class);
-                    for (IEObjectDescription desc : delta.getOld().getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN)) {
+                    Iterable<IEObjectDescription> oldExportedPatterns = delta.getOld().getExportedObjectsByType(PatternLanguagePackage.Literals.PATTERN);
+                    for (IEObjectDescription desc : oldExportedPatterns) {
                         Pattern pattern = (Pattern) desc.getEObjectOrProxy();
                         if (pattern.eIsProxy()) {
-                            pattern = oldVersion.findPattern(((InternalEObject)pattern).eProxyURI());
+                            pattern = oldVersion.findOldVersion(((InternalEObject)pattern).eProxyURI());
                         }
                         final String fqn = desc.getQualifiedName().toString();
                         if (pattern == null || pattern.eIsProxy()) {
@@ -183,8 +190,10 @@ public class CleanSupport {
                             context.getBuiltProject().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
                             return;
                         }
-                        // clean up code and extensions in the modelProject
-                        executeCleanUpOnModelProject(context.getBuiltProject(), fqn);
+                        // Only clean up extensions in the modelProject if file is removed, otherwise it will be overwritten later
+                        if (delta.getNew() == null) {
+                            executeCleanUpOnModelProject(context.getBuiltProject(), pattern);
+                        }
                         // clean up code and extensions for all fragments
                         executeCleanUpOnFragments(context.getBuiltProject(), pattern);
                     }
@@ -201,11 +210,12 @@ public class CleanSupport {
      * @param pattern
      * @throws CoreException
      */
-    private void executeCleanUpOnModelProject(IProject modelProject, String fqn) throws CoreException {
-        // only the extension id and point name is needed for removal
-        String extensionId = fqn;
-        ensureSupport
+    private void executeCleanUpOnModelProject(IProject modelProject, Pattern pattern) throws CoreException {
+        if (pattern != null) {
+            String extensionId = inferrerUtil.modelFileQualifiedName(pattern);
+            ensureSupport
                 .removeExtension(modelProject, Pair.of(extensionId, IExtensions.QUERY_SPECIFICATION_EXTENSION_POINT_ID));
+        }
     }
 
     /**
