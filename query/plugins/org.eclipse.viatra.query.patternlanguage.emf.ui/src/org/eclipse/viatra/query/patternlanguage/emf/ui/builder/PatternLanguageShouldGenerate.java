@@ -22,8 +22,14 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.IShouldGenerate;
 import org.eclipse.xtext.ui.generator.EclipseBasedShouldGenerate;
 import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.util.UriUtil;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 import org.eclipse.xtext.workspace.IProjectConfig;
+import org.eclipse.xtext.workspace.ISourceFolder;
 import org.eclipse.xtext.workspace.ProjectConfigAdapter;
 
 /**
@@ -57,12 +63,31 @@ public class PatternLanguageShouldGenerate implements IShouldGenerate {
             if (adapter != null) {
                 IProjectConfig projectConfig = adapter.getProjectConfig();
                 if (Objects.equals(member.getProject().getName(), projectConfig.getName())) {
-                    return projectConfig.findSourceFolderContaining(uri) != null &&
+                    return isInSourceFolder(projectConfig, uri) &&
                             member.findMaxProblemSeverity(null, true, IResource.DEPTH_INFINITE) != IMarker.SEVERITY_ERROR;
                 }
             }
         }
         return false;
+    }
+    
+    private boolean isInSourceFolder(IProjectConfig config, final URI uri) {
+        if (config.findSourceFolderContaining(uri) == null) {
+            // XXX: If classpath entry has a trailing slash, an empty segment is added to the URI
+            return Iterables.any(config.getSourceFolders(), new Predicate<ISourceFolder>() {
+
+                @Override
+                public boolean apply(ISourceFolder folder) {
+                    URI folderUri = folder.getPath();
+                    if (folderUri.segment(folderUri.segmentCount() - 1).isEmpty()) {
+                        return UriUtil.isPrefixOf(folderUri.trimSegments(1), uri);
+                    }
+                    return false;
+                }
+            });
+        } else {
+            return true;
+        }
     }
 
 }
