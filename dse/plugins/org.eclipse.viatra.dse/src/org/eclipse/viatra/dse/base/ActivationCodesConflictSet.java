@@ -175,9 +175,10 @@ public class ActivationCodesConflictSet implements ChangeableConflictSet {
 
     }
 
-    protected void reinitWithActivations(Collection<Activation<?>> activations) {
+    protected void reinitWithActivations(ConflictSet nextActivationsConflictSet) {
+        this.nextActivationsConflictSet = nextActivationsConflictSet;
         activationCodes.clear();
-        for (Activation<?> activation : activations) {
+        for (Activation<?> activation : nextActivationsConflictSet.getNextActivations()) {
             Object activationCode = createActivationCode(activation);
             activationCodes.addActivation(activation, activationCode);
         }

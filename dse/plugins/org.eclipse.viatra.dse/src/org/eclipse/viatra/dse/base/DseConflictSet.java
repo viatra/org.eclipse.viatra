@@ -70,7 +70,7 @@ public class DseConflictSet implements ChangeableConflictSet {
         for (Activation<?> activation : activationOrderingConflictSet.getConflictingActivations()) {
             newActivationOrderingConflictSet.addActivation(activation);
         }
-        activationCodesConflictSet.reinitWithActivations(newActivationOrderingConflictSet.getNextActivations());
+        activationCodesConflictSet.reinitWithActivations(newActivationOrderingConflictSet);
         ChangeableConflictSet tmp = activationOrderingConflictSet;
         activationOrderingConflictSet = newActivationOrderingConflictSet;
         prevActivationOrderingConflictSet = tmp;

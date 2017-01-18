@@ -87,6 +87,7 @@ public class SolutionTrajectory {
      *             If the VIATRA Query fails to initialize.
      */
     public void setModel(Notifier model) throws ViatraQueryException {
+        editingDomain = null;
         EMFScope scope = new EMFScope(model);
         this.engine = ViatraQueryEngine.on(scope);
         this.model = model;
