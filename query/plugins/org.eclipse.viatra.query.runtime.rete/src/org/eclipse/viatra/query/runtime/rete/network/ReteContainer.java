@@ -14,14 +14,17 @@ package org.eclipse.viatra.query.runtime.rete.network;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
 import org.eclipse.viatra.query.runtime.rete.boundary.InputConnector;
 import org.eclipse.viatra.query.runtime.rete.remote.Address;
 import org.eclipse.viatra.query.runtime.rete.single.SingleInputNode;
+import org.eclipse.viatra.query.runtime.rete.single.UniquenessEnforcerNode;
 import org.eclipse.viatra.query.runtime.rete.tuple.Clearable;
 
 /**
@@ -39,7 +42,7 @@ public final class ReteContainer {
     protected LinkedList<Clearable> clearables;
     protected Map<Long, Node> nodesById;
     protected long nextId = 0;
-    
+
     protected ConnectionFactory connectionFactory;
     protected NodeProvisioner nodeProvisioner;
 
@@ -50,6 +53,8 @@ public final class ReteContainer {
                                // ONLY with messageQueue locked!
     protected Map<ReteContainer, Long> terminationCriteria = null;
 
+    protected Set<RederivableNode> rederivables;
+
     /**
      * @param threaded
      *            false if operating in a single-threaded environment
@@ -57,14 +62,15 @@ public final class ReteContainer {
     public ReteContainer(Network network, boolean threaded) {
         super();
         this.network = network;
-        nodesById = CollectionsFactory.getMap();//new HashMap<Long, Node>();
+        rederivables = new LinkedHashSet<RederivableNode>();
+        nodesById = CollectionsFactory.getMap();// new HashMap<Long, Node>();
         clearables = new LinkedList<Clearable>();
-        
+
         connectionFactory = new ConnectionFactory(this);
         nodeProvisioner = new NodeProvisioner(this);
 
         if (threaded) {
-            terminationCriteria = CollectionsFactory.getMap();//new HashMap<ReteContainer, Long>();
+            terminationCriteria = CollectionsFactory.getMap();// new HashMap<ReteContainer, Long>();
             consumerThread = new Thread("Rete thread of " + ReteContainer.super.toString()) {
                 @Override
                 public void run() {
@@ -72,6 +78,39 @@ public final class ReteContainer {
                 }
             };
             consumerThread.start();
+        }
+    }
+
+    /**
+     * Registers the given {@link RederivableNode} as re-derivable.
+     * 
+     * @param node the node
+     * @return true if the node was not in the set of re-derivable ones
+     */
+    public boolean registerRederivable(RederivableNode node) {
+        return this.rederivables.add(node);
+    }
+
+    /**
+     * Unregisters the given {@link RederivableNode} from the set of re-derivable ones. 
+     * 
+     * @param node the node
+     * @return true if the node has already been registered as re-derivable
+     */
+    public boolean unregisterRederivable(UniquenessEnforcerNode node) {
+        return this.rederivables.remove(node);
+    }
+
+    /**
+     * Returns the first {@link RederivableNode} node.
+     * 
+     * @return the first node
+     */
+    public RederivableNode getFirstRederivable() {
+        if (this.rederivables.isEmpty()) {
+            return null;
+        } else {
+            return this.rederivables.iterator().next();
         }
     }
 
@@ -138,7 +177,8 @@ public final class ReteContainer {
      * @param desynchronise
      *            indicates whether the current contents of the supplier should be subtracted from the receiver
      */
-    public void disconnectRemoteSupplier(Address<? extends Supplier> supplier, Receiver receiver, boolean desynchronise) {
+    public void disconnectRemoteSupplier(Address<? extends Supplier> supplier, Receiver receiver,
+            boolean desynchronise) {
         Supplier parent = nodeProvisioner.asSupplier(supplier);
         if (desynchronise)
             disconnectAndDesynchronize(parent, receiver);
@@ -324,7 +364,8 @@ public final class ReteContainer {
      *
      * @return the value of the container's clock at the time when the message was accepted into the local message queue
      */
-    public void sendUpdateToRemoteAddress(Address<? extends Receiver> address, Direction direction, Tuple updateElement) {
+    public void sendUpdateToRemoteAddress(Address<? extends Receiver> address, Direction direction,
+            Tuple updateElement) {
         ReteContainer otherContainer = address.getContainer();
         long otherClock = otherContainer.sendUpdateToLocalAddress(address, direction, updateElement);
         // Long criterion = terminationCriteria.get(otherContainer);
@@ -410,18 +451,18 @@ public final class ReteContainer {
                                                      // queue is locked for
                                                      // precise clocking of
                                                      // termination point!
-                    if (!externalMessageQueue.isEmpty()) { // if external queue
-                                                           // is non-empty,
-                                                           // retrieve the next
-                                                           // message instantly
-                        {
-                            message = takeExternalMessage();
-                        }
-                    } else { // if external queue is found empty (and this is
-                             // the first time in a row)
-                        incrementedClock = ++clock; // local termination point
-                        // synchronized(clock){incrementedClock = ++clock;}
-                    }
+                if (!externalMessageQueue.isEmpty()) { // if external queue
+                                                       // is non-empty,
+                                                       // retrieve the next
+                                                       // message instantly
+                {
+                message = takeExternalMessage();
+                }
+                } else { // if external queue is found empty (and this is
+                         // the first time in a row)
+                incrementedClock = ++clock; // local termination point
+                // synchronized(clock){incrementedClock = ++clock;}
+                }
                 }
 
             if (message == null) // both queues were empty
@@ -455,10 +496,16 @@ public final class ReteContainer {
      * Iteratively consumes update messages until there are none left. Requires single-threaded behaviour.
      */
     void messageConsumptionSingleThreaded() {
-        while (!internalMessageQueue.isEmpty()) // deliver messages on and on and on....
-        {
-            UpdateMessage message = internalMessageQueue.removeFirst();
-            message.receiver.update(message.direction, message.updateElement);
+        while (!internalMessageQueue.isEmpty() || getFirstRederivable() != null) {
+            while (!internalMessageQueue.isEmpty()) {
+                UpdateMessage message = internalMessageQueue.removeFirst();
+                message.receiver.update(message.direction, message.updateElement);
+            }
+
+            RederivableNode node = getFirstRederivable();
+            if (node != null) {
+                node.rederiveOne();
+            }
         }
     }
 
@@ -499,18 +546,17 @@ public final class ReteContainer {
     }
 
     /**
-     * Returns an addressed node at this container. 
+     * Returns an addressed node at this container.
      * 
      * @pre: address.container == this, e.g. address MUST be local
-     * @throws IllegalArgumentException if address is non-local
+     * @throws IllegalArgumentException
+     *             if address is non-local
      */
     @SuppressWarnings("unchecked")
     public <N extends Node> N resolveLocal(Address<N> address) {
-    	if (this != address.getContainer())
-    		throw new IllegalArgumentException(
-    				String.format("Address %s non-local at container %s", 
-    						address, this));
-    	
+        if (this != address.getContainer())
+            throw new IllegalArgumentException(String.format("Address %s non-local at container %s", address, this));
+
         N cached = address.getNodeCache();
         if (cached != null)
             return cached;
@@ -565,14 +611,14 @@ public final class ReteContainer {
     }
 
     public NodeFactory getNodeFactory() {
-		return network.getNodeFactory();
-	}
+        return network.getNodeFactory();
+    }
 
-	public ConnectionFactory getConnectionFactory() {
-		return connectionFactory;
-	}
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
 
-	public NodeProvisioner getProvisioner() {
+    public NodeProvisioner getProvisioner() {
         return nodeProvisioner;
     }
 
@@ -603,8 +649,8 @@ public final class ReteContainer {
         return nodesById.values();
     }
 
-	public InputConnector getInputConnectionFactory() {
-		return network.getInputConnector();
-	}
+    public InputConnector getInputConnectionFactory() {
+        return network.getInputConnector();
+    }
 
 }

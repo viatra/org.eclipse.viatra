@@ -35,8 +35,8 @@ public class DefaultProductionNode extends UniquenessEnforcerNode implements Pro
      * @param reteContainer
      * @param posMapping
      */
-    public DefaultProductionNode(ReteContainer reteContainer, Map<String, Integer> posMapping) {
-        super(reteContainer, posMapping.size());
+    public DefaultProductionNode(ReteContainer reteContainer, Map<String, Integer> posMapping, boolean deleteRederiveEvaluation) {
+        super(reteContainer, posMapping.size(), deleteRederiveEvaluation);
         this.posMapping = posMapping;
         // this.projections= new HashMap<TupleMask, Indexer>();
     }

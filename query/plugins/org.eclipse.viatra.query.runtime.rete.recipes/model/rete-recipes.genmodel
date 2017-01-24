@@ -39,6 +39,7 @@
     <genClasses image="false" ecoreClass="recipes.ecore#//AlphaRecipe"/>
     <genClasses image="false" ecoreClass="recipes.ecore#//MultiParentNodeRecipe">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference recipes.ecore#//MultiParentNodeRecipe/parents"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute recipes.ecore#//MultiParentNodeRecipe/deleteRederiveEvaluation"/>
       <genOperations ecoreOperation="recipes.ecore#//MultiParentNodeRecipe/getArity"/>
     </genClasses>
     <genClasses ecoreClass="recipes.ecore#//UniquenessEnforcerRecipe"/>

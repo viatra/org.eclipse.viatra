@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -43,6 +44,7 @@ import org.eclipse.viatra.query.runtime.rete.traceability.CompiledQuery;
 import org.eclipse.viatra.query.runtime.rete.traceability.CompiledSubPlan;
 import org.eclipse.viatra.query.runtime.rete.traceability.PlanningTrace;
 import org.eclipse.viatra.query.runtime.rete.traceability.RecipeTraceInfo;
+import org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions;
 
 /**
  * @author Bergmann Gabor
@@ -171,9 +173,11 @@ public class CompilerHelper {
      */
 	public static CompiledQuery makeQueryTrace(PQuery query,
 			Collection<RecipeTraceInfo> bodyFinalTraces,
-			Collection<ReteNodeRecipe> bodyFinalRecipes) 
+			Collection<ReteNodeRecipe> bodyFinalRecipes, QueryEvaluationHint hint) 
 	{
 		final ProductionRecipe recipe = ReteRecipeCompiler.FACTORY.createProductionRecipe();
+		boolean deleteRederiveEvaluation = ReteHintOptions.deleteRederiveEvaluation.getValueOrDefault(hint);
+		recipe.setDeleteRederiveEvaluation(deleteRederiveEvaluation);
 		recipe.setPattern(query);
 		recipe.setPatternFQN(query.getFullyQualifiedName());
 		recipe.setTraceInfo(recipe.getPatternFQN());

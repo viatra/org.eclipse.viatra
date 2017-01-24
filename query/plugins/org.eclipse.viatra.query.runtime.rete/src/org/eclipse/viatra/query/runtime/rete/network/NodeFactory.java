@@ -25,8 +25,6 @@ import org.eclipse.viatra.query.runtime.rete.aggregation.CountNode;
 import org.eclipse.viatra.query.runtime.rete.aggregation.IAggregatorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputEnumeratorNode;
 import org.eclipse.viatra.query.runtime.rete.boundary.ExternalInputStatelessFilterNode;
-import org.eclipse.viatra.query.runtime.rete.eval.CachedFunctionEvaluatorNode;
-import org.eclipse.viatra.query.runtime.rete.eval.CachedPredicateEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.eval.EvaluatorCore;
 import org.eclipse.viatra.query.runtime.rete.eval.MemorylessEvaluatorNode;
 import org.eclipse.viatra.query.runtime.rete.eval.OutputCachingEvaluatorNode;
@@ -42,7 +40,6 @@ import org.eclipse.viatra.query.runtime.rete.recipes.CountAggregatorRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorBucketRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.DiscriminatorDispatcherRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.EqualityFilterRecipe;
-import org.eclipse.viatra.query.runtime.rete.recipes.EvalRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionDefinition;
 import org.eclipse.viatra.query.runtime.rete.recipes.ExpressionEnforcerRecipe;
 import org.eclipse.viatra.query.runtime.rete.recipes.IndexerRecipe;
@@ -228,11 +225,11 @@ class NodeFactory {
 	}
 
 	private Supplier instantiateNode(ReteContainer reteContainer, ProductionRecipe recipe) {
-		return new DefaultProductionNode(reteContainer, toStringIndexMap(recipe.getMappedIndices()));
+		return new DefaultProductionNode(reteContainer, toStringIndexMap(recipe.getMappedIndices()), recipe.isDeleteRederiveEvaluation());
 	}
 
 	private Supplier instantiateNode(ReteContainer reteContainer, UniquenessEnforcerRecipe recipe) {
-		return new UniquenessEnforcerNode(reteContainer, recipe.getArity());
+		return new UniquenessEnforcerNode(reteContainer, recipe.getArity(), recipe.isDeleteRederiveEvaluation());
 	}
 	private Supplier instantiateNode(ReteContainer reteContainer, ConstantRecipe recipe) {
 		final List<Object> constantValues = recipe.getConstantValues();

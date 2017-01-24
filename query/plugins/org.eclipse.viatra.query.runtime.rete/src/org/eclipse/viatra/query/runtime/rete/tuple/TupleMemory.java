@@ -26,89 +26,167 @@ import org.eclipse.viatra.query.runtime.matchers.util.CollectionsFactory;
  */
 public class TupleMemory implements Clearable, Collection<Tuple> {
     /**
-     * Counts the number of occurences of each pattern. Element is deleted if # of occurences drops to 0.
+     * Counts the number of occurrences of each pattern. Element is deleted if # of occurences drops to 0.
      */
-    protected Map<Tuple, Integer> occurences;
+    protected Map<Tuple, Integer> occurrences;
 
     /**
-	 * 
-	 */
+     * 
+     */
     public TupleMemory() {
         super();
-        occurences = //new HashMap<Tuple, Integer>();
-                CollectionsFactory.getMap();
+        occurrences = CollectionsFactory.getMap();
     }
 
     /**
-     * Adds a pattern occurence to the memory
+     * Returns the number of occurrences of the given tuple.
      * 
-     * @return true if a new pattern is entered
+     * @param ps
+     *            the tuple
+     * @return the number of occurrences
+     */
+    public int get(Tuple ps) {
+        Integer count = occurrences.get(ps);
+        if (count == null) {
+            return 0;
+        } else {
+            return count;
+        }
+    }
+
+    /**
+     * Adds one tuple occurrence to the memory.
+     * 
+     * @param ps
+     *            the tuple
+     * @return true if the tuple was not present before in the memory
      */
     @Override
     public boolean add(Tuple ps) {
-        boolean exists = occurences.containsKey(ps);
-
-        if (exists)
-            occurences.put(ps, occurences.get(ps) + 1);
-        else
-            occurences.put(ps, 1);
-
-        return !exists;
+        return add(ps, 1);
     }
 
     /**
-     * Removes a pattern occurence from the memory
+     * Adds the given number of tuple occurrences to the memory. The count value must be a positive number.
      * 
-     * @return true if this was the the last occurence of pattern
+     * @param ps
+     *            the tuple
+     * @param count
+     *            the number of occurrences
+     * @return true if the tuple was not present before in the memory
+     */
+    public boolean add(Tuple ps, int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("The count value must be positive!");
+        }
+
+        Integer oldCount = occurrences.get(ps);
+
+        if (oldCount != null) {
+            occurrences.put(ps, oldCount + count);
+        } else {
+            occurrences.put(ps, count);
+        }
+
+        return oldCount == null;
+    }
+    
+    /**
+     * Adds one tuple occurrence to the memory if the tuple was already contained in the memory. 
+     * In this case the method returns true. If the tuple is not present in the memory, it will not be added and 
+     * the method returns false.   
+     * 
+     * @param ps the tuple
+     * @return true if the addition was successful, that is, the tuple was already present, false otherwise
+     */
+    public boolean demandAdd(Tuple ps) {
+        return demandAdd(ps, 1);
+    }
+    
+    /**
+     * Adds the given number of tuple occurrences to the memory if the tuple was already contained in the memory. 
+     * In this case the method returns true. If the tuple is not present in the memory, it will not be added and 
+     * the method returns false.   
+     * 
+     * @param ps the tuple
+     * @param count the number of occurrences
+     * @return true if the addition was successful, that is, the tuple was already present, false otherwise
+     */
+    public boolean demandAdd(Tuple ps, int count) {
+        if (count <= 0) {
+            throw new IllegalArgumentException("The count value must be positive!");
+        }
+
+        Integer oldCount = occurrences.get(ps);
+
+        if (oldCount != null) {
+            occurrences.put(ps, oldCount + count);
+        }
+
+        return oldCount != null;
+    }
+
+    /**
+     * Removes one occurrence of the given tuple from the memory
+     * 
+     * @return true if this was the the last occurrence of the tuple
      */
     public boolean remove(Tuple ps) {
-        int rest = occurences.get(ps) - 1;
+        int rest = occurrences.get(ps) - 1;
         boolean empty = rest == 0;
 
-        if (!empty)
-            occurences.put(ps, rest);
-        else
-            occurences.remove(ps);
+        if (!empty) {
+            occurrences.put(ps, rest);
+        } else {
+            occurrences.remove(ps);
+        }
 
         return empty;
     }
 
+    /**
+     * Removes all occurrences of the given tuple from the memory.
+     * 
+     * @param ps
+     *            the tuple to remove
+     */
+    public void clear(Tuple ps) {
+        occurrences.remove(ps);
+    }
+
     @Override
     public void clear() {
-        occurences.clear();
+        occurrences.clear();
 
     }
 
     @Override
     public Iterator<Tuple> iterator() {
-        return occurences.keySet().iterator();
+        return occurrences.keySet().iterator();
     }
 
     @Override
     public boolean addAll(Collection<? extends Tuple> arg0) {
         boolean change = false;
-        for (Tuple ps : arg0)
+        for (Tuple ps : arg0) {
             change |= add(ps);
+        }
         return change;
     }
 
     @Override
-    public boolean contains(Object arg0) {
-        return occurences.containsKey(arg0);
+    public boolean contains(Object arg) {
+        return occurrences.containsKey(arg);
     }
 
     @Override
     public boolean containsAll(Collection<?> arg0) {
-        return occurences.keySet().containsAll(arg0);
-        // for (Object o : arg0)
-        // if (!occurences.containsKey(o))
-        // return false;
-        // return true;
+        return occurrences.keySet().containsAll(arg0);
     }
 
     @Override
     public boolean isEmpty() {
-        return occurences.isEmpty();
+        return occurrences.isEmpty();
     }
 
     @Override
@@ -119,56 +197,35 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
     @Override
     public boolean removeAll(Collection<?> arg0) {
         boolean change = false;
-        for (Object o : arg0)
+        for (Object o : arg0) {
             change |= remove(o);
+        }
         return change;
     }
 
     @Override
     public boolean retainAll(Collection<?> arg0) {
-        return occurences.keySet().retainAll(arg0);
-        // HashSet<Tuple> obsolete = new HashSet<Tuple>();
-        // for (Tuple key : occurences.keySet())
-        // if (!arg0.contains(key))
-        // obsolete.add(key);
-        // for (Tuple key : obsolete)
-        // occurences.remove(key);
-        // return !obsolete.isEmpty();
+        return occurrences.keySet().retainAll(arg0);
     }
 
     @Override
     public int size() {
-        // int sum = 0;
-        // for (Integer count : occurences.values())
-        // sum += count;
-        // return sum;
-        return occurences.size();
+        return occurrences.size();
     }
 
     @Override
     public Object[] toArray() {
-        //return toArray(new Object[0]);
-        return toArray(new Object[occurences.size()]);
+        return toArray(new Object[occurrences.size()]);
     }
 
-    // @SuppressWarnings("unchecked")
     @Override
     public <T> T[] toArray(T[] arg0) {
-        return occurences.keySet().toArray(arg0);
-        // int length = size();
-        // T[] result = (T[]) java.lang.reflect.Array.newInstance(arg0.getClass()
-        // .getComponentType(), length);
-        // int next = 0;
-        // for (Tuple key : occurences.keySet()) {
-        // for (int counter = occurences.get(key); counter > 0; --counter)
-        // result[next++] = (T) key;
-        // }
-        // return result;
+        return occurrences.keySet().toArray(arg0);
     }
 
     @Override
     public String toString() {
-        return "TM" + occurences.keySet();
+        return "TM" + occurrences.keySet();
     }
 
 }

@@ -29,6 +29,9 @@ public class ReteHintOptions {
     public static final QueryHintOption<Boolean> cacheOutputOfEvaluatorsByDefault = 
             hintOption("cacheOutputOfEvaluatorsByDefault", false);
     
+    public static final QueryHintOption<Boolean> deleteRederiveEvaluation = 
+            hintOption("deleteRederiveEvaluation", false);
+    
     // internal helper for conciseness
     private static <T> QueryHintOption<T> hintOption(String hintKeyLocalName, T defaultValue) {
         return new QueryHintOption<T>(ReteHintOptions.class, hintKeyLocalName, defaultValue);
