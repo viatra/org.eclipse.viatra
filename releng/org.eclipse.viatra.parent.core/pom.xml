@@ -25,6 +25,7 @@
 		<module>../../transformation/plugins/org.eclipse.viatra.transformation.runtime.emf</module>
 		<module>../../transformation/features/org.eclipse.viatra.transformation.runtime.emf.feature</module>
 		<module>../../releng/org.eclipse.viatra.target.core</module>
+		<module>../../releng/org.eclipse.viatra.target.all</module>
 		<module>../../releng/org.eclipse.viatra.update.core</module>
 		<module>../../releng/org.eclipse.viatra.parent</module>
 		<module>../../maven/viatra-query-runtime</module>
