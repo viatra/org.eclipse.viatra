@@ -9,7 +9,6 @@
 	<url>http://eclipse.org/viatra</url>
 	<packaging>pom</packaging>
 	<modules>
-		<module>../../releng/org.eclipse.viatra.target.all</module>
 		<module>../../releng/org.eclipse.viatra.target.rcp</module>
 		<module>../../releng/org.eclipse.viatra.update</module>
 		<module>../../releng/org.eclipse.viatra.docs</module>

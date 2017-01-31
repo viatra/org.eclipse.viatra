@@ -18,14 +18,11 @@
 	</modules>
 	<parent>
 		<groupId>org.eclipse.viatra</groupId>
-		<artifactId>org.eclipse.viatra.parent</artifactId>
+		<!-- As a parent version parent.incubation is not used as we do not want to deploy everything to maven repositories, just DSE -->
+		<artifactId>org.eclipse.viatra.parent.core</artifactId>
 		<version>1.5.1-SNAPSHOT</version>
-		<relativePath>../org.eclipse.viatra.parent/pom.xml</relativePath>
+		<relativePath>../org.eclipse.viatra.parent.core/pom.xml</relativePath>
 	</parent>
-	<properties>
-		<viatra.incubation.version>0.15.1-SNAPSHOT</viatra.incubation.version>
-		<core.repository.url>file://${basedir}/../../../releng/org.eclipse.viatra.update.core/target/repository</core.repository.url>
-	</properties>
 	<repositories>
 		<repository>
 			<id>viatra.core</id>
@@ -43,45 +40,4 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	<build>
-	   <plugins>
-	   <plugin>
-                <groupId>org.eclipse.tycho</groupId>
-                <artifactId>target-platform-configuration</artifactId>
-                <version>${tycho.version}</version>
-                <configuration>
-                    <resolver>p2</resolver>
-                    <target>
-                        <artifact>
-                            <groupId>org.eclipse.viatra</groupId>
-                            <artifactId>org.eclipse.viatra.target.core</artifactId>
-                            <version>${viatra.main.version}</version>
-                        </artifact>
-                        <dependency-resolution>
-                        <extraRequirements>
-                            <requirement>
-                                <type>eclipse-plugin</type>
-                                <id>com.google.inject.multibindings</id>
-                                <versionRange>[3.0.0,4.0.0)</versionRange>
-                            </requirement>
-                        </extraRequirements>
-                    </dependency-resolution>
-                    </target>
-                    <ignoreTychoRepositories>true</ignoreTychoRepositories>
-                </configuration>
-            </plugin>
-	   </plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.tycho</groupId>
-					<artifactId>tycho-versions-plugin</artifactId>
-					<version>${tycho.version}</version>
-					<configuration>
-						<properties>viatra.incubation.version</properties>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
 </project>
