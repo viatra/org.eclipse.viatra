@@ -18,9 +18,10 @@
 	</modules>
 	<parent>
 		<groupId>org.eclipse.viatra</groupId>
-		<artifactId>org.eclipse.viatra.parent.incubation</artifactId>
-		<version>0.16.0-SNAPSHOT</version>
-		<relativePath>../org.eclipse.viatra.parent.incubation/pom.xml</relativePath>
+		<!-- As a parent version parent.incubation is not used as we do not want to deploy everything to maven repositories, just DSE -->
+		<artifactId>org.eclipse.viatra.parent.core</artifactId>
+		<version>1.6.0-SNAPSHOT</version>
+		<relativePath>../org.eclipse.viatra.parent.core/pom.xml</relativePath>
 	</parent>
 	<repositories>
 		<repository>
