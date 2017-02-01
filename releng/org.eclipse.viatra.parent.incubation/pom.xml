@@ -85,6 +85,7 @@
                    <artifactId>tycho-versions-plugin</artifactId>
                    <version>${tycho.version}</version>
                    <configuration>
+                     <artifacts>org.eclipse.viatra.parent.incubation,org.eclipse.viatra.parent.dse</artifacts>
                      <properties>viatra.incubation.version</properties>
                    </configuration>
                </plugin>
