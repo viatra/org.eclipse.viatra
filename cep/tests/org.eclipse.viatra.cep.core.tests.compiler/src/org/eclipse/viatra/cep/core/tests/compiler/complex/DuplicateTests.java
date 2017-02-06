@@ -77,7 +77,7 @@ public class DuplicateTests extends ComplexTest {
         Automaton automaton = internalModel.getAutomata().get(0);
 
         Assert.assertEquals(3, automaton.getStates().size());
-        Assert.assertEquals(3, automaton.getInitialState().getOutTransitions().size());
+        Assert.assertEquals(2, automaton.getInitialState().getOutTransitions().size());
 
         int aTransition = 0;
         int bTransition = 0;
@@ -92,7 +92,7 @@ public class DuplicateTests extends ComplexTest {
         }
 
         Assert.assertEquals(1, aTransition);
-        Assert.assertEquals(2, bTransition);
+        Assert.assertEquals(1, bTransition);
 
         Assert.assertTrue(noEpsilonTransitions(automaton));
         Assert.assertTrue(noOrphanTransitions(automaton));

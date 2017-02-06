@@ -14,6 +14,11 @@ import static org.eclipse.viatra.cep.core.tests.compiler.complex.Utils.noEpsilon
 import static org.eclipse.viatra.cep.core.tests.compiler.complex.Utils.noOrphanStates;
 import static org.eclipse.viatra.cep.core.tests.compiler.complex.Utils.noOrphanTransitions;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.viatra.cep.core.compiler.testdata.patterns.CepFactory;
 import org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.A_1_Pattern;
 import org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.A_Pattern;
@@ -32,8 +37,10 @@ import org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.complex.N
 import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton;
 import org.eclipse.viatra.cep.core.metamodels.automaton.NegativeTransition;
+import org.eclipse.viatra.cep.core.metamodels.automaton.Parameter;
 import org.eclipse.viatra.cep.core.metamodels.automaton.State;
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition;
+import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -254,15 +261,18 @@ public class NotTests extends ComplexTest {
         int negTransition = 0;
         State posFollowupState = null;
 
+        String paramNameNegative = null;
+        String paramNamePositive = null;
+        
         for (Transition transition : automaton.getInitialState().getOutTransitions()) {
             if (transition instanceof NegativeTransition) {
                 assertTransitionTypedWith(transition, A_1_Pattern.class);
-                assertParameterizedTransition(transition, "param");
+                paramNameNegative = getSingleParameterName(transition);
                 Assert.assertTrue(transition.getPostState().equals(automaton.getFinalStates().get(0)));
                 negTransition++;
             } else {
                 assertTransitionTypedWith(transition, A_1_Pattern.class);
-                assertParameterizedTransition(transition, "param");
+                paramNamePositive = getSingleParameterName(transition);
                 posTransition++;
                 posFollowupState = transition.getPostState();
             }
@@ -270,18 +280,32 @@ public class NotTests extends ComplexTest {
 
         Assert.assertEquals(1, posTransition);
         Assert.assertEquals(1, negTransition);
+        
+        Assert.assertNotNull(paramNameNegative);
+        Assert.assertTrue(paramNameNegative.equals(paramNamePositive));
 
         Assert.assertEquals(1, posFollowupState.getOutTransitions().size());
 
         Transition finalTransition = posFollowupState.getOutTransitions().get(0);
         Assert.assertTrue(finalTransition instanceof NegativeTransition);
         assertTransitionTypedWith(finalTransition, B_1_Pattern.class);
-        assertParameterizedTransition(finalTransition, "param");
+        String paramNameFinal = getSingleParameterName(finalTransition);
+        Assert.assertTrue(paramNameNegative.equals(paramNameFinal));
         Assert.assertTrue(finalTransition.getPostState().equals(automaton.getFinalStates().get(0)));
 
         Assert.assertTrue(noEpsilonTransitions(automaton));
         Assert.assertTrue(noOrphanTransitions(automaton));
         Assert.assertTrue(noOrphanStates(automaton));
+    }
+
+    private String getSingleParameterName(Transition transition) {
+        Assert.assertTrue(transition instanceof TypedTransition);
+        EList<Parameter> parameters = ((TypedTransition) transition).getParameters();
+        Assert.assertEquals(1, parameters.size());
+        for (Parameter parameter : parameters) {
+            return parameter.getSymbolicName();
+        }
+        throw new IllegalStateException();
     }
 
     @Ignore

@@ -12,24 +12,29 @@
 package org.eclipse.viatra.cep.core.engine.compiler.builders
 
 import com.google.common.base.Preconditions
+import java.util.ArrayList
+import java.util.Collection
 import java.util.List
+import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.viatra.cep.core.engine.compiler.PermutationsHelper
 import org.eclipse.viatra.cep.core.metamodels.automaton.Automaton
 import org.eclipse.viatra.cep.core.metamodels.automaton.AutomatonFactory
 import org.eclipse.viatra.cep.core.metamodels.automaton.NegativeTransition
+import org.eclipse.viatra.cep.core.metamodels.automaton.Parameter
 import org.eclipse.viatra.cep.core.metamodels.automaton.State
 import org.eclipse.viatra.cep.core.metamodels.automaton.Transition
+import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition
 import org.eclipse.viatra.cep.core.metamodels.events.AND
 import org.eclipse.viatra.cep.core.metamodels.events.ComplexEventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.EventPattern
 import org.eclipse.viatra.cep.core.metamodels.events.EventPatternReference
+import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
 import org.eclipse.viatra.cep.core.metamodels.events.FOLLOWS
 import org.eclipse.viatra.cep.core.metamodels.events.NEG
 import org.eclipse.viatra.cep.core.metamodels.events.OR
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceFactory
 import org.eclipse.viatra.cep.core.metamodels.trace.TraceModel
-import org.eclipse.viatra.cep.core.metamodels.events.EventsFactory
-import org.eclipse.viatra.cep.core.metamodels.automaton.TypedTransition
+import org.eclipse.viatra.cep.core.engine.compiler.TransformationBasedCompiler
 
 class ComplexMappingUtils {
 	protected val extension AutomatonFactory automatonFactory = AutomatonFactory.eINSTANCE
@@ -37,10 +42,41 @@ class ComplexMappingUtils {
 	private extension BuilderPrimitives builderPrimitives
 	private TraceModel traceModel
 
+
 	new(TraceModel traceModel) {
 		this.traceModel = traceModel
 		this.builderPrimitives = new BuilderPrimitives(traceModel)
 	}
+
+    private static var relabelingCounter = 0L
+
+    def relabelWithActualParameters(ComplexEventPattern referredEventPattern, Collection<Parameter> actualParameters) {
+        val relabelingUniqueID = relabelingCounter++ 
+        
+        val renamings = newHashMap(actualParameters.map[
+            referredEventPattern.parameterNames.get(position) -> symbolicName
+        ])
+        
+        val results = new ArrayList(referredEventPattern.containedEventPatterns.map[ symbolicPattern |
+            EcoreUtil.copy(symbolicPattern) => [symbolicPattern.eResource.contents += it]
+        ])
+        results.forEach[
+            val renamedList = new ArrayList(parameterSymbolicNames.map[
+                if (it.equalsIgnoreCase(TransformationBasedCompiler.OMITTED_PARAMETER_SYMBOLIC_NAME)) {
+                    it
+                } else {
+                    val renamed = renamings.get(it)
+                    if (renamed == null)
+                        '''«relabelingUniqueID»|«it»'''
+                    else
+                        renamed
+                }
+            ])
+            parameterSymbolicNames.clear
+            parameterSymbolicNames.addAll(renamedList)
+        ]
+        return results
+    }
 
 	/**
 	 * Builds a path of {@link Transition}s and {@link State}s for the referred {@link EventPattern} with a
@@ -76,7 +112,8 @@ class ComplexMappingUtils {
 	}
 
 	public def unfoldFollowsPath(Automaton automaton, ComplexEventPattern eventPattern, TypedTransition transition) {
-		val firstCreatedState = buildFollowsPath(automaton, eventPattern.containedEventPatterns, transition.preState,
+        val relabeledEventReferences = relabelWithActualParameters(eventPattern, transition.parameters)
+		val firstCreatedState = buildFollowsPath(automaton, relabeledEventReferences, transition.preState,
 			transition.postState)
 
 		alignTimewindow(automaton, eventPattern, transition, firstCreatedState)
@@ -87,18 +124,23 @@ class ComplexMappingUtils {
 	 * operator.
 	 */
 	public def buildOrPath(Automaton automaton, ComplexEventPattern eventPattern, State preState, State postState) {
-		val State lastState = createState
-		automaton.states += lastState
+		buildOrPath(automaton, eventPattern.containedEventPatterns, preState, postState)
+	}
+	
+	private def buildOrPath(Automaton automaton, Collection<EventPatternReference> eventPatterns, State preState, State postState) {
+        val State lastState = createState
+        automaton.states += lastState
 
-		for (eventPatternReference : eventPattern.containedEventPatterns) {
-			mapWithMultiplicity(eventPatternReference, automaton, preState, lastState)
-		}
+        for (eventPatternReference : eventPatterns) {
+            mapWithMultiplicity(eventPatternReference, automaton, preState, lastState)
+        }
 
-		createEpsilon(lastState, postState)
+        createEpsilon(lastState, postState)
 	}
 
 	public def unfoldOrPath(Automaton automaton, ComplexEventPattern eventPattern, TypedTransition transition) {
-		buildOrPath(automaton, eventPattern, transition.preState, transition.postState)
+        val relabeledEventReferences = relabelWithActualParameters(eventPattern, transition.parameters)
+		buildOrPath(automaton, relabeledEventReferences, transition.preState, transition.postState)
 		
 		alignTimewindow(automaton, eventPattern, transition)
 	}
@@ -107,15 +149,19 @@ class ComplexMappingUtils {
 	 * Builds a path of {@link Transition}s and {@link State}s for the referred {@link EventPattern} with an
 	 * {@link AND} operator.
 	 */
-	public def buildAndPath(Automaton automaton, ComplexEventPattern eventPattern, State preState, State postState) {
-		for (permutation : new PermutationsHelper<EventPatternReference>().getAll(
-			eventPattern.containedEventPatterns)) {
-			automaton.buildFollowsPath(permutation, preState, postState)
-		}
-	}
+    public def buildAndPath(Automaton automaton, ComplexEventPattern eventPattern, State preState, State postState) {
+        buildAndPath(automaton, eventPattern.containedEventPatterns, preState, postState)
+    }
+    
+    private def buildAndPath(Automaton automaton, List<EventPatternReference> eventPatterns, State preState, State postState) {
+        for (permutation : new PermutationsHelper<EventPatternReference>().getAll(eventPatterns)) {
+            automaton.buildFollowsPath(permutation, preState, postState)
+        }
+    }
 
 	public def unfoldAndPath(Automaton automaton, ComplexEventPattern eventPattern, TypedTransition transition) {
-		buildAndPath(automaton, eventPattern, transition.preState, transition.postState)
+		val relabeledEventReferences = relabelWithActualParameters(eventPattern, transition.parameters)
+		buildAndPath(automaton, relabeledEventReferences, transition.preState, transition.postState)
 		
 		alignTimewindow(automaton, eventPattern, transition)
 	}
@@ -145,28 +191,30 @@ class ComplexMappingUtils {
 				newTransition.parameters += transition.parameters
 			}
 			FOLLOWS: {
+			    val relabeledEventPatterns = relabelWithActualParameters(eventPattern, transition.parameters)
 				val firstNegBranch = newNegTransition(transition.preState, transition.postState)
-				firstNegBranch.addGuard(eventPattern.containedEventPatterns.head)
-				eventPattern.containedEventPatterns.head.handleTransitionParameters(firstNegBranch)
-				if (eventPattern.containedEventPatterns.size > 1) {
-					Preconditions::checkArgument(eventPattern.containedEventPatterns.size == 2) // XXX domain knowledge hard coded!
-					val secondNegBranchState = automaton.transitionToNewState(eventPattern.containedEventPatterns.head,
+				firstNegBranch.addGuard(relabeledEventPatterns.head)
+				relabeledEventPatterns.head.handleTransitionParameters(firstNegBranch)
+				if (relabeledEventPatterns.size > 1) {
+					Preconditions::checkArgument(relabeledEventPatterns.size == 2) // XXX domain knowledge hard coded!
+					val secondNegBranchState = automaton.transitionToNewState(relabeledEventPatterns.head,
 						transition.preState)
 					val secondNegBranch = newNegTransition(secondNegBranchState, transition.postState)
-					secondNegBranch.addGuard(eventPattern.containedEventPatterns.get(1))
-					eventPattern.containedEventPatterns.last.handleTransitionParameters(secondNegBranch)
+					secondNegBranch.addGuard(relabeledEventPatterns.get(1))
+					relabeledEventPatterns.last.handleTransitionParameters(secondNegBranch)
 				}
 			}
 			OR: {
 				val newTransition = newNegTransition(transition.preState, transition.postState)
-				eventPattern.containedEventPatterns.forEach [ ref |
+				relabelWithActualParameters(eventPattern, transition.parameters).forEach [ ref |
 					newTransition.addGuard(ref.eventPattern)
 				]
 			// TODO : parameters?
 			}
 			AND: {
 				for (permutation : new PermutationsHelper<EventPatternReference>().getAll(
-					eventPattern.containedEventPatterns)) {
+					relabelWithActualParameters(eventPattern, transition.parameters))) 
+				{
 					val surrogateFollowsPattern = EventsFactory.eINSTANCE.createComplexEventPattern
 					surrogateFollowsPattern.containedEventPatterns += permutation
 					surrogateFollowsPattern.operator = EventsFactory.eINSTANCE.createFOLLOWS

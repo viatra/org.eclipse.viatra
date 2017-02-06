@@ -23,19 +23,12 @@ epsilonTransition(automaton : Automaton, transition : EpsilonTransition, preStat
 	State.inTransitions(postState, transition);
 }
 
-pattern sameBooleanTransitionType(transition1 : TypedTransition, transition2 : TypedTransition){
-	find negativeTransition(transition1);
-	find negativeTransition(transition2);
-} or {
-	neg find negativeTransition(transition1);
-	neg find negativeTransition(transition2);
-}
-
 pattern
 equivalentTransitions(transition1 : TypedTransition, transition2 : TypedTransition, preState : State, postState : State) {
 	transition1 != transition2;
 	
-	find sameBooleanTransitionType(transition1, transition2);
+	count find negativeTransition(transition1) ==
+	count find negativeTransition(transition2);
 	
 	Transition.preState(transition1, preState);
 	Transition.preState(transition2, preState);
@@ -46,8 +39,8 @@ equivalentTransitions(transition1 : TypedTransition, transition2 : TypedTransiti
 	TypedTransition.guards(transition1, guard1);
 	TypedTransition.guards(transition2, guard2);
 
-	Guard.eventType(guard1, et1);
-	Guard.eventType(guard2, et2);
+	Guard.eventType.id(guard1, et1);
+	Guard.eventType.id(guard2, et2);
 
 	et1 == et2;
 
@@ -59,7 +52,8 @@ pattern
 equivalentStates(transition1 : TypedTransition, transition2 : TypedTransition, preState : State, postState1 : State, postState2 : State) {
 	transition1 != transition2;
 	
-	find sameBooleanTransitionType(transition1, transition2);
+	count find negativeTransition(transition1) ==
+	count find negativeTransition(transition2);
 
 	Transition.preState(transition1, preState);
 	Transition.preState(transition2, preState);
@@ -72,8 +66,8 @@ equivalentStates(transition1 : TypedTransition, transition2 : TypedTransition, p
 	TypedTransition.guards(transition1, guard1);
 	TypedTransition.guards(transition2, guard2);
 
-	Guard.eventType(guard1, et1);
-	Guard.eventType(guard2, et2);
+	Guard.eventType.id(guard1, et1);
+	Guard.eventType.id(guard2, et2);
 
 	et1 == et2;
 

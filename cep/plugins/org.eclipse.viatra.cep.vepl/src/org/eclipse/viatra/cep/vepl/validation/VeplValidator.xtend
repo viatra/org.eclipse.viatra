@@ -164,7 +164,7 @@ class VeplValidator extends AbstractVeplValidator {
 	def complexEventPatternWithPlainAtomExpression(ComplexEventPattern eventPattern) {
 		val expression = eventPattern.complexEventExpression
 
-		if (expression.right.empty && (expression.left instanceof Atom)) {
+		if (expression != null && expression.right.empty && (expression.left instanceof Atom)) {
 			val atom = expression.left as Atom
 
 			if (!atom.hasMultiplicity) {
@@ -262,22 +262,22 @@ class VeplValidator extends AbstractVeplValidator {
 		}
 	}
 
-	@Check
-	def paramOnlyOnAtomicEventPatternReference(ParameterizedPatternCall parameterizedPatternCall) {
-		if (parameterizedPatternCall.parameterList == null) {
-			return
-		}
-		if (parameterizedPatternCall.parameterList.parameters.empty) {
-			return
-		}
-		if (!(parameterizedPatternCall.eventPattern instanceof AbstractAtomicEventPattern)) {
-			error(
-				"Parameters are only applicable to atomic event pattern references.",
-				VeplPackage.Literals.PARAMETERIZED_PATTERN_CALL__PARAMETER_LIST,
-				PARAMETER_ON_NON_ATOMIC_PATTERN_CALL
-			)
-		}
-	}
+//	@Check
+//	def paramOnlyOnAtomicEventPatternReference(ParameterizedPatternCall parameterizedPatternCall) {
+//		if (parameterizedPatternCall.parameterList == null) {
+//			return
+//		}
+//		if (parameterizedPatternCall.parameterList.parameters.empty) {
+//			return
+//		}
+//		if (!(parameterizedPatternCall.eventPattern instanceof AbstractAtomicEventPattern)) {
+//			error(
+//				"Parameters are only applicable to atomic event pattern references.",
+//				VeplPackage.Literals.PARAMETERIZED_PATTERN_CALL__PARAMETER_LIST,
+//				PARAMETER_ON_NON_ATOMIC_PATTERN_CALL
+//			)
+//		}
+//	}
 
 	@Check
 	def duplicateTraitParameterNamesInDiamondInheritance(AtomicEventPattern atomicEventPattern) {

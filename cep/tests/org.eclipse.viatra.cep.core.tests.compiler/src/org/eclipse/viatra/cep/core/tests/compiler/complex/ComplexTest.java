@@ -82,12 +82,21 @@ public class ComplexTest {
     }
 
     protected boolean transitionTypedWith(Transition transition, Class<? extends EventPattern> clazz) {
+        try {
+            return transitionTypedWith(transition, clazz.newInstance().getId());
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    protected boolean transitionTypedWith(Transition transition, String eventTypeID) {
         if (!(transition instanceof TypedTransition)) {
             return false;
         }
 
         for (Guard guard : ((TypedTransition) transition).getGuards()) {
-            if (guard.getEventType().getClass().equals(clazz)) {
+            if (guard.getEventType().getId().equals(eventTypeID)) {
                 return true;
             }
         }
