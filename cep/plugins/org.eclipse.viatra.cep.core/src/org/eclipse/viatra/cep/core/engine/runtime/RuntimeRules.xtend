@@ -26,6 +26,8 @@ import org.eclipse.viatra.transformation.runtime.emf.rules.EventDrivenTransforma
 import org.eclipse.viatra.transformation.runtime.emf.rules.eventdriven.EventDrivenTransformationRuleFactory
 import org.eclipse.viatra.transformation.runtime.emf.transformation.eventdriven.EventDrivenTransformation
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.viatra.cep.core.metamodels.automaton.ParameterBinding
+import java.util.ArrayList
 
 class RuntimeRules {
 
@@ -70,6 +72,7 @@ class RuntimeRules {
 		eventModelManager.handleEvent(transition, eventToken)
 
 		if (event instanceof ParameterizableEventInstance) {
+		    val newBindings = new ArrayList<ParameterBinding>()
 			for (parameter : transition.parameters) {
 				// obtain the value in the observed event instance on the given position
 				val parameterValueToBind = (event as ParameterizableEventInstance).getParameter(parameter.position)
@@ -83,15 +86,17 @@ class RuntimeRules {
 					val newBinding = AutomatonFactory::eINSTANCE.createParameterBinding
 					newBinding.symbolicName = parameter.symbolicName
 					newBinding.value = parameterValueToBind
-					eventToken.parameterTable.parameterBindings.add(newBinding)
+					newBindings.add(newBinding)
 				} else {
 					// if there was a parameter binding found, the values should match
 					// otherwise return before the token could be fired
 					if (!existingBinding.value.equals(parameterValueToBind)) {
-						return
+						return 
 					}
 				}
 			}
+			
+			eventToken.parameterTable.parameterBindings.addAll(newBindings)
 		}
 
 		eventModelManager.fireTransition(transition, eventToken)
