@@ -42,6 +42,14 @@ class AtomicMappingRules extends MappingRules {
 		var guard = createGuard
 		guard.eventType = eventPattern
 		transition.guards += guard
+		
+		var k = 0;
+		for (String parameterName : eventPattern.parameterNames) {
+		    val param = createParameter
+		    param.position = k++;
+            param.symbolicName = parameterName
+		    transition.parameters += param
+		}
 
 		transition.preState = automaton.initialState
 
