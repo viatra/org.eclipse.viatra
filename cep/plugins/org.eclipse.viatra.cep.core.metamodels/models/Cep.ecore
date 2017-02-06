@@ -10,6 +10,8 @@
         eOpposite="#//EventModel/eventPatterns"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="automaton" eType="ecore:EClass Automaton.ecore#//Automaton"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameterNames" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AtomicEventPattern" eSuperTypes="#//EventPattern">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

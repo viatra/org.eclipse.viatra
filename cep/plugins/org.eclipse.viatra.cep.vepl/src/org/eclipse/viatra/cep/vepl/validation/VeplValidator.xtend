@@ -318,14 +318,16 @@ class VeplValidator extends AbstractVeplValidator {
 
 		val shadowedParameters = Lists::newArrayList
 
-		for (parameter : atomicEventPattern.parameters.parameters) {
-			for (trait : traitList.traits) {
-				for (traitParam : trait.parameters.parameters) {
-					if (traitParam.typedParameter.name.equals(parameter.name)) {
-						shadowedParameters += traitParam.typedParameter.name
-					}
-				}
-			}
+        if (atomicEventPattern.parameters != null) { // defensive
+    		for (parameter : atomicEventPattern.parameters.parameters) {
+    			for (trait : traitList.traits) {
+    				for (traitParam : trait.parameters.parameters) {
+    					if (traitParam.typedParameter.name.equals(parameter.name)) {
+    						shadowedParameters += traitParam.typedParameter.name
+    					}
+    				}
+    			}
+    		}
 		}
 
 		if (!shadowedParameters.empty) {

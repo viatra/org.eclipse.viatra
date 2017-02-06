@@ -90,19 +90,22 @@ class ComplexGenerator {
 				compositionEvents.add(compositionEvent)
 			} else {
 				val leaf = child as Leaf
-				val compositionEvent = new Pair
-				compositionEvent.first = (leaf.expression as Atom).patternCall.eventPattern.patternFqn;
-
-				var parameters = new ArrayList<String>
-				val paramList = (leaf.expression as Atom).patternCall.parameterList
-				if (paramList != null && !paramList.parameters.empty) {
-					for (parameter : paramList.parameters) {
-						parameters.add(parameter.name)
-					}
+				val eventPattern = (leaf.expression as Atom).patternCall.eventPattern
+				if (!eventPattern.eIsProxy) { // defensive against partially compiled state
+    				val compositionEvent = new Pair
+    				compositionEvent.first = eventPattern.patternFqn;
+    
+    				var parameters = new ArrayList<String>
+    				val paramList = (leaf.expression as Atom).patternCall.parameterList
+    				if (paramList != null && !paramList.parameters.empty) {
+    					for (parameter : paramList.parameters) {
+    						parameters.add(parameter.name)
+    					}
+    				}
+    
+    				compositionEvent.second = parameters
+    				compositionEvents.add(compositionEvent)
 				}
-
-				compositionEvent.second = parameters
-				compositionEvents.add(compositionEvent)
 			}
 		}
 
@@ -187,11 +190,15 @@ class ComplexGenerator {
 									
 							''')
 					}
-					it.append(
-						'''
-					setId("«className.toLowerCase»");''')
-					it.append(
-						'''
+					if (pattern.parameters != null) it.append(
+						'''«FOR parameter : pattern.parameters.parameters»
+                    getParameterNames().add("«parameter.name»");
+                    «ENDFOR»
+                    ''')
+                    it.append('''
+					setId("«className.toLowerCase»");
+					''')
+					it.append('''
 					setEventContext(''').append('''«referClass(it, typeRefBuilder, pattern, EventContext)»''').
 						append('''.''').append('''«pattern.deriveContext.literal»''').append(''');''')
 				]

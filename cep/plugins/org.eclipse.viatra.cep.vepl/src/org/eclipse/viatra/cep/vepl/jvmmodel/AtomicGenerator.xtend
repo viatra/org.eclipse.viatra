@@ -149,15 +149,28 @@ class AtomicGenerator {
 				}
 				members += pattern.toConstructor [
 					body = [
-						append(
+						var appendable = append(
 							'''
 						super();
 						setType(''').append('''«it.referClass(typeRefBuilder, pattern.classFqn, pattern)»''').append(
-							'''.class.getCanonicalName());''').append(
-							'''
-							
-							setId("«pattern.patternFqn.toString.toLowerCase»");'''
-						)
+							'''.class.getCanonicalName());
+						''')
+						if (paramList != null) 
+						  for (parameter : paramList.parameters) 
+						      appendable = appendable.append('''
+                                getParameterNames().add("«parameter.name»");
+                        ''')
+                        if (pattern instanceof AtomicEventPattern) 
+                            if(pattern.traits != null) 
+                                for (trait : pattern.traits.traits) 
+                                    if (trait.parameters != null)
+                                        for(traitParameter : trait.parameters.parameters)
+                                            if (traitParameter.typedParameter != null) 
+                                            appendable = appendable.append('''
+                            getParameterNames().add("«traitParameter.typedParameter.name»");
+                        ''')
+                        appendable = appendable.append('''
+							setId("«pattern.patternFqn.toString.toLowerCase»");''')
 					]
 				]
 			]
