@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.dse.api;
 
+import org.eclipse.viatra.dse.api.strategy.impl.BestFirstStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.BreadthFirstStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.DepthFirstStrategy;
 import org.eclipse.viatra.dse.api.strategy.impl.FixedPriorityStrategy;
@@ -117,5 +118,21 @@ public final class Strategies {
      */
     public static HillClimbingStrategy creatHillClimbingStrategy() {
         return new HillClimbingStrategy();
+    }
+
+    /**
+     * See {@link BestFirstStrategy}.
+     * @return
+     */
+    public static BestFirstStrategy createBestFirstStrategy() {
+        return new BestFirstStrategy();
+    }
+
+    /**
+     * See {@link BestFirstStrategy}.
+     * @return
+     */
+    public static BestFirstStrategy createBestFirstStrategy(int depthLimit) {
+        return new BestFirstStrategy(depthLimit);
     }
 }
