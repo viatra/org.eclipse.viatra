@@ -83,7 +83,7 @@ public class BestFirstStrategy implements IStrategy {
     }
 
     public BestFirstStrategy goOnOnlyIfFitnessIsBetter() {
-        onlyBetterFirst = false;
+        onlyBetterFirst = true;
         return this;
     }
 
@@ -130,14 +130,13 @@ public class BestFirstStrategy implements IStrategy {
 
             if (currentTrajectoryWithFittness == null) {
                 context.backtrackUntilRoot();
-                System.out.println("reset");
                 if (trajectoiresToExplore.isEmpty()) {
                     logger.debug("State space is fully traversed.");
                     return;
                 } else {
                     currentTrajectoryWithFittness = trajectoiresToExplore.element();
                     if (logger.isDebugEnabled()) {
-                        logger.debug("New trajectory is choosen: " + currentTrajectoryWithFittness);
+                        logger.debug("New trajectory is chosen: " + currentTrajectoryWithFittness);
                     }
                     context.executeTrajectory(currentTrajectoryWithFittness.trajectory);
                 }
