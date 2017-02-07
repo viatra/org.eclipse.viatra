@@ -101,7 +101,7 @@ public class BestFirstStrategy implements IStrategy {
             }
         };
 
-        trajectoiresToExplore = new PriorityQueue<>(comparator);
+        trajectoiresToExplore = new PriorityQueue<TrajectoryWithFitness>(comparator);
 
     }
 
