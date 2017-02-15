@@ -21,6 +21,20 @@ import org.eclipse.viatra.dse.api.strategy.interfaces.IStrategyFactory;
 import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
 
+/**
+ * A depth-first search algorithm implementation, that
+ * <ul>
+ * <li>can work with multiple threads,</li>
+ * <li>randomly traverses the search space,</li>
+ * <li>saves all states (trajectories) as solutions that fulfill all the hard objectives,</li>
+ * <li>can have a depth limit,</li>
+ * <li>will backtrack when a model satisfies the hard objectives (after saving it as a solution), which can be modified
+ * by calling {@link #continueIfHardObjectivesFulfilled()}</li>
+ * </ul>
+ * 
+ * @author Andras Szabolcs Nagy
+ *
+ */
 public class DepthFirstStrategy implements IStrategy {
 
     private int maxDepth;
@@ -31,15 +45,34 @@ public class DepthFirstStrategy implements IStrategy {
 
     private Random random = new Random();
     private boolean backTrackIfSolution = true; 
-    
+
+    /**
+     * Creates a new depth-first search algorithm without depth limit.
+     */
+    public DepthFirstStrategy() {
+        this.maxDepth = Integer.MAX_VALUE;
+    }
+
+    /**
+     * Creates a new depth-first search algorithm with depth limit.
+     * 
+     * @param maxDepth
+     *            A negative <code>maxDepth</code> means no depth limit, zero means the checking of the initial state.
+     */
     public DepthFirstStrategy(int maxDepth) {
-        if (maxDepth <= 0) {
+        if (maxDepth < 0) {
             this.maxDepth = Integer.MAX_VALUE;
         } else {
             this.maxDepth = maxDepth;
         }
     }
 
+    /**
+     * If called, the algorithm will not backtrack after the hard objectives are fulfilled, instead it goes deeper in
+     * the search space.
+     * 
+     * @return
+     */
     public DepthFirstStrategy continueIfHardObjectivesFulfilled() {
         backTrackIfSolution = false;
         return this;

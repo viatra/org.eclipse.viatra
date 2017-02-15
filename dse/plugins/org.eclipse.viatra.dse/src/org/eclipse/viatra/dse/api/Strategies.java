@@ -46,12 +46,12 @@ public final class Strategies {
      * @see DepthFirstStrategy
      */
     public static DepthFirstStrategy createDfsStrategy() {
-        return new DepthFirstStrategy(0);
+        return new DepthFirstStrategy();
     }
 
     /**
-     * Creates a depth-first search exploration strategy with a depth limit. A zero or negative depth limit means no
-     * depth limit.
+     * Creates a depth-first search exploration strategy with a depth limit. A negative depth limit means no
+     * depth limit, zero means that it will check the initial state.
      * 
      * @param depthLimit
      * @return The strategy.
