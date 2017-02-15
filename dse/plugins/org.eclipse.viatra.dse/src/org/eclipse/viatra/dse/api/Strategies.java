@@ -59,7 +59,7 @@ public final class Strategies {
      * @see FixedPriorityStrategy
      */
     public static FixedPriorityStrategy createFixedPriorityStrategy() {
-        return createFixedPriorityStrategy(0);
+        return createFixedPriorityStrategy(-1);
     }
 
     /**

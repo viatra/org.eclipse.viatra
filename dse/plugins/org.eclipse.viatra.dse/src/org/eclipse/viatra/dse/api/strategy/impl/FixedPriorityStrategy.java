@@ -25,6 +25,16 @@ import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransforma
 
 import com.google.common.collect.Lists;
 
+/**
+ * Works as {@link DepthFirstStrategy} but:
+ * <ul>
+ * <li>works only with single thread,</li>
+ * <li>in a given state, it only traverses the activations with locally the highest priority.</li>
+ * </ul>
+ * 
+ * @author Andras Szabolcs Nagy
+ *
+ */
 public class FixedPriorityStrategy implements IStrategy {
 
     private int maxDepth = Integer.MAX_VALUE;
@@ -45,7 +55,7 @@ public class FixedPriorityStrategy implements IStrategy {
      * @return The actual instance to enable a builder pattern like usage.
      */
     public FixedPriorityStrategy withDepthLimit(int maxDepth) {
-        if (maxDepth <= 0) {
+        if (maxDepth < 0) {
             this.maxDepth = Integer.MAX_VALUE;
         } else {
             this.maxDepth = maxDepth;
@@ -59,7 +69,7 @@ public class FixedPriorityStrategy implements IStrategy {
      * @param rule
      *            The transformation rule.
      * @param priority
-     *            The priority of the rule.
+     *            The priority of the rule. Higher is better.
      * @return The actual instance to enable a builder pattern like usage.
      */
     public FixedPriorityStrategy withRulePriority(BatchTransformationRule<?, ?> rule, int priority) {
@@ -134,7 +144,11 @@ public class FixedPriorityStrategy implements IStrategy {
                     Integer bestPriority = getBestPriority(context.getCurrentActivationIds());
                     transitions = Lists.newArrayList();
                     for (Object iTransition : context.getCurrentActivationIds()) {
-                        if (priorities.get(context.getRuleByActivationId(iTransition)).equals(bestPriority)) {
+                        Integer integer = priorities.get(context.getRuleByActivationId(iTransition));
+                        if (integer == null) {
+                            integer = Integer.valueOf(0);
+                        }
+                        if (integer.equals(bestPriority)) {
                             transitions.add(iTransition);
                         }
                     }
@@ -183,6 +197,9 @@ public class FixedPriorityStrategy implements IStrategy {
         Integer bestPriority = Integer.MIN_VALUE;
         for (Object iTransition : transitions) {
             Integer priority = priorities.get(context.getRuleByActivationId(iTransition));
+            if (priority == null) {
+                priority = Integer.valueOf(0);
+            }
             if (priority > bestPriority) {
                 bestPriority = priority;
             }
