@@ -24,6 +24,20 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 
+/**
+ * A breadth-first search algorithm implementation, that
+ * <ul>
+ * <li>can work with multiple threads,</li>
+ * <li>indeterministic,</li>
+ * <li>saves all states (trajectories) as solutions that fulfill all the hard objectives,</li>
+ * <li>can have a depth limit,</li>
+ * <li>will backtrack when a model satisfies the hard objectives (after saving it as a solution) and will not explore
+ * beyond that state.</li>
+ * </ul>
+ * 
+ * @author Andras Szabolcs Nagy
+ *
+ */
 public class BreadthFirstStrategy implements IStrategy {
 
     private static final class BfsSharedObject {
@@ -77,11 +91,25 @@ public class BreadthFirstStrategy implements IStrategy {
     private SolutionStore solutionStore;
     private boolean isFirstThread = false;
 
+    /**
+     * Creates a new breadth-first search algorithm without depth limit.
+     */
     public BreadthFirstStrategy() {
+        this.maxDepth = Integer.MAX_VALUE;
     }
 
+    /**
+     * Creates a new breadth-first search algorithm with depth limit.
+     * 
+     * @param maxDepth
+     *            A negative <code>maxDepth</code> means no depth limit, zero means the checking of the initial state.
+     */
     public BreadthFirstStrategy(int maxDepth) {
-        this.maxDepth = maxDepth;
+        if (maxDepth < 0) {
+            this.maxDepth = Integer.MAX_VALUE;
+        } else {
+            this.maxDepth = maxDepth;
+        }
     }
 
     @Override
@@ -171,7 +199,7 @@ public class BreadthFirstStrategy implements IStrategy {
                 } else if (context.calculateFitness().isSatisifiesHardObjectives()) {
                     solutionStore.newSolution(context);
                     logger.debug("Found a solution.");
-                } else if (maxDepth > 0 && context.getDepth() >= maxDepth) {
+                } else if (context.getDepth() >= maxDepth) {
                     logger.debug("Reached max depth.");
                 } else {
                     Object[] currentTrajectory = context.getTrajectory().toArray(new Object[0]);

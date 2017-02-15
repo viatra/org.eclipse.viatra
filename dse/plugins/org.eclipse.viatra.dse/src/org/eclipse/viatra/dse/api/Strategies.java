@@ -82,7 +82,7 @@ public final class Strategies {
      * @see BreadthFirstStrategy
      */
     public static BreadthFirstStrategy createBfsStrategy() {
-        return new BreadthFirstStrategy(0);
+        return new BreadthFirstStrategy();
     }
 
     /**
