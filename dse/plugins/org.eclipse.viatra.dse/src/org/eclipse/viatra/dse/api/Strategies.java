@@ -29,17 +29,6 @@ public final class Strategies {
     }
 
     /**
-     * 
-     * @param depthLimit
-     * @return
-     * @deprecated Use {@link Strategies#createDfsStrategy(int)} instead.
-     */
-    @Deprecated
-    public static DepthFirstStrategy createDFSStrategy(int depthLimit) {
-        return new DepthFirstStrategy(depthLimit);
-    }
-
-    /**
      * Creates a depth-first search exploration strategy without a depth limit.
      * 
      * @return The strategy.
