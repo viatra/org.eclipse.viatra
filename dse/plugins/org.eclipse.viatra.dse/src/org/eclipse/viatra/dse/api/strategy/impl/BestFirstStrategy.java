@@ -43,7 +43,7 @@ public class BestFirstStrategy implements IStrategy {
     private ThreadContext context;
     private SolutionStore solutionStore;
 
-    private int maxDepth = 0;
+    private int maxDepth;
     private boolean isInterrupted = false;
     private boolean backTrackIfSolution = true;
     private boolean onlyBetterFirst = false;
@@ -69,12 +69,25 @@ public class BestFirstStrategy implements IStrategy {
 
     }
 
+    /**
+     * Creates a new best-first search algorithm without depth limit.
+     */
     public BestFirstStrategy() {
-        this(0);
+        this(-1);
     }
 
+    /**
+     * Creates a new best-first search algorithm with depth limit.
+     * 
+     * @param maxDepth
+     *            A negative <code>maxDepth</code> means no depth limit, zero means the checking of the initial state.
+     */
     public BestFirstStrategy(int maxDepth) {
-        this.maxDepth = maxDepth;
+        if (maxDepth < 0) {
+            this.maxDepth = Integer.MAX_VALUE;
+        } else {
+            this.maxDepth = maxDepth;
+        }
     }
 
     public BestFirstStrategy continueIfHardObjectivesFulfilled() {
@@ -119,6 +132,10 @@ public class BestFirstStrategy implements IStrategy {
         if (firstFittness.isSatisifiesHardObjectives()) {
             context.newSolution();
             logger.info("First state is a solution. Terminate.");
+            return;
+        }
+
+        if (maxDepth == 0) {
             return;
         }
 
@@ -172,7 +189,7 @@ public class BestFirstStrategy implements IStrategy {
                             continue;
                         }
                     }
-                    if (maxDepth > 0 && context.getDepth() >= maxDepth) {
+                    if (context.getDepth() >= maxDepth) {
                         logger.debug("Reached max depth.");
                         context.backtrack();
                         continue;
