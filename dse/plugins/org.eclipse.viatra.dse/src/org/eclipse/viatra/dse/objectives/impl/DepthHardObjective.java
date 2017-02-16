@@ -13,26 +13,52 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.IObjective;
 
 /**
- * This hard objective is fulfilled if the trajectory is longer than a predefined number. A minimum length if 0 means
- * all trajectory will be regarded as a solution.
+ * This hard objective is fulfilled if the trajectory is in the specified interval (inclusive).
  * 
  * @author Andras Szabolcs Nagy
  *
  */
-public class MinimalDepthHardObjective extends BaseObjective {
+public class DepthHardObjective extends BaseObjective {
 
-    private static final String DEFAULT_NAME = "MinimalDepthHardObjective";
+    private static final String DEFAULT_NAME = "DepthHardObjective";
     protected int minDepth;
+    protected int maxDepth;
     private ThreadContext context;
 
-    public MinimalDepthHardObjective(int minDepth) {
-        super(DEFAULT_NAME);
-        this.minDepth = minDepth;
+    public DepthHardObjective() {
+        this(DEFAULT_NAME, 0, Integer.MAX_VALUE);
     }
 
-    public MinimalDepthHardObjective(String name, int minDepth) {
+    public DepthHardObjective(String name) {
+        this(name, 0, Integer.MAX_VALUE);
+    }
+
+    public DepthHardObjective(int minDepth) {
+        this(DEFAULT_NAME, minDepth, Integer.MAX_VALUE);
+    }
+
+    public DepthHardObjective(String name, int minDepth) {
+        this(name, minDepth, Integer.MAX_VALUE);
+    }
+
+    public DepthHardObjective(int minDepth, int maxDepth) {
+        this(DEFAULT_NAME, minDepth, maxDepth);
+    }
+    
+    public DepthHardObjective(String name, int minDepth, int maxDepth) {
         super(name);
         this.minDepth = minDepth;
+        this.maxDepth = maxDepth;
+    }
+
+    public DepthHardObjective withMinDepth(int minDepth) {
+        this.minDepth = minDepth;
+        return this;
+    }
+
+    public DepthHardObjective withMaxDepth(int maxDepth) {
+        this.maxDepth = maxDepth;
+        return this;
     }
 
     @Override
@@ -53,12 +79,12 @@ public class MinimalDepthHardObjective extends BaseObjective {
 
     @Override
     public boolean satisifiesHardObjective(Double fitness) {
-        return context.getDepth() <= minDepth;
+        return minDepth <= context.getDepth() && context.getDepth() <= maxDepth;
     }
 
     @Override
     public IObjective createNew() {
-        return new MinimalDepthHardObjective(name, minDepth);
+        return new DepthHardObjective(name, minDepth, maxDepth);
     }
 
 }

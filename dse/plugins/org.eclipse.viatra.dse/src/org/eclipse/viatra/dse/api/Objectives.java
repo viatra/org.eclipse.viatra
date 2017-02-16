@@ -12,7 +12,7 @@ package org.eclipse.viatra.dse.api;
 import org.eclipse.viatra.dse.objectives.impl.CompositeObjective;
 import org.eclipse.viatra.dse.objectives.impl.ConstraintsObjective;
 import org.eclipse.viatra.dse.objectives.impl.AlwaysSatisfiedDummyHardObjective;
-import org.eclipse.viatra.dse.objectives.impl.MinimalDepthHardObjective;
+import org.eclipse.viatra.dse.objectives.impl.DepthHardObjective;
 import org.eclipse.viatra.dse.objectives.impl.NeverSatisfiedDummyHardObjective;
 import org.eclipse.viatra.dse.objectives.impl.NoRuleActivationsHardObjective;
 import org.eclipse.viatra.dse.objectives.impl.TrajectoryCostSoftObjective;
@@ -129,28 +129,26 @@ public class Objectives {
     }
 
     /**
-     * This hard objective is fulfilled if the trajectory is longer than a predefined number.
+     * This hard objective is fulfilled if the length of the trajectory is in the specified interval (inclusive). Use
+     * {@link DepthHardObjective#withMinDepth(int)} and {@link DepthHardObjective#withMaxDepth(int)} to configure.
      * 
-     * @param minDepth
-     *            0 means all trajectory will be regarded as a solution.
      * @return The objective.
-     * @see MinimalDepthHardObjective
+     * @see DepthHardObjective
      */
-    public static MinimalDepthHardObjective createMinimalDepthHardObjective(int minDepth) {
-        return new MinimalDepthHardObjective(minDepth);
+    public static DepthHardObjective createDepthHardObjective() {
+        return new DepthHardObjective();
     }
 
     /**
-     * This hard objective is fulfilled if the trajectory is longer than a predefined number.
+     * This hard objective is fulfilled if the length of the trajectory is in the specified interval (inclusive). Use
+     * {@link DepthHardObjective#withMinDepth(int)} and {@link DepthHardObjective#withMaxDepth(int)} to configure.
      * 
      * @param name
-     * @param minDepth
-     *            0 means all trajectory will be regarded as a solution.
      * @return The objective.
-     * @see MinimalDepthHardObjective
+     * @see DepthHardObjective
      */
-    public static MinimalDepthHardObjective createMinimalDepthHardObjective(String name, int minDepth) {
-        return new MinimalDepthHardObjective(name, minDepth);
+    public static DepthHardObjective createDepthHardObjective(String name) {
+        return new DepthHardObjective(name);
     }
 
 }
