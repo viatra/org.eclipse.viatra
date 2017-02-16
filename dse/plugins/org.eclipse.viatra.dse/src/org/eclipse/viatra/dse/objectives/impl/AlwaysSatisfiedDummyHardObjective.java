@@ -18,15 +18,15 @@ import org.eclipse.viatra.dse.objectives.IObjective;
  * @author Andras Szabolcs Nagy
  *
  */
-public class DummyHardObjective extends BaseObjective {
+public class AlwaysSatisfiedDummyHardObjective extends BaseObjective {
 
-    private static final String DEFAULT_NAME = "DummyHardObjective";
+    private static final String DEFAULT_NAME = "AlwaysSatisfiedDummyHardObjective";
 
-    public DummyHardObjective() {
+    public AlwaysSatisfiedDummyHardObjective() {
         super(DEFAULT_NAME);
     }
 
-    public DummyHardObjective(String name) {
+    public AlwaysSatisfiedDummyHardObjective(String name) {
         super(name);
     }
 

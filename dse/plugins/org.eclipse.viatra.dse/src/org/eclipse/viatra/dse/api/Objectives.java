@@ -11,8 +11,9 @@ package org.eclipse.viatra.dse.api;
 
 import org.eclipse.viatra.dse.objectives.impl.CompositeObjective;
 import org.eclipse.viatra.dse.objectives.impl.ConstraintsObjective;
-import org.eclipse.viatra.dse.objectives.impl.DummyHardObjective;
+import org.eclipse.viatra.dse.objectives.impl.AlwaysSatisfiedDummyHardObjective;
 import org.eclipse.viatra.dse.objectives.impl.MinimalDepthHardObjective;
+import org.eclipse.viatra.dse.objectives.impl.NeverSatisfiedDummyHardObjective;
 import org.eclipse.viatra.dse.objectives.impl.NoRuleActivationsHardObjective;
 import org.eclipse.viatra.dse.objectives.impl.TrajectoryCostSoftObjective;
 
@@ -89,10 +90,10 @@ public class Objectives {
      * solution.
      * 
      * @return The objective.
-     * @see DummyHardObjective
+     * @see AlwaysSatisfiedDummyHardObjective
      */
-    public static DummyHardObjective createDummyHardObjective() {
-        return new DummyHardObjective();
+    public static AlwaysSatisfiedDummyHardObjective createAlwaysSatisfiedDummyHardObjective() {
+        return new AlwaysSatisfiedDummyHardObjective();
     }
 
     /**
@@ -101,10 +102,30 @@ public class Objectives {
      * 
      * @param name
      * @return The objective.
-     * @see DummyHardObjective
+     * @see AlwaysSatisfiedDummyHardObjective
      */
-    public static DummyHardObjective createDummyHardObjective(String name) {
-        return new DummyHardObjective(name);
+    public static AlwaysSatisfiedDummyHardObjective createDummyHardObjective(String name) {
+        return new AlwaysSatisfiedDummyHardObjective(name);
+    }
+
+    /**
+     * This hard objective is never fulfilled. Use it if all states should be regarded as an invalid solution.
+     * 
+     * @return The objective.
+     * @see AlwaysSatisfiedDummyHardObjective
+     */
+    public static NeverSatisfiedDummyHardObjective createNeverSatisfiedDummyHardObjective() {
+        return new NeverSatisfiedDummyHardObjective();
+    }
+
+    /**
+     * This hard objective is never fulfilled. Use it if all states should be regarded as an invalid solution.
+     * 
+     * @return The objective.
+     * @see AlwaysSatisfiedDummyHardObjective
+     */
+    public static NeverSatisfiedDummyHardObjective createNeverSatisfiedDummyHardObjective(String name) {
+        return new NeverSatisfiedDummyHardObjective(name);
     }
 
     /**

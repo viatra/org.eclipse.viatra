@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.viatra.dse.api.DSEException;
@@ -79,7 +80,6 @@ public class ThreadContext implements IDseStrategyContext{
 
     private boolean isFirstThread = false;
     private IObjective[][] leveledObjectives;
-    private boolean isThereHardObjective;
     
     private static class GetRuleExecutionsImpl implements DseIdPoolHelper.IGetRuleExecutions {
 
@@ -207,12 +207,18 @@ public class ThreadContext implements IDseStrategyContext{
         this.domain = EMFHelper.createEditingDomain(model);
         designSpaceManager = new DesignSpaceManager(this);
 
+        boolean isThereHardObjective = false;
         for (IObjective objective : objectives) {
             objective.init(this);
             if (objective.isHardObjective()) {
                 isThereHardObjective = true;
             }
         }
+        if (!isThereHardObjective) {
+            Logger.getLogger(IStrategy.class).warn(
+                    "No hard objective is specified: all reachable state is a solution. Use a dummy hard objective to be explicit.");
+        }
+        
         for (IGlobalConstraint globalConstraint : globalConstraints) {
             globalConstraint.init(this);
         }
@@ -240,12 +246,7 @@ public class ThreadContext implements IDseStrategyContext{
             }
         }
 
-        if (isThereHardObjective) {
-            result.setSatisifiesHardObjectives(satisifiesHardObjectives);
-        }
-        else {
-            result.setSatisifiesHardObjectives(false);
-        }
+        result.setSatisifiesHardObjectives(satisifiesHardObjectives);
 
         lastFitness = result;
 
