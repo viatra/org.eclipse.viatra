@@ -17,12 +17,14 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -35,7 +37,14 @@ public class MigrateProjectHandler extends AbstractHandler {
 		
 		for(Object o : selection.toArray()){
 			if (o instanceof IProject){
-				projects.add(new JavaProjectMigrator((IProject) o));
+			    try {
+                    if (((IProject) o).hasNature(JavaCore.NATURE_ID)) {
+                        // Only call Java project migration for Java projects!
+                        projects.add(new JavaProjectMigrator((IProject) o));
+                    }
+                } catch (CoreException e) {
+                    throw new ExecutionException("Unexpected error during migration: " + e.getMessage(), e);
+                }
 			}
 			if (o instanceof IJavaProject){
 				projects.add(new JavaProjectMigrator((IJavaProject) o));
