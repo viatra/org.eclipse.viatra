@@ -1,0 +1,46 @@
+# Deployment Change Monitor
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+This component tracks changes in the deployment model and informs the code generator about the changes.
+
+## Purpose of the monitor
+
+The code generator produces simulation code for a DeploymentElement given to it. To decide whether a source file for a model element needs to be generated or not is beyond its responsibility. For this reason a DeploymentChangeMonitor is introduced and should be used during the behavior code generation process. This monitor tracks the changes of the model and is able to feed the generator with the DeploymentElements for which source code generation or re-generation is required. This solution will make overall time spent on code generation shorter, because only the changed model parts are considered.
+
+## How does it work
+
+The implemetation relies on the VIATRA Event-driven Virtual Machine (EVM). There are rules defined for the Deployment, DeploymentHost, DeploymentApplication and DeploymentBehavior types using VIATRA Query patterns. These rules describe the connections and properties of model elements that are to be monitored, and the DeploymentChangeMonitor keeps track of these changes. This is done by separate registered jobs for appear, update and disappear events.
+
+The monitor inside stores three sets separately for appeared, updated and disappeared DeploymentElements, and a boolean flag is the Deployment is changed.
+
+The rules used for monitoring:
+
+ * Deployment is changed iff
+ ** Lists of host changed OR
+ ** IP of a contained Host is changed
+ * DeploymentHost is changed iff 
+ ** Its list of applications is changed OR
+ ** Its IP changed
+ * DeploymentApplication is changed iff
+ ** Its ID changed OR
+ ** The current state of its DeploymentBehavior changed
+ * DeploymentBehavior is changed iff
+ ** The list of its states changed OR
+ ** The list of its transitions changed OR
+ ** For any transition the list of triggered transitions are changed
+
+## Usage
+The implementation class for the monitor is the ```org.eclipse.viatra.query.examples.cps.xform.m2t.DeploymentChangeMonitor``` Java class. To use it, an ViatraQueryEngine and a Deployment needed. 
+```
+engine = ViatraQueryEngine.on(deployment);
+monitor = new DeploymentChangeMonitor(deployment,engine);
+monitor.startMonitoring();
+```
+To get the change detlas a DeploymentChangeDelta DTO is returned by the getDeltaSinceLastCheckpoint() method of the monitor. This DTO also contains the information about the old names/IDs required for identifying the previously generated files that are to be deleted. This is in a map, that can be queried and used like in the code shown below:
+```
+String oldId = monitor.deltaSinceLastCheckpoint.oldNamesForDeletion.get(deploymentElement);
+```
+
+To create a checkpoint in order to start collecting deltas to new empty collections the createCheckpoint() method can be used. This also returns a DeploymentChangeDelta containing all changes between the last two checkpoints.

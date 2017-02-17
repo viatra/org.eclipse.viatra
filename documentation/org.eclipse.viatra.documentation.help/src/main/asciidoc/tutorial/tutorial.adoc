@@ -1,0 +1,45 @@
+= Getting Started with VIATRA
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:rootdir: .
+:imagesdir: {rootdir}/images
+:toclevels: 2
+:toc:
+:toc2:
+:numbered:
+:icons: font
+:sectnums:
+:sectnumlevels: 4
+:experimental:
+:sectlinks:
+
+== Introduction
+
+link:http://www.eclipse.org/viatra/[VIATRA] is an open source model transformation framework, focusing on efficient evaluation of model queries and supports various transformation workflows. This document contains a tutorial for getting started with the query and transformation development.
+
+The tutorial relies on the link:../cps/Home{outfilesuffix}[CPS Demonstrator application]. The CPS Demonstrator is specified to cover a usual workflow in Model-driven Engineering, where a system is (1) first described in a source model, then (2) automated model-to-model transformations are used to derive a target model. Finally, (3) model-to-text transformation is performed to generate code from the target domain. In addition, a model generator that can automatically create source domain models can support the correctness testing and performance evaluation of the components. This tutorial uses only a subset of the transformation problem, as its main goal is to illustrate the basics of the VIATRA environment. Consult the original demonstrator for a more complex transformation example.
+
+We expect readers to be familiar with the basics of Eclipse plug-in development, more specifically creating plug-in projects and defining basic UI extensions such as commands. Additionally, we expect a basic understanding of EMF-based modeling If required, look at the Plug-in development tutorial at link:http://www.vogella.com/tutorials/EclipsePlugin/article.html[] or the EMF tutorial at link:http://www.vogella.com/tutorials/EclipseEMF/article.html[] for a short tutorial on these subjects.
+
+This document starts with a <<environment,quick setup guide>>, then describes model <<_query_development,query development>>. Both <<_batch_transformations,batch>> and <<_event_driven_transformations,event-driven transformations>> are covered later.
+
+The source of this tutorial is written in AsciiDoc and is available at https://github.com/viatra/viatra-docs Contributions are welcome! If you find any mistakes or outdated informations, please open an link:https://github.com/viatra/viatra-docs/issues/new[issue].
+
+This document is intended only as a short tutorial for the usage of the Query and Transformation capabilities of VIATRA. A more detailed documentation is maintained at link:http://wiki.eclipse.org/VIATRA[].
+
+<<<
+include::tutorial/environment.adoc[leveloffset=+1]
+
+<<<
+include::tutorial/queries.adoc[leveloffset=+1]
+
+<<<
+== Model Transformation Development
+
+For model transformation development a Java API is available, allowing seamless integration of the transformations into any Java applications. However, to enhance readability, we recommend using a higher-level JVM language, as it allows defining the transformation as an internal DSL of this host language.
+
+In this tutorial we rely on the link:https://eclipse.org/xtend/[Xtend language] to host the VIATRA transformation DSL, and we rely on its extension method and type inference support to reduce unnecessary elements. However, other JVM-based languages can also be used with similar efficiency (for an example in link:https://kotlinlang.org/[Kotlin] see https://gist.github.com/doczir/bfe95c470599c5b8e60b400b80f92ea2).
+
+include::tutorial/batch-transformations.adoc[leveloffset=+2]
+
+<<<
+include::tutorial/incremental-transformations.adoc[leveloffset=+2]

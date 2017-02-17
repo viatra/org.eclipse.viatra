@@ -1,0 +1,53 @@
+# Simple Xtend and Query M2M transformation
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+## Introduction
+
+The idea behind this transformation variant is similar in concept to the <<Simple-and-optimized-Xtend-batch-M2M-transformation#,simple Xtend batch>> variant. Traverse the model and transform the elements according to the specification. The main difference is the usage of VIATRA Query patterns in place of complex queries (e.g. finding send and wait signal pairs), making the transformation faster and more memory efficient.
+
+## How does it work
+
+The transformation can be separated into 2 distinct steps. Building the deployment model itself and, wherever required, setting the relationships of the model elements.
+
+To build the model, the transformation walks through the CPS model in the following hierarchy:
+
+* HostInstance
+** ApplicationInstance
+*** StateMachine
+**** State
+**** Transition
+
+The transformation is described by the following steps.
+
+1. The first step is to iterate through each HostInstance and create the DeploymentHost representing it, set its IP address and add it to the Deployment model.
+.. For each ApplicationInstance inside the HostInstance a DeploymentInstance is created, its id is set to be the same as the ApplicationInstance's and is added to the proper DeploymentHost.
+... If the ApplicationInstance's type has a StateMachine specified a DeploymentBehavior representing it is created,  its description is set and is added to the proper ApplicationInstance.
+.... For each State in the StateMachine a BehaviorState based on the original State is created, its description is set and is added to the proper DeploymentBehavior.
+.... For each State's each Transition a BehaviorTransition is created, its description is set and is added to both the proper DeploymentBehavior and as an outgoing transition of the BehaviorState. At this point using the Transition's target state, the BehaviorTransition's to reference can be set.
+.... The DeploymentBehavior's current state is set to the corresponding StateMachine's initial state.
+2. At this point, the triggers are set as specified by the transformation. This is done via getting the Transition for each BehaviorTransition. If the Transition has a send action, the directly reachable hosts are checked for Transitions under the correct ApplicationType's StateMachine, and if any are found, their BehaviorTransition counterparts are added.
+
+Each time a new element of the deployment model is created, the traceability model gets modified as required.
+
+## Handling of 1-to-n mappings
+
+Since the transformation is done via traversing the CPS model hierarchy, the 1-to-n mappings are created automatically. The most important thing to consider is the nature of the traceability model. Since for example each State can have multiple corresponding BehaviorStates, when searching for a specific DeploymentApplication's BehaviorState using the traceability model, the correct one should be filtered.
+
+## Creation of triggers
+
+The creation of the triggers was mostly done leveraging the power of VIATRA Query.
+
+The main pattern used is the one named "triggerPair". This pattern returns the BehaviorTransition for every Tansition with wait action corresponding to the specified Transition with send action.
+
+The other important pattern is "communicatingAppInstances". This pattern searches for every ApplicationInstance pair allocated to hosts that can directly communicate with each other.
+
+## Class of the transformation
+
+The implementation of the transformation can be found in the following class:
+`CPS2DeploymentBatchTransformationEiq.xtend`
+
+## Summary and comparison
+
+This method of transformation proved to be the fastest of all alternatives, while being the most memory efficient of the transformation variants using VIATRA Query. This is mainly due to the fact that it is not required to build complex VIATRA Query patterns aimed at tracking changes in the model. This is also it's main handicap since the transformation is not incremental, thus it needs to traverse the cps model and rebuild the traceability and deployment model to maintain consistency.

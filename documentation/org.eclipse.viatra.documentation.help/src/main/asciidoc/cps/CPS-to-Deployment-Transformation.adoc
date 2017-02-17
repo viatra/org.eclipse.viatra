@@ -1,0 +1,50 @@
+# CPS-to-Deployment Transformation
+
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+## Specification
+
+The specification of the CPS-to-Deployment M2M transformation describes what is expected from any <<Alternative-transformation-methods#,implementation variant>>.
+
+### Input
+
+* <<Domains#cyber-physical-system,Cyber Physical System>> instance model that satisfies the validation rules defined on the <<Live-Validation#,Live Validation>> page.
+
+### Output
+
+* <<Domains#deployment,Deployment>> instance model
+* <<Domains#traceability,Traceability>> instance model between the CPS and Deployment instance models
+
+### Rules
+
+1. **Host mapping:** All host instances in the CPS are transformed into deployment hosts.
+  * The _IP address_ of the host instance is copied to the deployment model.
+  * *Traceability:* A trace is created between each host instance and related deployment host (`1-to-1`).
+1. **Application mapping:** All application instances allocated to a host instances in the CPS are transformed into deployment applications.
+  * The _identifier_ of the application instance is copied to the deployment model.
+  * *Traceability:* A trace is created between each application instance and related deployment application (`1-to-1`).
+1. **State machine mapping:** All deployment applications will contain a deployment behavior transformed from the state machine of their application type.
+  * The _identifier_ of the state machine is copied to the description of the deployment behavior.
+  * *Traceability:* A trace is created for each state machine and it refers to all deployment behaviors mapped from that state machine (`1-to-n`).
+1. **State mapping:** Each state of state machines are transformed as behavior states into all deployment behaviors for the given state machine.
+  * The _identifier_ of the state is copied to the description of the behavior state.
+  * *Traceability:* A trace is created for each state and it refers to all behavior states mapped from that state (`1-to-n`).
+1. **Transition mapping:** Each transition of state machines are transformed as behavior transitions into all deployment behaviors for the given state machine.
+  * The _identifier_ of the transition is copied to the description of the behavior transition.
+  * The behavior transition is added to the _outgoing transitions_ of the behavior state mapped from the state containing the transition to the given deployment behavior.
+  * The _to_ reference of the behavior transition is set to the behavior state mapped from the target state of the transition to the given deployment behavior.
+  * *Traceability:* A trace is created for each transition and it refers to all behavior transition mapped from that transition (`1-to-n`).
+1. **Action mapping:** The actions of transitions are transformed into _trigger_ references between behavior transitions.
+  * A behavior transition `SBT` related to a CPS transition `STr` with action `sendSignal(appTypeId,signalId)` will trigger all behavior transitions `WBT` related to CPS transitions `WTr` with action `waitForSignal(signalId)`, if:
+    * The identifier of the application type that contains the state machine of `WTr` is `appTypeId`.
+    * The application instance related to the deployment application containing `SBT` is allocated to host instance `H1`.
+    * The application instance related to the deployment application containing `WBT` is allocated to host instance `H2`.
+    * `H1` can communicate with `H2` transitively:
+      1. `H1` and `H2` may be the same
+      1. `H2` is included in the set of values of `communicatesWith` in `H1`
+
+## Testing
+
+We provide <<CPS-to-Deployment-Unit-Tests#,unit tests>> that are defined based on this specification and can test the correctness of any transformation variant.

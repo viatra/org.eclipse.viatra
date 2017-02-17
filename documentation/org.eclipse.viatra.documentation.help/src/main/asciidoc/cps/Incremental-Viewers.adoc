@@ -1,0 +1,39 @@
+# Incremental Viewers
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+The VIATRA link:https://wiki.eclipse.org/index.php?title=VIATRA/Addon/VIATRA_Viewers[Viewers Framework] is applied to create custom views for the CPS demonstrator.
+
+The views are defined using declarative pattern annotations which specify items and edges in a view. The view may be a graph visualization, but simple UI elements, such as lists or tree views are also supported by the technology. In the CPS demonstrator, we created views using the link:https://www.eclipse.org/gef/zest/[Zest] Graph Visualization framework.
+
+image::https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/plain/cps/models/org.eclipse.viatra.examples.cps.instances/deployment_viewer.png[Deployment model viewer]
+
+The definition of the views can be found in the `cps.queries` project in the `model/viewer` and `deployment/viewer` packages. Items are defined with `@Item` annotations, edges are specified with `@Edge` annotations, while the format (such as colours) is described with `@Format` annotations.
+
+## Viewer example
+
+The following patterns define the following:
+
+* Create items for each deployment host
+* Create items for each deployment application
+* Create edges between items that correspond to the deployment host and application objects
+
+```
+@Format(color = "#FBFE00")
+@Item(item = host, label = "Host $host.ip$")
+pattern deploymentHostItem(host) {
+	DeploymentHost(host);
+}
+
+@Format(color = "#996600")
+@Item(item = app, label = "App $app.id$")
+pattern deploymentApplicationItem(app) {
+	DeploymentApplication(app);
+}
+
+@Edge(source = host, target = app, label = "apps")
+pattern deploymentHostApplicationEdge(host, app) {
+	DeploymentHost.applications(host, app);
+}
+```

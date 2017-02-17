@@ -1,0 +1,113 @@
+= Using Queries Programmatically
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ../]
+:imagesdir: {rootdir}
+
+== Managed Engine
+
+ . Create an instance of ExampleQueries
+ . Create the EMFScope for the resource (or resourceSet)
+ . Use `AdvancedViatraQueryEngine.on` for creation of the managed engine
+ . Prepare the engine
+ . Usage of the `hostInstancesForIP` pattern
+ .. Get HostInstance of the only one match from the matcher for the fixed IP parameter in one line
+ . Usage of the `hostTypesConnectedToApplicationTypes` pattern
+ .. Use forEachMatch and the generated match processor for iterating all matches.
+
+Code:
+[[app-listing]]
+[source,java]
+----
+extension val exampleQueries = ExampleQueries.instance
+
+val scope = new EMFScope(resource)
+val engine = AdvancedViatraQueryEngine.on(scope)
+engine.prepare
+
+val searchedHost = engine.hostInstancesForIP
+                            .getOneArbitraryMatch(null, SEARCHED_IP)
+                            .hostInstance
+
+engine.hostTypesConnectedToApplicationTypes.forEachMatch(new HostTypesConnectedToApplicationTypesProcessor() {
+    override process(HostType pHostType, ApplicationType pAppType) {
+        '''«pHostType.identifier»«IF pHostType.identifier.length<8»	«ENDIF»	| «pAppType.identifier»'''.log
+    }
+})
+----
+
+== Unmanaged Engine
+
+ . Create an instance of ExampleQueries
+ . Create the EMFScope for the resource (or resourceSet)
+ . Use `AdvancedViatraQueryEngine.createUnmanagedEngine` for creation of the unmanaged engine
+ . Usage of the `hostInstancesForIP` pattern
+ .. Get matcher from instance of queries (this needs an engine)
+ .. Get the only one match from the matcher for the fixed IP parameter
+ .. Get the HostInstance of the match
+ . Usage of the `hostTypesConnectedToApplicationTypes` pattern
+ .. Get all matches in a one line expression (thanks for Xtend extension)
+ .. Pretty print use the default forEach of Xtend for iterating matches
+ . Dispose the engine
+
+Code:
+[[app-listing]]
+[source,java]
+----
+extension val exampleQueries = ExampleQueries.instance
+
+val scope = new EMFScope(resource)
+val engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope)
+
+val hostInstancesMatcher = exampleQueries.getHostInstancesForIP(engine)
+val hostInstanceMatch =
+        hostInstancesMatcher.getOneArbitraryMatch(null, SEARCHED_IP)
+val searchedHost = hostInstanceMatch.hostInstance
+
+val hostTypesConnectedToApplicationTypesMatches =
+        engine.hostTypesConnectedToApplicationTypes.allMatches
+hostTypesConnectedToApplicationTypesMatches.prettyPrintMatches
+
+engine.dispose
+----
+
+== Unmanaged Engine with Local Search
+
+ . Create an instance of ExampleQueries
+ . Create the EMFScope for the resource (or resourceSet)
+ . Use `AdvancedViatraQueryEngine.createUnmanagedEngine` for creation of the unmanaged engine
+ . Create a query evaluation hint for LocalSearchBackend (`USE_BASE_INDEX` is false)
+ . Usage of the `hostInstancesForIP` pattern
+ .. Get matcher from the engine for the pattern and the hint
+ .. Get the host instance of the only match from the matcher for the partial match
+ . Usage of the `hostTypesConnectedToApplicationTypes` pattern
+ .. Get matcher from the engine for the pattern and the hint and get all values of host types
+ .. Print host types
+ . Dispose the engine
+
+Code:
+[[app-listing]]
+[source,java]
+----
+extension val exampleQueries = ExampleQueries.instance
+val scope = new EMFScope(resource)
+val engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope)
+val hint = new QueryEvaluationHint(
+                LocalSearchBackendFactory.INSTANCE,
+                #{LocalSearchHintKeys.USE_BASE_INDEX -> false}
+)
+
+val hostInstancesForIPMatcher = engine.getMatcher(hostInstancesForIP, hint)
+val searchedHost =
+        hostInstancesForIPMatcher
+            .getOneArbitraryMatch(
+                HostInstancesForIPMatch.newMatch(null, SEARCHED_IP))
+            .hostInstance
+
+val hostTypesConnectedToApplicationTypesMatches =
+        engine.getMatcher(hostTypesConnectedToApplicationTypes, hint)
+            .allValuesOfhostType
+'''HostTypes:'''.log
+hostTypesConnectedToApplicationTypes.forEach['''	«it.identifier»'''.log]
+
+engine.dispose
+----

@@ -1,0 +1,93 @@
+# VIATRA transformation API based QRT M2M transformation
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+This gives a short introduction on the QRT transformation variant that uses the VIATRA transformation API to define its transformation rules.
+
+## Introduction
+
+This transformation variant is closely related to the <<Query-result-traceability-M2M-transformation#,Query Result Tracebility>> variant. The basic concept of the transformation and the transformation rules are identical to those of the aforementioned variant, as the VIATRA transformation API basically provides a simplified, more model transformation oriented interface for the link:https://wiki.eclipse.org/VIATRA/Transformation/EventDrivenVM[Event-driven Virtual Machine (EVM)].
+
+## How does it work
+
+On the contrary to its sister variant, this method uses the link:http://wiki.eclipse.org/VIATRA/Transformation_API[VIATRA transformation API] to access the EVM. Similar to the aforementioned QRT method, each transformation step is triggered by an appearing or disappearing VIATRA Query pattern match. The transformation steps are detailed in the listing below.
+
+* **HostInstance**
+** Related patterns:
+*** _hostInstance_ (Event Trigger)
+*** _cps2depTrace_ (Used in transformation)
+** Appear: Create a new DeploymentHost in the deployment model representing the appeared HostInstance. Add trace to traceability.
+** Update: Update the IP address if required.
+** Disappear: Remove the DeploymentHost representing the disappeared HostInstance from the deployment model. Remove trace from traceability.
+* **ApplicationInstance**
+** Related patterns:
+*** _applicationInstance_ (Event Trigger)
+*** _cps2depTrace_ (Used in transformation)
+** Appear: Create a new DeploymentApplication in the deployment model representing the appeared ApplicationInstance. Add trace to traceability.
+** Update: Update the id if required.
+** Disappear: Remove the DeploymentApplication representing the disappeared ApplicationInstance from the deployment model. Remove trace from traceability.
+* **StateMachine**
+** Related patterns:
+*** _stateMachine_ (Event Trigger)
+*** _applicationInstance_ (Referenced by event trigger)
+*** _cps2depTrace_ (Used in transformation)
+** Appear: Create a new DeploymentBehavior in the deployment model representing the appeared StateMachine for the ApplicationInstance specified by the pattern. This happens for every ApplicationInstance with a type that defines the StateMachine. Add DeploymentBehavior to proper trace in traceability. If it does not exist, create it.
+** Update: Update the description if required.
+** Disappear: Remove the DeploymentBehaviors representing the disappeared StateMachines from the deployment model. Remove DeploymentBehavior from proper trace in traceability. If no DeploymentBehaviors are left in the trace, remove it.
+* **State**
+** Related patterns:
+*** _state_ (Event Trigger)
+*** _stateMachine_ (Referenced by event trigger)
+*** _applicationInstance_ (Referenced by event trigger)
+*** _cps2depTrace_ (Used in transformation)
+** Appear: Create a new BehaviorState in the deployment model representing the appeared State for the ApplicationInstance specified by the pattern. This happens for every ApplicationInstance with a type that defines the StateMachine containing the State. Set the DeploymentBehavior's current state to the created BehaviorState if the original State was an initial state of it's state machine. Add BehaviorState to proper trace in traceability. If it does not exist, create it.
+** Update: Update the description and the current state of the state machine if required.
+** Disappear: Remove the BehaviorStates representing the disappeared State from the deployment model. If this BehaviorState was the current state of it's DeploymentBehavior, set the behavior's current state to null. Remove BehaviorStates from proper trace in traceability. If no BehaviorStates are left in the trace, remove it.
+* **Transition**
+** Related patterns:
+*** _transition_ (Event Trigger)
+*** _state_ (Referenced by event trigger) 
+*** _stateMachine_ (Referenced by event trigger)
+*** _applicationInstance_ (Referenced by event trigger)
+*** _cps2depTrace_ (Used in transformation)
+*** _depBehaviorsStateAndTransitions_ (Used in transformation)
+** Appear: Create a new BehaviorTransition in the deployment model representing the appeared State for the ApplicationInstance specified by the pattern. This happens for every ApplicationInstance with a type that defines the StateMachine containing the State containing the Transition. Add BehaviorTransition to proper trace in traceability. If it does not exist, create it.
+** Update: Update the description, the source and target states if required.
+** Disappear: Remove the BehaviorTransitions representing the disappeared Transition from the deployment model. Remove BehaviorTransitions from proper trace in traceability. If no BehaviorTransitions are left in the trace, remove it.
+* **Trigger**
+** Related patterns:
+*** _triggerPair_ (Event Trigger)
+*** _sendTransitionAppSignal_ (Referenced by event trigger)
+*** _waitTransitionAppSignal_ (Referenced by event trigger)
+*** _appInstanceTransition_ (Referenced by event trigger)
+*** _applicationInstance_ (Referenced by event trigger)
+*** _applicationInstanceWithHost_ (Referenced by event trigger)
+*** _reachableHosts_ (Referenced by event trigger)
+*** _hostCommunication_ (Referenced by event trigger)
+*** _cps2depTrace_ (Used in transformation)
+** Appear: Set the trigger between the BehaviorTransitions representing the matched Transitions.
+** Disappear: Remove the trigger between the BehaviorTransitions representing the matched Transitions.
+
+To resolve ordering issues, the events processing order is defined based on priorities as follows:
+HostInstance > ApplicationInstance > StateMachine > State > Transition > Trigger
+
+(A > B means event A will be processed before event B)
+
+The above order is true for each appear and update event. In the case of disappear events the order is reversed.
+
+## Handling of 1-to-n mappings
+
+The 1-to-n mappings are mainly handled inside the event trigger patterns. Each pattern is written in a way so that it will create an event for each applicable ApplicationInstance, e.g. if a new State is added to the CPS model and there are 3 ApplicationInstances of the type that defines the StateMachine, then 3 appeared events will occur, and each of them will add a new BehaviorState to the corresponding DeploymentApplication's DeploymentBehavior.
+
+## Creation of triggers
+
+Detecting new trigger pairs is entirely the job of VIATRA Query using the above specified patterns.
+
+## Class of the transformation
+
+The implementation of the transformation can be found in the following class:
+`CPS2DeploymentTransformationViatra.xtend`
+
+## Summary and comparison
+If compared to the QRT variant, while being simpler and easier to maintain than its counterpart due to the simplified, more transformation oriented VIATRA API, this implementation offers the same functionality and performance as well.

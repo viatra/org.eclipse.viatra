@@ -1,0 +1,96 @@
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+The model generator component is able to generate `CyberPhysicalSystem` models with the specified properties.
+The generator is built on top of the <<Plan-Executor#,PlanExecutor>> and implements specific plans, phases, operations, initializer and fragment objects. The generation process is based on pseudo-random actions which means the output is deterministic according to the input parameters.
+
+image:modelgenerator.png[ModelGenerator]
+
+Preferences of the model are declared in `ICPSConstraints` objects. The following constraints are available: 
+
+* It is able to define _Host_ and _Application Classes_ which specify constraints for `Host-` and `ApplicationTypes`. Each _HostClass_ contains the following attributes:
+** Name: Name of the HostClass (important for the ids)
+** HostTypes: Min-Max value of the instantiated `HostTypes` (the exact value is randomized between the min and max values)
+** HostInstances: Min-Max value of the instantiated `HostInstances`. (the exact value is randomized separately for each `HostTypes` of the _HostClass_, between the min and max values)
+** CommunicationLines: This min-max value specifies the number of accessible `HostInstances` (`communicateWith` attribute).
+* _ApplicationClass_ is defined with the following properties:
+** Name: Name of the ApplicationClass (important for the ids)
+** ApplicationTypes: in-Max value of the instantiated `ApplicationTypes` (the exact value randomized between the min and max values)
+** ApplicationInstances: Min-Max value of the instantiated `ApplicationInstances`. (the exact value is randomized separately for each `ApplicationTypes` of the _ApplicationClass_, between the min and max values)
+** States: Min-Max value of the instantiated `States`for each `StateMachine` of the `ApplicationType`
+** Transitions: Min-Max value of the instantiated `Transitions` for each `StateMachine` of the `ApplicationType`
+** PercentageOfAllocatedInstances: Probability of application allocation
+** AllocationRatios: Describes the allocation ratio by _HostClasses_
+** ProbabilityOfActionGeneration: probability of the action generation for `Transitions`
+** ProbabilityOfSenAction: probability of generating _sendSignal_ action (other is the _wiatForSignal_)
+* Number of the available signals is specified with Min-Max value
+
+## CPS model generation plan
+
+image:plan.png[Plan of the CPS model generation]
+
+The CPS plan consists of seven phases and eight operations.
+
+* Prepare: prepare the IncQueryEngine
+* SignalSet: Generate signals
+* Types: Generate Host and Application types (include StateMachines) according to the _Classes_
+* Instances: Generate Host and Application instances according to the _Classes_
+* Host Communication: Add communication lines to `HostInstances`
+* Allocations: Allocate `ApplicationInstances` to `HostInstances`
+* Actions: Generate actions to `Transitions`
+
+## Usage example
+
+First, the `ICPSConstraints` interface shall be implemented.
+```xtend
+class SimpleCPSConstraints implements ICPSConstraints {
+	
+	public String name = "Simple"
+	val hostClass1 = new HostClass(
+				"FirstHostClass",
+				new MinMaxData(1, 3), // HostTypes
+				new MinMaxData(2, 5), // HostInstances
+				new MinMaxData(1, 2) // CommLines
+			)
+	val hostClass2 = new HostClass(
+				"OtherHostClass",
+				new MinMaxData(1, 1), // HostTypes
+				new MinMaxData(2, 2), // HostInstances
+				new MinMaxData(1, 1) // CommLines
+			)
+	
+	override getHostClasses() {
+		#[hostClass, hostClass2];
+	}
+	
+	override getNumberOfSignals() {
+		new MinMaxData(1, 10);
+	}
+	
+	override getApplicationClasses() {
+		val firstAppClassAllocations = new HashMap();
+		firstAppClassAllocations.put(hostClass, 1);
+		firstAppClassAllocations.put(hostClass2, 2);
+
+		#[
+			new AppClass(
+				"FirstAppClass",
+				new MinMaxData(1, 3), // AppTypes
+				new MinMaxData(1, 2), // AppInstances
+				new MinMaxData(2, 4), // States
+				new MinMaxData(1, 2) // Transitions
+				, new Percentage(100) // PercentageOfAllocatedInstances 
+				, firstAppClassAllocations // allocationRatios
+				, new Percentage(95) // probabilityOfActionGeneration
+				, new Percentage(60) //probabilityOfSenAction
+			)
+		];
+	}
+	
+}
+```
+
+This model shall contain least one and maximum three `HostTypes` of _FirstHostClass_ and exactly one of the _OtherHostClass_. Each `HostType` of the _FirstHostClass_ shall be instantiated minimum two and maximum five times and the `HostInstances` shall communicate with one or two other instances. The _OtherHostClass_ is more stringent, it specifies the exact number of types, instances and communication lines (1,2,1). Number of the generated signals shall be in range of 1 to 10. The SimpleCPSConstraints specifies only one _ApplicationClass_, the _FirstAppClass_. Least one and maximum three _ApplicationType_ shall be created for this class. Each types of _FirstAppClass_ shall be instantiated one or two times and the `StateMachine` of the types shall contain minimum two and maximum four `States` with one or two `Transactions`. Every `ApplicationInstance` shall be allocated (PercentageOfAllocatedInstances ). Two times more application instances shall be allocated on the instances of the _OtherHostClass_ than the _FirstHostClass_ (allocationRatios). Transitions contain actions with 95% and the probability of the "sendSignal" is 60%.
+
+Then the `CPSGeneratorBuilder.buildAndGenerateModel(long seed, ICPSConstraints constraints) : CPSFragment` should be called.

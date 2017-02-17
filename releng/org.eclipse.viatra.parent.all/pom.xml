@@ -11,7 +11,6 @@
 	<modules>
 		<module>../../releng/org.eclipse.viatra.target.rcp</module>
 		<module>../../releng/org.eclipse.viatra.update</module>
-		<module>../../releng/org.eclipse.viatra.docs</module>
 		<module>../../releng/org.eclipse.viatra.parent.incubation</module>
 
 		<!-- Query -->
@@ -60,6 +59,10 @@
 		<module>../../integration/tests/org.eclipse.viatra.integration.uml.test</module>
 		<module>../../integration/features/org.eclipse.viatra.integration.gmf.feature</module>
 		<module>../../integration/features/org.eclipse.viatra.integration.uml.feature</module>
+		
+		<!-- Documentation -->
+		<module>../../documentation/org.eclipse.viatra.documentation.help</module>
+		<module>../../releng/org.eclipse.viatra.docs</module>
 
 	</modules>
 	<parent>

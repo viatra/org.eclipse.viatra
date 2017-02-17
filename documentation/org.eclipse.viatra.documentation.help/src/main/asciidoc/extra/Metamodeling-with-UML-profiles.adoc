@@ -1,0 +1,198 @@
+= Metamodeling with UML profiles
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ../]
+:imagesdir: {rootdir}
+:experimental:
+:icons: font
+:toc:
+:toc2:
+
+== Overview
+In this tutorial a profile is created with a custom palette. They are added to the Papyrus UML environment.
+
+== Environment of the exercise
+You need an *Eclipse Modeling Tools* version 4.5 with the following installed features:
+
+.Installed Features
+[cols="4,3,3",options="header"]
+|===
+
+| Plugin | Version | Updatesite
+
+| _Papyrus UML_ | 1.1.4 | link:http://download.eclipse.org/releases/mars[Mars Release Updatesite]
+
+|===
+
+You can install it from _Help_ > _Install New Sotware\..._. Select the updatesite of Mars (`\http://download.eclipse.org/releases/mars`) to _Work with_. Select _Modeling_ > _Papyrus UML_ and click _Next_ -> _Next_ -> _Install_. We use the _Papyrus_ perspective through the exercise.
+
+== Create your first profile
+We create a new profile in a project with some basic elements.
+
+* First we need to create a new project so right-click in the _Project Explorer_ and select _New_ > _Papyrus Project_ and click _Next_.
+** At the first page of the wizard select _Profile_ as _Diagram Language_.
++
+image::extra/screenshots/uml_create_profile_project_0.png[]
+
+** At the next page set following properties and click _Next_:
++
+_Project name_: `com.incquerylabs.course.cps.uml.profile`
++
+_Model file name_: `cps`
++
+image::extra/screenshots/uml_create_profile_project_1.png[]
+
+** At the last page set _Root model element name_ to `CyberPhysicalSystem` and select the _Profile Diagram_ diagram kind and click _Finish_.
++
+image::extra/screenshots/uml_create_profile_project_2.png[]
+
+* Then the `cps.profile.di` is generated and opened in the editor. The profile diagram is empty yet.
++
+image::extra/screenshots/uml_create_profile_0.png[]
+
+* Now we create a new _Stereotype_ from the _Palette_ called `ApplicationInstance`.
++
+image::extra/screenshots/uml_create_profile_1.png[]
++
+IMPORTANT: When saving, be careful with defining the profile: every definition will be generated into the uml file (see: <<cps-profile-generated-definition,generated definition of cps profile>>)!
++
+image::extra/screenshots/uml_create_profile_2.png[]
+
+* Next we create a new _Import Metaclass_ and select `Artifact` in the pop-up window.
++
+image::extra/screenshots/uml_create_profile_3.png[]
+
+* Create a new _Extension_ between `ApplicationInstance` stereotype and `Artifact` metaclass
++
+image::extra/screenshots/uml_create_profile_4.png[]
+
+* Create a new _Property_ in `ApplicationInstance` stereotype with following properties:
++
+_Name_: `dbUser`
++
+_Type_: _UML Primitive Types_ > _String_
++
+image::extra/screenshots/uml_create_profile_5.png[]
+
+* Under the stereotype's Properties > UML, add _Icon_ with following settings:
++
+_Kind_: shape
++
+_Location_: `platform:/plugin/org.eclipse.ant.ui/icons/full/elcl16/properties.png`
++
+image::extra/screenshots/uml_create_profile_6.png[]
+
+* Now we can define the profile, so modify the diagram in an arbitrary way, then save and define it.
++
+image::extra/screenshots/uml_create_profile_7.png[]
+
+* A definition will be generated into the `cps.profile.uml`:
++
+[[cps-profile-generated-definition]]
+.The generated definition in the `cps.profile.uml`
+image::extra/screenshots/uml_create_profile_8.png[]
+
+== Apply profile
+At this section we try out the created profile.
+
+* First create a new _Papyrus Project_ with the following settings:
++
+_Diagram Language_: UML
++
+_Name_: `com.incquerylabs.course.cps.uml.instance`
++
+_Model file name_: `cps`
++
+_Diagram Kind_: Deployment Diagram
++
+_Profile to apply_: browse the newly created profile from the workspace
+
+* Then create a new _Artifact_
+* Under the artifact's _Properties_ > _Profile_ add `ApplicationInstance` to _Applied stereotypes_.
+** Expand `ApplicationInstance` stereotype and set the value of `dbUser` property.
++
+image::extra/screenshots/uml_use_profile_0.png[]
+
+* Under Properties > Appearance, set followings:
++
+_Shape Decoration_ > _Visible_: true
++
+_Stereotype display_ > _ApplicationInstance_: check _In Braces_
++
+image::extra/screenshots/uml_use_profile_1.png[]
+
+== Register profile to Papyrus
+Now we embed our profile in a plug-in and register it to Papyrus. After this we are able to use the profile like other built-in profiles in a runtime Eclipse
+
+* Right-click on the `com.incquerylabs.course.cps.uml.profile` project and select _Configure_ > _Convert to plug-in project_.
+* Open `MANIFEST.MF`.
+** First we define path mapping, so add new extension for extension point `org.eclipse.emf.ecore.uri_mapping`. With this we connect a custom pathmap to the real path of something (in this case our project). Use following settings for mapping:
+*** _source_: `pathmap://CPS_PROFILE/`
+*** _target_: `platform:/plugin/com.incquerylabs.course.cps.uml.profile/`
+** Then register the profile for Papyrus, so add a new extension for extension point `org.eclipse.papyrus.uml.extensionpoints.UMLProfile`. If you do not find it then uncheck _Show only extension points for required dependencies_ (this is because of the missing `org.eclipse.papyrus.uml.extensionpoints` dependency, you need to add it). Use following settings for the profile:
+*** _name_: `CyberPhysicalSystem` (arbitrary)
+*** _path_: `pathmap://CPS_PROFILE/cps.profile.uml` (path to UML model file with pathmap)
+
+== Usage of the registered profile
+Now we try out the registered `CyberPhysicalSystem` profile.
+
+* Launch a new runtime Eclipse by right-clicking on the project of profile and select _Run As_ > _Eclipse Application_.
+* Create a new _Papyrus Project_ in the runtime Eclipse, select UML to the _Diagram Language_ and _Browse Registered Profiles_ should contain registered `CyberPhysicalSystem` profile.
++
+image::extra/screenshots/uml_registered_profile_0.png[]
+
+== Customize palette
+The last thing - what we create - is a custom palette for CPS profile.
+
+* Right-click on any content of the _Palette_ of the `cps.di` and select _Customize\..._.
+* In the pop-up dialog click on the icon:plus[role="lime",title="Create a new local palette"] button
++
+
+image::extra/screenshots/uml_create_palette_0.png[]
+* Set _Name_ to `CPS palette`, take note of _Advanced_ > _EditorID_ (it should be `org.eclipse.papyrus.uml.diagram.deployment`) and click _Next_.
++
+image::extra/screenshots/uml_create_palette_1.png[]
+
+* At the last page for _Available Tools_ select _CyberPhysicalSystem_ profile then add _ApplicationInstance (Artifact)_ to the _Palette Preview_:
+** Click on _ApplicationInstance (Artifact)_, click on the target in the _Palette Preview_ then click on the icon:arrow-right[role="yellow",title="Add the selection to the palette"] button,
++
+image::extra/screenshots/uml_create_palette_2.png[]
+
+** Or drag and drop the _Application Instance (Artifact)_ to the _Palette Preview_.
+* Then click _Finish_
+
+== Register the new palette
+
+* Create a new _Plug-in Project_ with following settings:
++
+_Name_: com.incquerylabs.course.cps.uml.profile.customization
++
+_Generate an activator, a Java class that controls the plug-in's life cycle_: icon:square-o[] (unchecked)
+
+* Copy palette definition XML from `$WORKSPACE/.metadata/.plugins/org.eclipse.papyrus.uml.diagram.common` to `$WORKSPACE/com.incquerylabs.course.cps.uml.profile.customization/palettes`
+* Open MANIFEST.MF
+** Add dependencies:
++
+`org.eclipse.papyrus.uml.diagram.common`
++
+`com.incquerylabs.course.cps.uml.profile`
+** Add extension for extension point `org.eclipse.papyrus.uml.diagram.common.paletteDefinition` and set followings:
++
+_Path_: browse the palette definition XML
++
+_Class_: org.eclipse.papyrus.uml.diagram.common.service.PluginPaletteProvider
++
+_Priority_: Medium
+
+*** Then right-click on the palette definition and select _New_ > _editor_
++
+image::extra/screenshots/uml_register_palette_0.png[]
+
+**** Set the _Id_ od the editor to the saved EditorID (`org.eclipse.papyrus.uml.diagram.deployment`)
+
+== Usage of the palette
+
+* Launch a runtime Eclipse.
+* Open the previously created `cps.di` (if you do not have this follow instructions of  <<_usage_of_the_registered_profile,this section>>).
+* The palette will be in the editor:
++
+image::extra/screenshots/uml_use_palette.png[]

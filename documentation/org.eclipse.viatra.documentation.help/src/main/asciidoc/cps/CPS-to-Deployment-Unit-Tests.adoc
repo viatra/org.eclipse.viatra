@@ -1,0 +1,86 @@
+# CPS to Deployment Unit Tests
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+The `xform.m2m.tests` project specifies a high number of test cases that are independent of transformation implementations and are created for allowing Test Driven Development of transformations based on the specification.
+
+The tests are grouped together into classes following the rules found in the specification of the <<CPS-to-Deployment-Transformation#,CPS-to-Deployment>> transformation:
+
+* HostMappingTest
+* ApplicationMappingTest
+* StateMachineMappingTest
+* StateMappingTest
+* TransitionMappingTest
+* ActionMappingTest
+
+In addition, the `TransformationApiTest` class ensures that all variants behave the same way for incorrect input parameters, while the `WrapperTest` class can contain additional tests for specific transformation variant wrappers.
+
+## Technical details
+
+### Run the tests
+
+Simply right-click on the `xform.m2m.tests` project and select `Run as... -> JUnit Plugin Test`.
+
+### Test case structure
+
+All specification related tests extend the `CPS2DepTest` class, which defines some extension fields:
+
+```xtend
+class CPS2DepTest {
+	protected extension Logger logger = Logger.getLogger("cps.xform.CPS2DepTest")
+	protected extension CPSTransformationWrapper xform
+	protected extension CPSModelBuilderUtil modelBuilder
+```
+
+A simple test case is structured as follows:
+
+```xtend
+@Test
+def hostIncremental() {
+ val testId = "hostIncremental"
+ info("START TEST: " + testId)
+ 
+ // use model builder to create initial model
+ val cps2dep = prepareEmptyModel(testId) 
+ 		
+ // use transformation wrapper to initialize (e.g. create rules)
+ cps2dep.initializeTransformation
+ // use transformation wrapper to execute
+ executeTransformation
+ 
+ // modify model
+ val instance = cps2dep.prepareHostInstance
+ // re-execute transformation (incremental usually ignores this call)
+ executeTransformation
+ 
+ // check results
+ cps2dep.assertHostMapping(instance)
+	
+ info("END TEST: " + testId)
+}
+```
+
+### Test with existing input model
+
+If you would like to test the transformation on your own input CPS model, take a look at the `specificInputModel` test case in `InstanceModelTest.xtend` in the `<cps>.xform.m2m.tests.integration` package.
+
+```xtend
+@Ignore
+@Test
+def specificInputModel(){
+  val testId = "specificInputModel"
+  info("START TEST: " + testId)
+  
+  val cpsUri = "file://my-cps-git-location/models/org.eclipse.viatra.query.examples.cps.instances/example.cyberphysicalsystem"
+  
+  val cps2dep = prepareCPSModel(cpsUri)
+  		
+  cps2dep.initializeTransformation
+  executeTransformation
+
+  info("END TEST: " + testId)
+}
+```
+
+Just change the resource URI to a full file path, remove or comment out the `@Ignore` and run the tests.

@@ -1,0 +1,36 @@
+= Advanced Features of the VIATRA Framework
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+:rootdir: .
+:imagesdir: {rootdir}/extra/images
+:toclevels: 2
+:toc:
+:toc2:
+:numbered:
+:icons: font
+:chapterdir: .
+:sectnums:
+:sectnumlevels: 4
+:experimental:
+:sectlinks:
+
+:chapterdir: extra
+
+include::{chapterdir}/Derived-features.adoc[leveloffset=+1]
+
+<<<
+include::{chapterdir}/Metamodeling-with-UML-profiles.adoc[leveloffset=+1]
+
+<<<
+include::{chapterdir}/Querying-and-transforming-UML-profile-applications.adoc[leveloffset=+1]
+
+<<<
+include::{chapterdir}/VIATRA-debugger.adoc[leveloffset=+1]
+
+<<<
+include::{chapterdir}/VIATRA-EVM-barebone.adoc[leveloffset=+1]
+
+<<<
+include::{chapterdir}/VIATRA-Query-API.adoc[leveloffset=+1]
+
+<<<
+include::{chapterdir}/VIATRA-visualization.adoc[leveloffset=+1]

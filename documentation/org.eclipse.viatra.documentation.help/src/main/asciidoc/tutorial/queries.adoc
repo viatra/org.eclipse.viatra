@@ -1,0 +1,215 @@
+= Query Development
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}
+:experimental:
+
+== Define your First Query
+
+. Create a new VIATRA Query project in the host Eclipse with the following name: `com.incquerylabs.cps.queries`.
+. Add `org.eclipse.viatra.examples.cps.model` to the Plug-in dependencies
+. Create a new query definition in a package named `com.incquerylabs.cps.queries` and a file named `queries.vql`. In the wizard create an empty query. Fill the first query:
++
+[[app-listing]]
+[source,vql]
+.queries.vql
+----
+package com.incquerylabs.cps.queries
+
+import "http://org.eclipse.viatra/model/cps"
+
+pattern hostIpAddress(host: HostInstance, ip) {
+    HostInstance.nodeIp(host,ip);
+}
+----
+. Import instances project ```models\org.eclipse.viatra.examples.cps.instances``` from the link:https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps/[CPS Git repository]. Note that this is **not** a Git repository URL, but a web interface; a repository url can be found in the bottom of the page.
+
+
+== Query Explorer
+
+*Query Explorer* is the primary debug tool for debugging VIATRA Query patterns runtime. Open the view by selecting _Window/Show View/Others/VIATRA/Query Explorer_ or you can simply press the kbd:[CTRL+3] shortcut and start to type the name of the view. On the left side of the view, there will be patterns inherited from  the host eclipse. The middle part will show you the matches of the patterns. To achieve this, we have to load a model into the view:
+
+. Open our example instance model (/org.eclipse.viatra.examples.cps.instances/example.cyberphysicalsystem)
+. Make sure "ReteEngine" is selected in the Query Explorer (next to the green arrow button)
+. then press the green arrow button on the view.
+. Open the query specification (vql file)
+. then press the green arrow button again
+
+.Query Explorer
+image::screenshots/query_explorer.png[Query Explorer]
+
+== Pattern Language
+
+Every pattern has a unique name and several parameters. Inside the body of the patterns, there are different constraints. Our first example describes a feature constraint. It states that `entity` variable is of class `Entity` and its `name` attribute is the value of `name` variable.
+
+. Create a validation query that checks if the IP address of a `HostInstance` is only an empty string:
++
+[[app-listing]]
+[source,vql]
+----
+pattern emptyIpAddress(host: HostInstance) {
+    HostInstance.nodeIp(host, "");
+}
+----
++
+This pattern shows that the parameters can be typed immediately in the parameters list.
+
+. Create a validation query that checks if two hosts have the same IP:
++
+[[app-listing]]
+[source,vql]
+----
+pattern sameIpAddress(host1, host2, commonIp) {
+    HostInstance.nodeIp(host1, commonIp);
+    HostInstance.nodeIp(host2, commonIp);
+    host1!=host2;
+}
+----
++
+This pattern shows the `!=` (_not equal_) operator to select two different entities from the instance model. (Use the `==` operator to equality)
+
+. Create a validation query that checks if the ip address contains only numbers and dots:
++
+[[app-listing]]
+[source,vql]
+----
+pattern ipFormatInvalid(host) {
+    HostInstance.nodeIp(host,ip);
+    check (
+        !ip.matches("^[\\d\\.]+")
+    );
+}
+----
++
+This pattern shows the `check` block where you can write a wide range of _Xbase_ expressions (similar to Java). In this case, we define a regular expression. It is important to note that check expressions *have to* be side-effect free and can only be called on attribute variables
+
+. Create a query that gets the other ending of a relation ending:
++
+[[app-listing]]
+[source,vql]
+----
+pattern connectedTo(state: State, other: State){
+    State.outgoingTransitions(state, transition);
+    Transition.targetState(transition, other);
+} or {
+    State.outgoingTransitions(other, transition);
+    Transition.targetState(transition, state);
+}
+----
++
+This pattern shows how to connect independent bodies in a pattern by using the `or` keyword that states the pattern has a match if the first _or_ the second _or_ the third _or_ etc body has a match.
+
+. Create a query that summarizes this three validation condition:
++
+[[app-listing]]
+[source,vql]
+----
+pattern badHost(host, ip) {
+    find sameIpAddress(host, _other, ip);
+} or {
+    HostInstance.nodeIp(host, ip);
+    find emptyIpAddress(host);
+} or {
+    HostInstance.nodeIp(host, ip);
+    find ipFormatInvalid(host);
+}
+----
++
+This pattern shows how to reuse previously defined patterns as sub patterns. To do this, we use the `find` keyword then write the id of the sub pattern and finally add the variables. (Variables starting with `___` define _don't care_ variables, hence you cannot use them in other lines of the pattern)
+
+. Create a query that matches to the valid hosts:
++
+[[app-listing]]
+[source,vql]
+----
+pattern goodEntity(host, ip) {
+    HostInstance.nodeIp(host, ip);
+    neg find badHost(host, _);
+}
+----
++
+This pattern shows `neg find` expression to express negation. Those actual parameters of the negative pattern call that are not used elsewhere in the calling body are universally quantified, meaning that the calling pattern only matches if variables of the calling pattern cannot be bound to matching elements.
+
+. Create a query that counts the number of attributes of an entity:
++
+[[app-listing]]
+[source,vql]
+----
+pattern applications(host, app) {
+    HostInstance.applications(host, app);
+}
+
+pattern countApplications(host : HostInstance, M) {
+    M == count find applications(host, _);
+}
+----
++
+This pattern shows `count find` expression that aggregates multiple matches of a called pattern into a single value.
+
+== Validation
+
+VIATRA provides facilities to create validation rules based on the pattern language of the framework. These rules can be evaluated on various EMF instance models and upon violations of constraints, markers are automatically created in the Eclipse Problems View.
+
+The *@Constraint* annotation can be used to mark a pattern as a validation rule. If the framework finds at least one pattern with such annotation.
+
+Annotation parameters:
+
+* _key:_ The list of paremeters which determine which objects the constraint violation needs to be attached to.
+* _message:_ The message to display when the constraint violation is found. The message may refer the parameter variables between $ symbols, or their EMF features, such as in $Param1.name$.
+* _severity:_ "warning" or "error"
+* _targetEditorId:_ An Eclipse editor ID where the validation framework should register itself to the context menu. Use "*" as a wildcard if the constraint should be used always when validation is started.
+
+To find a specific editor id, we can use the _Plug-in Selection Spy_ tool with a kbd:[Shift+Alt+F1] shortcut.
+
+For example:
+
+[[app-listing]]
+[source,vql]
+----
+@Constraint(targetEditorId = "org.eclipse.viatra.examples.cps.cyberPhysicalSystem.presentation.CyberPhysicalSystemEditorID",
+            severity = "error",
+            message = "The ip address is not unique",
+            key = {"host1"})
+pattern sameIpAddress(host1: HostInstance, host2: HostInstance, commonIp) {
+    HostInstance.nodeIp(host1, commonIp);
+    HostInstance.nodeIp(host2, commonIp);
+    host1!=host2;
+}
+----
+
+== Advanced Queries
+
+. Create *Support* pattern:
++
+[[app-listing]]
+[source,vql]
+----
+private pattern directReachable(state: State, other: State){
+    State.outgoingTransitions(state, transition);
+    Transition.targetState(transition, other);
+}
+----
+
+. Create a pattern that determines the transitive closure of reachable states:
++
+[[app-listing]]
+[source,vql]
+----
+private pattern reachable(state: State, other: State){
+    find directReachable+(state, other);
+}
+
+pattern reachableState(sm :StateMachine, state: State){
+    StateMachine.initial(sm, state);
+} or {
+    StateMachine.initial(sm, initial);
+    StateMachine.states(sm, state);
+    find reachable(initial, state);
+}
+----
+
+== References
+
+* Pattern Language: https://wiki.eclipse.org/VIATRA/Query/UserDocumentation/QueryLanguage
+* Validation Framework: https://wiki.eclipse.org/VIATRA/Addons/UserDocumentation/Validation
+* Query Based Features: https://wiki.eclipse.org/VIATRA/Addons/UserDocumentation/Query_Based_Features

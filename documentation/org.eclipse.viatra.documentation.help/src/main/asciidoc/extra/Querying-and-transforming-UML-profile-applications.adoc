@@ -1,0 +1,37 @@
+= Querying & transforming UML profile applications
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ../]
+:imagesdir: {rootdir}
+
+* Create static profile
+** Open profile
+** Under Properties > Profile, add Applied stereotype EPackage
+*** packageName = `profile`
+*** nsURI = `http://Papyrus/CpsProfile`
+*** basePackage = `com.incquerylabs.course.cps.uml`
+*** prefix = `CpsProfile`
+** New > EMF Generator Model
+*** Model importer: UML model
+*** Model URI: browse profile UML from workspace
+*** Ignore warnings
+*** Root packages:
+**** Package: `com.incquerylabs.course.cps.uml.profile`
+**** File Name: `cps.profile.ecore`
+*** Referenced generator models: all
+** In the opened genmodel, right click root element > Generate Model Code
+** Open the UML model file with text editor
+*** Take note of Profile's xmi:id
+** Open MANIFEST.MF
+*** Add dependencies:
+**** org.eclipse.emf.ecore
+**** org.eclipse.uml2.uml
+*** Add extension for point org.eclipse.uml2.uml.generated_package
+**** Uri: `http://Papyrus/CpsProfile` (nsURI of EPackage)
+**** Location: `pathmap://CPS_PROFILE/cps.profile.uml#` + Profile's xmi:id
+* Use profile from VIATRA
+** Run new Eclipse Application
+*** Import the lab projects `com.incquerylabs.course.cps.uml.viatra.batch*`
+*** Run `ApplicationTypeMappingTest` as JUnit Plug-in Test
+*** Run new Eclipse Application
+**** Import the `com.incquerylabs.course.cps.uml.viatra.instance` project (this contains the UML model file containing the profile application)
+**** Right-click it and select Transform to CPS

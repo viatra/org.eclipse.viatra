@@ -1,0 +1,53 @@
+# Partial batch M2M transformation
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+This page provides a summary for the partial batch transformation.
+
+## Introduction
+
+The partial batch transformation performs an initial, complete transformation for the model, which is basically the simple VIATRA Query solution described in <<Simple-Xtend-and-Query-M2M-transformation#,Simple Xtend and Query M2M-transformation>>. Then, the changes of the source CyberPhysicalSystem model are traced and collected using a change monitor. From the collected changes in source cyber physical system model the transformation - when run again - modifies only the corresponding parts of the deployment model, this way dramatically reducing re-transformation time if the source model contains changes.
+
+## How does it work
+
+This transformation uses the link:https://wiki.eclipse.org/VIATRA/Transformation/EventDrivenVM[Event-driven Virtual Machine (EVM)] feature of VIATRA Query. Registrations of changes are triggered by an appearing or disappearing VIATRA Query pattern match. Based on the appearance, disappearance or update of a model element since the last transformation, actions are to be taken when the transformation is initiated again.
+
+The VIARA Query query definitions used for the transformation of the model elements are detailed below.
+
+* *hostInstances*
+** Finds all host instances who have host type assigned.
+** Used for transforming host instances to deployment hosts. The attribute values are obtained from the host instance object.
+
+* *appInstances*
+** Finds all application instance which have application type.
+** Used for creating deployment applications.
+
+* *appTypes*
+** Returns all application types in the cyber physical system model.
+** Used for determining the state machine application based on the type. The state machine is transformed to a behavior using the rule assigned to the `stateMachines` pattern.
+
+* *stateMachines*
+** Gets the state machines assigned to any application type.
+** Used for creating behaviors of deployment applications.
+
+* *states*
+** Returns states that are part of a given state machine.
+** Used for the creation of deployment behavior states within a behavior.
+
+* *transitions*
+** Gets all transitions that are outgoing transitions of a state.
+** Based on the matches of this pattern behavior transitions and triggers between them are created.
+
+## Handling of 1-to-n mappings
+
+The 1-to-n mappings are handled within a separate method called `addTraceOneToN`. This is required for transforming state machines, states and transitions. When deletions occur in the source model, then the corresponding mappings are found using an VIATRA Query matcher, then removed by hand from the mappings.
+ 
+## Class of the transformation
+
+The implementation of the transformation can be found in the following class:
+`CPS2DeploymentPartialBatchTransformationEiq.xtend`, which is located in the `org.eclipse.viatra.query.examples.cps.xform.m2m.incr.aggr` package.
+
+## Summary
+
+This transformation has almost the same memory footprint as the batch VIATRA Query transformation. The first transformation time is about the same, however, the time needed to transform the changes in the initial model is half the time needed for the batch VIATRA Query variant.

@@ -1,0 +1,25 @@
+[[environment]]
+= Setting up the tutorial
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}
+
+The VIATRA website describes where to download VIATRA from: https://www.eclipse.org/viatra/downloads.php This tutorial was written for version 1.4 (released on 30th September 2016).
+
+VIATRA is available from the p2 repository at http://download.eclipse.org/viatra/updates/release/
+
+To install VIATRA, select the _Help/Install New Software\..._, then paste the copied URL to the _Work with_ field, than press _Enter_. When the view is updated, select the _VIATRA Query and Transformation SDK_. Tick the _Contact all update sites during install\..._ field. Press _Next_, then _Next_ and finally _Finish_.
+After the install process, you should restart Eclipse.
+
+.Select *Help/Install New Software\...*
+image::screenshots/install.png[Select _Help/Install New Software..._]
+
+
+.Install window
+image::screenshots/install2.png[Install window]
+
+For a faster installation, you may deselect the _Contact all update sites during install\..._ field, but then it is necessary to install the required _Xtext SDK_ manually.
+
+This tutorial relies on the CPS demonstrator example from https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps (for a description of the example please consult https://github.com/viatra/viatra-docs/blob/master/cps/Home.adoc).
+
+This document assumes that the metamodels themselves are installed into the Eclipse instance. They are available from the p2 repository https://build.incquerylabs.com/jenkins/job/CPS-Demonstrator/lastSuccessfulBuild/artifact/cps/releng/org.eclipse.viatra.examples.cps.update/target/repository/

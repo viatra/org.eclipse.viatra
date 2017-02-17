@@ -1,0 +1,177 @@
+= Displaying Query Results in the User Interface
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ../]
+:imagesdir: {rootdir}
+
+As far as the visualization of VIATRA pattern matching results is concerned, the VIATRA framework provides two approaches:
+
+* _VIATRA Data Binding Addon_: Using this addon, VIATRA pattern matches can be directly incorporated in newly developed applications that utilize JFace Data Binding.
+* _VIATRA Viewers Addon_: The VIATRA Viewers component helps developing model-driven user interfaces by filling and updating model viewer results with the results of model queries. The implementation relies on (and is modeled after) the Event-driven Virtual Machine and JFace Viewers libraries.
+
+== VIATRA Data Binding
+
+VIATRA provides a simple data binding facility that can be used to bind pattern matches to UI elements. The feature is mainly intended to be used to integrate VIATRA queries to newly developed user interfaces. In order to utilize this functionality, the source patterns need to be annotated, and the used UI components need to be bound to the Observables provided by the data binding API. In the following sections an example is shown which uses VIATRA Data Binding.
+
+=== Required annotations
+
+* _@ObservableValue_: allows the developer to customize the appearance of a match. It defines an observable value (as defined in JFace Data Binding) which can be bound to an Eclipse/JFace UI.
+** _name_ (String): the name of the parameter
+** _expression_ (String): the attribute to be observed definition without '$' marks. For example `@ObservableValue(name = "id", expression = "host.identifier")`
+** _labelExpression_: this annotation makes it possible to create observable string properties, which are useful when presenting relations between objects inside a JFace viewer component.
+
+[[app-listing]]
+[source,vql]
+----
+@ObservableValue(name = "id", expression = "host.identifier")
+@ObservableValue(name = "node_ip", expression = "host.nodeIp")
+@ObservableValue(name = "current_cpu", expression = "host.availableCpu")
+@ObservableValue(name = "current_hdd", expression = "host.availableHdd")
+@ObservableValue(name = "current_ram", expression = "host.availableRam")
+@ObservableValue(name = "total_cpu", expression = "host.totalCpu")
+@ObservableValue(name = "total_hdd", expression = "host.totalHdd")
+@ObservableValue(name = "total_ram", expression = "host.totalRam")
+pattern hostInstances(host: HostInstance) {
+	HostInstance(host);
+}
+
+@ObservableValue(name = "id", expression = "app.identifier")
+@ObservableValue(name = "state", expression = "app.state")
+@ObservableValue(name = "db_user", expression = "app.dbUser")
+@ObservableValue(name = "db_pass", expression = "app.dbPassword")
+@ObservableValue(name = "allocatedTo", expression = "app.allocatedTo")
+pattern applicationInstances(app: ApplicationInstance) {
+	ApplicationInstance(app);
+}
+----
+
+=== Using data binding to populate a table
+
+[[app-listing]]
+[source,java]
+----
+//Initialize VIATRA query engine
+ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(resourceSet));
+//Get the matcher for the query to be observed (HostInstances pattern)
+HostInstancesMatcher matcher = HostInstancesMatcher.on(engine);
+//Create a generic data binding adapter for the query specification
+//It is responsible for creating observable value properties based on the annotations of the pattern
+GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(HostInstancesMatcher.querySpecification());
+//Bind the matches to the given TableViewer
+ViewerSupport.bind(
+	tableViewer,
+	//Get the matching results as an observable list
+        ViatraObservables.observeMatchesAsList(matcher),
+        //Specify observed proeprties
+        new IValueProperty[] {
+		adapter.getProperty("id"),
+		adapter.getProperty("node_ip"),
+		adapter.getProperty("current_cpu"),
+		adapter.getProperty("current_hdd"),
+		adapter.getProperty("current_ram"),
+		adapter.getProperty("total_cpu"),
+		adapter.getProperty("total_hdd"),
+		adapter.getProperty("total_ram") });
+----
+
+=== Master - detail data binding with a list
+
+The following code fragment is responsible for binding a list to the results of a VIATRA query, and also displays match details in text boxes. (Uses Master-detail binding)
+
+[[app-listing]]
+[source,java]
+----
+//Create new data binding context
+//It will be used for binding the pattern match details
+DataBindingContext dataBindingContext = new DataBindingContext();
+//Initialize VIATRA query engine
+ViatraQueryEngine engine = ViatraQueryEngine.on(new EMFScope(resourceSet));
+//Get the matcher for the query to be observed (ApplicationInstances pattern)
+ApplicationInstancesMatcher matcher = ApplicationInstancesMatcher.on(engine);
+//Create a generic data binding adapter for the query specification
+//It is responsible for creating observable value properties based on the annotations of the pattern
+GenericDatabindingAdapter adapter = new GenericDatabindingAdapter(ApplicationInstancesMatcher.querySpecification());
+//Bind the matches to the given ListViewer
+ViewerSupport.bind(listViewer, ViatraObservables.observeMatchesAsSet(matcher), adapter.getProperty("id"));
+
+//At this point, the results of the given pattern will appear in the list Viewer, the details however still need to be implemented
+//Define target observable values for both textboxes
+IObservableValue dbUserTarget = WidgetProperties.text().observe(dbUser);
+IObservableValue dbPassTarget = WidgetProperties.text().observe(dbPass);
+
+//Observe the changes in the list selection
+IViewerObservableValue listSelection = ViewerProperties
+	.singleSelection().observe(listViewer);
+
+//Use the data binding context to bind the text property of the target textbox and the given property of the matcher.
+dataBindingContext.bindValue(
+	//Target textbox observable value
+	dbPassTarget,
+	//Get the source observable value from the adapter
+	adapter.getProperty("db_pass").observeDetail(listSelection),
+	//Define EMF update value strategy
+	//In this case its one directional
+	new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
+	new EMFUpdateValueStrategy());
+
+dataBindingContext.bindValue(dbUserTarget, adapter.getProperty("db_user").observeDetail(listSelection),
+	new EMFUpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
+	new EMFUpdateValueStrategy());
+----
+
+== VIATRA Viewers
+
+The VIATRA Viewers component can bind the results of queries to various JFace Viewers: JFace ListViewer and TreeViewers are currently supported. Additionally, by installing extra features from the extra update site GraphViewers (based on GEF4 Zest) are also supported. In the following example, and during the lab excersize as well, usage of GraphViewers will be presented. These GraphViewers are capable of displaying query results as graphs.
+
+=== Usage
+
+In order to use the VIATRA Viewers addon the following steps need to be undertaken:
+
+* Annotate VIATRA query patterns with the @Item, @ContainsItem and @Edge annotations
+** _@Item_ will be represented as a graph node
+** _@ContainsItem_ will be represented as a node and an edge (edge is between the parent and child nodes)
+** _@Edge_ will be displayed as an edge (targeted)
+* Initialize the Viewers based UI component
+
+=== Pattern Annotations
+
+[[app-listing]]
+[source,vql]
+----
+//Host Type objects will be nodes of the displayed graph
+@Item(item = host, label = "$host.identifier$")
+//Format options can be set using the @Format annotation
+@Format(color = "#0033CC", textColor = "#FFFFFF")
+pattern hostTypes(host) {
+	HostType(host);
+}
+//Host types contain host instances
+//Displayed as nodes which have common edges with their parents
+@ContainsItem(container = type, item = instance)
+pattern connectTypesAndInstancesHost(type, instance) {
+	HostType.instances(type,instance);
+}
+//Host instances can communicate with each other
+//Displayed as an edge between the two nodes
+@Edge(source = i1, target = i2, label = "comm")
+pattern communications(i1, i2) {
+	HostInstance.communicateWith(i1,i2);
+}
+----
+
+=== Example initialization
+
+[[app-listing]]
+[source,java]
+----
+//Create the graph viewer component and add it to the containing SWT control
+GraphViewer viewer = new GraphViewer(parent, SWT.None);
+//Create a new Viewer state based on the created VIATRA query engine and a set of annotated VIATRA query specifications
+ViewerState state = ViatraViewerDataModel.newViewerState(getEngine(), getSpecifications(), ViewerDataFilter.UNFILTERED,
+		ImmutableSet.of(ViewerStateFeature.EDGE, ViewerStateFeature.CONTAINMENT));
+//This method of binding supports isolated nodes
+ViatraGraphViewers.bindWithIsolatedNodes(viewer, state, true);
+//Define layout algorithm
+viewer.setLayoutAlgorithm(new SpaceTreeLayoutAlgorithm());
+//Apply layout
+viewer.applyLayout();
+----

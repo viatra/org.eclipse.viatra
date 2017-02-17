@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toc label="Tutorial">
+   <topic href="html/tutorial/queries.html" label="Getting started with Query Development">
+   </topic>
+   <topic href="html/tutorial/batch-transformations.html" label="Getting Started with Batch Transformation Development">
+   </topic>
+   <topic href="html/tutorial/incremental-transformations.html" label="Getting Started with Event-driven Transformation">
+   </topic>
+   <topic href="html/cps/Home.html" label="CPS Demonstrator">
+   </topic>
+</toc>

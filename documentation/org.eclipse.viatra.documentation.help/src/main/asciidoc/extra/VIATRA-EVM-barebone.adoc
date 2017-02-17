@@ -1,0 +1,167 @@
+= VIATRA EVM Barebone
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ../]
+:imagesdir: {rootdir}
+
+== Preparation of the transformation
+A ViatraQueryEngine is needed over an EMFScope. This EMFScope contains the resource set in which the source and the target of the transformation can be found. The main part of the demo is in the `execute` method.
+
+== Transformation rules
+We have two main rule: the hostMapping and appMapping.
+
+The hostMapping has three job (one for all states of the life cycle):
+
+ * The pattern: This rule is based on the hostInstances pattern. This pattern finds all host instances.
+ 1. _ActivationState.CREATED_: This job create deployment hosts for host instances. The ip of the deployment host is set here.
+ 2. _ActivationState.DELETED_: This removes deployment pairs of disappeared host instances.
+ 3. _ActivationState.UPDATED_: This will be invoked when the hostInstances pattern updated (so when a host type or host instance is modified). The description of the deployment host is set to `modified`.
+
+The appMapping has only two job:
+
+ * The pattern: This rule is based on the applicationsInstances pattern. This finds application instances which is allocated to host instance which has a pair in the deployment.
+ 1. _ActivationState.CREATED_: Creates the deployment application (sets the id).
+ 2. _ActivationState.DELETED_: Removes the deployment application.
+
+== Resolver
+There is an InvertedDisappearancePriorityConflictResolver which can be used to order activations.
+
+== Execution versions
+=== Execution Schema
+This is the simple way of the execution. For this you need to set the *`simple` field to `true`* (at the top of the class).
+
+A scheduler factory is created for the ViatraQueryEngine and an execution schema is created based on this factory and the ViatraQueryEngine. After these steps the conflict resolver is set and rules are added to the schema. The execution is triggered by the `startUnscheduledExecution` method.
+
+Code:
+[[app-listing]]
+[source,java]
+----
+// Create schema
+val schedulerFactory = Schedulers.getQueryEngineSchedulerFactory(engine)
+val schema = ExecutionSchemas.createViatraQueryExecutionSchema(engine, schedulerFactory)
+// Setup conflict resolver
+schema.conflictResolver = resolver
+// Add rules to the schema
+schema.addRule(hostMapping)
+schema.addRule(appMapping)
+
+schema.startUnscheduledExecution
+----
+
+=== Advanced executions
+Here are the versions of manual executions of activations. For these the value of the *`simple` field should be `false`*.
+
+==== Common parts
+For all advanced version of execution need a rule engine (based on the ViatraQueryEngine), a context, and the setup of these elements (conflict resolver and addition of rules for the rule engine).
+
+Code:
+[[app-listing]]
+[source,java]
+----
+// Create rule engine over ViatraQueryEngine
+val ruleEngine = RuleEngines.createViatraQueryRuleEngine(engine)
+// Create context for execution
+val context = Context.create()
+// Conflict resolver also can be used here
+ruleEngine.conflictResolver = resolver
+// Add rule specifications to engine
+ruleEngine.addRule(hostMapping)
+ruleEngine.addRule(appMapping)
+----
+
+==== Fire one activation of a specific rule
+Activations of a rule can be queried from the rule engine. This is a set which can be iterated and the activation can be fired (with the context) so we can *fire the first one*.
+
+Code:
+[[app-listing]]
+[source,java]
+----
+// Check rule applicability
+val createClassesActivations = ruleEngine.getActivations(hostMapping)
+if (!createClassesActivations.empty) {
+    // Fire activation of a given rule
+    createClassesActivations.iterator.next.fire(context)
+}
+----
+
+==== Fire all activations
+Next activation from the rule engine is fired while the set of conflicting activations is not empty so we can *fire all activations*. After firing all activations *rules are removed* from the rule engine.
+
+Code:
+[[app-listing]]
+[source,java]
+----
+// Check for any applicable rules
+while (!ruleEngine.conflictingActivations.empty) {
+    // Fire next activation as long as possible
+    ruleEngine.nextActivation?.fire(context)
+}
+// Remove rules after execution
+ruleEngine.removeRule(appMapping)
+ruleEngine.removeRule(hostMapping)
+----
+
+==== Filter activations
+First of all a *custom event filter* is created. This filter works over `HostInctanceMatch` objects and filter out match which contains host instance with the specified nodeIp. The rule should be added to the rule engine with the filter (if we want that the unfiltered rule does not cause a problem it should be removed) and after this we can iterate over the activations just like in the previous version (but only one deployment host will be created if the original rule has been removed).
+
+Code:
+[[app-listing]]
+[source,java]
+----
+// Create custom filter for IP
+var eventFilter = new EventFilter<HostInstancesMatch>() {
+	override isProcessable(HostInstancesMatch eventAtom) {
+		eventAtom.hostInstance.nodeIp == FILTERED_IP
+	}
+}
+// Replace the simple rule with the rule->filter pair in the engine
+ruleEngine.removeRule(hostMapping)
+ruleEngine.addRule(hostMapping, eventFilter)
+// Fire all activations
+while (!ruleEngine.conflictingActivations.empty) {
+    // Fire next activation as long as possible
+    val nextActivation = ruleEngine.nextActivation
+    nextActivation?.fire(context)
+}
+----
+
+==== Manage conflict set manually
+At this version a different filter is created: a `ViatraQueryMatchEventFilter` which works with a specific match. This match is created for a host instance. We need to add the hostMapping-filter pair to the rule engine. The removal of the original rule is not necessary.
+
+Code for filter:
+[[app-listing]]
+[source,java]
+----
+// Create query match filter with a partial match object
+val matchFilter = ViatraQueryMatchEventFilter.createFilter(
+	HostInstancesMatch.newMatch(
+		engine.hostInstancesByIp.getOneArbitraryMatch(null, FILTERED_IP).hostInstance
+	)
+)
+// Add the rule->filter pair to the engine
+ruleEngine.addRule(hostMapping, matchFilter)
+----
+
+The main part of this section is the next: a *scoped conflict set is created* from the rule engine. It expects a resolver and a multi map of rules and filters. Because of this last point the original rule does not need to be removed from the rule engine. *Important* that the simple rule addition uses *empty filter* (and not a null value) when registers the rule so at the map empty filter should be used for these rules. The `nextActivation` method of this conflict set gives the next activation which can be fired (if no activation can be fired the return value will be `null` so a null check is necessary before the fire).
+
+Code for conflict set:
+[[app-listing]]
+[source,java]
+----
+// Check that there is any conflicting activation
+if(!ruleEngine.conflictingActivations.empty) {
+	// Create the conflict set
+	val conflictSet = ruleEngine.createScopedConflictSet(resolver,
+		// From filtered hostMapping rule and unfiltered appMapping
+		ImmutableMultimap.of(
+			hostMapping, matchFilter,
+			appMapping, appMapping.createEmptyFilter
+		)
+	)
+	// Iterate over activations of the conflict set
+	var nextActivation = conflictSet.nextActivation
+	while(nextActivation != null) {
+		nextActivation.fire(context)
+		nextActivation = conflictSet.nextActivation
+	}
+}
+----

@@ -1,0 +1,144 @@
+# Code Generator (Distributed realization, Xtend templates)
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+The `org.eclipse.viatra.query.examples.cps.m2t.distributed.generator` project implements a basic model-to-text transformation. It is a basic template based generator written in _Xtend_ .
+
+## Deployment realization
+The generated Java code realizes a "_distributed_" `Deployment` model where `Hosts` are the base elements of the distribution. Each host is a separated entity which can be run on `HostRunner` (threads). Hosts can communicate with each other via the `CommunicationNetwork` shared object.
+
+image::codegenerator.png[Code Generator]
+
+`Hosts` and `Applications` are data objects with states. `HostRunner` is a simple engine which triggers its hosts to fire available transitions on every applications. The communication is asynchronous and realized with queues.
+
+## Code Generator
+The public API of the transformation contains four methods.
+```xtend
+interface ICPSGenerator {
+	def CharSequence generateHostCode(DeploymentHost host) throws CPSGeneratorException
+	def CharSequence generateApplicationCode(DeploymentApplication application) throws CPSGeneratorException
+	def CharSequence generateBehaviorCode(DeploymentBehavior behavior) throws CPSGeneratorException
+	def CharSequence generateDeploymentCode(Deployment deployment) throws CPSGeneratorException
+}
+```
+This implementation of the code generator is stateless. Each separate model element is generated individually.
+
+
+### Host
+The host objects keep references to their own applications.
+#### Generated Code
+```java
+public class Host152661025 extends BaseHost {
+	
+	public Host152661025(CommunicationNetwork network) {
+		super(network);
+		// Add Applications of Host
+		applications = Lists.<Application>newArrayList(
+			new AlarmApplication(this),
+                        new OtherApplication(this),
+		);
+	}
+
+} 
+```
+
+### Application
+Applications store their `ApplicationID` and their current state of the behavior (State machine).
+#### Generated Code
+```java 
+public class AlarmApplication extends BaseApplication<BehaviorAlarmB> {
+
+	protected static final String APP_ID = "Alarm";
+
+	public AlarmApplication(Host host) {
+		super(host);
+		
+		// Set initial State
+		currentState = BehaviorAlarmB.AInit;
+	}
+
+	@Override
+	public String getAppID() {
+		return APP_ID;
+	}
+	
+}
+```
+
+### Behavior
+Behavior represents a statemachine of the application. It stores and manages the possible state transitions. 
+#### Generated Code
+```java
+public enum BehaviorAlarmB implements State<BehaviorAlarmB> {
+	 ///////////
+	// States
+	AInit {
+        @Override
+        public List<State<BehaviorAlarmB>> possibleNextStates(Application app) {
+        	List<State<BehaviorAlarmB>> possibleStates = Lists.newArrayList();
+        	
+        	// Add Neutral Transitions
+        	
+        	// Add Send Transitions
+        	possibleStates.add(ASent);
+        	
+        	// Add Wait Transitions
+        	
+        	return possibleStates;
+        }
+        
+        @Override
+        public BehaviorAlarmB stepTo(BehaviorAlarmB nextState, Application app) {
+        	// Send triggers
+        	if(nextState == ASent){
+        		app.sendTrigger("152.66.102.5", "Alarm", "ISSReceiving");
+        		return super.stepTo(nextState, app);
+        	}
+        	
+        	// Other cases (wait, neutral)
+        	return super.stepTo(nextState, app);
+        }
+    },
+    ASent {
+        @Override
+        public List<State<BehaviorAlarmB>> possibleNextStates(Application app) {
+        	List<State<BehaviorAlarmB>> possibleStates = Lists.newArrayList();
+        	
+        	// Add Neutral Transitions
+        	possibleStates.add(AInit);
+        	
+        	// Add Send Transitions
+        	        	
+        	// Add Wait Transitions
+        	
+        	return possibleStates;
+        }
+    };
+	
+    private static Logger logger = Logger.getLogger("cps.proto.distributed.state");
+    
+     ////////////
+    // Triggers
+    
+	 /////////////////
+	// General part
+	@Override
+	abstract public List<State<BehaviorAlarmB>> possibleNextStates(Application app);
+	
+	@Override
+	public BehaviorAlarmB stepTo(BehaviorAlarmB nextState, Application app){
+		if(possibleNextStates(app).contains(nextState)){
+			logger.info("Step from " + this.name() + " to " + nextState.name());
+			return nextState;
+		}else{
+			logger.info("!!! Warning: Unable to step from " + this.name() + " to " + nextState.name() 
+					+ " because the target state is not possible state.");
+		}
+		return this;
+	}
+
+}
+```
+
+In addition to the generated code `org.eclipse.viatra.query.examples.cps.m2t.proto.distributed` project contains the shared part of the working code (_general_ package). Implementation of the CommunicationNetwork, the HostRunner, the BaseApplication, the BaseHost, State and the interfaces are placed there.

@@ -1,0 +1,19 @@
+# Generate CPS models
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ./]
+:imagesdir: {rootdir}/images
+
+You can generate CPS models with `SampleModelGenerator` class of the `org.eclipse.viatra.query.examples.cps.generator.tests` project.
+
+How to use it:
+
+ * Remove the `@Ignore` annotation from the class
+ * Run the class as JUnit Plug-in Test
+ * Generated files will be in the `models` folder of the test project
+
+Currently generated example models:
+
+ * `DemoCPSConstraints`
+ * `SimpleCPSConstraints`
+
+If you need other models you need to add other test cases to the class.

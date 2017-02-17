@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            category="VIATRA"
+            file="viatra.toc.xml"
+            primary="true">
+      </toc>
+      <toc
+            extradir="tutorial"
+            file="tutorial.toc.xml"
+            primary="false">
+      </toc>
+   </extension>
+
+</plugin>

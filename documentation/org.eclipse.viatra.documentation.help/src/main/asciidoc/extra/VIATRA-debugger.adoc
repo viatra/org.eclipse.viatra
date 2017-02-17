@@ -1,0 +1,266 @@
+= VIATRA Debugger
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
+ifndef::rootdir[:rootdir: ../]
+:imagesdir: {rootdir}
+
+== Debugging model transformations
+The development and debugging of  model transformations is not a trivial exercise, the basic concepts of software debugging however can be mapped to this field as well. Debuggers can be used for detecting bugs, as well as better understanding the structure and behavior of programs. Direct control over a program allows the programmer to follow the flow of execution or stop the program at any desired point. Then it is possible to inspect its current state and verify the correctness of the software. These properties are very desirable in the field of model transformations too.
+The VIATRA framework incorporates a debugger framework that supports the following features:
+
+* Display the state of remote VIATRA transformations.
+* Allow the user to control the execution of VIATRA transformations, via standard debugger commands ("Step over", "Continue") or by selecting the next activation to be executed.
+* Display the model instances associated with the transformation under debugging.
+* Allow the user to define various transformation breakpoints.
+
+
+== Architectural Overview
+A full-fledged transformation debugger requires a software solution that is able to observe and control model transformations. The debugger should be able to insert additional functionality into certain points during the execution of model transformations. The _VIATRA Adapter Framework_ allows the definition of additional functionalities that are executed at certain points in VIATRA-based model transformations. The previously described debug functionalities are implemented using the _VIATRA Adapter Framework_.
+
+.Adapter Framework
+image::extra/images/adapter_framework.png[Adapter Framework]
+
+* _Adapter Interface_: The Adapter Interface defines a set of callback methods that are executed at certain points during the transformation execution. These actions are capable of altering the execution sequence of transformation rules. A number of Adapters can implement this interface, in order to define additional functionality that should be undertaken at certain points in the transformation.
+* _Listener Interface_: The Listener Interface defines a set of callback methods that are executed at certain points during the transformation execution. The actions defined in these methods can have no effect on the transformation itself, purely aim at providing a solution to listening to certain transformation-related events. A number of Adapters can implement this interface, in order to define additional functionality that should be undertaken at certain points in the transformation.
+* _Adaptable EVM_: The Adaptable EVM is responsible aggregating the used Adapter and Listener instances and delegates the callback method calls from the internal VIATRA objects towards the appropriate callback method of each adapter or listener at certain points during execution. The Adaptable EVM is also responsible for setting up VIATRA transformation to utilize adapters.
+* _Adapter Configuration_: The adapter configurations serve multiple purposes. They can either define dependency relations between adapter implementations, or specify complex use cases which requires more than one adapter to function properly
+
+The Adapter Framework provides a generic, easy-to-use technique for creating user defined adapter and listener implementations. The Adapter Framework is utilized in order to implement a set of debugging-related use cases.
+
+=== VIATRA Transformation Debugger
+
+The VIATRA transformation debugger implements a breakpoint based debugging approach (similar to JDT). It utilizes the Eclipse Debug framework, as well as some custom debug-related views. It contains the logic for stopping the transformation execution if a breakpoint condition matches, and updating the Transformation Debug Model, based on which the current transformation state is displayed. To support various debugging use cases, the debugger supports various breakpoint implementations as well. The debugger consists of two main components:
+
+* _VIATRA Debugger Runtime_: It contains the debugger elements associated with the running model transformation instance. These elements are responsible for instrumenting the transformation instance and propagating the gathered information to the tooling elements. They also enable the tooling elements to control the instrumented transformation instance.
+
+* _VIATRA Debugger Tooling_: It contains elements associated with extending the _Eclipse Debug Framework_. They allow the information provided by the runtime elements to be displayed on the Eclipse debug UI, and enable the user to control the transformation under debugging.
+
+
+
+.Debug Adapter
+image::extra/images/transformation_debugger.png[Debugger Overview]
+
+* _Debugger Runtime_
+** _Transformation Debugger_: Observes and manipulates the execution of a VIATRA transformation.
+** _Runtime Communication Agent_: Responsible for orchestrating the communication between the tooling and runtime components. Uses JMX-based communication.
+** _Debug Information_: Data that is propagated between the runtime and tooling components. I contains information about the state of the transformation under debugging, and the involved model instances as well. This information is displayed by debugger tooling components.
+*** _Transformation State_: It contains information about the transformation under debugging. Including the state of the transformation conflict set and the next activation to be executed.
+*** _Model Instance Representation_: Represents model instances that are associated with the transformation, using a generic, serializable meta-model.
+** _Debug Actions_: User actions that are sent from the tooling to the runtime components.
+*** _Breakpoints_: The debugger framework supports a set of different transformation breakpoints.
+**** _Rule Activation Breakpoints_: Identifies a transformation rule activation. If the given activation is about to be fired, the transformation execution will be halted.
+**** _Conditional Breakpoints_: These breakpoints are able to define global constraints that are not only affected by the current activation. A similar concept is available in the Eclipse Java Development Tools (JDT). The constraints are defined by using the VIATRA query language.
+**** _Rule Breakpoints_: These breakpoints identify a given VIATRA transformation rule. The execution is halted if an activation of this rule is about to be fired.
+*** _Debugger Commands_: User commands that are sent from the tooling components to the runtime components.
+* _Debugger Tooling_
+** _VIATRA Debugger UI Elements_: UI elements that display transformation-specific information that cannot be visualizes via using Eclipse debug UI elements.
+*** _VIATRA Transformation Browser_: Displays the current state of the model transformation. Shows the set of activations to be fired, and allows the user to control the execution of the transformation or define breakpoints as well. The activations displayed can either be grouped by their parent rule, or their position in the transformation conflict set.
+*** _VIATRA Transformation Model Instance Viewer_: Displays the current state of the model instances related to the transformation using a tree-view with properties support.
+** _Eclipse Debugger UI Elements_: Eclipse debugger UI elements that display transformation debugger-related information.
+
+== User's Guide
+The following section aims at providing a basic example of how the VIATRA transformation debugger should be used. The example utilizes the following VIATRA example projects:
+
+* link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/cps[VIATRA CPS Example]: The debugger example is based on the CPS meta-models, and utility features.
+* link:http://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/tree/transformation/transformation-debugger[VIATRA Transformation Debugger example]: Provides the example model transformations, and UI components responsible for running them.
+
+=== Setting Up the Transformation Under Debugging
+In order to support debugging, the model transformation definition needs minor modifications. These can be done in two different ways:
+
+* If the transformation is being newly developed, it is highly advised to use the VIATRA model transformation creation wizard. As shown on the figure below, the user can select the "VIATRA debugger support" checkbox, this way the generated code will incorporate the appropriate setup.
+
+NOTE: Use the _VIATRA Debugger Session Name_ optional parameter to define a textual identifier for the transformation. Usage of this identifier helps the transformation developer to  differentiate between different model transformation sessions, while using the transformation debugger.
+
+.Opening the Wizard
+image::extra\screenshots\VIATRA_transformation_wizard_selection.png[Wizard selection]
+.Selecting debugger support
+image::extra\screenshots\VIATRA_transformation_wizard_debugging.png[Wizard debug]
+
+* In case of an already-existing transformation, the model transformation definition needs to be modified manually. This involves adding the VIATRA debug configuration to the VIATRA transformation builder. The following example snippet shows how this is achieved in the example.
+
+[[Transformation-setup]]
+[source,Java]
+----
+private def createTransformation() {
+    import org.eclipse.viatra.transformation.debug.configuration.TransformationDebuggerConfiguration
+    ...
+    transformation = BatchTransformation.forEngine(engine).addAdapterConfiguration(new TransformationDebuggerConfiguration("TestTransformation")).build
+    ...
+}
+----
+
+As the VIATRA transformation debugger is a _Remote Debugging_-style debugger, the example transformation needs to be started manually. This is especially true in case of batch transformations, since event-driven transformations typically run continuously. The example uses a simple command and handler to run the model transformation on a predefined test model.
+
+[[Transformation-handler]]
+[source,Java]
+----
+public class BatchTestHandler extends AbstractHandler {
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        final Job job = new Job(JOB_NAME) {
+            protected IStatus run(IProgressMonitor monitor) {
+                // Load the CPS model
+                CPSModelInitializer init = new CPSModelInitializer();
+                CPSToDeployment cps2dep = init.loadModel(SOURCE_MODEL_URI);
+                // Initialize CPS to Deployment Transformation
+                CPSTransformation transformation = new CPSBatchTransformation(cps2dep);
+                // Execute the transformation and observe the effects of the selected adapter
+                transformation.execute();
+                transformation.dispose();
+                return Status.OK_STATUS;
+            }
+        };
+        job.schedule();
+        return null;
+    }
+}
+----
+
+In order to properly initiate the VIATRA debugger runtime agent, the target Eclipse instance should be launched via using the following command line arguments:
+[[Transformation-handler]]
+[source,Java]
+----
+-Dcom.sun.management.jmxremote.port="port to be used, typically 1099"
+-Dcom.sun.management.jmxremote.authenticate=false
+-Dcom.sun.management.jmxremote.ssl=false
+----
+
+=== Using the Debugger UI
+
+The following section describes how to use the VIATRA transformation debugger UI elements once the debugging infrastructure is set up. This section of the guide assumes that a target Eclipse instance is running.
+
+==== Connecting to the transformation under debugging
+
+* If the VIATRA debugger feature is installed, the Debugger UI Elements are contained by the Eclipse Debug perspective, once this perspective is selected, the related VIATRA debug views are displayed.
+
+.Debug perspective with debugger views
+image::extra\screenshots\VIATRA_debug_persp_empty.png[Debug perspective]
+
+* The debugger can be initialized via launching a _VIATRA Transformation Remote Debugging_ debug configuration. The debug configuration can be specified similarly to any other Eclipse launch configuration. As the figure below shows, firstly, the target port needs to be specified. This value needs to be equal to the port value specified in the target Eclipse launch configuration (typically its 1099).
+* Next the port needs to be queried, via using the button located next to the port text field.
+* After the querying is completed, the user can select from a set of transformation instances that are present on that port.
+* Finally, a class file present in the workspace needs to be selected, as the breakpoints associated with the transformation will be bound to the resource of this file.
+
+.Editing launch configuration
+image::extra\screenshots\VIATRA_debug_newlaunch.png[Class selection]
+
+.Selecting a class
+image::extra\screenshots\VIATRA_debug_newtransf_classsel.png[Class selection]
+
+* These launch configurations are saved, once the user defines a configuration for a target transformation, it can be reused without any required modifications (Assuming that the user did not modify the ID of the transformation session).
+
+* After launching the debug configuration, the debug session is initialized allowing the user to observe and control the execution of the selected transformation. Here the transformation debugging session is displayed in the Eclipse debug view. There are however additional contemporary views that display the details of the selected debug session.
+
+.Debugger in its initialized state
+image::extra\screenshots\VIATRA_debug_persp.png[Debug perspective]
+
+==== Browsing the transformation state
+
+One of the main use-cases of the VIATRA transformation debugger, is to enable the transformation developer to observe the state of a VIATRA transformation at certain point in its execution sequence. The debugger allows the transformation developer to observe the following transformation elements:
+
+* Active transformation rule activations
+* Input and output model instances
+* The input parameters of the next Activation
+
+NOTE: In order to use the debugger UI elements, select the Debug Stack trace representing the transformation:
+
+.Selecting the transformation stack frame
+image::extra\screenshots\VIATRA_debug_selectthread.png[Select transformation stack frame]
+
+The _Transformation Browser_ view is responsible for observing the internal state of the transformation. It allows the user to observe the current transformation rule activations, and it supports the definition of various transformation breakpoints.
+
+.Transformation Browser ordered by transformation rules
+image::extra\screenshots\VIATRA_debug_AEVMBr_TR.png[TB rules]
+
+.Transformation Browser ordered by EVM Conflict Set state
+image::extra\screenshots\VIATRA_debug_AEVMBr_CS.png[TB conflict set]
+
+The _Transformation Model Instance Viewer_ enables the transformation developer to observe the state of the source and target model instances related to the model transformation selected in the _Adaptable Transformation Browser_ view. This view displays the model instances in a multi-tabbed tree view with properties view support.
+
+.VIATRA model instance browser view
+image::extra\screenshots\VIATRA_debug_TBr.png[VTB view]
+
+The parameters of the next activation to be executed can be observed via the _Variables_ Eclipse Debug View. After selecting the given debug stack frame (representing a transformation rule activation), the parameters of the transformation rule precondition are displayed as variables.
+
+.VIATRA transformation preconditions as Variables
+image::extra\screenshots\VIATRA_debug_variables.png[Variables view]
+
+==== Controlling the transformation execution sequence
+
+The VIATRA transformation debugger enables the transformation developer to control the execution sequence of the transformation under debugging. This can be done in the following ways.
+
+===== Using Breakpoints and standard debug commands
+
+The Transformation debugger supports the following breakpoints:
+
+* _Activation breakpoint_: Activation breakpoints can be toggled via selecting a rule activation and using the appropriate command on the _Transformation Browser_ view.
+* _Rule Breakpoint_: Rule breakpoints can be created via selecting a model transformation instance and using the appropriate UI element. Once this is done, the following dialog opens, on which the transformation developer can specify the name of the transformation rule. Once an activation is about to be executed, the debugger checks if the activation derives from the rule associated with the specified name. If this condition is true, the execution is halted.
+* _Conditional breakpoint_: These breakpoints allow the user to define VIATRA Query based conditions to halt the execution of the transformation. In order to create a conditional breakpoint, select a model transformation instance in the _Transformation Browser_ view, and use the appropriate command on the view's command bar. Afterwards, a dialog window opens which allows the user to define VIATRA query patterns. The execution of the transformation is halted once the match set of the pattern changes.
+
+.Rule breakpoint definition dialog
+image::extra\screenshots\VIATRA_debug_cr_rule_brkp.png[Rule breakpoint definition]
+
+.Conditional breakpoint definition dialog
+image::extra\screenshots\VIATRA_debug_cr_cond_brkp.png[Conditional breakpoint definition]
+
+IMPORTANT: This editor reuses the standard Xtext based VIATRA query editor, however in this case, package definitions should be omitted (as there is no enclosed Eclipse resource to the file). Furthermore, the definition can contain only one public pattern at this point, this restriction, however, does not apply to private patterns.
+
+IMPORTANT: The Debugger runtime component reuses the VIATRA Query language parser infrastructure to parse the patterns contained in _conditional breakpoints_. The debugger runtime component explicitly does not require classes of the parser infrastructure to be loaded (in order to minimize the dependencies of said runtime component). Make sure however, if _conditional breakpoints_ are used, the target platform on which the transformation under debugging is running should contain the VIATRA Query Tooling UI elements, and they should be initialized as well. If these required steps are omitted, the debugger produces the following error message:
+
+NOTE: The rule and conditional breakpoints are persisted between individual transformation debugging sessions. The breakpoints are contained in a common breakpoint pool managed by the Eclipse Breakpoint Manager.
+
+NOTE: The breakpoints added are displayed in the _Breakpoints_ Eclipse Debug view. Which can be used to disable and remove these breakpoints.
+
+.Conditional breakpoint error dialog
+image::extra\screenshots\VIATRA_debug_cr_cond_brkp_parseerr.png[Conditional breakpoint parsing error]
+
+.Transformation breakpoints in the Eclipse Breakpoints view
+image::extra\screenshots\VIATRA_debug_breakpoints_view.png[Eclipse Breakpoints view]
+
+Supported Eclipse debug commands:
+* _Step Over (F6)_: If the transformation execution is halted, use this command the execute the next activation, and stop the execution again.
+* _Resume (F8)_: If the transformation execution is halted, use this command to continue the execution of the transformation until a breakpoint is hit.
+* _Terminate (Ctrl+F2)_: The transformation is resumed and the debugger agent is disconnected from the target transformation. The transformation debugging session is terminated.
+
+Unsupported Eclipse debug commands (These features are not implemented yet):
+* _Step Return_
+* _Step Into_
+* _Suspend_
+* _Disconnect_
+
+
+
+===== Directly selecting the next transformation activation to be fired
+The transformation debugger allows the user to define which activation should be executed next. In order to do this, select an activation and use the appropriate command to set it as the next activation to be executed.
+
+WARNING: The changes made this ways could produce unpredictable behavior in the model transformation (Overriding the defined priority could result in inconsistent model states). Use this feature cautiously.
+
+.Selecting the next activation
+image::extra\screenshots\VIATRA_debug_select_next.png[Select next activation]
+
+Once the next activation is selected, notice that the red rectangle representing, the next activation to be fired, is moved to the desired activation. At this point, if the transformation is resumed, it will continue its execution from the selected activation.
+
+=== Corner cases
+
+==== Trying to connect to an unreachable VIATRA transformation instance
+
+If the VIATRA transformation instance specified in the debugger launch configuration does not exist, the debugger tooling will inform the user, that the debugging session could not be initialized and terminate the newly created session as well.
+
+.Debugger Connection Error
+image::extra\screenshots\VIATRA_debug_conn_err.png[Debugger Connection Error]
+
+==== Transformation under debugging terminated abruptly.
+
+If the eclipse instance in which the target transformation is running is terminated, or the connection is severed between the host and target components, the debugger tooling will terminate the respective VIATRA debugger launch automatically.
+
+.Automatic termination
+image::extra\screenshots\VIATRA_debug_auto_term.png[Automatic termination]
+
+==== Trying to add a conditional breakpoint, but the Xtext parser infrastructure is not initialized.
+
+In order to ensure that the conditional breakpoint patterns are parsed properly in the runtime Eclipse instance, the Xtext parser infrastructure needs to be initialized. If the debugger tooling produces the following exception, open a VIATRA query view (e.g.: VIATRA Query Explorer) to manually initialize the parser tooling. These manual steps are needed, as Xtext-based parser tooling components are loaded lazily.
+
+.Conditional breakpoint error dialog
+image::extra\screenshots\VIATRA_debug_cr_cond_brkp_parseerr.png[Conditional breakpoint parsing error]
+
+
+NOTE: Once Discovered, additional corner cases will be added.
