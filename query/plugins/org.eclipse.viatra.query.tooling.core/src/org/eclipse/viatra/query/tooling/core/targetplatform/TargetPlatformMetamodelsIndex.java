@@ -29,6 +29,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -36,6 +38,8 @@ import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.viatra.query.tooling.core.generator.ViatraQueryGeneratorPlugin;
+import org.eclipse.viatra.query.tooling.core.preferences.ToolingCorePreferenceConstants;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
@@ -66,8 +70,40 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 	private Set<URI> reportedProblematicGenmodelUris = Sets.newHashSet();
     private Map<URI, URI> platformURIMap = new HashMap<URI, URI>();
 //    private Map<String, URI> ePackageNsURIToGenModelLocationMap;
+    
+    private boolean automaticIndexing = true;
+    private boolean indexUpToDate = false;
+    
+    /**
+     * @since 1.6 
+     */
+    public TargetPlatformMetamodelsIndex() {
+        IPreferenceStore preferenceStore = ViatraQueryGeneratorPlugin.INSTANCE.getPreferenceStore();
+        this.automaticIndexing = !preferenceStore.getBoolean(ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE);
+        preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
+                    @Override
+                    public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
+                        if (event.getProperty() == ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE) {
+                            // Note that if the property is set through non-typed API, it may be a String instead of Boolean.
+                            Object value = event.getNewValue();
+                            Boolean disableUpdatePreference = false;
+                            if (value instanceof Boolean) {
+                                disableUpdatePreference = (Boolean)value;
+                            } else if (value instanceof String) {
+                                disableUpdatePreference = Boolean.valueOf(value.toString());
+                            }
+                            automaticIndexing = !disableUpdatePreference;
+                            // always update once after preference change
+                            indexUpToDate = false;
+                        }
+                    }
+                });
+    }
 	
 	private void update(){
+	    if(!automaticIndexing && indexUpToDate) {
+	        return;
+	    }
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 		Set<String> workspacePlugins = new HashSet<String>();
 		Map<String, IPluginBase> pluginset = new HashMap<String, IPluginBase>();
@@ -108,6 +144,11 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
 			entries.putAll(id, load(base));
 			processedPlugins.add(id);
 		}
+		
+		if(!automaticIndexing) {
+		    indexUpToDate = true;
+		}
+		return;
 	}
 	
 	private List<TargetPlatformMetamodel> load(IPluginBase base){

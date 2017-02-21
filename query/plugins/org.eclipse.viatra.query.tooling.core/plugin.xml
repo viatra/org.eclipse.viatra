@@ -36,5 +36,11 @@
             value="true">
       </persistent>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.viatra.query.tooling.core.preferences.ToolingCorePreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

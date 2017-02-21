@@ -26,6 +26,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.viatra.query.tooling.core.generator,
  org.eclipse.viatra.query.tooling.core.generator.fragments,
  org.eclipse.viatra.query.tooling.core.generator.genmodel,
+ org.eclipse.viatra.query.tooling.core.preferences,
  org.eclipse.viatra.query.tooling.core.project,
  org.eclipse.viatra.query.tooling.core.targetplatform
 Import-Package: org.apache.log4j;version="1.2.15"
