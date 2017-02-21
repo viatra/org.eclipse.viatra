@@ -11,10 +11,10 @@
 
 package org.eclipse.viatra.query.tooling.core.generator;
 
-import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-public class ViatraQueryGeneratorPlugin implements BundleActivator {
+public class ViatraQueryGeneratorPlugin extends AbstractUIPlugin {
 
     private static BundleContext context;
     public static ViatraQueryGeneratorPlugin INSTANCE;

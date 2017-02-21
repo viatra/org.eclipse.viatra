@@ -656,6 +656,15 @@
             id="org.eclipse.viatra.query.tooling.ui.viatra"
             name="VIATRA">
       </page>
+      <page
+            category="org.eclipse.viatra.query.tooling.ui.viatra"
+            class="org.eclipse.viatra.query.tooling.ui.preferences.ToolingCorePreferencePage"
+            id="org.eclipse.viatra.query.tooling.ui.preferences.ToolingCorePreferencePage"
+            name="Query Tooling">
+         <keywordReference
+               id="org.eclipse.viatra.query.patternlanguage.emf.ui.keyword_EMFPatternLanguage">
+         </keywordReference>
+      </page>
    </extension>
    <extension
          point="org.eclipse.viatra.query.patternlanguage.annotation">
