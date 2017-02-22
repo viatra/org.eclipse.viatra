@@ -33,6 +33,8 @@ import org.eclipse.viatra.dse.designspace.api.DesignSpace;
 import org.eclipse.viatra.dse.designspace.api.IDesignSpace;
 import org.eclipse.viatra.dse.objectives.IGlobalConstraint;
 import org.eclipse.viatra.dse.objectives.IObjective;
+import org.eclipse.viatra.dse.solutionstore.ISolutionNameProvider;
+import org.eclipse.viatra.dse.solutionstore.IdBasedSolutionNameProvider;
 import org.eclipse.viatra.dse.solutionstore.SolutionStore;
 import org.eclipse.viatra.dse.statecode.IStateCoder;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
@@ -581,5 +583,44 @@ public class DesignSpaceExplorer {
      */
     public void waitForTerminaition() {
         globalContext.waitForTermination();
+    }
+
+    /**
+     * Serializes all the found solutions by transforming the given initial model.
+     * </p>Files will be named <code>solution[id].xmi</code>.
+     * @param model The initial model.
+     */
+    public void saveModels(Notifier model) {
+        this.saveModels(model, "solution", "xmi");
+    }
+
+    /**
+     * Serializes all the found solutions by transforming the given initial model.
+     * </p>Files will be named <code>solution[id].[extension]</code>.
+     * @param model The initial model.
+     * @param extension The extension of the omitted file.
+     */
+    public void saveModels(Notifier model, String extension) {
+        this.saveModels(model, "solution", extension);
+    }
+
+    /**
+     * Serializes all the found solutions by transforming the given initial model.
+     * </p>Files will be named <code>[fileNamePrefix][id].[extension]</code>.
+     * @param model The initial model.
+     * @param fileNamePrefix The prefix (optionally including a file path) of the omitted file.
+     * @param extension The extension of the omitted file.
+     */
+    public void saveModels(Notifier model, String fileNamePrefix, String extension) {
+        globalContext.getSolutionStore().saveModels(model, new IdBasedSolutionNameProvider(fileNamePrefix, extension));
+    }
+
+    /**
+     * Serializes all the found solutions by transforming the given initial model.
+     * </p>Files will be named using the {@link ISolutionNameProvider}.
+     * @param model The initial model.
+     */
+    public void saveModels(Notifier model, ISolutionNameProvider solutionNameProvider) {
+        globalContext.getSolutionStore().saveModels(model, solutionNameProvider);
     }
 }

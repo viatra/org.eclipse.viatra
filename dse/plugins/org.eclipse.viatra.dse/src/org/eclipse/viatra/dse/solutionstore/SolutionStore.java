@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.dse.api.Solution;
 import org.eclipse.viatra.dse.api.SolutionTrajectory;
@@ -28,6 +29,8 @@ import org.eclipse.viatra.dse.base.ThreadContext;
 import org.eclipse.viatra.dse.objectives.Fitness;
 import org.eclipse.viatra.dse.objectives.ObjectiveComparatorHelper;
 import org.eclipse.viatra.dse.statecode.IStateCoderFactory;
+import org.eclipse.viatra.dse.util.EMFHelper;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 
 /**
  * 
@@ -43,11 +46,6 @@ public class SolutionStore {
 
     public interface IEnoughSolutions extends ISolutionFoundHandler {
         boolean enoughSolutions();
-    }
-
-    public interface ISolutionFoundHandler {
-        void solutionFound(ThreadContext context, SolutionTrajectory trajectory);
-        void solutionTriedToSave(ThreadContext context, SolutionTrajectory trajectory);
     }
 
     public static class ANumberOfEnoughSolutions implements IEnoughSolutions {
@@ -75,21 +73,6 @@ public class SolutionStore {
 
         @Override
         public void solutionTriedToSave(ThreadContext context, SolutionTrajectory trajectory) {
-        }
-    }
-
-    public static class LogSolutionHandler implements ISolutionFoundHandler {
-
-        Logger logger = Logger.getLogger(LogSolutionHandler.class);
-
-        @Override
-        public void solutionFound(ThreadContext context, SolutionTrajectory trajectory) {
-            logger.info("Solution registered: " + trajectory.toPrettyString());
-        }
-
-        @Override
-        public void solutionTriedToSave(ThreadContext context, SolutionTrajectory trajectory) {
-            logger.debug("Not good enough solution: " + trajectory.toPrettyString());
         }
     }
 
@@ -247,13 +230,13 @@ public class SolutionStore {
 
     private void unsavedSolutionCallbacks(ThreadContext context, SolutionTrajectory solutionTrajectory) {
         for (ISolutionFoundHandler handler : solutionFoundHandlers) {
-            handler.solutionFound(context, solutionTrajectory);
+            handler.solutionTriedToSave(context, solutionTrajectory);
         }
     }
 
     private void savedSolutionCallbacks(ThreadContext context, SolutionTrajectory solutionTrajectory) {
         for (ISolutionFoundHandler handler : solutionFoundHandlers) {
-            handler.solutionTriedToSave(context, solutionTrajectory);
+            handler.solutionFound(context, solutionTrajectory);
         }
     }
 
@@ -271,6 +254,26 @@ public class SolutionStore {
     public SolutionStore logSolutionsWhenFound() {
         registerSolutionFoundHandler(new LogSolutionHandler());
         Logger.getLogger(LogSolutionHandler.class).setLevel(Level.INFO);
+        return this;
+    }
+
+    public SolutionStore saveModelWhenFound() {
+        registerSolutionFoundHandler(new ModelSaverSolutionFoundHandler());
+        return this;
+    }
+
+    public SolutionStore saveModelWhenFound(String extension) {
+        registerSolutionFoundHandler(new ModelSaverSolutionFoundHandler(extension));
+        return this;
+    }
+
+    public SolutionStore saveModelWhenFound(String prefix, String extension) {
+        registerSolutionFoundHandler(new ModelSaverSolutionFoundHandler(prefix, extension));
+        return this;
+    }
+
+    public SolutionStore saveModelWhenFound(ISolutionNameProvider solutionNameProvider) {
+        registerSolutionFoundHandler(new ModelSaverSolutionFoundHandler(solutionNameProvider));
         return this;
     }
 
@@ -292,5 +295,18 @@ public class SolutionStore {
     public SolutionStore storeBestSolutionsOnly() {
         this.solutionSaver = new BestSolutionSaver();
         return this;
+    }
+
+    public void saveModels(Notifier model, ISolutionNameProvider solutionNameProvider) {
+        try {
+            for (Solution solution : solutions.values()) {
+                SolutionTrajectory trajectory = solution.getArbitraryTrajectory();
+                trajectory.doTransformationUndoable(model);
+                EMFHelper.saveModel(model, solutionNameProvider.getName());
+                trajectory.undoTransformation();
+            }
+        } catch (ViatraQueryException e) {
+            Logger.getLogger(SolutionStore.class).error("Exception happened during model saving.", e);
+        }
     }
 }

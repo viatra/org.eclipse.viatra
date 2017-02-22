@@ -143,21 +143,124 @@ public final class EMFHelper {
      * @param root The root of model.
      * @param name The name or path of the file. 
      * @param ext The extension of the file.
+     * @deprecated Use {@link #saveModel(Notifier, String)} instead.
      */
+    @Deprecated
     public static void serializeModel(EObject root, String name, String ext) {
+        saveModel(root, name +ext);
+    }
+
+    /**
+     * Saves the EMF model (EObject or Resource) into the given file. An {@link XMIResourceFactoryImpl} will be
+     * registered if not already.
+     * 
+     * Doesn't throw exception but logs an error if the save was unsuccessful.
+     * 
+     * @param model Can be an {@link EObject} or a {@link Resource}.
+     * @param fileName
+     */
+    public static void saveModel(Notifier model, String fileName) {
+
+        Preconditions.checkNotNull(model);
+        Preconditions.checkArgument(fileName != null && !fileName.isEmpty(), "File name is null or empty.");
+
+        int extensionIndex = fileName.lastIndexOf('.');
+
+        Preconditions.checkState(extensionIndex > -1 && extensionIndex != fileName.length() - 1, "Bad file extension.");
+
+        String ext = fileName.substring(extensionIndex + 1);
 
         registerExtensionForXmiSerializer(ext);
 
-        ResourceSet resSet = new ResourceSetImpl();
-        URI uri = URI.createFileURI(name + "." + ext);
-        Resource resource = resSet.createResource(uri);
+        URI uri = URI.createFileURI(fileName);
+        Resource resource;
 
-        resource.getContents().add(root);
+        if (model instanceof ResourceSet) {
+            throw new EmfHelperException("Unsupported type: ResourceSet");
+        } else if (model instanceof Resource) {
+            resource = (Resource) model;
+        } else if (model instanceof EObject) {
+            EObject root = (EObject) model;
+            ResourceSet resSet = new ResourceSetImpl();
+            resource = resSet.createResource(uri);
+            resource.getContents().add(root);
+        } else {
+            throw new EmfHelperException("Unkown type: " + model.getClass());
+        }
 
+        resource.setURI(uri);
+        saveResource(resource);
+    }
+
+    private static void saveResource(Resource resource) {
         try {
             resource.save(Collections.EMPTY_MAP);
         } catch (IOException e) {
             logger.error(e);
+        }
+    }
+
+    /**
+     * Loads a model as a {@link Resource}. In headless mode, don't forget to call XYZPackage.eINSTANCE.
+     * 
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    public static Resource loadModel(String fileName) throws IOException {
+        Preconditions.checkArgument(fileName != null && !fileName.isEmpty(), "File name is null or empty.");
+        int extensionIndex = fileName.lastIndexOf('.');
+        Preconditions.checkState(extensionIndex > -1 && extensionIndex != fileName.length() - 1, "Bad file extension.");
+
+        String ext = fileName.substring(extensionIndex + 1);
+        registerExtensionForXmiSerializer(ext);
+
+        ResourceSetImpl rSet = new ResourceSetImpl();
+        URI fileUri = URI.createFileURI(fileName);
+        Resource resource = rSet.createResource(fileUri);
+
+        resource.load(null);
+        return resource;
+    }
+
+    /**
+     * Retrieves the root EObject from a Resource or ResourceSet.
+     * <ul>
+     * <li>Returns null if there is no content.</li>
+     * <li>Returns the notifier itself if it is an EObject.</li>
+     * <li>Logs a warn if there are multiple roots.</li>
+     * </ul>
+     * 
+     * @param notifier
+     * @return The root EObject or null.
+     */
+    public static EObject getRootEObject(Notifier notifier) {
+        if (notifier instanceof EObject) {
+            return (EObject) notifier;
+        } else if (notifier instanceof Resource) {
+            Resource resource = (Resource) notifier;
+            List<EObject> contents = resource.getContents();
+            if (contents.size() > 1) {
+                logger.warn("Resource has more than one root.");
+            }
+            if (contents.size() < 1) {
+                return null;
+            } else {
+                return contents.get(0);
+            }
+        } else if (notifier instanceof ResourceSet) {
+            ResourceSet resourceSet = (ResourceSet) notifier;
+            List<Resource> resources = resourceSet.getResources();
+            if (resources.size() > 1) {
+                logger.warn("ResourceSet has more than one resources.");
+            }
+            if (resources.size() < 1) {
+                return null;
+            } else {
+                return getRootEObject(resources.get(0));
+            }
+        } else {
+            throw new EmfHelperException("Unkown type: " + notifier.getClass());
         }
     }
 
