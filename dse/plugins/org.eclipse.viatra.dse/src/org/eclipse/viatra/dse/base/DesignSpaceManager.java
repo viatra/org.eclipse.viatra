@@ -356,8 +356,8 @@ public class DesignSpaceManager {
         while(trajectory.canStepBack()) {
             domain.getCommandStack().undo();
             trajectory.backtrack();
-            activationCodes.updateActivationCodes();
         }
+        activationCodes.updateActivationCodes();
         logger.debug("Backtracked to root.");
     }
     
