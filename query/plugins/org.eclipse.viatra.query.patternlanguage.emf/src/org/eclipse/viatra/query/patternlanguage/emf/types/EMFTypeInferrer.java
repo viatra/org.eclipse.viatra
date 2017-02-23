@@ -34,7 +34,9 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -55,6 +57,24 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
     @Inject
     private NumberLiterals literals;
 
+    /**
+     * This predicate selects a pattern that has at least one untyped parameter
+     */
+    private final static Predicate<Pattern> UNTYPED_PATTERN_PREDICATE = new Predicate<Pattern>(){
+
+        @Override
+        public boolean apply(Pattern input) {
+            return input != null && Iterables.any(input.getParameters(), new Predicate<Variable>() {
+
+                @Override
+                public boolean apply(Variable variable) {
+                    return variable.getType() == null;
+                }
+            });
+        }
+        
+    };
+    
     /**
      * @since 1.3
      */
@@ -112,7 +132,8 @@ public class EMFTypeInferrer extends AbstractTypeInferrer {
         });
 
         // XXX requiring an ordered call graph might be expensive, but it avoids inconsistent errors during type inference
-        final Set<Pattern> patternsToCheck = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern, true);
+        // The UNTYPED_PARAMETER_PREDICATE is used to return a reduced call graph where pattern with only declared types are (transitively) ignored.
+        final Set<Pattern> patternsToCheck = CorePatternLanguageHelper.getReferencedPatternsTransitive(pattern, true, UNTYPED_PATTERN_PREDICATE);
         patternsToCheck.add(pattern);
         
         for (Pattern patternToCheck : patternsToCheck) {

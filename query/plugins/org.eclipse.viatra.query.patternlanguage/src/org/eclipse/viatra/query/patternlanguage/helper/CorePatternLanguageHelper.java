@@ -60,6 +60,7 @@ import org.eclipse.xtext.xbase.XNumberLiteral;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 
 import com.google.common.base.Function;
@@ -261,9 +262,15 @@ public final class CorePatternLanguageHelper {
 
     private static class CallComparator implements Comparator<Pattern> {
 
+        private Predicate<Pattern> filter;
+        
+        private CallComparator(Predicate<Pattern> filter) {
+            this.filter = filter;
+        }
+        
         public int compare(Pattern left, Pattern right) {
-            boolean rightCalled = doGetReferencedPatternsTransitively(left).contains(right);
-            boolean leftCalled = doGetReferencedPatternsTransitively(right).contains(left);
+            boolean rightCalled = doGetReferencedPatternsTransitively(left, filter).contains(right);
+            boolean leftCalled = doGetReferencedPatternsTransitively(right, filter).contains(left);
             
             if (leftCalled && !rightCalled) {
                 return -1;
@@ -275,51 +282,79 @@ public final class CorePatternLanguageHelper {
             
           }
     }
-    
+
+    /**
+     * This method returns a set of patterns that are reachable from the selected pattern through various pattern
+     * composition calls. The patterns in the returned set not ordered.
+     * 
+     * @param pattern the source pattern
+     * @since 1.4
+     */
     public static Set<Pattern> getReferencedPatternsTransitive(Pattern pattern) {
         return getReferencedPatternsTransitive(pattern, false);
     }
     
     /**
+     * This method returns a set of patterns that are reachable from the selected pattern through various pattern
+     * composition calls.
+     * 
+     * @param pattern the source pattern
+     * @param orderPatterns if true, the returned set will be ordered based on the call edges
      * @since 1.4
      */
     public static Set<Pattern> getReferencedPatternsTransitive(Pattern pattern, boolean orderPatterns) {
+        return getReferencedPatternsTransitive(pattern, orderPatterns, Predicates.<Pattern>alwaysTrue());
+    }
+    
+    /**
+     * This method returns a set of patterns that are reachable from the selected pattern through various pattern
+     * composition calls, while each called element fulfills the filter predicate. If a pattern does not match the
+     * filter predicate, both the pattern and all patterns called by it will be absent from the returned set of the
+     * nodes.
+     * 
+     * @param pattern the source pattern
+     * @param orderPatterns if true, the returned set will be ordered based on the call edges
+     * @param filter the filter predicate
+     * @since 1.6
+     */
+    public static Set<Pattern> getReferencedPatternsTransitive(Pattern pattern, boolean orderPatterns, Predicate<Pattern> filter) {
         Set<Pattern> referencedPatterns = null;
         if (orderPatterns) {
-             referencedPatterns = new TreeSet<>(new CallComparator());
+            referencedPatterns = new TreeSet<>(new CallComparator(filter));
         } else {
             referencedPatterns = new HashSet<>();
         }
-        referencedPatterns.addAll(doGetReferencedPatternsTransitively(pattern));
+        referencedPatterns.addAll(doGetReferencedPatternsTransitively(pattern, filter));
         return referencedPatterns;
     }
 
     private static OnChangeEvictingCache cache = new OnChangeEvictingCache();
     
-    private static Set<Pattern> doGetReferencedPatternsTransitively(final Pattern pattern) {
+    private static Set<Pattern> doGetReferencedPatternsTransitively(final Pattern pattern, final Predicate<Pattern> filter) {
         if (pattern.eResource() == null) {
             Set<Pattern> patterns = new HashSet<>();
-            calculateReferencedPatternsTransitive(pattern, patterns);
+            calculateReferencedPatternsTransitive(pattern, patterns, filter);
             return patterns;
         } else {
-            return cache.get(pattern, pattern.eResource(), new Provider<Set<Pattern>>() {
+            Pair<Pattern, Predicate<Pattern>> key = new Pair<Pattern, Predicate<Pattern>>(pattern, filter);
+            return cache.get(key, pattern.eResource(), new Provider<Set<Pattern>>() {
 
                 @Override
                 public Set<Pattern> get() {
                     Set<Pattern> patterns = new HashSet<>();
-                    calculateReferencedPatternsTransitive(pattern, patterns);
+                    calculateReferencedPatternsTransitive(pattern, patterns, filter);
                     return patterns;
                 }
             });
         }
     }
     
-    private static void calculateReferencedPatternsTransitive(Pattern pattern, Set<Pattern> addedPatterns) {
-        Set<Pattern> candidates = getReferencedPatterns(pattern);
+    private static void calculateReferencedPatternsTransitive(Pattern pattern, Set<Pattern> addedPatterns, final Predicate<Pattern> filter) {
+        Set<Pattern> candidates = Sets.filter(getReferencedPatterns(pattern), filter);
         candidates.removeAll(addedPatterns);
         addedPatterns.addAll(candidates);
         for (Pattern newCandidate : candidates) {
-            calculateReferencedPatternsTransitive(newCandidate, addedPatterns);
+            calculateReferencedPatternsTransitive(newCandidate, addedPatterns, filter);
         }
     }
 
