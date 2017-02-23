@@ -55,6 +55,8 @@ public class ExplorerThread implements Runnable {
 
             strategy.explore();
 
+            threadContext.backtrackUntilRoot();
+
         } catch (Throwable e) {
             Logger.getLogger(IStrategy.class).error("Thread stopped unexpectedly!", e);
             globalContext.registerException(e);
@@ -65,7 +67,7 @@ public class ExplorerThread implements Runnable {
     }
 
     /**
-     * Disposes of this strategy. Recursively callse dispose on the underlying {@link RuleEngine} and
+     * Disposes of this strategy. Recursively calls dispose on the underlying {@link RuleEngine} and
      * {@link ViatraQueryEngine}. Calling this is only required if the design space exploration was launched in thread, as
      * the underlying engines get collected on the stop of the running {@link Thread}.
      */
