@@ -146,7 +146,6 @@ public class BestFirstStrategy implements IStrategy {
         mainLoop: while (!isInterrupted) {
 
             if (currentTrajectoryWithFittness == null) {
-                context.backtrackUntilRoot();
                 if (trajectoiresToExplore.isEmpty()) {
                     logger.debug("State space is fully traversed.");
                     return;
@@ -155,7 +154,7 @@ public class BestFirstStrategy implements IStrategy {
                     if (logger.isDebugEnabled()) {
                         logger.debug("New trajectory is chosen: " + currentTrajectoryWithFittness);
                     }
-                    context.executeTrajectory(currentTrajectoryWithFittness.trajectory);
+                    context.getDesignSpaceManager().executeTrajectoryWithMinimalBacktrackWithoutStateCoding(currentTrajectoryWithFittness.trajectory);
                 }
             }
 
@@ -216,7 +215,7 @@ public class BestFirstStrategy implements IStrategy {
                             continue mainLoop;
                         }
                     } else {
-                        logger.debug("Worse fitness");
+                        logger.debug("Worse fitness.");
                         currentTrajectoryWithFittness = null;
                         continue mainLoop;
                     }

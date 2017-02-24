@@ -91,10 +91,6 @@ public class TrajectoryInfo implements Cloneable {
         return trajectory.get(trajectory.size() - 1);
     }
 
-    public Object getLastStateId() {
-        return stateIds.get(stateIds.size() - 1);
-    }
-
     public List<Object> getTrajectory() {
         return trajectoryView;
     }

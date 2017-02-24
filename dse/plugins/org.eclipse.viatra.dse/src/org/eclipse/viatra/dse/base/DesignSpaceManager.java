@@ -35,6 +35,8 @@ import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
+import com.google.common.collect.Iterators;
+
 public class DesignSpaceManager {
 
     private final IStateCoder stateCoder;
@@ -162,8 +164,8 @@ public class DesignSpaceManager {
             }
         }
 
-        logger.debug("Executed activation: " + transition + " from state: " + previousState + " to "
-                + newStateId);
+        logger.debug("Executed activation: " + transition);/* + " from state: " + previousState + " to "
+                + newStateId);*/
         
         return true;
     }
@@ -187,44 +189,44 @@ public class DesignSpaceManager {
     }
 
     public int executeTrajectory(Object[] trajectoryToExecute) {
-        return executeTrajectory(trajectoryToExecute, trajectoryToExecute.length, false, true);
+        return executeTrajectory(trajectoryToExecute, 0, trajectoryToExecute.length, false, true);
     }
 
     public int executeTrajectory(Object[] trajectoryToExecute, int excludedIndex) {
-        return executeTrajectory(trajectoryToExecute, excludedIndex, false, true);
+        return executeTrajectory(trajectoryToExecute, 0, excludedIndex, false, true);
     }
 
     public int executeTrajectoryByTrying(Object[] trajectoryToExecute) {
-        return executeTrajectory(trajectoryToExecute, trajectoryToExecute.length, true, true);
+        return executeTrajectory(trajectoryToExecute, 0, trajectoryToExecute.length, true, true);
     }
 
     public int executeTrajectoryByTrying(Object[] trajectoryToExecute, int excludedIndex) {
-        return executeTrajectory(trajectoryToExecute, excludedIndex, true, true);
+        return executeTrajectory(trajectoryToExecute, 0, excludedIndex, true, true);
     }
 
     public int executeTrajectoryWithoutStateCoding(Object[] trajectoryToExecute) {
-        return executeTrajectory(trajectoryToExecute, trajectoryToExecute.length, false, false);
+        return executeTrajectory(trajectoryToExecute, 0, trajectoryToExecute.length, false, false);
     }
 
     public int executeTrajectoryWithoutStateCoding(Object[] trajectoryToExecute, int excludedIndex) {
-        return executeTrajectory(trajectoryToExecute, excludedIndex, false, false);
+        return executeTrajectory(trajectoryToExecute, 0, excludedIndex, false, false);
     }
 
     public int executeTrajectoryByTryingWithoutStateCoding(Object[] trajectoryToExecute) {
-        return executeTrajectory(trajectoryToExecute, trajectoryToExecute.length, true, false);
+        return executeTrajectory(trajectoryToExecute, 0, trajectoryToExecute.length, true, false);
     }
 
     public int executeTrajectoryByTryingWithoutStateCoding(Object[] trajectoryToExecute, int excludedIndex) {
-        return executeTrajectory(trajectoryToExecute, excludedIndex, true, false);
+        return executeTrajectory(trajectoryToExecute, 0, excludedIndex, true, false);
     }
 
-    private int executeTrajectory(Object[] trajectoryToExecute, int excludedIndex, boolean tryAllActivations, boolean createStateCode) {
+    private int executeTrajectory(Object[] trajectoryToExecute, int includedFromIndex, int excludedToIndex, boolean tryAllActivations, boolean createStateCode) {
         logger.debug("Executing trajectory.");
         int unsuccesfulIndex = -1;
         if (tryAllActivations) {
             unsuccesfulIndex = 0;
         }
-        for (int i = 0; i < excludedIndex; i++) {
+        for (int i = includedFromIndex; i < excludedToIndex; i++) {
             Object activationId = trajectoryToExecute[i];
             final Activation<?> activation = getActivationById(activationId);
 
@@ -350,6 +352,58 @@ public class DesignSpaceManager {
         logger.debug("Backtrack.");
 
         return true;
+    }
+
+    public void backtrackXTimes(int steps) {
+        for (int i = steps; i > 0; i--) {
+            domain.getCommandStack().undo();
+            trajectory.backtrack();
+        }
+        activationCodes.updateActivationCodes();
+        logger.debug("Backtracked " + steps + " times.");
+    }
+
+    public int backtrackUntilLastCommonActivation(Object[] newTrajectory) {
+        Iterator<Object> currentTrajectoryIterator = trajectory.getTrajectory().iterator();
+        if (!currentTrajectoryIterator.hasNext()) {
+            return 0;
+        }
+        int indexOfLastCommonActivation = 0;
+        for (Object activationCode : newTrajectory) {
+            if (currentTrajectoryIterator.hasNext()) {
+                Object activationCodeFromCurrent = currentTrajectoryIterator.next();
+                if (activationCodeFromCurrent.equals(activationCode)) {
+                    indexOfLastCommonActivation++;
+                } else {
+                    break;
+                }
+            } else {
+                // current trajectory is smaller
+                break;
+            }
+        }
+        int numberOfBacktracks = trajectory.getDepth() - indexOfLastCommonActivation;
+        if (numberOfBacktracks > 0) {
+            for (int i = numberOfBacktracks; i > 0; i--) {
+                domain.getCommandStack().undo();
+                trajectory.backtrack();
+            }
+            activationCodes.updateActivationCodes();
+        }
+        logger.debug("Backtracked " + numberOfBacktracks + " times.");
+        return indexOfLastCommonActivation;
+    }
+
+    public void executeTrajectoryWithMinimalBacktrack(Object[] trajectory) {
+        int fromIndex = backtrackUntilLastCommonActivation(trajectory);
+        executeTrajectory(trajectory, fromIndex, trajectory.length, false, true);
+    }
+
+    public void executeTrajectoryWithMinimalBacktrackWithoutStateCoding(Object[] trajectory) {
+        int fromIndex = backtrackUntilLastCommonActivation(trajectory);
+        executeTrajectory(trajectory, fromIndex, trajectory.length, false, false);
+        Object stateCode = stateCoder.createStateCode();
+        this.trajectory.modifyLastStateCode(stateCode);
     }
 
     public void undoUntilRoot() {
