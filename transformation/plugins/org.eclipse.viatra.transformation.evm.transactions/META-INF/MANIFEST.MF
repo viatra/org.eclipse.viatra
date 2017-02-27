@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA EVM - EMF Transactions Support
 Bundle-SymbolicName: org.eclipse.viatra.transformation.evm.transactions;singleton:=true
-Bundle-Version: 1.5.1.qualifier
+Bundle-Version: 1.5.2.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: com.google.guava,
  org.eclipse.viatra.query.runtime,

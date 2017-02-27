@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
       label="VIATRA Viewers Runtime - GEF4 Zest Support (Incubation)"
-      version="0.15.1.qualifier"
+      version="0.15.2.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">

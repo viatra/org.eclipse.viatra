@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GMF Integration for VIATRA
 Bundle-SymbolicName: org.eclipse.viatra.integration.gmf;singleton:=true
-Bundle-Version: 1.5.1.qualifier
+Bundle-Version: 1.5.2.qualifier
 Bundle-Vendor: Eclipse VIATRA Project
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

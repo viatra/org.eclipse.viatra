@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VIATRA Validation IDE
 Bundle-SymbolicName: org.eclipse.viatra.addon.validation.tooling;singleton:=true
-Bundle-Version: 1.5.1.qualifier
+Bundle-Version: 1.5.2.qualifier
 Require-Bundle: org.eclipse.viatra.query.tooling.core;bundle-version="0.8.0",
  org.eclipse.viatra.query.patternlanguage;bundle-version="0.8.0",
  org.eclipse.viatra.query.patternlanguage.emf;bundle-version="0.8.0",
