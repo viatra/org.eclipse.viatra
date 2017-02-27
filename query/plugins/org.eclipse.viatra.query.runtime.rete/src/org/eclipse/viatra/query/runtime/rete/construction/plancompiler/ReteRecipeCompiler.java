@@ -40,6 +40,7 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PProject;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.ITypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -108,13 +109,13 @@ import com.google.common.collect.Multimap;
  */
 public class ReteRecipeCompiler {
 
-    private IQueryPlannerStrategy plannerStrategy;
-	private IQueryMetaContext metaContext;
-	private IQueryBackendHintProvider hintProvider;
-	private IQueryCacheContext queryCacheContext;
-	private PDisjunctionRewriter normalizer;
-	private QueryAnalyzer queryAnalyzer;
-	private Logger logger;
+    private final IQueryPlannerStrategy plannerStrategy;
+	private final IQueryMetaContext metaContext;
+	private final IQueryBackendHintProvider hintProvider;
+	private final IQueryCacheContext queryCacheContext;
+	private final PDisjunctionRewriter normalizer;
+	private final QueryAnalyzer queryAnalyzer;
+	private final Logger logger;
 	
 	/**
 	 * @since 1.5
@@ -133,7 +134,16 @@ public class ReteRecipeCompiler {
 		this.metaContext = metaContext;
 		this.queryCacheContext = queryCacheContext;
         this.queryAnalyzer = queryAnalyzer;
-		this.normalizer = new PDisjunctionRewriterCacher(new SurrogateQueryRewriter(), new PBodyNormalizer(metaContext));
+		this.normalizer = new PDisjunctionRewriterCacher(new SurrogateQueryRewriter(), new PBodyNormalizer(metaContext) {
+
+		    @Override
+		    protected boolean canLeadOutOfScope(PQuery query, ITypeConstraint constraint) {
+		        QueryEvaluationHint hint = ReteRecipeCompiler.this.hintProvider.getQueryEvaluationHint(query);
+		        Boolean checkScopeBoundaries = hint.getValueOrDefault(ReteHintOptions.checkScopeBoundaries);
+		        return checkScopeBoundaries && super.canLeadOutOfScope(query, constraint);
+		    }
+		    
+		});
 		this.hintProvider = hintProvider;
 	}
 

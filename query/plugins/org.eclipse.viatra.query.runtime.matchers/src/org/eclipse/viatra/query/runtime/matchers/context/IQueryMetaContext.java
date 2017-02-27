@@ -49,4 +49,10 @@ public interface IQueryMetaContext {
 	 */
 	Map<Set<Integer>, Set<Integer>> getFunctionalDependencies(IInputKey key);
 	
+	/**
+	 * Tells whether the given {@link IInputKey} is an edge and may lead out of scope.
+	 * 
+	 * @since 1.6
+	 */
+	boolean canLeadOutOfScope(IInputKey key);
 }

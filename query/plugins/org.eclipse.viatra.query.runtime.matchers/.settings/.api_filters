@@ -114,4 +114,18 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/rewriters/PBodyNormalizer.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer">
+        <filter id="1142947843">
+            <message_arguments>
+                <message_argument value="1.5.2"/>
+                <message_argument value="canLeadOutOfScope(PQuery, ITypeConstraint)"/>
+            </message_arguments>
+        </filter>
+        <filter id="1142947843">
+            <message_arguments>
+                <message_argument value="1.5.2"/>
+                <message_argument value="shouldCalculateImpliedTypes(PQuery)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

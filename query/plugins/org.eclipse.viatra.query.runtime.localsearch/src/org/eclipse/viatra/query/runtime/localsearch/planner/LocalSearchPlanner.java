@@ -47,7 +47,7 @@ import com.google.common.collect.Sets;
  * @author Marton Bur
  * @noreference This class is not intended to be referenced by clients.
  */
-public class LocalSearchPlanner{
+public class LocalSearchPlanner {
 
     // Fields to track and debug the workflow
     // Internal data
@@ -86,15 +86,28 @@ public class LocalSearchPlanner{
      * @since 1.4
      */
     public LocalSearchPlanner(LocalSearchBackend backend, Logger logger, final LocalSearchHints configuration) {
-        
+
         this.runtimeContext = backend.getRuntimeContext();
         this.configuration = configuration;
         flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
-        normalizer = new PBodyNormalizer(runtimeContext.getMetaContext(), false);
-        
+        /*
+         * TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=439358: The normalizer is initialized with the false
+         * parameter to turn off unary constraint elimination to work around an issue related to plan ordering: the
+         * current implementation of the feature target checking operations expect that the source types were checked
+         * before. However, this causes duplicate constraint checks in the search plan that might affect performance
+         * negatively.
+         */
+        normalizer = new PBodyNormalizer(runtimeContext.getMetaContext()) {
+            
+            @Override
+            protected boolean shouldCalculateImpliedTypes(PQuery query) {
+                return false;
+            }
+        };
+
         plannerStrategy = new LocalSearchRuntimeBasedStrategy();
         this.backend = backend;
-        
+
         context = backend.getBackendContext();
     }
 
@@ -120,14 +133,17 @@ public class LocalSearchPlanner{
             // 2. Plan creation
             // Context has matchers for the referred Queries (IQuerySpecifications)
             Set<PVariable> boundVariables = calculatePatternAdornmentForPlanner(boundParameters, normalizedBody);
-            SubPlan plan = plannerStrategy.plan(normalizedBody, boundVariables, context , configuration);
+            SubPlan plan = plannerStrategy.plan(normalizedBody, boundVariables, context, configuration);
             // 3. PConstraint -> POperation compilation step
             // * Pay extra caution to extend operations, when more than one variables are unbound
-            POperationCompiler operationCompiler = new POperationCompiler(runtimeContext, backend, configuration.isUseBase());
+            POperationCompiler operationCompiler = new POperationCompiler(runtimeContext, backend,
+                    configuration.isUseBase());
             List<ISearchOperation> compiledOperations = operationCompiler.compile(plan, boundParameters);
             // Store the variable mappings for the plans for debug purposes (traceability information)
-            SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody, operationCompiler.getVariableMappings(), plan, compiledOperations, operationCompiler.getDependencies());
-            
+            SearchPlanForBody compiledPlan = new SearchPlanForBody(normalizedBody,
+                    operationCompiler.getVariableMappings(), plan, compiledOperations,
+                    operationCompiler.getDependencies());
+
             plansForBodies.add(compiledPlan);
         }
 
@@ -144,33 +160,33 @@ public class LocalSearchPlanner{
         // Normalize
         normalizedDisjunction = normalizer.rewrite(flatDisjunction);
         Set<PBody> normalizedBodies = normalizedDisjunction.getBodies();
-        
+
         removeDuplicateConstraints(normalizedBodies);
-        
+
         return normalizedBodies;
     }
 
-    private Object getConstraintKey(PConstraint constraint){
-        if (constraint instanceof TypeConstraint){
+    private Object getConstraintKey(PConstraint constraint) {
+        if (constraint instanceof TypeConstraint) {
             return ((TypeConstraint) constraint).getEquivalentJudgement();
         }
         // Do not check duplication for any other types
         return constraint;
     }
-    
+
     private void removeDuplicateConstraints(Set<PBody> normalizedBodies) {
         for (PBody pBody : normalizedBodies) {
             pBody.setStatus(PQueryStatus.UNINITIALIZED);
-            
+
             Map<Object, PConstraint> constraints = Maps.newHashMap();
-            for(PConstraint constraint : pBody.getConstraints()){
+            for (PConstraint constraint : pBody.getConstraints()) {
                 Object key = getConstraintKey(constraint);
                 // Retain first found instance of a constraint
-                if (!constraints.containsKey(key)){
+                if (!constraints.containsKey(key)) {
                     constraints.put(key, constraint);
                 }
             }
-            
+
             // Retain collected constraints, remove everything else
             pBody.getConstraints().retainAll(constraints.values());
             pBody.setStatus(PQueryStatus.OK);
