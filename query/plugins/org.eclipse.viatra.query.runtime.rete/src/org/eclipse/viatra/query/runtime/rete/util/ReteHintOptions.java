@@ -27,7 +27,7 @@ public class ReteHintOptions {
             hintOption("prioritizeConstantFiltering", true);
 
     public static final QueryHintOption<Boolean> cacheOutputOfEvaluatorsByDefault = 
-            hintOption("cacheOutputOfEvaluatorsByDefault", false);
+            hintOption("cacheOutputOfEvaluatorsByDefault", true);
     
     public static final QueryHintOption<Boolean> deleteRederiveEvaluation = 
             hintOption("deleteRederiveEvaluation", false);
