@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.viatra.query.sdk.extensions.feature"
       label="VIATRA Query and Transformation SDK Extensions (Incubation)"
-      version="0.15.2.qualifier"
+      version="0.15.3.qualifier"
       provider-name="Eclipse VIATRA Project"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
