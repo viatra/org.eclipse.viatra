@@ -19,5 +19,9 @@ package org.eclipse.viatra.query.runtime.matchers.context;
  */
 public abstract class AbstractQueryMetaContext implements IQueryMetaContext {
 
-
+	@Override
+	public boolean canLeadOutOfScope(IInputKey key) {
+		return key.getArity() > 1;
+	}
+	
 }

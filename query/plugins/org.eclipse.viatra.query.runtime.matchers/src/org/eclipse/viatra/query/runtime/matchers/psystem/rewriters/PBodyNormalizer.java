@@ -27,7 +27,9 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
 import com.google.common.collect.Sets;
@@ -43,24 +45,52 @@ import com.google.common.collect.Sets;
 public class PBodyNormalizer extends PDisjunctionRewriter {
 
     /**
-     * If set to true, shrinks the net by avoiding unnecessary typechecks
+     * If set to true, reduces the PQuery by avoiding unnecessary typechecks.
+     * 
+     * @deprecated redefine in a subclass {@link #shouldCalculateImpliedTypes(PQuery)} instead
      */
     public boolean calcImpliedTypes;
     private IQueryMetaContext context;
 
     public PBodyNormalizer(IQueryMetaContext context) {
-        this(context, true);
+        this.context = context;
+        calcImpliedTypes = true;
     }
-    
+
     /**
      * 
      * @param calculateImpliedTypes
      *            If set to true, shrinks the net by avoiding unnecessary typechecks
+     * @deprecated redefine in a subclass {@link #shouldCalculateImpliedTypes(PQuery)} instead
      */
     public PBodyNormalizer(IQueryMetaContext context, boolean calculateImpliedTypes) {
         this.context = context;
         calcImpliedTypes = calculateImpliedTypes;
     }
+
+    /**
+     * Returns whether unary constraint elimination is enabled. This behavior can be customized by creating a subclass
+     * with a custom implementation.
+     * 
+     * @since 1.6
+     */
+    protected boolean shouldCalculateImpliedTypes(PQuery query) {
+        return calcImpliedTypes;
+    }
+
+    /**
+     * Checks whether a type constraint in a query can lead out of the scope. It is possible to turn off or customize
+     * this checks by creating a subclass and overriding this method.
+     * 
+     * @since 1.6
+     */
+    protected boolean canLeadOutOfScope(PQuery query, ITypeConstraint constraint) {
+        if (constraint instanceof TypeConstraint) {
+            return context.canLeadOutOfScope(((TypeConstraint) constraint).getSupplierKey());
+        }
+        return true;
+    }
+
     @Override
     public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
         Set<PBody> normalizedBodies = Sets.newHashSet();
@@ -88,10 +118,11 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         try {
             return normalizeBodyInternal(body);
         } catch (QueryProcessingException e) {
-            throw new RewriterException("Error during rewriting: {1}", new String[]{e.getMessage()}, e.getShortMessage(), body.getPattern(), e);
+            throw new RewriterException("Error during rewriting: {1}", new String[] { e.getMessage() },
+                    e.getShortMessage(), body.getPattern(), e);
         }
     }
-    
+
     PBody normalizeBodyInternal(PBody body) throws QueryProcessingException {
         // UNIFICATION AND WEAK INEQUALITY ELMINATION
         unifyVariablesAlongEqualities(body);
@@ -99,9 +130,10 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         removeMootEqualities(body);
 
         // UNARY ELIMINATION WITH TYPE INFERENCE
-        if (calcImpliedTypes) {
+        if (shouldCalculateImpliedTypes(body.getPattern())) {
             eliminateInferrableTypes(body, context);
         }
+
         // PREVENTIVE CHECKS
         checkSanity(body);
         return body;
@@ -144,44 +176,45 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      * Eliminates all type constraints that are inferrable from other constraints.
      */
     void eliminateInferrableTypes(final PBody body, IQueryMetaContext context) {
-    	Set<TypeJudgement> subsumedByRetainedConstraints = new HashSet<TypeJudgement>();
-    	LinkedList<ITypeConstraint> allTypeConstraints = new LinkedList<ITypeConstraint>();
+        Set<TypeJudgement> subsumedByRetainedConstraints = new HashSet<TypeJudgement>();
+        LinkedList<ITypeConstraint> allTypeConstraints = new LinkedList<ITypeConstraint>();
         for (PConstraint pConstraint : body.getConstraints()) {
-			if (pConstraint instanceof ITypeConstraint) {
-				allTypeConstraints.add((ITypeConstraint) pConstraint);
-			} else if (pConstraint instanceof ITypeInfoProviderConstraint) { 
-				// non-type constraints are all retained
-				final Set<TypeJudgement> directJudgements = 
-						((ITypeInfoProviderConstraint) pConstraint).getImpliedJudgements(context);
-				subsumedByRetainedConstraints.addAll(TypeHelper.typeClosure(directJudgements, context));
-			}
-		}
+            if (pConstraint instanceof ITypeConstraint) {
+                allTypeConstraints.add((ITypeConstraint) pConstraint);
+            } else if (pConstraint instanceof ITypeInfoProviderConstraint) {
+                // non-type constraints are all retained
+                final Set<TypeJudgement> directJudgements = ((ITypeInfoProviderConstraint) pConstraint)
+                        .getImpliedJudgements(context);
+                subsumedByRetainedConstraints.addAll(TypeHelper.typeClosure(directJudgements, context));
+            }
+        }
         Collections.sort(allTypeConstraints, PConstraint.CompareByMonotonousID.INSTANCE);
         Queue<ITypeConstraint> potentialConstraints = allTypeConstraints; // rename for better comprehension
-        
+
         while (!potentialConstraints.isEmpty()) {
-        	ITypeConstraint candidate = potentialConstraints.poll();
-        	
-        	boolean isSubsumed = 
-        			subsumedByRetainedConstraints.contains(candidate.getEquivalentJudgement());
-        	if (!isSubsumed) 
-	        	for (ITypeConstraint subsuming : potentialConstraints) { // the remaining ones
-	        		final Set<TypeJudgement> directJudgements = 
-	        				subsuming.getImpliedJudgements(context);
-	        		final Set<TypeJudgement> typeClosure = TypeHelper.typeClosure(directJudgements, context);
-					
-	        		if (typeClosure.contains(candidate.getEquivalentJudgement())) {
-	        			isSubsumed = true;
-	        			break;
-	        		}
-	        	}          
-        	
-        	if (isSubsumed) { // eliminated
-        		candidate.delete();
-        	} else { // retained
-        		subsumedByRetainedConstraints.addAll(TypeHelper.typeClosure(candidate.getImpliedJudgements(context), context));
-        	}      		
-        }        
+            ITypeConstraint candidate = potentialConstraints.poll();
+
+            boolean isSubsumed = subsumedByRetainedConstraints.contains(candidate.getEquivalentJudgement());
+            if (!isSubsumed) {
+                for (ITypeConstraint subsuming : potentialConstraints) { // the remaining ones
+                    if (!canLeadOutOfScope(body.getPattern(), subsuming)) {
+                        final Set<TypeJudgement> directJudgements = subsuming.getImpliedJudgements(context);
+                        final Set<TypeJudgement> typeClosure = TypeHelper.typeClosure(directJudgements, context);
+
+                        if (typeClosure.contains(candidate.getEquivalentJudgement())) {
+                            isSubsumed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (isSubsumed) { // eliminated
+                candidate.delete();
+            } else { // retained
+                subsumedByRetainedConstraints
+                        .addAll(TypeHelper.typeClosure(candidate.getImpliedJudgements(context), context));
+            }
+        }
     }
 
     /**

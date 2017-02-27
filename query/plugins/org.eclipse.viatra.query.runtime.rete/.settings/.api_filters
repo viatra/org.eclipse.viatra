@@ -17,4 +17,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/viatra/query/runtime/rete/util/ReteHintOptions.java" type="org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.util.ReteHintOptions"/>
+                <message_argument value="checkScopeBoundaries"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

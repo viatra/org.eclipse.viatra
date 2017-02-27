@@ -65,6 +65,18 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
 	}
 	
 	@Override
+	public boolean canLeadOutOfScope(IInputKey key) {
+		ensureValidKey(key);
+		if (key instanceof EStructuralFeatureInstancesKey) {
+			EStructuralFeature feature = ((EStructuralFeatureInstancesKey) key).getEmfKey();
+			if (feature instanceof EReference){
+				return ((EReference) feature).isResolveProxies();
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean isStateless(IInputKey key) {
 		ensureValidKey(key);
 		if (key instanceof JavaTransitiveInstancesKey) 
