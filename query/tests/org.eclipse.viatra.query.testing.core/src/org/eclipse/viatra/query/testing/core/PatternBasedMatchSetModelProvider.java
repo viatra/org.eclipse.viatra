@@ -1,11 +1,12 @@
 /** 
- * Copyright (c) 2010-2015, Grill Bal�zs, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2015, Grill Balazs, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * Contributors:
- * Grill Bal�zs - initial API and implementation
+ * Grill Balazs - initial API and implementation
+ * Peter Lunk - EMFScope support added
  */
 package org.eclipse.viatra.query.testing.core;
 
@@ -30,11 +31,12 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
     private AdvancedViatraQueryEngine engine;
 
     @Override
-    public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet resourceSet,
+    public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(EMFScope scope,
             IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
                     throws ViatraQueryException {
+        
         if (engine == null){
-            engine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(resourceSet));
+            engine = AdvancedViatraQueryEngine.createUnmanagedEngine(scope);
         }
         ViatraQueryMatcher<Match> matcher = (ViatraQueryMatcher<Match>) ((AdvancedViatraQueryEngine) engine)
                 .getMatcher(querySpecification, hint);
@@ -43,6 +45,20 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
 
     }
 
+	@Override
+	public boolean updatedByModify() {
+		return true;
+	}
+
+
+    @Override
+    public <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(ResourceSet rs,
+            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, Match filter)
+            throws ViatraQueryException {
+        
+       return getMatchSetRecord(new EMFScope(rs), querySpecification, filter);
+    }
+    
     @Override
     public void dispose() {
         if (engine != null) {
@@ -50,9 +66,4 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
             engine = null;
         }
     }
-
-	@Override
-	public boolean updatedByModify() {
-		return true;
-	}
 }
