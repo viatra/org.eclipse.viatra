@@ -1,11 +1,12 @@
 /** 
- * Copyright (c) 2010-2015, Balázs Grill, Istvan Rath and Daniel Varro
+ * Copyright (c) 2010-2015, Balazs Grill, Istvan Rath and Daniel Varro
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * Contributors:
- * Balázs Grill - initial API and implementation
+ * Balazs Grill - initial API and implementation
+ * Peter Lunk - EMFScope support added
  */
 package org.eclipse.viatra.query.testing.core.api
 
@@ -30,6 +31,7 @@ import org.eclipse.viatra.query.testing.core.SnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.ViatraQueryTestCase
 import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 /**
  * This class defines an API to easily construct test cases. The base conception is to provide
@@ -38,116 +40,125 @@ import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOpt
  */
 class ViatraQueryTest {
 
-	val ViatraQueryTestCase testCase;
+    val ViatraQueryTestCase testCase;
     private val List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList;
 
     private new() {
         testCase = new ViatraQueryTestCase
     }
 
-	/**
-	 * Test the specified query
-	 */
-	static def <Match extends IPatternMatch> test(IQuerySpecification<? extends ViatraQueryMatcher<Match>> pattern) {
-		new ViatraQueryTest().and(pattern)
-	}
+    /**
+     * Test the specified query
+     */
+    static def <Match extends IPatternMatch> test(IQuerySpecification<? extends ViatraQueryMatcher<Match>> pattern) {
+        new ViatraQueryTest().and(pattern)
+    }
 
-	static def test(IQueryGroup patterns) {
-		new ViatraQueryTest().and(patterns)
-	}
+    static def test(IQueryGroup patterns) {
+        new ViatraQueryTest().and(patterns)
+    }
 
-	static def test() {
-		new ViatraQueryTest
-	}
+    static def test() {
+        new ViatraQueryTest
+    }
 
-	/**
-	 * Test the specified query
-	 */
-	static def <Match extends IPatternMatch> test(String pattern) {
-		test().and(pattern)
-	}
+    /**
+     * Test the specified query
+     */
+    static def <Match extends IPatternMatch> test(String pattern) {
+        test().and(pattern)
+    }
 
-	def and(IQueryGroup patterns) {
-		patterns.specifications.forEach [
-			this.patterns += it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>
-		]
-		this
-	}
+    def and(IQueryGroup patterns) {
+        patterns.specifications.forEach [
+            this.patterns += it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>
+        ]
+        this
+    }
 
     /**
      * Test the given pattern parsed from file
      */
-    def and(URI patternModel, Injector injector, String patternName){
+    def and(URI patternModel, Injector injector, String patternName) {
         val resourceSet = XmiModelUtil.prepareXtextResource(injector)
         val resource = resourceSet.getResource(patternModel, true);
         Preconditions.checkState(!resource.contents.empty)
         val patternmodel = resource.contents.get(0)
         Preconditions.checkState(patternmodel instanceof PatternModel)
-        val patterns = (patternmodel as PatternModel).patterns.filter[ it.name == patternName ]
+        val patterns = (patternmodel as PatternModel).patterns.filter[it.name == patternName]
         Preconditions.checkState(patterns.size == 1)
         val builder = new SpecificationBuilder
         this.patterns.add(builder.getOrCreateSpecification(patterns.get(0)))
     }
 
-	def and(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
-		patterns.add(pattern)
-		this
-	}
+    def and(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
+        patterns.add(pattern)
+        this
+    }
 
-	def and(String pattern) {
-	    val view = QuerySpecificationRegistry.instance.defaultView
-		and(view.getEntry(pattern).get as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
-	}
+    def and(String pattern) {
+        val view = QuerySpecificationRegistry.instance.defaultView
+        and(view.getEntry(pattern).get as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
+    }
 
-	private new(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
-		this()
-		this.patterns.add(pattern);
-	}
+    private new(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
+        this()
+        this.patterns.add(pattern);
+    }
 
-	/**
-	 * Add match result set with a query initialized using the given hints
-	 */
-	def with(QueryEvaluationHint hint) {
-		val modelProvider = new PatternBasedMatchSetModelProvider(hint);
-		testCase.addMatchSetModelProvider(modelProvider)
-		this
-	}
+    /**
+     * Add match result set with a query initialized using the given hints
+     */
+    def with(QueryEvaluationHint hint) {
+        val modelProvider = new PatternBasedMatchSetModelProvider(hint);
+        testCase.addMatchSetModelProvider(modelProvider)
+        this
+    }
 
-	/**
-	 * Add match result set with a query initialized using the given query backend
-	 */
-	def with(IQueryBackendFactory queryBackendFactory) {
-		val QueryEvaluationHint hint = new QueryEvaluationHint(null, queryBackendFactory);
-		with(hint)
-	}
+    /**
+     * Add match result set with a query initialized using the given query backend
+     */
+    def with(IQueryBackendFactory queryBackendFactory) {
+        val QueryEvaluationHint hint = new QueryEvaluationHint(null, queryBackendFactory);
+        with(hint)
+    }
 
-	/**
-	 * Add match result set loaded from the given snapshot
-	 */
-	def with(URI snapshotURI) {
-		testCase.addMatchSetModelProvider(new SnapshotMatchSetModelProvider(snapshotURI))
-		this
-	}
+    /**
+     * Add match result set loaded from the given snapshot
+     */
+    def with(URI snapshotURI) {
+        testCase.addMatchSetModelProvider(new SnapshotMatchSetModelProvider(snapshotURI))
+        this
+    }
 
-	/**
-	 * Add match result set loaded from the given snapshot
-	 */
-	def with(String snapshotURI) {
-		with(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, snapshotURI))
-	}
+    /**
+     * Add match result set loaded from the given snapshot
+     */
+    def with(String snapshotURI) {
+        with(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, snapshotURI))
+    }
 
-	/**
-	 * Load input model
-	 */
-	def on(URI inputURI) {
-		testCase.loadModel(inputURI)
-		this
-	}
+    /**
+     * Load input model
+     */
+    def on(URI inputURI) {
+        testCase.loadModel(inputURI)
+        this
+    }
+
+    /**
+     * Initialize test using EMF Scope
+     * @since 1.5.2
+     */
+    def on(EMFScope scope) {
+        testCase.scope = scope
+        this
+    }
 
     /**
      * Execute the given operation on the model. This call will also remove every non-incremental result set.
      */
-    def <T extends EObject> modify(Class<T> clazz, (T)=>boolean condition, (T)=>void operation){
+    def <T extends EObject> modify(Class<T> clazz, (T)=>boolean condition, (T)=>void operation) {
         testCase.modifyModel(clazz, condition, operation)
         this
     }
@@ -157,65 +168,66 @@ class ViatraQueryTest {
      * is separated from assertEquals because JUnit requires test methods to return void, therefore a test shall end with
      * assertEquals and this method shall be used where further actions are intended (e.g. incremental scenarios)
      */
-    def assertEqualsThen(){
+    def assertEqualsThen() {
         assertEquals
         this
     }
-    
+
     /**
      * Assert that there were no log events with higher level than given severity during the execution 
      */
-    def assertLogSeverityThreshold(Level severity){
+    def assertLogSeverityThreshold(Level severity) {
         testCase.assertLogSeverityThreshold(severity)
     }
-    
+
     /**
      * Assert that the highest level of log events occurred during execution equals to the given severity
      */
-    def assertLogSeverity(Level severity){
+    def assertLogSeverity(Level severity) {
         testCase.assertLogSeverity(severity)
     }
 
     /**
      * Assert that there were no log events with higher level than given severity during the execution 
      */
-    def assertLogSeverityThresholdThen(Level severity){
+    def assertLogSeverityThresholdThen(Level severity) {
         this.assertLogSeverityThreshold(severity)
         this
     }
-    
+
     /**
      * Assert that the highest level of log events occurred during execution equals to the given severity
      */
-    def assertLogSeverityThen(Level severity){
+    def assertLogSeverityThen(Level severity) {
         this.assertLogSeverity(severity)
         this
     }
 
-	/**
-	 * Execute all queries and check that the result sets are equal and no error log message was thrown
-	 */
-	def assertEquals() {
-		this.assertEquals(Level::INFO)
-	}
-	/**
-	 * Execute all queries and check that the result sets are equal with a selected log level treshold
-	 */
-	def assertEquals(Level treshold) {
-		patterns.forEach [
-			testCase.assertMatchSetsEqual(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
-		]
-		testCase.assertLogSeverityThreshold(treshold)
-	}
-	
-	/**
-	 * Make assumptions that each provided engine and snapshot can provide Match result set for each tested patterns
-	 */
-	def assumeInputs(){
-	    patterns.forEach[
-	        testCase.assumeMatchSetsAreAvailable(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
-	    ]
-	    this
-	}
+    /**
+     * Execute all queries and check that the result sets are equal and no error log message was thrown
+     */
+    def assertEquals() {
+        this.assertEquals(Level::INFO)
+    }
+
+    /**
+     * Execute all queries and check that the result sets are equal with a selected log level treshold
+     */
+    def assertEquals(Level treshold) {
+        patterns.forEach [
+            testCase.assertMatchSetsEqual(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
+        ]
+        testCase.assertLogSeverityThreshold(treshold)
+    }
+
+    /**
+     * Make assumptions that each provided engine and snapshot can provide Match result set for each tested patterns
+     */
+    def assumeInputs() {
+        patterns.forEach [
+            testCase.assumeMatchSetsAreAvailable(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
+        ]
+        this
+    }
 
 }
