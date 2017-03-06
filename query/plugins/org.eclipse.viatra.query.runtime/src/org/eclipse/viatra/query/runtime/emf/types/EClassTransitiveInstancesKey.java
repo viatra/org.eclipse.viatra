@@ -11,10 +11,12 @@
 package org.eclipse.viatra.query.runtime.emf.types;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 
 /**
- * Instance tuples are of form (x), where x is an eObject instance of the given eClass or one of its subclasses.
+ * Instance tuples are of form (x), where x is an eObject instance of the given eClass or one of its subclasses <b>within the scope</b>.
+ * <p> As of version 1.6, this input key has the strict semantics that instances must be within the {@link EMFScope}.
  * @author Bergmann Gabor
  *
  */
@@ -26,12 +28,12 @@ public class EClassTransitiveInstancesKey extends BaseEMFTypeKey<EClass> {
 
 	@Override
 	public String getPrettyPrintableName() {
-        return ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
+        return "(scoped) "+ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override
 	public String getStringID() {
-		return "eClass#"+ ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
+		return "eClass(scoped)#"+ ViatraQueryRuntimeHelper.prettyPrintEMFType(wrappedKey);
 	}
 
 	@Override

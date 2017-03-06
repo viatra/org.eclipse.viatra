@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.matchers.psystem;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -20,6 +21,9 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.InputKeyImplication;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 /**
  * A judgement that means that the given tuple of variables will represent a tuple of values that is a member of the extensional relation identified by the given input key.
@@ -84,15 +88,37 @@ public class TypeJudgement {
 		Collection<InputKeyImplication> implications = context.getImplications(this.inputKey);
 		for (InputKeyImplication inputKeyImplication : implications) {
 			results.add(
-				new TypeJudgement(
-						inputKeyImplication.getImpliedKey(), 
-						transcribeVariablesToTuple(inputKeyImplication.getImpliedIndices())
-				)
+				transcribeImplication(inputKeyImplication)
 			);
 		}
 		
 		return results;
 	}
+	/**
+	 * @since 1.6
+	 */
+    public SetMultimap<TypeJudgement, TypeJudgement> getConditionalImpliedJudgements(IQueryMetaContext context) {
+        SetMultimap<TypeJudgement, TypeJudgement> results = HashMultimap.create();
+        
+        SetMultimap<InputKeyImplication, InputKeyImplication> implications = context.getConditionalImplications(this.inputKey);
+        for (Entry<InputKeyImplication, InputKeyImplication> entry : implications.entries()) {
+            results.put(
+                    transcribeImplication(entry.getKey()),
+                    transcribeImplication(entry.getValue())
+            );            
+        }
+        
+        return results;
+    }
+	
+	
+	
+    private TypeJudgement transcribeImplication(InputKeyImplication inputKeyImplication) {
+        return new TypeJudgement(
+                inputKeyImplication.getImpliedKey(), 
+        		transcribeVariablesToTuple(inputKeyImplication.getImpliedIndices())
+        );
+    }
 	private Tuple transcribeVariablesToTuple(List<Integer> indices) {
 		Object[] elements = new Object[indices.size()];
 		for (int i = 0; i < indices.size(); ++i)

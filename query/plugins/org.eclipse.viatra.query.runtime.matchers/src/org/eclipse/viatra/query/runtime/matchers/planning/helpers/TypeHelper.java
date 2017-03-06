@@ -11,9 +11,12 @@
 
 package org.eclipse.viatra.query.runtime.matchers.planning.helpers;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -22,6 +25,11 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.ITypeInfoProviderConstr
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 
 /**
  * @author Gabor Bergmann
@@ -77,17 +85,52 @@ public class TypeHelper {
      * @return the set of all type judgements in typesToClose and all their direct and indirect supertypes
      */
     public static Set<TypeJudgement> typeClosure(Set<TypeJudgement> typesToClose, IQueryMetaContext context) {
-        Set<TypeJudgement> closure = new HashSet<TypeJudgement>(typesToClose);
-        Set<TypeJudgement> delta = closure;
-        while (!delta.isEmpty()) {
-            Set<TypeJudgement> newTypes = new HashSet<TypeJudgement>();
-            for (TypeJudgement deltaType : delta) {
-            	newTypes.addAll(deltaType.getDirectlyImpliedJudgements(context));
-            }
-            newTypes.removeAll(closure);
-            delta = newTypes;
-            closure.addAll(delta);
+        return typeClosure(Collections.<TypeJudgement>emptySet(), typesToClose, context);
+    }
+
+    /**
+     * Calculates the closure of a set of type judgements (with respect to supertyping), 
+     *      where the closure has been calculated before for a given base set, but not for a separate delta set.
+     * <p> Precondition: the set (typesToClose MINUS delta) is already closed w.r.t. supertyping. 
+     * 
+     * @return the set of all type judgements in typesToClose and all their direct and indirect supertypes
+     * @since 1.6
+     */
+    public static Set<TypeJudgement> typeClosure(Set<TypeJudgement> preclosedBaseSet, Set<TypeJudgement> delta, IQueryMetaContext context) {
+        delta = Sets.difference(delta, preclosedBaseSet);
+        if (delta.isEmpty()) return preclosedBaseSet;
+        
+        Set<TypeJudgement> closure = new HashSet<TypeJudgement>(preclosedBaseSet);
+        Queue<TypeJudgement> queue = new LinkedList<TypeJudgement>(delta);
+        
+        SetMultimap<TypeJudgement, TypeJudgement> conditionalImplications = HashMultimap.create();
+        for (TypeJudgement typeJudgement : closure) {
+            conditionalImplications.putAll(typeJudgement.getConditionalImpliedJudgements(context));
         }
+        
+        do {
+            TypeJudgement deltaType = queue.poll();
+            if (closure.add(deltaType)) {
+                // direct implications
+                queue.addAll(deltaType.getDirectlyImpliedJudgements(context));
+                
+                // conditional implications, source key processed before, this is the condition key
+                queue.addAll(conditionalImplications.get(deltaType));
+                
+                // conditional implications, this is the source key 
+                SetMultimap<TypeJudgement, TypeJudgement> deltaConditionalImplications = deltaType.getConditionalImpliedJudgements(context);
+                for (TypeJudgement condition : deltaConditionalImplications.keySet()) {
+                    if (closure.contains(condition)) {
+                        // condition processed before
+                        queue.addAll(deltaConditionalImplications.get(condition));                        
+                    } else {
+                        // condition not processed yet
+                        conditionalImplications.putAll(condition, deltaConditionalImplications.get(condition));
+                    }
+                }
+            }
+        } while (!queue.isEmpty());
+        
         return closure;
     }
 

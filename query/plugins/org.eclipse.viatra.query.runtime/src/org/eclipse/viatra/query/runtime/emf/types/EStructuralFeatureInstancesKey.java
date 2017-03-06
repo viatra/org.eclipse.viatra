@@ -11,10 +11,13 @@
 package org.eclipse.viatra.query.runtime.emf.types;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.emf.helper.ViatraQueryRuntimeHelper;
 
 /**
  * Instance tuples are of form (x, y), where x is an eObject that has y as the value of the given feature (or one of the values in case of multi-valued).
+ * 
+ * <p> As of version 1.6, this input key has the strict semantics that x must be within the {@link EMFScope}, scoping is <b>not</b> implied for y.
  * @author Bergmann Gabor
  *
  */

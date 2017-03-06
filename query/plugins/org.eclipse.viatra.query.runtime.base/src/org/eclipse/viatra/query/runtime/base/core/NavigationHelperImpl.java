@@ -541,6 +541,18 @@ public class NavigationHelperImpl implements NavigationHelper {
 
         return retSet;
     }
+    
+    @Override
+    public boolean isInstanceOfUnscoped(EObject object, EClass clazz) {
+        Object candidateTypeKey = toKey(clazz);
+        Object typeKey = toKey(object.eClass()); 
+        
+        if (candidateTypeKey.equals(typeKey)) return true;
+        if (metaStore.getEObjectClassKey().equals(candidateTypeKey)) return true;
+                    
+        Set<Object> superTypes = metaStore.getSuperTypeMap().get(typeKey);
+        return superTypes.contains(candidateTypeKey);            
+    }
 
     @Override
     public Set<EObject> findByFeatureValue(Object value_, EStructuralFeature _feature) {

@@ -31,6 +31,7 @@ import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.InstanceListener;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.matchers.context.AbstractQueryRuntimeContext;
@@ -62,7 +63,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 	protected final Map<EDataType, EnumSet<IndexingService>> indexedDataTypes = Maps.newHashMap();
 	protected final Map<EStructuralFeature, EnumSet<IndexingService>> indexedFeatures = Maps.newHashMap();
     
-	protected final EMFQueryMetaContext metaContext = EMFQueryMetaContext.INSTANCE;
+	protected final EMFQueryMetaContext metaContext;
 
 	protected Logger logger;
 
@@ -71,7 +72,7 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     public EMFQueryRuntimeContext(NavigationHelper baseIndex, Logger logger, EMFScope emfScope) {
         this.baseIndex = baseIndex;
         this.logger = logger;
-        //this.listener = new BaseIndexListener(iqEngine);
+        this.metaContext = new EMFQueryMetaContext(emfScope);
         this.emfScope = emfScope;
     }
     
@@ -147,14 +148,14 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
     }
     
     /**
-     * Retrieve the current registered indexing services for the given key. May not null,
+     * Retrieve the current registered indexing services for the given key. May not return null,
      * returns an empty set if no indexing is registered.
      * 
      * @since 1.4
      */
     protected EnumSet<IndexingService> getCurrentIndexingServiceFor(IInputKey key){
         ensureValidKey(key);
-        if (key instanceof JavaTransitiveInstancesKey) {
+        if (!key.isEnumerable()) {
             return EnumSet.noneOf(IndexingService.class);
         } else if (key instanceof EClassTransitiveInstancesKey) {
             EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
@@ -193,11 +194,17 @@ public class EMFQueryRuntimeContext extends AbstractQueryRuntimeContext {
 				return instanceClass.isInstance(getFromSeed(seed, 0));
 			else
 				return false;
-    	} else {
+    	} else if (key instanceof EClassUnscopedTransitiveInstancesKey) {
+            EClass emfKey = ((EClassUnscopedTransitiveInstancesKey) key).getEmfKey();
+            Object candidateInstance = getFromSeed(seed, 0);
+            if (candidateInstance instanceof EObject) {
+                return baseIndex.isInstanceOfUnscoped((EObject) candidateInstance, emfKey);
+            } else return false;            
+        } else {
     		ensureIndexed(key);
     		if (key instanceof EClassTransitiveInstancesKey) {
     			EClass eClass = ((EClassTransitiveInstancesKey) key).getEmfKey();
-    			// instance check not enough, must lookup from index
+    			// instance check not enough to satisfy scoping, must lookup from index
     			return baseIndex.getAllInstances(eClass).contains(getFromSeed(seed, 0));
     		} else if (key instanceof EDataTypeInSlotsKey) {
     			EDataType dataType = ((EDataTypeInSlotsKey) key).getEmfKey();

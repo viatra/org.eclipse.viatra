@@ -48,7 +48,7 @@ public class EMFScope extends QueryScope {
     /**
      * Creates an EMF scope at the given root, with default options (recommended for most users).
      * @param scopeRoot the root of the EMF scope
-     * @throws ViatraQueryException if scopeRoot is not an EMF ResourceSet, Resource or EObject
+     * @throws ViatraQueryException- if scopeRoot is not an EMF ResourceSet, Resource or EObject
      */
     public EMFScope(Notifier scopeRoot) throws ViatraQueryException {
         this(ImmutableSet.of(scopeRoot), new BaseIndexOptions());

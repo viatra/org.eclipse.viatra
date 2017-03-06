@@ -31,7 +31,7 @@ public class CppQueryRuntimeContext extends AbstractQueryRuntimeContext{
 
     @Override
     public IQueryMetaContext getMetaContext() {
-        return EMFQueryMetaContext.INSTANCE;
+        return EMFQueryMetaContext.DEFAULT;
     }
 
     @Override

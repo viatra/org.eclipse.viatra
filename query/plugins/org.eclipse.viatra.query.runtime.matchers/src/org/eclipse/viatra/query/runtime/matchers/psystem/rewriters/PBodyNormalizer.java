@@ -12,11 +12,13 @@
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.helpers.TypeHelper;
@@ -32,6 +34,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 /**
@@ -185,10 +189,18 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
                 // non-type constraints are all retained
                 final Set<TypeJudgement> directJudgements = ((ITypeInfoProviderConstraint) pConstraint)
                         .getImpliedJudgements(context);
-                subsumedByRetainedConstraints.addAll(TypeHelper.typeClosure(directJudgements, context));
+                subsumedByRetainedConstraints = TypeHelper.typeClosure(subsumedByRetainedConstraints, directJudgements,
+                        context);
             }
         }
-        Collections.sort(allTypeConstraints, PConstraint.CompareByMonotonousID.INSTANCE);
+        Comparator<ITypeConstraint> eliminationOrder = Ordering.from(context.getSuggestedEliminationOrdering())
+                .onResultOf(new Function<ITypeConstraint, IInputKey>() {
+                    @Override
+                    public IInputKey apply(ITypeConstraint input) {
+                        return input.getEquivalentJudgement().getInputKey();
+                    }
+                }).compound(PConstraint.CompareByMonotonousID.INSTANCE);
+        Collections.sort(allTypeConstraints, eliminationOrder);
         Queue<ITypeConstraint> potentialConstraints = allTypeConstraints; // rename for better comprehension
 
         while (!potentialConstraints.isEmpty()) {
@@ -196,23 +208,22 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
 
             boolean isSubsumed = subsumedByRetainedConstraints.contains(candidate.getEquivalentJudgement());
             if (!isSubsumed) {
+                Set<TypeJudgement> typeClosure = subsumedByRetainedConstraints;
                 for (ITypeConstraint subsuming : potentialConstraints) { // the remaining ones
-                    if (!canLeadOutOfScope(body.getPattern(), subsuming)) {
-                        final Set<TypeJudgement> directJudgements = subsuming.getImpliedJudgements(context);
-                        final Set<TypeJudgement> typeClosure = TypeHelper.typeClosure(directJudgements, context);
+                    final Set<TypeJudgement> directJudgements = subsuming.getImpliedJudgements(context);
+                    typeClosure = TypeHelper.typeClosure(typeClosure, directJudgements, context);
 
-                        if (typeClosure.contains(candidate.getEquivalentJudgement())) {
-                            isSubsumed = true;
-                            break;
-                        }
+                    if (typeClosure.contains(candidate.getEquivalentJudgement())) {
+                        isSubsumed = true;
+                        break;
                     }
                 }
             }
             if (isSubsumed) { // eliminated
                 candidate.delete();
             } else { // retained
-                subsumedByRetainedConstraints
-                        .addAll(TypeHelper.typeClosure(candidate.getImpliedJudgements(context), context));
+                subsumedByRetainedConstraints = TypeHelper.typeClosure(subsumedByRetainedConstraints,
+                        candidate.getImpliedJudgements(context), context);
             }
         }
     }

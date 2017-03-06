@@ -17,6 +17,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.EClassifierConstraint;
@@ -218,6 +219,20 @@ public class PatternBodyTransformer {
             EStructuralFeature typeObject = ((ReferenceType) segmentType).getRefname();
             acceptor.acceptTypeConstraint(ImmutableList.of(srcName, trgName),
                     new EStructuralFeatureInstancesKey(typeObject));
+            
+            // new since 1.6, see Bug 512752
+            //  target type constraint introduced to ensure scope semantics and reject dangling edges
+            //  as EStructuralFeatureInstancesKey does not guarantee that target is in scope 
+            EClassifier targetType = typeObject.getEType();
+            if (targetType instanceof EClass) {
+                acceptor.acceptTypeConstraint(ImmutableList.of(trgName),
+                        new EClassTransitiveInstancesKey((EClass) targetType));
+            } else if (targetType instanceof EDataType) {
+                acceptor.acceptTypeConstraint(ImmutableList.of(trgName),
+                        new EDataTypeInSlotsKey((EDataType) targetType));
+            }
+            
+            // source type is gathered separately, no action required here
         } else
             throw new SpecificationBuilderException("Unsupported path segment type {1} in pattern {2}: {3}",
                     new String[] { segmentType.eClass().getName(), patternFQN, typeStr(segmentType) },

@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
@@ -346,6 +347,17 @@ public interface NavigationHelper {
      * @see #getDirectInstances(EClass)
      */
     public Set<EObject> getAllInstances(EClass clazz);
+
+    /**
+     * Checks whether the given {@link EObject} is an instance of the given {@link EClass}. 
+     * This includes instances of subclasses.
+     * <p> Special note: this method does not check whether the object is indexed in the scope, 
+     * and will return true for out-of-scope objects as well (as long as they are instances of the class). 
+     * <p> The given class does not have to be indexed.
+     * <p> The difference between this method and {@link EClassifier#isInstance(Object)} is that in dynamic EMF mode, EPackage equivalence is taken into account. 
+     * @since 1.6
+     */
+    public boolean isInstanceOfUnscoped(EObject object, EClass clazz);
 
     /**
      * Get the total number of instances of the given {@link EClass} and all of its subclasses.

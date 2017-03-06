@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.viatra.query.runtime.emf.EMFQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.emf.types.EClassTransitiveInstancesKey;
+import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey;
 import org.eclipse.viatra.query.runtime.emf.types.EDataTypeInSlotsKey;
 import org.eclipse.viatra.query.runtime.emf.types.EStructuralFeatureInstancesKey;
 import org.eclipse.viatra.query.runtime.localsearch.matcher.MatcherReference;
@@ -288,9 +289,11 @@ public class POperationCompiler {
         final IInputKey inputKey = typeConstraint.getInputKey();
         if (inputKey instanceof JavaTransitiveInstancesKey) {
             operations.add(new InstanceOfJavaClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((JavaTransitiveInstancesKey) inputKey).getInstanceClass()));
-        } else if (inputKey instanceof EDataTypeInSlotsKey) {
+        } else if (inputKey instanceof EDataTypeInSlotsKey) { // TODO probably only occurs as TypeConstraint
             operations.add(new InstanceOfDataTypeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)),
                     ((EDataTypeInSlotsKey) inputKey).getEmfKey()));
+        } else if (inputKey instanceof EClassUnscopedTransitiveInstancesKey) {
+            operations.add(new InstanceOfClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassUnscopedTransitiveInstancesKey) inputKey).getEmfKey()));
         } else {
             String msg = UNSUPPORTED_TYPE_MESSAGE + inputKey;
             throw new QueryProcessingException(msg, null, msg, null);
@@ -301,7 +304,8 @@ public class POperationCompiler {
     	final IInputKey inputKey = typeConstraint.getSupplierKey();
 		if (inputKey instanceof EClassTransitiveInstancesKey) {
 	        operations.add(new InstanceOfClassCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), ((EClassTransitiveInstancesKey) inputKey).getEmfKey()));
-	    } else if (inputKey instanceof EStructuralFeatureInstancesKey) {
+	        operations.add(new ScopeCheck(variableMapping.get(typeConstraint.getVariablesTuple().get(0)), runtimeContext.getEmfScope()));
+		} else if (inputKey instanceof EStructuralFeatureInstancesKey) {
             int sourcePosition = variableMapping.get(typeConstraint.getVariablesTuple().get(0));
             int targetPosition = variableMapping.get(typeConstraint.getVariablesTuple().get(1));
             operations.add(new StructuralFeatureCheck(sourcePosition, targetPosition,

@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess
+import org.eclipse.viatra.query.patternlanguage.emf.types.EMFPatternTypeProvider
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
@@ -47,6 +48,7 @@ import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
+import org.eclipse.viatra.query.runtime.emf.types.EClassUnscopedTransitiveInstancesKey
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -489,6 +491,15 @@ class EMFPatternLanguageJvmModelInferrerUtil {
                 val packageNsUri = literal.EPackage.nsURI
                 target.append('''new ''')
                 target.append(EClassTransitiveInstancesKey)
+                target.append('''((''')
+                target.append(EClass)
+                target.append(''')«classifierGetterName(forParameter)»("«packageNsUri»", "«literal.name»"))''')
+            }
+            EClassUnscopedTransitiveInstancesKey : {
+                val literal = key.emfKey
+                val packageNsUri = literal.EPackage.nsURI
+                target.append('''new ''')
+                target.append(EClassUnscopedTransitiveInstancesKey)
                 target.append('''((''')
                 target.append(EClass)
                 target.append(''')«classifierGetterName(forParameter)»("«packageNsUri»", "«literal.name»"))''')

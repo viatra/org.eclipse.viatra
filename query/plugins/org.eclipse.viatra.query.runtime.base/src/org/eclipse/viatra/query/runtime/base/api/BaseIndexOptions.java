@@ -49,12 +49,19 @@ public class BaseIndexOptions {
      * 
      * By default, base indices will be constructed with only well-behaving features traversed.
      */
-    private static final boolean TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT = true;
+    private static final boolean TRAVERSE_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT = true;
     /**
      * 
      * By default, base indices will be constructed with dynamic EMF mode set as false.
      */
     protected static final boolean DYNAMIC_EMF_MODE_DEFAULT = false;
+    
+    /**
+     * 
+     * By default, the scope will make the assumption that it is free from dangling edges.
+     * @since 1.6
+     */
+    protected static final boolean DANGLING_FREE_ASSUMPTION_DEFAULT = true;
     
     /**
      * By default, duplicate notifications are only logged.
@@ -63,8 +70,12 @@ public class BaseIndexOptions {
      */
     protected static final boolean STRICT_NOTIFICATION_MODE_DEFAULT = false;
 
+    /**
+     * @since 1.6
+     */
+    protected boolean danglingFreeAssumption = DANGLING_FREE_ASSUMPTION_DEFAULT;
     protected boolean dynamicEMFMode = DYNAMIC_EMF_MODE_DEFAULT;
-    protected boolean traverseOnlyWellBehavingDerivedFeatures = TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT;
+    protected boolean traverseOnlyWellBehavingDerivedFeatures = TRAVERSE_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT;
     protected IndexingLevel wildcardMode = WILDCARD_MODE_DEFAULT;
     protected IBaseIndexObjectFilter notifierFilterConfiguration;
     protected IBaseIndexResourceFilter resourceFilterConfiguration;
@@ -115,6 +126,19 @@ public class BaseIndexOptions {
     public BaseIndexOptions withDynamicEMFMode(boolean dynamicEMFMode) {
     	BaseIndexOptions result = copy();
         result.dynamicEMFMode = dynamicEMFMode;
+        return result;
+    }
+    
+    /**
+     * 
+     * @param danglingFreeAssumption if true, 
+     *  the base index will assume that there are no dangling references 
+     *  (pointing out of scope or to proxies)
+     * @since 1.6
+     */
+    public BaseIndexOptions withDanglingFreeAssumption(boolean danglingFreeAssumption) {
+        BaseIndexOptions result = copy();
+        result.danglingFreeAssumption = danglingFreeAssumption;
         return result;
     }
     
@@ -184,6 +208,14 @@ public class BaseIndexOptions {
      */
     public boolean isDynamicEMFMode() {
         return dynamicEMFMode;
+    }
+
+    /**
+     * @return whether the base index makes the assumption that there can be no dangling edges
+     * @since 1.6
+     */
+    public boolean isDanglingFreeAssumption() {
+        return danglingFreeAssumption;
     }
 
     /**
@@ -258,6 +290,7 @@ public class BaseIndexOptions {
      */
     public BaseIndexOptions copy() {
         BaseIndexOptions baseIndexOptions = new BaseIndexOptions(this.dynamicEMFMode, this.wildcardMode);
+        baseIndexOptions.danglingFreeAssumption = this.danglingFreeAssumption;
         baseIndexOptions.traverseOnlyWellBehavingDerivedFeatures = this.traverseOnlyWellBehavingDerivedFeatures;
         baseIndexOptions.notifierFilterConfiguration = this.notifierFilterConfiguration;
         baseIndexOptions.resourceFilterConfiguration = this.resourceFilterConfiguration;
@@ -269,7 +302,8 @@ public class BaseIndexOptions {
 	@Override
 	public int hashCode() {
         return Objects.hashCode(dynamicEMFMode, notifierFilterConfiguration, resourceFilterConfiguration,
-                featureFilterConfiguration, traverseOnlyWellBehavingDerivedFeatures, wildcardMode, strictNotificationMode);
+                featureFilterConfiguration, traverseOnlyWellBehavingDerivedFeatures, wildcardMode, strictNotificationMode,
+                danglingFreeAssumption);
 	}
 
 	@Override
@@ -281,8 +315,10 @@ public class BaseIndexOptions {
 		if (!(obj instanceof BaseIndexOptions))
 			return false;
 		BaseIndexOptions other = (BaseIndexOptions) obj;
-		if (dynamicEMFMode != other.dynamicEMFMode)
-			return false;
+        if (dynamicEMFMode != other.dynamicEMFMode)
+            return false;
+        if (danglingFreeAssumption != other.danglingFreeAssumption)
+            return false;
 		if (notifierFilterConfiguration == null) {
 			if (other.notifierFilterConfiguration != null)
 				return false;
@@ -320,8 +356,9 @@ public class BaseIndexOptions {
     public String toString() {
     	StringBuilder sb = new StringBuilder();
     	appendModifier(sb, dynamicEMFMode, DYNAMIC_EMF_MODE_DEFAULT, "dynamicEMF");
-    	appendModifier(sb, wildcardMode, WILDCARD_MODE_DEFAULT, "wildcard");
-    	appendModifier(sb, traverseOnlyWellBehavingDerivedFeatures, TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT, "wellBehavingOnly");
+        appendModifier(sb, wildcardMode, WILDCARD_MODE_DEFAULT, "wildcard");
+        appendModifier(sb, danglingFreeAssumption, DANGLING_FREE_ASSUMPTION_DEFAULT, "danglingFreeAssumption");
+    	appendModifier(sb, traverseOnlyWellBehavingDerivedFeatures, TRAVERSE_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT, "wellBehavingOnly");
     	appendModifier(sb, strictNotificationMode, STRICT_NOTIFICATION_MODE_DEFAULT, "strictNotificationMode");
     	appendModifier(sb, notifierFilterConfiguration, null, "notifierFilter=");
     	appendModifier(sb, resourceFilterConfiguration, null, "resourceFilter=");

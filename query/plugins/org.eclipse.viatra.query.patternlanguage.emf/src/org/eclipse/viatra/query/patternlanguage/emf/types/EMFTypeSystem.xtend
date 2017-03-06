@@ -80,7 +80,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
     @Inject TypeReferences typeReferences
 
     @Inject new(Logger logger) {
-        super(EMFQueryMetaContext.INSTANCE)
+        super(EMFQueryMetaContext.DEFAULT)
     }
 
     override IInputKey extractTypeDescriptor(Type type) {

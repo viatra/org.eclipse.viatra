@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.context;
 
+import java.util.Comparator;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
 /**
  * Common abstract class for implementers of {@link IQueryMetaContext}
  * 
@@ -18,10 +23,24 @@ package org.eclipse.viatra.query.runtime.matchers.context;
  *
  */
 public abstract class AbstractQueryMetaContext implements IQueryMetaContext {
+    
+    @Override
+    public SetMultimap<InputKeyImplication, InputKeyImplication> getConditionalImplications(IInputKey implyingKey) {
+        return HashMultimap.create(0, 0);
+    }
 
 	@Override
 	public boolean canLeadOutOfScope(IInputKey key) {
 		return key.getArity() > 1;
 	}
 	
+    @Override
+    public Comparator<IInputKey> getSuggestedEliminationOrdering() {
+        return new Comparator<IInputKey>() {
+            @Override
+            public int compare(IInputKey o1, IInputKey o2) {
+                return 0;
+            }
+        };
+    }
 }
