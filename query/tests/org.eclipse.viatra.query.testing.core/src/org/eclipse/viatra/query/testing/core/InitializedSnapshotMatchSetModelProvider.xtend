@@ -5,16 +5,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * Contributors:
- * Grill Balazs - initial API and implementation
- * Peter Lunk - EMFScope support added
+ * Peter Lunk - initial API and implementation
  */
 package org.eclipse.viatra.query.testing.core
 
-import com.google.common.collect.Sets
-import java.util.Set
-import org.eclipse.emf.common.notify.Notifier
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
@@ -26,30 +20,24 @@ import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 /** 
  * 
- * @deprecated this class is deprecated, use InitializedSnapshotMatchSetModelProvider instead.
+ * Fetches Snapshot match elements for a given QuerySpecification based on the specified QuerySnaphot instances.
+ * 
+ * @since 1.5.2
  */
-@Deprecated
-class SnapshotMatchSetModelProvider implements IMatchSetModelProvider {
-    final URI snapshotModel
-
-    new(URI snapshotModel) {
-        this.snapshotModel = snapshotModel
+class InitializedSnapshotMatchSetModelProvider implements IMatchSetModelProvider {
+    final Iterable<QuerySnapshot> qsnap
+    
+    new(QuerySnapshot ... qsnap){
+        this.qsnap = qsnap
     }
 
     override <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(EMFScope scope,
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
         Match filter) throws ViatraQueryException {
+        
         val FQN = querySpecification.getFullyQualifiedName()
-
-        val Set<QuerySnapshot> snapshot = Sets.newHashSet;
-        for (Notifier n : scope.scopeRoots) {
-            switch (n) {
-                ResourceSet: snapshot.addAll(n.getResource(snapshotModel, true).contents.filter(QuerySnapshot))
-                Resource: if(n.URI.equals(snapshotModel)) snapshot.addAll(n.contents.filter(QuerySnapshot))
-            }
-        }
-
-        return getMatchSetRecordsFromSnapshot(snapshot, FQN)
+        
+        return getMatchSetRecordsFromSnapshot(qsnap, FQN)
     }
 
     override updatedByModify() {
@@ -60,18 +48,18 @@ class SnapshotMatchSetModelProvider implements IMatchSetModelProvider {
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
         Match filter) throws ViatraQueryException {
         val FQN = querySpecification.getFullyQualifiedName()
-        val snapshot = resourceSet.getResource(snapshotModel, true).contents.filter(QuerySnapshot)
-        return getMatchSetRecordsFromSnapshot(snapshot, FQN)
+        
+        return getMatchSetRecordsFromSnapshot(qsnap, FQN)
     }
 
     override dispose() {}
 
     private def <Match extends IPatternMatch> MatchSetRecord getMatchSetRecordsFromSnapshot(
         Iterable<QuerySnapshot> snapshot, String FQN) {
-        if(snapshot.empty) throw new IllegalArgumentException(snapshotModel + " is not a Snapshot model")
+        if(snapshot.empty) throw new IllegalArgumentException("The provided scope does not contain a Snapshot model")
         val record = (snapshot).head?.matchSetRecords.findFirst[FQN == it.patternQualifiedName]
         if (record == null)
-            throw new IllegalArgumentException("Could not find snapshot for " + FQN + " in " + snapshotModel)
+            throw new IllegalArgumentException("Could not find snapshot for " + FQN + " in the provided scope")
         record
     }
 

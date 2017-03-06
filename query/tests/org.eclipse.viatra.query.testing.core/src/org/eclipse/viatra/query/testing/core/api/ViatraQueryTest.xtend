@@ -23,15 +23,17 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry
+import org.eclipse.viatra.query.testing.core.InitializedSnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.SnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.ViatraQueryTestCase
 import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
-import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 /**
  * This class defines an API to easily construct test cases. The base conception is to provide
@@ -61,6 +63,7 @@ class ViatraQueryTest {
     static def test() {
         new ViatraQueryTest
     }
+
 
     /**
      * Test the specified query
@@ -125,9 +128,22 @@ class ViatraQueryTest {
 
     /**
      * Add match result set loaded from the given snapshot
+     * 
+     * @deprecated This method is deprecated, use with(QuerySnapshot ... snapshot) instead to add snapshot providers.
      */
+     @Deprecated
     def with(URI snapshotURI) {
         testCase.addMatchSetModelProvider(new SnapshotMatchSetModelProvider(snapshotURI))
+        this
+    }
+    
+    /**
+     * Add a number of query snapshots to be used as reference.
+     * 
+     * @since 1.5.2
+     */
+    def with(QuerySnapshot ... snapshot) {
+        testCase.addMatchSetModelProvider(new InitializedSnapshotMatchSetModelProvider(snapshot))
         this
     }
 
@@ -140,7 +156,10 @@ class ViatraQueryTest {
 
     /**
      * Load input model
+     * 
+     * @deprecated use on(EMFScope scope) instead
      */
+     @Deprecated
     def on(URI inputURI) {
         testCase.loadModel(inputURI)
         this

@@ -16,7 +16,6 @@ import java.util.Map
 import java.util.concurrent.TimeUnit
 import org.eclipse.viatra.query.runtime.api.GenericQueryGroup
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 
 /**
  * This abstract test class can be used to measure the steady-state memory requirements 
