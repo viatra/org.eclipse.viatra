@@ -205,17 +205,5 @@ class ViatraQueryTestCase {
         MatchSetRecordDiff::compute(expected, actual)
     }
 
-    private def <Match extends IPatternMatch> compareMatchSets(
-        IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
-        IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider) {
-
-        val matchdiff = getMatchSetDiff(querySpecification, expectedProvider, actualProvider)
-        val diff = newHashSet
-        diff.addAll(matchdiff.additions.map[UNEXPECTED_MATCH + " (" + it.prettyPrint + ")"])
-        diff.addAll(matchdiff.removals.map[EXPECTED_NOT_FOUND + " (" + it.prettyPrint + ")"])
-
-        return diff
-    }
-
 }
     
