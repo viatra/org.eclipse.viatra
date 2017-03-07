@@ -31,9 +31,11 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.resource.impl.URIMappingRegistryImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.viatra.maven.querybuilder.helper.Metamodel;
+import org.eclipse.viatra.maven.querybuilder.helper.URIMapping;
 import org.eclipse.viatra.maven.querybuilder.setup.EMFPatternLanguageMavenStandaloneSetup;
 import org.eclipse.viatra.maven.querybuilder.setup.MavenBuilderGenmodelLoader;
 import org.eclipse.xtext.maven.Language;
@@ -137,10 +139,19 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
      * @parameter
      */
     private boolean useProjectDependencies = false;
+    
+    /**
+     * URI mappings to add to the global URI mapping registry.
+     * 
+     * @parameter
+     */
+    private List<URIMapping> uriMappings;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         prepareClasspath();
+        
+        prepareURIMappings();
         
         registerGenmodelExtension();
 
@@ -152,6 +163,31 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
 
         generator.execute();
 
+    }
+    
+    /**
+     * The URI converters used by EMF resource sets always delegate to the
+     * global URI Mapping Registry, that means we can add user-defined mappings
+     * there without knowing about the specific resource set.
+     * 
+     * @throws MojoExecutionException
+     */
+    protected void prepareURIMappings() throws MojoExecutionException {
+        if(uriMappings == null || uriMappings.isEmpty()) {
+            return;
+        }
+        URIMappingRegistryImpl uriMappingRegistry = URIMappingRegistryImpl.INSTANCE;
+        for (URIMapping uriMapping : uriMappings) {
+            try {
+                URI sourceUri = URI.createURI(uriMapping.getSourceURI());
+                URI targetUri = URI.createURI(uriMapping.getTargetUri());
+                uriMappingRegistry.put(sourceUri, targetUri);
+            } catch (Exception e) {
+                final String msg = String.format("Error while adding URI mapping (source: %s, target: %s)", uriMapping.getSourceURI(), uriMapping.getTargetUri());
+                getLog().error(msg);
+                throw new MojoExecutionException(msg, e);
+            }
+        }
     }
 
     /**
