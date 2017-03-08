@@ -961,6 +961,7 @@
       </setupTask>
     </stream>
   </project>
+  <project href="https://git.eclipse.org/c/viatra/org.eclipse.viatra.examples.git/plain/cps/releng/org.eclipse.viatra.examples.cps.setup/CPSExample.setup#/"/>
   <stream name="master">
     <setupTask
         xsi:type="setup:EclipseIniTask"
