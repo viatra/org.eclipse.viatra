@@ -10,6 +10,9 @@
  */
 package org.eclipse.viatra.query.testing.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.api.IPatternMatch;
@@ -18,14 +21,21 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
+import org.eclipse.viatra.query.testing.core.api.JavaObjectAccess;
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord;
 
 public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider {
 
     private QueryEvaluationHint hint;
+    private SnapshotHelper helper;
 
     public PatternBasedMatchSetModelProvider(QueryEvaluationHint hint) {
+        this(hint,new HashMap<String, JavaObjectAccess>());
+    }
+    
+    public PatternBasedMatchSetModelProvider(QueryEvaluationHint hint, Map<String, JavaObjectAccess> accessmap) {
         this.hint = hint;
+        this.helper = new SnapshotHelper(accessmap);
     }
 
     private AdvancedViatraQueryEngine engine;
@@ -40,7 +50,7 @@ public class PatternBasedMatchSetModelProvider implements IMatchSetModelProvider
         }
         ViatraQueryMatcher<Match> matcher = (ViatraQueryMatcher<Match>) ((AdvancedViatraQueryEngine) engine)
                 .getMatcher(querySpecification, hint);
-        return new SnapshotHelper().createMatchSetRecordForMatcher(matcher,
+        return helper.createMatchSetRecordForMatcher(matcher,
                 filter == null ? matcher.newEmptyMatch() : filter);
 
     }

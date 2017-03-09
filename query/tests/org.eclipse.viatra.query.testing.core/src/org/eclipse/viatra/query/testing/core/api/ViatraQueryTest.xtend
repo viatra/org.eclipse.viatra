@@ -11,9 +11,11 @@
 package org.eclipse.viatra.query.testing.core.api
 
 import com.google.common.base.Preconditions
+import com.google.common.collect.Maps
 import com.google.inject.Injector
 import java.util.LinkedList
 import java.util.List
+import java.util.Map
 import org.apache.log4j.Level
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
@@ -27,12 +29,14 @@ import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry
+import org.eclipse.viatra.query.testing.core.IMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.InitializedSnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.SnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.ViatraQueryTestCase
 import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
+import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivalence
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 /**
@@ -44,10 +48,23 @@ class ViatraQueryTest {
 
     val ViatraQueryTestCase testCase;
     private val List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList;
+    private Map<String, JavaObjectAccess> accessMap;
 
     private new() {
-        testCase = new ViatraQueryTestCase
+        this(Maps.newHashMap)
     }
+    
+    /**
+     * Initializes a {@link ViatraQueryTest} with a map containing {@link JavaObjectAccess} objects for 
+     * serialization and deserialization of plain Java types.
+     * 
+     * @since 1.6
+     */
+    private new(Map<String, JavaObjectAccess> accessMap) {
+        this.accessMap = accessMap
+        testCase = new ViatraQueryTestCase(accessMap)
+    }
+    
 
     /**
      * Test the specified query
@@ -58,6 +75,14 @@ class ViatraQueryTest {
 
     static def test(IQueryGroup patterns) {
         new ViatraQueryTest().and(patterns)
+    }
+    
+    static def <Match extends IPatternMatch> test(IQuerySpecification<? extends ViatraQueryMatcher<Match>> pattern, Map<String, JavaObjectAccess> accessMap) {
+        new ViatraQueryTest(accessMap).and(pattern)
+    }
+
+    static def test(IQueryGroup patterns, Map<String, JavaObjectAccess> accessMap) {
+        new ViatraQueryTest(accessMap).and(patterns)
     }
 
     static def test() {
@@ -108,12 +133,22 @@ class ViatraQueryTest {
         this()
         this.patterns.add(pattern);
     }
+    
+    /**
+     * Add Java Object Access elements
+     * 
+     * @since 1.6
+     */
+    def withClasses(Map<String, JavaObjectAccess> accessmap) {
+        this.accessMap = accessmap;
+        this
+    }
 
     /**
      * Add match result set with a query initialized using the given hints
      */
     def with(QueryEvaluationHint hint) {
-        val modelProvider = new PatternBasedMatchSetModelProvider(hint);
+        val modelProvider = new PatternBasedMatchSetModelProvider(hint, accessMap);
         testCase.addMatchSetModelProvider(modelProvider)
         this
     }
@@ -223,18 +258,40 @@ class ViatraQueryTest {
     }
 
     /**
+     * Assert that the specified {@link IMatchSetModelProvider} instances produce the same match set snapshots, using a user defined equivalence algorithm.  
+     * 
+     * @since 1.6
+     */
+    def assertEquals(MatchRecordEquivalence equivalence) {
+        this.assertEquals(Level::INFO, equivalence)
+    }
+    
+    /**
      * Execute all queries and check that the result sets are equal and no error log message was thrown
+     * 
      */
     def assertEquals() {
         this.assertEquals(Level::INFO)
     }
 
     /**
-     * Execute all queries and check that the result sets are equal with a selected log level treshold
+     * Execute all queries and check that the result sets are equal with a selected log level threshold, using a user specified equivalence algorithm.
+     * 
+     * @since 1.6
+     */
+    def assertEquals(Level treshold, MatchRecordEquivalence equivalence) {
+        patterns.forEach [
+            testCase.assertMatchSetsEqual(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>, equivalence)
+        ]
+        testCase.assertLogSeverityThreshold(treshold)
+    }
+    
+    /**
+     * Execute all queries and check that the result sets are equal with a selected log level threshold
      */
     def assertEquals(Level treshold) {
         patterns.forEach [
-            testCase.assertMatchSetsEqual(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
+            testCase.assertMatchSetsEqual(it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>, new DefaultMatchRecordEquivalence(accessMap))
         ]
         testCase.assertLogSeverityThreshold(treshold)
     }
