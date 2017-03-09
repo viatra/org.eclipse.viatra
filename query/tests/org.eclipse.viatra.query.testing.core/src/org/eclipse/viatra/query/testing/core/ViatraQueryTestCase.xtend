@@ -13,6 +13,7 @@ import com.google.common.base.Joiner
 import java.util.Iterator
 import java.util.LinkedList
 import java.util.List
+import java.util.Map
 import org.apache.log4j.Level
 import org.eclipse.emf.common.notify.Notifier
 import org.eclipse.emf.common.util.URI
@@ -27,9 +28,13 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
+import org.eclipse.viatra.query.testing.core.api.JavaObjectAccess
+import org.eclipse.viatra.query.testing.core.api.MatchRecordEquivalence
+import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivalence
 import org.junit.Assert
 import org.junit.Assume
 import org.junit.ComparisonFailure
+import com.google.common.collect.Maps
 
 /** 
  * @author Grill Balazs
@@ -45,13 +50,19 @@ class ViatraQueryTestCase {
     private EMFScope scope = new EMFScope(new ResourceSetImpl)
 
     final List<IMatchSetModelProvider> modelProviders
-    extension SnapshotHelper = new SnapshotHelper
-
+    extension SnapshotHelper snapshotHelper
+    private Map<String, JavaObjectAccess> accessMap;
+    
     val TestingSeverityAggregatorLogAppender appender
 
     new() {
+        this(Maps.newHashMap)
+    }
+    
+    new(Map<String, JavaObjectAccess> accessMap) {
         this.modelProviders = new LinkedList
-
+        this.accessMap = accessMap
+        this.snapshotHelper = new SnapshotHelper(accessMap)
         val a = ViatraQueryLoggingUtil.getLogger(ViatraQueryEngine).getAppender(
             SEVERITY_AGGREGATOR_LOGAPPENDER_NAME)
         this.appender = if (a instanceof TestingSeverityAggregatorLogAppender) {
@@ -126,7 +137,7 @@ class ViatraQueryTestCase {
                 }
             }
         }
-
+        
         for (element : elementsToModify) {
             operation.apply(element)
         }
@@ -149,9 +160,20 @@ class ViatraQueryTestCase {
         ]
 
     }
-
+    
     def <Match extends IPatternMatch> assertMatchSetsEqual(
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification) {
+        assertMatchSetsEqual(querySpecification, new DefaultMatchRecordEquivalence(accessMap))
+    }
+
+
+     /**
+     * Checks if the match sets of the given query specification are equivalent, based on a user specified equivalence logic.
+     * 
+     * @since 1.6
+     */
+    def <Match extends IPatternMatch> assertMatchSetsEqual(
+        IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, MatchRecordEquivalence equivalence) {
         if (modelProviders.size < 2) {
             throw new IllegalArgumentException("At least two model providers shall be set")
         }
@@ -159,7 +181,7 @@ class ViatraQueryTestCase {
         val reference = modelProviders.head
 
         modelProviders.tail.forEach [
-            val matchDiff = getMatchSetDiff(querySpecification, reference, it)
+            val matchDiff = getMatchSetDiff(querySpecification, reference, it, equivalence)
 
             if (!matchDiff.empty) {
                 val joiner = Joiner.on("\n")
@@ -172,16 +194,31 @@ class ViatraQueryTestCase {
             }
         ]
     }
-
+    
     def assertMatchSetsEqual(IQueryGroup queryGroup) {
+        assertMatchSetsEqual(queryGroup, new DefaultMatchRecordEquivalence(accessMap))
+    }
+
+     /**
+     * Checks if the match sets of the queries contained in the provided query group are equivalent in the scope of added {@link IMatchSetModelProvider} instances.
+     * 
+     * @since 1.6
+     */
+    def assertMatchSetsEqual(IQueryGroup queryGroup, MatchRecordEquivalence equivalence) {
         queryGroup.specifications.forEach [
-            assertMatchSetsEqual(it as IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>)
+            assertMatchSetsEqual(it as IQuerySpecification<? extends ViatraQueryMatcher<IPatternMatch>>, equivalence)
         ]
     }
 
+    
+     /**
+     * Calculates the differences between the match sets of a given {@link IQuerySpecification} based on the specified {@link IMatchSetModelProvider} instances.
+     * 
+     * @since 1.6
+     */
     def <Match extends IPatternMatch> getMatchSetDiff(
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
-        IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider) {
+        IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider, MatchRecordEquivalence equivalence) {
 
         var Match filter = null;
 
@@ -202,7 +239,13 @@ class ViatraQueryTestCase {
             }
         }
 
-        MatchSetRecordDiff::compute(expected, actual)
+        MatchSetRecordDiff::compute(expected, actual, equivalence)
+    }
+    
+    def <Match extends IPatternMatch> getMatchSetDiff(
+        IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
+        IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider) {
+        getMatchSetDiff(querySpecification, expectedProvider, actualProvider, new DefaultMatchRecordEquivalence(accessMap))
     }
 
 }

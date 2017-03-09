@@ -7,22 +7,27 @@
  * Contributors:
  * Grill Balázs - initial API and implementation
  */
-package org.eclipse.viatra.query.testing.core.internal
+package org.eclipse.viatra.query.testing.core.api
 
 import com.google.common.base.Equivalence
-import com.google.common.collect.Maps
 import com.google.common.collect.Sets
+import java.util.Map
 import org.eclipse.viatra.query.testing.core.SnapshotHelper
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 
 /** 
  * @author Grill Balázs
  */
-class MatchRecordEquvalence extends Equivalence<MatchRecord> {
+abstract class MatchRecordEquivalence extends Equivalence<MatchRecord> {
 	
-	extension SnapshotHelper = new SnapshotHelper
+	protected extension SnapshotHelper helper
+	protected Map<String, JavaObjectAccess> accessMap
 	
-	public static val INSTANCE = new MatchRecordEquvalence
+	new(Map<String, JavaObjectAccess> accessMap){
+	    this.accessMap = accessMap;
+	    helper = new SnapshotHelper(accessMap);
+	}
+	
 	
 	def wrap(Iterable<MatchRecord> matches){
 		Sets.newHashSet(matches.map[it.wrap])
@@ -40,17 +45,5 @@ class MatchRecordEquvalence extends Equivalence<MatchRecord> {
 		return result
 	}
 	
-	/* (non-Javadoc)
-	 * @see Equivalence#doEquivalent(java.lang.Object, java.lang.Object)
-	 */
-	override protected boolean doEquivalent(MatchRecord a, MatchRecord b) {
-		Maps.difference(a.toMap, b.toMap).areEqual
-	}
-
-	/* (non-Javadoc)
-	 * @see Equivalence#doHash(java.lang.Object)
-	 */
-	override protected int doHash(MatchRecord t) {
-		t.substitutions.map[it.derivedValue?.hashCode].fold(0, [r, e | r+e])
-	}
+	
 }
