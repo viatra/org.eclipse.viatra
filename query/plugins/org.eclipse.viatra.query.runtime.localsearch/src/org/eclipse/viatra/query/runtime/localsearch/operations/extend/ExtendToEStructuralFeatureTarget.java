@@ -72,7 +72,7 @@ public class ExtendToEStructuralFeatureTarget extends ExtendOperation<Object> {
     
     @Override
     public String toString() {
-        return "extend    "+feature.getContainerClass().getSimpleName()+"."+feature.getName()+"(+"+sourcePosition+", -"+position+")";
+        return "extend    "+feature.getEContainingClass().getName()+"."+feature.getName()+"(+"+sourcePosition+", -"+position+")";
     }
 
     @Override
