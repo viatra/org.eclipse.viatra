@@ -18,6 +18,7 @@ Require-Bundle: org.eclipse.emf.mwe2.launch,
  org.eclipse.viatra.query.patternlanguage.emf;resolution:=optional,
  org.eclipse.viatra.query.patternlanguage.emf.tests;resolution:=optional,
  org.eclipse.viatra.query.tooling.ui.retevis;resolution:=optional,
- org.eclipse.viatra.integration.uml;resolution:=optional
+ org.eclipse.viatra.integration.uml;resolution:=optional,
+ org.eclipse.viatra.query.testing.snapshot;resolution:=optional
 Import-Package: org.apache.log4j
 Bundle-Vendor: Eclipse VIATRA Project

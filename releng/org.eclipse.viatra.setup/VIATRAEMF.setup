@@ -380,6 +380,13 @@
           launcher="org.eclipse.viatra.setup/GeneratePatternLanguageTestMetamodel.mwe2.launch">
         <description></description>
       </setupTask>
+      <setupTask
+          xsi:type="launching:LaunchTask"
+          predecessor="viatra.pregen"
+          successor="viatra.xtext.pregen"
+          launcher="org.eclipse.viatra.setup/GenerateTestSnapshotMetamodel.mwe2.launch">
+        <description></description>
+      </setupTask>
     </setupTask>
     <setupTask
         xsi:type="setup.workingsets:WorkingSetTask">

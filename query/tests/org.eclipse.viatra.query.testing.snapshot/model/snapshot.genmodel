@@ -5,8 +5,7 @@
     editorDirectory="" modelPluginID="org.eclipse.viatra.query.testing.snapshot" modelName="Snapshot"
     rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" testsDirectory=""
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
-    runtimeVersion="2.10" language="" usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore"
-    operationReflection="true" importOrganizing="true">
+    runtimeVersion="2.10" language="" operationReflection="true" importOrganizing="true">
   <foreignModel>snapshot.ecore</foreignModel>
   <genPackages prefix="Snapshot" basePackage="org.eclipse.viatra.query.testing" disposableProviderFactory="true"
       ecorePackage="snapshot.ecore#/">
