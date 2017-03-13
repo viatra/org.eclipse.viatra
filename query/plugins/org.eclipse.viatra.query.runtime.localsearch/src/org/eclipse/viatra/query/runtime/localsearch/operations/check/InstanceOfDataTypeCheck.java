@@ -36,7 +36,7 @@ public class InstanceOfDataTypeCheck extends CheckOperation {
     @Override
     protected boolean check(MatchingFrame frame) {
         Preconditions.checkNotNull(frame.getValue(position), "Invalid plan, variable %s unbound", position);
-        return dataType.getInstanceClassName().equals(frame.getValue(position).getClass().getName());
+        return dataType.isInstance(frame.getValue(position));
     }
 
     @Override
