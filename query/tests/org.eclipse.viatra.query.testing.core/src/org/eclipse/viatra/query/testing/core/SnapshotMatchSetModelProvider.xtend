@@ -26,7 +26,9 @@ import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 /** 
  * 
- * @deprecated this class is deprecated, use InitializedSnapshotMatchSetModelProvider instead.
+ * <b>Note</b> If no query scope is set up explicitly, the resource set of the snapshot model will be used as a test model scope.
+ * 
+ * @deprecated this class is deprecated, use {@link InitializedSnapshotMatchSetModelProvider} instead.
  */
 @Deprecated
 class SnapshotMatchSetModelProvider implements IMatchSetModelProvider {
@@ -39,40 +41,41 @@ class SnapshotMatchSetModelProvider implements IMatchSetModelProvider {
     override <Match extends IPatternMatch> MatchSetRecord getMatchSetRecord(EMFScope scope,
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
         Match filter) throws ViatraQueryException {
-        val FQN = querySpecification.getFullyQualifiedName()
+            val FQN = querySpecification.getFullyQualifiedName()
 
-        val Set<QuerySnapshot> snapshot = Sets.newHashSet;
-        for (Notifier n : scope.scopeRoots) {
-            switch (n) {
-                ResourceSet: snapshot.addAll(n.getResource(snapshotModel, true).contents.filter(QuerySnapshot))
-                Resource: if(n.URI.equals(snapshotModel)) snapshot.addAll(n.contents.filter(QuerySnapshot))
+            val Set<QuerySnapshot> snapshot = Sets.newHashSet;
+            for (Notifier n : scope.scopeRoots) {
+                switch (n) {
+                    ResourceSet: snapshot.addAll(n.getResource(snapshotModel, true).contents.filter(QuerySnapshot))
+                    Resource: if(n.URI.equals(snapshotModel)) snapshot.addAll(n.contents.filter(QuerySnapshot))
+                }
             }
+
+            return getMatchSetRecordsFromSnapshot(snapshot, FQN)
         }
 
-        return getMatchSetRecordsFromSnapshot(snapshot, FQN)
-    }
+        override updatedByModify() {
+            false
+        }
 
-    override updatedByModify() {
-        false
-    }
+        override <Match extends IPatternMatch> getMatchSetRecord(ResourceSet resourceSet,
+            IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
+            Match filter) throws ViatraQueryException {
+                val FQN = querySpecification.getFullyQualifiedName()
+                val snapshot = resourceSet.getResource(snapshotModel, true).contents.filter(QuerySnapshot)
+                return getMatchSetRecordsFromSnapshot(snapshot, FQN)
+            }
 
-    override <Match extends IPatternMatch> getMatchSetRecord(ResourceSet resourceSet,
-        IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
-        Match filter) throws ViatraQueryException {
-        val FQN = querySpecification.getFullyQualifiedName()
-        val snapshot = resourceSet.getResource(snapshotModel, true).contents.filter(QuerySnapshot)
-        return getMatchSetRecordsFromSnapshot(snapshot, FQN)
-    }
+            override dispose() {}
 
-    override dispose() {}
+            private def <Match extends IPatternMatch> MatchSetRecord getMatchSetRecordsFromSnapshot(
+                Iterable<QuerySnapshot> snapshot, String FQN) {
+                if(snapshot.empty) throw new IllegalArgumentException(snapshotModel + " is not a Snapshot model")
+                val record = (snapshot).head?.matchSetRecords.findFirst[FQN == it.patternQualifiedName]
+                if (record == null)
+                    throw new IllegalArgumentException("Could not find snapshot for " + FQN + " in " + snapshotModel)
+                record
+            }
 
-    private def <Match extends IPatternMatch> MatchSetRecord getMatchSetRecordsFromSnapshot(
-        Iterable<QuerySnapshot> snapshot, String FQN) {
-        if(snapshot.empty) throw new IllegalArgumentException(snapshotModel + " is not a Snapshot model")
-        val record = (snapshot).head?.matchSetRecords.findFirst[FQN == it.patternQualifiedName]
-        if (record == null)
-            throw new IllegalArgumentException("Could not find snapshot for " + FQN + " in " + snapshotModel)
-        record
-    }
-
-}
+        }
+        

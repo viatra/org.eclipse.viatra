@@ -20,7 +20,9 @@ import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
 /** 
  * 
- * Fetches Snapshot match elements for a given QuerySpecification based on the specified QuerySnaphot instances.
+ * Fetches Snapshot match elements for a given QuerySpecification based on the specified QuerySnaphot instances.</p>
+ * 
+ * <b>Note</b> If no query scope is set up explicitly, the resource set of the snapshot model will be used as a test model scope.
  * 
  * @since 1.5.2
  */

@@ -48,6 +48,7 @@ class ViatraQueryTestCase {
     public static val String EXPECTED_NOT_FOUND = "Expected match not found"
 
     private EMFScope scope = new EMFScope(new ResourceSetImpl)
+    private boolean isScopeSet = false
 
     final List<IMatchSetModelProvider> modelProviders
     extension SnapshotHelper snapshotHelper
@@ -90,6 +91,7 @@ class ViatraQueryTestCase {
         val resourceSet = new ResourceSetImpl
         resourceSet.getResource(uri, true)
         scope = new EMFScope(resourceSet)
+        isScopeSet = true
     }
 
     /**
@@ -99,6 +101,7 @@ class ViatraQueryTestCase {
      */
     def setScope(EMFScope scope) {
         this.scope = scope;
+        isScopeSet = true
     }
 
     def void dispose() {
@@ -174,9 +177,7 @@ class ViatraQueryTestCase {
      */
     def <Match extends IPatternMatch> assertMatchSetsEqual(
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification, MatchRecordEquivalence equivalence) {
-        if (modelProviders.size < 2) {
-            throw new IllegalArgumentException("At least two model providers shall be set")
-        }
+        validateTestCase
 
         val reference = modelProviders.head
 
@@ -220,6 +221,8 @@ class ViatraQueryTestCase {
         IQuerySpecification<? extends ViatraQueryMatcher<Match>> querySpecification,
         IMatchSetModelProvider expectedProvider, IMatchSetModelProvider actualProvider, MatchRecordEquivalence equivalence) {
 
+        validateTestCase
+
         var Match filter = null;
 
         var expected = expectedProvider.getMatchSetRecord(scope, querySpecification, filter)
@@ -248,5 +251,22 @@ class ViatraQueryTestCase {
         getMatchSetDiff(querySpecification, expectedProvider, actualProvider, new DefaultMatchRecordEquivalence(accessMap))
     }
 
+    /**
+     * Validate the created test configuration before calculating and comparing the query results
+     * 
+     * @since 1.6
+     */
+    private def validateTestCase() {
+        if (modelProviders.size < 2) {
+            throw new IllegalArgumentException("At least two model providers shall be set")
+        }
+        // If the scope is set explicitly by the test case, or a snapshot model provider is added, there exists a test model
+        if (!isScopeSet && !modelProviders.exists[
+               it instanceof SnapshotMatchSetModelProvider
+            || it instanceof InitializedSnapshotMatchSetModelProvider
+        ]) {
+            throw new IllegalArgumentException("Always include a model in the test specification")
+        }
+    }
 }
     
