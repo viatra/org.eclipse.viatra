@@ -19,6 +19,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.PatternMo
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.viatra.query.testing.core.api.MatchRecordEquivalence
+import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivalence
 import org.eclipse.viatra.query.testing.snapshot.MatchRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
@@ -73,14 +75,26 @@ class TestExecutor {
 		return true
 
 	}
+	
+	/**
+     * Compares the match set of a given matcher with the given match record
+     *  using VIATRA Query as a compare tool.
+     * Therefore the comparison depends on correct VIATRA Query query evaluation
+     *  (for a given limited pattern language feature set).
+     */
+    def compareResultSetsAsRecords(ViatraQueryMatcher matcher, MatchSetRecord expected){
+        compareResultSetsAsRecords(matcher, expected, new DefaultMatchRecordEquivalence())
+    }
 
 	/**
 	 * Compares the match set of a given matcher with the given match record
-	 *  using VIATRA Query as a compare tool.
-	 * Therefore the comparison depends on correct VIATRA Query query evaluation
-	 *  (for a given limited pattern language feature set).
+     * using VIATRA Query as a compare tool.
+     * 
+     * The comparison logic can be specified via the equivalence parameter.
+	 * 
+	 * @since 1.6
 	 */
-	def compareResultSetsAsRecords(ViatraQueryMatcher matcher, MatchSetRecord expected){
+	def compareResultSetsAsRecords(ViatraQueryMatcher matcher, MatchSetRecord expected, MatchRecordEquivalence equivalence){
 		val diff = newHashSet
 
 		// 1. Validate match set record against matcher
@@ -100,7 +114,7 @@ class TestExecutor {
 		val actual = matcher.saveMatchesToSnapshot(partialMatch,snapshot)
 
 		// 3. Compute diff
-		val matchdiff = MatchSetRecordDiff::compute(expected, actual)
+		val matchdiff = MatchSetRecordDiff::compute(expected, actual, equivalence)
 
 		// 4. Print results
 		diff.addAll(matchdiff.additions.map[UNEXPECTED_MATCH + " (" + it.prettyPrint + ")"])

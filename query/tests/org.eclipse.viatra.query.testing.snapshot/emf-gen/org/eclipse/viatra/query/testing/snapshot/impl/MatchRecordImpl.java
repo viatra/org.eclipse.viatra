@@ -34,119 +34,119 @@ import org.eclipse.viatra.query.testing.snapshot.SnapshotPackage;
  * @generated
  */
 public class MatchRecordImpl extends MinimalEObjectImpl.Container implements MatchRecord {
-	/**
-	 * The cached value of the '{@link #getSubstitutions() <em>Substitutions</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSubstitutions()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<MatchSubstitutionRecord> substitutions;
+    /**
+     * The cached value of the '{@link #getSubstitutions() <em>Substitutions</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getSubstitutions()
+     * @generated
+     * @ordered
+     */
+    protected EList<MatchSubstitutionRecord> substitutions;
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected MatchRecordImpl() {
-		super();
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected MatchRecordImpl() {
+        super();
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EClass eStaticClass() {
-		return SnapshotPackage.Literals.MATCH_RECORD;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    protected EClass eStaticClass() {
+        return SnapshotPackage.Literals.MATCH_RECORD;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<MatchSubstitutionRecord> getSubstitutions() {
-		if (substitutions == null) {
-			substitutions = new EObjectContainmentEList<MatchSubstitutionRecord>(MatchSubstitutionRecord.class, this, SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS);
-		}
-		return substitutions;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EList<MatchSubstitutionRecord> getSubstitutions() {
+        if (substitutions == null) {
+            substitutions = new EObjectContainmentEList<MatchSubstitutionRecord>(MatchSubstitutionRecord.class, this, SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS);
+        }
+        return substitutions;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
-				return ((InternalEList<?>)getSubstitutions()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+        switch (featureID) {
+            case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
+                return ((InternalEList<?>)getSubstitutions()).basicRemove(otherEnd, msgs);
+        }
+        return super.eInverseRemove(otherEnd, featureID, msgs);
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-			case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
-				return getSubstitutions();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Object eGet(int featureID, boolean resolve, boolean coreType) {
+        switch (featureID) {
+            case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
+                return getSubstitutions();
+        }
+        return super.eGet(featureID, resolve, coreType);
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-			case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
-				getSubstitutions().clear();
-				getSubstitutions().addAll((Collection<? extends MatchSubstitutionRecord>)newValue);
-				return;
-		}
-		super.eSet(featureID, newValue);
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void eSet(int featureID, Object newValue) {
+        switch (featureID) {
+            case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
+                getSubstitutions().clear();
+                getSubstitutions().addAll((Collection<? extends MatchSubstitutionRecord>)newValue);
+                return;
+        }
+        super.eSet(featureID, newValue);
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void eUnset(int featureID) {
-		switch (featureID) {
-			case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
-				getSubstitutions().clear();
-				return;
-		}
-		super.eUnset(featureID);
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public void eUnset(int featureID) {
+        switch (featureID) {
+            case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
+                getSubstitutions().clear();
+                return;
+        }
+        super.eUnset(featureID);
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-			case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
-				return substitutions != null && !substitutions.isEmpty();
-		}
-		return super.eIsSet(featureID);
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public boolean eIsSet(int featureID) {
+        switch (featureID) {
+            case SnapshotPackage.MATCH_RECORD__SUBSTITUTIONS:
+                return substitutions != null && !substitutions.isEmpty();
+        }
+        return super.eIsSet(featureID);
+    }
 
 } //MatchRecordImpl

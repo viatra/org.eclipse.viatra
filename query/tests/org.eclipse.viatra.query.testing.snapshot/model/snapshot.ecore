@@ -64,4 +64,8 @@
     <eLiterals name="Match"/>
     <eLiterals name="Filter" value="1" literal="Filter"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SerializedJavaObjectSubstitution" eSuperTypes="#//MatchSubstitutionRecord">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
 </ecore:EPackage>

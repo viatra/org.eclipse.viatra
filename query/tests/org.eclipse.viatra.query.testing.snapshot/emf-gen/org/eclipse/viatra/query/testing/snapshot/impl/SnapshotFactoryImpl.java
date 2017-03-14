@@ -20,283 +20,294 @@ import org.eclipse.viatra.query.testing.snapshot.*;
  * @generated
  */
 public class SnapshotFactoryImpl extends EFactoryImpl implements SnapshotFactory {
-	/**
-	 * Creates the default factory implementation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public static SnapshotFactory init() {
-		try {
-			SnapshotFactory theSnapshotFactory = (SnapshotFactory)EPackage.Registry.INSTANCE.getEFactory(SnapshotPackage.eNS_URI);
-			if (theSnapshotFactory != null) {
-				return theSnapshotFactory;
-			}
-		}
-		catch (Exception exception) {
-			EcorePlugin.INSTANCE.log(exception);
-		}
-		return new SnapshotFactoryImpl();
-	}
+    /**
+     * Creates the default factory implementation.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public static SnapshotFactory init() {
+        try {
+            SnapshotFactory theSnapshotFactory = (SnapshotFactory)EPackage.Registry.INSTANCE.getEFactory(SnapshotPackage.eNS_URI);
+            if (theSnapshotFactory != null) {
+                return theSnapshotFactory;
+            }
+        }
+        catch (Exception exception) {
+            EcorePlugin.INSTANCE.log(exception);
+        }
+        return new SnapshotFactoryImpl();
+    }
 
-	/**
-	 * Creates an instance of the factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SnapshotFactoryImpl() {
-		super();
-	}
+    /**
+     * Creates an instance of the factory.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public SnapshotFactoryImpl() {
+        super();
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EObject create(EClass eClass) {
-		switch (eClass.getClassifierID()) {
-			case SnapshotPackage.MATCH_SET_RECORD: return createMatchSetRecord();
-			case SnapshotPackage.MATCH_RECORD: return createMatchRecord();
-			case SnapshotPackage.EMF_SUBSTITUTION: return createEMFSubstitution();
-			case SnapshotPackage.INT_SUBSTITUTION: return createIntSubstitution();
-			case SnapshotPackage.LONG_SUBSTITUTION: return createLongSubstitution();
-			case SnapshotPackage.DOUBLE_SUBSTITUTION: return createDoubleSubstitution();
-			case SnapshotPackage.FLOAT_SUBSTITUTION: return createFloatSubstitution();
-			case SnapshotPackage.BOOLEAN_SUBSTITUTION: return createBooleanSubstitution();
-			case SnapshotPackage.STRING_SUBSTITUTION: return createStringSubstitution();
-			case SnapshotPackage.DATE_SUBSTITUTION: return createDateSubstitution();
-			case SnapshotPackage.ENUM_SUBSTITUTION: return createEnumSubstitution();
-			case SnapshotPackage.MISCELLANEOUS_SUBSTITUTION: return createMiscellaneousSubstitution();
-			case SnapshotPackage.QUERY_SNAPSHOT: return createQuerySnapshot();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
-		}
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public EObject create(EClass eClass) {
+        switch (eClass.getClassifierID()) {
+            case SnapshotPackage.MATCH_SET_RECORD: return createMatchSetRecord();
+            case SnapshotPackage.MATCH_RECORD: return createMatchRecord();
+            case SnapshotPackage.EMF_SUBSTITUTION: return createEMFSubstitution();
+            case SnapshotPackage.INT_SUBSTITUTION: return createIntSubstitution();
+            case SnapshotPackage.LONG_SUBSTITUTION: return createLongSubstitution();
+            case SnapshotPackage.DOUBLE_SUBSTITUTION: return createDoubleSubstitution();
+            case SnapshotPackage.FLOAT_SUBSTITUTION: return createFloatSubstitution();
+            case SnapshotPackage.BOOLEAN_SUBSTITUTION: return createBooleanSubstitution();
+            case SnapshotPackage.STRING_SUBSTITUTION: return createStringSubstitution();
+            case SnapshotPackage.DATE_SUBSTITUTION: return createDateSubstitution();
+            case SnapshotPackage.ENUM_SUBSTITUTION: return createEnumSubstitution();
+            case SnapshotPackage.MISCELLANEOUS_SUBSTITUTION: return createMiscellaneousSubstitution();
+            case SnapshotPackage.QUERY_SNAPSHOT: return createQuerySnapshot();
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION: return createSerializedJavaObjectSubstitution();
+            default:
+                throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+        }
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object createFromString(EDataType eDataType, String initialValue) {
-		switch (eDataType.getClassifierID()) {
-			case SnapshotPackage.INPUT_SPECIFICATION:
-				return createInputSpecificationFromString(eDataType, initialValue);
-			case SnapshotPackage.RECORD_ROLE:
-				return createRecordRoleFromString(eDataType, initialValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
-		}
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Object createFromString(EDataType eDataType, String initialValue) {
+        switch (eDataType.getClassifierID()) {
+            case SnapshotPackage.INPUT_SPECIFICATION:
+                return createInputSpecificationFromString(eDataType, initialValue);
+            case SnapshotPackage.RECORD_ROLE:
+                return createRecordRoleFromString(eDataType, initialValue);
+            default:
+                throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+        }
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String convertToString(EDataType eDataType, Object instanceValue) {
-		switch (eDataType.getClassifierID()) {
-			case SnapshotPackage.INPUT_SPECIFICATION:
-				return convertInputSpecificationToString(eDataType, instanceValue);
-			case SnapshotPackage.RECORD_ROLE:
-				return convertRecordRoleToString(eDataType, instanceValue);
-			default:
-				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
-		}
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public String convertToString(EDataType eDataType, Object instanceValue) {
+        switch (eDataType.getClassifierID()) {
+            case SnapshotPackage.INPUT_SPECIFICATION:
+                return convertInputSpecificationToString(eDataType, instanceValue);
+            case SnapshotPackage.RECORD_ROLE:
+                return convertRecordRoleToString(eDataType, instanceValue);
+            default:
+                throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+        }
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MatchSetRecord createMatchSetRecord() {
-		MatchSetRecordImpl matchSetRecord = new MatchSetRecordImpl();
-		return matchSetRecord;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public MatchSetRecord createMatchSetRecord() {
+        MatchSetRecordImpl matchSetRecord = new MatchSetRecordImpl();
+        return matchSetRecord;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MatchRecord createMatchRecord() {
-		MatchRecordImpl matchRecord = new MatchRecordImpl();
-		return matchRecord;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public MatchRecord createMatchRecord() {
+        MatchRecordImpl matchRecord = new MatchRecordImpl();
+        return matchRecord;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EMFSubstitution createEMFSubstitution() {
-		EMFSubstitutionImpl emfSubstitution = new EMFSubstitutionImpl();
-		return emfSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EMFSubstitution createEMFSubstitution() {
+        EMFSubstitutionImpl emfSubstitution = new EMFSubstitutionImpl();
+        return emfSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public IntSubstitution createIntSubstitution() {
-		IntSubstitutionImpl intSubstitution = new IntSubstitutionImpl();
-		return intSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public IntSubstitution createIntSubstitution() {
+        IntSubstitutionImpl intSubstitution = new IntSubstitutionImpl();
+        return intSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public LongSubstitution createLongSubstitution() {
-		LongSubstitutionImpl longSubstitution = new LongSubstitutionImpl();
-		return longSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public LongSubstitution createLongSubstitution() {
+        LongSubstitutionImpl longSubstitution = new LongSubstitutionImpl();
+        return longSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public DoubleSubstitution createDoubleSubstitution() {
-		DoubleSubstitutionImpl doubleSubstitution = new DoubleSubstitutionImpl();
-		return doubleSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public DoubleSubstitution createDoubleSubstitution() {
+        DoubleSubstitutionImpl doubleSubstitution = new DoubleSubstitutionImpl();
+        return doubleSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public FloatSubstitution createFloatSubstitution() {
-		FloatSubstitutionImpl floatSubstitution = new FloatSubstitutionImpl();
-		return floatSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public FloatSubstitution createFloatSubstitution() {
+        FloatSubstitutionImpl floatSubstitution = new FloatSubstitutionImpl();
+        return floatSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public BooleanSubstitution createBooleanSubstitution() {
-		BooleanSubstitutionImpl booleanSubstitution = new BooleanSubstitutionImpl();
-		return booleanSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public BooleanSubstitution createBooleanSubstitution() {
+        BooleanSubstitutionImpl booleanSubstitution = new BooleanSubstitutionImpl();
+        return booleanSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public StringSubstitution createStringSubstitution() {
-		StringSubstitutionImpl stringSubstitution = new StringSubstitutionImpl();
-		return stringSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public StringSubstitution createStringSubstitution() {
+        StringSubstitutionImpl stringSubstitution = new StringSubstitutionImpl();
+        return stringSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public DateSubstitution createDateSubstitution() {
-		DateSubstitutionImpl dateSubstitution = new DateSubstitutionImpl();
-		return dateSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public DateSubstitution createDateSubstitution() {
+        DateSubstitutionImpl dateSubstitution = new DateSubstitutionImpl();
+        return dateSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EnumSubstitution createEnumSubstitution() {
-		EnumSubstitutionImpl enumSubstitution = new EnumSubstitutionImpl();
-		return enumSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EnumSubstitution createEnumSubstitution() {
+        EnumSubstitutionImpl enumSubstitution = new EnumSubstitutionImpl();
+        return enumSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MiscellaneousSubstitution createMiscellaneousSubstitution() {
-		MiscellaneousSubstitutionImpl miscellaneousSubstitution = new MiscellaneousSubstitutionImpl();
-		return miscellaneousSubstitution;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public MiscellaneousSubstitution createMiscellaneousSubstitution() {
+        MiscellaneousSubstitutionImpl miscellaneousSubstitution = new MiscellaneousSubstitutionImpl();
+        return miscellaneousSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public QuerySnapshot createQuerySnapshot() {
-		QuerySnapshotImpl querySnapshot = new QuerySnapshotImpl();
-		return querySnapshot;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public QuerySnapshot createQuerySnapshot() {
+        QuerySnapshotImpl querySnapshot = new QuerySnapshotImpl();
+        return querySnapshot;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public InputSpecification createInputSpecificationFromString(EDataType eDataType, String initialValue) {
-		InputSpecification result = InputSpecification.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public SerializedJavaObjectSubstitution createSerializedJavaObjectSubstitution() {
+        SerializedJavaObjectSubstitutionImpl serializedJavaObjectSubstitution = new SerializedJavaObjectSubstitutionImpl();
+        return serializedJavaObjectSubstitution;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertInputSpecificationToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public InputSpecification createInputSpecificationFromString(EDataType eDataType, String initialValue) {
+        InputSpecification result = InputSpecification.get(initialValue);
+        if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+        return result;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public RecordRole createRecordRoleFromString(EDataType eDataType, String initialValue) {
-		RecordRole result = RecordRole.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-		return result;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String convertInputSpecificationToString(EDataType eDataType, Object instanceValue) {
+        return instanceValue == null ? null : instanceValue.toString();
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertRecordRoleToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public RecordRole createRecordRoleFromString(EDataType eDataType, String initialValue) {
+        RecordRole result = RecordRole.get(initialValue);
+        if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+        return result;
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SnapshotPackage getSnapshotPackage() {
-		return (SnapshotPackage)getEPackage();
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String convertRecordRoleToString(EDataType eDataType, Object instanceValue) {
+        return instanceValue == null ? null : instanceValue.toString();
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @deprecated
-	 * @generated
-	 */
-	@Deprecated
-	public static SnapshotPackage getPackage() {
-		return SnapshotPackage.eINSTANCE;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public SnapshotPackage getSnapshotPackage() {
+        return (SnapshotPackage)getEPackage();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @deprecated
+     * @generated
+     */
+    @Deprecated
+    public static SnapshotPackage getPackage() {
+        return SnapshotPackage.eINSTANCE;
+    }
 
 } //SnapshotFactoryImpl

@@ -8,23 +8,24 @@ import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.viatra.query.testing.snapshot.SerializedJavaObjectSubstitution;
 import org.eclipse.viatra.query.testing.snapshot.SnapshotPackage;
-import org.eclipse.viatra.query.testing.snapshot.StringSubstitution;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>String Substitution</b></em>'.
+ * An implementation of the model object '<em><b>Serialized Java Object Substitution</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.viatra.query.testing.snapshot.impl.StringSubstitutionImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link org.eclipse.viatra.query.testing.snapshot.impl.SerializedJavaObjectSubstitutionImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link org.eclipse.viatra.query.testing.snapshot.impl.SerializedJavaObjectSubstitutionImpl#getType <em>Type</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class StringSubstitutionImpl extends MatchSubstitutionRecordImpl implements StringSubstitution {
+public class SerializedJavaObjectSubstitutionImpl extends MatchSubstitutionRecordImpl implements SerializedJavaObjectSubstitution {
     /**
      * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
      * <!-- begin-user-doc -->
@@ -46,11 +47,31 @@ public class StringSubstitutionImpl extends MatchSubstitutionRecordImpl implemen
     protected String value = VALUE_EDEFAULT;
 
     /**
+     * The default value of the '{@link #getType() <em>Type</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getType()
+     * @generated
+     * @ordered
+     */
+    protected static final String TYPE_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getType()
+     * @generated
+     * @ordered
+     */
+    protected String type = TYPE_EDEFAULT;
+
+    /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected StringSubstitutionImpl() {
+    protected SerializedJavaObjectSubstitutionImpl() {
         super();
     }
 
@@ -61,7 +82,7 @@ public class StringSubstitutionImpl extends MatchSubstitutionRecordImpl implemen
      */
     @Override
     protected EClass eStaticClass() {
-        return SnapshotPackage.Literals.STRING_SUBSTITUTION;
+        return SnapshotPackage.Literals.SERIALIZED_JAVA_OBJECT_SUBSTITUTION;
     }
 
     /**
@@ -82,7 +103,28 @@ public class StringSubstitutionImpl extends MatchSubstitutionRecordImpl implemen
         String oldValue = value;
         value = newValue;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, SnapshotPackage.STRING_SUBSTITUTION__VALUE, oldValue, value));
+            eNotify(new ENotificationImpl(this, Notification.SET, SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__VALUE, oldValue, value));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setType(String newType) {
+        String oldType = type;
+        type = newType;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__TYPE, oldType, type));
     }
 
     /**
@@ -93,8 +135,10 @@ public class StringSubstitutionImpl extends MatchSubstitutionRecordImpl implemen
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case SnapshotPackage.STRING_SUBSTITUTION__VALUE:
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__VALUE:
                 return getValue();
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__TYPE:
+                return getType();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -107,8 +151,11 @@ public class StringSubstitutionImpl extends MatchSubstitutionRecordImpl implemen
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case SnapshotPackage.STRING_SUBSTITUTION__VALUE:
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__VALUE:
                 setValue((String)newValue);
+                return;
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__TYPE:
+                setType((String)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -122,8 +169,11 @@ public class StringSubstitutionImpl extends MatchSubstitutionRecordImpl implemen
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case SnapshotPackage.STRING_SUBSTITUTION__VALUE:
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__VALUE:
                 setValue(VALUE_EDEFAULT);
+                return;
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__TYPE:
+                setType(TYPE_EDEFAULT);
                 return;
         }
         super.eUnset(featureID);
@@ -137,8 +187,10 @@ public class StringSubstitutionImpl extends MatchSubstitutionRecordImpl implemen
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case SnapshotPackage.STRING_SUBSTITUTION__VALUE:
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__VALUE:
                 return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__TYPE:
+                return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
         }
         return super.eIsSet(featureID);
     }
@@ -155,8 +207,10 @@ public class StringSubstitutionImpl extends MatchSubstitutionRecordImpl implemen
         StringBuffer result = new StringBuffer(super.toString());
         result.append(" (value: ");
         result.append(value);
+        result.append(", type: ");
+        result.append(type);
         result.append(')');
         return result.toString();
     }
 
-} //StringSubstitutionImpl
+} //SerializedJavaObjectSubstitutionImpl

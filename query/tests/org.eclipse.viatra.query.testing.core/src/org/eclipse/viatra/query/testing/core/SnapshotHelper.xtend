@@ -11,9 +11,11 @@
 
 package org.eclipse.viatra.query.testing.core
 
+import com.google.common.collect.Maps
 import java.util.ArrayList
 import java.util.Date
-import org.eclipse.emf.ecore.EEnumLiteral
+import java.util.Map
+import org.eclipse.emf.common.util.Enumerator
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.resource.ResourceSet
@@ -22,6 +24,7 @@ import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.emf.EMFScope
+import org.eclipse.viatra.query.testing.core.api.JavaObjectAccess
 import org.eclipse.viatra.query.testing.snapshot.BooleanSubstitution
 import org.eclipse.viatra.query.testing.snapshot.DateSubstitution
 import org.eclipse.viatra.query.testing.snapshot.DoubleSubstitution
@@ -36,6 +39,7 @@ import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord
 import org.eclipse.viatra.query.testing.snapshot.MatchSubstitutionRecord
 import org.eclipse.viatra.query.testing.snapshot.MiscellaneousSubstitution
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
+import org.eclipse.viatra.query.testing.snapshot.SerializedJavaObjectSubstitution
 import org.eclipse.viatra.query.testing.snapshot.SnapshotFactory
 import org.eclipse.viatra.query.testing.snapshot.StringSubstitution
 
@@ -43,6 +47,22 @@ import org.eclipse.viatra.query.testing.snapshot.StringSubstitution
  * Helper methods for dealing with snapshots and match set records.
  */
 class SnapshotHelper {
+    
+    private final Map<String, JavaObjectAccess> accessMap;
+    
+    new(){
+        this(Maps.newHashMap)
+    }
+    
+    /**
+     * Initializes a {@link SnapshotHelper} with a map containing {@link JavaObjectAccess} objects for 
+     * serialization and deserialization of plain Java types.
+     * 
+     * @since 1.6
+     */
+    new(Map<String, JavaObjectAccess> accessMap){
+        this.accessMap = accessMap
+    }
 	
 	/**
 	 * Returns the actual value of the substitution based on its type
@@ -59,6 +79,7 @@ class SnapshotHelper {
 			LongSubstitution: substitution.value
 			MiscellaneousSubstitution: substitution.value
 			StringSubstitution: substitution.value
+			SerializedJavaObjectSubstitution: substitution
 		}
 	}
 	
@@ -113,31 +134,31 @@ class SnapshotHelper {
 		    default: InputSpecification::UNSET
 		}
 	}
-
+	
 	/**
-	 * Saves the matches of the given matcher (using the partial match) into the given snapshot.
-	 * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
-	 */
-	def saveMatchesToSnapshot(ViatraQueryMatcher matcher, IPatternMatch partialMatch, QuerySnapshot snapshot){
-		val patternFQN = matcher.patternName
-		val actualRecord = SnapshotFactory::eINSTANCE.createMatchSetRecord
-		actualRecord.patternQualifiedName = patternFQN
-		// 1. put actual match set record in the same model with the expected
-		snapshot.matchSetRecords.add(actualRecord)
-		// 2. store model roots
-		if(snapshot.inputSpecification == InputSpecification::UNSET){
-			snapshot.modelRoots.addAll(matcher.engine.modelRootsForEngine)
-			snapshot.modelRoots.remove(snapshot)
-			snapshot.inputSpecification = matcher.inputSpecificationForMatcher
-		}
-		actualRecord.filter = partialMatch.createMatchRecordForMatch
+     * Saves the matches of the given matcher (using the partial match) into the given snapshot.
+     * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
+     */
+    def saveMatchesToSnapshot(ViatraQueryMatcher matcher, IPatternMatch partialMatch, QuerySnapshot snapshot){
+        val patternFQN = matcher.patternName
+        val actualRecord = SnapshotFactory::eINSTANCE.createMatchSetRecord
+        actualRecord.patternQualifiedName = patternFQN
+        // 1. put actual match set record in the same model with the expected
+        snapshot.matchSetRecords.add(actualRecord)
+        // 2. store model roots
+        if(snapshot.inputSpecification == InputSpecification::UNSET){
+            snapshot.modelRoots.addAll(matcher.engine.modelRootsForEngine)
+            snapshot.modelRoots.remove(snapshot)
+            snapshot.inputSpecification = matcher.inputSpecificationForMatcher
+        }
+        actualRecord.filter = partialMatch.createMatchRecordForMatch
 
-		// 3. create match set records
-		matcher.forEachMatch(partialMatch)[match |
-			actualRecord.matches.add(match.createMatchRecordForMatch)
-		]
-		return actualRecord
-	}
+        // 3. create match set records
+        matcher.forEachMatch(partialMatch)[match |
+            actualRecord.matches.add(match.createMatchRecordForMatch)
+        ]
+        return actualRecord
+    }
 
 	/**
 	 * Creates a match record that corresponds to the given match.
@@ -168,6 +189,7 @@ class SnapshotHelper {
 	/**
 	 * Creates a partial match that corresponds to the given match record.
 	 *  Each substitution is used as a value for the parameter with the same name.
+	 * 
 	 * @deprecated use createMatchForMatchRecord(IQuerySpecification, MatchRecord) instead
 	 */
 	@Deprecated
@@ -199,13 +221,14 @@ class SnapshotHelper {
 		return match
 	}
 
+	
 	/**
-	 * Saves all matches of the given matcher into the given snapshot.
-	 * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
-	 */
-	def saveMatchesToSnapshot(ViatraQueryMatcher matcher, QuerySnapshot snapshot){
-		matcher.saveMatchesToSnapshot(matcher.newEmptyMatch, snapshot)
-	}
+     * Saves all matches of the given matcher into the given snapshot.
+     * If the input specification is not yet filled, it is now filled based on the engine of the matcher.
+     */
+    def saveMatchesToSnapshot(ViatraQueryMatcher matcher, QuerySnapshot snapshot){
+        matcher.saveMatchesToSnapshot(matcher.newEmptyMatch, snapshot)
+    }
 
 	/**
 	 * Returns the match set record for the given pattern FQN from the snapshot,
@@ -233,13 +256,12 @@ class SnapshotHelper {
 	 */
 	def createSubstitution(String parameterName, Object value){
 		return switch(value) {
-			EEnumLiteral: {
-				val sub = SnapshotFactory::eINSTANCE.createEnumSubstitution
-				sub.setValueLiteral((value as EEnumLiteral).literal)
-				sub.setEnumType((value as EEnumLiteral).EEnum)
-				sub.setParameterName(parameterName)
-				sub
-			}
+			Enumerator: {
+                val sub = SnapshotFactory::eINSTANCE.createEnumSubstitution
+                sub.setValueLiteral((value as Enumerator).literal)
+                sub.setParameterName(parameterName)
+                sub
+            }
 			EObject : {
 				val sub = SnapshotFactory::eINSTANCE.createEMFSubstitution
 				sub.setValue(value as EObject)
@@ -289,10 +311,17 @@ class SnapshotHelper {
 				sub				
 			}
 			default : {
-				val sub = SnapshotFactory::eINSTANCE.createMiscellaneousSubstitution
-				sub.setValue(value)
-				sub.setParameterName(parameterName)
-				sub	
+			    val access = accessMap.get(value.class.name)
+			    if(access!=null){
+			       val sub = access.toSubstitution(value)
+			       sub.parameterName = parameterName
+			       sub
+			    }else{
+			       val sub = SnapshotFactory::eINSTANCE.createMiscellaneousSubstitution
+                   sub.setValue(value)
+                   sub.setParameterName(parameterName)
+                   sub  
+			    }
 			}
 		}
 	}
