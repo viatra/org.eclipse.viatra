@@ -26,6 +26,8 @@ import org.eclipse.viatra.query.patternlanguage.emf.jvmmodel.EMFPatternLanguageJ
 import org.eclipse.viatra.query.patternlanguage.emf.scoping.IMetamodelProviderInstance;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.EMFPatternLanguageBuilderParticipant;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.PatternLanguageShouldGenerate;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderPreferenceAccess;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderConfigurationBlock;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.contentassist.EMFPatternLanguageTemplateProposalProvider;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingCalculator;
 import org.eclipse.viatra.query.patternlanguage.emf.ui.highlight.EMFPatternLanguageHighlightingConfiguration;
@@ -50,6 +52,8 @@ import org.eclipse.viatra.query.tooling.core.targetplatform.ITargetPlatformMetam
 import org.eclipse.viatra.query.tooling.core.targetplatform.TargetPlatformMetamodelProviderService;
 import org.eclipse.viatra.query.tooling.core.targetplatform.TargetPlatformMetamodelsIndex;
 import org.eclipse.xtext.builder.IXtextBuilderParticipant;
+import org.eclipse.xtext.builder.preferences.BuilderConfigurationBlock;
+import org.eclipse.xtext.builder.preferences.BuilderPreferenceAccess;
 import org.eclipse.xtext.common.types.access.IJvmTypeProvider;
 import org.eclipse.xtext.common.types.access.jdt.IJavaProjectProvider;
 import org.eclipse.xtext.common.types.xtext.AbstractTypeScopeProvider;
@@ -64,6 +68,7 @@ import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelInferrer;
+import org.eclipse.xtext.xbase.ui.builder.XbaseBuilderPreferenceAccess;
 import org.eclipse.xtext.xbase.ui.editor.XbaseResourceForEditorInputFactory;
 
 import com.google.inject.Binder;
@@ -229,5 +234,21 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @Override
     public Class<? extends IShouldGenerate> bindIShouldGenerate() {
         return PatternLanguageShouldGenerate.class;
+    }
+    
+    /**
+     * @since 1.6
+     */
+    @Override
+    public Class<? extends BuilderPreferenceAccess.Initializer> bindBuilderPreferenceAccess$Initializer() {
+        return EMFPatternLanguageBuilderPreferenceAccess.Initializer.class;
+    }
+    
+    /**
+     * @since 1.6
+     */
+    @Override
+    public Class<? extends BuilderConfigurationBlock> bindBuilderConfigurationBlock() {
+        return EMFPatternLanguageBuilderConfigurationBlock.class;
     }
 }

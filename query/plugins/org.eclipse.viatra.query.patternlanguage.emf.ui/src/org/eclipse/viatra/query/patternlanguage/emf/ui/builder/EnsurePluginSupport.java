@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderPreferenceAccess;
 import org.eclipse.viatra.query.tooling.core.generator.ExtensionData;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragment;
 import org.eclipse.viatra.query.tooling.core.generator.fragments.IGenerationFragmentProvider;
@@ -48,6 +49,9 @@ public class EnsurePluginSupport {
 
     @Inject
     private Logger logger;
+    
+    @Inject
+    private EMFPatternLanguageBuilderPreferenceAccess builderPreferenceAccess;
 
     private Multimap<IProject, String> exportedPackageMap = ArrayListMultimap.create();
     private Multimap<IProject, ExtensionData> appendableExtensionMap = ArrayListMultimap.create();
@@ -121,8 +125,12 @@ public class EnsurePluginSupport {
 
     private void internalEnsure(IProject modelProject, IProgressMonitor monitor) throws CoreException {
         // ensure exported package and extensions
-        ensurePackages(monitor);
-        ensureExtensions(monitor);
+        if (builderPreferenceAccess.isManifestGenerationEnabled(modelProject)) {
+            ensurePackages(monitor);
+        }
+        if (builderPreferenceAccess.isExtensionGenerationEnabled(modelProject)) {
+            ensureExtensions(monitor);
+        }
         ensureSourceFolders(modelProject, monitor);
     }
 
