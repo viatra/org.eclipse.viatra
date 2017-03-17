@@ -1,4 +1,13 @@
 /**
+ * Copyright (c) 2010-2017, Gabor Bergmann, Abel Hegedus, Zoltan Ujhelyi, Peter Lunk, Istvan Rath, Daniel Varro, IncQuery Labs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *   Gabor Bergmann, Abel Hegedus, Zoltan Ujhelyi - initial API and implementation
+ *   Peter Lunk - SerializedJavaObjectSubstitution
  */
 package org.eclipse.viatra.query.testing.snapshot.provider;
 
@@ -33,455 +42,479 @@ import org.eclipse.viatra.query.testing.snapshot.util.SnapshotAdapterFactory;
  * @generated
  */
 public class SnapshotItemProviderAdapterFactory extends SnapshotAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
-	/**
-	 * This keeps track of the root adapter factory that delegates to this adapter factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ComposedAdapterFactory parentAdapterFactory;
+    /**
+     * This keeps track of the root adapter factory that delegates to this adapter factory.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected ComposedAdapterFactory parentAdapterFactory;
 
-	/**
-	 * This is used to implement {@link org.eclipse.emf.edit.provider.IChangeNotifier}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected IChangeNotifier changeNotifier = new ChangeNotifier();
+    /**
+     * This is used to implement {@link org.eclipse.emf.edit.provider.IChangeNotifier}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected IChangeNotifier changeNotifier = new ChangeNotifier();
 
-	/**
-	 * This keeps track of all the supported types checked by {@link #isFactoryForType isFactoryForType}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected Collection<Object> supportedTypes = new ArrayList<Object>();
+    /**
+     * This keeps track of all the supported types checked by {@link #isFactoryForType isFactoryForType}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected Collection<Object> supportedTypes = new ArrayList<Object>();
 
-	/**
-	 * This constructs an instance.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SnapshotItemProviderAdapterFactory() {
-		supportedTypes.add(IEditingDomainItemProvider.class);
-		supportedTypes.add(IStructuredItemContentProvider.class);
-		supportedTypes.add(ITreeItemContentProvider.class);
-		supportedTypes.add(IItemLabelProvider.class);
-		supportedTypes.add(IItemPropertySource.class);
-	}
+    /**
+     * This constructs an instance.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public SnapshotItemProviderAdapterFactory() {
+        supportedTypes.add(IEditingDomainItemProvider.class);
+        supportedTypes.add(IStructuredItemContentProvider.class);
+        supportedTypes.add(ITreeItemContentProvider.class);
+        supportedTypes.add(IItemLabelProvider.class);
+        supportedTypes.add(IItemPropertySource.class);
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.MatchSetRecord} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected MatchSetRecordItemProvider matchSetRecordItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.MatchSetRecord} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected MatchSetRecordItemProvider matchSetRecordItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.MatchSetRecord}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createMatchSetRecordAdapter() {
-		if (matchSetRecordItemProvider == null) {
-			matchSetRecordItemProvider = new MatchSetRecordItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.MatchSetRecord}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createMatchSetRecordAdapter() {
+        if (matchSetRecordItemProvider == null) {
+            matchSetRecordItemProvider = new MatchSetRecordItemProvider(this);
+        }
 
-		return matchSetRecordItemProvider;
-	}
+        return matchSetRecordItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.MatchRecord} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected MatchRecordItemProvider matchRecordItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.MatchRecord} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected MatchRecordItemProvider matchRecordItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.MatchRecord}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createMatchRecordAdapter() {
-		if (matchRecordItemProvider == null) {
-			matchRecordItemProvider = new MatchRecordItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.MatchRecord}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createMatchRecordAdapter() {
+        if (matchRecordItemProvider == null) {
+            matchRecordItemProvider = new MatchRecordItemProvider(this);
+        }
 
-		return matchRecordItemProvider;
-	}
+        return matchRecordItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.EMFSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected EMFSubstitutionItemProvider emfSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.EMFSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected EMFSubstitutionItemProvider emfSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.EMFSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createEMFSubstitutionAdapter() {
-		if (emfSubstitutionItemProvider == null) {
-			emfSubstitutionItemProvider = new EMFSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.EMFSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createEMFSubstitutionAdapter() {
+        if (emfSubstitutionItemProvider == null) {
+            emfSubstitutionItemProvider = new EMFSubstitutionItemProvider(this);
+        }
 
-		return emfSubstitutionItemProvider;
-	}
+        return emfSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.IntSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected IntSubstitutionItemProvider intSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.IntSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected IntSubstitutionItemProvider intSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.IntSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createIntSubstitutionAdapter() {
-		if (intSubstitutionItemProvider == null) {
-			intSubstitutionItemProvider = new IntSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.IntSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createIntSubstitutionAdapter() {
+        if (intSubstitutionItemProvider == null) {
+            intSubstitutionItemProvider = new IntSubstitutionItemProvider(this);
+        }
 
-		return intSubstitutionItemProvider;
-	}
+        return intSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.LongSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected LongSubstitutionItemProvider longSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.LongSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected LongSubstitutionItemProvider longSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.LongSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createLongSubstitutionAdapter() {
-		if (longSubstitutionItemProvider == null) {
-			longSubstitutionItemProvider = new LongSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.LongSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createLongSubstitutionAdapter() {
+        if (longSubstitutionItemProvider == null) {
+            longSubstitutionItemProvider = new LongSubstitutionItemProvider(this);
+        }
 
-		return longSubstitutionItemProvider;
-	}
+        return longSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.DoubleSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected DoubleSubstitutionItemProvider doubleSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.DoubleSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected DoubleSubstitutionItemProvider doubleSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.DoubleSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createDoubleSubstitutionAdapter() {
-		if (doubleSubstitutionItemProvider == null) {
-			doubleSubstitutionItemProvider = new DoubleSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.DoubleSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createDoubleSubstitutionAdapter() {
+        if (doubleSubstitutionItemProvider == null) {
+            doubleSubstitutionItemProvider = new DoubleSubstitutionItemProvider(this);
+        }
 
-		return doubleSubstitutionItemProvider;
-	}
+        return doubleSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.FloatSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected FloatSubstitutionItemProvider floatSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.FloatSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected FloatSubstitutionItemProvider floatSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.FloatSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createFloatSubstitutionAdapter() {
-		if (floatSubstitutionItemProvider == null) {
-			floatSubstitutionItemProvider = new FloatSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.FloatSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createFloatSubstitutionAdapter() {
+        if (floatSubstitutionItemProvider == null) {
+            floatSubstitutionItemProvider = new FloatSubstitutionItemProvider(this);
+        }
 
-		return floatSubstitutionItemProvider;
-	}
+        return floatSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.BooleanSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected BooleanSubstitutionItemProvider booleanSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.BooleanSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected BooleanSubstitutionItemProvider booleanSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.BooleanSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createBooleanSubstitutionAdapter() {
-		if (booleanSubstitutionItemProvider == null) {
-			booleanSubstitutionItemProvider = new BooleanSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.BooleanSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createBooleanSubstitutionAdapter() {
+        if (booleanSubstitutionItemProvider == null) {
+            booleanSubstitutionItemProvider = new BooleanSubstitutionItemProvider(this);
+        }
 
-		return booleanSubstitutionItemProvider;
-	}
+        return booleanSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.StringSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected StringSubstitutionItemProvider stringSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.StringSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected StringSubstitutionItemProvider stringSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.StringSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createStringSubstitutionAdapter() {
-		if (stringSubstitutionItemProvider == null) {
-			stringSubstitutionItemProvider = new StringSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.StringSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createStringSubstitutionAdapter() {
+        if (stringSubstitutionItemProvider == null) {
+            stringSubstitutionItemProvider = new StringSubstitutionItemProvider(this);
+        }
 
-		return stringSubstitutionItemProvider;
-	}
+        return stringSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.DateSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected DateSubstitutionItemProvider dateSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.DateSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected DateSubstitutionItemProvider dateSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.DateSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createDateSubstitutionAdapter() {
-		if (dateSubstitutionItemProvider == null) {
-			dateSubstitutionItemProvider = new DateSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.DateSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createDateSubstitutionAdapter() {
+        if (dateSubstitutionItemProvider == null) {
+            dateSubstitutionItemProvider = new DateSubstitutionItemProvider(this);
+        }
 
-		return dateSubstitutionItemProvider;
-	}
+        return dateSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.EnumSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected EnumSubstitutionItemProvider enumSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.EnumSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected EnumSubstitutionItemProvider enumSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.EnumSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createEnumSubstitutionAdapter() {
-		if (enumSubstitutionItemProvider == null) {
-			enumSubstitutionItemProvider = new EnumSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.EnumSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createEnumSubstitutionAdapter() {
+        if (enumSubstitutionItemProvider == null) {
+            enumSubstitutionItemProvider = new EnumSubstitutionItemProvider(this);
+        }
 
-		return enumSubstitutionItemProvider;
-	}
+        return enumSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.MiscellaneousSubstitution} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected MiscellaneousSubstitutionItemProvider miscellaneousSubstitutionItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.MiscellaneousSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected MiscellaneousSubstitutionItemProvider miscellaneousSubstitutionItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.MiscellaneousSubstitution}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createMiscellaneousSubstitutionAdapter() {
-		if (miscellaneousSubstitutionItemProvider == null) {
-			miscellaneousSubstitutionItemProvider = new MiscellaneousSubstitutionItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.MiscellaneousSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createMiscellaneousSubstitutionAdapter() {
+        if (miscellaneousSubstitutionItemProvider == null) {
+            miscellaneousSubstitutionItemProvider = new MiscellaneousSubstitutionItemProvider(this);
+        }
 
-		return miscellaneousSubstitutionItemProvider;
-	}
+        return miscellaneousSubstitutionItemProvider;
+    }
 
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected QuerySnapshotItemProvider querySnapshotItemProvider;
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected QuerySnapshotItemProvider querySnapshotItemProvider;
 
-	/**
-	 * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createQuerySnapshotAdapter() {
-		if (querySnapshotItemProvider == null) {
-			querySnapshotItemProvider = new QuerySnapshotItemProvider(this);
-		}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.QuerySnapshot}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createQuerySnapshotAdapter() {
+        if (querySnapshotItemProvider == null) {
+            querySnapshotItemProvider = new QuerySnapshotItemProvider(this);
+        }
 
-		return querySnapshotItemProvider;
-	}
+        return querySnapshotItemProvider;
+    }
 
-	/**
-	 * This returns the root adapter factory that contains this factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ComposeableAdapterFactory getRootAdapterFactory() {
-		return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory();
-	}
+    /**
+     * This keeps track of the one adapter used for all {@link org.eclipse.viatra.query.testing.snapshot.SerializedJavaObjectSubstitution} instances.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected SerializedJavaObjectSubstitutionItemProvider serializedJavaObjectSubstitutionItemProvider;
 
-	/**
-	 * This sets the composed adapter factory that contains this factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory) {
-		this.parentAdapterFactory = parentAdapterFactory;
-	}
+    /**
+     * This creates an adapter for a {@link org.eclipse.viatra.query.testing.snapshot.SerializedJavaObjectSubstitution}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter createSerializedJavaObjectSubstitutionAdapter() {
+        if (serializedJavaObjectSubstitutionItemProvider == null) {
+            serializedJavaObjectSubstitutionItemProvider = new SerializedJavaObjectSubstitutionItemProvider(this);
+        }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public boolean isFactoryForType(Object type) {
-		return supportedTypes.contains(type) || super.isFactoryForType(type);
-	}
+        return serializedJavaObjectSubstitutionItemProvider;
+    }
 
-	/**
-	 * This implementation substitutes the factory itself as the key for the adapter.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter adapt(Notifier notifier, Object type) {
-		return super.adapt(notifier, this);
-	}
+    /**
+     * This returns the root adapter factory that contains this factory.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public ComposeableAdapterFactory getRootAdapterFactory() {
+        return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory();
+    }
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object adapt(Object object, Object type) {
-		if (isFactoryForType(type)) {
-			Object adapter = super.adapt(object, type);
-			if (!(type instanceof Class<?>) || (((Class<?>)type).isInstance(adapter))) {
-				return adapter;
-			}
-		}
+    /**
+     * This sets the composed adapter factory that contains this factory.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory) {
+        this.parentAdapterFactory = parentAdapterFactory;
+    }
 
-		return null;
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public boolean isFactoryForType(Object type) {
+        return supportedTypes.contains(type) || super.isFactoryForType(type);
+    }
 
-	/**
-	 * This adds a listener.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void addListener(INotifyChangedListener notifyChangedListener) {
-		changeNotifier.addListener(notifyChangedListener);
-	}
+    /**
+     * This implementation substitutes the factory itself as the key for the adapter.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Adapter adapt(Notifier notifier, Object type) {
+        return super.adapt(notifier, this);
+    }
 
-	/**
-	 * This removes a listener.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void removeListener(INotifyChangedListener notifyChangedListener) {
-		changeNotifier.removeListener(notifyChangedListener);
-	}
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public Object adapt(Object object, Object type) {
+        if (isFactoryForType(type)) {
+            Object adapter = super.adapt(object, type);
+            if (!(type instanceof Class<?>) || (((Class<?>)type).isInstance(adapter))) {
+                return adapter;
+            }
+        }
 
-	/**
-	 * This delegates to {@link #changeNotifier} and to {@link #parentAdapterFactory}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void fireNotifyChanged(Notification notification) {
-		changeNotifier.fireNotifyChanged(notification);
+        return null;
+    }
 
-		if (parentAdapterFactory != null) {
-			parentAdapterFactory.fireNotifyChanged(notification);
-		}
-	}
+    /**
+     * This adds a listener.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void addListener(INotifyChangedListener notifyChangedListener) {
+        changeNotifier.addListener(notifyChangedListener);
+    }
 
-	/**
-	 * This disposes all of the item providers created by this factory. 
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void dispose() {
-		if (matchSetRecordItemProvider != null) matchSetRecordItemProvider.dispose();
-		if (matchRecordItemProvider != null) matchRecordItemProvider.dispose();
-		if (emfSubstitutionItemProvider != null) emfSubstitutionItemProvider.dispose();
-		if (intSubstitutionItemProvider != null) intSubstitutionItemProvider.dispose();
-		if (longSubstitutionItemProvider != null) longSubstitutionItemProvider.dispose();
-		if (doubleSubstitutionItemProvider != null) doubleSubstitutionItemProvider.dispose();
-		if (floatSubstitutionItemProvider != null) floatSubstitutionItemProvider.dispose();
-		if (booleanSubstitutionItemProvider != null) booleanSubstitutionItemProvider.dispose();
-		if (stringSubstitutionItemProvider != null) stringSubstitutionItemProvider.dispose();
-		if (dateSubstitutionItemProvider != null) dateSubstitutionItemProvider.dispose();
-		if (enumSubstitutionItemProvider != null) enumSubstitutionItemProvider.dispose();
-		if (miscellaneousSubstitutionItemProvider != null) miscellaneousSubstitutionItemProvider.dispose();
-		if (querySnapshotItemProvider != null) querySnapshotItemProvider.dispose();
-	}
+    /**
+     * This removes a listener.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void removeListener(INotifyChangedListener notifyChangedListener) {
+        changeNotifier.removeListener(notifyChangedListener);
+    }
+
+    /**
+     * This delegates to {@link #changeNotifier} and to {@link #parentAdapterFactory}.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void fireNotifyChanged(Notification notification) {
+        changeNotifier.fireNotifyChanged(notification);
+
+        if (parentAdapterFactory != null) {
+            parentAdapterFactory.fireNotifyChanged(notification);
+        }
+    }
+
+    /**
+     * This disposes all of the item providers created by this factory. 
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void dispose() {
+        if (matchSetRecordItemProvider != null) matchSetRecordItemProvider.dispose();
+        if (matchRecordItemProvider != null) matchRecordItemProvider.dispose();
+        if (emfSubstitutionItemProvider != null) emfSubstitutionItemProvider.dispose();
+        if (intSubstitutionItemProvider != null) intSubstitutionItemProvider.dispose();
+        if (longSubstitutionItemProvider != null) longSubstitutionItemProvider.dispose();
+        if (doubleSubstitutionItemProvider != null) doubleSubstitutionItemProvider.dispose();
+        if (floatSubstitutionItemProvider != null) floatSubstitutionItemProvider.dispose();
+        if (booleanSubstitutionItemProvider != null) booleanSubstitutionItemProvider.dispose();
+        if (stringSubstitutionItemProvider != null) stringSubstitutionItemProvider.dispose();
+        if (dateSubstitutionItemProvider != null) dateSubstitutionItemProvider.dispose();
+        if (enumSubstitutionItemProvider != null) enumSubstitutionItemProvider.dispose();
+        if (miscellaneousSubstitutionItemProvider != null) miscellaneousSubstitutionItemProvider.dispose();
+        if (querySnapshotItemProvider != null) querySnapshotItemProvider.dispose();
+        if (serializedJavaObjectSubstitutionItemProvider != null) serializedJavaObjectSubstitutionItemProvider.dispose();
+    }
 
 }

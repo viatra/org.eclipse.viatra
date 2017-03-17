@@ -20,24 +20,26 @@ import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 
-import org.eclipse.viatra.query.testing.snapshot.EMFSubstitution;
+import org.eclipse.viatra.query.testing.snapshot.SerializedJavaObjectSubstitution;
 import org.eclipse.viatra.query.testing.snapshot.SnapshotPackage;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.viatra.query.testing.snapshot.EMFSubstitution} object.
+ * This is the item provider adapter for a {@link org.eclipse.viatra.query.testing.snapshot.SerializedJavaObjectSubstitution} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class EMFSubstitutionItemProvider extends MatchSubstitutionRecordItemProvider {
+public class SerializedJavaObjectSubstitutionItemProvider extends MatchSubstitutionRecordItemProvider {
     /**
      * This constructs an instance from a factory and a notifier.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    public EMFSubstitutionItemProvider(AdapterFactory adapterFactory) {
+    public SerializedJavaObjectSubstitutionItemProvider(AdapterFactory adapterFactory) {
         super(adapterFactory);
     }
 
@@ -53,6 +55,7 @@ public class EMFSubstitutionItemProvider extends MatchSubstitutionRecordItemProv
             super.getPropertyDescriptors(object);
 
             addValuePropertyDescriptor(object);
+            addTypePropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
@@ -68,26 +71,48 @@ public class EMFSubstitutionItemProvider extends MatchSubstitutionRecordItemProv
             (createItemPropertyDescriptor
                 (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
                  getResourceLocator(),
-                 getString("_UI_EMFSubstitution_value_feature"),
-                 getString("_UI_PropertyDescriptor_description", "_UI_EMFSubstitution_value_feature", "_UI_EMFSubstitution_type"),
-                 SnapshotPackage.Literals.EMF_SUBSTITUTION__VALUE,
+                 getString("_UI_SerializedJavaObjectSubstitution_value_feature"),
+                 getString("_UI_PropertyDescriptor_description", "_UI_SerializedJavaObjectSubstitution_value_feature", "_UI_SerializedJavaObjectSubstitution_type"),
+                 SnapshotPackage.Literals.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__VALUE,
                  true,
                  false,
-                 true,
-                 null,
+                 false,
+                 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
                  null,
                  null));
     }
 
     /**
-     * This returns EMFSubstitution.gif.
+     * This adds a property descriptor for the Type feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    protected void addTypePropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add
+            (createItemPropertyDescriptor
+                (((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+                 getResourceLocator(),
+                 getString("_UI_SerializedJavaObjectSubstitution_type_feature"),
+                 getString("_UI_PropertyDescriptor_description", "_UI_SerializedJavaObjectSubstitution_type_feature", "_UI_SerializedJavaObjectSubstitution_type"),
+                 SnapshotPackage.Literals.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__TYPE,
+                 true,
+                 false,
+                 false,
+                 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+                 null,
+                 null));
+    }
+
+    /**
+     * This returns SerializedJavaObjectSubstitution.gif.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     @Override
     public Object getImage(Object object) {
-        return overlayImage(object, getResourceLocator().getImage("full/obj16/EMFSubstitution"));
+        return overlayImage(object, getResourceLocator().getImage("full/obj16/SerializedJavaObjectSubstitution"));
     }
 
     /**
@@ -98,10 +123,10 @@ public class EMFSubstitutionItemProvider extends MatchSubstitutionRecordItemProv
      */
     @Override
     public String getText(Object object) {
-        String label = ((EMFSubstitution)object).getParameterName();
+        String label = ((SerializedJavaObjectSubstitution)object).getParameterName();
         return label == null || label.length() == 0 ?
-            getString("_UI_EMFSubstitution_type") :
-            getString("_UI_EMFSubstitution_type") + " " + label;
+            getString("_UI_SerializedJavaObjectSubstitution_type") :
+            getString("_UI_SerializedJavaObjectSubstitution_type") + " " + label;
     }
     
 
@@ -115,6 +140,13 @@ public class EMFSubstitutionItemProvider extends MatchSubstitutionRecordItemProv
     @Override
     public void notifyChanged(Notification notification) {
         updateChildren(notification);
+
+        switch (notification.getFeatureID(SerializedJavaObjectSubstitution.class)) {
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__VALUE:
+            case SnapshotPackage.SERIALIZED_JAVA_OBJECT_SUBSTITUTION__TYPE:
+                fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+                return;
+        }
         super.notifyChanged(notification);
     }
 

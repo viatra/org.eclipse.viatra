@@ -389,7 +389,7 @@
 								http://www.eclipse.org/legal/epl-v10.html
 							</inlineHeader>
 							<useDefaultExcludes>true</useDefaultExcludes>
-							<failIfMissing>false</failIfMissing>
+							<failIfMissing>true</failIfMissing>
 							<!-- Needed for EPL as placeholders would be too complicated -->
 							<strictCheck>false</strictCheck>
 							<includes>

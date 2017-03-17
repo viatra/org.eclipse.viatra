@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010-2016, Balazs Grill and IncQueryLabs Ltd.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Balazs Grill - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.viatra.query.runtime.tests.api;
 
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -31,7 +41,7 @@ import com.google.inject.Inject;
 /**
  * Test that the {@link ViatraQueryEngine} takes {@link QueryEvaluationHint} into account when creating matchers
  * 
- * @author Grill Balázs
+ * @author Balazs Grill
  *
  */
 @RunWith(XtextRunner.class)
