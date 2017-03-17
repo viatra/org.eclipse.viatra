@@ -29,6 +29,8 @@
         <!-- Maven deploy related properties-->
         <viatra.deploy.release>https://repo.eclipse.org/content/repositories/viatra2-releases/</viatra.deploy.release>
         <viatra.deploy.snapshot>https://repo.eclipse.org/content/repositories/viatra2-snapshots/</viatra.deploy.snapshot>
+        
+        <license.aggregate>true</license.aggregate>
 	</properties>
 	<build>
 		<plugins>
@@ -363,6 +365,56 @@
                             </execution>
                         </executions>
                     </plugin>
+				</plugins>
+			</build>
+			</profile>
+		<profile>
+			<id>license-check</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<!-- license -->
+					<plugin>
+						<groupId>com.mycila</groupId>
+						<artifactId>license-maven-plugin</artifactId>
+						<version>3.0</version>
+						<configuration>
+							<inlineHeader>
+								All rights reserved. This program and the accompanying materials
+								are made available under the terms of the Eclipse Public License
+								v1.0
+								which accompanies this distribution, and is available at
+								http://www.eclipse.org/legal/epl-v10.html
+							</inlineHeader>
+							<useDefaultExcludes>true</useDefaultExcludes>
+							<failIfMissing>false</failIfMissing>
+							<!-- Needed for EPL as placeholders would be too complicated -->
+							<strictCheck>false</strictCheck>
+							<includes>
+								<include>**/*.java</include>
+								<include>**/*.xtend</include>
+							</includes>
+							<excludes>
+								<exclude>**/src/site/**</exclude>
+								<exclude>**/target/**</exclude>
+								<exclude>**/src-gen/**</exclude>
+								<exclude>**/xtend-gen/**</exclude>
+							</excludes>
+							<mapping>
+								<xtend>JAVADOC_STYLE</xtend>
+							</mapping>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>process-sources</phase>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
