@@ -1004,13 +1004,11 @@
         xsi:type="setup.p2:P2Task">
       <requirement
           name="org.eclipse.xtext.sdk.feature.group"
-          versionRange="[2.10.0,2.11.0)"/>
+          versionRange="[2.9.0,2.12.0)"/>
       <requirement
           name="de.itemis.xtext.antlr.feature.feature.group"/>
       <repository
           url="http://download.itemis.com/updates/releases"/>
-      <repository
-          url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/milestones/"/>
       <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
     </setupTask>
     <setupTask
@@ -1020,18 +1018,32 @@
         targetName="">
       <targlet
           name="Xtext"
-          activeRepositoryList="">
+          activeRepositoryList="${eclipse.target.platform}">
         <requirement
             name="de.itemis.xtext.antlr.feature.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.10.0,2.11.0)"/>
+            versionRange="[2.9.0,2.12.0)"/>
         <repositoryList
-            name="">
+            name="Mars">
+          <repository
+              url="http://download.itemis.com/updates/releases"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.9.2"/>
+        </repositoryList>
+        <repositoryList
+            name="Neon">
           <repository
               url="http://download.itemis.com/updates/releases"/>
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
+        </repositoryList>
+        <repositoryList
+            name="Oxygen">
+          <repository
+              url="http://download.itemis.com/updates/releases"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.11.0"/>
         </repositoryList>
       </targlet>
     </setupTask>
