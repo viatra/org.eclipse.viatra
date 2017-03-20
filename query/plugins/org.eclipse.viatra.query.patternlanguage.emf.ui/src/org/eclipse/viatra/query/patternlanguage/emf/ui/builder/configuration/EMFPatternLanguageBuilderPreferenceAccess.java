@@ -20,6 +20,7 @@ import com.google.inject.Inject;
  * @author Zoltan Ujhelyi
  * @since 1.6
  */
+@SuppressWarnings("restriction")
 public class EMFPatternLanguageBuilderPreferenceAccess extends XbaseBuilderPreferenceAccess {
 
     /**
@@ -29,7 +30,7 @@ public class EMFPatternLanguageBuilderPreferenceAccess extends XbaseBuilderPrefe
     /**
      * Preference identifier for generating extensions.
      */
-    public static final String PREF_GENERATE_ECLIPSE_EXTENSIONS = "generateGeneratedAnnotation"; //$NON-NLS-1$
+    public static final String PREF_GENERATE_ECLIPSE_EXTENSIONS = "generateEclipseExtensions"; //$NON-NLS-1$
     
     public static class Initializer extends XbaseBuilderPreferenceAccess.Initializer {
 
@@ -57,11 +58,11 @@ public class EMFPatternLanguageBuilderPreferenceAccess extends XbaseBuilderPrefe
     
     public void setManifestGenerationEnabled(Object context, boolean enabled) {
         IPreferenceStore preferenceStore = preferenceStoreAccess.getWritablePreferenceStore(context);
-        preferenceStore.setValue(PREF_GENERATE_MANIFEST_ENTRIES, false);
+        preferenceStore.setValue(PREF_GENERATE_MANIFEST_ENTRIES, enabled);
     }
     
     public void setExtensionGenerationEnabled(Object context, boolean enabled) {
         IPreferenceStore preferenceStore = preferenceStoreAccess.getWritablePreferenceStore(context);
-        preferenceStore.setValue(PREF_GENERATE_ECLIPSE_EXTENSIONS, false);
+        preferenceStore.setValue(PREF_GENERATE_ECLIPSE_EXTENSIONS, enabled);
     }
 }
