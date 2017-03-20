@@ -126,12 +126,14 @@ public class EnsurePluginSupport {
     private void internalEnsure(IProject modelProject, IProgressMonitor monitor) throws CoreException {
         // ensure exported package and extensions
         if (builderPreferenceAccess.isManifestGenerationEnabled(modelProject)) {
-            ensurePackages(monitor);
+            // Export query packages
+            ensurePackages(monitor); 
+            // Source folder settings might require updates in manifest files
+            ensureSourceFolders(modelProject, monitor); 
         }
         if (builderPreferenceAccess.isExtensionGenerationEnabled(modelProject)) {
             ensureExtensions(monitor);
         }
-        ensureSourceFolders(modelProject, monitor);
     }
 
     private void ensurePackages(IProgressMonitor monitor) throws CoreException {
