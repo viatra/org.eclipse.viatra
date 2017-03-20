@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.runtime.matchers.context;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 
 import com.google.common.collect.HashMultimap;
@@ -43,4 +45,9 @@ public abstract class AbstractQueryMetaContext implements IQueryMetaContext {
             }
         };
     }
+    
+    @Override
+    public Collection<InputKeyImplication> getWeakenedAlternatives(IInputKey implyingKey) {
+        return Collections.emptySet();
+    }    
 }

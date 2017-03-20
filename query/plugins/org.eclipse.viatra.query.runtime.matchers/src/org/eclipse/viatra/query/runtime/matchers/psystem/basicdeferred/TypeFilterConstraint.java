@@ -25,7 +25,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeCo
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
 /**
- * Represents an enumerable type constraint that asserts that values substituted for the given tuple of variables 
+ * Represents a non-enumerable type constraint that asserts that values substituted for the given tuple of variables 
  * 	form a tuple that belongs to a (typically non-enumerable) extensional relation identified by an {@link IInputKey}.
  * 
  * <p> The InputKey is typically not enumerable. If it is enumerable, use {@link TypeConstraint} instead, so that the PConstraint carries over the property of enumerability.

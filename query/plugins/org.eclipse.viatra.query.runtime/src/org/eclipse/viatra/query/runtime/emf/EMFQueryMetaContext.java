@@ -123,7 +123,7 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
 	@Override
 	public boolean isStateless(IInputKey key) {
 		ensureValidKey(key);
-		if (key instanceof JavaTransitiveInstancesKey) 
+		if (key instanceof JavaTransitiveInstancesKey || key instanceof EClassUnscopedTransitiveInstancesKey) 
 			return true;
 		else
 			return false;
@@ -277,6 +277,21 @@ public final class EMFQueryMetaContext extends AbstractQueryMetaContext {
             );
 	        return result;
 	    } else return super.getConditionalImplications(implyingKey);
+	}
+	
+	@Override
+	public Collection<InputKeyImplication> getWeakenedAlternatives(IInputKey implyingKey) {
+        ensureValidKey(implyingKey);
+        if (implyingKey instanceof EClassTransitiveInstancesKey) {
+            EClass emfKey = ((EClassTransitiveInstancesKey) implyingKey).getEmfKey();
+            
+            Collection<InputKeyImplication> result = new HashSet<InputKeyImplication>();
+            result.add(
+                    // in some cases, filtering by the the unscoped key may be sufficient
+                    new InputKeyImplication(implyingKey, new EClassUnscopedTransitiveInstancesKey(emfKey), Arrays.asList(0))
+            );
+            return result;
+        } else return super.getWeakenedAlternatives(implyingKey);
 	}
 
 	public void ensureValidKey(IInputKey key) {

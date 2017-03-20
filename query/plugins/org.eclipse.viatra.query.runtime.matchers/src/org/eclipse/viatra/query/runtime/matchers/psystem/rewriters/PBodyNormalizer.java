@@ -83,6 +83,17 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
     }
 
     /**
+     * Returns whether 'weakened alternative' suggestions of the context shall be expanded as additional PConstraints. 
+     * This behavior can be customized by creating a subclass
+     * with a custom implementation.
+     * 
+     * @since 1.6
+     */
+    protected boolean shouldExpandWeakenedAlternatives(PQuery query) {
+        return false;
+    }
+
+    /**
      * Checks whether a type constraint in a query can lead out of the scope. It is possible to turn off or customize
      * this checks by creating a subclass and overriding this method.
      * 
@@ -133,7 +144,12 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         eliminateWeakInequalities(body);
         removeMootEqualities(body);
 
-        // UNARY ELIMINATION WITH TYPE INFERENCE
+        // ADDING WEAKENED ALTERNATIVES
+        if (shouldExpandWeakenedAlternatives(body.getPattern())) {
+            expandWeakenedAlternativeConstraints(body);
+        }
+        
+        // CONSTRAINT ELIMINATION WITH TYPE INFERENCE
         if (shouldCalculateImpliedTypes(body.getPattern())) {
             eliminateInferrableTypes(body, context);
         }
@@ -228,6 +244,36 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         }
     }
 
+    /**
+     * Inserts "weakened alternative" constraints suggested by the meta context that aid in coming up with a query plan.
+     */
+    void expandWeakenedAlternativeConstraints(PBody body) {
+        Set<TypeJudgement> allJudgements = new HashSet<TypeJudgement>();
+        Set<TypeJudgement> newConstraintsToAdd = new HashSet<TypeJudgement>();
+        Queue<TypeJudgement> judgementsToProcess = new LinkedList<TypeJudgement>();
+        
+        for (ITypeConstraint typeConstraint : body.getConstraintsOfType(ITypeConstraint.class)) {
+            TypeJudgement equivalentJudgement = typeConstraint.getEquivalentJudgement();
+            judgementsToProcess.add(equivalentJudgement);
+            allJudgements.add(equivalentJudgement);
+        }
+        
+        while (!judgementsToProcess.isEmpty()) {
+            TypeJudgement judgement = judgementsToProcess.poll();
+            for (TypeJudgement alternativeJudgement : judgement.getWeakenedAlternativeJudgements(context)) {
+                if (allJudgements.add(alternativeJudgement)) {
+                    newConstraintsToAdd.add(alternativeJudgement);
+                    judgementsToProcess.add(alternativeJudgement);
+                }
+            }
+        }
+        
+        for (TypeJudgement typeJudgement : newConstraintsToAdd) {
+            typeJudgement.createConstraintFor(body);
+        }        
+    }
+    
+    
     /**
      * Verifies the sanity of all constraints. Should be issued as a preventive check before layouting.
      * 

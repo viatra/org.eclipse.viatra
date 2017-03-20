@@ -29,6 +29,9 @@ public class ReteHintOptions {
     public static final QueryHintOption<Boolean> cacheOutputOfEvaluatorsByDefault = 
             hintOption("cacheOutputOfEvaluatorsByDefault", true);
     
+    /**
+     * @since 1.6
+     */
     public static final QueryHintOption<Boolean> deleteRederiveEvaluation = 
             hintOption("deleteRederiveEvaluation", false);
     
@@ -43,6 +46,15 @@ public class ReteHintOptions {
     public static final QueryHintOption<Boolean> checkScopeBoundaries =
             hintOption("checkScopeBoundaries", true);
     
+    /**
+     * This hint allows the query planner to take advantage of "weakened alternative" suggestions of the meta context.
+     * For instance, enumerable unary type constraints may be substituted with a simple type filtering where sufficient.
+     * 
+     * @since 1.6
+     */
+    public static final QueryHintOption<Boolean> expandWeakenedAlternativeConstraints =
+            hintOption("expandWeakenedAlternativeConstraints", true);
+   
     // internal helper for conciseness
     private static <T> QueryHintOption<T> hintOption(String hintKeyLocalName, T defaultValue) {
         return new QueryHintOption<T>(ReteHintOptions.class, hintKeyLocalName, defaultValue);

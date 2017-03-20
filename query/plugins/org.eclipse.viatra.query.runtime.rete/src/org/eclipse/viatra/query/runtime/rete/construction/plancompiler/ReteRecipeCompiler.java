@@ -141,6 +141,13 @@ public class ReteRecipeCompiler {
 		        return checkScopeBoundaries && super.canLeadOutOfScope(query, constraint);
 		    }
 		    
+		    @Override
+		    protected boolean shouldExpandWeakenedAlternatives(PQuery query) {
+                QueryEvaluationHint hint = ReteRecipeCompiler.this.hintProvider.getQueryEvaluationHint(query);
+                Boolean expandWeakenedAlternativeConstraints = ReteHintOptions.expandWeakenedAlternativeConstraints.getValueOrDefault(hint);
+		        return expandWeakenedAlternativeConstraints;
+		    }
+		    
 		});
 		this.hintProvider = hintProvider;
 	}
@@ -460,11 +467,15 @@ public class ReteRecipeCompiler {
 		final List<PVariable> parentVariables = parentCompiled.getVariablesTuple();
 		
 		Mask mask; // select elements of the tuple to check against extensional relation
-		if (new FlatTuple(parentVariables.toArray()).equals(constraintVariables))
+		if (new FlatTuple(parentVariables.toArray()).equals(constraintVariables)) {
 			mask = null; // lucky case, parent signature equals that of input key
-		else mask = CompilerHelper.makeProjectionMask(parentCompiled, 
-				Arrays.asList((PVariable[])constraintVariables.getElements()));
-		
+		} else { 
+		    List<PVariable> variables = new ArrayList<PVariable>();
+		    for (Object variable : constraintVariables.getElements()) {
+                variables.add((PVariable) variable);
+            }
+		    mask = CompilerHelper.makeProjectionMask(parentCompiled, variables);
+		}
 		InputFilterRecipe inputFilterRecipe = 
 				RecipesHelper.inputFilterRecipe(parentCompiled.getRecipe(), 
 						inputKey, inputKey.getStringID(),

@@ -19,6 +19,8 @@ import java.util.Set;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.context.IQueryMetaContext;
 import org.eclipse.viatra.query.runtime.matchers.context.InputKeyImplication;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.TypeFilterConstraint;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.tuple.FlatTuple;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 
@@ -81,19 +83,36 @@ public class TypeJudgement {
 		return true;
 	}
 	
-	public Set<TypeJudgement> getDirectlyImpliedJudgements(IQueryMetaContext context) {
-		Set<TypeJudgement> results = new HashSet<TypeJudgement>();
-		results.add(this);
-		
-		Collection<InputKeyImplication> implications = context.getImplications(this.inputKey);
-		for (InputKeyImplication inputKeyImplication : implications) {
-			results.add(
-				transcribeImplication(inputKeyImplication)
-			);
-		}
-		
-		return results;
-	}
+    public Set<TypeJudgement> getDirectlyImpliedJudgements(IQueryMetaContext context) {
+        Set<TypeJudgement> results = new HashSet<TypeJudgement>();
+        results.add(this);
+        
+        Collection<InputKeyImplication> implications = context.getImplications(this.inputKey);
+        for (InputKeyImplication inputKeyImplication : implications) {
+            results.add(
+                transcribeImplication(inputKeyImplication)
+            );
+        }
+        
+        return results;
+    }
+    
+    /**
+     * @since 1.6
+     */
+    public Set<TypeJudgement> getWeakenedAlternativeJudgements(IQueryMetaContext context) {
+        Set<TypeJudgement> results = new HashSet<TypeJudgement>();
+        
+        Collection<InputKeyImplication> implications = context.getWeakenedAlternatives(this.inputKey);
+        for (InputKeyImplication inputKeyImplication : implications) {
+            results.add(
+                transcribeImplication(inputKeyImplication)
+            );
+        }
+        
+        return results;
+    }
+    
 	/**
 	 * @since 1.6
 	 */
@@ -130,4 +149,17 @@ public class TypeJudgement {
 	public String toString() {
 		return "TypeJudgement:" + inputKey.getPrettyPrintableName() + "@" + variablesTuple.toString();
 	}
+	
+    /**
+     * Creates this judgement as a direct type constraint in the given PBody under construction.
+     * <p> pre: the variables tuple must be formed of variables of that PBody.
+     * @since 1.6
+     */
+    public void createConstraintFor(PBody pBody) {
+        if (inputKey.isEnumerable()) {
+            new TypeConstraint(pBody, variablesTuple, inputKey);
+        } else {
+            new TypeFilterConstraint(pBody, variablesTuple, inputKey);
+        }
+    }
 }

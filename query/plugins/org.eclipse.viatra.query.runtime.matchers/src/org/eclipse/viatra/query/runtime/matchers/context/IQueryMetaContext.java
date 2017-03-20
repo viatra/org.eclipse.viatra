@@ -37,6 +37,15 @@ public interface IQueryMetaContext {
 	 * <p> If false, the runtime provides notifications upon change.
 	 */
 	boolean isStateless(IInputKey key);
+    
+    /**
+     * Returns a set of implications (weakened alternatives),
+     *  with a suggestion for the query planner that satisfying them first may help in satisfying the implying key.
+     * <p> Note that for the obvious reasons, enumerable keys can only be implied by enumerable keys.
+     * <p> Must follow directly or transitively from implications of {@link #getImplications(IInputKey)}.
+     * @since 1.6
+     */
+    Collection<InputKeyImplication> getWeakenedAlternatives(IInputKey implyingKey);
 	
 	/**
 	 * Returns known direct implications, e.g. edge supertypes, edge opposites, node type constraints, etc.
