@@ -38,7 +38,6 @@ public class FileStringReplacer {
 	 * the number of matches were greater than zero.
 	 * @param pattern
 	 * @param replacement
-	 * @return
 	 */
 	public boolean replacePattern(String pattern, String replacement){
 		String newData = data.replaceAll(pattern, replacement);

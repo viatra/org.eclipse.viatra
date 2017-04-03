@@ -50,6 +50,7 @@ import com.google.common.collect.Lists;
  * @author Zoltan Ujhelyi
  *
  */
+@SuppressWarnings("restriction")
 class NatureUpdaterJob extends Job {
 
 	private IProject project;

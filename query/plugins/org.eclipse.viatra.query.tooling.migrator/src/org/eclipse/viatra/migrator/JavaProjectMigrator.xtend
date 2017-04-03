@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.viatra.migrator
 
-import java.lang.reflect.Field
 import java.util.Map
 import java.util.Map.Entry
 import org.eclipse.core.filebuffers.FileBuffers
@@ -69,7 +68,7 @@ class JavaProjectMigrator extends JavaProjectMigratorData{
 		 */
 		val project = javaProject.project
 		if (ProjectGenerationHelper.isOpenPDEProject(project)){
-			ProjectGenerationHelper.replaceBundledependencies(project, bundleRenames, bundleVersions, m.newChild(1))
+			ProjectGenerationHelper.replaceBundleDependencies(project, bundleRenames, bundleVersions, m.newChild(1))
 		}
 		
 		/*
