@@ -164,6 +164,7 @@ class NatureUpdaterJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
+		    project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			repairErroneousBuilderEntry(project);
 			reorderBuilderEntries(project);
 
