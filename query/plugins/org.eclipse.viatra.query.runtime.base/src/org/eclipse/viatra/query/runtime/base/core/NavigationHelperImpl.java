@@ -241,7 +241,7 @@ public class NavigationHelperImpl implements NavigationHelper {
         this.observedDataTypes = new HashMap<Object, IndexingLevel>();
 
         metaStore = new EMFBaseIndexMetaStore(this);
-        instanceStore = new EMFBaseIndexInstanceStore(this);
+        instanceStore = new EMFBaseIndexInstanceStore(this, logger, options);
         statsStore = new EMFBaseIndexStatisticsStore();
 
         this.contentAdapter = new NavigationHelperContentAdapter(this);

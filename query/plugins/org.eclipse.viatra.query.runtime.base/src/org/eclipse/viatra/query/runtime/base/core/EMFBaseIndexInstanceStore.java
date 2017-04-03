@@ -17,10 +17,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultiset;
@@ -38,10 +40,15 @@ import com.google.common.collect.Table.Cell;
  */
 public class EMFBaseIndexInstanceStore {
     
-    private NavigationHelperImpl navigationHelper;
-    public EMFBaseIndexInstanceStore(NavigationHelperImpl navigationHelper) {
+    private final NavigationHelperImpl navigationHelper;
+    private final Logger logger;
+    private final boolean strictNotificationMode;
+    
+    public EMFBaseIndexInstanceStore(NavigationHelperImpl navigationHelper, Logger logger, BaseIndexOptions options) {
         super();
         this.navigationHelper = navigationHelper;
+        this.logger = logger;
+        this.strictNotificationMode = options.isStrictNotificationMode();
     }
 
     /**
@@ -109,7 +116,11 @@ public class EMFBaseIndexInstanceStore {
 
         }
         boolean changed = unique || !setVal.contains(holder);
-        setVal.add(holder);
+        boolean success = setVal.add(holder);
+        if (unique && !success) {
+            String msg = String.format("Error adding feature %s to the index with type %s. This indicates some errors in underlying model representation.", value, featureKey);
+            logNotificationHandlingError(msg);
+        }
         return changed;
     }
 
@@ -160,12 +171,16 @@ public class EMFBaseIndexInstanceStore {
             final EObject holder) {
         final Collection<EObject> setHolder = valueToFeatureToHolderMap.get(value, featureKey);
         if (setHolder != null) {
-            setHolder.remove(holder);
+            boolean removed = setHolder.remove(holder);
 
             if (setHolder.isEmpty()) {
                 valueToFeatureToHolderMap.remove(value, featureKey);
             }
-            return unique || (!setHolder.contains(holder));
+            if (!removed) {
+                String msg = String.format("Notification received to remove value %s from feature %s of object %s, but feature value is missing from the index. This indicates some errors in underlying model representation.", value, featureKey, holder);
+                logNotificationHandlingError(msg);
+            }
+            return removed && (unique || (!setHolder.contains(holder)));
         }
         return false;
     }
@@ -229,7 +244,11 @@ public class EMFBaseIndexInstanceStore {
             set = new HashSet<EObject>();
             instanceMap.put(keyClass, set);
         }
-        set.add(value);
+        
+        if (!set.add(value)) {
+            String msg = String.format("Notification received to index %s as a %s, but it already exists in the index. This indicates some errors in underlying model representation.", value, keyClass);
+            logNotificationHandlingError(msg);
+        }
 
         isDirty = true;
         navigationHelper.notifyInstanceListeners(keyClass, value, true);
@@ -238,7 +257,10 @@ public class EMFBaseIndexInstanceStore {
     public void removeFromInstanceSet(final Object keyClass, final EObject value) {
         final Set<EObject> set = instanceMap.get(keyClass);
         if (set != null) {
-            set.remove(value);
+            if(!set.remove(value)) {
+                String msg = String.format("Notification received to remove %s as a %s, but it is missing from the index. This indicates some errors in underlying model representation.", value, keyClass);
+                logNotificationHandlingError(msg);
+            }
 
             if (set.isEmpty()) {
                 instanceMap.remove(keyClass);
@@ -399,4 +421,12 @@ public class EMFBaseIndexInstanceStore {
         return oldValues;
     }
     
+    private void logNotificationHandlingError(String msg) {
+        if (strictNotificationMode) {
+            // This will cause e.g. query engine to become tainted
+            navigationHelper.notifyFatalListener(msg, new IllegalStateException(msg));
+        } else {
+            logger.error(msg);
+        }
+    }
 }

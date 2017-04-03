@@ -55,6 +55,13 @@ public class BaseIndexOptions {
      * By default, base indices will be constructed with dynamic EMF mode set as false.
      */
     protected static final boolean DYNAMIC_EMF_MODE_DEFAULT = false;
+    
+    /**
+     * By default, duplicate notifications are only logged.
+     * 
+     * @since 1.6
+     */
+    protected static final boolean STRICT_NOTIFICATION_MODE_DEFAULT = false;
 
     protected boolean dynamicEMFMode = DYNAMIC_EMF_MODE_DEFAULT;
     protected boolean traverseOnlyWellBehavingDerivedFeatures = TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT;
@@ -65,6 +72,15 @@ public class BaseIndexOptions {
      * @since 1.5
      */
     protected IBaseIndexFeatureFilter featureFilterConfiguration;
+    
+    /**
+     * If strict notification mode is turned on, errors related to inconsistent notifications, e.g. duplicate deletions
+     * cause the entire Base index to be considered invalid, e.g. the query engine on top of the index should become
+     * tainted.
+     * 
+     * @since 1.6
+     */
+    protected boolean strictNotificationMode = STRICT_NOTIFICATION_MODE_DEFAULT;
 
     /**
      * Creates a base index options with the default values.
@@ -201,6 +217,14 @@ public class BaseIndexOptions {
    }
 
     /**
+     * @since 1.6
+     */
+    public BaseIndexOptions withStrictNotificationMode(boolean strictNotificationMode) {
+        BaseIndexOptions result = copy();
+        result.strictNotificationMode = strictNotificationMode;
+        return result;
+    }
+    /**
      * @return whether the base index option has wildcard mode set
      */
     public boolean isWildcardMode() {
@@ -216,6 +240,17 @@ public class BaseIndexOptions {
     }
 
     /**
+     * If strict notification mode is turned on, errors related to inconsistent notifications, e.g. duplicate deletions
+     * cause the entire Base index to be considered invalid, e.g. the query engine on top of the index should become
+     * tainted.
+     * 
+     * @since 1.6
+     */
+    public boolean isStrictNotificationMode() {
+        return strictNotificationMode;
+    }
+
+    /**
      * Creates an independent copy of itself. The values of each option will be the same as this options. This method is
      * used when a provided option must be copied to avoid external option changes afterward.
      * 
@@ -227,30 +262,14 @@ public class BaseIndexOptions {
         baseIndexOptions.notifierFilterConfiguration = this.notifierFilterConfiguration;
         baseIndexOptions.resourceFilterConfiguration = this.resourceFilterConfiguration;
         baseIndexOptions.featureFilterConfiguration = this.featureFilterConfiguration;
+        baseIndexOptions.strictNotificationMode = this.strictNotificationMode;
         return baseIndexOptions;
     }
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (dynamicEMFMode ? 1231 : 1237);
-		result = prime
-				* result
-				+ ((notifierFilterConfiguration == null) ? 0
-						: notifierFilterConfiguration.hashCode());
-		result = prime
-				* result
-				+ ((resourceFilterConfiguration == null) ? 0
-						: resourceFilterConfiguration.hashCode());
-		result = prime
-                * result
-                + ((featureFilterConfiguration == null) ? 0
-                        : featureFilterConfiguration.hashCode());
-		result = prime * result
-				+ (traverseOnlyWellBehavingDerivedFeatures ? 1231 : 1237);
-		result = prime * result + (1231 + wildcardMode.ordinal() * 6);
-		return result;
+        return Objects.hashCode(dynamicEMFMode, notifierFilterConfiguration, resourceFilterConfiguration,
+                featureFilterConfiguration, traverseOnlyWellBehavingDerivedFeatures, wildcardMode, strictNotificationMode);
 	}
 
 	@Override
@@ -290,6 +309,9 @@ public class BaseIndexOptions {
 			return false;
 		if (wildcardMode != other.wildcardMode)
 			return false;
+		if (strictNotificationMode != other.strictNotificationMode) {
+		    return false;
+		}
 		return true;
 	}
     
@@ -300,6 +322,7 @@ public class BaseIndexOptions {
     	appendModifier(sb, dynamicEMFMode, DYNAMIC_EMF_MODE_DEFAULT, "dynamicEMF");
     	appendModifier(sb, wildcardMode, WILDCARD_MODE_DEFAULT, "wildcard");
     	appendModifier(sb, traverseOnlyWellBehavingDerivedFeatures, TRAVERS_ONLY_WELLBEHAVING_DERIVED_FEATURES_DEFAULT, "wellBehavingOnly");
+    	appendModifier(sb, strictNotificationMode, STRICT_NOTIFICATION_MODE_DEFAULT, "strictNotificationMode");
     	appendModifier(sb, notifierFilterConfiguration, null, "notifierFilter=");
     	appendModifier(sb, resourceFilterConfiguration, null, "resourceFilter=");
     	appendModifier(sb, featureFilterConfiguration, null, "featureFilterConfiguration=");
