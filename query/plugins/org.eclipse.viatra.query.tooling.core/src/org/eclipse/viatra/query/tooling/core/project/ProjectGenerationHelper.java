@@ -781,20 +781,9 @@ public abstract class ProjectGenerationHelper {
      */
     private static IBundleClasspathEntry[] getUpdatedBundleClasspathEntries(final IBundleClasspathEntry[] oldClasspath,
             final List<String> requiredSourceFolders, final IBundleProjectService service) {
-        Collection<IBundleClasspathEntry> classPathSourceList = Collections2.filter(Lists.newArrayList(oldClasspath),
-                new Predicate<IBundleClasspathEntry>() {
-                    @Override
-                    public boolean apply(IBundleClasspathEntry entry) {
-                        return entry.getSourcePath() != null && !entry.getSourcePath().isEmpty();
-                    }
-                });
-        final Collection<String> existingSourceEntries = Collections2.transform(classPathSourceList,
-                new Function<IBundleClasspathEntry, String>() {
-                    @Override
-                    public String apply(IBundleClasspathEntry entry) {
-                        return entry.getSourcePath().toString();
-                    }
-                });
+        
+        final Collection<String> existingSourceEntries = (oldClasspath == null) ? Lists.<String>newArrayList() : getExistingSourceEntries(oldClasspath);
+        
         Collection<String> missingSourceFolders = Collections2.filter(requiredSourceFolders, new Predicate<String>() {
             @Override
             public boolean apply(String entry) {
@@ -812,6 +801,23 @@ public abstract class ProjectGenerationHelper {
         List<IBundleClasspathEntry> modifiedClasspathEntries = Lists.newArrayList(oldClasspath);
         modifiedClasspathEntries.addAll(newClasspathEntries);
         return modifiedClasspathEntries.toArray(new IBundleClasspathEntry[modifiedClasspathEntries.size()]);
+    }
+    
+    private static Collection<String> getExistingSourceEntries(final IBundleClasspathEntry[] oldClasspath) {
+        Collection<IBundleClasspathEntry> classPathSourceList = Collections2.filter(Lists.newArrayList(oldClasspath),
+                new Predicate<IBundleClasspathEntry>() {
+                    @Override
+                    public boolean apply(IBundleClasspathEntry entry) {
+                        return entry.getSourcePath() != null && !entry.getSourcePath().isEmpty();
+                    }
+                });
+        return Collections2.transform(classPathSourceList,
+                new Function<IBundleClasspathEntry, String>() {
+                    @Override
+                    public String apply(IBundleClasspathEntry entry) {
+                        return entry.getSourcePath().toString();
+                    }
+                });
     }
 
     public static String getBundleSymbolicName(IProject project) {
