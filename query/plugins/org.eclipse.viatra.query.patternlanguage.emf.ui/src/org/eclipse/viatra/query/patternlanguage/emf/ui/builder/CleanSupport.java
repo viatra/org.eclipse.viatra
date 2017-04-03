@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.viatra.query.patternlanguage.emf.ui.builder.configuration.EMFPatternLanguageBuilderPreferenceAccess;
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil;
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
@@ -74,6 +75,9 @@ public class CleanSupport {
     
     @Inject
     EMFPatternLanguageJvmModelInferrerUtil inferrerUtil; 
+    
+    @Inject
+    private EMFPatternLanguageBuilderPreferenceAccess builderPreferenceAccess;
 
 
     /**
@@ -100,7 +104,9 @@ public class CleanSupport {
         // clean current model project
         List<Pair<String, String>> removableExtensions = new ArrayList<Pair<String, String>>();
         removableExtensions.addAll(GenerateQuerySpecificationExtension.getRemovableExtensionIdentifiers());
-        ProjectGenerationHelper.removeAllExtension(modelProject, removableExtensions);
+        if (builderPreferenceAccess.isExtensionGenerationEnabled(modelProject)) {
+            ProjectGenerationHelper.removeAllExtension(modelProject, removableExtensions);
+        }
     }
 
     /**
@@ -129,9 +135,8 @@ public class CleanSupport {
             for (OutputConfiguration config : fsa.getOutputConfigurations().values()) {
                 cleanFragmentFolder(fragmentProject, config);
             }
-            if (PDE.hasPluginNature(fragmentProject)) {
-                // clean all removable extensions
-                ProjectGenerationHelper.removeAllExtension(fragmentProject, fragment.getRemovableExtensions());
+            if (PDE.hasPluginNature(fragmentProject) && builderPreferenceAccess.isExtensionGenerationEnabled(modelProject)) {
+            ProjectGenerationHelper.removeAllExtension(fragmentProject, fragment.getRemovableExtensions());
             }
             // removing all fragment-related markers
             fragmentProject.deleteMarkers(IErrorFeedback.FRAGMENT_ERROR_TYPE, true, IResource.DEPTH_INFINITE);
