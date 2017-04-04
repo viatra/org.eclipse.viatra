@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess
-import org.eclipse.viatra.query.patternlanguage.emf.types.EMFPatternTypeProvider
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
@@ -47,6 +46,7 @@ import org.eclipse.xtext.xbase.XFeatureCall
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes
+import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
 
 /**
  * Utility class for the EMFPatternLanguageJvmModelInferrer.
@@ -349,6 +349,13 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   	def getUtilPackageName(Pattern pattern) {
   		return getPackageName(pattern)+".util"
   	}
+  	
+  	/**
+  	 * 
+  	 */
+  	def getInternalSpecificationPackage(Pattern pattern) {
+  		return getPackageName(pattern)+".internal"
+  	}
 
 	/**
   	 * Returns the packageName: PatternModel.packageName + Pattern.name, packageName is ignored, when nullOrEmpty.
@@ -387,13 +394,17 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	}
 	
 	def findInferredSpecification(Pattern pattern) {
-		pattern.findInferredClass(typeof (BaseGeneratedEMFQuerySpecification))
+		pattern.findInferredClass(typeof (BaseGeneratedEMFQuerySpecification), typeof (BaseGeneratedPrivateEMFQuerySpecification))
 	}
 	
-	def findInferredClass(EObject pattern, Class<?> clazz) {
+	/**
+	 * Returns an inferred class with a predefined <em>direct</em> subtype (one of the given values)
+	 * @param pattern the source pattern
+	 * @param clazzes a set of classes to check whether the inferred class has any as given values
+	 */
+	def findInferredClass(EObject pattern, Class<?>... clazzes) {
 		associations.getJvmElements(pattern).filter(typeof(JvmType)).findFirst[
-			isCompatibleWith(clazz) 
-	
+			clazzes.exists[clazz | isCompatibleWith(clazz)]
 		]
 	}
 	

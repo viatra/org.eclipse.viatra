@@ -20,14 +20,14 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmMo
 import org.eclipse.viatra.query.patternlanguage.emf.util.IErrorFeedback
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
-import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
 import org.eclipse.viatra.query.runtime.api.impl.BasePatternMatch
 import org.eclipse.xtext.diagnostics.Severity
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociator
-import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
+import org.eclipse.viatra.query.runtime.api.GenericPatternMatch
+import org.eclipse.viatra.query.runtime.api.GenericPatternMatcher
 
 /**
  * <p>Infers a JVM model from the source model.</p>
@@ -106,7 +106,7 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 		val processorClass = pattern.inferProcessorClass(isPrelinkingPhase, utilPackageName, matchClass, _typeReferenceBuilder, _annotationTypesBuilder)
 
 		acceptor.accept(querySpecificationClass) [
-			initializePublicSpecification(pattern, matcherClass, matchClass, builder)
+			initializeSpecification(pattern, matcherClass, matchClass, builder)
 		]
 		acceptor.accept(processorClass) [
 			processorClass.inferProcessorClassMethods(pattern, matchClass)
@@ -131,15 +131,16 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
 	private def void inferPrivate(Pattern pattern, IJvmDeclaredTypeAcceptor acceptor, SpecificationBuilder builder,
 		boolean isPrelinkingPhase) {
 		logger.debug("Inferring Jvm Model for private pattern " + pattern.name);
-		val utilPackageName = pattern.utilPackageName
+		val utilPackageName = pattern.internalSpecificationPackage /* This package is not exported by design */
 
 
-		val matcherClass = typeRef(typeof(ViatraQueryMatcher), typeRef(typeof(IPatternMatch))).type 
+		val matcherClass = typeRef(typeof(GenericPatternMatcher)).type 
+		val matchClass = typeRef(typeof(GenericPatternMatch)).type 
 		val querySpecificationClass = pattern.inferQuerySpecificationClass(isPrelinkingPhase, utilPackageName,
 			matcherClass, _typeReferenceBuilder, _annotationTypesBuilder)
 		associator.associatePrimary(pattern, querySpecificationClass)
 		acceptor.accept(querySpecificationClass) [
-			initializePrivateSpecification(querySpecificationClass, pattern, matcherClass, null /* no match class */, builder)
+			initializeSpecification(querySpecificationClass, pattern, matcherClass, matchClass, builder)
 		]
 	}
 		
@@ -160,10 +161,16 @@ class EMFPatternLanguageJvmModelInferrer extends AbstractModelInferrer {
    			}
 	   		logger.debug("Inferring Jvm Model for Pattern model " + model.modelFileName);
    			if (!model.patterns.empty) {
-	   			val groupClass = model.inferPatternGroupClass(_typeReferenceBuilder)
+	   			val groupClass = model.inferPatternGroupClass(_typeReferenceBuilder, false)
    				acceptor.accept(groupClass) [
-   					initializePatternGroup(model, _typeReferenceBuilder)
+   					initializePatternGroup(model, _typeReferenceBuilder, false)
    				]
+	   			if (model.patterns.exists[CorePatternLanguageHelper.isPrivate(it)]) {
+    	   			val privateGroupClass = model.inferPatternGroupClass(_typeReferenceBuilder, true)
+       				acceptor.accept(privateGroupClass) [
+       					initializePatternGroup(model, _typeReferenceBuilder, true)
+       				]
+	   			}
    				model.associatePrimary(groupClass)
    			}
    				

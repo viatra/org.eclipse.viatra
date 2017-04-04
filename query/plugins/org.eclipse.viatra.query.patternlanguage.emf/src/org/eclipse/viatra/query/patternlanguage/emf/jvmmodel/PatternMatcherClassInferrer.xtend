@@ -97,7 +97,7 @@ class PatternMatcherClassInferrer {
    			static = true
    			final = true
    			initializer = '''
-   				«ViatraQueryLoggingUtil».getLogger(«pattern.matcherClassName».class)
+   				«ViatraQueryLoggingUtil».getLogger(«matcherClass».class)
    			'''
    		]
    	}

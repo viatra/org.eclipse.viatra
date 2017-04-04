@@ -200,21 +200,26 @@ class JavadocInferrer {
 		@throws ViatraQueryException if the pattern definition could not be loaded
 	'''
 
-	def javadocGroupClass(PatternModel model) '''
-		A pattern group formed of all patterns defined in «model.modelFileName».vql.
+	def javadocGroupClass(PatternModel model, boolean includePrivate) '''
+        A pattern group formed of all«IF !includePrivate» public«ENDIF» patterns defined in «model.modelFileName».vql.
 
-		<p>Use the static instance as any {@link org.eclipse.viatra.query.runtime.api.IPatternGroup}, to conveniently prepare
-		a VIATRA Query engine for matching all patterns originally defined in file «model.modelFileName».vql,
-		in order to achieve better performance than one-by-one on-demand matcher initialization.
+        «IF includePrivate»
+        <p>A private group that includes private patterns as well. Only intended use case is for pattern testing.
+        «ELSE»
+        <p>Use the static instance as any {@link org.eclipse.viatra.query.runtime.api.IPatternGroup}, to conveniently prepare
+        a VIATRA Query engine for matching all patterns originally defined in file «model.modelFileName».vql,
+        in order to achieve better performance than one-by-one on-demand matcher initialization.
+        «ENDIF»
 
-		<p> From package «model.packageName», the group contains the definition of the following patterns: <ul>
-		«FOR p : model.patterns»
-		  <li>«p.name»</li>
-		«ENDFOR»
-		</ul>
+        <p> From package «model.packageName», the group contains the definition of the following patterns: <ul>
+        «FOR p : model.patterns.filter[includePrivate || !it.modifiers.isPrivate]»
+          <li>«p.name»</li>
+        «ENDFOR»
+        </ul>
 
-		@see IPatternGroup
+        @see IPatternGroup
    	'''
+
 	def javadocGroupClassInstanceMethod(PatternModel model) '''
 		Access the pattern group.
 

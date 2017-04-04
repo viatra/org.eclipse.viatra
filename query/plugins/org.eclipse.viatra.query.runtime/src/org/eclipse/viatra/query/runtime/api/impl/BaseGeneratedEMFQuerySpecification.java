@@ -15,9 +15,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
-import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
 
 /**
  * Provides common functionality of pattern-specific generated query specifications over the EMF scope.
@@ -36,20 +34,7 @@ public abstract class BaseGeneratedEMFQuerySpecification<Matcher extends ViatraQ
         super(wrappedPQuery);
     }
     
-    protected static ViatraQueryException processInitializerError(ExceptionInInitializerError err) {
-        Throwable cause1 = err.getCause();
-        if (cause1 instanceof RuntimeException) {
-            Throwable cause2 = ((RuntimeException) cause1).getCause();
-            if (cause2 instanceof ViatraQueryException) {
-                return (ViatraQueryException) cause2;
-            } else if (cause2 instanceof QueryInitializationException) {
-                return new ViatraQueryException((QueryInitializationException) cause2);
-            } 
-        }
-        throw err;
-    }
-        
-	@Override
+    @Override
 	public Class<? extends QueryScope> getPreferredScopeClass() {
 		return EMFScope.class;
 	}

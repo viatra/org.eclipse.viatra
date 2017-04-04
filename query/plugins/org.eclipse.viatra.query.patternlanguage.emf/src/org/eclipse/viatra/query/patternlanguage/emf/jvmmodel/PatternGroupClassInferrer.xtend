@@ -16,7 +16,6 @@ import org.eclipse.viatra.query.patternlanguage.emf.util.EMFJvmTypesBuilder
 import org.eclipse.viatra.query.patternlanguage.emf.util.EMFPatternLanguageJvmModelInferrerUtil
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel
-import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFQuerySpecification
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup
 import org.eclipse.viatra.query.runtime.api.impl.BaseMatcher
 import org.eclipse.xtext.common.types.JvmConstructor
@@ -40,33 +39,39 @@ class PatternGroupClassInferrer {
 	@Inject extension JavadocInferrer
 	@Extension JvmTypeReferenceBuilder builder
 
-	def inferPatternGroupClass(PatternModel model, JvmTypeReferenceBuilder builder) {
+	def inferPatternGroupClass(PatternModel model, JvmTypeReferenceBuilder builder, boolean includePrivate) {
 		this.builder = builder
-		model.toClass(model.groupClassName) [
-			packageName = model.packageName
+		model.toClass(model.groupClassName(includePrivate)) [
+			packageName = model.groupPackageName(includePrivate)
 			final = true
 			superTypes += typeRef(typeof (BaseGeneratedPatternGroup))
 			fileHeader = model.fileComment
 		]
 	}
 		
-	def initializePatternGroup(JvmGenericType groupClass, PatternModel model, JvmTypeReferenceBuilder builder) {
+	def initializePatternGroup(JvmGenericType groupClass, PatternModel model, JvmTypeReferenceBuilder builder, boolean includePrivate) {
 		this.builder = builder
 		
-		groupClass.documentation = model.javadocGroupClass.toString
+		groupClass.documentation = javadocGroupClass(model, includePrivate).toString
 		groupClass.members += model.inferInstanceMethod(groupClass)
 		groupClass.members += model.inferInstanceField(groupClass)
-		groupClass.members += model.inferConstructor(groupClass)
-		for (pattern : model.patterns.filter[public && !name.nullOrEmpty]) {
-			groupClass.members += pattern.inferSpecificationGetter(groupClass, pattern.findInferredClass(typeof(BaseGeneratedEMFQuerySpecification)))
-			groupClass.members += pattern.inferMatcherGetter(groupClass, pattern.findInferredClass(typeof(BaseMatcher)))
+		groupClass.members += model.inferConstructor(groupClass, includePrivate)
+		if (!includePrivate) {
+    		for (pattern : model.patterns.filter[public && !name.nullOrEmpty]) {
+    			groupClass.members += pattern.inferSpecificationGetter(groupClass, pattern.findInferredSpecification)
+    			groupClass.members += pattern.inferMatcherGetter(groupClass, pattern.findInferredClass(typeof(BaseMatcher)))
+    		}
 		}
-		groupClass
 	}
 
-	def String groupClassName(PatternModel model) {
-		val fileName = model.modelFileName
-		return fileName.toFirstUpper
+	private def String groupClassName(PatternModel model, boolean includePrivate) {
+		val fileName = model.modelFileName.toFirstUpper
+		return if (includePrivate) fileName + "All" else fileName
+	}
+	
+	private def String groupPackageName(PatternModel model, boolean includePrivate) {
+	    val packageName = model.packageName
+	    return if (includePrivate) packageName + ".internal" else packageName
 	}
 
 	def JvmField inferInstanceField(PatternModel model, JvmType groupClass) {
@@ -93,21 +98,19 @@ class PatternGroupClassInferrer {
 
 	}
 
-	def JvmConstructor inferConstructor(PatternModel model, JvmType groupClass) {
+	def JvmConstructor inferConstructor(PatternModel model, JvmType groupClass, boolean includePrivate) {
 		val exception = typeRef(typeof (ViatraQueryException))
 		model.toConstructor [
 			visibility = JvmVisibility::PRIVATE
-			simpleName = groupClassName(model)
+			simpleName = groupClassName(model, includePrivate)
 			exceptions += exception
 			body = '''
-				«FOR matcherRef : model.patterns.filter[public].filterNull.map[findInferredSpecification.typeRef]»
+				«FOR matcherRef : model.patterns.filter[includePrivate || public].filterNull.map[findInferredSpecification.typeRef]»
 					querySpecifications.add(«matcherRef».instance());
 				«ENDFOR»
 			'''
 		]
 	}
-
-	
 
 	def JvmOperation inferSpecificationGetter(Pattern model, JvmType groupClass, JvmType specificationClass) {
 		val classRef = if (specificationClass == null) {

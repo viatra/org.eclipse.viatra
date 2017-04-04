@@ -14,7 +14,6 @@ package org.eclipse.viatra.query.patternlanguage.emf.jvmmodel
 import com.google.common.collect.Sets
 import com.google.inject.Inject
 import java.util.Arrays
-import java.util.Collections
 import java.util.List
 import java.util.Set
 import org.eclipse.viatra.query.patternlanguage.emf.specification.SpecificationBuilder
@@ -30,7 +29,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeInferrer
 import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem
-import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedEMFPQuery
@@ -57,6 +55,8 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
+import org.eclipse.viatra.query.runtime.api.GenericPatternMatch
+import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
 
 /**
  * {@link IQuerySpecification} implementation inferrer.
@@ -88,32 +88,20 @@ class PatternQuerySpecificationClassInferrer {
   			documentation = pattern.javadocQuerySpecificationClass.toString
   			final = true
   			if (pattern.isPublic) {
-  				superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecification), typeRef(matcherClass))
+    			superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecification), typeRef(matcherClass))
   			} else {
-	  			superTypes += typeRef(typeof (BaseGeneratedEMFQuerySpecification), typeRef(matcherClass, typeRef(typeof(IPatternMatch))))
+    			superTypes += typeRef(typeof (BaseGeneratedPrivateEMFQuerySpecification))
   			}
   			fileHeader = pattern.fileComment
   		]
   		return querySpecificationClass
   	}
 
-  	def initializePublicSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder specBuilder) {
+  	def initializeSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder specBuilder) {
   	    try {
-  		    querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, true)
-  		    querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, true, specBuilder)
+  		    querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, pattern.isPublic)
+  		    querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, pattern.isPublic, specBuilder)
   		    querySpecificationClass.inferExpressions(pattern)
-        } catch (IllegalStateException ex) {
-            feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
-                IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
-        }
-  	}
-
-  	def initializePrivateSpecification(JvmDeclaredType querySpecificationClass, Pattern pattern, JvmType matcherClass, JvmType matchClass, SpecificationBuilder specBuilder) {
-  	    try {
-            querySpecificationClass.visibility = JvmVisibility::DEFAULT
-            querySpecificationClass.inferQuerySpecificationMethods(pattern, matcherClass, matchClass, false)
-            querySpecificationClass.inferQuerySpecificationInnerClasses(pattern, false, specBuilder)
-            querySpecificationClass.inferExpressions(pattern)
         } catch (IllegalStateException ex) {
             feedback.reportError(pattern, ex.message, EMFIssueCodes.OTHER_ISSUE, Severity.ERROR,
                 IErrorFeedback.JVMINFERENCE_ERROR_TYPE)
@@ -145,51 +133,34 @@ class PatternQuerySpecificationClassInferrer {
 			'''
 		]
 
-  		querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
-			visibility = JvmVisibility::PROTECTED
-			annotations += annotationRef(typeof (Override))
-			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
-			exceptions += typeRef(typeof (ViatraQueryException))
-			body = if (isPublic) { 
-				'''return «pattern.matcherClassName».on(engine);'''
-			} else {
-				'''throw new «UnsupportedOperationException»();'''
-			}
-		]
-		querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
-            visibility = JvmVisibility::PUBLIC
-            annotations += annotationRef(typeof (Override))
-            exceptions += typeRef(typeof (ViatraQueryException))
-            body = if (isPublic) { 
-                '''return «pattern.matcherClassName».create();'''
-            } else {
-                '''throw new «UnsupportedOperationException»();'''
-            }
-        ]
-		querySpecificationClass.members += pattern.toMethod("newEmptyMatch",
-			if (isPublic) typeRef(matchClass) else typeRef(typeof(IPatternMatch))) 
-		[
-			visibility = JvmVisibility::PUBLIC
-			annotations += annotationRef(typeof(Override))
-			body = if (isPublic) {
-					'''return «pattern.matchClassName».newEmptyMatch();'''
-				} else {
-					'''throw new «UnsupportedOperationException»();'''
-				}
-			
-		]
-		querySpecificationClass.members += pattern.toMethod("newMatch",
-			if (isPublic) typeRef(matchClass) else typeRef(typeof(IPatternMatch))) [
-			visibility = JvmVisibility::PUBLIC
-			annotations += annotationRef(typeof(Override))
-			parameters += pattern.toParameter("parameters", typeRef(Object).addArrayTypeDimension)
-			varArgs = true
-			body = if (isPublic) {
-					'''return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«pattern.parameters.indexOf(p)»]«ENDFOR»);'''
-				} else {
-					'''throw new «UnsupportedOperationException»();'''
-				}
-		]
+  		if (isPublic) {
+      		querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
+    			visibility = JvmVisibility::PROTECTED
+    			annotations += annotationRef(typeof (Override))
+    			parameters += pattern.toParameter("engine", typeRef(typeof (ViatraQueryEngine)))
+    			exceptions += typeRef(typeof (ViatraQueryException))
+    			body = '''return «matcherClass».on(engine);'''
+    		]
+    		querySpecificationClass.members += pattern.toMethod("instantiate", typeRef(matcherClass)) [
+                visibility = JvmVisibility::PUBLIC
+                annotations += annotationRef(typeof (Override))
+                exceptions += typeRef(typeof (ViatraQueryException))
+                body = '''return «matcherClass».create();'''
+            ]
+    		querySpecificationClass.members += pattern.toMethod("newEmptyMatch", typeRef(matchClass)) [
+    			visibility = JvmVisibility::PUBLIC
+    			annotations += annotationRef(typeof(Override))
+    			body = '''return «matchClass».newEmptyMatch();'''
+    			
+    		]
+    		querySpecificationClass.members += pattern.toMethod("newMatch", typeRef(matchClass)) [
+    			visibility = JvmVisibility::PUBLIC
+    			annotations += annotationRef(typeof(Override))
+    			parameters += pattern.toParameter("parameters", typeRef(Object).addArrayTypeDimension)
+    			varArgs = true
+    			body = '''return «pattern.matchClassName».newMatch(«FOR p : pattern.parameters SEPARATOR ', '»(«p.calculateType.qualifiedName») parameters[«pattern.parameters.indexOf(p)»]«ENDFOR»);'''
+    		]
+  		}
   	}
 
     def direction(Variable variable){

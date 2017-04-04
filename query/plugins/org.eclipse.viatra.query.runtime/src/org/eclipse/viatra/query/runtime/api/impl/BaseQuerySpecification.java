@@ -32,7 +32,22 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializa
 public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<? extends IPatternMatch>> implements
         IQuerySpecification<Matcher> {
 
-	protected final PQuery wrappedPQuery;
+	/**
+     * @since 1.6
+     */
+	protected static ViatraQueryException processInitializerError(ExceptionInInitializerError err) {
+        Throwable cause1 = err.getCause();
+        if (cause1 instanceof RuntimeException) {
+            Throwable cause2 = ((RuntimeException) cause1).getCause();
+            if (cause2 instanceof ViatraQueryException) {
+                return (ViatraQueryException) cause2;
+            } else if (cause2 instanceof QueryInitializationException) {
+                return new ViatraQueryException((QueryInitializationException) cause2);
+            } 
+        }
+        throw err;
+    }
+    protected final PQuery wrappedPQuery;
 	
     protected abstract Matcher instantiate(ViatraQueryEngine engine) throws ViatraQueryException;
 
