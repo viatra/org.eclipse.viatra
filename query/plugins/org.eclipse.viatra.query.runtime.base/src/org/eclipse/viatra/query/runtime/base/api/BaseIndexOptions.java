@@ -68,7 +68,7 @@ public class BaseIndexOptions {
      * 
      * @since 1.6
      */
-    protected static final boolean STRICT_NOTIFICATION_MODE_DEFAULT = false;
+    protected static final boolean STRICT_NOTIFICATION_MODE_DEFAULT = true;
 
     /**
      * @since 1.6
