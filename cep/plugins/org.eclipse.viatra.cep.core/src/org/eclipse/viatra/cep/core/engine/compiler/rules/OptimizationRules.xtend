@@ -48,13 +48,20 @@ class OptimizationRules extends MappingRules {
 	 * Transformation rule to merge {@link State}s connected by an {@link EpsilonTransition}.
 	 */
 	val mergeUponEpsilonTransitionRule = createRule.precondition(EpsilonTransitionMatcher::querySpecification).action[
-		if(preState instanceof InitState){
-			mergeStates(postState, preState, transition)
-		} else if(postState instanceof FinalState){
-			mergeStates(preState, postState, transition)	
-		} else{
-			mergeStates(preState, postState, transition)
-		}
+	    if (preState == postState) {
+	       removeTransition(transition)	        
+	    } else {	        
+    	   val keepPreState = preState instanceof InitState || preState instanceof FinalState
+    	   val keepPostState = postState instanceof InitState || postState instanceof FinalState
+    	   Preconditions::checkArgument(!(keepPreState && keepPostState))
+    	   if(keepPreState){
+    	       mergeStates(postState, preState, transition)
+    	   } else if(keepPostState){
+    	       mergeStates(preState, postState, transition)	
+    	   } else{
+    	       mergeStates(preState, postState, transition)
+    	   }
+	    }
 	].build
 
 	/**
@@ -69,21 +76,25 @@ class OptimizationRules extends MappingRules {
 	 * Transformation rule to merge equivalent {@link State}s.
 	 */
 	val mergeEquivalentStatesRule = createRule.precondition(EquivalentStatesMatcher::querySpecification).action [
-		Preconditions::checkArgument(!((postState1 instanceof InitState) && (postState2 instanceof FinalState)))
-		Preconditions::checkArgument(!((postState1 instanceof FinalState) && (postState2 instanceof InitState)))
-
-		switch (postState1) {
-			InitState:
-				mergeStates(postState2, postState1, transition2, transition1)
-			FinalState:
-				mergeStates(postState2, postState1, transition2, transition1)
-			default:
-				switch (postState2) {
-					InitState: mergeStates(postState1, postState2, transition1, transition2)
-					FinalState: mergeStates(postState1, postState2, transition1, transition2)
-					default: mergeStates(postState1, postState2, transition1, transition2)
-				}
-		}
+        if (postState1 == postState2) {
+            mergeStates(postState2, postState1, transition2, transition1) 
+        } else {
+            Preconditions::checkArgument(!((postState1 instanceof InitState) && (postState2 instanceof FinalState)))
+    		Preconditions::checkArgument(!((postState1 instanceof FinalState) && (postState2 instanceof InitState)))
+    
+    		switch (postState1) {
+    			InitState:
+    				mergeStates(postState2, postState1, transition2, transition1)
+    			FinalState:
+    				mergeStates(postState2, postState1, transition2, transition1)
+    			default:
+    				switch (postState2) {
+    					InitState: mergeStates(postState1, postState2, transition1, transition2)
+    					FinalState: mergeStates(postState1, postState2, transition1, transition2)
+    					default: mergeStates(postState1, postState2, transition1, transition2)
+    				}
+    		}
+        }	
 	].build
 
 //	/**

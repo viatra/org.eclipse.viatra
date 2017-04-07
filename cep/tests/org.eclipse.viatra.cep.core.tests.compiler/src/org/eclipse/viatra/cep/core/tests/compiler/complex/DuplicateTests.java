@@ -82,6 +82,7 @@ public class DuplicateTests extends ComplexTest {
         int aTransition = 0;
         int bTransition = 0;
 
+        Assert.assertEquals(1, automaton.getFinalStates().size());
         for (Transition transition : automaton.getInitialState().getOutTransitions()) {
             Assert.assertTrue(transition.getPostState().equals(automaton.getFinalStates().get(0)));
             if (transitionTypedWith(transition, A_Pattern.class)) {
