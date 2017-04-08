@@ -455,7 +455,7 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
         case Notification.UNSET:
         {
           Object oldValue = notification.getOldValue();
-          if (Objects.equals(oldValue, Boolean.TRUE) && Objects.equals(oldValue, Boolean.FALSE))
+          if (!Objects.equals(oldValue, Boolean.TRUE) && !Objects.equals(oldValue, Boolean.FALSE))
           {
             if (oldValue != null)
             {

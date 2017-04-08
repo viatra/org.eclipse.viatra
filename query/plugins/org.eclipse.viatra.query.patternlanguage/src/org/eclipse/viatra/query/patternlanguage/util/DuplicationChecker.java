@@ -82,7 +82,7 @@ public class DuplicationChecker {
         Set<IEObjectDescription> duplicates = Sets.newHashSet();
         for (IEObjectDescription shadowingPatternDescription : shadowingPatternDescriptions) {
             EObject shadowingPattern = shadowingPatternDescription.getEObjectOrProxy();
-            if (Objects.equals(shadowingPattern, pattern)) {
+            if (!Objects.equals(shadowingPattern, pattern)) {
                 URI resourceUri = pattern.eResource().getURI();
                 // not using shadowingPattern because it might be proxy
                 URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment(); 
