@@ -70,8 +70,6 @@ public class DepthFirstStrategy implements IStrategy {
     /**
      * If called, the algorithm will not backtrack after the hard objectives are fulfilled, instead it goes deeper in
      * the search space.
-     * 
-     * @return
      */
     public DepthFirstStrategy continueIfHardObjectivesFulfilled() {
         backTrackIfSolution = false;

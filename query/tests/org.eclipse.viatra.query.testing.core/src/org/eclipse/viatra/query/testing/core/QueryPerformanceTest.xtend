@@ -23,13 +23,11 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher
 import org.eclipse.viatra.query.runtime.api.scope.QueryScope
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
-import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.rete.matcher.ReteBackendFactory
 import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil
 import org.eclipse.xtend.lib.annotations.Data
 import org.junit.Test
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngineOptions
-import org.eclipse.viatra.query.runtime.api.IPatternMatch
 import com.google.common.base.Function
 
 /**
@@ -86,7 +84,6 @@ abstract class QueryPerformanceTest {
 
     /**
      * This method shall return the query backend class that will be used for evaluation.
-     * The backend must be already registered in the {@link QueryBackendRegistry}.
      * 
      * <p>Default implementation returns the registered default backend class.
      * 

@@ -26,16 +26,25 @@ import com.google.common.collect.SetMultimap;
  */
 public abstract class AbstractQueryMetaContext implements IQueryMetaContext {
     
+    /**
+     * @since 1.6
+     */
     @Override
     public SetMultimap<InputKeyImplication, InputKeyImplication> getConditionalImplications(IInputKey implyingKey) {
         return HashMultimap.create(0, 0);
     }
 
+	/**
+     * @since 1.6
+     */
 	@Override
 	public boolean canLeadOutOfScope(IInputKey key) {
 		return key.getArity() > 1;
 	}
 	
+    /**
+     * @since 1.6
+     */
     @Override
     public Comparator<IInputKey> getSuggestedEliminationOrdering() {
         return new Comparator<IInputKey>() {
@@ -46,6 +55,9 @@ public abstract class AbstractQueryMetaContext implements IQueryMetaContext {
         };
     }
     
+    /**
+     * @since 1.6
+     */
     @Override
     public Collection<InputKeyImplication> getWeakenedAlternatives(IInputKey implyingKey) {
         return Collections.emptySet();

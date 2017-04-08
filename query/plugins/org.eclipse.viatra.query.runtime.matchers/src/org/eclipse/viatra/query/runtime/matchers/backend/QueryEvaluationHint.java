@@ -103,8 +103,6 @@ public class QueryEvaluationHint {
 	/**
 	 * Override values in this hint and return a consolidated instance.
 	 * 
-	 * @param overridingHint
-	 * @return
 	 * @since 1.4
 	 */
 	public QueryEvaluationHint overrideBy(QueryEvaluationHint overridingHint){
@@ -127,7 +125,6 @@ public class QueryEvaluationHint {
      * Returns whether the given hint option is overridden.
      * @since 1.5
      */
-    @SuppressWarnings("unchecked")
     public boolean isOptionOverridden(QueryHintOption<?> option) {
         return getBackendHintSettings().containsKey(option);
     }
@@ -146,7 +143,6 @@ public class QueryEvaluationHint {
      * Intended to be called by backends to find out the definitive value that should be considered.
      * @since 1.5
      */
-    @SuppressWarnings("unchecked")
     public <HintValue> HintValue getValueOrDefault(QueryHintOption<HintValue> option) {
         return option.getValueOrDefault(this);
     }

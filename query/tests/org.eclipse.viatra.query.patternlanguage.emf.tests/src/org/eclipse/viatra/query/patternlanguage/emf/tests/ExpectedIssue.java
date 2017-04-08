@@ -38,8 +38,6 @@ public class ExpectedIssue {
 	
 	/**
 	 * Decides whether the expected issue matches an error node
-	 * @param node
-	 * @return
 	 */
 	public boolean matchesErrorNode(INode node) {
 		return (node.getStartLine() == line && node.getSyntaxErrorMessage()

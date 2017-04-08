@@ -1,10 +1,127 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.viatra.query.runtime.rete.recipes" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter id="926941240">
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/MultiParentNodeRecipe.java" type="org.eclipse.viatra.query.runtime.rete.recipes.MultiParentNodeRecipe">
+        <filter comment="EMF generated code modified" id="403804204">
             <message_arguments>
-                <message_argument value="1.5.0"/>
-                <message_argument value="1.4.0"/>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.MultiParentNodeRecipe"/>
+                <message_argument value="isDeleteRederiveEvaluation()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.MultiParentNodeRecipe"/>
+                <message_argument value="setDeleteRederiveEvaluation(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1211105284">
+            <message_arguments>
+                <message_argument value="isDeleteRederiveEvaluation()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1211105284">
+            <message_arguments>
+                <message_argument value="setDeleteRederiveEvaluation(boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/RecipesPackage.java" type="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage">
+        <filter comment="EMF generated code modified" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="MULTI_PARENT_NODE_RECIPE_FEATURE_COUNT"/>
+                <message_argument value="3"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="PRODUCTION_RECIPE_FEATURE_COUNT"/>
+                <message_argument value="6"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="PRODUCTION_RECIPE__MAPPED_INDICES"/>
+                <message_argument value="3"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="PRODUCTION_RECIPE__PATTERN"/>
+                <message_argument value="4"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="PRODUCTION_RECIPE__PATTERN_FQN"/>
+                <message_argument value="5"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="388194388">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="UNIQUENESS_ENFORCER_RECIPE_FEATURE_COUNT"/>
+                <message_argument value="3"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="MULTI_PARENT_NODE_RECIPE__DELETE_REDERIVE_EVALUATION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="PRODUCTION_RECIPE__DELETE_REDERIVE_EVALUATION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="UNIQUENESS_ENFORCER_RECIPE__DELETE_REDERIVE_EVALUATION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="403804204">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage"/>
+                <message_argument value="getMultiParentNodeRecipe_DeleteRederiveEvaluation()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1211105284">
+            <message_arguments>
+                <message_argument value="MULTI_PARENT_NODE_RECIPE__DELETE_REDERIVE_EVALUATION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1211105284">
+            <message_arguments>
+                <message_argument value="PRODUCTION_RECIPE__DELETE_REDERIVE_EVALUATION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1211105284">
+            <message_arguments>
+                <message_argument value="UNIQUENESS_ENFORCER_RECIPE__DELETE_REDERIVE_EVALUATION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1211105284">
+            <message_arguments>
+                <message_argument value="getMultiParentNodeRecipe_DeleteRederiveEvaluation()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/RecipesPackage.java" type="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage$Literals">
+        <filter comment="EMF generated code modified" id="403767336">
+            <message_arguments>
+                <message_argument value="org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage.Literals"/>
+                <message_argument value="MULTI_PARENT_NODE_RECIPE__DELETE_REDERIVE_EVALUATION"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1211105284">
+            <message_arguments>
+                <message_argument value="MULTI_PARENT_NODE_RECIPE__DELETE_REDERIVE_EVALUATION"/>
             </message_arguments>
         </filter>
     </resource>
@@ -24,12 +141,41 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/impl/MultiParentNodeRecipeImpl.java" type="org.eclipse.viatra.query.runtime.rete.recipes.impl.MultiParentNodeRecipeImpl">
+        <filter comment="EMF generated code modified" id="1143996420">
+            <message_arguments>
+                <message_argument value="DELETE_REDERIVE_EVALUATION_EDEFAULT"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1143996420">
+            <message_arguments>
+                <message_argument value="deleteRederiveEvaluation"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1143996420">
+            <message_arguments>
+                <message_argument value="isDeleteRederiveEvaluation()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="EMF generated code modified" id="1143996420">
+            <message_arguments>
+                <message_argument value="setDeleteRederiveEvaluation(boolean)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/impl/RecipesFactoryImpl.java" type="org.eclipse.viatra.query.runtime.rete.recipes.impl.RecipesFactoryImpl">
         <filter comment="Aggregator API is not finished yet" id="643842064">
             <message_arguments>
                 <message_argument value="IMultisetAggregationOperator&lt;Domain, Accumulator, AggregateResult&gt;"/>
                 <message_argument value="RecipesFactoryImpl"/>
                 <message_argument value="createAggregationOperatorFromString(EDataType, String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src-gen/org/eclipse/viatra/query/runtime/rete/recipes/impl/RecipesPackageImpl.java" type="org.eclipse.viatra.query.runtime.rete.recipes.impl.RecipesPackageImpl">
+        <filter comment="EMF generated code modified" id="1143996420">
+            <message_arguments>
+                <message_argument value="getMultiParentNodeRecipe_DeleteRederiveEvaluation()"/>
             </message_arguments>
         </filter>
     </resource>

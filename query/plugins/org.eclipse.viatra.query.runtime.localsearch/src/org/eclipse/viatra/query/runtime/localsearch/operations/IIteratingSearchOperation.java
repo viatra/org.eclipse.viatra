@@ -23,7 +23,6 @@ public interface IIteratingSearchOperation extends ISearchOperation{
 
     /**
      * Get the {@link IInputKey} which instances this operation iterates upon.
-     * @return
      */
     public IInputKey getIteratedInputKey();
     

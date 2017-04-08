@@ -32,7 +32,6 @@ public interface IQuerySpecificationProvider extends IProvider<IQuerySpecificati
 
     /**
      * Returns the name of project providing the specification (or null if not calculable)
-     * @return
      */
     String getSourceProjectName();
     

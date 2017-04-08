@@ -19,15 +19,11 @@ import org.eclipse.viatra.integration.mwe2.mwe2impl.exceptions.InvalidParameterT
  * 
  * @author Peter Lunk
  *
- * @param <ParameterType>
- * @param <Message>
  */
 public interface IMessageProcessor<ParameterType extends Object, Message extends IMessage<ParameterType>> {
 
     /**
      * Returns the parent <link>ITransformationStep</link> object of this particular message processor.
-     * 
-     * @return
      */
     public ITransformationStep getParent();
 

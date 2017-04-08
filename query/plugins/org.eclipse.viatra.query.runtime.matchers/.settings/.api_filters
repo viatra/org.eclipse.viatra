@@ -84,20 +84,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/viatra/query/runtime/matchers/backend/IQueryBackendFactory.java" type="org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory">
-        <filter comment="Adjusted create method" id="403804204">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory"/>
-                <message_argument value="create(IQueryBackendContext)"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Adjusted create method" id="405901410">
-            <message_arguments>
-                <message_argument value="org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory"/>
-                <message_argument value="create(Logger, IQueryRuntimeContext, IQueryCacheContext, IQueryBackendHintProvider)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/matchers/psystem/basicdeferred/AggregatorConstraint.java" type="org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.AggregatorConstraint">
         <filter id="643842064">
             <message_arguments>

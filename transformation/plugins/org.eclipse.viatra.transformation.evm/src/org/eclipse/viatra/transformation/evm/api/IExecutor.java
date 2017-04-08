@@ -45,8 +45,6 @@ public interface IExecutor {
 
     /**
      * Returns the {@link Context} of the executor. The return value should never be null.
-     * 
-     * @return
      */
     public Context getContext();
 }

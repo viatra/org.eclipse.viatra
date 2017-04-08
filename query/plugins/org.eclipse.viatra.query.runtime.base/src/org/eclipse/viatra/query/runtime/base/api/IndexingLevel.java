@@ -85,9 +85,6 @@ public enum IndexingLevel {
     /**
      * Merge this level with the given other level, The resulting indexing level will provide the 
      * functionality which conforms to both given levels.
-     * 
-     * @param other
-     * @return
      */
     public IndexingLevel merge(IndexingLevel other){
         if (other == null) return this;
@@ -96,8 +93,6 @@ public enum IndexingLevel {
 
     /**
      * Tells whether the indexer shall perform separate statistics calculation for this level
-     * 
-     * @return
      */
     public boolean hasStatistics() {
         return this == IndexingLevel.BOTH || this == IndexingLevel.STATISTICS || this == IndexingLevel.FULL;

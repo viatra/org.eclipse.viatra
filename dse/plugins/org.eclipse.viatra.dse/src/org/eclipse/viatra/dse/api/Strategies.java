@@ -111,7 +111,6 @@ public final class Strategies {
 
     /**
      * See {@link BestFirstStrategy}.
-     * @return
      */
     public static BestFirstStrategy createBestFirstStrategy() {
         return new BestFirstStrategy();
@@ -119,7 +118,6 @@ public final class Strategies {
 
     /**
      * See {@link BestFirstStrategy}.
-     * @return
      */
     public static BestFirstStrategy createBestFirstStrategy(int depthLimit) {
         return new BestFirstStrategy(depthLimit);

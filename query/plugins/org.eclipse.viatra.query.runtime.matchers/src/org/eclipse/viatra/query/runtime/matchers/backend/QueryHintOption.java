@@ -73,7 +73,6 @@ public class QueryHintOption<HintValue> {
     /**
      * Returns the value of this hint option from the given hint collection, or null if not defined.
      */
-    @SuppressWarnings("unchecked")
     public HintValue getValueOrNull(QueryEvaluationHint hints) {
         return hints.getValueOrNull(this);
     }
@@ -81,7 +80,6 @@ public class QueryHintOption<HintValue> {
     /**
      * Returns whether this hint option is defined in the given hint collection.
      */
-    @SuppressWarnings("unchecked")
     public boolean isOverriddenIn(QueryEvaluationHint hints) {
         return hints.isOptionOverridden(this);
     }

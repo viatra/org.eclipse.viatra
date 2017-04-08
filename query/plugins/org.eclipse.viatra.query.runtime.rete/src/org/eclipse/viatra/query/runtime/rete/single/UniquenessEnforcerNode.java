@@ -40,7 +40,13 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
 
     protected Collection<Supplier> parents;
     protected TupleMemory memory;
+    /**
+     * @since 1.6
+     */
     protected TupleMemory rederivableMemory;
+    /**
+     * @since 1.6
+     */
     protected boolean deleteRederiveEvaluation;
 
     public TupleMemory getMemory() {
@@ -54,6 +60,13 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
     private final TupleMask nullMask;
     private final TupleMask identityMask;
 
+    public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth) {
+        this(reteContainer, tupleWidth, false);
+    }
+    
+    /**
+     * @since 1.6
+     */
     public UniquenessEnforcerNode(ReteContainer reteContainer, int tupleWidth, boolean deleteRederiveEvaluation) {
         super(reteContainer);
         this.parents = new ArrayList<Supplier>();
@@ -148,6 +161,9 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
         }
     }
 
+    /**
+     * @since 1.6
+     */
     @Override
     public void rederiveOne() {
         Tuple update = rederivableMemory.iterator().next();
@@ -160,6 +176,9 @@ public class UniquenessEnforcerNode extends StandardNode implements Tunnel, Rede
         propagate(Direction.INSERT, update);
     }
 
+    /**
+     * @since 1.6
+     */
     protected void propagate(Direction direction, Tuple update) {
         propagateUpdate(direction, update);
 

@@ -57,8 +57,7 @@ public interface ITypeInferrer {
     /**
      * Returns a collection of possible inferred types. Used for validating inputs; not recommended to use when
      * processing the patterns
-     * @param ex
-     * @return
+
      * @since 1.3
      */
     Set<IInputKey> getAllPossibleTypes(Expression ex);
@@ -66,7 +65,6 @@ public interface ITypeInferrer {
     /**
      * Returns the type of a variable.
      * 
-     * @param ex
      * @return if the variable has a declared type, it is returned; otherwise the inferred type is calculated.
      * @since 1.3
      */

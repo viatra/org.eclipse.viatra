@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.dse.api.DSEException;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.base.api.IndexingLevel;
 import org.eclipse.viatra.query.runtime.base.api.NavigationHelper;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -45,7 +46,7 @@ public class IncrementalObjectProvider implements IObjectsProvider {
 //              }
             }
             baseIndex = EMFScope.extractUnderlyingEMFIndex(queryEngine);
-            baseIndex.registerEClasses(classes);
+            baseIndex.registerEClasses(classes, IndexingLevel.FULL);
         } catch (ViatraQueryException e) {
             logger.error("Failed to initialize VIATRA Query engine on the given notifier", e);
             throw new DSEException("Failed to initialize VIATRA Query engine on the given notifier");

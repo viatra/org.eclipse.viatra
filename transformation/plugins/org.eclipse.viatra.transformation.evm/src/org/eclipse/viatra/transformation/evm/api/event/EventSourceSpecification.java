@@ -24,8 +24,6 @@ public interface EventSourceSpecification<EventAtom> {
      * 
      * <strong>Warning</strong>: either return a single instance, or make sure all returned instances are equal (
      * {@linkplain Object#equals(Object)} and {@linkplain Object#hashCode()}.
-     * 
-     * @return
      */
     EventFilter<EventAtom> createEmptyFilter();
     

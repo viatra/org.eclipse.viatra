@@ -78,7 +78,6 @@ public class TraceabilityUtil {
      *            of traces to be detached
      * @param sources
      *            of traces to be detached
-     * @return
      * @throws ViatraQueryException 
      */
     public static void deleteTraceAndTarget(ViatraQueryEngine engine, EObject toDelete) throws ViatraQueryException {

@@ -17,9 +17,21 @@
         </filter>
     </resource>
     <resource path="src/org/eclipse/viatra/query/runtime/internal/apiimpl/ViatraQueryEngineImpl.java" type="org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl">
+        <filter id="572522506">
+            <message_arguments>
+                <message_argument value="QueryAnalyzer"/>
+                <message_argument value="ViatraQueryEngineImpl"/>
+            </message_arguments>
+        </filter>
         <filter comment="The interface is allowed to be implemented in org.eclipse.viatra.query.runtime" id="574619656">
             <message_arguments>
                 <message_argument value="IQueryBackendHintProvider"/>
+                <message_argument value="ViatraQueryEngineImpl"/>
+            </message_arguments>
+        </filter>
+        <filter comment="It is the ViatraQueryEngineImpl which should implement IQueryResultProviderAccess" id="574619656">
+            <message_arguments>
+                <message_argument value="IQueryResultProviderAccess"/>
                 <message_argument value="ViatraQueryEngineImpl"/>
             </message_arguments>
         </filter>
@@ -27,12 +39,6 @@
             <message_arguments>
                 <message_argument value="org.eclipse.viatra.query.runtime.internal.apiimpl.ViatraQueryEngineImpl.getQueryBackend(IQueryBackendFactory)"/>
                 <message_argument value="IQueryBackendContext"/>
-            </message_arguments>
-        </filter>
-        <filter comment="It is the ViatraQueryEngineImpl which should implement IQueryResultProviderAccess" id="574619656">
-            <message_arguments>
-                <message_argument value="IQueryResultProviderAccess"/>
-                <message_argument value="ViatraQueryEngineImpl"/>
             </message_arguments>
         </filter>
     </resource>

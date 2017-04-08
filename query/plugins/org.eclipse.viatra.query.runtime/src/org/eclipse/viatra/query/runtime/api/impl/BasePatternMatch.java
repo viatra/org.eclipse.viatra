@@ -27,6 +27,7 @@ import org.eclipse.viatra.query.runtime.api.IPatternMatch;
  */
 public abstract class BasePatternMatch implements IPatternMatch {
 
+    @SafeVarargs
 	protected static <T> List<T> makeImmutableList(T... elements) {
 		return Collections.unmodifiableList(Arrays.asList(elements));
 	}

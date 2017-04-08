@@ -170,6 +170,7 @@ public class CompilerHelper {
 
     /**
      * Creates a recipe for a production node and the corresponding trace.
+     * @since 1.6
      */
 	public static CompiledQuery makeQueryTrace(PQuery query,
 			Collection<RecipeTraceInfo> bodyFinalTraces,

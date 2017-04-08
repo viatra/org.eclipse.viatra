@@ -29,19 +29,16 @@ public interface IConstraintEvaluationContext {
 
     /**
      * Get the constraint to be evaluated
-     * @return
      */
     public PConstraint getConstraint();
 
     /**
      * Unbound variables at the time of evaluating the constraint
-     * @return
      */
     public Collection<PVariable> getFreeVariables();
 
     /**
      * Bound variables at the time of evaluating the constraint
-     * @return
      */
     public Collection<PVariable> getBoundVariables();
     

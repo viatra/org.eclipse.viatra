@@ -33,10 +33,6 @@ public class GeneratorModelHelper {
      * Resolves the {@link Variable} using information from the {@link GenPackage}. Tries to find an appropriate
      * {@link GenClass} for the {@link EClassifier}. If one is found, then returns a {@link JvmTypeReference} for it's
      * qualified interface name.
-     *
-     * @param genPackage
-     * @param classifier
-     * @return
      */
     public static String resolveTypeReference(GenPackage genPackage, EClassifier classifier) {
         GenClassifier genClassifier = findGenClassifier(genPackage, classifier);

@@ -51,9 +51,6 @@ public interface IQueryRuntimeContext {
 	/**
 	 * Returns true if index is available for the given key providing the given service.
 	 * 
-	 * @param key
-	 * @param service
-	 * @return
 	 * @since 1.4
 	 */
 	public boolean isIndexed(IInputKey key, IndexingService service);

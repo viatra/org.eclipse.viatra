@@ -67,7 +67,6 @@ public class MatchingFrame extends Tuple implements Cloneable {
      * later than initialization (done by the {@link LocalSearchMatcher}.
      * 
      * @param keys
-     * @return 
      * @see {@linkplain #setParameterValues(Object[])} for setting the initial parameter
      * @since 1.3
      */

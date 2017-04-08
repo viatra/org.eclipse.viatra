@@ -18,7 +18,6 @@ package org.eclipse.viatra.integration.mwe2.providers;
 public interface IConditionProvider extends IProvider{
     /**
      * Applies the specified condition and returns its result.
-     * @return
      */
     public boolean apply();
 }

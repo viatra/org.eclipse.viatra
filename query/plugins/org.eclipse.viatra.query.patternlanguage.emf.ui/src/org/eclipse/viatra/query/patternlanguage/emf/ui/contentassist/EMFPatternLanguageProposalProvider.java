@@ -276,7 +276,7 @@ public class EMFPatternLanguageProposalProvider extends AbstractEMFPatternLangua
     
     /**
      * Remove extra double quote from proposal if the next character is already a double quote.
-     * Based on the work of Christian Dietrich in {@link https://christiandietrich.wordpress.com/2015/03/19/xtext-and-strings-as-cross-references/} 
+     * Based on the work of Christian Dietrich in {@link "https://christiandietrich.wordpress.com/2015/03/19/xtext-and-strings-as-cross-references/"} 
      * 
      * @author Abel Hegedus
      *

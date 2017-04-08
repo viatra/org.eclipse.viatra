@@ -40,26 +40,21 @@ public interface ITopic {
     
     /**
      * Removes the given message from every subscriber
-     * @param message
      */
     public void removeMessage(IMessage<?> message);
     
     /**
      * Returns every message sent to the given subscriber
-     * @param sub
-     * @return
      */
     public List<IMessage<? extends Object>> getMessages(ITransformationStep sub);      
     
     /**
      * Adds a new subscriber to this topic
-     * @param subscriber
      */
     public void addSubscriber(ITransformationStep subscriber);
     
     /**
      * Returns the subscribers of this topic
-     * @return
      */
     public List<ITransformationStep> getSubscribers();
 }

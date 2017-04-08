@@ -20,8 +20,6 @@ import org.eclipse.viatra.query.testing.snapshot.MatchSetRecord;
 /**
  * Implementations of this interface can provide match set snapshots for a given {@link IQuerySpecification}. The query
  * scope must be defined by the implementer (e.g. an EMF notifier or a pre-executed snapshot)
- *
- * @param <Match>
  */
 public interface IMatchSetModelProvider {
 
@@ -52,9 +50,7 @@ public interface IMatchSetModelProvider {
     
     /**
      * Return true if the result of this provider is updated by input model modifications, thus a subsequent
-     * getMathcSetRecord() call will reflect the changes.
-     * 
-     * @return
+     * {@link #getMatchSetRecord(EMFScope, IQuerySpecification, IPatternMatch)} call will reflect the changes.
      */
     public boolean updatedByModify();
     

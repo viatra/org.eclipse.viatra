@@ -26,8 +26,6 @@ public interface IController {
 
     /**
      * If the Step has finished it returns true
-     * 
-     * @return
      */
     public boolean isFinished();
 }

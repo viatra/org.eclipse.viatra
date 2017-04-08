@@ -333,8 +333,6 @@ public abstract class AdvancedViatraQueryEngine extends ViatraQueryEngine {
 	/**
 	 * Return the underlying result provider for the given matcher.
 	 * 
-	 * @param matcher
-	 * @return
 	 * @beta This method may change in future versions
 	 * @since 1.4
 	 * @noreference This method is considered internal API

@@ -13,9 +13,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.specification;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.ClassType;
 import org.eclipse.viatra.query.patternlanguage.emf.internal.XtextInjectorProvider;
-import org.eclipse.viatra.query.patternlanguage.emf.specification.internal.PatternBodyTransformer;
 import org.eclipse.viatra.query.patternlanguage.emf.types.EMFTypeSystem;
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Parameter;

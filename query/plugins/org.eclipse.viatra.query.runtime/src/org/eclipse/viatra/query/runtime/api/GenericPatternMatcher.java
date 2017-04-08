@@ -69,6 +69,7 @@ public class GenericPatternMatcher extends BaseMatcher<GenericPatternMatch> {
         return new GenericPatternMatch.Immutable(getSpecification(), /*avoid re-cloning*/t.getElements());
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public GenericQuerySpecification<? extends GenericPatternMatcher> getSpecification() {
         return (GenericQuerySpecification<? extends GenericPatternMatcher>)querySpecification;

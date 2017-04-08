@@ -110,10 +110,6 @@ public class EventDrivenTransformationRuleFactory {
 
 	/**
 	 * Replaces a filter of an existing transformation rule, but keeps all other properties intact
-	 * 
-	 * @param rule
-	 * @param filter
-	 * @return
 	 */
 	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> EventDrivenTransformationRule<Match, Matcher> filterRule(
 			EventDrivenTransformationRule<Match, Matcher> rule, EventFilter<? super Match> filter) {

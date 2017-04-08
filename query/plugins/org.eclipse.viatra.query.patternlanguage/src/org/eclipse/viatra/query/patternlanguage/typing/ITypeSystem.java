@@ -78,18 +78,12 @@ public interface ITypeSystem {
     Set<IInputKey> addTypeInformation(Set<IInputKey> types, IInputKey newType);
 
     /**
-     * @param types
-     * @param newTypes
-     * @return
      * @since 1.3
      */
     Set<IInputKey> addTypeInformation(Set<IInputKey> types, Set<IInputKey> newTypes);
     
     /**
      * Creates a type reference for model inference from a selected type.
-     * 
-     * @param type
-     * @param context
      */
     JvmTypeReference toJvmTypeReference(IInputKey type, EObject context);
 
@@ -104,16 +98,14 @@ public interface ITypeSystem {
     
     /**
      * Returns a set of types that is a common supertype of a set of type parameters
-     * @param types
-     * @return
+     *
      * @since 1.3
      */
     Set<IInputKey> getCompatibleSupertypes(Set<IInputKey> types);
 
     /**
      * Returns whether the type declaration represents a valid, resolvable type for the selected type system. A null type is invalid.
-     * @param type
-     * @return
+     * 
      * @since 1.4
      */
     boolean isValidType(Type type);

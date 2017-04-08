@@ -38,9 +38,6 @@ public class RegistryChangeMultiplexer implements IQuerySpecificationRegistryCha
     /**
      * Adds a weak reference on the listener to the multiplexer. The listener will receive all further notifications and
      * does not have to be removed, since the multiplexer will not keep it in memory when it can be collected.
-     * 
-     * @param listener
-     * @return
      */
     public boolean addListener(IQuerySpecificationRegistryChangeListener listener) {
         return listeners.add(listener);

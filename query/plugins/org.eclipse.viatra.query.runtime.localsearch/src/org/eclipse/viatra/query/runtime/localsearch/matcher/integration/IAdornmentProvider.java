@@ -53,9 +53,6 @@ public interface IAdornmentProvider {
 
     /**
      * The bound parameter sets
-     * 
-     * @param query
-     * @return
      */
     public Iterable<Set<PParameter>> getAdornments(PQuery query);
     

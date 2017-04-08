@@ -64,17 +64,11 @@ public interface IEMFTypeProvider {
 	 * Calculates the JVM type of the selected variable. The calculation
 	 * includes the inference of the corresponding EMF type, and then the
 	 * calculation of corresponding Java class.
-	 * 
-	 * @param variable
-	 * @return
 	 */
 	JvmTypeReference getVariableType(Variable variable);
 
 	/**
 	 * Calculates the corresponding JVM type of a selected EClassifier. The context is used to select the model-specific information, e.g. ResourceSet, project, etc.
-	 * @param classifier
-	 * @param context
-	 * @return
 	 */
 	JvmTypeReference getJvmType(EClassifier classifier, EObject context);
 	/**

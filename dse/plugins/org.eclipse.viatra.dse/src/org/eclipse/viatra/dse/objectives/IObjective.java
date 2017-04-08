@@ -101,15 +101,11 @@ public interface IObjective {
 
     /**
      * Set the level of the objective.
-     * 
-     * @param level
      */
     void setLevel(int level);
 
     /**
      * Gets the level of the objective.
-     * 
-     * @return
      */
     int getLevel();
 

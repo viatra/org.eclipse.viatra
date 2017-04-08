@@ -28,7 +28,6 @@ import com.google.common.collect.Multimap;
  * 
  * @author Csaba Debreceni
  *
- * @param <Matcher>
  */
 public class GenericTracedQuerySpecification extends GenericQuerySpecification<GenericPatternMatcher> {
 

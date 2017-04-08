@@ -34,7 +34,6 @@ import com.google.common.collect.Multimap;
  * 
  * @author Csaba Debreceni
  *
- * @param <Matcher>
  */
 public class GenericReferencedQuerySpecification extends
         GenericQuerySpecification<GenericPatternMatcher> {

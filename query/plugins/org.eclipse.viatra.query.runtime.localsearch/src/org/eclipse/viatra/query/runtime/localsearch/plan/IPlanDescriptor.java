@@ -28,26 +28,22 @@ public interface IPlanDescriptor {
 
     /**
      * The query which this plan implements
-     * @return
      */
     public PQuery getQuery();
     
     /**
      * The iterator of executable search plans for each body in the query
-     * @return
      */
     public Iterable<SearchPlanForBody> getPlan();
     
     /**
      * The set of parameters this plan assumes to be bound
-     * @return
      */
     public Set<PParameter> getAdornment();
     
     /**
      * The collection of {@link IInputKey}s which needs to be iterated during the execution of this plan. For optimal
      * performance, instances of these keys might be indexed.
-     * @return
      */
     public Set<IInputKey> getIteratedKeys();
     

@@ -19,28 +19,28 @@ public class DSEException extends RuntimeException {
     private static final long serialVersionUID = -8312212010574763824L;
 
     /**
-     * @see RuntimeException#RuntimeException().
+     * @see RuntimeException#RuntimeException()
      */
     public DSEException() {
         super();
     }
 
     /**
-     * @see RuntimeException#RuntimeException(String)).
+     * @see RuntimeException#RuntimeException(String) 
      */
     public DSEException(String message) {
         super(message);
     }
 
     /**
-     * @see RuntimeException#RuntimeException(String, Throwable)).
+     * @see RuntimeException#RuntimeException(String, Throwable)
      */
     public DSEException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * @see RuntimeException#RuntimeException(Throwable)).
+     * @see RuntimeException#RuntimeException(Throwable)
      */
     public DSEException(Throwable cause) {
         super(cause);

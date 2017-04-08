@@ -44,6 +44,7 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
      * @param ps
      *            the tuple
      * @return the number of occurrences
+     * @since 1.6
      */
     public int get(Tuple ps) {
         Integer count = occurrences.get(ps);
@@ -74,6 +75,7 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
      * @param count
      *            the number of occurrences
      * @return true if the tuple was not present before in the memory
+     * @since 1.6
      */
     public boolean add(Tuple ps, int count) {
         if (count < 0) {
@@ -98,6 +100,7 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
      * 
      * @param ps the tuple
      * @return true if the addition was successful, that is, the tuple was already present, false otherwise
+     * @since 1.6
      */
     public boolean demandAdd(Tuple ps) {
         return demandAdd(ps, 1);
@@ -111,6 +114,7 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
      * @param ps the tuple
      * @param count the number of occurrences
      * @return true if the addition was successful, that is, the tuple was already present, false otherwise
+     * @since 1.6
      */
     public boolean demandAdd(Tuple ps, int count) {
         if (count <= 0) {
@@ -149,6 +153,7 @@ public class TupleMemory implements Clearable, Collection<Tuple> {
      * 
      * @param ps
      *            the tuple to remove
+     * @since 1.6
      */
     public void clear(Tuple ps) {
         occurrences.remove(ps);

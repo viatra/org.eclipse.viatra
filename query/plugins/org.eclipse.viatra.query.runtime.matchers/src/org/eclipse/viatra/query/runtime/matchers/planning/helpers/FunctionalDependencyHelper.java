@@ -20,7 +20,6 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 /**
  * Helper utility class for functional dependency analysis.
@@ -69,7 +68,6 @@ public class FunctionalDependencyHelper {
      * <p> Note: minimality of the returned dependency set is currently not guaranteed.
      * @param originalDependencies all dependencies that are known to hold on a wider set of attributes
      * @param targetAttributes the set of attributes we are interested in
-     * @return
      * @since 1.5
      */
     public static <A> Map<Set<A>, Set<A>> projectDependencies(Map<Set<A>, Set<A>> originalDependencies, Set<A> targetAttributes) {

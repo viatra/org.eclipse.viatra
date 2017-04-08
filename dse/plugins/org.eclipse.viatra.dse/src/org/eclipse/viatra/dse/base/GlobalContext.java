@@ -163,8 +163,6 @@ public class GlobalContext {
      *            The {@link Strategy}.
      * @param tedToClone
      *            The model to clone. Hint: context.getTed()
-     * @return The newly created {@link ExplorerThread}. Null if the number of the current strategies reached their
-     *         maximum.
      */
 
     public synchronized void strategyFinished(ExplorerThread strategy) {

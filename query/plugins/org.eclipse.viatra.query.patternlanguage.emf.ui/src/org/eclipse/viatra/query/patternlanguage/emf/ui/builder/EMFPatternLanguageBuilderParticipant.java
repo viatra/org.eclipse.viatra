@@ -45,8 +45,6 @@ import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
-import org.eclipse.xtext.ui.resource.IStorage2UriMapper;
-import org.eclipse.xtext.util.Pair;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -83,9 +81,6 @@ public class EMFPatternLanguageBuilderParticipant extends BuilderParticipant {
 
     @Inject
     private Logger logger;
-
-    @Inject
-    private IStorage2UriMapper storage2UriMapper;
 
     @Inject
     private PatternSetValidator validator;

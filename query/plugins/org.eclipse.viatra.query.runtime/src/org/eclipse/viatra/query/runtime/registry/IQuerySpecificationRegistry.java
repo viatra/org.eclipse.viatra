@@ -24,7 +24,7 @@ public interface IQuerySpecificationRegistry {
     /**
      * Cannot register connectors with the same identifier twice. No change occurs if the identifier is already used.
      * 
-     * @param connector,
+     * @param connector
      *            cannot be null
      * @return false if a connector with the given identifier has already been added, true otherwise
      */
@@ -34,7 +34,7 @@ public interface IQuerySpecificationRegistry {
      * Removes the connector if it was registered. No change occurs if the identifier of the connector was not used
      * before.
      * 
-     * @param connector,
+     * @param connector
      *            cannot be null
      * @return false if a registered connector with the given identifier was not found, true if it was successfully
      *         removed

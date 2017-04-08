@@ -55,7 +55,6 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmAnnotationReferenceBuilder
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypeReferenceBuilder
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendFactory
-import org.eclipse.viatra.query.runtime.api.GenericPatternMatch
 import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPrivateEMFQuerySpecification
 
 /**
@@ -375,17 +374,17 @@ class PatternQuerySpecificationClassInferrer {
     }
 
     def StringConcatenationClient inferAnnotations(Pattern pattern) {
-    	'''
-    		«FOR annotation : pattern.annotations»
-        		{
-        			«PAnnotation» annotation = new «PAnnotation»("«annotation.name»");
-        			«FOR attribute : CorePatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries»
-        				annotation.addAttribute("«attribute.key»", «outputAnnotationParameter(attribute.value)»);
-        			«ENDFOR»
-        			addAnnotation(annotation);
-        		}
-    		«ENDFOR»
-    	'''
+        '''
+            «FOR annotation : pattern.annotations»
+                {
+                    «PAnnotation» annotation = new «PAnnotation»("«annotation.name»");
+                    «FOR attribute : CorePatternLanguageHelper.evaluateAnnotationParametersWithMultiplicity(annotation).entries»
+                        annotation.addAttribute("«attribute.key»", «outputAnnotationParameter(attribute.value)»);
+                    «ENDFOR»
+                    addAnnotation(annotation);
+                }
+            «ENDFOR»
+        '''
     }
 
     def StringConcatenationClient outputAnnotationParameter(Object value) {

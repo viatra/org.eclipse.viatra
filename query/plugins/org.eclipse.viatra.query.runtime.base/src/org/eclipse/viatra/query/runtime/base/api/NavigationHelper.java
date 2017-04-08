@@ -362,8 +362,6 @@ public interface NavigationHelper {
     /**
      * Get the total number of instances of the given {@link EClass} and all of its subclasses.
      * 
-     * @param clazz
-     * @return
      * @since 1.4
      */
     public int countAllInstances(EClass clazz);
@@ -851,16 +849,11 @@ public interface NavigationHelper {
 	IndexingLevel getIndexingLevel(EStructuralFeature feature);
 
     /**
-     * @param dataType
-     * @return
      * @since 1.4
      */
     public int countDataTypeInstances(EDataType dataType);
 
     /**
-     * @param seedSource
-     * @param feature
-     * @return
      * @since 1.4
      */
     public int countFeatureTargets(EObject seedSource, EStructuralFeature feature);

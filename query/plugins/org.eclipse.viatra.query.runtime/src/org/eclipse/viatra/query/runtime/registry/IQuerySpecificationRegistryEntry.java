@@ -29,14 +29,12 @@ public interface IQuerySpecificationRegistryEntry extends IQuerySpecificationPro
     
     /**
      * Returns whether the query specification was provided by an identifiable project.
-     * @return
      */
     boolean isFromProject();
     
     /**
      * Collects the name of the project that is registered this specification to the registry.
      *  If {@link #getSourceIdentifier()} is false, it returns null.
-     * @return
      */
     String getSourceProjectName();
 

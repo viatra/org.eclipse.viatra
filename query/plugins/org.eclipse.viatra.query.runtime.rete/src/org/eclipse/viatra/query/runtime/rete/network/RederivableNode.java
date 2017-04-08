@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.runtime.rete.network;
  * A rederivable node can potentially re-derive tuples after the Rete network has finished the delivery of messages.  
  * 
  * @author Tamas Szabo
+ * @since 1.6
  */
 public interface RederivableNode {
 

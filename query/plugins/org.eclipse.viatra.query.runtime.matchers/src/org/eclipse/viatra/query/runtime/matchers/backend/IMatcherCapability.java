@@ -22,9 +22,6 @@ public interface IMatcherCapability {
 
     /**
      * Returns true if matchers of this capability can be used as a substitute for a matcher implementing the given capability
-     * 
-     * @param capability
-     * @return
      */
     public boolean canBeSubstitute(IMatcherCapability capability);
     

@@ -18,7 +18,6 @@ package org.eclipse.viatra.integration.mwe2.providers;
 public interface IIterableProvider extends IProvider{
     /**
      * Returns the iterable
-     * @return
      */
     public Iterable<?> getIterable();    
 }

@@ -31,9 +31,6 @@ public class ActivationBreakpointHandler implements ITransformationBreakpointHan
     
     /**
      * Checks if the given EVM rule activation matches the specified transformation breakpoint.
-     * 
-     * @param a
-     * @return
      */
     @Override
     public boolean shouldBreak(Activation<?> a) {

@@ -72,7 +72,6 @@ public class PatternParsingResults {
     
     /**
      * In case of parsing errors, the returned contents is undefined.
-     * @return
      */
     public List<Pattern> getPatterns() {
         return patterns;

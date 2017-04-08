@@ -31,8 +31,6 @@ import com.google.inject.Injector;
 /**
  * Allows the caller to parse VIATRA query patterns provided in text format. IMPORTANT: This API class assumes that the Xtext parser infrastructure is already initialized. If its not,  {@link ViatraQueryException} is thrown.
  * 
- * @throws ViatraQueryException
- *  
  * @author Peter Lunk
  * @since 1.5
  */

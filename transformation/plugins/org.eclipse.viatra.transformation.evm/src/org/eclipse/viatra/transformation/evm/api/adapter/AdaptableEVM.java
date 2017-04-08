@@ -172,10 +172,6 @@ public class AdaptableEVM {
     
     /**
      * Creates a new adaptable {@link ExecutionSchema} based on the input parameters.
-     * @param queryEngine
-     * @param schedulerFactory
-     * @param conflictResolver
-     * @return
      */
     public ExecutionSchema createAdaptableExecutionSchema(ViatraQueryEngine queryEngine,
             ISchedulerFactory schedulerFactory, ConflictResolver conflictResolver) {
@@ -196,8 +192,6 @@ public class AdaptableEVM {
     
     /**
      * Creates a new adaptable {@link RuleEngine} based on the input {@link ViatraQueryEngine}
-     * @param queryEngine
-     * @return
      */
     public RuleEngine createAdaptableRuleEngine(ViatraQueryEngine queryEngine) {
         AdaptableConflictResolver conflictResolver = new AdaptableConflictResolver(new ArbitraryOrderConflictResolver(),

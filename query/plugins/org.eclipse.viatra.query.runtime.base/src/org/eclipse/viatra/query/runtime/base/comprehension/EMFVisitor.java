@@ -106,11 +106,6 @@ public class EMFVisitor {
      * A containment is in a transient state from the point of view of the visitor if it connects a subtree that is
      * being inserted <em>during</em> a full-model traversal, and a separate notification handler will deal with it
      * later.
-     * 
-     * @param source
-     * @param reference
-     * @param targetObject
-     * @return
      */
     public boolean avoidTransientContainmentLink(EObject source, EReference reference, EObject targetObject) {
         return false;

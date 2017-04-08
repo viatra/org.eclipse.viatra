@@ -18,7 +18,6 @@ package org.eclipse.viatra.integration.mwe2.providers;
 public interface IIterationNumberProvider extends IProvider {
     /**
      * returns the number of iterations
-     * @return
      */
     public Integer getIterationNumber();    
 }

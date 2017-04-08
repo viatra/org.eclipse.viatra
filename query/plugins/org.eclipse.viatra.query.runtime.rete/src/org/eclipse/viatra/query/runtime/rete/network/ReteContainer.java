@@ -86,6 +86,7 @@ public final class ReteContainer {
      * 
      * @param node the node
      * @return true if the node was not in the set of re-derivable ones
+     * @since 1.6
      */
     public boolean registerRederivable(RederivableNode node) {
         return this.rederivables.add(node);
@@ -96,6 +97,7 @@ public final class ReteContainer {
      * 
      * @param node the node
      * @return true if the node has already been registered as re-derivable
+     * @since 1.6
      */
     public boolean unregisterRederivable(UniquenessEnforcerNode node) {
         return this.rederivables.remove(node);
@@ -105,6 +107,7 @@ public final class ReteContainer {
      * Returns the first {@link RederivableNode} node.
      * 
      * @return the first node
+     * @since 1.6
      */
     public RederivableNode getFirstRederivable() {
         if (this.rederivables.isEmpty()) {

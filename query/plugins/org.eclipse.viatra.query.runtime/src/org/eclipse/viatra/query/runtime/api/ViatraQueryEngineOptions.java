@@ -111,8 +111,6 @@ public final class ViatraQueryEngineOptions {
 
     /**
      * Initializes an option builder with no previously set options.
-     * 
-     * @return
      */
     public static Builder defineOptions() {
         return new Builder();
@@ -120,9 +118,6 @@ public final class ViatraQueryEngineOptions {
 
     /**
      * Initializes an option builder with settings from an existing configuration.
-     * 
-     * @param options
-     * @return
      */
     public static Builder copyOptions(ViatraQueryEngineOptions options) {
         return new Builder(options);
@@ -149,8 +144,6 @@ public final class ViatraQueryEngineOptions {
     /**
      * Returns the configured default caching backed. If the default backend caches matches, it is usually expected, but
      * not mandatory for the two default backends to be the same.
-     * 
-     * @return
      */
     public IQueryBackendFactory getDefaultCachingBackendFactory() {
         return defaultCachingBackendFactory;

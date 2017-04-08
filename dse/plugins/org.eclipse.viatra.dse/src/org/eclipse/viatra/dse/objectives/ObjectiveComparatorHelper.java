@@ -44,10 +44,6 @@ public class ObjectiveComparatorHelper {
      * Compares two fitnesses based on hierarchical dominance. Returns -1 if the second parameter {@code o2} is a better
      * solution ({@code o2} dominates {@code o1}), 1 if the first parameter {@code o1} is better ({@code o1} dominates
      * {@code o2}) and returns 0 if they are non-dominating each other.
-     * 
-     * @param o1
-     * @param o2
-     * @return
      */
     public int compare(Fitness o1, Fitness o2) {
 
@@ -99,8 +95,6 @@ public class ObjectiveComparatorHelper {
 
     /**
      * Returns the inner {@link TrajectoryFitness} list.
-     * 
-     * @return
      */
     public List<TrajectoryFitness> getTrajectoryFitnesses() {
         return trajectoryFitnesses;
@@ -108,8 +102,6 @@ public class ObjectiveComparatorHelper {
 
     /**
      * Returns a random {@link TrajectoryFitness} from the pareto front.
-     * 
-     * @return
      */
     public TrajectoryFitness getRandomBest() {
         List<TrajectoryFitness> paretoFront = getParetoFront();
@@ -119,8 +111,6 @@ public class ObjectiveComparatorHelper {
 
     /**
      * Returns the pareto front of the previously added {@link TrajectoryFitness}.
-     * 
-     * @return
      */
     public List<TrajectoryFitness> getParetoFront() {
         return getFronts().get(0);
@@ -128,8 +118,6 @@ public class ObjectiveComparatorHelper {
 
     /**
      * Returns the previously added {@link TrajectoryFitness} instances in fronts.
-     * 
-     * @return
      */
     public List<? extends List<TrajectoryFitness>> getFronts() {
         Preconditions.checkArgument(!trajectoryFitnesses.isEmpty(), "No trajectory fitnesses were added.");

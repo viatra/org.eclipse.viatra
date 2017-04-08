@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EClass
 import org.eclipse.emf.ecore.EDataType
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.patternlanguage.emf.services.EMFPatternLanguageGrammarAccess
-import org.eclipse.viatra.query.patternlanguage.emf.types.EMFPatternTypeProvider
 import org.eclipse.viatra.query.patternlanguage.helper.CorePatternLanguageHelper
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody
@@ -353,7 +352,7 @@ class EMFPatternLanguageJvmModelInferrerUtil {
   	}
   	
   	/**
-  	 * 
+  	 * @since 1.6
   	 */
   	def getInternalSpecificationPackage(Pattern pattern) {
   		return getPackageName(pattern)+".internal"
@@ -400,9 +399,16 @@ class EMFPatternLanguageJvmModelInferrerUtil {
 	}
 	
 	/**
+	 * Returns an inferred class with a predefined <em>direct</em> subtype
+	 */
+	def findInferredClass(EObject pattern, Class<?> clazz) {
+	    findInferredClass(pattern, #{clazz})
+	}
+	/**
 	 * Returns an inferred class with a predefined <em>direct</em> subtype (one of the given values)
 	 * @param pattern the source pattern
 	 * @param clazzes a set of classes to check whether the inferred class has any as given values
+	 * @since 1.6
 	 */
 	def findInferredClass(EObject pattern, Class<?>... clazzes) {
 		associations.getJvmElements(pattern).filter(typeof(JvmType)).findFirst[
