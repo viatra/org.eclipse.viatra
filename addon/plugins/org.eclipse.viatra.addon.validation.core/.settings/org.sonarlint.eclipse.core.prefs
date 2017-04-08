@@ -1,0 +1,5 @@
+autoEnabled=true
+eclipse.preferences.version=1
+extraProperties=
+moduleKey=org.eclipse.viatra\:org.eclipse.viatra.addon.validation.core
+serverId=build
