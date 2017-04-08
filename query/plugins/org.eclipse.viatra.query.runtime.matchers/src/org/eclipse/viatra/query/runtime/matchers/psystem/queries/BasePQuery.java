@@ -44,7 +44,7 @@ public abstract class BasePQuery implements PQuery {
 	/** For traceability only. */
 	private List<Object> wrappingQuerySpecifications = new ArrayList<Object>(1);
 
-    private final class AnnotationNameTester implements Predicate<PAnnotation> {
+    private static final class AnnotationNameTester implements Predicate<PAnnotation> {
         private final String annotationName;
 
         private AnnotationNameTester(String annotationName) {

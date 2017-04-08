@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Preconditions;
+
 public class CsvFile {
 
     protected String fileBasePath = "";
@@ -31,8 +33,6 @@ public class CsvFile {
     private Path path;
 
     protected List<String> columnNamesInOrder = new ArrayList<>();
-
-    protected List<Row> loadedRows;
 
     public String getHeaderString() {
         StringBuilder sb = new StringBuilder();
@@ -78,9 +78,7 @@ public class CsvFile {
     }
 
     public boolean appendRow(Row row) {
-        if (csvFile == null) {
-            throw new RuntimeException("Csv file is not created yet.");
-        }
+        Preconditions.checkState(csvFile != null, "Csv file is not created yet.");
 
         try (
                 FileWriter fw = new FileWriter(path.toString(), true);

@@ -107,6 +107,7 @@ public abstract class ViatraViewersViewSupport extends ViatraViewersPartSupport 
                     return new EMFScope(eO.eResource().getResourceSet());
                 }
             }
+            break;
         case RESOURCE:
             for (Notifier n : notifiers) {
                 if (n instanceof ResourceSet) {

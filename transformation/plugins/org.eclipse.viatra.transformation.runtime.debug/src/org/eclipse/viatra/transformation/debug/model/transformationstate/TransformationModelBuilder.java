@@ -12,11 +12,15 @@ package org.eclipse.viatra.transformation.debug.model.transformationstate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -29,14 +33,13 @@ public class TransformationModelBuilder {
     }
 
     public synchronized TransformationModelElement getTransformationElement(EObject eobject) {
-        for (TransformationModelElement trElement : elementMap.keySet()) {
-            if (elementMap.get(trElement).equals(eobject)) {
-                return trElement;
+        for (Entry<TransformationModelElement, EObject> elementEntry : elementMap.entrySet()) {
+            if (Objects.equals(elementEntry.getValue(), eobject)) {
+                return elementEntry.getKey();
             }
         }
-
-        TransformationModelElement element = createTransformationElement(eobject);
-        return element;
+        
+        return createTransformationElement(eobject);
     }
 
     private TransformationModelElement createTransformationElement(EObject eobject) {
@@ -104,9 +107,9 @@ public class TransformationModelBuilder {
     }
 
     private EObject getEObject(TransformationModelElement element) {
-        for (TransformationModelElement keyElement : elementMap.keySet()) {
-            if (keyElement.getId().equals(element.getId())) {
-                return elementMap.get(keyElement);
+        for (Entry<TransformationModelElement, EObject> elementEntry : elementMap.entrySet()) {
+            if (Objects.equals(elementEntry.getKey().getId(), element.getId())) {
+                return elementEntry.getValue();
             }
         }
         return null;

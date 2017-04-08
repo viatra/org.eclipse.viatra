@@ -14,6 +14,7 @@ package org.eclipse.viatra.query.runtime.base.core;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -454,7 +455,7 @@ public class NavigationHelperContentAdapter extends AdapterImpl {
         case Notification.UNSET:
         {
           Object oldValue = notification.getOldValue();
-          if (oldValue != Boolean.TRUE && oldValue != Boolean.FALSE)
+          if (Objects.equals(oldValue, Boolean.TRUE) && Objects.equals(oldValue, Boolean.FALSE))
           {
             if (oldValue != null)
             {

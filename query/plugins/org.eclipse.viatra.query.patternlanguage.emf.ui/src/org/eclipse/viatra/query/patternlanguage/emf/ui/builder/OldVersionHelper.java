@@ -40,7 +40,6 @@ import com.google.inject.Inject;
  */
 public class OldVersionHelper {
 
-    Map<URI, Resource> resourceMap = Maps.newHashMap();
     Map<IPath, URI> copiedURIMap = Maps.newHashMap();
     Map<IProject, ResourceSet> resourceSetMap = Maps.newHashMap();
 
@@ -134,7 +133,7 @@ public class OldVersionHelper {
         if (absolutePath.segmentCount() == 0) {
             return null;
         }
-        IProject project = workspaceRoot.getProject(absolutePath.segment(0).toString());
+        IProject project = workspaceRoot.getProject(absolutePath.segment(0));
         ResourceSet set = getResourceSet(project);
 
         URI copiedURI = getCopiedURI(project, absolutePath);

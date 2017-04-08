@@ -11,6 +11,7 @@
 package org.eclipse.viatra.query.patternlanguage.util;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -26,7 +27,6 @@ import org.eclipse.xtext.resource.impl.LiveShadowedResourceDescriptions;
 import org.eclipse.xtext.workspace.IProjectConfig;
 import org.eclipse.xtext.workspace.IProjectConfigProvider;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -82,11 +82,11 @@ public class DuplicationChecker {
         Set<IEObjectDescription> duplicates = Sets.newHashSet();
         for (IEObjectDescription shadowingPatternDescription : shadowingPatternDescriptions) {
             EObject shadowingPattern = shadowingPatternDescription.getEObjectOrProxy();
-            if (shadowingPattern != pattern) {
+            if (Objects.equals(shadowingPattern, pattern)) {
                 URI resourceUri = pattern.eResource().getURI();
                 // not using shadowingPattern because it might be proxy
                 URI otherResourceUri = shadowingPatternDescription.getEObjectURI().trimFragment(); 
-                if (!Objects.equal(resourceUri, otherResourceUri) && isStandaloneFileURI(shadowingPattern, otherResourceUri)) {
+                if (!Objects.equals(resourceUri, otherResourceUri) && isStandaloneFileURI(shadowingPattern, otherResourceUri)) {
                     // If shadowing pattern is not in another source file in a source folder, it does not matter
                     continue;
                 }
@@ -99,12 +99,10 @@ public class DuplicationChecker {
                             resourceDescriptions);
                     List<IContainer> visibleFromOther = containerManager.getVisibleContainers(otherResourceDescription,
                             resourceDescriptions);
-                    if (Iterables.any(visible, contains(otherResourceDescription))
-                            || Iterables.any(visibleFromOther, contains(resourceDescription))) {
-                        if (!Objects.equal(resourceUri, otherResourceUri)) {
-                            duplicates.add(shadowingPatternDescription);
-                            
-                        }
+                    if ((Iterables.any(visible, contains(otherResourceDescription))
+                            || Iterables.any(visibleFromOther, contains(resourceDescription))) && !Objects.equals(resourceUri, otherResourceUri)) {
+                        duplicates.add(shadowingPatternDescription);
+                        
                     }
                 } else {
                     duplicates.add(shadowingPatternDescription);

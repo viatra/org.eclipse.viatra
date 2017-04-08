@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
@@ -99,13 +100,13 @@ public class TransformationModelElement implements Serializable{
     }
     
     public Map<String, List<TransformationModelElement>> getContainments() {
-        return Maps.newHashMap((containedElements));
+        return Maps.newHashMap(containedElements);
     }
     
     public List<TransformationModelElement> getChildren() {
         List<TransformationModelElement> list = Lists.newArrayList();
-        for(String label : containedElements.keySet()){
-            list.addAll(containedElements.get(label));
+        for(List<TransformationModelElement> children : containedElements.values()){
+            list.addAll(children);
         } 
         return list;
     }

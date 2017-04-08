@@ -81,14 +81,7 @@ public class ViatraViewerDataModel extends ViewerDataModel {
  	 * Instantiate a {@link ViewerState} and its corresponding {@link ViewerDataModel} instance, for VIATRA-based 
  	 * model sources.
  	 * 
- 	 * When the state is disposed, the model will be disposed too.
- 	 * 
- 	 * @param set
- 	 * @param engine
- 	 * @param patterns
- 	 * @param filter
- 	 * @param features
- 	 * @return
+ 	 * <p>When the state is disposed, the view model will be disposed too.
  	 */
  	public static ViewerState newViewerState(ViatraQueryEngine engine,
  			Collection<IQuerySpecification<?>> patterns, ViewerDataFilter filter,
@@ -113,7 +106,6 @@ public class ViatraViewerDataModel extends ViewerDataModel {
  	 * @param model
  	 * @param filter
  	 * @param features
- 	 * @return
  	 */
  	public static ViewerState newViewerState(ViatraViewerDataModel model, ViewerDataFilter filter,
  			Collection<ViewerStateFeature> features)

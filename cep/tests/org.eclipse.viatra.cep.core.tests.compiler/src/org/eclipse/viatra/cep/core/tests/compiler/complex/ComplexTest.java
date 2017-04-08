@@ -38,7 +38,6 @@ public class ComplexTest {
     protected EventModel eventModel;
     protected InternalModel internalModel;
     protected TraceModel traceModel;
-    protected TransformationBasedCompiler compiler;
 
     @Before
     public void setUp() throws Exception {
@@ -63,7 +62,6 @@ public class ComplexTest {
 
     @After
     public void tearDown() throws Exception {
-        compiler = null;
         resourceSet = null;
 
         eventModel = null;
@@ -84,9 +82,7 @@ public class ComplexTest {
     protected boolean transitionTypedWith(Transition transition, Class<? extends EventPattern> clazz) {
         try {
             return transitionTypedWith(transition, clazz.newInstance().getId());
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

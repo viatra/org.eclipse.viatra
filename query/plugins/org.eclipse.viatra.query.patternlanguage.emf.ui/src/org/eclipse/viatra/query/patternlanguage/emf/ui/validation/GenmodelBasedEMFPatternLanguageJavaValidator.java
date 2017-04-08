@@ -107,8 +107,11 @@ public class GenmodelBasedEMFPatternLanguageJavaValidator extends EMFPatternLang
     @Check(CheckType.NORMAL)
     public void checkClassPath(ClassType typeDecl) {
         Resource resource = typeDecl.eResource();
+        if (resource == null) {
+            return;
+        }
         ResourceSet resourceSet = resource.getResourceSet();
-        if (resource == null || resourceSet == null) {
+        if (resourceSet == null) {
             return;
         }
         IJavaProject javaProject = projectProvider.getJavaProject(resourceSet);

@@ -54,7 +54,7 @@ public class ElementSelectionDialog extends SelectionStatusDialog {
     private String header;
     private ImportFilter importFilter;
 
-    private class ImportFilter extends ViewerFilter {
+    private static class ImportFilter extends ViewerFilter {
 
         private String filterString = "";
 

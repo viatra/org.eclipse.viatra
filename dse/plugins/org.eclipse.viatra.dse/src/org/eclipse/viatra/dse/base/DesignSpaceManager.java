@@ -35,8 +35,6 @@ import org.eclipse.viatra.transformation.evm.api.Context;
 import org.eclipse.viatra.transformation.evm.api.resolver.ChangeableConflictSet;
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRule;
 
-import com.google.common.collect.Iterators;
-
 public class DesignSpaceManager {
 
     private final IStateCoder stateCoder;

@@ -14,10 +14,6 @@ import static org.eclipse.viatra.cep.core.tests.compiler.complex.Utils.noEpsilon
 import static org.eclipse.viatra.cep.core.tests.compiler.complex.Utils.noOrphanStates;
 import static org.eclipse.viatra.cep.core.tests.compiler.complex.Utils.noOrphanTransitions;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.viatra.cep.core.compiler.testdata.patterns.CepFactory;
 import org.eclipse.viatra.cep.core.compiler.testdata.patterns.patterns.atomic.A_1_Pattern;

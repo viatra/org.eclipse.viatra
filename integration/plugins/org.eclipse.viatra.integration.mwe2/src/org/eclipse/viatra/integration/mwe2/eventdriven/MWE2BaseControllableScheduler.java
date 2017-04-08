@@ -57,8 +57,7 @@ public class MWE2BaseControllableScheduler extends Scheduler implements IControl
 
         @Override
         public Scheduler prepareScheduler(final ScheduledExecution execution) {
-            MWE2BaseControllableScheduler scheduler = new MWE2BaseControllableScheduler(execution, this);
-            setScheduler(scheduler);
+            setScheduler(new MWE2BaseControllableScheduler(execution, this));
             return scheduler;
         }
 

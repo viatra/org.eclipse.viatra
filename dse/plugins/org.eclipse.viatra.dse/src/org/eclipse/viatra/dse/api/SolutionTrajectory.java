@@ -15,7 +15,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.edit.command.ChangeCommand;

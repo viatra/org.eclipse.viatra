@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -100,9 +101,10 @@ public class IBiDirectionalWrapper<V> implements IBiDirectionalGraphDataSource<V
 
     @Override
     public void nodeDeleted(V n) {
-        for (V key : backwardEdges.keySet()) {
-            while (backwardEdges.get(key).contains(n))
-                backwardEdges.get(key).remove(n);
+        for (List<V> edges : backwardEdges.values()) {
+            while (edges.contains(n)) {
+                edges.remove(n);
+            }
         }
     }
 

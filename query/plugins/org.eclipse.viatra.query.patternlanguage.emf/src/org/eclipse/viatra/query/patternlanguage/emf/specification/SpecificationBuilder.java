@@ -307,7 +307,7 @@ public class SpecificationBuilder {
                 forgetSpecificationTransitively(dependant, forgottenSpecifications);
             }
         }
-        dependantQueries.removeAll(specification);
+        dependantQueries.removeAll(specification.getInternalQueryRepresentation());
     }
 
     /**

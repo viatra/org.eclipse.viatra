@@ -160,8 +160,6 @@ public class PatternLanguageProposalProvider extends AbstractPatternLanguageProp
             acceptor.accept(proposal);
         }
 
-        Function<IEObjectDescription, ICompletionProposal> proposalFactory = getProposalFactory(
-                getFeatureCallRuleName(), contentAssistContext);
         proposeDeclaringTypeForStaticInvocation(context, null /* ignore */, contentAssistContext, acceptor);
     }
 

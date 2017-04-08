@@ -12,6 +12,8 @@
 
 package org.eclipse.viatra.cep.tooling.ui.wizards;
 
+import java.util.Objects;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -153,7 +155,7 @@ public class NewVeplFileWizardContainerConfigurationPage extends NewTypeWizardPa
             return JavaConventions.validatePackageName(text, JavaCore.VERSION_1_6, JavaCore.VERSION_1_6);
         }
         IStatus status = JavaConventionsUtil.validatePackageName(text, project);
-        if (!text.equalsIgnoreCase(text)) {
+        if (!Objects.equals(text, text.toLowerCase())) {
             return new Status(IStatus.ERROR, Activator.PLUGIN_ID, PACKAGE_NAME_WARNING);
         }
         return status;

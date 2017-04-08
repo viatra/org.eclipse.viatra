@@ -35,8 +35,11 @@ public class RefreshCodeToLinkedFileHandler extends AbstractHandler {
 
         if (QBEViewUtils.getLinkedFile() != null) {
             try {
-                String code = ((this.qbeView == null || this.qbeView.getService() == null) ? null
-                        : this.qbeView.getService().getPatternCode());
+                if (this.qbeView == null || this.qbeView.getService() == null) {
+                    StatusManager.getManager().handle(new Status(IStatus.ERROR, QBEViewUtils.PLUGIN_ID,
+                            IStatus.ERROR, "Qery by Example View not available", null));
+                }
+                String code = this.qbeView.getService().getPatternCode();
                 QBEViewUtils.getLinkedFile().setContents(new ByteArrayInputStream(code.getBytes()), true, false, new NullProgressMonitor());
             } catch (CoreException ex) {
                 StatusManager.getManager().handle(new Status(IStatus.ERROR, QBEViewUtils.PLUGIN_ID,

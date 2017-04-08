@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.testing.ui.handlers;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -132,7 +133,7 @@ public class SaveSnapshotHandler extends AbstractHandler {
 			}
 		} else {
 			snapshotFile = files[0];
-			if(snapshotFile != null && snapshotFile.getFileExtension().equals("snapshot")) {
+			if(snapshotFile != null && Objects.equals(snapshotFile.getFileExtension(), "snapshot")) {
 			
 				snapshot = loader.loadExpectedResultsFromFile(resourceSet,snapshotFile);
 				

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.igraph.IBiDirectionalGraphDataSource;
@@ -157,9 +158,10 @@ public class Graph<V> implements IGraphDataSource<V>, IBiDirectionalGraphDataSou
             sb.append(n.toString() + " ");
         }
         sb.append(" edges = ");
-        for (V source : this.edgeList.keySet()) {
-            if (edgeList.get(source) != null) {
-                for (V target : this.edgeList.get(source)) {
+        for (Entry<V, List<V>> entry : this.edgeList.entrySet()) {
+            V source = entry.getKey();
+            if (entry.getValue() != null) {
+                for (V target : entry.getValue()) {
                     sb.append("(" + source + "," + target + ") ");
                 }
             }

@@ -133,11 +133,9 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
             }
         }
         boolean matchFound = currentOperation > upperBound;
-        if( matchFound ){
-            if (!adapters.isEmpty()){
-                for (ILocalSearchAdapter adapter : adapters) {
-                    adapter.matchFound(this, frame);
-                }
+        if (matchFound && !adapters.isEmpty()) {
+            for (ILocalSearchAdapter adapter : adapters) {
+                adapter.matchFound(this, frame);
             }
         }
 		return matchFound;

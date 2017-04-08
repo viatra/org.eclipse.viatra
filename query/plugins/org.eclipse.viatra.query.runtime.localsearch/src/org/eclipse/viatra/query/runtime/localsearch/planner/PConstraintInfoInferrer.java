@@ -52,7 +52,7 @@ class PConstraintInfoInferrer {
     private static final class VariableNotDeducablePredicate implements Predicate<PVariable> {
         @Override
         public boolean apply(PVariable input) {
-            return !input.isDeducable();
+            return input != null && !input.isDeducable();
         }
     }
 

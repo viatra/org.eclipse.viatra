@@ -142,7 +142,7 @@ public class EMFBaseIndexWrapper implements IBaseIndex {
 			return success;
 		} else return false;
 	}
-	private class EObjectObserver implements LightweightEObjectObserver {
+	private static class EObjectObserver implements LightweightEObjectObserver {
 		/**
 		 * 
 		 */

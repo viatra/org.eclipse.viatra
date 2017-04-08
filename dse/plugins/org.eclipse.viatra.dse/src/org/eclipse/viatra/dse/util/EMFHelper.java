@@ -58,6 +58,8 @@ public final class EMFHelper {
     }
 
     public static class EmfHelperException extends RuntimeException {
+        private static final long serialVersionUID = 7635796550669616626L;
+        
         public EmfHelperException(String string) {
             super(string);
         }
@@ -202,10 +204,6 @@ public final class EMFHelper {
 
     /**
      * Loads a model as a {@link Resource}. In headless mode, don't forget to call XYZPackage.eINSTANCE.
-     * 
-     * @param fileName
-     * @return
-     * @throws IOException
      */
     public static Resource loadModel(String fileName) throws IOException {
         Preconditions.checkArgument(fileName != null && !fileName.isEmpty(), "File name is null or empty.");
@@ -324,8 +322,6 @@ public final class EMFHelper {
 
     /**
      * Collects all the classes and references from the given {@link EPackage}s.
-     * @param metaModelPackages
-     * @return
      * 
      * @deprecated Use {@link #getAllMetaModelElements(Set)} instead.
      */

@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.viatra.query.runtime.base.itc.alg.misc.ITcRelation;
@@ -156,8 +157,9 @@ public class DRedTcRelation<V> implements Serializable, ITcRelation<V> {
     public String toString() {
         StringBuilder sb = new StringBuilder("TcRelation = ");
 
-        for (V source : this.tuplesForward.keySet()) {
-            for (V target : this.tuplesForward.get(source)) {
+        for (Entry<V, Set<V>> entry : this.tuplesForward.entrySet()) {
+            V source = entry.getKey();
+            for (V target : entry.getValue()) {
                 sb.append("(" + source + "," + target + ") ");
             }
         }
@@ -193,15 +195,17 @@ public class DRedTcRelation<V> implements Serializable, ITcRelation<V> {
 
         DRedTcRelation<V> aTR = (DRedTcRelation<V>) obj;
 
-        for (V source : aTR.tuplesForward.keySet()) {
-            for (V target : aTR.tuplesForward.get(source)) {
+        for (Entry<V, Set<V>> entry : aTR.tuplesForward.entrySet()) {
+            V source = entry.getKey();
+            for (V target : entry.getValue()) {
                 if (!this.containsTuple(source, target))
                     return false;
             }
         }
 
-        for (V source : this.tuplesForward.keySet()) {
-            for (V target : this.tuplesForward.get(source)) {
+        for (Entry<V, Set<V>> entry : this.tuplesForward.entrySet()) {
+            V source = entry.getKey();
+            for (V target : entry.getValue()) {
                 if (!aTR.containsTuple(source, target))
                     return false;
             }

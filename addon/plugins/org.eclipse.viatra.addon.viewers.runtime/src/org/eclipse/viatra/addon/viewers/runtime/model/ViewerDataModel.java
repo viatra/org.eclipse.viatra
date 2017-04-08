@@ -42,7 +42,7 @@ import org.eclipse.viatra.transformation.views.core.ViewModelManager;
  */
 public abstract class ViewerDataModel {
 
-    private final String NOTATION_RESOURCE = "org.eclipse.viatra.addon.viewers.notation.NotationResource";
+    private static final String NOTATION_RESOURCE = "org.eclipse.viatra.addon.viewers.notation.NotationResource";
     
     protected NotationModel model;
     protected ViatraQueryEngine engine;

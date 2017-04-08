@@ -85,14 +85,14 @@ public class Options {
     	OFF,
     	OPPORTUNISTIC
     }
-    public static FunctionalDependencyOption functionalDependencyOption = 
+    public static final FunctionalDependencyOption functionalDependencyOption = 
     		FunctionalDependencyOption.OPPORTUNISTIC;
     
     public enum PlanTrimOption {
     	OFF,
     	OPPORTUNISTIC
     }
-    public static PlanTrimOption planTrimOption = 
+    public static final PlanTrimOption planTrimOption = 
     		PlanTrimOption.OPPORTUNISTIC;
 
 }

@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -83,7 +84,7 @@ public final class TargetPlatformMetamodelsIndex implements ITargetPlatformMetam
         preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
                     @Override
                     public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
-                        if (event.getProperty() == ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE) {
+                        if (Objects.equals(event.getProperty(), ToolingCorePreferenceConstants.P_DISABLE_TARGET_PLATFORM_METAMODEL_INDEX_UPDATE)) {
                             // Note that if the property is set through non-typed API, it may be a String instead of Boolean.
                             Object value = event.getNewValue();
                             Boolean disableUpdatePreference = false;

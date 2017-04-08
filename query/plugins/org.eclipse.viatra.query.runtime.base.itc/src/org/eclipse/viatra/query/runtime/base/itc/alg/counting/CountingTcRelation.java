@@ -167,9 +167,11 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
     public String toString() {
         StringBuilder sb = new StringBuilder("TcRelation = ");
 
-        for (V source : this.tuplesForward.keySet()) {
-            for (V target : this.tuplesForward.get(source).keySet()) {
-                sb.append("{(" + source + "," + target + ")," + this.tuplesForward.get(source).get(target) + "} ");
+        for (Entry<V, Map<V, Integer>> outerEntry : this.tuplesForward.entrySet()) {
+            V source = outerEntry.getKey();
+            for (Entry<V, Integer> innerEntry: outerEntry.getValue().entrySet()) {
+                V target = innerEntry.getKey();
+                sb.append("{(" + source + "," + target + ")," + innerEntry.getValue() + "} ");
             }
         }
         return sb.toString();
@@ -235,16 +237,18 @@ public class CountingTcRelation<V> implements ITcRelation<V> {
         } else {
             CountingTcRelation<V> aTR = (CountingTcRelation<V>) obj;
 
-            for (V source : aTR.tuplesForward.keySet()) {
-                for (V target : aTR.tuplesForward.get(source).keySet()) {
+            for (Entry<V, Map<V, Integer>> entry : aTR.tuplesForward.entrySet()) {
+                V source = entry.getKey();
+                for (V target : entry.getValue().keySet()) {
                     if (!this.containsTuple(source, target)) {
                         return false;
                     }
                 }
             }
 
-            for (V source : this.tuplesForward.keySet()) {
-                for (V target : this.tuplesForward.get(source).keySet()) {
+            for (Entry<V, Map<V, Integer>> entry : this.tuplesForward.entrySet()) {
+                V source = entry.getKey();
+                for (V target : entry.getValue().keySet()) {
                     if (!aTR.containsTuple(source, target)) {
                         return false;
                     }

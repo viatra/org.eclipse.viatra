@@ -15,6 +15,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
@@ -108,9 +109,10 @@ public class TransformationValue extends TransformationDebugElement implements I
             
             //Attributes
             Map<String, String> attributes = element.getAttributes();
-            for (String attrLabel : attributes.keySet()) {
+            for (Entry<String, String> attrEntry : attributes.entrySet()) {
+                String attrLabel = attrEntry.getKey();
                 if(!attrLabel.equals(TransformationModelElement.TYPE_ATTR)){
-                    transformationVariables.add(createTransformationVariable("\""+attributes.get(attrLabel)+"\"", attrLabel));
+                    transformationVariables.add(createTransformationVariable("\""+attrEntry.getValue()+"\"", attrLabel));
                 }
             }
             //CrossReferences

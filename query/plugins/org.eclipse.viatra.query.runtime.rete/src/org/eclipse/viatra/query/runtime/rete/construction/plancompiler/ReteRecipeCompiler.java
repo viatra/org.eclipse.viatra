@@ -11,7 +11,6 @@
 package org.eclipse.viatra.query.runtime.rete.construction.plancompiler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -110,7 +109,6 @@ public class ReteRecipeCompiler {
     private final IQueryPlannerStrategy plannerStrategy;
 	private final IQueryMetaContext metaContext;
 	private final IQueryBackendHintProvider hintProvider;
-	private final IQueryCacheContext queryCacheContext;
 	private final PDisjunctionRewriter normalizer;
 	private final QueryAnalyzer queryAnalyzer;
 	private final Logger logger;
@@ -130,7 +128,6 @@ public class ReteRecipeCompiler {
 		this.plannerStrategy = plannerStrategy;
 		this.logger = logger;
 		this.metaContext = metaContext;
-		this.queryCacheContext = queryCacheContext;
         this.queryAnalyzer = queryAnalyzer;
 		this.normalizer = new PDisjunctionRewriterCacher(new SurrogateQueryRewriter(), new PBodyNormalizer(metaContext) {
 

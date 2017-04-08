@@ -34,7 +34,7 @@ import com.google.common.collect.Maps;
  */
 public class ViewerDataFilter {
 
-    public static ViewerDataFilter UNFILTERED = new ViewerDataFilter();
+    public static final ViewerDataFilter UNFILTERED = new ViewerDataFilter();
 
     private Map<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>, ViewerFilterDefinition> filterDefinitions;
     
@@ -56,9 +56,6 @@ public class ViewerDataFilter {
 
     /**
      * Copies all filter rules from an existing {@link ViewerDataFilter} instance.
-     * 
-     * @param other
-     * @return
      */
     public static ViewerDataFilter cloneFilter(ViewerDataFilter other) {
         return new ViewerDataFilter(other.filterDefinitions);

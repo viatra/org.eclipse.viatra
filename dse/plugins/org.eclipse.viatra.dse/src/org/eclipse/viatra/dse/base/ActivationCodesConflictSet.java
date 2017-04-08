@@ -26,7 +26,7 @@ import com.google.common.base.Preconditions;
 
 public class ActivationCodesConflictSet implements ChangeableConflictSet {
 
-    private class ActivationCodesMultiBiMap {
+    private static class ActivationCodesMultiBiMap {
         public Map<Activation<?>, Object> activationsToCodes = new HashMap<>();
         public Map<Object, Set<Activation<?>>> codesToActivations = new HashMap<>();
 
