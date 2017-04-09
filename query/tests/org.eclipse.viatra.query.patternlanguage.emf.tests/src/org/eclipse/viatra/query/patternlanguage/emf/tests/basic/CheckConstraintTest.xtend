@@ -199,5 +199,53 @@ class CheckConstraintTest extends AbstractValidatorTest {
 		    getInfoCode(EMFIssueCodes::MISSING_PARAMETER_TYPE)
 		)
 	}
+	
+	@Test
+    def evalReturnAsParameterCheck() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern evalTest(cl : EClass, name : java String) {
+                EClass.name(cl, name);
+                name == eval(name);
+            }
+        ''')
+        tester.validate(model).assertAll(
+            getErrorCode(IssueCodes::EVAL_INCORRECT_RETURNVALUE)
+        )
+    }
+    
+	@Test
+    def evalReturnAsParameterCheck2() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern evalTest(cl : EClass, name : java String) {
+                EClass.name(cl, name);
+                name != eval(name);
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertAll(
+            getWarningCode(IssueCodes::EVAL_INCORRECT_RETURNVALUE)
+        )
+    }
+    
+	@Test
+    def evalReturnAsParameterCheck3() {
+        val model = parseHelper.parse('''
+            package org.eclipse.viatra.query.patternlanguage.emf.tests
+            import "http://www.eclipse.org/emf/2002/Ecore"
+
+            pattern evalTest(cl : EClass, n : java String) {
+                EClass.name(cl, name);
+                n == eval(name);
+            }
+        ''')
+        model.assertNoErrors
+        tester.validate(model).assertOK
+    }
 
 }

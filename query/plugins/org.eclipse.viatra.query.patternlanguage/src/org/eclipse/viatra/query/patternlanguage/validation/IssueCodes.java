@@ -57,7 +57,11 @@ public final class IssueCodes {
 
     public static final String CHECK_MUST_BE_BOOLEAN = ISSUE_CODE_PREFIX + "check_boolean";
     public static final String CHECK_WITH_IMPURE_JAVA_CALLS = ISSUE_CODE_PREFIX + "check_with_impure_java_calls";
-
+    /**
+     * @since 1.6
+     */
+    public static final String EVAL_INCORRECT_RETURNVALUE = ISSUE_CODE_PREFIX + "eval_incorrect_returnvalue";
+    
     public static final String SYMBOLIC_VARIABLE_NEVER_REFERENCED = ISSUE_CODE_PREFIX
             + "symbolic_variable_never_referenced";
     public static final String SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE = ISSUE_CODE_PREFIX

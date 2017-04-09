@@ -463,8 +463,35 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
                         IssueCodes.SELF_COMPARE_CONSTRAINT);
             }
         }
+        
+        // Ensure 
+        boolean op1Eval = PatternLanguagePackage.Literals.FUNCTION_EVALUATION_VALUE.isSuperTypeOf(op1.eClass());
+        boolean op2Eval = PatternLanguagePackage.Literals.FUNCTION_EVALUATION_VALUE.isSuperTypeOf(op2.eClass());
+        
+        if (op1Eval && op2Variable) {
+            checkEvalInCompare(constraint, (VariableValue) op2, (FunctionEvaluationValue) op1);
+        } else if (op2Eval && op1Variable) {
+            checkEvalInCompare(constraint, (VariableValue) op1, (FunctionEvaluationValue) op2);
+        }
+        
     }
 
+    private void checkEvalInCompare(CompareConstraint constraint, VariableValue variable, FunctionEvaluationValue eval) {
+        List<Variable> evalInputVariables = CorePatternLanguageHelper.getUsedVariables(eval.getExpression(), EcoreUtil2
+                .getContainerOfType(constraint, PatternBody.class).getVariables());
+        if (evalInputVariables.contains(variable.getValue().getVariable())) {
+            if (constraint.getFeature() == CompareFeature.EQUALITY) {
+                error("Return value of an eval expression cannot be stored in one of its parameters.", variable, 
+                    PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE,
+                    IssueCodes.EVAL_INCORRECT_RETURNVALUE);
+            } else {
+                warning("Return value of an eval expression should not be compared with one of its parameters.", variable, 
+                        PatternLanguagePackage.Literals.VARIABLE_VALUE__VALUE,
+                        IssueCodes.EVAL_INCORRECT_RETURNVALUE);
+            }
+        }
+    }
+    
     @Check
     public void checkRecursivePatternCall(PatternCall call) {
         Map<PatternCall, Set<PatternCall>> graph = cache.get(call.eResource(), call.eResource(),
