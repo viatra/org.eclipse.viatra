@@ -302,7 +302,7 @@ public class LocalSearchDebugView extends ViewPart implements IZoomableWorkbench
 	}
 
 	
-	private class MatchTableContentProvider implements IStructuredContentProvider {
+	private static class MatchTableContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public void dispose() {

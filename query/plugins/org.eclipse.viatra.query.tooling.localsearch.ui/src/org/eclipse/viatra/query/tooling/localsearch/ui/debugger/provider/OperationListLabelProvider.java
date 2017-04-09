@@ -12,6 +12,8 @@ package org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -145,9 +147,9 @@ public class OperationListLabelProvider extends StyledCellLabelProvider {
 		this.dummyMatchOperationMappings.put(dummyOperation, inputElement);
 	}
     public Object getDummyMatchOperation(SearchPlanExecutor planExecutor) {
-    	for (Object key : dummyMatchOperationMappings.keySet()) {
-			if(dummyMatchOperationMappings.get(key).equals(planExecutor)){
-				return key;
+    	for (Entry<Object, SearchPlanExecutor> key : dummyMatchOperationMappings.entrySet()) {
+			if(Objects.equals(key.getValue(), planExecutor)){
+				return key.getKey();
 			}
 		}
 		return null;

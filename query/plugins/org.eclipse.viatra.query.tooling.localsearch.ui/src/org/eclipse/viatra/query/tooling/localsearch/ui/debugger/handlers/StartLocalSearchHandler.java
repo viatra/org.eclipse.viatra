@@ -41,7 +41,7 @@ import org.eclipse.viatra.query.tooling.ui.util.IFilteredMatcherContent;
  */
 public class StartLocalSearchHandler extends AbstractHandler {
 
-    public static Thread planExecutorThread = null;
+    private static Thread planExecutorThread = null;
 
     @Override
     public Object execute(final ExecutionEvent event) throws ExecutionException {

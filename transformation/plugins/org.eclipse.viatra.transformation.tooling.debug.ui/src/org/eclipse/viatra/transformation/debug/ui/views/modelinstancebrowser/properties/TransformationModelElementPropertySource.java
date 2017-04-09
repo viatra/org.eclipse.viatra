@@ -12,6 +12,7 @@ package org.eclipse.viatra.transformation.debug.ui.views.modelinstancebrowser.pr
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -78,16 +79,16 @@ public class TransformationModelElementPropertySource implements IPropertySource
         }
         //Attributes
         Map<String, String> attributes = element.getAttributes();
-        for(String attrName : attributes.keySet()){
-            if(attrName.equals(id)){
-                return attributes.get(attrName);
+        for(Entry<String,String> attr : attributes.entrySet()){
+            if(attr.getKey().equals(id)){
+                return attr.getValue();
             }
         }
         //Cross References
         Map<String, List<TransformationModelElement>> crossReferences = element.getCrossReferences();
-        for(String crossrefName : crossReferences.keySet()){
-            if(crossrefName.equals(id)){
-                List<TransformationModelElement> list = crossReferences.get(crossrefName);
+        for(Entry<String, List<TransformationModelElement>> crossRef : crossReferences.entrySet()){
+            if(crossRef.getKey().equals(id)){
+                List<TransformationModelElement> list = crossRef.getValue();
                 if(list.size() == 1){
                     return new CrossReferenceElementPropertySource(list.get(0));
                 }else{

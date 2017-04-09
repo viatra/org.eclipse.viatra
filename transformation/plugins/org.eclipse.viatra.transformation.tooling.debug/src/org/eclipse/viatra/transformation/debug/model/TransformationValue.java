@@ -38,15 +38,16 @@ public class TransformationValue extends TransformationDebugElement implements I
     private boolean initialized = false;
     private final TransformationModelProvider modelProvider;
     
-    public Object getValue() {
-        return value;
-    }
-
     public TransformationValue(TransformationDebugTarget target, Object value, TransformationModelProvider modelProvider) {
         super(target);
         this.value = value;
         this.modelProvider = modelProvider;
     }
+    
+    public Object getValue() {
+        return value;
+    }
+
 
     public void addTransformationVariable(TransformationVariable variable) {
         transformationVariables.add(variable);
@@ -117,18 +118,19 @@ public class TransformationValue extends TransformationDebugElement implements I
             }
             //CrossReferences
             Map<String, List<TransformationModelElement>> crossReferences = element.getCrossReferences();
-            for (String referenceLabel : crossReferences.keySet()) {
-                Collection<TransformationModelElement> collection = crossReferences.get(referenceLabel);
+            for (Entry<String, List<TransformationModelElement>> entry : crossReferences.entrySet()) {
+                String referenceLabel = entry.getKey();
+                Collection<TransformationModelElement> collection = entry.getValue();
                 if(collection.size()==1){
-                    transformationVariables.add(createTransformationVariable(crossReferences.get(referenceLabel).iterator().next(), referenceLabel));
+                    transformationVariables.add(createTransformationVariable(collection.iterator().next(), referenceLabel));
                 }else{
-                    transformationVariables.add(createTransformationVariable(crossReferences.get(referenceLabel), referenceLabel));
+                    transformationVariables.add(createTransformationVariable(collection, referenceLabel));
                 }
             }
             //Children
             Map<String, List<TransformationModelElement>> children = element.getContainments();
-            for (String containmentLabel : children.keySet()) {
-                transformationVariables.add(createTransformationVariable(children.get(containmentLabel), containmentLabel));
+            for (Entry<String, List<TransformationModelElement>> entry : children.entrySet()) {
+                transformationVariables.add(createTransformationVariable(entry.getValue(), entry.getKey()));
             }
             
         } else if (value instanceof List<?>) {

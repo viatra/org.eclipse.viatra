@@ -31,7 +31,7 @@ public class TransformationRuleGroup<Rule extends ITransformationRule<?, ?>> ext
 			Function<Rule, RuleSpecification<?>> {
 		@Override
 		public RuleSpecification<?> apply(Rule rule) {
-			return rule.getRuleSpecification();
+			return (rule == null) ? null : rule.getRuleSpecification();
 		}
 	}
 	
@@ -41,6 +41,7 @@ public class TransformationRuleGroup<Rule extends ITransformationRule<?, ?>> ext
 		super();
 	}
 	
+	@SafeVarargs
 	public TransformationRuleGroup(Rule... rules) {
 		super(rules.length);
 		for (Rule rule : rules) {

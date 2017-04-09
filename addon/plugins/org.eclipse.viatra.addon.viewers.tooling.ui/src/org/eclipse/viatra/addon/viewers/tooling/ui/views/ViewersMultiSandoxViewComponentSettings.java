@@ -163,7 +163,7 @@ public class ViewersMultiSandoxViewComponentSettings {
 		
 	}
 	
-	class PatternListLabelProvider extends LabelProvider {
+	static class PatternListLabelProvider extends LabelProvider {
 		private Image itemIcon;
 		private Image edgeIcon; 
 		private Image contIcon;
@@ -217,7 +217,7 @@ public class ViewersMultiSandoxViewComponentSettings {
 		}
 	}
 	
-	class PatternListComparator extends ViewerComparator {
+	static class PatternListComparator extends ViewerComparator {
 		@Override
     	public int category(Object element) {
 		    if (element instanceof IQuerySpecification) {
@@ -237,7 +237,7 @@ public class ViewersMultiSandoxViewComponentSettings {
 
 	}
 	
-	class PatternListContentProvider implements ITreeContentProvider {
+	static class PatternListContentProvider implements ITreeContentProvider {
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 		

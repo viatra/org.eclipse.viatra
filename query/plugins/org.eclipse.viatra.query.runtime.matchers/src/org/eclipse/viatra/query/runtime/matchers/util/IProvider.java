@@ -27,7 +27,7 @@ public interface IProvider<T> {
 	public final class ProvidedValueFunction implements Function<IProvider<PQuery>, PQuery> {
 		@Override
 		public PQuery apply(IProvider<PQuery> input) {
-			return input.get();
+			return (input == null) ? null : input.get();
 		}
 	}
 }

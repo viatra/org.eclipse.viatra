@@ -301,7 +301,7 @@ public class TransformationThread extends TransformationDebugElement implements 
         List<TransformationStackFrame> stackFrames = Lists.newArrayList();
         
         if (state != null) {
-            Deque<RuleActivation> activationStack = new ArrayDeque<RuleActivation>();
+            Deque<RuleActivation> activationStack = new ArrayDeque<>();
             activationStack.addAll(state.getActivationStack());
             while(!activationStack.isEmpty()){
                 try {
@@ -316,7 +316,7 @@ public class TransformationThread extends TransformationDebugElement implements 
         suspended = true;
         fireSuspendEvent(DebugEvent.BREAKPOINT);
         this.state = state;
-        this.name = state.getID();
+        this.name = (state == null) ? "" : state.getID();
     }
     
     public TransformationState getTransformationState() {

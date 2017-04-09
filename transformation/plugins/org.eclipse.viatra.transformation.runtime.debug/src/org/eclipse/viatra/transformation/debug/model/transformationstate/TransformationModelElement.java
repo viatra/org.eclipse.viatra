@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
@@ -121,9 +122,9 @@ public class TransformationModelElement implements Serializable{
     }
     
     public String getNameAttribute(){
-        for (String attributeKey : attributes.keySet()) {
-            if(attributeKey.matches("(.*ID.*|.*identifier.*|.*name.*)")){
-                return attributes.get(attributeKey);
+        for (Entry<String, String> attr : attributes.entrySet()) {
+            if(attr.getKey().matches("(.*ID.*|.*identifier.*|.*name.*)")){
+                return attr.getValue();
             }
         }
         return "";
