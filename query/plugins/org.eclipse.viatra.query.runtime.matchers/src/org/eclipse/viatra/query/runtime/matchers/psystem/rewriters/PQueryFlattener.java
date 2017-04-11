@@ -233,7 +233,9 @@ public class PQueryFlattener extends PDisjunctionRewriter {
     }
 
     private FlattenerCopier createBodyCopier(PQuery query, Map<PositivePatternCall, PBody> calledBodies) {
-        return new FlattenerCopier(query, calledBodies);
+        FlattenerCopier flattenerCopier = new FlattenerCopier(query, calledBodies);
+        flattenerCopier.setTraceCollector(getTraceCollector());
+        return flattenerCopier;
     }
 
     private PBody prepareFlatPBody(PBody pBody) {

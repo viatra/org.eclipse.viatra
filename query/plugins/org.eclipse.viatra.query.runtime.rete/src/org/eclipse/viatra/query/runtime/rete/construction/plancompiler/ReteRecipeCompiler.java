@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions;
 import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackendHintProvider;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
@@ -244,6 +245,7 @@ public class ReteRecipeCompiler {
 
     private CompiledQuery compileProduction(PQuery query) throws QueryProcessingException {
         Collection<SubPlan> bodyPlans = new ArrayList<SubPlan>();
+        normalizer.setTraceCollector(CommonQueryHintOptions.normalizationTraceCollector.getValueOrDefault(hintProvider.getQueryEvaluationHint(query)));
         for (PBody pBody : normalizer.rewrite(query).getBodies()) {
             SubPlan bodyPlan = getPlan(pBody);
             bodyPlans.add(bodyPlan);

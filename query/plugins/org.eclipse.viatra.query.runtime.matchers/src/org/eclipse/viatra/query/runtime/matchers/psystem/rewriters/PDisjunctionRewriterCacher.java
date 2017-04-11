@@ -29,6 +29,13 @@ public class PDisjunctionRewriterCacher extends PDisjunctionRewriter {
     private WeakHashMap<PDisjunction, PDisjunction> cachedResults =
             new WeakHashMap<PDisjunction, PDisjunction>();
 
+    private void setupTraceCollectorInChain(){
+        IRewriterTraceCollector collector = getTraceCollector();
+        for(PDisjunctionRewriter rewriter: rewriterChain){
+            rewriter.setTraceCollector(collector);
+        }
+    }
+    
     public PDisjunctionRewriterCacher(PDisjunctionRewriter rewriter) {
         rewriterChain = ImmutableList.of(rewriter);
     }
@@ -45,9 +52,11 @@ public class PDisjunctionRewriterCacher extends PDisjunctionRewriter {
     public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
         if (!cachedResults.containsKey(disjunction)) {
             PDisjunction rewritten = disjunction;
+            setupTraceCollectorInChain();
             for (PDisjunctionRewriter rewriter : rewriterChain) {
                 rewritten = rewriter.rewrite(rewritten);
             }
+            
             cachedResults.put(disjunction, rewritten);
         }
         return cachedResults.get(disjunction);

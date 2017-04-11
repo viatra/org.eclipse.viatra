@@ -15,6 +15,7 @@ import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.L
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.PLANNER_TABLE_ROW_COUNT;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.USE_BASE_INDEX;
 import static org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchHintOptions.ADORNMENT_PROVIDER;
+import static org.eclipse.viatra.query.runtime.matchers.backend.CommonQueryHintOptions.normalizationTraceCollector;
 
 import java.util.Map;
 
@@ -26,7 +27,9 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint;
 import org.eclipse.viatra.query.runtime.matchers.backend.QueryHintOption;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.DefaultFlattenCallPredicate;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IFlattenCallPredicate;
+import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.IRewriterTraceCollector;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.NeverFlattenCallPredicate;
+import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.NopTraceCollector;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -49,6 +52,8 @@ public final class LocalSearchHints implements IMatcherCapability {
     private IFlattenCallPredicate flattenCallPredicate = null;
     
     private IAdornmentProvider adornmentProvider = null;
+    
+    private IRewriterTraceCollector traceCollector = NopTraceCollector.INSTANCE;
     
     private LocalSearchHints() {}
 
@@ -107,6 +112,7 @@ public final class LocalSearchHints implements IMatcherCapability {
         result.flattenCallPredicate = FLATTEN_CALL_PREDICATE.getValueOrNull(hint);
         result.costFunction = PLANNER_COST_FUNCTION.getValueOrNull(hint);
         result.adornmentProvider = ADORNMENT_PROVIDER.getValueOrNull(hint);
+        result.traceCollector = normalizationTraceCollector.getValueOrDefault(hint);
         
         return result;
     }
@@ -128,6 +134,9 @@ public final class LocalSearchHints implements IMatcherCapability {
         }
         if (adornmentProvider != null){
             ADORNMENT_PROVIDER.insertOverridingValue(map, adornmentProvider);
+        }
+        if (traceCollector != null){
+            normalizationTraceCollector.insertOverridingValue(map, traceCollector);
         }
         return new QueryEvaluationHint(map, LocalSearchBackendFactory.INSTANCE);
     }
@@ -164,6 +173,13 @@ public final class LocalSearchHints implements IMatcherCapability {
     }
 
     /**
+     * @since 1.6
+     */
+    public IRewriterTraceCollector getTraceCollector() {
+        return traceCollector == null ? normalizationTraceCollector.getDefaultValue() : traceCollector;
+    }
+    
+    /**
      * @deprecated allow inverse was deprecated in 1.4; its uses are ignored 
      */
     @Deprecated
@@ -188,6 +204,14 @@ public final class LocalSearchHints implements IMatcherCapability {
     
     public LocalSearchHints setFlattenCallPredicate(IFlattenCallPredicate flattenCallPredicate) {
         this.flattenCallPredicate = flattenCallPredicate;
+        return this;
+    }
+    
+    /**
+     * @since 1.6
+     */
+    public LocalSearchHints setTraceCollector(IRewriterTraceCollector traceCollector) {
+        this.traceCollector = traceCollector;
         return this;
     }
     
@@ -224,6 +248,13 @@ public final class LocalSearchHints implements IMatcherCapability {
      */
     public static LocalSearchHints customizeAdornmentProvider(IAdornmentProvider adornmentProvider){
         return new LocalSearchHints().setAdornmentProvider(adornmentProvider);
+    }
+    
+    /**
+     * @since 1.6
+     */
+    public static LocalSearchHints customizeTraceCollector(IRewriterTraceCollector traceCollector){
+        return new LocalSearchHints().setTraceCollector(traceCollector);
     }
 
     @Override

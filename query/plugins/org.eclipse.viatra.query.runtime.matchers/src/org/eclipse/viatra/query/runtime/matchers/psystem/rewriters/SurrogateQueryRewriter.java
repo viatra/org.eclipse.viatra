@@ -35,10 +35,10 @@ public class SurrogateQueryRewriter extends PDisjunctionRewriter {
     public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
         Set<PBody> replacedBodies = Sets.newHashSet();
         for (PBody body : disjunction.getBodies()) {
-            PBodyCopier copier = new PBodyCopier(body) {
-                
-                @Override
-                protected void copyTypeConstraint(TypeConstraint typeConstraint) {
+            PBodyCopier copier = new PBodyCopier(body, getTraceCollector()) {
+            	
+            	@Override
+            	protected void copyTypeConstraint(TypeConstraint typeConstraint) {
                     PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
                     FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
                     final IInputKey supplierKey = typeConstraint.getSupplierKey();
@@ -46,14 +46,14 @@ public class SurrogateQueryRewriter extends PDisjunctionRewriter {
                         PQuery surrogateQuery = SurrogateQueryRegistry.instance().getSurrogateQuery(supplierKey);
                         if (surrogateQuery == null) {
                             throw new IllegalStateException(
-                                    String.format("Surrogate query for feature %s not found", 
-                                            supplierKey.getPrettyPrintableName()));
+                            		String.format("Surrogate query for feature %s not found", 
+                            				supplierKey.getPrettyPrintableName()));
                         }
-                        new PositivePatternCall(getCopiedBody(), variablesTuple, surrogateQuery);
+                        addTrace(typeConstraint, new PositivePatternCall(getCopiedBody(), variablesTuple, surrogateQuery));
                     } else {
-                        new TypeConstraint(getCopiedBody(), variablesTuple, supplierKey);
+                    	addTrace(typeConstraint, new TypeConstraint(getCopiedBody(), variablesTuple, supplierKey));
                     }
-                }
+            	}
             };
             PBody modifiedBody = copier.getCopiedBody();
             replacedBodies.add(modifiedBody);

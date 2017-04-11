@@ -110,7 +110,7 @@ class FlattenerCopier extends PBodyCopier {
             PositivePatternCall contextPatternCall) {
         PVariable who = variableMapping.get(pVariable1);
         PVariable withWhom = variableCopyTable.get(contextPatternCall, pVariable2);
-        new Equality(body, who, withWhom);
+        addTrace(contextPatternCall, new Equality(body, who, withWhom));
     }
 
     @Override
@@ -123,7 +123,7 @@ class FlattenerCopier extends PBodyCopier {
             }
         });
         PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
-        new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable);
+       addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable));
     }
     
 }

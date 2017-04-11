@@ -97,6 +97,7 @@ public class LocalSearchPlanner {
     public Collection<SearchPlanForBody> plan(PQuery querySpec, Set<PParameter> boundParameters)
             throws QueryProcessingException {
         // 1. Preparation
+        preprocessor.setTraceCollector(configuration.getTraceCollector());
         Set<PBody> normalizedBodies = preprocessor.rewrite(querySpec.getDisjunctBodies()).getBodies();
 
         List<SearchPlanForBody> plansForBodies = Lists.newArrayListWithExpectedSize(normalizedBodies.size());

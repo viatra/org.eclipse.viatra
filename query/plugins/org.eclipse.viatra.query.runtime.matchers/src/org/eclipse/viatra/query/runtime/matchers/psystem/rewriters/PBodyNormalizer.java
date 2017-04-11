@@ -11,9 +11,11 @@
 
 package org.eclipse.viatra.query.runtime.matchers.psystem.rewriters;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -98,7 +100,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
     public PDisjunction rewrite(PDisjunction disjunction) throws RewriterException {
         Set<PBody> normalizedBodies = Sets.newHashSet();
         for (PBody body : disjunction.getBodies()) {
-            PBodyCopier copier = new PBodyCopier(body);
+            PBodyCopier copier = new PBodyCopier(body, getTraceCollector());
             PBody modifiedBody = copier.getCopiedBody();
             normalizeBody(modifiedBody);
             normalizedBodies.add(modifiedBody);
@@ -156,6 +158,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         for (Equality equality : equals) {
             if (equality.isMoot()) {
                 equality.delete();
+                derivativeRemoved(equality, ConstraintRemovalReason.MOOT_EQUALITY);
             }
         }
     }
@@ -180,8 +183,12 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      * @param body
      */
     void eliminateWeakInequalities(PBody body) {
-        for (Inequality inequality : body.getConstraintsOfType(Inequality.class))
-            inequality.eliminateWeak();
+        for (Inequality inequality : body.getConstraintsOfType(Inequality.class)){
+            if (inequality.isEliminable()){
+                inequality.eliminateWeak();
+                derivativeRemoved(inequality, ConstraintRemovalReason.WEAK_INEQUALITY_SELF_LOOP);
+            }
+        }
     }
 
     /**
@@ -229,6 +236,7 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
             }
             if (isSubsumed) { // eliminated
                 candidate.delete();
+                derivativeRemoved(candidate, ConstraintRemovalReason.TYPE_SUBSUMED);
             } else { // retained
                 subsumedByRetainedConstraints = TypeHelper.typeClosure(subsumedByRetainedConstraints,
                         candidate.getImpliedJudgements(context), context);
@@ -284,7 +292,16 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         }
 
         // Retain collected constraints, remove everything else
-        body.getConstraints().retainAll(constraints.values());
+        Iterator<PConstraint> iterator = body.getConstraints().iterator();
+        Collection<PConstraint> toRetain = constraints.values(); 
+        while(iterator.hasNext()){
+            PConstraint next = iterator.next();
+            if (!toRetain.contains(next)){
+                Object key = getConstraintKey(next);
+                derivativeRemoved(next, ConstraintRemovalReason.DUPLICATE);
+                iterator.remove();
+            }
+        }
     }
     
     /**

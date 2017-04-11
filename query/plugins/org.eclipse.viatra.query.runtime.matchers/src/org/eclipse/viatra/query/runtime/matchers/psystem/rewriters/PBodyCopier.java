@@ -48,7 +48,7 @@ import com.google.common.collect.Maps;
  * @author Marton Bur
  * 
  */
-public class PBodyCopier {
+public class PBodyCopier extends AbstractRewriterTraceSource{
 
     /**
      * The created body
@@ -59,18 +59,38 @@ public class PBodyCopier {
      */
     protected Map<PVariable, PVariable> variableMapping = Maps.newHashMap();
     
-    
     public Map<PVariable, PVariable> getVariableMapping() {
         return variableMapping;
     }
     
-    public PBodyCopier(PBody body) {
+    /**
+     * This constructor is deprecated as it performs a copy without allowing callers
+     * to set the trace collector before.
+     * 
+     * @deprecated use {@link #PBodyCopier(PBody, IRewriterTraceCollector)} instead
+     */
+    @Deprecated
+    public PBodyCopier(PBody body){
         this.body = new PBody(body.getPattern());
+        
+        // do the actual copying
+        mergeBody(body);
+    }
+    
+    /**
+     * @since 1.6
+     */
+    public PBodyCopier(PBody body, IRewriterTraceCollector traceCollector) {
+        this.body = new PBody(body.getPattern());
+        setTraceCollector(traceCollector);
 
         // do the actual copying
         mergeBody(body);
-        
     }
+    
+    /**
+     * @since 1.6
+     */
     public PBodyCopier(PQuery query) {
         this.body = new PBody(query);
     }
@@ -167,62 +187,63 @@ public class PBodyCopier {
             newExportedParameter = new ExportedParameter(body, mappedPVariable, parameter);
         }
         body.getSymbolicParameters().add(newExportedParameter);
+        addTrace(exportedParameter, newExportedParameter);
         return newExportedParameter;
     }
 
     protected void copyEqualityConstraint(Equality equality) {
         PVariable who = equality.getWho();
         PVariable withWhom = equality.getWithWhom();
-        new Equality(body, variableMapping.get(who), variableMapping.get(withWhom));
+        addTrace(equality, new Equality(body, variableMapping.get(who), variableMapping.get(withWhom)));
     }
 
     protected void copyInequalityConstraint(Inequality inequality) {
         PVariable who = inequality.getWho();
         PVariable withWhom = inequality.getWithWhom();
-        new Inequality(body, variableMapping.get(who), variableMapping.get(withWhom));
+        addTrace(inequality, new Inequality(body, variableMapping.get(who), variableMapping.get(withWhom)));
     }
     
     protected void copyTypeConstraint(TypeConstraint typeConstraint) {
         PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
         FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
-        new TypeConstraint(body, variablesTuple, typeConstraint.getSupplierKey());
+        addTrace(typeConstraint, new TypeConstraint(body, variablesTuple, typeConstraint.getSupplierKey()));
     }
     
     protected void copyTypeFilterConstraint(TypeFilterConstraint typeConstraint) {
         PVariable[] mappedVariables = extractMappedVariables(typeConstraint);
         FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables); 	
-        new TypeFilterConstraint(body, variablesTuple, typeConstraint.getInputKey());
+        addTrace(typeConstraint, new TypeFilterConstraint(body, variablesTuple, typeConstraint.getInputKey()));
     }
 
     protected void copyConstantValueConstraint(ConstantValue constantValue) {
         PVariable pVariable = (PVariable) constantValue.getVariablesTuple().getElements()[0];
-        new ConstantValue(body, variableMapping.get(pVariable), constantValue.getSupplierKey());
+        addTrace(constantValue, new ConstantValue(body, variableMapping.get(pVariable), constantValue.getSupplierKey()));
     }
 
     protected void copyPositivePatternCallConstraint(PositivePatternCall positivePatternCall) {
         PVariable[] mappedVariables = extractMappedVariables(positivePatternCall);
         FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
-        new PositivePatternCall(body, variablesTuple, positivePatternCall.getReferredQuery());
+        addTrace(positivePatternCall, new PositivePatternCall(body, variablesTuple, positivePatternCall.getReferredQuery()));
     }
 
 
     protected void copyNegativePatternCallConstraint(NegativePatternCall negativePatternCall) {
         PVariable[] mappedVariables = extractMappedVariables(negativePatternCall);
         FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
-        new NegativePatternCall(body, variablesTuple, negativePatternCall.getReferredQuery());
+        addTrace(negativePatternCall, new NegativePatternCall(body, variablesTuple, negativePatternCall.getReferredQuery()));
     }
 
     protected void copyBinaryTransitiveClosureConstraint(BinaryTransitiveClosure binaryTransitiveClosure) {
         PVariable[] mappedVariables = extractMappedVariables(binaryTransitiveClosure);
         FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
-        new BinaryTransitiveClosure(body, variablesTuple, binaryTransitiveClosure.getReferredQuery());
+        addTrace(binaryTransitiveClosure, new BinaryTransitiveClosure(body, variablesTuple, binaryTransitiveClosure.getReferredQuery()));
     }
 
     protected void copyPatternMatchCounterConstraint(PatternMatchCounter patternMatchCounter) {
         PVariable[] mappedVariables = extractMappedVariables(patternMatchCounter);
         PVariable mappedResultVariable = variableMapping.get(patternMatchCounter.getResultVariable());
         FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
-        new PatternMatchCounter(body, variablesTuple, patternMatchCounter.getReferredQuery(), mappedResultVariable);
+        addTrace(patternMatchCounter, new PatternMatchCounter(body, variablesTuple, patternMatchCounter.getReferredQuery(), mappedResultVariable));
     }
     
     /**
@@ -232,13 +253,13 @@ public class PBodyCopier {
         PVariable[] mappedVariables = extractMappedVariables(constraint);
         PVariable mappedResultVariable = variableMapping.get(constraint.getResultVariable());
         FlatTuple variablesTuple = new FlatTuple((Object[])mappedVariables);
-        new AggregatorConstraint(constraint.getAggregator(), body, variablesTuple, constraint.getReferredQuery(), mappedResultVariable, constraint.getAggregatedColumn());
+        addTrace(constraint, new AggregatorConstraint(constraint.getAggregator(), body, variablesTuple, constraint.getReferredQuery(), mappedResultVariable, constraint.getAggregatedColumn()));
     }
 
 
     protected void copyExpressionEvaluationConstraint(ExpressionEvaluation expressionEvaluation) {
         PVariable mappedOutputVariable = variableMapping.get(expressionEvaluation.getOutputVariable());
-        new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable);
+        addTrace(expressionEvaluation, new ExpressionEvaluation(body, new VariableMappingExpressionEvaluatorWrapper(expressionEvaluation.getEvaluator(), variableMapping), mappedOutputVariable));
     }
     
     

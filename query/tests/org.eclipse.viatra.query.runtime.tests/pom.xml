@@ -12,10 +12,44 @@
     <artifactId>org.eclipse.viatra.query.runtime.tests</artifactId>
     <packaging>eclipse-test-plugin</packaging>
     <build>
+        <resources>
+            <resource>
+                <directory>src</directory>
+            </resource>
+            <resource>
+                <directory>xtend-gen</directory>
+            </resource>
+        </resources>
        <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>xtend-gen</directory>
+                            <excludes>
+                                <exclude>.gitignore</exclude>
+                            </excludes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.xtend</groupId>
+                <artifactId>xtend-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
        </plugins>
     </build>
