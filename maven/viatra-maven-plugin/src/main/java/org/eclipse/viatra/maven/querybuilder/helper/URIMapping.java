@@ -16,19 +16,19 @@ public class URIMapping {
     /**
      * @property
      */
-    private String sourceURI;
+    private String sourceUri;
 
     /**
      * @property
      */
     private String targetUri;
 
-    public String getSourceURI() {
-        return sourceURI;
+    public String getSourceUri() {
+        return sourceUri;
     }
 
-    public void setSourceURI(String sourceURI) {
-        this.sourceURI = sourceURI;
+    public void setSourceUri(String sourceUri) {
+        this.sourceUri = sourceUri;
     }
 
     public String getTargetUri() {

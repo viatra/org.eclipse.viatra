@@ -179,11 +179,11 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
         URIMappingRegistryImpl uriMappingRegistry = URIMappingRegistryImpl.INSTANCE;
         for (URIMapping uriMapping : uriMappings) {
             try {
-                URI sourceUri = URI.createURI(uriMapping.getSourceURI());
+                URI sourceUri = URI.createURI(uriMapping.getSourceUri());
                 URI targetUri = URI.createURI(uriMapping.getTargetUri());
                 uriMappingRegistry.put(sourceUri, targetUri);
             } catch (Exception e) {
-                final String msg = String.format("Error while adding URI mapping (source: %s, target: %s)", uriMapping.getSourceURI(), uriMapping.getTargetUri());
+                final String msg = String.format("Error while adding URI mapping (source: %s, target: %s)", uriMapping.getSourceUri(), uriMapping.getTargetUri());
                 getLog().error(msg);
                 throw new MojoExecutionException(msg, e);
             }
