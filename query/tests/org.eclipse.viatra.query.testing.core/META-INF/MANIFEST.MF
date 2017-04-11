@@ -22,6 +22,7 @@ Export-Package: org.eclipse.viatra.query.testing.core;
   uses:="com.google.common.base,
    com.google.inject",
  org.eclipse.viatra.query.testing.core.base,
+ org.eclipse.viatra.query.testing.core.coverage,
  org.eclipse.viatra.query.testing.core.injector;uses:="org.eclipse.xtext.junit4,com.google.inject"
 Bundle-Vendor: Eclipse VIATRA Project
 Import-Package: org.apache.log4j;version="1.2.15",
