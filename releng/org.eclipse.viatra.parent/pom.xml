@@ -362,6 +362,12 @@
                                 <goals>
                                     <goal>pack</goal>
                                 </goals>
+                                <configuration>
+                                    <supportedProjectTypes>
+                                        <supportedProjectType>eclipse-plugin</supportedProjectType>
+                                        <supportedProjectType>eclipse-test-plugin</supportedProjectType>
+                                    </supportedProjectTypes>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
