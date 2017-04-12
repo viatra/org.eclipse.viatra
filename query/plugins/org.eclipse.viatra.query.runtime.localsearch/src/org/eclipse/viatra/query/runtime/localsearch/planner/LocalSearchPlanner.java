@@ -25,19 +25,15 @@ import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
 import org.eclipse.viatra.query.runtime.matchers.planning.SubPlan;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
-import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PBodyNormalizer;
+import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PDisjunctionRewriter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PDisjunctionRewriterCacher;
 import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.PQueryFlattener;
-import org.eclipse.viatra.query.runtime.matchers.psystem.rewriters.RewriterException;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -49,34 +45,9 @@ import com.google.common.collect.Sets;
  */
 public class LocalSearchPlanner {
 
-    // Fields to track and debug the workflow
-    // Internal data
-    private PDisjunction flatDisjunction;
-    private PDisjunction normalizedDisjunction;
-    private List<SearchPlanForBody> plansForBodies;
-
-    public PDisjunction getFlatDisjunction() {
-        return flatDisjunction;
-    }
-
-    public PDisjunction getNormalizedDisjunction() {
-        return normalizedDisjunction;
-    }
-
-    public List<SubPlan> getPlansForBodies() {
-        return Lists.transform(plansForBodies, new Function<SearchPlanForBody, SubPlan>() {
-
-            @Override
-            public SubPlan apply(SearchPlanForBody input) {
-                return input.getPlan();
-            }
-        });
-    }
-
     // Externally set tools for planning
-    private final PQueryFlattener flattener;
+    private final PDisjunctionRewriter preprocessor;
     private final LocalSearchRuntimeBasedStrategy plannerStrategy;
-    private final PBodyNormalizer normalizer;
     private final IQueryRuntimeContext runtimeContext;
     private final LocalSearchHints configuration;
     private final IQueryBackendContext context;
@@ -89,7 +60,7 @@ public class LocalSearchPlanner {
 
         this.runtimeContext = backend.getRuntimeContext();
         this.configuration = configuration;
-        flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
+        PQueryFlattener flattener = new PQueryFlattener(configuration.getFlattenCallPredicate());
         /*
          * TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=439358: The normalizer is initialized with the false
          * parameter to turn off unary constraint elimination to work around an issue related to plan ordering: the
@@ -97,13 +68,14 @@ public class LocalSearchPlanner {
          * before. However, this causes duplicate constraint checks in the search plan that might affect performance
          * negatively.
          */
-        normalizer = new PBodyNormalizer(runtimeContext.getMetaContext()) {
+        PBodyNormalizer normalizer = new PBodyNormalizer(runtimeContext.getMetaContext()) {
             
             @Override
             protected boolean shouldCalculateImpliedTypes(PQuery query) {
                 return false;
             }
         };
+        preprocessor = new PDisjunctionRewriterCacher(flattener, normalizer);
 
         plannerStrategy = new LocalSearchRuntimeBasedStrategy();
         this.backend = backend;
@@ -125,9 +97,9 @@ public class LocalSearchPlanner {
     public Collection<SearchPlanForBody> plan(PQuery querySpec, Set<PParameter> boundParameters)
             throws QueryProcessingException {
         // 1. Preparation
-        Set<PBody> normalizedBodies = prepareNormalizedBodies(querySpec);
+        Set<PBody> normalizedBodies = preprocessor.rewrite(querySpec.getDisjunctBodies()).getBodies();
 
-        plansForBodies = Lists.newArrayListWithExpectedSize(normalizedBodies.size());
+        List<SearchPlanForBody> plansForBodies = Lists.newArrayListWithExpectedSize(normalizedBodies.size());
 
         for (PBody normalizedBody : normalizedBodies) {
             // 2. Plan creation
@@ -148,57 +120,6 @@ public class LocalSearchPlanner {
         }
 
         return plansForBodies;
-    }
-
-    private Set<PBody> prepareNormalizedBodies(PQuery querySpec) throws RewriterException {
-        // Preparation steps
-        // Flatten
-        flatDisjunction = flattener.rewrite(querySpec.getDisjunctBodies());
-        Set<PBody> flatBodies = flatDisjunction.getBodies();
-        prepareFlatBodiesForNormalize(flatBodies);
-
-        // Normalize
-        normalizedDisjunction = normalizer.rewrite(flatDisjunction);
-        Set<PBody> normalizedBodies = normalizedDisjunction.getBodies();
-
-        removeDuplicateConstraints(normalizedBodies);
-
-        return normalizedBodies;
-    }
-
-    private Object getConstraintKey(PConstraint constraint) {
-        if (constraint instanceof TypeConstraint) {
-            return ((TypeConstraint) constraint).getEquivalentJudgement();
-        }
-        // Do not check duplication for any other types
-        return constraint;
-    }
-
-    private void removeDuplicateConstraints(Set<PBody> normalizedBodies) {
-        for (PBody pBody : normalizedBodies) {
-            pBody.setStatus(PQueryStatus.UNINITIALIZED);
-
-            Map<Object, PConstraint> constraints = Maps.newHashMap();
-            for (PConstraint constraint : pBody.getConstraints()) {
-                Object key = getConstraintKey(constraint);
-                // Retain first found instance of a constraint
-                if (!constraints.containsKey(key)) {
-                    constraints.put(key, constraint);
-                }
-            }
-
-            // Retain collected constraints, remove everything else
-            pBody.getConstraints().retainAll(constraints.values());
-            pBody.setStatus(PQueryStatus.OK);
-        }
-    }
-
-    private void prepareFlatBodiesForNormalize(Set<PBody> flatBodies) {
-        // Revert status to be able to rewrite
-        // XXX Needed because the current implementation of the Normalizer requires mutable bodies
-        for (PBody pBody : flatBodies) {
-            pBody.setStatus(PQueryStatus.UNINITIALIZED);
-        }
     }
 
     private Set<PVariable> calculatePatternAdornmentForPlanner(Set<PParameter> boundParameters, PBody normalizedBody) {

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
@@ -35,6 +36,7 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
@@ -152,13 +154,17 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         // CONSTRAINT ELIMINATION WITH TYPE INFERENCE
         if (shouldCalculateImpliedTypes(body.getPattern())) {
             eliminateInferrableTypes(body, context);
+        } else {
+            // ELIMINATE DUPLICATE TYPE CONSTRAINTS
+            eliminateDuplicateTypeConstraints(body);
         }
 
+        
         // PREVENTIVE CHECKS
         checkSanity(body);
         return body;
     }
-
+    
     private void removeMootEqualities(PBody body) {
         Set<Equality> equals = body.getConstraintsOfType(Equality.class);
         for (Equality equality : equals) {
@@ -273,6 +279,27 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
         }        
     }
     
+    private Object getConstraintKey(PConstraint constraint) {
+        if (constraint instanceof ITypeConstraint) {
+            return ((ITypeConstraint) constraint).getEquivalentJudgement();
+        }
+        // Do not check duplication for any other types
+        return constraint;
+    }
+    
+    void eliminateDuplicateTypeConstraints(PBody body) {
+        Map<Object, PConstraint> constraints = Maps.newHashMap();
+        for (PConstraint constraint : body.getConstraints()) {
+            Object key = getConstraintKey(constraint);
+            // Retain first found instance of a constraint
+            if (!constraints.containsKey(key)) {
+                constraints.put(key, constraint);
+            }
+        }
+
+        // Retain collected constraints, remove everything else
+        body.getConstraints().retainAll(constraints.values());
+    }
     
     /**
      * Verifies the sanity of all constraints. Should be issued as a preventive check before layouting.
