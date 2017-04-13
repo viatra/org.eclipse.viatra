@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.patternlanguage.emf.validation;
 
 import static org.eclipse.xtext.xbase.validation.IssueCodes.IMPORT_UNUSED;
 
+import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
@@ -84,6 +86,7 @@ import org.eclipse.xtext.common.types.JvmEnumerationType;
 import org.eclipse.xtext.common.types.JvmGenericType;
 import org.eclipse.xtext.common.types.util.TypeReferences;
 import org.eclipse.xtext.util.Strings;
+import org.eclipse.xtext.validation.AbstractDeclarativeValidator;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.xbase.XExpression;
@@ -211,7 +214,34 @@ public class EMFPatternLanguageJavaValidator extends AbstractEMFPatternLanguageJ
 
     @Inject
     private TypeReferences typeReferences;
+    
+    @Inject
+    private Logger logger;
 
+    private static class CustomMethodWrapper extends MethodWrapper{
+
+        private Logger logger;
+
+        protected CustomMethodWrapper(AbstractDeclarativeValidator instance, Method m, Logger logger) {
+            super(instance, m);
+            this.logger = logger;
+        }
+
+        protected void handleInvocationTargetException(Throwable targetException, State state) {
+            // superclass ignores NPEs, instead we should at least log them
+            if (targetException instanceof NullPointerException) {
+                logger.warn("Unexpected validation error", targetException);
+            }
+            super.handleInvocationTargetException(targetException, state);
+        }
+
+    }
+    
+    @Override
+    protected MethodWrapper createMethodWrapper(AbstractDeclarativeValidator instanceToUse, Method method) {
+        return new CustomMethodWrapper(instanceToUse, method, logger);
+    }
+    
     @Override
     protected List<EPackage> getEPackages() {
         // PatternLanguagePackage must be added to the defaults, otherwise the core language validators not used in the
