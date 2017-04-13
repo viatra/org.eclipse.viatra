@@ -140,17 +140,20 @@ public class EMFTypeSystem extends AbstractTypeSystem {
             } else if (actualType instanceof JavaTransitiveInstancesKey) {
                 val expectedJavaClass = expectedType.javaClass
                 val actualJavaClass = actualType.javaClass
-                return expectedJavaClass.isAssignableFrom(actualJavaClass)
+                return expectedJavaClass != null && actualJavaClass != null
+                     && expectedJavaClass.isAssignableFrom(actualJavaClass)
             }
         } else if (expectedType instanceof JavaTransitiveInstancesKey) {
             if (actualType instanceof JavaTransitiveInstancesKey) {
-                val expectedClass = expectedType.instanceClass
-                val actualClass = actualType.instanceClass
-                return expectedClass.isAssignableFrom(actualClass)
+                val expectedJavaClass = expectedType.instanceClass
+                val actualJavaClass = actualType.instanceClass
+                return expectedJavaClass != null && actualJavaClass != null
+                    && expectedJavaClass.isAssignableFrom(actualJavaClass)
             } else if (actualType instanceof EDataTypeInSlotsKey) {
                 val expectedJavaClass = expectedType.javaClass
                 val actualJavaClass = actualType.javaClass
-                return expectedJavaClass.isAssignableFrom(actualJavaClass)
+                return expectedJavaClass != null && actualJavaClass != null
+                    && expectedJavaClass.isAssignableFrom(actualJavaClass)
             }
         }
         // This means inconsistent type settings that is reported elsewhere
@@ -162,7 +165,7 @@ public class EMFTypeSystem extends AbstractTypeSystem {
      */
     def Class<?> getJavaClass(EDataTypeInSlotsKey key) {
         var dataTypeClass = key.getEmfKey().instanceClass
-        if(dataTypeClass.isPrimitive) dataTypeClass = dataTypeClass.wrapperClassForType
+        if(dataTypeClass.isPrimitive) dataTypeClass = dataTypeClass?.wrapperClassForType
         return dataTypeClass
     }
 
