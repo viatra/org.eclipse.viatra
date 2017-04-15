@@ -58,7 +58,9 @@ public class ViatraViewersJFaceViewSupport extends ViatraViewersViewSupport impl
 	
 	@Override
 	public void dispose() {
-		jfaceViewer.removeSelectionChangedListener(selectionHelper.trickyListener);
+	    if (jfaceViewer != null) {
+	        jfaceViewer.removeSelectionChangedListener(selectionHelper.trickyListener);
+	    }
 		super.dispose();
 	}
 	
@@ -89,12 +91,10 @@ public class ViatraViewersJFaceViewSupport extends ViatraViewersViewSupport impl
 
 	@Override
 	protected void unbindModel() {
-		if (jfaceViewer != null) {
-			// check for contents first
-			if (jfaceViewer.getInput() !=null) {
-				jfaceViewer.setInput(null);
-			}
-		}
+		if (jfaceViewer != null && !jfaceViewer.getControl().isDisposed() && jfaceViewer.getInput() !=null) {
+        	jfaceViewer.setInput(null);
+        	jfaceViewer = null;
+        }
 		if (state != null && !state.isDisposed()) {
 			state.dispose();
 		}

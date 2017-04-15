@@ -157,8 +157,8 @@ public class ViewModelManager {
     }
 
     public void dispose() {
-        EcoreUtil.delete(traceability);
         executionSchema.dispose();
+        EcoreUtil.delete(traceability);
     }
     
     private String getTraceabilityResourceId() {
