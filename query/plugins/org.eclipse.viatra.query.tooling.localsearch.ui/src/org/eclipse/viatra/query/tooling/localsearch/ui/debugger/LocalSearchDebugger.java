@@ -51,12 +51,16 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	private List<ILocalSearchAdaptable> adaptedElements = Lists.newArrayList();
 	private boolean startHandlerCalled = false;
 	private boolean isDisposed = false;
+	private boolean hasFinished = false;
 
     private boolean halted = true;
 	private SearchPlanViewModel viewModel;
 
     
-	public LocalSearchDebugView getLocalSearchDebugView() {
+	public LocalSearchDebugView getLocalSearchDebugView() throws PartInitException {
+	    if (localSearchDebugView == null) {
+	        localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
+	    }
 		return localSearchDebugView;
 	}
 
@@ -73,6 +77,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
         if (isDisposed) {
             return;
         }
+        
 	    // If a new debug session is starting, obtain the view
 		if (startHandlerCalled) {
 			startHandlerCalled = false;
@@ -81,7 +86,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 				@Override
 				public void run() {
 					try {
-						localSearchDebugView = (LocalSearchDebugView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(LocalSearchDebugView.ID);
+						getLocalSearchDebugView();
 						BreakPointListener breakPointListener = new BreakPointListener(LocalSearchDebugger.this);
 						TreeViewer operationListViewer = localSearchDebugView.getOperationListViewer();
 						operationListViewer.addDoubleClickListener(breakPointListener);
@@ -92,8 +97,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 						runningMatchers = Queues.newArrayDeque();
 						runningExecutors = Queues.newArrayDeque();
 
-						String simpleQueryName = getSimpleQueryName(lsMatcher.getQuerySpecification());
-						TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
+						TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(lsMatcher.getQuerySpecification());
 						@SuppressWarnings("unchecked")
 						List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
 						storedFrames.clear();
@@ -124,6 +128,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 			// After all the matching process finished set to halted in order to
 			// be able to start a new debug session
 			halted = true;
+			hasFinished = true;
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 				@Override
 				public void run() {
@@ -134,8 +139,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 			localSearchDebugView.refreshView();
 		} else {
 			// clear frame table
-			String simpleQueryName = getSimpleQueryName(removedMatcher.getQuerySpecification());
-			TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
+			TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(removedMatcher.getQuerySpecification());
 			@SuppressWarnings("unchecked")
 			List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
 			storedFrames.clear();
@@ -174,8 +178,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		// Manage tabs for matching frames
 		PQuery querySpecification = runningMatchers.peek().getQuerySpecification();
 		final int keySize = querySpecification.getParameters().size();
-		String queryName = getSimpleQueryName(querySpecification);
-		final TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(queryName);
+		final TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(querySpecification);
 		@SuppressWarnings("unchecked")
 		List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
 		if (!storedFrames.isEmpty()) {
@@ -202,8 +205,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
             return;
         }
 	    // Add the new frame here to the list of frames. Its contents will change as matching advances
-		String simpleQueryName = getSimpleQueryName(runningMatchers.peek().getQuerySpecification());
-		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
+		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(runningMatchers.peek().getQuerySpecification());
 		@SuppressWarnings("unchecked")
 		List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
 		if (!storedFrames.contains(frame)) {
@@ -247,8 +249,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
             return;
         }
 		MatchingFrame frameToStore = frame.clone();
-		String simpleQueryName = getSimpleQueryName(runningMatchers.peek().getQuerySpecification());
-		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(simpleQueryName);
+		TableViewer matchesViewer = localSearchDebugView.getMatchesViewer(runningMatchers.peek().getQuerySpecification());
 		@SuppressWarnings("unchecked")
 		List<MatchingFrame> storedFrames = (List<MatchingFrame>) matchesViewer.getData(LocalSearchDebugView.VIEWER_KEY);
 		storedFrames.add(storedFrames.size() - 1, frameToStore);
@@ -257,12 +258,10 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 	public void setHalted(boolean halted) {
 		this.halted = halted;
 	}
-
-	// TODO might not be needed by others
-	public boolean isHalted() {
-		return halted;
-	}
 	
+	public boolean isPatternMatchingRunning() {
+	    return !hasFinished;
+	}
 	
 	private List<SearchOperationViewerNode> createOperationsListFromExecutor(SearchPlanExecutor planExecutor) {
 		List<SearchOperationViewerNode> nodes = Lists.newArrayList();
@@ -277,11 +276,6 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 		return nodes;
 	}
 	
-	private String getSimpleQueryName(PQuery query) {
-		String[] stringTokens = query.getFullyQualifiedName().split("\\.");
-		String queryName = stringTokens[stringTokens.length - 1];
-		return queryName;
-	}
 
 	private void checkForBreakPoint() {
 		if (localSearchDebugView != null && halted) {

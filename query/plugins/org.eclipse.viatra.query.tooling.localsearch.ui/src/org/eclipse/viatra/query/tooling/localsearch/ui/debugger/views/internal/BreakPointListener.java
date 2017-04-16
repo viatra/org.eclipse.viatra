@@ -43,15 +43,15 @@ public class BreakPointListener implements IDoubleClickListener {
 		// TreeViewer viewer = (TreeViewer) event.getViewer();
 		IStructuredSelection thisSelection = (IStructuredSelection) event.getSelection();
 
-		final LocalSearchDebugView debuggerView = localSearchDebugger.getLocalSearchDebugView();
-        final IWorkbenchPartSite site = debuggerView.getSite();
-		Map<String, Object> eventContextParameters = Maps.newHashMap();
-		eventContextParameters.put(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, site.getWorkbenchWindow());
-		eventContextParameters.put(ISources.ACTIVE_PART_NAME, debuggerView);
-		eventContextParameters.put(ISources.ACTIVE_PART_ID_NAME, LocalSearchDebugView.ID);
-		eventContextParameters.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, thisSelection);
-		ICommandService commandService = (ICommandService) site.getService(ICommandService.class);
 		try {
+    	    final LocalSearchDebugView debuggerView = localSearchDebugger.getLocalSearchDebugView();
+            final IWorkbenchPartSite site = debuggerView.getSite();
+    		Map<String, Object> eventContextParameters = Maps.newHashMap();
+    		eventContextParameters.put(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, site.getWorkbenchWindow());
+    		eventContextParameters.put(ISources.ACTIVE_PART_NAME, debuggerView);
+    		eventContextParameters.put(ISources.ACTIVE_PART_ID_NAME, LocalSearchDebugView.ID);
+    		eventContextParameters.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, thisSelection);
+    		ICommandService commandService = (ICommandService) site.getService(ICommandService.class);
 		    commandService.getCommand("org.eclipse.viatra.query.tooling.localsearch.ui.debugger.localsearch.placebreakpoint").executeWithChecks(
 		            new ExecutionEvent(null, eventContextParameters, null, null));
 		}

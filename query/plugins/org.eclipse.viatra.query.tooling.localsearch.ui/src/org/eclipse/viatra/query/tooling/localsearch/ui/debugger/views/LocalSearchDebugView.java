@@ -35,6 +35,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -43,8 +44,18 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
 import org.eclipse.viatra.integration.zest.viewer.ZestContentViewer;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
+import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
+import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.localsearch.MatchingFrame;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackend;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchBackendFactory;
+import org.eclipse.viatra.query.runtime.localsearch.matcher.integration.LocalSearchResultProvider;
+import org.eclipse.viatra.query.runtime.matchers.backend.IQueryBackend;
+import org.eclipse.viatra.query.runtime.matchers.planning.QueryProcessingException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.LocalSearchDebugger;
+import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.internal.LocalSearchDebuggerRunner;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.FrameViewerContentProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.MatchesTableLabelProvider;
 import org.eclipse.viatra.query.tooling.localsearch.ui.debugger.provider.OperationListContentProvider;
@@ -77,8 +88,52 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
 	private Map<String, TableViewer> matchViewersMap = Maps.newHashMap();
 
 	private LocalSearchDebugger debugger;
+	private Thread planExecutorThread = null;
 
+	public void createDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> query, final Object[] adornment) throws ViatraQueryException, QueryProcessingException {
+	    disposeExistingDebugger();
+	    initializeDebugger(engine, query, adornment);
+	    closeMatchTabs();
+	}
+	
 
+    private String getSimpleQueryName(PQuery query) {
+        String[] stringTokens = query.getFullyQualifiedName().split("\\.");
+        String queryName = stringTokens[stringTokens.length - 1];
+        return queryName;
+    }
+	
+	private void initializeDebugger(final AdvancedViatraQueryEngine engine, final IQuerySpecification<?> specification, final Object[] adornment) throws ViatraQueryException, QueryProcessingException {
+	    final IQueryBackend lsBackend = engine.getQueryBackend(LocalSearchBackendFactory.INSTANCE);
+	    final LocalSearchResultProvider lsResultProvider = (LocalSearchResultProvider) lsBackend
+                .getResultProvider(specification.getInternalQueryRepresentation());
+        final LocalSearchBackend localSearchBackend = (LocalSearchBackend) lsBackend;
+        debugger = new LocalSearchDebugger() {
+            @Override
+            public void dispose() {
+                localSearchBackend.removeAdapter(this);
+                super.dispose();
+            }
+        };
+        localSearchBackend.addAdapter(debugger);
+
+        // Create and start the matcher thread
+        Runnable planExecutorRunnable = new LocalSearchDebuggerRunner(debugger, adornment, lsResultProvider);
+
+        if (planExecutorThread == null || !planExecutorThread.isAlive()) {
+            // Start the matching process if not started or in progress yet
+            planExecutorThread = new Thread(planExecutorRunnable);
+            planExecutorThread.start();
+        } else if (planExecutorThread.isAlive()) {
+            planExecutorThread.interrupt();
+            planExecutorThread = new Thread(planExecutorRunnable);
+            planExecutorThread.start();
+        }
+        //Casting is required for backward compatibility with old platform versions
+        IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
+        service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
+	}
+	
 	public void setDebugger(LocalSearchDebugger localSearchDebugger) {
 		this.debugger = localSearchDebugger;
 		//Casting is required for backward compatibility with old platform versions
@@ -156,8 +211,6 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
 
         ILayoutAlgorithm layout = getLayout();
         this.graphViewer.setLayoutAlgorithm(layout);
-        
-        fillToolBar();
     }
 
     private void createTreeViewer(SashForm sashForm) {
@@ -181,17 +234,6 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
         return layout;
     }
 
-    private void fillToolBar() {
-//        ZoomContributionViewItem toolbarZoomContributionViewItem = new ZoomContributionViewItem(this);
-//        IActionBars bars = getViewSite().getActionBars();
-//        bars.getMenuManager().add(toolbarZoomContributionViewItem);
-    }
-
-//    @Override
-//    public AbstractZoomableViewer getZoomableViewer() {
-//        return graphViewer;
-//    }
-
     @Override
     public void setFocus() {
         operationListViewer.getControl().setFocus();
@@ -209,6 +251,10 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
 				}
 			}
 		});
+    	
+        //Casting is required for backward compatibility with old platform versions
+        IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
+        service.requestEvaluation(LocalSearchDebuggerPropertyTester.DEBUGGER_RUNNING);
     }
 
     public TreeViewer getOperationListViewer() {
@@ -227,7 +273,8 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
         return graphViewer;
     }
 
-	public TableViewer getMatchesViewer(String queryName) {
+	public TableViewer getMatchesViewer(PQuery query) {
+	    String queryName = getSimpleQueryName(query);
 		TableViewer viewer = matchViewersMap.get(queryName);
 		if(viewer == null){
 			getOrCreateMatchesTab(queryName);
@@ -335,14 +382,24 @@ public class LocalSearchDebugView extends ViewPart /*implements IZoomableWorkben
     	return matchesViewer;
     	
 	}
-
+	
     @Override
     public void dispose() {
+        disposeExistingDebugger();
+        super.dispose();
+    }
+
+    private void disposeExistingDebugger() {
         if (debugger != null) {
             debugger.dispose();
             debugger = null;
         }
-        super.dispose();
     }
 
+    private void closeMatchTabs() {
+        for (Item item : getMatchesTabFolder().getItems()) {
+            item.dispose();
+        }
+        matchViewersMap.clear();
+    }
 }

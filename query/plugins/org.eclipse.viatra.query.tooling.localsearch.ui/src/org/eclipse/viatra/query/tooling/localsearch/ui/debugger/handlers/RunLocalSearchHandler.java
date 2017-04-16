@@ -33,7 +33,7 @@ public class RunLocalSearchHandler extends AbstractHandler {
                 localSearchDebugView.getDebugger().setHalted(false);
             }
         } catch (PartInitException e) {
-            throw new RuntimeException(e);
+            throw new ExecutionException(e.getMessage(), e);
         }
         
         synchronized (LocalSearchDebugger.notifier) {

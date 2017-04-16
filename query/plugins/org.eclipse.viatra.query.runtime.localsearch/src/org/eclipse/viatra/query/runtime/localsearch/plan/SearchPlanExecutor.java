@@ -41,7 +41,7 @@ public class SearchPlanExecutor implements ILocalSearchAdaptable{
     SearchPlan plan;
     private List<ISearchOperation> operations;
     private final ISearchContext context;
-    private final List<ILocalSearchAdapter> adapters = Lists.newArrayListWithCapacity(1);
+    private final List<ILocalSearchAdapter> adapters = Lists.newCopyOnWriteArrayList();
 	private final BiMap<Integer,PVariable> variableMapping;
 
 	public BiMap<Integer, PVariable> getVariableMapping() {
