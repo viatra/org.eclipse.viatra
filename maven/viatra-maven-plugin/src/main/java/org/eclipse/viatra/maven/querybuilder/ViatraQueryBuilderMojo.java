@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.resource.impl.URIMappingRegistryImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.viatra.maven.querybuilder.helper.Metamodel;
-import org.eclipse.viatra.maven.querybuilder.helper.URIMapping;
+import org.eclipse.viatra.maven.querybuilder.helper.UriMapping;
 import org.eclipse.viatra.maven.querybuilder.setup.EMFPatternLanguageMavenStandaloneSetup;
 import org.eclipse.viatra.maven.querybuilder.setup.MavenBuilderGenmodelLoader;
 import org.eclipse.xtext.maven.Language;
@@ -145,13 +145,13 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
      * 
      * @parameter
      */
-    private List<URIMapping> uriMappings;
+    private List<UriMapping> uriMappings;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         prepareClasspath();
         
-        prepareURIMappings();
+        prepareUriMappings();
         
         registerGenmodelExtension();
 
@@ -172,13 +172,13 @@ public class ViatraQueryBuilderMojo extends AbstractMojo {
      * 
      * @throws MojoExecutionException
      */
-    protected void prepareURIMappings() throws MojoExecutionException {
+    protected void prepareUriMappings() throws MojoExecutionException {
         if(uriMappings == null || uriMappings.isEmpty()) {
             return;
         }
         URIMappingRegistryImpl uriMappingRegistry = URIMappingRegistryImpl.INSTANCE;
-        for (URIMapping uriMapping : uriMappings) {
-            try {
+        for (UriMapping uriMapping : uriMappings) {
+            try {   
                 URI sourceUri = URI.createURI(uriMapping.getSourceUri());
                 URI targetUri = URI.createURI(uriMapping.getTargetUri());
                 uriMappingRegistry.put(sourceUri, targetUri);
