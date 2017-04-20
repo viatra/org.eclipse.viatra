@@ -150,14 +150,13 @@
 					<configuration>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
-						<!-- add JavaFX to classpath (jfxrt for Java 7, jfxswt.jar for Java 
-							8) -->
+						<!-- add JavaFX to classpath (jfxswt.jar for Java 8) -->
 						<extraClasspathElements>
 							<extraClasspathElement>
 								<groupId>com.oracle</groupId>
 								<artifactId>javafx</artifactId>
-								<version>2.2.0-SNAPSHOT</version>
-								<systemPath>${java.home}/lib/jfxrt.jar</systemPath>
+								<version>8.0.0-SNAPSHOT</version>
+								<systemPath>${java.home}/lib/ext/jfxrt.jar</systemPath>
 								<scope>system</scope>
 							</extraClasspathElement>
 							<extraClasspathElement>
