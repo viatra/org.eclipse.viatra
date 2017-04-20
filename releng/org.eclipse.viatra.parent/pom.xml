@@ -182,9 +182,7 @@
 						<excludeResources>
 							<excludeResource>**/.gitignore</excludeResource>
 						</excludeResources>
-						<compilerArgs>
-						  <compilerArg>-err:-forbidden</compilerArg>
-						</compilerArgs>
+						<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
 					</configuration>
 				</plugin>
 				<plugin>
