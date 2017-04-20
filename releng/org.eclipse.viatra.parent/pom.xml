@@ -150,16 +150,8 @@
 					<configuration>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
-						<!-- add JavaFX to classpath (jfxrt for Java 7, jfxswt.jar for Java 
-							8) -->
+						<!-- add JavaFX to classpath (jfxswt.jar for Java 8) -->
 						<extraClasspathElements>
-							<extraClasspathElement>
-								<groupId>com.oracle</groupId>
-								<artifactId>javafx</artifactId>
-								<version>2.2.0-SNAPSHOT</version>
-								<systemPath>${java.home}/lib/jfxrt.jar</systemPath>
-								<scope>system</scope>
-							</extraClasspathElement>
 							<extraClasspathElement>
 								<groupId>com.oracle</groupId>
 								<artifactId>javafxswt</artifactId>
@@ -183,9 +175,7 @@
 						<excludeResources>
 							<excludeResource>**/.gitignore</excludeResource>
 						</excludeResources>
-						<compilerArgs>
-						  <compilerArg>-err:-forbidden</compilerArg>
-						</compilerArgs>
+						<compilerArguments>-err:-forbidden</compilerArguments>
 					</configuration>
 				</plugin>
 				<plugin>
