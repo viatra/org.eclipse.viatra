@@ -175,7 +175,7 @@
 						<excludeResources>
 							<excludeResource>**/.gitignore</excludeResource>
 						</excludeResources>
-						<compilerArguments>-err:-forbidden</compilerArguments>
+						<compilerArgument>-err:-forbidden</compilerArgument>
 					</configuration>
 				</plugin>
 				<plugin>
