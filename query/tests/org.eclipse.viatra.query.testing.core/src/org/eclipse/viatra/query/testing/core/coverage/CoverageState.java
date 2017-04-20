@@ -10,25 +10,30 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.testing.core.coverage;
 
+/**
+ * Possible coverage states for a PSystem element.
+ *
+ * @since 1.6
+ */
 public enum CoverageState {
 
     /**
-     * Constraint is covered
+     * Element is covered
      */
     COVERED,
     
     /**
-     * Constraint is not covered
+     * Element is not covered
      */
     NOT_COVERED,
     
     /**
-     * Coverage cannot be determined for constraint
+     * Coverage cannot be determined for Element
      */
     UNDEFINED,
     
     /**
-     * Constraint is not represented by the underlying engine, usually meaning it was
+     * Element is not represented by the underlying engine, usually meaning it was
      * removed by an optimization.
      */
     NOT_REPRESENTED

@@ -31,11 +31,11 @@ import org.eclipse.viatra.query.runtime.matchers.backend.QueryEvaluationHint
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry
 import org.eclipse.viatra.query.testing.core.IMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.InitializedSnapshotMatchSetModelProvider
-import org.eclipse.viatra.query.testing.core.PatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.SnapshotMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.ViatraQueryTestCase
 import org.eclipse.viatra.query.testing.core.XmiModelUtil
 import org.eclipse.viatra.query.testing.core.XmiModelUtil.XmiModelUtilRunningOptionEnum
+import org.eclipse.viatra.query.testing.core.internal.AnalyzedPatternBasedMatchSetModelProvider
 import org.eclipse.viatra.query.testing.core.internal.DefaultMatchRecordEquivalence
 import org.eclipse.viatra.query.testing.snapshot.QuerySnapshot
 
@@ -49,6 +49,7 @@ class ViatraQueryTest {
     val ViatraQueryTestCase testCase;
     private val List<IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>>> patterns = new LinkedList;
     private Map<String, JavaObjectAccess> accessMap;
+    private val List<IPatternExecutionAnalyzer> analyzers = new LinkedList
 
     private new() {
         this(Maps.newHashMap)
@@ -73,29 +74,44 @@ class ViatraQueryTest {
         new ViatraQueryTest().and(pattern)
     }
 
+	/**
+	 * Tests every query in the given group.
+	 */
     static def test(IQueryGroup patterns) {
         new ViatraQueryTest().and(patterns)
     }
     
+    /**
+     * Tests the given query with the given Java object access settings.
+     */
     static def <Match extends IPatternMatch> test(IQuerySpecification<? extends ViatraQueryMatcher<Match>> pattern, Map<String, JavaObjectAccess> accessMap) {
         new ViatraQueryTest(accessMap).and(pattern)
     }
 
+	/**
+     * Tests every query in the given group with the given Java object access settings.
+     */
     static def test(IQueryGroup patterns, Map<String, JavaObjectAccess> accessMap) {
         new ViatraQueryTest(accessMap).and(patterns)
     }
 
+	/**
+	 * Tests every query in the given group.
+	 */
     static def test() {
         new ViatraQueryTest
     }
 
     /**
-     * Test the specified query
+     * Test the query with the given fully qualified name.
      */
     static def <Match extends IPatternMatch> test(String pattern) {
         test().and(pattern)
     }
 
+	/**
+	 * Tests every query in the given group.
+	 */
     def and(IQueryGroup patterns) {
         patterns.specifications.forEach [
             this.patterns += it as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>
@@ -104,7 +120,7 @@ class ViatraQueryTest {
     }
 
     /**
-     * Test the given pattern parsed from file
+     * Test the given query parsed from file
      */
     def and(URI patternModel, Injector injector, String patternName) {
         val resourceSet = XmiModelUtil.prepareXtextResource(injector)
@@ -118,19 +134,38 @@ class ViatraQueryTest {
         this.patterns.add(builder.getOrCreateSpecification(patterns.get(0)))
     }
 
+	/**
+     * Test the specified query
+     */
     def and(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
         patterns.add(pattern)
         this
     }
 
+	/**
+     * Test the query with the given fully qualified name.
+     */
     def and(String pattern) {
         val view = QuerySpecificationRegistry.instance.defaultView
         and(view.getEntry(pattern).get as IQuerySpecification<ViatraQueryMatcher<IPatternMatch>>)
     }
-
-    private new(IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> pattern) {
-        this()
-        this.patterns.add(pattern);
+    
+    /**
+     * Enables analyzing all referred patterns.
+     * 
+     * @since 1.6
+     */
+    def andAllReferredPatterns() {
+    	val allReferredPatterns = 
+	    	patterns.map[pattern |
+	    		pattern.internalQueryRepresentation.allReferredQueries.map[
+		    		publishedAs.filter(IQuerySpecification).map[IQuerySpecification<? extends ViatraQueryMatcher<? extends IPatternMatch>> it |
+		    			it
+		    		]
+		    	].flatten
+	    	].flatten.toSet
+	    patterns += allReferredPatterns
+    	this
     }
     
     /**
@@ -144,16 +179,36 @@ class ViatraQueryTest {
     }
 
     /**
-     * Add match result set with a query initialized using the given hints
+     * Add an analyzer to pattern executions
+     * 
+     * @since 1.6
      */
-    def with(QueryEvaluationHint hint) {
-        val modelProvider = new PatternBasedMatchSetModelProvider(hint, accessMap);
-        testCase.addMatchSetModelProvider(modelProvider)
+    def analyzeWith(IPatternExecutionAnalyzer analyzer){
+        this.analyzers.add(analyzer)
         this
     }
 
+	/**
+     * Adds a pattern-based match result set evaluated using the given hints.
+     * 
+     * @since 1.6
+     */
+    def withPatternMatches(QueryEvaluationHint hint) {
+    	with(hint)
+    }
+     
     /**
-     * Add match result set with a query initialized using the given query backend
+     * Adds a pattern-based match result set evaluated using the given hints.
+     */
+    def with(QueryEvaluationHint hint) {
+        
+        val modelProvider = new AnalyzedPatternBasedMatchSetModelProvider(hint, accessMap, analyzers);
+        testCase.addMatchSetModelProvider(modelProvider)
+        this
+    }
+    
+    /**
+     * Adds a pattern-based match result set evaluated using the given query backend.
      */
     def with(IQueryBackendFactory queryBackendFactory) {
         val QueryEvaluationHint hint = new QueryEvaluationHint(null, queryBackendFactory);
@@ -172,7 +227,16 @@ class ViatraQueryTest {
     }
     
     /**
-     * Add a number of query snapshots to be used as reference.
+     * Add match result set loaded from the given snapshots.
+     * 
+     * @since 1.6
+     */
+    def withSnapshotMatches(QuerySnapshot ... snapshot) {
+    	with(snapshot)
+    }
+
+    /**
+     * Add match result set loaded from the given snapshot.
      * 
      * @since 1.5.2
      */
@@ -182,7 +246,7 @@ class ViatraQueryTest {
     }
 
     /**
-     * Add match result set loaded from the given snapshot
+     * Add match result set loaded from the given snapshot.
      */
     def with(String snapshotURI) {
         with(XmiModelUtil::resolvePlatformURI(XmiModelUtilRunningOptionEnum.BOTH, snapshotURI))
@@ -200,7 +264,7 @@ class ViatraQueryTest {
     }
 
     /**
-     * Initialize test using EMF Scope
+     * Initialize test model using EMF Scope
      * @since 1.5.2
      */
     def on(EMFScope scope) {

@@ -12,8 +12,15 @@ package org.eclipse.viatra.query.testing.core.coverage;
 
 import java.util.HashMap;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
+/**
+ * Associates {@link CoverageState}s to objects.
+ *
+ * @param <T> type of objects whose coverages are stored
+ * @since 1.6
+ */
 public class CoverageInfo<T> extends HashMap<T, CoverageState>{
 
     private static final long serialVersionUID = -8699692647123679741L;
@@ -25,40 +32,16 @@ public class CoverageInfo<T> extends HashMap<T, CoverageState>{
         CoverageInfo<T> result = new CoverageInfo<>();
         
         for(T key: Sets.union(this.keySet(), other.keySet())){
-            if (containsKey(key)){
-                result.put(key, get(key).best(other.get(key)));
-            }else{
-                result.put(key, other.get(key));
-            }
+        	CoverageState state = get(key);
+        	CoverageState otherState = other.get(key);
+        	if ((state != null) && (otherState != null)) {
+        		result.put(key, state.best(otherState));
+        	} else {
+        		result.put(key, Objects.firstNonNull(state, otherState));
+        	}
         }
         
         return result;
-    }
-    
-    /**
-     * @return the ratio of covered keys to the coverable (covered plus not covered) in percents
-     */
-    public float getCoveragePercent(){
-        int covered = 0;
-        int notcovered = 0;
-        for(CoverageState state: values()){
-            switch(state){
-            case COVERED:
-                covered++;
-                break;
-            case NOT_COVERED:
-                notcovered++;
-                break;
-            case NOT_REPRESENTED:
-            case UNDEFINED:
-            default:
-                break;
-            }
-        }
-        if ((covered+notcovered)>0){
-            return (100f*(float)covered) / ((float)(covered+notcovered));
-        }
-        return 0;
     }
     
 }
