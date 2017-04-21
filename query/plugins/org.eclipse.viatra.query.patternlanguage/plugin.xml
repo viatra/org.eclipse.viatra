@@ -504,6 +504,10 @@
            fully-qualified-name="java.lang.Integer.valueOf(java.lang.String, int)"
            type="method">
      </pure-element>
+     <pure-element
+           fully-qualified-name="java.math.BigDecimal"
+           type="class">
+     </pure-element>
   </extension>
   <extension
         point="org.eclipse.viatra.query.patternlanguage.annotation">
