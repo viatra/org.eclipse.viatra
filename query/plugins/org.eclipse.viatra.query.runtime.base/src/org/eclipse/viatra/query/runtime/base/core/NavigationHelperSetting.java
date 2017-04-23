@@ -60,9 +60,7 @@ public class NavigationHelperSetting implements Setting {
 
     @Override
     public boolean isSet() {
-        if (value != null)
-            return true;
-        return false;
+        return (value != null);
     }
 
     @Override

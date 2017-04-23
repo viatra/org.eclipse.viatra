@@ -48,10 +48,7 @@ public class QueryExplorerLabelProvider extends ColumnLabelProvider {
 
     @Override
     public boolean isLabelProperty(Object element, String property) {
-        if (property.matches("text")) {
-            return true;
-        }
-        return false;
+        return property.matches("text");
     }
 
     @Override

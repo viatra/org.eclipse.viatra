@@ -123,9 +123,7 @@ public abstract class ViewerDataModel {
     }
     
     private boolean checkNotationResource(Resource r) {
-    	if (r.getURI().toString().equals(getNotationResourceId()))
-    		return true;
-    	return false;
+    	return (r.getURI().toString().equals(getNotationResourceId()))
     }
     
     private Collection<? extends Notifier> getNotifiers() {

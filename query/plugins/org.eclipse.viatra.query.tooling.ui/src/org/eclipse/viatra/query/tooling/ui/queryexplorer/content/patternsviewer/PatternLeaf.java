@@ -55,11 +55,7 @@ public class PatternLeaf extends PatternComponent {
 
         PatternLeaf composite = (PatternLeaf) obj;
 
-        if ((this.patternNameFragment == composite.patternNameFragment) && (this.parent == composite.parent)) {
-            return true;
-        }
-
-        return false;
+        return (this.patternNameFragment == composite.patternNameFragment) && (this.parent == composite.parent);
     }
 
     @Override

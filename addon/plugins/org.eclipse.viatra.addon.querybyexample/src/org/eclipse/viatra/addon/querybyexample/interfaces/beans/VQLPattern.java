@@ -82,10 +82,8 @@ public class VQLPattern {
     }
 
     public boolean validate() {
-        if (this.packageName.trim().isEmpty() || this.nsUri.trim().isEmpty() || this.patternName.trim().isEmpty()
-                || this.selectedEObjects.isEmpty())
-            return false;
-        return true;
+        return (this.packageName.trim().isEmpty() || this.nsUri.trim().isEmpty() || this.patternName.trim().isEmpty()
+                || this.selectedEObjects.isEmpty());
     }
 
     public void reset() {

@@ -49,12 +49,10 @@ public class FrameViewerContentProvider implements IGraphEntityRelationshipConte
         }
 
         ArrayList<Object> elements = Lists.newArrayList();
-        if (frame != null) {
-            for (int i = 0; i < frame.getSize(); i++) {
-                Object element = frame.get(i);
-                if(element != null && element instanceof EObject){
-                    elements.add(element);              
-                }
+        for (int i = 0; i < frame.getSize(); i++) {
+            Object element = frame.get(i);
+            if(element != null && element instanceof EObject){
+                elements.add(element);              
             }
         }
         return elements.toArray();

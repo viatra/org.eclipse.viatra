@@ -319,10 +319,7 @@ public abstract class QueryResultAssociativeStore<KeyType, ValueType> {
     protected boolean checkModificationThroughQueryResultSetter(KeyType key, ValueType value, Direction direction,
             final int expectedChange, final int size) {
         boolean isInsertion = direction == Direction.INSERT;
-        if (isInsertion == internalCacheContainsEntry(key, value)
-                && (internalCacheSize() - expectedChange) == size) {
-            return true;
-        }
-        return false;
+        return (isInsertion == internalCacheContainsEntry(key, value)
+                && (internalCacheSize() - expectedChange) == size);
     }
 }

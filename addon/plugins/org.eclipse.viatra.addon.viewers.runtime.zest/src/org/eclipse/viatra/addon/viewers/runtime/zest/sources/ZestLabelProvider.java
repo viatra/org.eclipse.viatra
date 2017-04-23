@@ -62,20 +62,6 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
         return null;
     }
 
-    private int getIntProperty(FormattableElement element, String property) {
-        if (FormatParser.isFormatted(element)) {
-            return FormatParser.getNumberProperty(element,property);
-        }
-        return -1;
-    }
-    
-    private String getStringProperty(FormattableElement element, String property) {
-    	if (FormatParser.isFormatted(element)) {
-    		return FormatParser.getStringProperty(element, property);
-    	}
-    	return "";
-    }
-
     private Color getColor(RGB rgb) {
         if (!colorMap.containsKey(rgb)) {
             Color newColor = new Color(display, rgb);
@@ -112,40 +98,25 @@ public class ZestLabelProvider extends QueryLabelProvider implements IColorProvi
         super.dispose();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider#getEdgeAttributes(java.lang.Object, java.lang.Object)
-     */
     @Override
     public Map<String, Object> getEdgeAttributes(Object sourceNode, Object targetNode) {
-        // TODO Auto-generated method stub
         Map<String, Object> attributes = Maps.newHashMap();
         attributes.put(ZestProperties.TARGET_DECORATION__E, new DiamondHead());
         return attributes;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider#getGraphAttributes()
-     */
     @Override
     public Map<String, Object> getGraphAttributes() {
         return Maps.newHashMap();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider#getNestedGraphAttributes(java.lang.Object)
-     */
     @Override
     public Map<String, Object> getNestedGraphAttributes(Object nestingNode) {
-        // TODO Auto-generated method stub
         return Maps.newHashMap();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.gef4.zest.fx.jface.IGraphAttributesProvider#getNodeAttributes(java.lang.Object)
-     */
     @Override
     public Map<String, Object> getNodeAttributes(Object node) {
-        // TODO Auto-generated method stub
         return Maps.newHashMap();
     }
 

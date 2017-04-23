@@ -117,9 +117,7 @@ public class ViewModelManager {
     }
 
     private boolean checkTraceabilityResource(Resource r) {
-    	if (r.getURI().toString().equals(getTraceabilityResourceId()))
-    		return true;
-    	return false;
+    	return r.getURI().toString().equals(getTraceabilityResourceId());
     }
     
     public ViatraQueryEngine getEngine() {

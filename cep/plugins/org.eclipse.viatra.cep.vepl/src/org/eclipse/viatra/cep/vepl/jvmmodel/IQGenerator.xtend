@@ -215,10 +215,7 @@ class IQGenerator {
 
 	def requiresAppearAction(QueryResultChangeEventPattern pattern) {
 		val changeType = pattern.resultChangeType
-		if (changeType == null || changeType.equals(QueryResultChangeType.FOUND)) {
-			return true
-		}
-		return false
+		return (changeType == null || changeType.equals(QueryResultChangeType.FOUND))
 	}
 
 	def patternsRequiringAppearAction(List<QueryResultChangeEventPattern> patterns) {
@@ -227,10 +224,7 @@ class IQGenerator {
 
 	def requiresDisappearAction(QueryResultChangeEventPattern pattern) {
 		val changeType = pattern.resultChangeType
-		if (changeType.equals(QueryResultChangeType.LOST)) {
-			return true
-		}
-		return false
+		return (changeType.equals(QueryResultChangeType.LOST))
 	}
 
 	def patternsRequiringDisappearAction(List<QueryResultChangeEventPattern> patterns) {

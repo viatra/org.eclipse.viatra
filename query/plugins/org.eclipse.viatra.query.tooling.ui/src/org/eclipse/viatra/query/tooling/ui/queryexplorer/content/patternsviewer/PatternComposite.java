@@ -330,11 +330,7 @@ public class PatternComposite extends PatternComponent {
 
         PatternComposite composite = (PatternComposite) obj;
 
-        if ((this.patternNameFragment == composite.patternNameFragment) && (this.parent == composite.parent)
-                && (this.children.equals(composite.children))) {
-            return true;
-        }
-
-        return false;
+        return (this.patternNameFragment == composite.patternNameFragment) && (this.parent == composite.parent)
+                && (this.children.equals(composite.children));
     }
 }
