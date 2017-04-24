@@ -242,8 +242,8 @@ public abstract class NavigationHelperVisitor extends EMFVisitor {
                 return false;
             }
         }
-        return isInsertion && navigationHelper.isExpansionAllowed() && feature instanceof EReference
-                && !((EReference) feature).isContainment();
+        return !(isInsertion && navigationHelper.isExpansionAllowed() && feature instanceof EReference
+                && !((EReference) feature).isContainment());
     }
 
     /**
