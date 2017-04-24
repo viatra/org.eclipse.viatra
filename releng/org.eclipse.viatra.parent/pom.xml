@@ -273,7 +273,7 @@
 	</pluginRepositories>
 	<profiles>
         <profile>
-            <id>sign_milestone</id>
+            <id>sign_integration</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
                 <property>
