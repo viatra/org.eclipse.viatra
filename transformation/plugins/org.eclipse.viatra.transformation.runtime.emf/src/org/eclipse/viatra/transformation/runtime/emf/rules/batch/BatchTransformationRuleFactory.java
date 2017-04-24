@@ -60,27 +60,27 @@ public class BatchTransformationRuleFactory {
 
 		public BatchTransformationRule<Match, Matcher> build() {
 		    if (fFilter == null) {
-		        return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+		        return new BatchTransformationRule<>(fName, fPrecondition,
 		                BatchTransformationRule.STATELESS_RULE_LIFECYCLE, fAction);
             } else {
-    		    return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+    		    return new BatchTransformationRule<>(fName, fPrecondition,
     	                BatchTransformationRule.STATELESS_RULE_LIFECYCLE, fAction, fFilter);
             }
 		}
 		
 		public BatchTransformationRule<Match, Matcher> buildStateful() {
 		    if (fFilter == null) {
-		        return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+		        return new BatchTransformationRule<>(fName, fPrecondition,
 		                BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, fAction);
 		    } else {
-		        return new BatchTransformationRule<Match, Matcher>(fName, fPrecondition,
+		        return new BatchTransformationRule<>(fName, fPrecondition,
 		                BatchTransformationRule.STATEFUL_RULE_LIFECYCLE, fAction, fFilter);
 		    }
 		}
 	}
 	
 	public <Match extends IPatternMatch, Matcher extends ViatraQueryMatcher<Match>> BatchTransformationRuleBuilder<Match, Matcher> createRule() {
-		return new BatchTransformationRuleBuilder<Match, Matcher>();
+		return new BatchTransformationRuleBuilder<>();
 	}
 
 }

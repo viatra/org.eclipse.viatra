@@ -35,10 +35,7 @@ public class MaxEvaluationsStopCondition implements IStopCondition {
     @Override
     public boolean checkStopCondition(Collection<TrajectoryFitness> survivedPopulation) {
         evals += so.childPopulationSize;
-        if (evals >= maxEvaluations) {
-            return true;
-        }
-        return false;
+        return evals >= maxEvaluations;
     }
 
 }

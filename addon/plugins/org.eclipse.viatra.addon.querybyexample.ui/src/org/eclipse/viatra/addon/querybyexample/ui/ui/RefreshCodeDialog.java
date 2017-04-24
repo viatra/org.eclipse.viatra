@@ -58,9 +58,7 @@ public class RefreshCodeDialog extends Dialog {
     private static class EIQFilesViewerFilter extends ViewerFilter {
         @Override
         public boolean select(Viewer viewer, Object parentElement, Object element) {
-            if (element instanceof IFile && !VQL_FILE_EXTENSION.equals(((IFile) element).getFileExtension()))
-                return false;
-            return true;
+            return element instanceof IFile && !VQL_FILE_EXTENSION.equals(((IFile) element).getFileExtension());
         }
     }
 
