@@ -16,7 +16,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature" version="1.6.0" match="equivalent"/>
       <import feature="org.eclipse.modisco.infrastructure.feature"/>
    </requires>
 

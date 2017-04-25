@@ -16,9 +16,9 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.runtime.feature" version="0.0.0"/>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="0.0.0"/>
       <import feature="org.eclipse.emf.databinding"/>
+      <import feature="org.eclipse.viatra.query.runtime.feature" version="1.6.0" match="equivalent"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.6.0" match="equivalent"/>
    </requires>
 
    <plugin

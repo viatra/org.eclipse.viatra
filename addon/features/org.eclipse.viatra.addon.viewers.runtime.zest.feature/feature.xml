@@ -16,10 +16,10 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.addon.viewers.runtime.feature"/>
-      <import feature="org.eclipse.gef.graph"/>
-      <import feature="org.eclipse.gef.layout"/>
-      <import feature="org.eclipse.gef.zest.fx.jface"/>
+      <import feature="org.eclipse.viatra.addon.viewers.runtime.feature" version="0.16.0" match="equivalent"/>
+      <import feature="org.eclipse.gef.graph" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef.layout" version="5.0.0" match="compatible"/>
+      <import feature="org.eclipse.gef.zest.fx.jface" version="5.0.0" match="compatible"/>
    </requires>
 
    <plugin

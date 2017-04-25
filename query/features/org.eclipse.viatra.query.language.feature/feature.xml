@@ -16,7 +16,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.runtime.feature"/>
+      <import feature="org.eclipse.viatra.query.runtime.feature" version="1.6.0" match="equivalent"/>
       <import feature="org.eclipse.xtext.runtime" version="2.9.0" match="compatible"/>
    </requires>
 

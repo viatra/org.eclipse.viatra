@@ -17,14 +17,16 @@
 
    <includes
          id="org.eclipse.viatra.addon.viewers.runtime.zest.feature"
-         version="0.0.0"/>
+         version="0.16.0.qualifier"
+         name="VIATRA Viewers Runtime - GEF4 Zest Support"/>
 
    <includes
          id="org.eclipse.viatra.addon.viewers.runtime.feature"
-         version="0.0.0"/>
+         version="0.16.0.qualifier"
+         name="VIATRA Viewers Runtime"/>
 
    <requires>
-      <import feature="org.eclipse.viatra.query.sdk.feature" version="1.2.0.qualifier"/>
+      <import feature="org.eclipse.viatra.query.sdk.feature" version="1.6.0" match="equivalent"/>
    </requires>
 
    <plugin

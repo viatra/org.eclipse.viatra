@@ -17,7 +17,7 @@
 
    <requires>
       <import feature="org.eclipse.xtext.xbase.lib" version="2.9.0" match="compatible"/>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.6.0" match="equivalent"/>
       <import feature="org.eclipse.jdt"/>
    </requires>
 

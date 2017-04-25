@@ -16,7 +16,7 @@
    </url>
 
    <requires>
-      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.2.0.qualifier"/>
+      <import feature="org.eclipse.viatra.transformation.runtime.emf.feature" version="1.6.0" match="equivalent"/>
    </requires>
 
    <plugin
