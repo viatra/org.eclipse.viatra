@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultiset;
@@ -38,17 +37,10 @@ import com.google.common.collect.Table.Cell;
  * @author Gabor Bergmann
  *
  */
-public class EMFBaseIndexInstanceStore {
+public class EMFBaseIndexInstanceStore extends AbstractBaseIndexStore {
     
-    private final NavigationHelperImpl navigationHelper;
-    private final Logger logger;
-    private final boolean strictNotificationMode;
-    
-    public EMFBaseIndexInstanceStore(NavigationHelperImpl navigationHelper, Logger logger, BaseIndexOptions options) {
-        super();
-        this.navigationHelper = navigationHelper;
-        this.logger = logger;
-        this.strictNotificationMode = options.isStrictNotificationMode();
+    public EMFBaseIndexInstanceStore(NavigationHelperImpl navigationHelper, Logger logger) {
+        super(navigationHelper, logger);
     }
 
     /**
@@ -421,12 +413,4 @@ public class EMFBaseIndexInstanceStore {
         return oldValues;
     }
     
-    private void logNotificationHandlingError(String msg) {
-        if (strictNotificationMode) {
-            // This will cause e.g. query engine to become tainted
-            navigationHelper.notifyFatalListener(msg, new IllegalStateException(msg));
-        } else {
-            logger.error(msg);
-        }
-    }
 }

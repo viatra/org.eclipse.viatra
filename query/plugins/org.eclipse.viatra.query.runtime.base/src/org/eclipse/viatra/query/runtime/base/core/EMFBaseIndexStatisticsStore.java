@@ -13,23 +13,25 @@ package org.eclipse.viatra.query.runtime.base.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import com.google.common.base.Preconditions;
 
 /**
  * @author Grill Balázs
  *
  */
-public class EMFBaseIndexStatisticsStore {
+public class EMFBaseIndexStatisticsStore extends AbstractBaseIndexStore {
 
     /**
      * A common map is used to store instance/value statistics. The key can be an {@link EClassifier}, 
      * {@link EStructuralFeature} or a String ID. 
      */
     private final Map<Object, Integer> stats = new HashMap<Object, Integer>();
-    
+
+    public EMFBaseIndexStatisticsStore(NavigationHelperImpl navigationHelper, Logger logger) {
+        super(navigationHelper, logger);
+    }
     public void addFeature(Object element, Object feature){
         addInstance(feature);
     }
@@ -45,7 +47,9 @@ public class EMFBaseIndexStatisticsStore {
     
     public void removeInstance(Object key){
         Integer v = stats.get(key);
-        Preconditions.checkArgument(v != null && v > 0, "No instances of %s is registered before calling removeInstance method.", key);
+        if(v == null || v > 0) {
+            logNotificationHandlingError(String.format("No instances of %s is registered before calling removeInstance method.", key));
+        }
         if (v.intValue() == 1){
             stats.remove(key);
         }else{
