@@ -12,18 +12,14 @@
 
 package org.eclipse.viatra.query.tooling.ui.retevis.views;
 
-import java.util.Collection;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.viatra.addon.viewers.runtime.extensions.ViewersComponentConfiguration;
 import org.eclipse.viatra.integration.zest.viewer.ModifiableZestContentViewer;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
-import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQueryHeader;
 import org.eclipse.viatra.query.tooling.ui.retevis.ReteVisualization;
 
-import com.google.common.collect.Sets;
 
 public class ReteVisualizationView extends ViewPart /*implements IZoomableWorkbenchPart */{
 
@@ -32,21 +28,17 @@ public class ReteVisualizationView extends ViewPart /*implements IZoomableWorkbe
         graphViewer =  new ModifiableZestContentViewer();
         graphViewer.createControl(parent, SWT.BORDER);
         
-        final Collection<String> queryNames = Sets.newHashSet();
         try {
-            for (PQueryHeader query : ReteVisualization.instance().getSpecifications()) {
-                queryNames.add(query.getFullyQualifiedName());
-            }
+            viewSupport = new ReteVisualizationViewSupport(
+                    this, 
+                    ViewersComponentConfiguration.fromQuerySpecs(ReteVisualization.instance().getSpecifications()),
+                    graphViewer);
+            viewSupport.createPartControl(parent, graphViewer.getControl());
+            viewSupport.createToolbar();
+            viewSupport.createLayoutMenu();
         } catch (ViatraQueryException e) {
             throw new RuntimeException("Failed to get Rete Visualization query specifications", e);
         }
-        viewSupport = new ReteVisualizationViewSupport(
-                this, 
-                ViewersComponentConfiguration.fromQuerySpecFQNs(queryNames),
-                graphViewer);
-        viewSupport.createPartControl(parent, graphViewer.getControl());
-        viewSupport.createToolbar();
-        viewSupport.createLayoutMenu();
     }
 
     private ModifiableZestContentViewer graphViewer;

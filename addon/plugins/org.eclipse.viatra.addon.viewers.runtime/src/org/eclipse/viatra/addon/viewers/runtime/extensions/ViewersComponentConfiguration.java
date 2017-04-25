@@ -15,9 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.viatra.addon.viewers.runtime.model.ViewerDataFilter;
-import org.eclipse.viatra.query.runtime.api.IPatternMatch;
 import org.eclipse.viatra.query.runtime.api.IQuerySpecification;
-import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.registry.IQuerySpecificationRegistry;
 import org.eclipse.viatra.query.runtime.registry.QuerySpecificationRegistry;
@@ -56,18 +54,10 @@ public class ViewersComponentConfiguration
 		this(_model,_patterns,ViewerDataFilter.UNFILTERED);
 	}
 	
-	/**
-	 * TODO this does not seem to be usable at the moment
-	 * 
-	 * Java generics bugs?
-	 * 
-	 * @param specs
-	 * @return
-	 */
-	public static ViewersComponentConfiguration fromQuerySpecs(Collection<IQuerySpecification<ViatraQueryMatcher<? extends IPatternMatch>>> specs)
+	public static ViewersComponentConfiguration fromQuerySpecs(Collection<? extends IQuerySpecification<?>> specs)
 	{
 		ViewersComponentConfiguration c = new ViewersComponentConfiguration();
-		for (IQuerySpecification<ViatraQueryMatcher<? extends IPatternMatch>> spec : specs) {
+		for (IQuerySpecification<?> spec : specs) {
 			c.patterns.add(spec);
 		}
 		return c;
