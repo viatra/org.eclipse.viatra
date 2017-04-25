@@ -118,11 +118,10 @@ public class EMFModelComprehension {
         if (isMixed)
             return true; // TODO maybe check the "name"=":mixed" or ":group" feature for representability?
 
-        final String groupAnnotation = EcoreUtil.getAnnotation(feature, ExtendedMetaData.ANNOTATION_URI, "group");
-        if (groupAnnotation != null && groupAnnotation.length() > 1 && '#' == groupAnnotation.charAt(0)) {
-            final String groupFeatureName = groupAnnotation.substring(1);
-            final EStructuralFeature groupFeature = feature.getEContainingClass().getEStructuralFeature(
-                    groupFeatureName);
+        // Group features are alternative features that are used when the ecore is derived from an xsd schema containing
+        // choices; in that case instead of the asked feature we should index the corresponding group feature
+        final EStructuralFeature groupFeature = ExtendedMetaData.INSTANCE.getGroup(feature);
+        if (groupFeature != null) {
             return representable(groupFeature);
         }
 
