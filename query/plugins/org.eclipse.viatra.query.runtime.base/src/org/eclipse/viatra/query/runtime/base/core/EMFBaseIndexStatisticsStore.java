@@ -47,8 +47,9 @@ public class EMFBaseIndexStatisticsStore extends AbstractBaseIndexStore {
     
     public void removeInstance(Object key){
         Integer v = stats.get(key);
-        if(v == null || v > 0) {
+        if(v == null || v <= 0) {
             logNotificationHandlingError(String.format("No instances of %s is registered before calling removeInstance method.", key));
+            return;
         }
         if (v.intValue() == 1){
             stats.remove(key);
