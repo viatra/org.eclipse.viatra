@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contexts>
+   <context id="usagecounting">
+      <topic href="html/language/usagecounting.html" label="Usage Counting"/>
+   </context>
+</contexts>

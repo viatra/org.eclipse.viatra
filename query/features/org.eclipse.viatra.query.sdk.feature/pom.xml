@@ -34,6 +34,9 @@
 					</execution>
 				</executions>
 				<configuration>
+				    <excludes>
+				        <plugin id="org.eclipse.viatra.documentation.help"/>
+				    </excludes>
 					<labelSuffix></labelSuffix>
 				</configuration>
 			</plugin>

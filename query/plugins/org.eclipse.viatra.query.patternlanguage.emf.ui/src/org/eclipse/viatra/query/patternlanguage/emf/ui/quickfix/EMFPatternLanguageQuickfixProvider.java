@@ -19,8 +19,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.viatra.query.patternlanguage.emf.eMFPatternLanguage.XImportSection;
 import org.eclipse.viatra.query.patternlanguage.emf.validation.EMFIssueCodes;
+import org.eclipse.viatra.query.patternlanguage.validation.IssueCodes;
 import org.eclipse.viatra.query.tooling.core.project.ProjectGenerationHelper;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -177,5 +180,33 @@ public class EMFPatternLanguageQuickfixProvider extends XbaseQuickfixProvider {
                 String.format("Add the required bundle '%s' to the manifest.mf file.", issue.getData()[0]), 
                 null,
                 new AddDependency(issue));
+    }
+    
+    @Fix(IssueCodes.LOCAL_VARIABLE_READONLY)
+    public void explainUsageCounting1(final Issue issue, IssueResolutionAcceptor acceptor) {
+        explainUsageCounting(issue, acceptor);
+    }
+    @Fix(IssueCodes.LOCAL_VARIABLE_NO_POSITIVE_REFERENCE)
+    public void explainUsageCounting2(final Issue issue, IssueResolutionAcceptor acceptor) {
+        explainUsageCounting(issue, acceptor);
+    }
+    @Fix(IssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE)
+    public void explainUsageCounting3(final Issue issue, IssueResolutionAcceptor acceptor) {
+        explainUsageCounting(issue, acceptor);
+    }
+    @Fix(IssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED)
+    public void explainUsageCounting4(final Issue issue, IssueResolutionAcceptor acceptor) {
+        explainUsageCounting(issue, acceptor);
+    }
+
+    private void explainUsageCounting(final Issue issue, IssueResolutionAcceptor acceptor) {
+        acceptor.accept(issue, "Explain message", "", null, new IModification() {
+            
+            @Override
+            public void apply(IModificationContext context) throws Exception {
+                IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench().getHelpSystem();
+                helpSystem.displayHelp("org.eclipse.viatra.documentation.help.usagecounting");
+            }
+        });
     }
 }

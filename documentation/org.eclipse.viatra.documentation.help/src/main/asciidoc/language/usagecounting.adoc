@@ -1,0 +1,31 @@
+= Variable usage counting
+
+* Variables references of a constraint are *enumerable*, if all possible values can be enumerated for a given model. E.g., all variables of type constraints like ```Book(b);``` and path expressions like ```Book.title(b, t);``` are enumerable.
+* Parameters of negative pattern calls and aggregators are *quantified*, if they are not referenced anywhere else in the pattern.
+* *Uncountable* in every other case, e.g. variable references in check expressions, like ```check(t.startsWith("The"));``` or Java type constraints, like ```java Integer(no);``` are uncountable.
+
+For a pattern body to be well-formed, the following rules are to be fulfilled:
+
+* Each parameter variable must have an *enumerable* reference.
+* Parameters of negative pattern calls and aggregators has to either be *quantified* with no other reference, or *must* have an *enumerable* reference in the body.
+
+== Examples
+
+```
+pattern enumerableParameterReference(b) {
+  Book(b); // OK: enumerable reference
+}
+```
+
+```
+pattern number(n) {
+  java Integer(n); // ERROR: only uncountable reference for n
+}
+```
+
+```
+pattern pageCount(b, n) {
+  Book.pages(b, n);
+  java Integer(n); // OK: Book.pages is enumerable
+}
+```

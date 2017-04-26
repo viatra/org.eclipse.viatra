@@ -14,5 +14,11 @@
             primary="false">
       </toc>
    </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="org.eclipse.viatra.documentation.help.contexts.xml">
+      </contexts>
+   </extension>
 
 </plugin>

@@ -90,7 +90,7 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
                     getPatternBodyName(body)), parameter, PatternLanguagePackage.Literals.VARIABLE__NAME,
                     IssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED);
         } else if (unifiedCounter.getReferenceCount(ReferenceType.POSITIVE) == 0) {
-            error(String.format("Parameter '%s' has no positive reference in body '%s'.", var.getName(),
+            error(String.format("Parameter '%s' has no enumerable reference in body '%s'.", var.getName(),
                     getPatternBodyName(body)), parameter, PatternLanguagePackage.Literals.VARIABLE__NAME,
                     IssueCodes.SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE);
         }
@@ -117,7 +117,7 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
         } else if (unifiedCounter.getReferenceCount(ReferenceType.POSITIVE) == 0) {
             if (unifiedCounter.getReferenceCount(ReferenceType.NEGATIVE) == 0) {
                 error(String.format(
-                        "Local variable '%s' appears in read-only context(s) only, thus its value cannot be determined.",
+                        "Local variable '%s' appears in uncountable reference(s) only, thus its value cannot be determined.",
                         var.getName()), var, PatternLanguagePackage.Literals.VARIABLE__NAME,
                         IssueCodes.LOCAL_VARIABLE_READONLY);
             } else if (individualCounter.getReferenceCount(ReferenceType.NEGATIVE) == 1
@@ -130,7 +130,7 @@ public class VariableUsageCounter extends AbstractDeclarativeValidator {
                         IssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE);
             } else if (unifiedCounter.getReferenceCount() > 1) {
                 error(String.format(
-                        "Local variable '%s' has no positive reference, thus its value cannot be determined.",
+                        "Local variable '%s' has no enumerable reference, thus its value cannot be determined.",
                         var.getName()), var.getReferences().get(0),
                         PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
                         IssueCodes.LOCAL_VARIABLE_NO_POSITIVE_REFERENCE);

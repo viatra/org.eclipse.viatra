@@ -16,7 +16,7 @@
 			<plugin>
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.3</version>
+				<version>1.5.5</version>
 				<executions>
 					<execution>
 						<id>generate-tutorial</id>
@@ -29,7 +29,8 @@
                             <backend>html5</backend>	
                             <sourceHighlighter>highlight.js</sourceHighlighter>
                             <preserveDirectories>true</preserveDirectories>
-                            <outputDirectory>html</outputDirectory>						
+                            <outputDirectory>html</outputDirectory>
+                            <headerFooter>false</headerFooter>			
 						</configuration>
 					</execution>
 				</executions>
