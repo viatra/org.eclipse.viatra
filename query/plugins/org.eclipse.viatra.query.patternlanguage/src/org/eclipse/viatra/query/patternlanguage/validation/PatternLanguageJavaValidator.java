@@ -81,6 +81,7 @@ import org.eclipse.xtext.util.IResourceScopeCache;
 import org.eclipse.xtext.util.Strings;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
+import org.eclipse.xtext.validation.ComposedChecks;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
 import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
@@ -89,6 +90,7 @@ import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
+import org.eclipse.xtext.xbase.validation.EarlyExitValidator;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -115,8 +117,9 @@ import com.google.inject.Provider;
  * @author Tamas Szabo (itemis AG)
  */
 @SuppressWarnings("restriction")
+@ComposedChecks(validators = { VariableUsageCounter.class })
 public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaValidator implements IIssueCallback {
-
+    
     public static final String DUPLICATE_VARIABLE_MESSAGE = "Duplicate parameter ";
     public static final String DUPLICATE_PATTERN_DEFINITION_MESSAGE = "Duplicate pattern %s (the shadowing pattern is in %s)";
     public static final String UNKNOWN_ANNOTATION_ATTRIBUTE = "Undefined annotation attribute ";
@@ -737,80 +740,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         }
     }
 
-    @Check(CheckType.NORMAL)
-    public void checkVariableUsageCounters(PatternBody body) {
-        UnionFind<Variable> variableUnions = calculateEqualVariables(body);
-        Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters = new HashMap<Set<Variable>, VariableReferenceCount>();
-        Map<Variable, VariableReferenceCount> individualRefCounters = new HashMap<Variable, VariableReferenceCount>();
-        calculateUsageCounts(body, variableUnions, individualRefCounters, unifiedRefCounters);
-        for (Variable var : body.getVariables()) {
-            if (var instanceof ParameterRef) {
-                checkParameterUsageCounter((ParameterRef) var, individualRefCounters, unifiedRefCounters,
-                        variableUnions, body);
-            } else {
-                checkLocalVariableUsageCounter(var, individualRefCounters, unifiedRefCounters, variableUnions);
-            }
-        }
-    }
 
-    private void checkParameterUsageCounter(ParameterRef var, Map<Variable, VariableReferenceCount> individualCounters,
-            Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters, UnionFind<Variable> variableUnions,
-            PatternBody body) {
-        Variable parameter = var.getReferredParam();
-        VariableReferenceCount individualCounter = individualCounters.get(var);
-        VariableReferenceCount unifiedCounter = unifiedRefCounters.get(variableUnions.getPartition(var));
-        if (individualCounter.getReferenceCount() == 0) {
-            error(String.format("Parameter '%s' is never referenced in body '%s'.", parameter.getName(),
-                    getPatternBodyName(body)), parameter, PatternLanguagePackage.Literals.VARIABLE__NAME,
-                    IssueCodes.SYMBOLIC_VARIABLE_NEVER_REFERENCED);
-        } else if (unifiedCounter.getReferenceCount(ReferenceType.POSITIVE) == 0) {
-            error(String.format("Parameter '%s' has no positive reference in body '%s'.", var.getName(),
-                    getPatternBodyName(body)), parameter, PatternLanguagePackage.Literals.VARIABLE__NAME,
-                    IssueCodes.SYMBOLIC_VARIABLE_NO_POSITIVE_REFERENCE);
-        }
-    }
-
-    private void checkLocalVariableUsageCounter(Variable var, Map<Variable, VariableReferenceCount> individualCounters,
-            Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters, UnionFind<Variable> variableUnions) {
-        VariableReferenceCount individualCounter = individualCounters.get(var);
-        VariableReferenceCount unifiedCounter = unifiedRefCounters.get(variableUnions.getPartition(var));
-        if (individualCounter.getReferenceCount(ReferenceType.POSITIVE) == 1
-                && individualCounter.getReferenceCount() == 1 && !isNamedSingleUse(var)
-                && !isUnnamedSingleUseVariable(var)) {
-            warning(String.format(
-                    "Local variable '%s' is referenced only once. Is it mistyped? Start its name with '_' if intentional.",
-                    var.getName()), var.getReferences().get(0), PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
-                    IssueCodes.LOCAL_VARIABLE_REFERENCED_ONCE);
-        } else if (individualCounter.getReferenceCount() > 1 && isNamedSingleUse(var)) {
-            for (VariableReference ref : var.getReferences()) {
-                error(String.format("Named single-use variable %s used multiple times.", var.getName()), ref,
-                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
-                        IssueCodes.ANONYM_VARIABLE_MULTIPLE_REFERENCE);
-
-            }
-        } else if (unifiedCounter.getReferenceCount(ReferenceType.POSITIVE) == 0) {
-            if (unifiedCounter.getReferenceCount(ReferenceType.NEGATIVE) == 0) {
-                error(String.format(
-                        "Local variable '%s' appears in read-only context(s) only, thus its value cannot be determined.",
-                        var.getName()), var, PatternLanguagePackage.Literals.VARIABLE__NAME,
-                        IssueCodes.LOCAL_VARIABLE_READONLY);
-            } else if (individualCounter.getReferenceCount(ReferenceType.NEGATIVE) == 1
-                    && individualCounter.getReferenceCount() == 1 && !isNamedSingleUse(var)
-                    && !isUnnamedSingleUseVariable(var)) {
-                warning(String.format(
-                        "Local variable '%s' will be quantified because it is used only here. Acknowledge this by prefixing its name with '_'.",
-                        var.getName()), var.getReferences().get(0),
-                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
-                        IssueCodes.LOCAL_VARIABLE_QUANTIFIED_REFERENCE);
-            } else if (unifiedCounter.getReferenceCount() > 1) {
-                error(String.format(
-                        "Local variable '%s' has no positive reference, thus its value cannot be determined.",
-                        var.getName()), var.getReferences().get(0),
-                        PatternLanguagePackage.Literals.VARIABLE_REFERENCE__VAR,
-                        IssueCodes.LOCAL_VARIABLE_NO_POSITIVE_REFERENCE);
-            }
-        }
-    }
 
     // private int getReferenceCount(Variable var, ReferenceType type, Map<Variable, VariableReferenceCount>
     // refCounters,
@@ -821,147 +751,6 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     // }
     // return sum;
     // }
-
-    private void calculateUsageCounts(PatternBody body, UnionFind<Variable> variableUnions,
-            Map<Variable, VariableReferenceCount> individualRefCounters,
-            Map<Set<Variable>, VariableReferenceCount> unifiedRefCounters) {
-        for (Variable var : body.getVariables()) {
-            boolean isParameter = var instanceof ParameterRef;
-            individualRefCounters.put(var, new VariableReferenceCount(Collections.singleton(var), isParameter));
-        }
-        for (Set<Variable> partition : variableUnions.getPartitions()) {
-            boolean isParameter = false;
-            for (Variable var : partition) {
-                if (var instanceof ParameterRef) {
-                    isParameter = true;
-                    break;
-                }
-            }
-            unifiedRefCounters.put(partition, new VariableReferenceCount(partition, isParameter));
-        }
-
-        TreeIterator<EObject> it = body.eAllContents();
-        while (it.hasNext()) {
-            EObject obj = it.next();
-            if (obj instanceof XExpression) {
-                XExpression expression = (XExpression) obj;
-                for (Variable var : CorePatternLanguageHelper.getReferencedPatternVariablesOfXExpression(expression,
-                        associations)) {
-                    individualRefCounters.get(var).incrementCounter(ReferenceType.READ_ONLY);
-                    unifiedRefCounters.get(variableUnions.getPartition(var)).incrementCounter(ReferenceType.READ_ONLY);
-                }
-                it.prune();
-            }
-            if (obj instanceof VariableReference) {
-                final VariableReference ref = (VariableReference) obj;
-                final Variable var = ref.getVariable();
-                final ReferenceType referenceClass = classifyReference(ref);
-                individualRefCounters.get(var).incrementCounter(referenceClass);
-                unifiedRefCounters.get(variableUnions.getPartition(var)).incrementCounter(referenceClass);
-            }
-        }
-    }
-
-    private UnionFind<Variable> calculateEqualVariables(PatternBody body) {
-        UnionFind<Variable> unions = new UnionFind<Variable>(body.getVariables());
-        TreeIterator<EObject> it = body.eAllContents();
-        while (it.hasNext()) {
-            EObject obj = it.next();
-            if (obj instanceof CompareConstraint) {
-                CompareConstraint constraint = (CompareConstraint) obj;
-                if (constraint.getFeature() == CompareFeature.EQUALITY) {
-                    ValueReference left = constraint.getLeftOperand();
-                    ValueReference right = constraint.getRightOperand();
-                    if (left instanceof VariableValue && right instanceof VariableValue) {
-                        unions.union(((VariableValue) left).getValue().getVariable(),
-                                ((VariableValue) right).getValue().getVariable());
-                    }
-                }
-                it.prune();
-            } else if (obj instanceof Constraint) {
-                it.prune();
-            }
-        }
-        return unions;
-    }
-
-    private String getPatternBodyName(PatternBody patternBody) {
-        return (patternBody.getName() != null) ? patternBody.getName()
-                : String.format("#%d", ((Pattern) patternBody.eContainer()).getBodies().indexOf(patternBody) + 1);
-    }
-
-    private ReferenceType classifyReference(VariableReference ref) {
-        EObject parent = ref;
-        while (parent != null && !(parent instanceof Constraint || parent instanceof AggregatedValue
-                || parent instanceof FunctionEvaluationValue)) {
-            parent = parent.eContainer();
-        }
-
-        if (parent instanceof CheckConstraint) {
-            return ReferenceType.READ_ONLY;
-        } else if (parent instanceof FunctionEvaluationValue) { // this should not be a variableReference, so probably
-                                                                // this will not happen
-            return ReferenceType.READ_ONLY;
-        } else if (parent instanceof CompareConstraint) {
-            CompareConstraint constraint = (CompareConstraint) parent;
-            if (constraint.getFeature() == CompareFeature.EQUALITY) {
-                final boolean leftIsVariable = constraint.getLeftOperand() instanceof VariableValue;
-                final boolean rightIsVariable = constraint.getRightOperand() instanceof VariableValue;
-                if (leftIsVariable && rightIsVariable) {
-                    // A==A equivalence between unified variables...
-                    // should be ignored in reference counting, except that it spoils quantification
-                    return ReferenceType.READ_ONLY;
-                } else if (leftIsVariable && !rightIsVariable) {
-                    if (ref.equals(((VariableValue) constraint.getLeftOperand()).getValue())) { // this should always be
-                                                                                                // true
-                        return ReferenceType.POSITIVE;
-                    } else
-                        reportStrangeVariableRef(ref, constraint);
-                } else if (rightIsVariable && !leftIsVariable) {
-                    if (ref.equals(((VariableValue) constraint.getRightOperand()).getValue())) { // this should always
-                                                                                                 // be true
-                        return ReferenceType.POSITIVE;
-                    } else
-                        reportStrangeVariableRef(ref, constraint);
-                } else
-                    reportStrangeVariableRef(ref, constraint);
-            } else if (constraint.getFeature() == CompareFeature.INEQUALITY) {
-                return ReferenceType.READ_ONLY;
-            } else
-                reportStrangeVariableRef(ref, constraint);
-        } else if (parent instanceof PatternCompositionConstraint
-                && ((PatternCompositionConstraint) parent).isNegative()) {
-            return ReferenceType.NEGATIVE;
-        } else if (parent instanceof AggregatedValue) {
-            return ReferenceType.NEGATIVE;
-        } else if (parent instanceof TypeCheckConstraint) {
-            return ReferenceType.READ_ONLY;
-        }
-        // Other constraints use positive references
-        return ReferenceType.POSITIVE;
-    }
-
-    private void reportStrangeVariableRef(VariableReference ref, CompareConstraint constraint) {
-        throw new IllegalStateException( // this should never come up
-                "Strange reference to variable " + ref.getVar() + " in " + constraint.getClass().getName());
-    }
-
-    /**
-     * @return true if the variable is single-use a named variable
-     */
-    public boolean isNamedSingleUse(Variable variable) {
-        String name = variable.getName();
-        return CorePatternLanguageHelper.hasAggregateReference(variable) ||
-                (name != null && name.startsWith("_") && !name.contains("<"));
-    }
-
-    /**
-     * @return true if the variable is an unnamed single-use variable
-     */
-    public boolean isUnnamedSingleUseVariable(Variable variable) {
-        String name = variable.getName();
-        return name != null && name.startsWith("_") && name.contains("<");
-    }
 
     @Check(CheckType.NORMAL)
     public void checkForImpureJavaCallsInCheckConstraints(CheckConstraint checkConstraint) {
@@ -1061,5 +850,22 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
     public void error(String message, EObject source, EStructuralFeature feature, String code, String... issueData) {
         super.error(message, source, feature, code, issueData);
     }
+    
+    /**
+     * @return true if the variable is single-use a named variable
+     * @deprecated use {@link CorePatternLanguageHelper#isNamedSingleUse(Variable)} instead
+     */
+    @Deprecated
+    public boolean isNamedSingleUse(Variable variable) {
+        return CorePatternLanguageHelper.isNamedSingleUse(variable);
+    }
 
+    /**
+     * @return true if the variable is an unnamed single-use variable
+     * @deprecated use {@link CorePatternLanguageHelper#isUnnamedSingleUse(Variable)} instead
+     */
+    @Deprecated
+    public boolean isUnnamedSingleUseVariable(Variable variable) {
+        return CorePatternLanguageHelper.isUnnamedSingleUseVariable(variable);
+    }
 }

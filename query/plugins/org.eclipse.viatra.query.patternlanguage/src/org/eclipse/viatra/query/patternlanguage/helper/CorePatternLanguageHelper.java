@@ -702,4 +702,22 @@ public final class CorePatternLanguageHelper {
             
         });
     }
+    
+    /**
+     * @return true if the variable is single-use a named variable
+     * @since 1.6
+     */
+    public static boolean isNamedSingleUse(Variable variable) {
+        String name = variable.getName();
+        return hasAggregateReference(variable) || (name != null && name.startsWith("_") && !name.contains("<"));
+    }
+
+    /**
+     * @return true if the variable is an unnamed single-use variable
+     * @since 1.6
+     */
+    public static boolean isUnnamedSingleUseVariable(Variable variable) {
+        String name = variable.getName();
+        return name != null && name.startsWith("_") && name.contains("<");
+    }
 }
