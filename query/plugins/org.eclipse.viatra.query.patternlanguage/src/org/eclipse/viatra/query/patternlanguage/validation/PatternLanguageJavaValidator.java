@@ -12,7 +12,6 @@ package org.eclipse.viatra.query.patternlanguage.validation;
 
 import static org.eclipse.xtext.util.Strings.equal;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,11 +37,9 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.BoolValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.CompareFeature;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.Constraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.FunctionEvaluationValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ListValue;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.NumberValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.ParameterRef;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Pattern;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternBody;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCall;
@@ -50,7 +47,6 @@ import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternCompositi
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternLanguagePackage;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.PatternModel;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.StringValue;
-import org.eclipse.viatra.query.patternlanguage.patternLanguage.TypeCheckConstraint;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.ValueReference;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.Variable;
 import org.eclipse.viatra.query.patternlanguage.patternLanguage.VariableReference;
@@ -60,10 +56,8 @@ import org.eclipse.viatra.query.patternlanguage.typing.ITypeSystem;
 import org.eclipse.viatra.query.patternlanguage.util.AggregatorUtil;
 import org.eclipse.viatra.query.patternlanguage.util.DuplicationChecker;
 import org.eclipse.viatra.query.patternlanguage.util.IExpectedPackageNameProvider;
-import org.eclipse.viatra.query.patternlanguage.validation.VariableReferenceCount.ReferenceType;
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PureWhitelistExtensionLoader;
 import org.eclipse.viatra.query.patternlanguage.validation.whitelist.PurityChecker;
-import org.eclipse.viatra.query.runtime.matchers.algorithms.UnionFind;
 import org.eclipse.viatra.query.runtime.matchers.context.IInputKey;
 import org.eclipse.viatra.query.runtime.matchers.psystem.aggregations.IAggregatorFactory;
 import org.eclipse.xtext.EcoreUtil2;
@@ -90,8 +84,6 @@ import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
 import org.eclipse.xtext.xbase.typesystem.computation.NumberLiterals;
 import org.eclipse.xtext.xbase.typesystem.references.LightweightTypeReference;
-import org.eclipse.xtext.xbase.validation.EarlyExitValidator;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
