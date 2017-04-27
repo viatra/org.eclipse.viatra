@@ -78,7 +78,6 @@ import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.ComposedChecks;
 import org.eclipse.xtext.xbase.XExpression;
 import org.eclipse.xtext.xbase.XMemberFeatureCall;
-import org.eclipse.xtext.xbase.jvmmodel.IJvmModelAssociations;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.typesystem.IBatchTypeResolver;
 import org.eclipse.xtext.xbase.typesystem.IResolvedTypes;
@@ -148,9 +147,6 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Inject
     private PatternAnnotationProvider annotationProvider;
-
-    @Inject
-    private IJvmModelAssociations associations;
 
     @Inject
     private ITypeSystem typeSystem;
