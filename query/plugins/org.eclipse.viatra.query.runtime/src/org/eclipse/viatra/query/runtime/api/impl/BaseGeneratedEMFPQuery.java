@@ -55,7 +55,7 @@ public abstract class BaseGeneratedEMFPQuery extends BasePQuery {
      * For parameter type retrieval only.
      * 
      * <p>If parameter type declaration is erroneous, we still get a working parameter list (without the type declaration); 
-     *  theexception will be thrown again later when the body is processed.
+     *  the exception will be thrown again later when the body is processed.
      */
     protected EClassifier getClassifierLiteralSafe(String packageURI, String classifierName) {
     	try {

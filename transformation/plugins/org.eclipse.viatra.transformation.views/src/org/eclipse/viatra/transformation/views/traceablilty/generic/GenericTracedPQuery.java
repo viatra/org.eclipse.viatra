@@ -96,7 +96,7 @@ public class GenericTracedPQuery extends GenericReferencedPQuery {
     @Override
     public String getFullyQualifiedName() {
         String fqn = referencedQuery.getFullyQualifiedName();
-        int i = fqn.lastIndexOf(".");
+        int i = fqn.lastIndexOf('.');
         if (i == -1) {
             return String.format("%s.%s%s<%s>", DEFAULT_SUBPACKAGE, fqn, DEFAULT_POSTFIX, traceabilityId);
         }

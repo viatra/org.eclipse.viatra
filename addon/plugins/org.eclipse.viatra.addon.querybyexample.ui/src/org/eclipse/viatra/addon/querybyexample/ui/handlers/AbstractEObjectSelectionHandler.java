@@ -52,16 +52,18 @@ public abstract class AbstractEObjectSelectionHandler extends AbstractHandler {
         if (selection instanceof IStructuredSelection)
             qbeView.setSelection((IStructuredSelection) selection);
         IModelConnector selectionProvider = getSelectionProviderFromIEditorPart(editor);
-        Collection<EObject> selectedEObjects = selectionProvider.getSelectedEObjects();
-        if (selectedEObjects == null || selectedEObjects.isEmpty()) {
-            MessageDialog.openError(HandlerUtil.getActiveShell(event), 
-                    QBE_COMMON_ALERT_TITLE,
-                    QBE_NO_EOBJECTS_IN_SELECTION_ERROR);
-            return null;
+        if (selectionProvider != null) {
+            Collection<EObject> selectedEObjects = selectionProvider.getSelectedEObjects();
+            if (selectedEObjects == null || selectedEObjects.isEmpty()) {
+                MessageDialog.openError(HandlerUtil.getActiveShell(event), 
+                        QBE_COMMON_ALERT_TITLE,
+                        QBE_NO_EOBJECTS_IN_SELECTION_ERROR);
+                return null;
+            }
+            handleSelection(qbeView, selectedEObjects);
+            QBEViewUtils.getMainSourceProvider(event).setModelLoadedState();
         }
-        handleSelection(qbeView, selectedEObjects);
-        QBEViewUtils.getMainSourceProvider(event).setModelLoadedState();
-    
+        
         return null;
     }
 

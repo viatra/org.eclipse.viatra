@@ -252,7 +252,7 @@ public final class ViatraObservables {
             }
             if (o != null && feature != null) {
                 val = EMFProperties.value(feature).observe(o);
-            } else if (o != null && feature == null) {
+            } else if (o != null) {
                 // No feature found, falling back to constant toString
                 val = Observables.constantObservableValue(o.toString());
             } else {

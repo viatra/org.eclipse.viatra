@@ -161,7 +161,7 @@ public class LocalSearchDebugger implements ILocalSearchAdapter {
 
 
 //		final List<SearchOperationViewerNode> viewNodes = createOperationsListFromExecutor(newPlanExecutor);
-		if (runningMatchers.size() == 1) {
+		if (runningMatchers.size() == 1 && newPlanExecutor != null) {
 			this.viewModel = new SearchPlanViewModel(createOperationsListFromExecutor(newPlanExecutor));
 			this.viewModel.setDebugger(this);
 			// Set the input when the top level matcher goes to the next plan

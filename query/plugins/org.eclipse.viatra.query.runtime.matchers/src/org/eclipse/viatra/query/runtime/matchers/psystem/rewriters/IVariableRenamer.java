@@ -54,7 +54,7 @@ public interface IVariableRenamer {
         
         private String getShortName(PQuery query) {
             String fullyQualifiedName = query.getFullyQualifiedName();
-            int beginIndex = fullyQualifiedName.lastIndexOf(".") + 1;
+            int beginIndex = fullyQualifiedName.lastIndexOf('.') + 1;
             return fullyQualifiedName.substring(beginIndex);
         }
     }

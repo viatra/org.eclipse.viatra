@@ -74,9 +74,6 @@ public class WellbehavingDerivedFeatureRegistry {
         }
     }
 
-    /**
-     * @param el
-     */
     private static void processWellbehavingExtension(IConfigurationElement el) {
         try {
             String packageUri = el.getAttribute("package-nsUri");
@@ -122,9 +119,6 @@ public class WellbehavingDerivedFeatureRegistry {
         }
     }
 
-    /**
-	 * @return the contributingPluginOfFeatureMap
-	 */
 	public static Multimap<String, String> getContributingPluginOfFeatureMap() {
 		return contributingPluginOfFeatureMap;
 	}
@@ -141,37 +135,21 @@ public class WellbehavingDerivedFeatureRegistry {
 	        return true;
 	    } else if (contributedWellbehavingDerivedClasses.contains(feature.getEContainingClass())) {
 	        return true;
-	    } else if (contributedWellbehavingDerivedPackages.contains(feature.getEContainingClass().getEPackage())) {
-	        return true;
-	    } else {
-	    	return false;
-	    }
+	    } else return contributedWellbehavingDerivedPackages.contains(feature.getEContainingClass().getEPackage());
 	}
 
-	/**
-     * @param feature
-     */
     public static void registerWellbehavingDerivedFeature(EStructuralFeature feature) {
         contributedWellbehavingDerivedFeatures.add(feature);
     }
 
-    /**
-     * @param cls
-     */
     public static void registerWellbehavingDerivedClass(EClass cls) {
         contributedWellbehavingDerivedClasses.add(cls);
     }
 
-    /**
-     * @param pkg
-     */
     public static void registerWellbehavingDerivedPackage(EPackage pkg) {
         contributedWellbehavingDerivedPackages.add(pkg);
     }
 
-	/**
-     * @return the contributedWellbehavingDerivedFeatures
-     */
     public static Collection<EStructuralFeature> getContributedWellbehavingDerivedFeatures() {
         return contributedWellbehavingDerivedFeatures;
     }

@@ -75,7 +75,7 @@ public class JavaProjectClassLoaderProvider extends SimpleClassLoaderProvider im
 //                uri = resource.getResourceSet().getURIConverter().normalize(uri);
                 String scheme = uri.scheme();
                 if ("platform".equals(scheme) && uri.segmentCount() > 1 && "resource".equals(uri.segment(0))) {
-                    StringBuffer platformResourcePath = new StringBuffer();
+                    StringBuilder platformResourcePath = new StringBuilder();
                     for (int j = 1, size = uri.segmentCount(); j < size; ++j) {
                         platformResourcePath.append('/');
                         platformResourcePath.append(uri.segment(j));

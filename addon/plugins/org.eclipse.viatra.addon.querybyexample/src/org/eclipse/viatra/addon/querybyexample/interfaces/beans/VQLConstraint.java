@@ -104,7 +104,7 @@ public class VQLConstraint {
 
         if (Objects.equals(this.start, other.start) && Objects.equals(this.end, other.end) && Objects.equals(this.reference, other.reference))
             return true;
-        else if (this.reference.getEOpposite() != null)
+        else if (this.reference != null && this.reference.getEOpposite() != null)
             return (Objects.equals(this.start, other.end) && Objects.equals(this.end, other.start)
                     && Objects.equals(this.reference.getEOpposite(), other.reference));
         else

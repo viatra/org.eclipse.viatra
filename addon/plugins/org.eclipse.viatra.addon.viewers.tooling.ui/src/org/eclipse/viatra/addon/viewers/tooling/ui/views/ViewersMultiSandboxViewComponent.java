@@ -332,7 +332,7 @@ public class ViewersMultiSandboxViewComponent implements ISelectionProvider {
        	IViewerSandboxTab tab = getCurrentContributedTab();
        	if (tab!=null) {
             // unwrap VIATRA viewers model elements to EObjects
-            return selectionHelper.unwrapElements_ViewersElementsToEObjects( getCurrentContributedTab().getSelection() );
+            return selectionHelper.unwrapElements_ViewersElementsToEObjects( tab.getSelection() );
         } else {
             return StructuredSelection.EMPTY;
         }

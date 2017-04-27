@@ -81,7 +81,7 @@ import com.google.inject.name.Names;
  */
 @SuppressWarnings("restriction")
 public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModule {
-    private static final String loggerRoot = "org.eclipse.viatra.query";
+    private static final String LOGGER_ROOT = "org.eclipse.viatra.query";
 
     public EMFPatternLanguageUiModule(AbstractUIPlugin plugin) {
         super(plugin);
@@ -90,7 +90,7 @@ public class EMFPatternLanguageUiModule extends AbstractEMFPatternLanguageUiModu
     @Provides
     @Singleton
     Logger provideLoggerImplementation() {
-        Logger logger = Logger.getLogger(loggerRoot);
+        Logger logger = Logger.getLogger(LOGGER_ROOT);
         logger.setAdditivity(false);
         logger.addAppender(new ConsoleAppender(new PatternLayout(PatternLayout.TTCC_CONVERSION_PATTERN)));
         logger.addAppender(new EclipseLogAppender());

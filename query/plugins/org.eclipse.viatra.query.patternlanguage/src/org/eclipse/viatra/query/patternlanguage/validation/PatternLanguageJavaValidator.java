@@ -491,7 +491,7 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
         LinkedList<PatternCall> result = dfsCheckCycle(call, graph);
 
         if (result != null) {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
 
             boolean first = true;
             for (PatternCall elem : result) {
@@ -742,31 +742,33 @@ public class PatternLanguageJavaValidator extends AbstractPatternLanguageJavaVal
 
     @Check(CheckType.NORMAL)
     public void checkForImpureJavaCallsInCheckConstraints(CheckConstraint checkConstraint) {
-        checkForImpureJavaCallsInternal(checkConstraint.getExpression(),
+        if (checkConstraint.getExpression() != null) {
+            checkForImpureJavaCallsInternal(checkConstraint.getExpression(),
                 PatternLanguagePackage.Literals.CHECK_CONSTRAINT__EXPRESSION);
+        }
     }
 
     @Check(CheckType.NORMAL)
     public void checkForImpureJavaCallsInEvalExpressions(FunctionEvaluationValue eval) {
-        checkForImpureJavaCallsInternal(eval.getExpression(),
+        if (eval.getExpression() != null) {
+            checkForImpureJavaCallsInternal(eval.getExpression(),
                 PatternLanguagePackage.Literals.FUNCTION_EVALUATION_VALUE__EXPRESSION);
+        }
     }
 
     private void checkForImpureJavaCallsInternal(XExpression xExpression, EStructuralFeature feature) {
         Set<String> elementsWithWarnings = new HashSet<String>();
-        if (xExpression != null) {
-            Iterator<EObject> eAllContents = Iterators.concat(Iterators.singletonIterator(xExpression),
-                    xExpression.eAllContents());
-            while (eAllContents.hasNext()) {
-                EObject nextEObject = eAllContents.next();
-                if (nextEObject instanceof XMemberFeatureCall) {
-                    XMemberFeatureCall xFeatureCall = (XMemberFeatureCall) nextEObject;
-                    JvmIdentifiableElement jvmIdentifiableElement = xFeatureCall.getFeature();
-                    if (jvmIdentifiableElement instanceof JvmOperation) {
-                        JvmOperation jvmOperation = (JvmOperation) jvmIdentifiableElement;
-                        if (!PurityChecker.isPure(jvmOperation) && !jvmOperation.eIsProxy()) {
-                            elementsWithWarnings.add(jvmOperation.getQualifiedName());
-                        }
+        Iterator<EObject> eAllContents = Iterators.concat(Iterators.singletonIterator(xExpression),
+                xExpression.eAllContents());
+        while (eAllContents.hasNext()) {
+            EObject nextEObject = eAllContents.next();
+            if (nextEObject instanceof XMemberFeatureCall) {
+                XMemberFeatureCall xFeatureCall = (XMemberFeatureCall) nextEObject;
+                JvmIdentifiableElement jvmIdentifiableElement = xFeatureCall.getFeature();
+                if (jvmIdentifiableElement instanceof JvmOperation) {
+                    JvmOperation jvmOperation = (JvmOperation) jvmIdentifiableElement;
+                    if (!PurityChecker.isPure(jvmOperation) && !jvmOperation.eIsProxy()) {
+                        elementsWithWarnings.add(jvmOperation.getQualifiedName());
                     }
                 }
             }

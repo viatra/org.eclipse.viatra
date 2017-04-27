@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.viatra.query.patternlanguage.validation;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +33,7 @@ class VariableReferenceCount {
     }
 
     private Set<Variable> variables;
-    private Map<ReferenceType, Integer> counters = new Hashtable<ReferenceType, Integer>();
+    private Map<ReferenceType, Integer> counters = new HashMap<>();
     private int size = 0;
     private boolean parameter;
 

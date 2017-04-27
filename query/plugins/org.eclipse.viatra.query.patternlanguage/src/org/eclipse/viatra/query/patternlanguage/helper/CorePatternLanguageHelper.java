@@ -103,6 +103,9 @@ public final class CorePatternLanguageHelper {
      * Returns the name of the pattern, qualified by package name.
      */
     public static String getFullyQualifiedName(Pattern pattern) {
+        if (pattern == null) {
+            return "";
+        }
         String packageName = getPackageName(pattern);
         if (packageName == null || packageName.isEmpty()) {
             return pattern.getName();
