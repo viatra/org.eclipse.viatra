@@ -20,8 +20,14 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryMatcher;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
 import org.eclipse.viatra.query.runtime.matchers.psystem.annotations.PAnnotation;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PProblem;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.QueryInitializationException;
+import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
+
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 
 /**
  * Base implementation of IQuerySpecification.
@@ -81,16 +87,31 @@ public abstract class BaseQuerySpecification<Matcher extends ViatraQueryMatcher<
 
     @Override
     public Matcher getMatcher(ViatraQueryEngine engine) throws ViatraQueryException {
-    	ensureInitializedInternal();
-    	if (engine.getScope().isCompatibleWithQueryScope(this.getPreferredScopeClass()))
-    		return instantiate(engine);
-    	else throw new ViatraQueryException(
-    			String.format(
-    					"Scope class incompatibility: the query %s is formulated over query scopes of class %s, " + 
-    					" thus the query engine formulated over scope %s of class %s cannot evaluate it.", 
-    					this.getFullyQualifiedName(), this.getPreferredScopeClass().getCanonicalName(),
-    					engine.getScope(), engine.getScope().getClass().getCanonicalName()), 
-    			"Incompatible scope classes of engine and query.");
+        ensureInitializedInternal();
+        if (wrappedPQuery.getStatus() == PQueryStatus.ERROR) {
+
+            String errorMessages = Joiner.on("\n")
+                    .join(Iterables.transform(wrappedPQuery.getPProblems(), new Function<PProblem, String>() {
+
+                        @Override
+                        public String apply(PProblem input) {
+                            return (input == null) ? "" : input.getShortMessage();
+                        }
+
+                    }));
+
+            throw new ViatraQueryException(String.format("Erroneous query specification: %s \n %s", getFullyQualifiedName(), errorMessages),
+                    "Cannot initialize matchers on erroneous query specifications.");
+        } else if (!engine.getScope().isCompatibleWithQueryScope(this.getPreferredScopeClass())) {
+            throw new ViatraQueryException(
+                    String.format(
+                            "Scope class incompatibility: the query %s is formulated over query scopes of class %s, "
+                                    + " thus the query engine formulated over scope %s of class %s cannot evaluate it.",
+                            this.getFullyQualifiedName(), this.getPreferredScopeClass().getCanonicalName(),
+                            engine.getScope(), engine.getScope().getClass().getCanonicalName()),
+                    "Incompatible scope classes of engine and query.");
+        }
+        return instantiate(engine);
     }
 
 	protected void ensureInitializedInternal() throws ViatraQueryException {
