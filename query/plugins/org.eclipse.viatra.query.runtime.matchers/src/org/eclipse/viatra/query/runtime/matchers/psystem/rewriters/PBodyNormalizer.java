@@ -30,7 +30,6 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.TypeJudgement;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Inequality;
-import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PDisjunction;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PQuery.PQueryStatus;
@@ -93,19 +92,6 @@ public class PBodyNormalizer extends PDisjunctionRewriter {
      */
     protected boolean shouldExpandWeakenedAlternatives(PQuery query) {
         return false;
-    }
-
-    /**
-     * Checks whether a type constraint in a query can lead out of the scope. It is possible to turn off or customize
-     * this checks by creating a subclass and overriding this method.
-     * 
-     * @since 1.6
-     */
-    protected boolean canLeadOutOfScope(PQuery query, ITypeConstraint constraint) {
-        if (constraint instanceof TypeConstraint) {
-            return context.canLeadOutOfScope(((TypeConstraint) constraint).getSupplierKey());
-        }
-        return true;
     }
 
     @Override

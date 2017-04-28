@@ -39,7 +39,6 @@ import org.eclipse.viatra.query.runtime.matchers.planning.operations.PProject;
 import org.eclipse.viatra.query.runtime.matchers.planning.operations.PStart;
 import org.eclipse.viatra.query.runtime.matchers.psystem.DeferredPConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.EnumerablePConstraint;
-import org.eclipse.viatra.query.runtime.matchers.psystem.ITypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
@@ -130,13 +129,6 @@ public class ReteRecipeCompiler {
 		this.metaContext = metaContext;
         this.queryAnalyzer = queryAnalyzer;
 		this.normalizer = new PDisjunctionRewriterCacher(new SurrogateQueryRewriter(), new PBodyNormalizer(metaContext) {
-
-		    @Override
-		    protected boolean canLeadOutOfScope(PQuery query, ITypeConstraint constraint) {
-		        QueryEvaluationHint hint = ReteRecipeCompiler.this.hintProvider.getQueryEvaluationHint(query);
-		        Boolean checkScopeBoundaries = hint.getValueOrDefault(ReteHintOptions.checkScopeBoundaries);
-		        return checkScopeBoundaries && super.canLeadOutOfScope(query, constraint);
-		    }
 		    
 		    @Override
 		    protected boolean shouldExpandWeakenedAlternatives(PQuery query) {
