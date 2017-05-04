@@ -67,7 +67,7 @@ public class NodeProvisioner {
                                                                                                    // Supplier>,
                                                                                                    // RemoteSupplier>();
 
-    private RecipeRecognizer recognizer = new RecipeRecognizer();
+    private RecipeRecognizer recognizer;
 
     /**
      * PRE: NodeFactory, ConnectionFactory must exist
@@ -82,6 +82,7 @@ public class NodeProvisioner {
         this.connectionFactory = reteContainer.getConnectionFactory();
         this.inputConnector = reteContainer.getInputConnectionFactory();
         runtimeContext = reteContainer.getNetwork().getEngine().getRuntimeContext();
+        recognizer = new RecipeRecognizer(runtimeContext);
     }
 
     public synchronized Address<? extends Node> getOrCreateNodeByRecipe(RecipeTraceInfo recipeTrace) {

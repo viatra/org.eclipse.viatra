@@ -12,6 +12,7 @@ package org.eclipse.viatra.query.runtime.rete.single;
 
 import java.util.Collection;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -20,6 +21,9 @@ import org.eclipse.viatra.query.runtime.rete.network.Supplier;
 /**
  * A bucket holds a filtered set of tuples of its parent {@link DiscriminatorDispatcherNode}. 
  * Exactly those that have the given bucket key at their discrimination column.
+ * 
+ * <p> During operation, tuple contents and bucket keys have already been wrapped using {@link IQueryRuntimeContext#wrapElement(Object)}
+ * 
  * @author Gabor Bergmann
  * @since 1.5
  */
@@ -27,9 +31,13 @@ public class DiscriminatorBucketNode extends SingleInputNode {
 
     private Object bucketKey;
 
+    /**
+     * @param bucketKey will be wrapped using {@link IQueryRuntimeContext#wrapElement(Object)}
+
+     */
     public DiscriminatorBucketNode(ReteContainer reteContainer, Object bucketKey) {
         super(reteContainer);
-        this.bucketKey = bucketKey;
+        this.bucketKey = reteContainer.getNetwork().getEngine().getRuntimeContext().wrapElement(bucketKey);
     }
 
     @Override

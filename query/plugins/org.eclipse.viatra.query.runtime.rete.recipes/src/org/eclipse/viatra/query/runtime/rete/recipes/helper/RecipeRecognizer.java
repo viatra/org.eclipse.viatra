@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.rete.recipes.RecipesPackage;
 import org.eclipse.viatra.query.runtime.rete.recipes.ReteNodeRecipe;
 
@@ -43,6 +44,19 @@ public class RecipeRecognizer {
      */
     Map<EClass, Set<ReteNodeRecipe>> canonicalRecipesByClass = Maps.newHashMap();
     Map<Long, ReteNodeRecipe> canonicalRecipeByEquivalenceClassID = Maps.newHashMap();
+
+    private IQueryRuntimeContext runtimeContext;
+
+    /**
+     * @param can be null; if provided, further equivalences can be detected based on {@link IQueryRuntimeContext#wrapElement(Object)}
+     * @since 1.6
+     */
+    public RecipeRecognizer(IQueryRuntimeContext runtimeContext) {
+        this.runtimeContext = runtimeContext;
+    }
+    public RecipeRecognizer() {
+        this(null);
+    }
 
     /**
      * Recognizes when an equivalent canonical recipe is already known.
@@ -125,23 +139,54 @@ public class RecipeRecognizer {
     }
 
     private boolean isEquivalentRecipe(ReteNodeRecipe recipe, ReteNodeRecipe knownRecipe) {
-        return new EqualityHelper().equals(recipe, knownRecipe);
+        return new EqualityHelper(runtimeContext).equals(recipe, knownRecipe);
     }
 
     // TODO reuse in more cases later, e.g. switching join node parents, etc.
     private static class EqualityHelper extends EcoreUtil.EqualityHelper {
 
+
+
+
         private static final long serialVersionUID = -8841971394686015188L;
         
-        final static EAttribute reteNodeRecipe_EquivalenceClassIDs = RecipesPackage.eINSTANCE
-                .getReteNodeRecipe_EquivalenceClassIDs();
+        private static final EAttribute RETE_NODE_RECIPE_EQUIVALENCE_CLASS_IDS = 
+                RecipesPackage.eINSTANCE.getReteNodeRecipe_EquivalenceClassIDs();
+        private static final EAttribute CONSTANT_RECIPE_CONSTANT_VALUES = 
+                RecipesPackage.eINSTANCE.getConstantRecipe_ConstantValues();
+        private static final EAttribute DISCRIMINATOR_BUCKET_RECIPE_BUCKET_KEY = 
+                RecipesPackage.eINSTANCE.getDiscriminatorBucketRecipe_BucketKey();
+
+        private IQueryRuntimeContext runtimeContext;
+
+        public EqualityHelper(IQueryRuntimeContext runtimeContext) {
+            this.runtimeContext = runtimeContext;
+        }
 
         @Override
         protected boolean haveEqualFeature(EObject eObject1, EObject eObject2, EStructuralFeature feature) {
             // ignore differences in this attribute, as it may only be assigned
             // after the equivalence check
-            if (reteNodeRecipe_EquivalenceClassIDs.equals(feature))
+            if (RETE_NODE_RECIPE_EQUIVALENCE_CLASS_IDS.equals(feature))
                 return true;
+            
+            if (runtimeContext != null) {
+                // constant values
+                if (/*CONSTANT_RECIPE_CONSTANT_VALUES.equals(feature) ||*/ DISCRIMINATOR_BUCKET_RECIPE_BUCKET_KEY.equals(feature)) {
+                    // use runtime context to map to canonical wrapped form
+                    // this is costly for constant recipes (TODO improve this), but essential for discriminator buckets
+                    
+                    Object val1 = eObject1.eGet(feature);
+                    Object val2 = eObject2.eGet(feature);
+                    
+                    if (val1 != null && val2 != null) {
+                        return runtimeContext.wrapElement(val1).equals(runtimeContext.wrapElement(val2));
+                    } else {
+                        return val1 == null && val2 == null;
+                    }
+                    
+                }                
+            }
 
             // fallback to general comparison
             return super.haveEqualFeature(eObject1, eObject2, feature);

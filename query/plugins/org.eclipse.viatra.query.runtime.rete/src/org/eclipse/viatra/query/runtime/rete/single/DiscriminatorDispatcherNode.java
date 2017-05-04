@@ -15,7 +15,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
+import org.eclipse.viatra.query.runtime.rete.boundary.ReteBoundary;
 import org.eclipse.viatra.query.runtime.rete.network.Direction;
 import org.eclipse.viatra.query.runtime.rete.network.Receiver;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
@@ -23,6 +25,9 @@ import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 /**
  * Node that sends tuples off to different buckets (attached as children of type {@link DiscriminatorBucketNode}), 
  *  based on the value of a given column.
+ *  
+ * <p> Tuple contents and bucket keys have already been wrapped using {@link IQueryRuntimeContext#wrapElement(Object)}
+ * 
  * @author Gabor Bergmann
  * @since 1.5
  */

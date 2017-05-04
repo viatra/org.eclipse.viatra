@@ -13,6 +13,7 @@ package org.eclipse.viatra.query.runtime.rete.misc;
 
 import java.util.Collection;
 
+import org.eclipse.viatra.query.runtime.matchers.context.IQueryRuntimeContext;
 import org.eclipse.viatra.query.runtime.matchers.tuple.Tuple;
 import org.eclipse.viatra.query.runtime.rete.network.ReteContainer;
 import org.eclipse.viatra.query.runtime.rete.network.StandardNode;
@@ -26,6 +27,9 @@ public class ConstantNode extends StandardNode {
 
     protected Tuple constant;
 
+    /**
+     * @param constant will be wrapped using {@link IQueryRuntimeContext#wrapTuple(Tuple)}
+     */
     public ConstantNode(ReteContainer reteContainer, Tuple constant) {
         super(reteContainer);
         this.constant = reteContainer.getNetwork().getEngine().getRuntimeContext().wrapTuple(constant);
