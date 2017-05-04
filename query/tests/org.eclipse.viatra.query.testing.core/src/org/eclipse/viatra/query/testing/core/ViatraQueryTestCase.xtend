@@ -187,7 +187,7 @@ class ViatraQueryTestCase {
             if (!matchDiff.empty) {
                 val joiner = Joiner.on("\n")
                 throw new ComparisonFailure(
-                    matchDiff.toString,
+                    '''Differences found between reference «reference.class.name» and match set provider «it.class.name»''',
                     joiner.join(matchDiff.additions.map[prettyPrint]),
                     joiner.join(matchDiff.removals.map[prettyPrint])
                 )
